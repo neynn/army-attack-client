@@ -74,8 +74,8 @@ ResourceLoader.loadFonts = function(fonts, onLoad) {
     for(const key in fonts) {
         const fontConfig = fonts[key];
         const { id, directory, source } = fontConfig;
-        const url = `url(${ResourceLoader.FILE_SERVER_ADDRESS}/${directory}/${source})`;
-        const face = new FontFace(id, url);
+        const path = ResourceLoader.getPath(directory, source);
+        const face = new FontFace(id, `url(${path})`);
         const promise = face.load()
         .then(font => onLoad(id, font, fontConfig))
         .catch(error => console.error({key, error}));
