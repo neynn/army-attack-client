@@ -2,10 +2,10 @@ export const ResourceLoader = function() {}
 
 ResourceLoader.DEFAULT_IMAGE_TYPE = ".png";
 ResourceLoader.DEFAULT_AUDIO_TYPE = ".mp3";
-ResourceLoader.FILE_SERVER_ADDRESS = "Army_Attack_Client";
+ResourceLoader.FILE_SERVER_ADDRESS = "";
 
 ResourceLoader.getPath = function(directory, source) {
-    const path = `${directory}/${source}`;
+    const path = `${ResourceLoader.FILE_SERVER_ADDRESS}/${directory}/${source}`;
     return path;
 }
 
