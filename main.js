@@ -9,7 +9,7 @@ const gameContext = new GameContext();
 
 ResourceLoader.loadJSON("result.json").then(file => console.log(file));
 
-ResourceLoader.loadConfigFiles("assets", "files.json").then(async files => {
+ResourceLoader.loadConfigFiles("./assets", "files.json").then(async files => {
   let totalMegabytes = 0;
   let totalMegabytesLargeFiles = 0;
 
