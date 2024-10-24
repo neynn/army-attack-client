@@ -314,19 +314,16 @@ SpriteManager.prototype.drawTileGraphics = function(graphics, context, renderX, 
     
     for(const component of currentFrame) {
         const { id, offsetX, offsetY } = component;
+        const { width, height, offset, bitmap } = tileSet.getBuffersByID(id)[ImageSheet.BUFFER_NOT_FLIPPED];
+        const drawX = renderX + offset.x + offsetX;
+        const drawY = renderY + offset.y + offsetY;
+        const drawWidth = width * scaleX;
+        const drawHeight = height * scaleY;
 
-        if(tileSet.hasFrame(id)) {
-            const buffer = tileSet.getBuffersByID(id)[ImageSheet.BUFFER_NOT_FLIPPED];
-            const drawX = renderX + buffer.offset.x + offsetX;
-            const drawY = renderY + buffer.offset.y + offsetY;
-            const drawWidth = buffer.width * scaleX;
-            const drawHeight = buffer.height * scaleY;
-
-            context.drawImage(
-                buffer.bitmap,
-                0, 0, buffer.width, buffer.height,
-                drawX, drawY, drawWidth, drawHeight
-            );
-        }
+        context.drawImage(
+            bitmap,
+            0, 0, width, height,
+            drawX, drawY, drawWidth, drawHeight
+        );
     }
 }

@@ -29,35 +29,6 @@ AttackAction.prototype.onStart = function(gameContext, request) {
     this.timePassed = 0;
 }
 
-/**
- * 
- * @param {int} start - The starting number.
- * @param {int} end - The ending number.
- * @param {Object.<string, int>} table - An object with string keys and number values.
- * @returns {string} A string representing the FizzBuzz output.
- */
-const fizzBuzz = function(start, end, table) {
-    let output = [];
-
-    for(let number = start; number <= end; number++) {
-        let numberOutput = "";
-
-        for(const word in table) {
-            if(number % table[word] === 0) {
-                numberOutput += word;
-            }
-        }
-
-        if(numberOutput === "") {
-            numberOutput = number;
-        }
-
-        output.push(numberOutput);
-    }
-
-    return output.join(" ");
-}
-
 AttackAction.prototype.onEnd = function(gameContext, request) {
     const { entityManager } = gameContext;
     const { entityID, attackers, damage } = request;
