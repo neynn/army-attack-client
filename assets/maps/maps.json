@@ -1,0 +1,3 @@
+{
+    "pvp_valleys": { "id": "pvp_valleys", "directory": "assets/maps/pvp", "source": "valleys.json" }
+}

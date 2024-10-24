@@ -1,0 +1,520 @@
+{
+    "settings": {
+        "allowAllyPassing": false,
+        "drawBorder": true,
+        "drawAttackRange": false,
+        "maxQueueSize": 20,
+        "maxAttackRange": 5,
+        "hitDuration": 1,
+        "iconDuration": 1.8,
+        "downDuration": 10,
+        "groundLayerID": "ground",
+        "decorationLayerID": "decoration",
+        "borderLayerID": "border",
+        "overlayLayerID": "overlay",
+        "cloudLayerID": "cloud",
+        "typeLayerID": "type",
+        "teamLayerID": "team",
+        "convertableLayers": { "ground": { "id": "ground" }, "decoration": { "id": "decoration" } },
+        "languages": { 
+            "german": { "id": "german", "directory": "assets/config/language", "source": "de.json" },
+            "english": { "id": "english", "directory": "assets/config/language", "source": "en.json" }
+        }
+    },
+    "tileTypes": {
+        "0": { "id": "0", "color": "#000000", "name": "Ground", "passability": "Land", "autoCapture": false, "hasBorder": true },
+        "1": { "id": "1", "color": "#ff0000", "name": "Mountain", "passability": "Mountain", "autoCapture": false, "hasBorder": false },
+        "2": { "id": "2", "color": "#0000ff", "name": "Sea", "passability": "Sea", "autoCapture": false, "hasBorder": false },
+        "3": { "id": "3", "color": "#0000ff", "name": "Shore", "passability": "Shore", "autoCapture": true, "hasBorder": false }
+    },
+    "passabilityTypes": {
+        "Land": { "id": "Land" },
+        "Mountain": { "id": "Mountain" },
+        "Sea": { "id": "Sea" },
+        "Shore": { "id": "Shore" }
+    },
+    "teamTypes": {
+        "0": {"id": "0", "name": "#CONFIG_TEAM_CRIMSON", "color": "#ff0000", "allies": {"0": true, "2": true}, "enemies": {"1": true, "3": true}, "sprites": {"statCard": "unit_stat_card_bad"}},
+        "1": {"id": "1", "name": "#CONFIG_TEAM_ALLIES", "color": "#0000ff", "allies": {"1": true, "2": true}, "enemies": {"0": true, "3": true}, "sprites": {"statCard": "unit_stat_card_good"}},
+        "2": {"id": "2", "name": "#CONFIG_TEAM_NEUTRAL", "color": "#00ff00", "allies": {}, "enemies": {}, "sprites": {}},
+        "3": {"id": "3", "name": "#CONFIG_TEAM_ANGRY", "color": "#000000", "allies": {}, "enemies": {"0": true, "1": true}, "sprites": {}}
+    },
+    "tileConversions": {
+        "ground": {
+            "Bg_BadTile_01": {"0": ["ground", "Bg_BadTile_01"], "1": ["ground", "Bg_GoodTile_01"]},
+            "Bg_BadTile_01_desert": {"0": ["ground", "Bg_BadTile_01_desert"], "1": ["ground", "Bg_GoodTile_01_desert"]},
+            "Bg_BadTile_02": {"0": ["ground", "Bg_BadTile_02"], "1": ["ground", "Bg_GoodTile_02"]},
+            "Bg_GoodTile_01": {"0": ["ground", "Bg_BadTile_01"], "1": ["ground", "Bg_GoodTile_01"]},
+            "Bg_GoodTile_01_desert": {"0": ["ground", "Bg_BadTile_01_desert"], "1": ["ground", "Bg_GoodTile_01_desert"]},
+            "Bg_GoodTile_02": {"0": ["ground", "Bg_BadTile_02"], "1": ["ground", "Bg_GoodTile_02"]}
+        },
+        "coast": {
+            "Bg_CoastTile_ne_01": {"0": ["coast", "Bg_CoastTile_ne_02"], "1": ["coast", "Bg_CoastTile_ne_01"]},
+            "Bg_CoastTile_ne_02": {"0": ["coast", "Bg_CoastTile_ne_02"], "1": ["coast", "Bg_CoastTile_ne_01"]},
+            "Bg_CoastTile_w_01": {"0": ["coast", "Bg_CoastTile_w_02"], "1": ["coast", "Bg_CoastTile_w_01"]},
+            "Bg_CoastTile_w_02": {"0": ["coast", "Bg_CoastTile_w_02"], "1": ["coast", "Bg_CoastTile_w_01"]},
+            "Bg_CoastTile_nw_inside_01": {"0": ["coast", "Bg_CoastTile_nw_inside_02"], "1": ["coast", "Bg_CoastTile_nw_inside_01"]},
+            "Bg_CoastTile_nw_inside_02": {"0": ["coast", "Bg_CoastTile_nw_inside_02"], "1": ["coast", "Bg_CoastTile_nw_inside_01"]},
+            "Bg_CoastTile_ne_inside_02": {"0": ["coast", "Bg_CoastTile_ne_inside_02"], "1": ["coast", "Bg_CoastTile_ne_inside_01"]},
+            "Bg_CoastTile_ne_inside_01": {"0": ["coast", "Bg_CoastTile_ne_inside_02"], "1": ["coast", "Bg_CoastTile_ne_inside_01"]},
+            "Bg_CoastTile_sw_01": {"0": ["coast", "Bg_CoastTile_sw_02"], "1": ["coast", "Bg_CoastTile_sw_01"]},
+            "Bg_CoastTile_sw_02": {"0": ["coast", "Bg_CoastTile_sw_02"], "1": ["coast", "Bg_CoastTile_sw_01"]},
+            "Bg_CoastTile_e_01": {"0": ["coast", "Bg_CoastTile_e_02"], "1": ["coast", "Bg_CoastTile_e_01"]},
+            "Bg_CoastTile_e_02": {"0": ["coast", "Bg_CoastTile_e_02"], "1": ["coast", "Bg_CoastTile_e_01"]},
+            "Bg_CoastTile_sw_inside_01": {"0": ["coast", "Bg_CoastTile_sw_inside_02"], "1": ["coast", "Bg_CoastTile_sw_inside_01"]},
+            "Bg_CoastTile_sw_inside_02": {"0": ["coast", "Bg_CoastTile_sw_inside_02"], "1": ["coast", "Bg_CoastTile_sw_inside_01"]},
+            "Bg_CoastTile_s_01": {"0": ["coast", "Bg_CoastTile_s_02"], "1": ["coast", "Bg_CoastTile_s_01"]},
+            "Bg_CoastTile_s_02": {"0": ["coast", "Bg_CoastTile_s_02"], "1": ["coast", "Bg_CoastTile_s_01"]},
+            "Bg_CoastTile_se_inside_01": {"0": ["coast", "Bg_CoastTile_se_inside_02"], "1": ["coast", "Bg_CoastTile_se_inside_01"]},
+            "Bg_CoastTile_se_inside_02": {"0": ["coast", "Bg_CoastTile_se_inside_02"], "1": ["coast", "Bg_CoastTile_se_inside_01"]},
+            "Bg_CoastTile_n_01": {"0": ["coast", "Bg_CoastTile_n_02"], "1": ["coast", "Bg_CoastTile_n_01"]},
+            "Bg_CoastTile_n_02": {"0": ["coast", "Bg_CoastTile_n_02"], "1": ["coast", "Bg_CoastTile_n_01"]},
+            "Bg_CoastTile_nw_01": {"0": ["coast", "Bg_CoastTile_nw_02"], "1": ["coast", "Bg_CoastTile_nw_01"]},
+            "Bg_CoastTile_nw_02": {"0": ["coast", "Bg_CoastTile_nw_02"], "1": ["coast", "Bg_CoastTile_nw_01"]},
+            "Bg_CoastTile_se_01": {"0": ["coast", "Bg_CoastTile_se_02"], "1": ["coast", "Bg_CoastTile_se_01"]},
+            "Bg_CoastTile_se_02": {"0": ["coast", "Bg_CoastTile_se_02"], "1": ["coast", "Bg_CoastTile_se_01"]}
+        },
+        "deco_bad": {
+            "Bg_DeadTrees_01": {"0": ["deco_bad", "Bg_DeadTrees_01"], "1": ["deco_good", "Bg_Trees_01"]},
+            "Bg_BadTile_Deco_01": {"0": ["deco_bad", "Bg_BadTile_Deco_01"], "1": ["deco_good", "Bg_GoodTile_Deco_01"]},
+            "Bg_BadTile_Deco_02": {"0": ["deco_bad", "Bg_BadTile_Deco_02"], "1": ["deco_good", "Bg_GoodTile_Deco_02"]},
+            "Bg_BadTile_Deco_03": {"0": ["deco_bad", "Bg_BadTile_Deco_03"], "1": ["deco_good", "Bg_GoodTile_Deco_03"]},
+            "Bg_BadTile_Deco_04": {"0": ["deco_bad", "Bg_BadTile_Deco_04"], "1": ["deco_good", "Bg_GoodTile_Deco_04"]},
+            "Bg_BadTile_Deco_05": {"0": ["deco_bad", "Bg_BadTile_Deco_05"], "1": ["deco_good", "Bg_GoodTile_Deco_05"]},
+            "Bg_BadTile_Deco_06": {"0": ["deco_bad", "Bg_BadTile_Deco_06"], "1": ["deco_good", "Bg_GoodTile_Deco_06"]},
+            "Bg_BadTile_Deco_07": {"0": ["deco_bad", "Bg_BadTile_Deco_07"], "1": ["deco_good", "Bg_GoodTile_Deco_07"]},
+            "Bg_BadTile_Deco_08": {"0": ["deco_bad", "Bg_BadTile_Deco_08"], "1": ["deco_good", "Bg_GoodTile_Deco_08"]},
+            "Bg_BadTile_Deco_09": {"0": ["deco_bad", "Bg_BadTile_Deco_09"], "1": ["deco_good", "Bg_GoodTile_Deco_09"]},
+            "Bg_BadTile_Deco_10": {"0": ["deco_bad", "Bg_BadTile_Deco_10"], "1": ["deco_good", "Bg_GoodTile_Deco_10"]},
+            "Bg_BadTile_Deco_11": {"0": ["deco_bad", "Bg_BadTile_Deco_11"], "1": ["deco_good", "Bg_GoodTile_Deco_11"]},
+            "Bg_BadTile_Deco_12": {"0": ["deco_bad", "Bg_BadTile_Deco_12"], "1": ["deco_good", "Bg_GoodTile_Deco_12"]},
+            "Bg_BadTile_Deco_13": {"0": ["deco_bad", "Bg_BadTile_Deco_13"], "1": ["deco_good", "Bg_GoodTile_Deco_13"]},
+            "Bg_BadTile_Deco_14": {"0": ["deco_bad", "Bg_BadTile_Deco_14"], "1": ["deco_good", "Bg_GoodTile_Deco_14"]},
+            "Bg_BadTile_Deco_15": {"0": ["deco_bad", "Bg_BadTile_Deco_15"], "1": ["deco_good", "Bg_GoodTile_Deco_15"]},
+            "Bg_BadTile_Deco_16": {"0": ["deco_bad", "Bg_BadTile_Deco_16"], "1": ["deco_good", "Bg_GoodTile_Deco_16"]},
+            "Bg_BadTile_Deco_17": {"0": ["deco_bad", "Bg_BadTile_Deco_17"], "1": ["deco_good", "Bg_GoodTile_Deco_17"]},
+            "Bg_BadTile_Deco_18": {"0": ["deco_bad", "Bg_BadTile_Deco_18"], "1": ["deco_good", "Bg_GoodTile_Deco_18"]},
+            "Bg_BadTile_Deco_19": {"0": ["deco_bad", "Bg_BadTile_Deco_19"], "1": ["deco_good", "Bg_GoodTile_Deco_19"]},
+            "Bg_BadTile_Deco_20": {"0": ["deco_bad", "Bg_BadTile_Deco_20"], "1": ["deco_good", "Bg_GoodTile_Deco_20"]},
+            "Bg_BadTile_Deco_21": {"0": ["deco_bad", "Bg_BadTile_Deco_21"], "1": ["deco_good", "Bg_GoodTile_Deco_21"]},
+            "Bg_BadTile_Deco_22": {"0": ["deco_bad", "Bg_BadTile_Deco_22"], "1": ["deco_good", "Bg_GoodTile_Deco_22"]},
+            "Bg_BadTile_Deco_23": {"0": ["deco_bad", "Bg_BadTile_Deco_23"], "1": ["deco_good", "Bg_GoodTile_Deco_23"]},
+            "Bg_BadTile_Deco_24": {"0": ["deco_bad", "Bg_BadTile_Deco_24"], "1": ["deco_good", "Bg_GoodTile_Deco_24"]},
+            "Bg_BadTile_Deco_25": {"0": ["deco_bad", "Bg_BadTile_Deco_25"], "1": ["deco_good", "Bg_GoodTile_Deco_25"]},
+            "Bg_BadTile_Deco_26": {"0": ["deco_bad", "Bg_BadTile_Deco_26"], "1": ["deco_good", "Bg_GoodTile_Deco_26"]}
+        },
+        "deco_good": {
+            "Bg_Trees_01": {"0": ["deco_bad", "Bg_DeadTrees_01"], "1": ["deco_good", "Bg_Trees_01"]},
+            "Bg_GoodTile_Deco_01": {"0": ["deco_bad", "Bg_BadTile_Deco_01"], "1": ["deco_good", "Bg_GoodTile_Deco_01"]},
+            "Bg_GoodTile_Deco_02": {"0": ["deco_bad", "Bg_BadTile_Deco_02"], "1": ["deco_good", "Bg_GoodTile_Deco_02"]},
+            "Bg_GoodTile_Deco_03": {"0": ["deco_bad", "Bg_BadTile_Deco_03"], "1": ["deco_good", "Bg_GoodTile_Deco_03"]},
+            "Bg_GoodTile_Deco_04": {"0": ["deco_bad", "Bg_BadTile_Deco_04"], "1": ["deco_good", "Bg_GoodTile_Deco_04"]},
+            "Bg_GoodTile_Deco_05": {"0": ["deco_bad", "Bg_BadTile_Deco_05"], "1": ["deco_good", "Bg_GoodTile_Deco_05"]},
+            "Bg_GoodTile_Deco_06": {"0": ["deco_bad", "Bg_BadTile_Deco_06"], "1": ["deco_good", "Bg_GoodTile_Deco_06"]},
+            "Bg_GoodTile_Deco_07": {"0": ["deco_bad", "Bg_BadTile_Deco_07"], "1": ["deco_good", "Bg_GoodTile_Deco_07"]},
+            "Bg_GoodTile_Deco_08": {"0": ["deco_bad", "Bg_BadTile_Deco_08"], "1": ["deco_good", "Bg_GoodTile_Deco_08"]},
+            "Bg_GoodTile_Deco_09": {"0": ["deco_bad", "Bg_BadTile_Deco_09"], "1": ["deco_good", "Bg_GoodTile_Deco_09"]},
+            "Bg_GoodTile_Deco_10": {"0": ["deco_bad", "Bg_BadTile_Deco_10"], "1": ["deco_good", "Bg_GoodTile_Deco_10"]},
+            "Bg_GoodTile_Deco_11": {"0": ["deco_bad", "Bg_BadTile_Deco_11"], "1": ["deco_good", "Bg_GoodTile_Deco_11"]},
+            "Bg_GoodTile_Deco_12": {"0": ["deco_bad", "Bg_BadTile_Deco_12"], "1": ["deco_good", "Bg_GoodTile_Deco_12"]},
+            "Bg_GoodTile_Deco_13": {"0": ["deco_bad", "Bg_BadTile_Deco_13"], "1": ["deco_good", "Bg_GoodTile_Deco_13"]},
+            "Bg_GoodTile_Deco_14": {"0": ["deco_bad", "Bg_BadTile_Deco_14"], "1": ["deco_good", "Bg_GoodTile_Deco_14"]},
+            "Bg_GoodTile_Deco_15": {"0": ["deco_bad", "Bg_BadTile_Deco_15"], "1": ["deco_good", "Bg_GoodTile_Deco_15"]},
+            "Bg_GoodTile_Deco_16": {"0": ["deco_bad", "Bg_BadTile_Deco_16"], "1": ["deco_good", "Bg_GoodTile_Deco_16"]},
+            "Bg_GoodTile_Deco_17": {"0": ["deco_bad", "Bg_BadTile_Deco_17"], "1": ["deco_good", "Bg_GoodTile_Deco_17"]},
+            "Bg_GoodTile_Deco_18": {"0": ["deco_bad", "Bg_BadTile_Deco_18"], "1": ["deco_good", "Bg_GoodTile_Deco_18"]},
+            "Bg_GoodTile_Deco_19": {"0": ["deco_bad", "Bg_BadTile_Deco_19"], "1": ["deco_good", "Bg_GoodTile_Deco_19"]},
+            "Bg_GoodTile_Deco_20": {"0": ["deco_bad", "Bg_BadTile_Deco_20"], "1": ["deco_good", "Bg_GoodTile_Deco_20"]},
+            "Bg_GoodTile_Deco_21": {"0": ["deco_bad", "Bg_BadTile_Deco_21"], "1": ["deco_good", "Bg_GoodTile_Deco_21"]},
+            "Bg_GoodTile_Deco_22": {"0": ["deco_bad", "Bg_BadTile_Deco_22"], "1": ["deco_good", "Bg_GoodTile_Deco_22"]},
+            "Bg_GoodTile_Deco_23": {"0": ["deco_bad", "Bg_BadTile_Deco_23"], "1": ["deco_good", "Bg_GoodTile_Deco_23"]},
+            "Bg_GoodTile_Deco_24": {"0": ["deco_bad", "Bg_BadTile_Deco_24"], "1": ["deco_good", "Bg_GoodTile_Deco_24"]},
+            "Bg_GoodTile_Deco_25": {"0": ["deco_bad", "Bg_BadTile_Deco_25"], "1": ["deco_good", "Bg_GoodTile_Deco_25"]},
+            "Bg_GoodTile_Deco_26": {"0": ["deco_bad", "Bg_BadTile_Deco_26"], "1": ["deco_good", "Bg_GoodTile_Deco_26"]}
+        },
+        "river_bad": {
+            "Bg_BadRiverTile_01": {"0": ["river_bad", "Bg_BadRiverTile_01"], "1": ["river_good", "Bg_RiverTile_01"]},
+            "Bg_BadRiverTile_02": {"0": ["river_bad", "Bg_BadRiverTile_02"], "1": ["river_good", "Bg_RiverTile_02"]},
+            "Bg_BadRiverTile_03": {"0": ["river_bad", "Bg_BadRiverTile_03"], "1": ["river_good", "Bg_RiverTile_03"]},
+            "Bg_BadRiverTile_04": {"0": ["river_bad", "Bg_BadRiverTile_04"], "1": ["river_good", "Bg_RiverTile_04"]},
+            "Bg_BadRiverTile_05": {"0": ["river_bad", "Bg_BadRiverTile_05"], "1": ["river_good", "Bg_RiverTile_05"]}
+        },
+        "river_good": {
+            "Bg_RiverTile_01": {"0": ["river_bad", "Bg_BadRiverTile_01"], "1": ["river_good", "Bg_RiverTile_01"]},
+            "Bg_RiverTile_02": {"0": ["river_bad", "Bg_BadRiverTile_02"], "1": ["river_good", "Bg_RiverTile_02"]},
+            "Bg_RiverTile_03": {"0": ["river_bad", "Bg_BadRiverTile_03"], "1": ["river_good", "Bg_RiverTile_03"]},
+            "Bg_RiverTile_04": {"0": ["river_bad", "Bg_BadRiverTile_04"], "1": ["river_good", "Bg_RiverTile_04"]},
+            "Bg_RiverTile_05": {"0": ["river_bad", "Bg_BadRiverTile_05"], "1": ["river_good", "Bg_RiverTile_05"]}
+        }
+    },
+    "collections": {
+        "collection_scout": {
+            "id": "collection_scout",
+            "name": "#CONFIG_COLLECTION_SCOUT",
+            "items": [
+                {"id": "scout_binoculars", "value": 1},
+                {"id": "scout_camo", "value": 1},
+                {"id": "scout_canteen", "value": 1},
+                {"id": "scout_field_radio", "value": 1},
+                {"id": "scout_tactical_map", "value": 1}
+            ],
+            "rewards": [
+                {"type": "Resource", "id": "Energy", "value": 3}
+            ]
+        },
+        "collection_infantry": {
+            "id": "collection_infantry",
+            "name": "#CONFIG_COLLECTION_INFANTRY",
+            "items": [
+                {"id": "infantry_combat_boots", "value": 1},
+                {"id": "infantry_dog_tags", "value": 1},
+                {"id": "infantry_grenade", "value": 1},
+                {"id": "infantry_mre", "value": 1},
+                {"id": "infantry_sergeant_hat", "value": 1}
+            ],
+            "rewards": [
+                {"type": "Resource", "id": "Supplies", "value": 150},
+                {"type": "Item", "id": "medal_bronzestar", "value": 1}
+            ]
+        },
+        "collection_apc": {
+            "id": "collection_apc",
+            "name": "#CONFIG_COLLECTION_APC",
+            "items": [
+                {"id": "apc_ammo_shells", "value": 1},
+                {"id": "apc_blueprints", "value": 1},
+                {"id": "apc_duct_tape", "value": 1},
+                {"id": "apc_gas_canister", "value": 1},
+                {"id": "apc_tires", "value": 1}
+            ],
+            "rewards": [
+                {"type": "Resource", "id": "Money", "value": 500},
+                {"type": "Item", "id": "medal_bronzestar", "value": 1}
+            ]
+        },
+        "collection_artillery": {
+            "id": "collection_artillery",
+            "name": "#CONFIG_COLLECTION_ARTILLERY",
+            "items": [
+                {"id": "artillery_ammo", "value": 1},
+                {"id": "artillery_fire_mission", "value": 1},
+                {"id": "artillery_mortar_base_plate", "value": 1},
+                {"id": "artillery_rangefinder", "value": 1},
+                {"id": "artillery_smoke_marker", "value": 1}
+            ],
+            "rewards": [
+                {"type": "Resource", "id": "Energy", "value": 5},
+                {"type": "Resource", "id": "Supplies", "value": 200},
+                {"type": "Item", "id": "medal_silverstar", "value": 1}
+            ]
+        },
+        "collection_battle_tank": {
+            "id": "collection_battle_tank",
+            "name": "#CONFIG_COLLECTION_BATTLETANK",
+            "items": [
+                {"id": "battle_tank_armor_plates", "value": 1},
+                {"id": "battle_tank_blueprints", "value": 1},
+                {"id": "battle_tank_broken_track", "value": 1},
+                {"id": "battle_tank_driver_goggles", "value": 1},
+                {"id": "battle_tank_heat_ammunition", "value": 1}
+            ],
+            "rewards": [
+                {"type": "Resource", "id": "Supplies", "value": 500},
+                {"type": "Item", "id": "medal_silverstar", "value": 1}
+            ]
+        },
+        "collection_stormtroop": {
+            "id": "collection_stormtroop",
+            "name": "#CONFIG_COLLECTION_STORMTROOP",
+            "items": [
+                {"id": "stormtroop_ammo_crate", "value": 1},
+                {"id": "stormtroop_balaclava", "value": 1},
+                {"id": "stormtroop_beret", "value": 1},
+                {"id": "stormtroop_combat_knife", "value": 1},
+                {"id": "stormtroop_supressor", "value": 1}
+            ],
+            "rewards": [
+                {"type": "Resource", "id": "Energy", "value": 7},
+                {"type": "Item", "id": "medal_goldstar", "value": 1}
+            ]
+        },
+        "collection_rocket_battery": {
+            "id": "collection_rocket_battery",
+            "name": "#CONFIG_COLLECTION_ROCKETBATTERY",
+            "items": [
+                {"id": "rocket_battery_headphones", "value": 1},
+                {"id": "rocket_battery_radar", "value": 1},
+                {"id": "rocket_battery_rockets", "value": 1},
+                {"id": "rocket_battery_shock_and_awe", "value": 1},
+                {"id": "rocket_battery_strategic_map", "value": 1}
+            ],
+            "rewards": [
+                {"type": "Resource", "id": "Energy", "value": 10},
+                {"type": "Item", "id": "medal_goldstar", "value": 1}
+            ]
+        },
+        "collection_pvp": {
+            "id": "collection_pvp",
+            "name": "#CONFIG_COLLECTION_PVP",
+            "items": [
+                {"id": "pvp_compass", "value": 1},
+                {"id": "pvp_survival_shovel", "value": 1},
+                {"id": "pvp_tent", "value": 1},
+                {"id": "pvp_torn_flag", "value": 1},
+                {"id": "pvp_war_loot", "value": 1}
+            ],
+            "rewards": []
+        }
+    },
+    "items": {
+        "apc_ammo_shells": { "id": "apc_ammo_shells", "icon": "apc_ammo_shells", "collection": "collection_apc", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "apc_blueprints": { "id": "apc_blueprints", "icon": "apc_blueprints", "collection": "collection_apc", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "apc_duct_tape": { "id": "apc_duct_tape", "icon": "apc_duct_tape", "collection": "collection_apc", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "apc_gas_canister": { "id": "apc_gas_canister", "icon": "apc_gas_canister", "collection": "collection_apc", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "apc_tires": { "id": "apc_tires", "icon": "apc_tires", "collection": "collection_apc", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "artillery_ammo": { "id": "artillery_ammo", "icon": "artillery_ammo", "collection": "collection_artillery", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "artillery_fire_mission": { "id": "artillery_fire_mission", "icon": "artillery_fire_mission", "collection": "collection_artillery", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "artillery_mortar_base_plate": { "id": "artillery_mortar_base_plate", "icon": "artillery_mortar_base_plate", "collection": "collection_artillery", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "artillery_rangefinder": { "id": "artillery_rangefinder", "icon": "artillery_rangefinder", "collection": "collection_artillery", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "artillery_smoke_marker": { "id": "artillery_smoke_marker", "icon": "artillery_smoke_marker", "collection": "collection_artillery", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "battle_tank_armor_plates": { "id": "battle_tank_armor_plates", "icon": "battle_tank_armor_plates", "collection": "collection_battle_tank", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "battle_tank_blueprints": { "id": "battle_tank_blueprints", "icon": "battle_tank_blueprints", "collection": "collection_battle_tank", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "battle_tank_broken_track": { "id": "battle_tank_broken_track", "icon": "battle_tank_broken_track", "collection": "collection_battle_tank", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "battle_tank_driver_goggles": { "id": "battle_tank_driver_goggles", "icon": "battle_tank_driver_goggles", "collection": "collection_battle_tank", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "battle_tank_heat_ammunition": { "id": "battle_tank_heat_ammunition", "icon": "battle_tank_heat_ammunition", "collection": "collection_battle_tank", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "infantry_combat_boots": { "id": "infantry_combat_boots", "icon": "infantry_combat_boots", "collection": "collection_infantry", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "infantry_dog_tags": { "id": "infantry_dog_tags", "icon": "infantry_dog_tags", "collection": "collection_infantry", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "infantry_grenade": { "id": "infantry_grenade", "icon": "infantry_grenade", "collection": "collection_infantry", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "infantry_mre": { "id": "infantry_mre", "icon": "infantry_mre", "collection": "collection_infantry", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "infantry_sergeant_hat": { "id": "infantry_sergeant_hat", "icon": "infantry_sergeant_hat", "collection": "collection_infantry", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "pvp_compass": { "id": "pvp_compass", "icon": "pvp_compass", "collection": "collection_pvp", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "pvp_survival_shovel": { "id": "pvp_survival_shovel", "icon": "pvp_survival_shovel", "collection": "collection_pvp", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "pvp_tent": { "id": "pvp_tent", "icon": "pvp_tent", "collection": "collection_pvp", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "pvp_torn_flag": { "id": "pvp_torn_flag", "icon": "pvp_torn_flag", "collection": "collection_pvp", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "pvp_war_loot": { "id": "pvp_war_loot", "icon": "pvp_war_loot", "collection": "collection_pvp", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "rocket_battery_headphones": { "id": "rocket_battery_headphones", "icon": "rocket_battery_headphones", "collection": "collection_rocket_battery", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "rocket_battery_radar": { "id": "rocket_battery_radar", "icon": "rocket_battery_radar", "collection": "collection_rocket_battery", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "rocket_battery_rockets": { "id": "rocket_battery_rockets", "icon": "rocket_battery_rockets", "collection": "collection_rocket_battery", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "rocket_battery_shock_and_awe": { "id": "rocket_battery_shock_and_awe", "icon": "rocket_battery_shock_and_awe", "collection": "collection_rocket_battery", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "rocket_battery_strategic_map": { "id": "rocket_battery_strategic_map", "icon": "rocket_battery_strategic_map", "collection": "collection_rocket_battery", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "scout_binoculars": { "id": "scout_binoculars", "icon": "scout_binoculars", "collection": "collection_scout", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "scout_camo": { "id": "scout_camo", "icon": "scout_camo", "collection": "collection_scout", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "scout_canteen": { "id": "scout_canteen", "icon": "scout_canteen", "collection": "collection_scout", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "scout_field_radio": { "id": "scout_field_radio", "icon": "scout_field_radio", "collection": "collection_scout", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "scout_tactical_map": { "id": "scout_tactical_map", "icon": "scout_tactical_map", "collection": "collection_scout", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "stormtroop_ammo_crate": { "id": "stormtroop_ammo_crate", "icon": "stormtroop_ammo_crate", "collection": "collection_stormtroop", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "stormtroop_balaclava": { "id": "stormtroop_balaclava", "icon": "stormtroop_balaclava", "collection": "collection_stormtroop", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "stormtroop_beret": { "id": "stormtroop_beret", "icon": "stormtroop_beret", "collection": "collection_stormtroop", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "stormtroop_combat_knife": { "id": "stormtroop_combat_knife", "icon": "stormtroop_combat_knife", "collection": "collection_stormtroop", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "stormtroop_supressor": { "id": "stormtroop_supressor", "icon": "stormtroop_supressor", "collection": "collection_stormtroop", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "ally_report": { "id": "ally_report", "icon": "ally_report", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
+        "intel": { "id": "intel", "icon": "icon_intel_item", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
+        "construction_artillery_tubes": { "id": "construction_artillery_tubes", "icon": "icon_construction_artillery_tubes", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
+        "construction_black_box": { "id": "construction_black_box", "icon": "icon_construction_black_box", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
+        "construction_cement_sacks": { "id": "construction_cement_sacks", "icon": "icon_construction_cement_sacks", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
+        "construction_commando_knife": { "id": "construction_commando_knife", "icon": "icon_construction_commando_knife", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
+        "construction_hard_hat": { "id": "construction_hard_hat", "icon": "icon_construction_hard_hat", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
+        "construction_item_bundle": { "id": "construction_item_bundle", "icon": "icon_construction_item_bundle", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
+        "construction_lumber": { "id": "construction_lumber", "icon": "icon_construction_lumber", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
+        "construction_pilot_helmet": { "id": "construction_pilot_helmet", "icon": "icon_construction_pilot_helmet", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
+        "construction_rebar": { "id": "construction_rebar", "icon": "icon_construction_rebar", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
+        "construction_steel_plates": { "id": "construction_steel_plates", "icon": "icon_construction_steel_plates", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
+        "construction_wiring": { "id": "construction_wiring", "icon": "icon_construction_wiring", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
+        "energy_pack_01": { "id": "energy_pack_01", "icon": "icon_energy_pack_01", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
+        "energy_pack_02": { "id": "energy_pack_02", "icon": "icon_energy_pack_02", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
+        "energy_pack_03": { "id": "energy_pack_03", "icon": "icon_energy_pack_03", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
+        "supply_pack_01": { "id": "supply_pack_01", "icon": "icon_supply_pack_01", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
+        "supply_pack_02": { "id": "supply_pack_02", "icon": "icon_supply_pack_02", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
+        "supply_pack_03": { "id": "supply_pack_03", "icon": "icon_supply_pack_03", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
+        "water_pack_01": { "id": "water_pack_01", "icon": "icon_water_pack_01", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
+        "water_pack_02": { "id": "water_pack_02", "icon": "icon_water_pack_02", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
+        "water_pack_03": { "id": "water_pack_03", "icon": "icon_water_pack_03", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
+        "unit_tank": { "id": "unit_tank", "icon": "icon_units_apc", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
+        "unit_artillery": { "id": "unit_artillery", "icon": "icon_units_artillery", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
+        "unit_battletank": { "id": "unit_battletank", "icon": "icon_units_battle_tank", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
+        "unit_infantry": { "id": "unit_infantry", "icon": "icon_units_infantry", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
+        "unit_elite_infantry": { "id": "unit_elite_infantry", "icon": "icon_units_premium_infantry", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
+        "unit_elite_battery": { "id": "unit_elite_battery", "icon": "icon_units_premium_rocket_battery", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
+        "unit_elite_commando": { "id": "unit_elite_commando", "icon": "icon_units_premium_special_forces", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
+        "unit_elite_battletank": { "id": "unit_elite_battletank", "icon": "icon_units_premium_tank", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
+        "unit_battery": { "id": "unit_battery", "icon": "icon_units_rocket_battery", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
+        "unit_commando": { "id": "unit_commando", "icon": "icon_units_special_forces", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
+        "medal_bronzestar": { "id": "medal_bronzestar", "icon": "icon_item_medal_bronzestar", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
+        "medal_silverstar": { "id": "medal_silverstar", "icon": "icon_item_medal_silverstar", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
+        "medal_goldstar": { "id": "medal_goldstar", "icon": "icon_item_medal_goldstar", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true }
+    },
+    "shopTabs": {
+        "specials": {
+            "id": "specials",
+            "name": null,
+            "tabType": "normal",
+            "items": []
+        },
+        "units": {
+            "id": "units",
+            "name": null,
+            "tabType": "normal",
+            "items": [
+                "blue_infantry", "blue_elite_infantry", "blue_tank", "blue_artillery",
+                "blue_battletank", "blue_elite_battletank", "blue_commando", "blue_elite_commando", 
+                "blue_battery", "blue_elite_battery"
+            ]
+        },
+        "areas": {
+            "id": "areas",
+            "name": null,
+            "tabType": "normal",
+            "items": [
+    
+            ]
+        },
+        "buildings": {
+            "id": "buildings",
+            "name": null,
+            "tabType": "normal",
+            "items": [
+    
+            ]
+        },
+        "decos": {
+            "id": "decos",
+            "name": null,
+            "tabType": "normal",
+            "items": [
+    
+            ]
+        },
+        "packs": {
+            "id": "packs",
+            "name": null,
+            "tabType": "normal",
+            "items": [
+    
+            ]
+        },
+        "supplies": {
+            "id": "supplies",
+            "name": null,
+            "tabType": "normal",
+            "items": [
+    
+            ]
+        },
+        "storage": {
+            "id": "storage",
+            "name": null,
+            "tabType": "normal",
+            "items": [
+    
+            ]
+        },
+        "buygold": {
+            "id": "buygold",
+            "name": null,
+            "tabType": "normal",
+            "items": [
+    
+            ]
+        },
+        "buycash": {
+            "id": "buycash",
+            "name": null,
+            "tabType": "normal",
+            "items": [
+    
+            ]
+        }
+    },
+    "shopItems": {
+        "blue_infantry": { "id": "blue_infantry", "type": "Entity", "icon": "icon_units_infantry", "buyResource": "Money", "buyValue": 1500, "sellResouce": "Money", "sellValue": 150 },
+        "blue_elite_infantry": { "id": "blue_elite_infantry", "type": "Entity", "icon": "icon_units_premium_infantry", "buyResource": "Gold", "buyValue": 30, "sellResouce": "Money", "sellValue": 3000 },
+        "blue_tank": { "id": "blue_tank", "type": "Entity", "icon": "icon_units_apc", "buyResource": "Money", "buyValue": 5000, "sellResouce": "Money", "sellValue": 500 },
+        "blue_artillery": { "id": "blue_artillery", "type": "Entity", "icon": "icon_units_artillery", "buyResource": "Money", "buyValue": 10000, "sellResouce": "Money", "sellValue": 1000 },
+        "blue_battletank": { "id": "blue_battletank", "type": "Entity", "icon": "icon_units_battle_tank", "buyResource": "Money", "buyValue": 20000, "sellResouce": "Money", "sellValue": 2000 },
+        "blue_elite_battletank": { "id": "blue_elite_battletank", "type": "Entity", "icon": "icon_units_premium_tank", "buyResource": "Gold", "buyValue": 90, "sellResouce": "Money", "sellValue": 9000 },
+        "blue_commando": { "id": "blue_commando", "type": "Entity", "icon": "icon_units_special_forces", "buyResource": "Money", "buyValue": 22000, "sellResouce": "Money", "sellValue": 2200 },
+        "blue_elite_commando": { "id": "blue_elite_commando", "type": "Entity", "icon": "icon_units_premium_special_forces", "buyResource": "Gold", "buyValue": 500, "sellResouce": "Money", "sellValue": 50000 },
+        "blue_battery": { "id": "blue_battery", "type": "Entity", "icon": "icon_units_rocket_battery", "buyResource": "Money", "buyValue": 30000, "sellResouce": "Money", "sellValue": 3000 },
+        "blue_elite_battery": { "id": "blue_elite_battery", "type": "Entity", "icon": "icon_units_premium_rocket_battery", "buyResource": "Gold", "buyValue": 200, "sellResouce": "Money", "sellValue": 20000 }
+    },
+    "fireCalls": {
+        "mortar": { 
+            "id": "mortar",
+            "dimX": 1, "dimY": 1, "dimZ": 1,
+            "damage": 2,
+            "icon": "icon_mortar",
+            "sprites": {
+                "fire": "effect_death_explosion",
+                "cursor": "cursor_powerup"
+            },
+            "sounds": {
+                "fire": "sound_firemission_friendlyattack"
+            }
+        },
+        "napalm": { 
+            "id": "napalm",
+            "dimX": 3, "dimY": 1, "dimZ": 1,
+            "damage": 2,
+            "icon": "icon_napalm",
+            "sprites": {
+                "fire": "effect_death_explosion",
+                "cursor": "cursor_powerup_3x1"
+            },
+            "sounds": {
+                "fire": "sound_firemission_napalmstrike"
+            }
+        },
+        "artillery": { 
+            "id": "artillery",
+            "dimX": 2, "dimY": 2, "dimZ": 1,
+            "damage": 3,
+            "icon": "icon_artillery",
+            "sprites": {
+                "fire": "effect_death_explosion",
+                "cursor": "cursor_powerup_2x2"
+            },
+            "sounds": {
+                "fire": "sound_firemission_artillerystrike"
+            }
+        },
+        "doomsday": { 
+            "id": "doomsday",
+            "dimX": 3, "dimY": 3, "dimZ": 1,
+            "damage": 6,
+            "icon": "icon_doomsday",
+            "sprites": {
+                "fire": "effect_death_explosion",
+                "cursor": "cursor_powerup_3x3"
+            },
+            "sounds": {
+                "fire": "sound_firemission_doomsday"
+            }
+        },
+        "orbitalLaser": { 
+            "id": "orbitalLaser",
+            "dimX": 1, "dimY": 1, "dimZ": 1,
+            "damage": 12,
+            "icon": "icon_beam",
+            "sprites": {
+                "fire": "effect_death_explosion",
+                "cursor": "cursor_powerup"
+            },
+            "sounds": {
+                "fire": "sound_firemission_doomsday"
+            }
+        },
+        "carptetBomb": { 
+            "id": "carpetBomb",
+            "dimX": 6, "dimY": 1, "dimZ": 1,
+            "damage": 4,
+            "icon": "icon_bomb",
+            "sprites": {
+                "fire": "effect_death_explosion",
+                "cursor": "cursor_powerup_6x1"
+            },
+            "sounds": {
+                "fire": "sound_firemission_napalmstrike"
+            }
+        }
+    }
+}

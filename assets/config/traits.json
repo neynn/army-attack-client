@@ -1,0 +1,21 @@
+{
+    "GOD": { "id": "GOD", "components": { "Health": { "health": 99, "maxHealth": 99 }, "Attack": { "damage": 99 } }, "description": "If an entity is really powerful." },
+
+    "Infantry": { "id": "Infantry", "components": { "SubType": { "isInfantry": true } }, "description": "If a unit is an infantry." },
+    "Artillery": { "id": "Artillery", "components": { "SubType": { "isArtillery": true } }, "description": "If a unit is an artillery." },
+    "Armor": { "id": "Armor", "components": { "SubType": { "isArmor": true } }, "description": "If a unit is armored." },
+
+    "EliteArmor": { "id": "EliteArmor", "components": { "Armor": { "armor": 1 } }, "description": "Used by the elite tank to reduce damage by 1." },
+    "WeakArmor": { "id": "WeakArmor", "components": { "Armor": { "armor": -1 } }, "description": "Can be used to increase incoming damage by 1." },
+
+    "Stealth": { "id": "Stealth", "components": { "Move": { "isStealth": true } }, "description": "If a unit can move on enemy tiles." },
+    "Cloak": { "id": "Cloak", "components": { "Move": { "isStealth": true, "isCloaked": true } }, "description": "If a unit can walk through enemy units." },
+    "Avian": { "id": "Avian", "components": { "Move": { "isAvian": true } }, "description": "If a unit is flying. When flying, other units can go below it."},
+ 
+    "Elite": { "id": "Elite", "component": "EliteComponent", "data": null, "description": "If an entity has the elite status." },
+    "Reviveable": { "id": "Reviveable", "component": "ReviveableComponent", "data": { "assign": { "isReviveable": true } }, "description": "If an entity can be revived." },
+    "Coward": { "id": "Coward", "component": "CowardComponent", "data": null, "description": "Not implemented. See Pathfinder. Disallows tile conquering." },
+    "Bulldoze": { "id": "Bulldoze", "description": "Used by enemy bulldozers to ignore the revive of the specified entityTypes.", "component": "IgnoreReviveComponent", "data": { "assign": { "ignoreRevive": ["Defense", "Building", "Unit"] } } },
+    "IgnoreTargeting": { "id": "IgnoreTargeting", "component": "IgnoreTargetingComponent", "data": null, "description": "Not implemented. Allows a unit to not be targeted." },
+    "AoE": { "id": "AoE", "component": "AoEComponent", "data": { "assign": { "attackAllies": true } }, "description": "Not implemented. Allows the entity do do an area of effect attack." }
+}

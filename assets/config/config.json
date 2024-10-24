@@ -1,0 +1,100 @@
+{
+    "mapLoader": {
+        "maxMapWidth": 100,
+        "maxMapHeight": 100,
+        "mapSetup": {
+            "width": 20,
+            "height": 20,
+            "layers": {
+                "ground": { "id": "ground", "fill": ["ground", "Bg_GoodTile_01_desert"] },
+                "border": { "id": "border", "fill": null },
+                "decoration": { "id": "decoration", "fill": null },
+                "overlay": { "id": "overlay", "fill": null },
+                "cloud": { "id": "cloud", "fill": null },
+                "type": { "id": "type", "fill": "0" },
+                "team": { "id": "team", "fill": "0" }
+            },
+            "layerOpacity": {
+                "ground": 1,
+                "border": 1,
+                "decoration": 1,
+                "overlay": 1,
+                "cloud": 1,
+                "type": 1,
+                "team": 1
+            },
+            "backgroundLayers": [
+                "ground",
+                "border",
+                "decoration",
+                "overlay"
+            ],
+            "foregroundLayers": [
+                "cloud"
+            ],
+            "metaLayers": [
+                "type",
+                "team"
+            ]
+        }
+    },
+    "mapEditor": {
+        "id": "MAP_EDITOR",
+        "overlayOpacity": 0.75,
+        "interface": {
+            "id": "MAP_EDITOR",
+            "layerButtonStates": {
+                "0": { "id": "0", "description": "HIDDEN", "textColor": "#cf3723", "opacity": 0, "nextState": "1" },
+                "1": { "id": "1", "description": "VISIBLE", "textColor": "#eeeeee", "opacity": 1, "nextState": "2" },
+                "2": { "id": "2", "description": "EDIT", "textColor": "#fcfc3f", "opacity": 1, "nextState": "0" }
+            },
+            "layerButtonTypes": {
+                "0": { "id": "0", "description": "BOOLEAN" },
+                "1": { "id": "1", "description": "GRAPHICS" },
+                "2": { "id": "2", "description": "TYPE" }
+            },
+            "layerButtons": {
+                "L1": { "id": "L1", "layer": "ground", "text": "TEXT_L1", "state": "1", "type": "1" },
+                "L2": { "id": "L2", "layer": "decoration", "text": "TEXT_L2", "state": "1", "type": "1" },
+                "L3": { "id": "L3", "layer": "cloud", "text": "TEXT_L3", "state": "1", "type": "1" },
+                "LC": { "id": "LC", "layer": "type", "text": "TEXT_LC", "state": "1", "type": "2" }
+            },
+            "slotButtons": {
+                "BUTTON_0": { "id": "BUTTON_0" },
+                "BUTTON_1": { "id": "BUTTON_1" },
+                "BUTTON_2": { "id": "BUTTON_2" },
+                "BUTTON_3": { "id": "BUTTON_3" },
+                "BUTTON_4": { "id": "BUTTON_4" },
+                "BUTTON_5": { "id": "BUTTON_5" },
+                "BUTTON_6": { "id": "BUTTON_6" },
+                "BUTTON_7": { "id": "BUTTON_7" },
+                "BUTTON_8": { "id": "BUTTON_8" }
+            },
+            "slots": ["BUTTON_0", "BUTTON_1", "BUTTON_2", "BUTTON_3", "BUTTON_4", "BUTTON_5", "BUTTON_6", "BUTTON_7", "BUTTON_8"]
+        },
+        "hiddenSets": {
+            "range": 1,
+            "overlay": 1
+        },
+        "orderedSets": {
+            "ground": {
+                "order": 0,
+                "tiles": []
+            },
+            "deco_bad": [],
+            "deco_good": [],
+            "mountain": [],
+            "river_good": [],
+            "river_bad": [],
+            "coast": []
+        }
+    },
+    "socket": {
+        "server": "http://localhost:3000",
+        "version": "https://cdn.socket.io/4.7.5/socket.io.min.js",
+        "userID": "neyn",
+        "reconnectionAttempts": 5,
+        "reconnectionDelay": 1000,
+        "timeout": 10000
+    }
+}
