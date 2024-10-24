@@ -7,7 +7,7 @@ const gameContext = new GameContext();
 
 //packerToJSON("clouds", await ResourceLoader.loadJSON("./clouds.json"));
 
-ResourceLoader.loadConfigFiles("Army_Attack_Client/assets", "files.json").then(async files => {
+ResourceLoader.loadConfigFiles("assets", "files.json").then(async files => {
   let totalMegabytes = 0;
   let totalMegabytesLargeFiles = 0;
 
