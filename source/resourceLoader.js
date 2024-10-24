@@ -5,7 +5,7 @@ ResourceLoader.DEFAULT_AUDIO_TYPE = ".mp3";
 ResourceLoader.FILE_SERVER_ADDRESS = "";
 
 ResourceLoader.getPath = function(directory, source) {
-    const path = `${ResourceLoader.FILE_SERVER_ADDRESS}/${directory}/${source}`;
+    const path = `${directory}/${source}`;
     return path;
 }
 
