@@ -49,8 +49,10 @@ ResourceLoader.loadConfigFiles("assets", "files.json").then(async files => {
   console.log(gameContext, resources);
 });
 
-//controller system, hover
 
+//TODO: sprites do not get unparsed after their parent is deleted!
+//ADD: DRAWABLE.EVENT_PARENT_REMOVED and react to that.
+//controller system, hover
 
 //added attackAction.js
 //added action_type.attack
@@ -61,3 +63,5 @@ ResourceLoader.loadConfigFiles("assets", "files.json").then(async files => {
 //added armorComponent
 
 //default move time; (96 * moveComponent.path.length) / 480;
+//sprite manager gets add icon / add sprite functions.
+//export const log instead of response.

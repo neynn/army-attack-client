@@ -103,7 +103,7 @@ TextElement.prototype.onDraw = function(context, viewportX, viewportY, localX, l
     context.fillText(this.revealedText, localX, localY);
 }
 
-TextElement.prototype.update = function(deltaTime) {
+TextElement.prototype.onUpdate = function(timestamp, deltaTime) {
     if(!this.isRevealing) {
         return;
     }

@@ -5,8 +5,6 @@ export const UIElement = function(DEBUG_NAME) {
 
     this.uniqueID = null;
     this.interfaceID = null;
-    this.width = 0;
-    this.height = 0;
     this.goals = new Map();
     this.goalsReached = new Set();
     
@@ -37,44 +35,47 @@ UIElement.prototype.loadFromConfig = function(config) {
 }
 
 UIElement.prototype.adjustAnchor = function(anchorType, originX, originY, viewportWidth, viewportHeight) {
+    const width = this.bounds.w;
+    const height = this.bounds.h;
+
     switch(anchorType) {
         case UIElement.ANCHOR_TYPE_TOP_LEFT: {
             return true;
         }
         case UIElement.ANCHOR_TYPE_TOP_CENTER: {
-            this.position.x = viewportWidth / 2 - originX - this.width / 2;
+            this.position.x = viewportWidth / 2 - originX - width / 2;
             return true;
         }
         case UIElement.ANCHOR_TYPE_TOP_RIGHT: {
-            this.position.x = viewportWidth - originX - this.width;
+            this.position.x = viewportWidth - originX - width;
             return true;
         }
         case UIElement.ANCHOR_TYPE_BOTTOM_LEFT: {
-            this.position.y = viewportHeight - originY - this.height;
+            this.position.y = viewportHeight - originY - height;
             return true;
         }
         case UIElement.ANCHOR_TYPE_BOTTOM_CENTER: {
-            this.position.x = viewportWidth / 2 - originX - this.width / 2;
-            this.position.y = viewportHeight - originY - this.height;
+            this.position.x = viewportWidth / 2 - originX - width / 2;
+            this.position.y = viewportHeight - originY - height;
             return true;
         }
         case UIElement.ANCHOR_TYPE_BOTTOM_RIGHT: {
-            this.position.x = viewportWidth - originX - this.width;
-            this.position.y = viewportHeight - originY - this.height;
+            this.position.x = viewportWidth - originX - width;
+            this.position.y = viewportHeight - originY - height;
             return true;
         }
         case UIElement.ANCHOR_TYPE_LEFT_CENTER: {
-            this.position.y = viewportHeight / 2 - originY - this.height / 2;
+            this.position.y = viewportHeight / 2 - originY - height / 2;
             return true;
         }
         case UIElement.ANCHOR_TYPE_CENTER: {
-            this.position.x = viewportWidth / 2 - originX - this.width / 2;
-            this.position.y = viewportHeight / 2 - originY - this.height / 2;
+            this.position.x = viewportWidth / 2 - originX - width / 2;
+            this.position.y = viewportHeight / 2 - originY - height / 2;
             return true;
         }
         case UIElement.ANCHOR_TYPE_RIGHT_CENTER: {
-            this.position.x = viewportWidth - originX - this.width;
-            this.position.y = viewportHeight / 2 - originY - this.height / 2;
+            this.position.x = viewportWidth - originX - width;
+            this.position.y = viewportHeight / 2 - originY - height / 2;
             return true;
         }
         default: {
@@ -88,35 +89,24 @@ UIElement.prototype.isColliding = function(mouseX, mouseY, mouseRange) {
     return false;
 }
 
-UIElement.prototype.handleCollisionTree = function(mouseX, mouseY, mouseRange, collidedElements) {
-    const references = this.getAllChildrenReferences();
+UIElement.prototype.getCollisions = function(mouseX, mouseY, mouseRange, collidedElements) {
+    if(!this.isColliding(mouseX, mouseY, mouseRange)) {
+        return;
+    } else {
+        collidedElements.push(this);
+    }
+
     const localX = mouseX - this.position.x;
     const localY = mouseY - this.position.y;
-
-    collidedElements.push(this);
+    const references = this.getAllChildrenReferences();
 
     for(const reference of references) {
-        const isColliding = reference.isColliding(localX, localY, mouseRange);
-
-        if(!isColliding) {
+        if(!(reference instanceof UIElement)) {
             continue;
         }
 
-        reference.handleCollisionTree(localX, localY, mouseRange, collidedElements);
+        reference.getCollisions(localX, localY, mouseRange, collidedElements);
     }
-}
-
-UIElement.prototype.setBounds = function(width, height) {
-    if(width === undefined) {
-        width = 0;
-    }
-
-    if(height === undefined) {
-        height = 0;
-    }
-
-    this.width = width;
-    this.height = height;
 }
 
 UIElement.prototype.setInterfaceID = function(interfaceID) {

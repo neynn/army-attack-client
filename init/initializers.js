@@ -25,6 +25,7 @@ import { PositionComponent } from "../components/position.js";
 import { TeamComponent } from "../components/team.js";
 import { SubTypeComponent } from "../components/subType.js";
 import { AttackAction } from "../actions/attackAction.js";
+import { Camera } from "../source/camera/camera.js";
 
 export const initializeTilemap = function(gameContext, mapID) {
     const { mapLoader } = gameContext;
@@ -147,7 +148,7 @@ export const initializeController = function(gameContext, controllerConfig) {
 }
 
 export const initializeGameContext = function(gameContext) {
-    const { states, actionQueue, client, mapLoader, entityManager } = gameContext;
+    const { states, actionQueue, client, mapLoader, entityManager, renderer } = gameContext;
     const { soundPlayer, socket } = client;
 
     states.addState(CONTEXT_STATES.MAIN_MENU, new MainMenuState());
@@ -161,11 +162,15 @@ export const initializeGameContext = function(gameContext) {
     actionQueue.registerAction(ACTION_TYPES.MOVE, new MoveAction());
     actionQueue.registerAction(ACTION_TYPES.ATTACK, new AttackAction());
 
+    renderer.events.subscribe(Camera.EVENT_VIEWPORT_LOAD, "INIT", (width, height) => renderer.centerViewport(width / 2, height / 2));
+
     soundPlayer.loadAllSounds();
+
     entityManager.setSaveableComponents({
         "Health": HealthComponent,
         "Construction": ConstructionComponent
     });
+
     entityManager.setLoadableComponents({
         "Health": HealthComponent,
         "Attack": AttackComponent,

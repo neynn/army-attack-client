@@ -3,8 +3,6 @@ import { Drawable } from "./drawable.js";
 export const SimpleImage = function() {
     Drawable.call(this, "SIMPLE_IMAGE");
     this.image = null;
-    this.width = 0;
-    this.height = 0;
 }
 
 SimpleImage.prototype = Object.create(Drawable.prototype);
@@ -15,13 +13,14 @@ SimpleImage.prototype.onDraw = function(context, viewportX, viewportY, localX, l
         return;
     }
 
+    const { w, h } = this.bounds;
     const drawX = viewportX - localX;
     const drawY = viewportY - localY;
 
     context.drawImage(
         this.image,
-        0, 0, this.width, this.height,
-        drawX, drawY, this.width, this.height
+        0, 0, w, h,
+        drawX, drawY, w, h
     );
 }
 
@@ -31,17 +30,6 @@ SimpleImage.prototype.setImage = function(image) {
     }
 
     this.image = image;
-
-    return true;
-}
-
-SimpleImage.prototype.setBounds = function(width, height) {
-    if(width === undefined || height === undefined) {
-        return false;
-    }
-
-    this.width = width;
-    this.height = height;
 
     return true;
 }

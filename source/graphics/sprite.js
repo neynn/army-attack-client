@@ -1,4 +1,3 @@
-import { Rectangle } from "../math/rect.js";
 import { Drawable } from "./drawable.js";
 
 export const Sprite = function(id, DEBUG_NAME) {
@@ -18,7 +17,6 @@ export const Sprite = function(id, DEBUG_NAME) {
     this.isStatic = false;
     this.isRepeating = true;
     this.isFlipped = false;
-    this.bounds = new Rectangle();
 
     this.events.listen(Sprite.FINISHED);
     this.events.listen(Sprite.LOOP_COMPLETE);
@@ -82,12 +80,19 @@ Sprite.prototype.getBounds = function() {
     const boundsX = this.position.x + adjustedX;
     const boundsY = this.position.y + y;
 
-    return { 
-        "x": boundsX,
-        "y": boundsY,
-        "w": w, 
-        "h": h
+    return { "x": boundsX, "y": boundsY, "w": w,  "h": h }
+}
+
+Sprite.prototype.onUpdate = function(timeStamp, deltaTime) {
+    if(this.lastCallTime === null) {
+        this.lastCallTime = timeStamp;
     }
+
+    const passedTime = timeStamp - this.lastCallTime;
+    const passedFrames = passedTime / this.frameTime;
+
+    this.lastCallTime = timeStamp;
+    this.updateFrame(passedFrames);
 }
 
 Sprite.prototype.onDebug = function(context, viewportX, viewportY, localX, localY) {
@@ -199,22 +204,5 @@ Sprite.prototype.updateFrame = function(passedFloatFrames = 0) {
         this.setVisible(false);
         this.setStatic(true);
         this.events.emit(Sprite.FINISHED, this);
-    }
-}
-
-Sprite.prototype.update = function(timeStamp, deltaTime) {
-    if(this.lastCallTime === null) {
-        this.lastCallTime = timeStamp;
-    }
-
-    const references = this.getAllChildrenReferences();
-    const passedTime = timeStamp - this.lastCallTime;
-    const passedFrames = passedTime / this.frameTime;
-
-    this.lastCallTime = timeStamp;
-    this.updateFrame(passedFrames);
-
-    for(const reference of references) {
-        reference.update(timeStamp, deltaTime);
     }
 }

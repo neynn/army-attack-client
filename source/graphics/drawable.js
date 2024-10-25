@@ -1,21 +1,25 @@
 import { EventEmitter } from "../events/eventEmitter.js";
 import { clampValue } from "../math/math.js";
+import { Rectangle } from "../math/rect.js";
 import { Vec2 } from "../math/vec2.js";
 import { Family } from "./family.js";
 
 export const Drawable = function(DEBUG_NAME) {
-    this.id = Symbol("DRAWABLE");
     this.DEBUG_NAME = DEBUG_NAME;
+    this.id = null;
     this.family = null;
-    this.isVisible = true;
     this.opacity = 1;
+    this.isVisible = true;
     this.position = new Vec2(0, 0);
+    this.bounds = new Rectangle(0, 0, 0, 0);
     this.events = new EventEmitter();
+    this.events.listen(Drawable.EVENT_FAMILY_CLOSED);
 }
 
+Drawable.EVENT_FAMILY_CLOSED = "Drawable.EVENT_FAMILY_CLOSED";
 Drawable.DEFAULT_FAMILY_NAME = "default";
 
-Drawable.prototype.update = function(timeStamp, timeStep) {
+Drawable.prototype.onUpdate = function(timestamp, deltaTime) {
 
 }
 
@@ -25,6 +29,17 @@ Drawable.prototype.onDraw = function(context, viewportX, viewportY, localX, loca
 
 Drawable.prototype.onDebug = function(context, viewportX, viewportY, localX, localY) {
 
+}
+
+Drawable.prototype.update = function(timeStamp, deltaTime) {
+    const children = this.getAllChildren();
+
+    this.onUpdate(timeStamp, deltaTime);
+
+    for(const child of children) {
+        const reference = child.getReference();
+        reference.update(timeStamp, deltaTime);
+    }
 }
 
 Drawable.prototype.debug = function(context, viewportX, viewportY, rootLocalX, rootLocalY) {
@@ -59,6 +74,24 @@ Drawable.prototype.draw = function(context, viewportX, viewportY, rootLocalX, ro
         const reference = child.getReference();
         reference.draw(context, viewportX, viewportY, localX, localY);
     }
+}
+
+Drawable.prototype.setID = function(id) {
+    if(id === undefined) {
+        return false;
+    }
+
+    this.id = id;
+
+    return true;
+}
+
+Drawable.prototype.getBounds = function() {
+    const { x, y, w, h } = this.bounds;
+    const boundsX = this.position.x + x;
+    const boundsY = this.position.y + y;
+
+    return { "x": boundsX, "y": boundsY, "w": w, "h": h };
 }
 
 Drawable.prototype.setPosition = function(positionX, positionY) {
@@ -103,19 +136,15 @@ Drawable.prototype.hasFamily = function() {
     return this.family !== null;
 }
 
-Drawable.prototype.openFamily = function(name) {
+Drawable.prototype.openFamily = function(name = Drawable.DEFAULT_FAMILY_NAME) {
     if(this.family) {
         return false;
     }
 
-    if(name === undefined) {
-        name = Drawable.DEFAULT_FAMILY_NAME;
-    }
-
-    this.family = new Family(Symbol(this.DEBUG_NAME), this);
+    this.family = new Family(this, this.DEBUG_NAME);
     this.family.setName(name);
 
-    return false;
+    return true;
 }
 
 Drawable.prototype.closeFamily = function() {
@@ -125,6 +154,7 @@ Drawable.prototype.closeFamily = function() {
 
     this.family.onRemove();
     this.family = null;
+    this.events.emit(Drawable.EVENT_FAMILY_CLOSED);
 
     return true;
 }
@@ -151,47 +181,42 @@ Drawable.prototype.setOpacity = function(opacity) {
     return true;
 }
 
-Drawable.prototype.addChild = function(drawable, customChildID) {
+Drawable.prototype.addChild = function(drawable, childName) {
     if(!this.family) {
         return false;
     }
 
-    if(customChildID === undefined) {
+    if(childName === undefined) {
         return false;
     }
 
-    if(this.family.getChildByName(customChildID)) {
+    if(this.family.getChildByName(childName)) {
         return false;
     }
 
-    drawable.openFamily(customChildID);
+    if(!drawable.hasFamily()) {
+        drawable.openFamily(childName);
+    }
+
     this.family.addChild(drawable.family);
 
     return true;
 }
 
-Drawable.prototype.removeChild = function(customChildID) {
+Drawable.prototype.removeChild = function(childName) {
     if(!this.family) {
         return false;
     }
 
-    const child = this.family.getChildByName(customChildID);
+    const child = this.family.getChildByName(childName);
 
     if(child === null) {
         return false;
     }
 
-    child.onRemove();
+    const reference = child.getReference();
 
-    return true;
-}
-
-Drawable.prototype.setID = function(id) {
-    if(id === undefined) {
-        return false;
-    }
-
-    this.id = id;
+    reference.closeFamily();
 
     return true;
 }

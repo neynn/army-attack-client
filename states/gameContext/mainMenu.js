@@ -10,7 +10,7 @@ MainMenuState.prototype.constructor = MainMenuState;
 
 MainMenuState.prototype.enter = function(stateMachine) {
     const gameContext = stateMachine.getContext();
-    const { uiManager, renderer, client } = gameContext;
+    const { uiManager, renderer, client, spriteManager } = gameContext;
     const { musicPlayer } = client;
 
     uiManager.parseUI("FPS_COUNTER", gameContext);
@@ -20,6 +20,8 @@ MainMenuState.prototype.enter = function(stateMachine) {
     uiManager.addClick("MAIN_MENU", "BUTTON_PLAY", () => stateMachine.setNextState(CONTEXT_STATES.STORY_MODE));
     uiManager.addClick("MAIN_MENU", "BUTTON_EDIT", () => stateMachine.setNextState(CONTEXT_STATES.EDIT_MODE));
     uiManager.addClick("MAIN_MENU", "BUTTON_PVP", () => stateMachine.setNextState(CONTEXT_STATES.VERSUS_MODE_LOBBY));
+
+    spriteManager.addSpriteToDrawable(uiManager.getButton("MAIN_MENU", "BUTTON_PLAY"), "TANK", "blue_battletank_idle");
 }
 
 MainMenuState.prototype.exit = function(stateMachine) {

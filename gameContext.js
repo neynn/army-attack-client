@@ -123,7 +123,7 @@ GameContext.prototype.exitGame = function() {
     this.entityManager.workEnd();
     this.spriteManager.workEnd();
     this.tileManager.workEnd();
-    //this.uiManager.workEnd();
+    this.uiManager.workEnd();
 }
 
 GameContext.prototype.loadMap = function(mapID) {

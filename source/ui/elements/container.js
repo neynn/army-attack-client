@@ -15,17 +15,19 @@ Container.prototype.loadFromConfig = function(config) {
 
     this.id = id;
     this.DEBUG_NAME = id;
+    this.bounds.set(0, 0, width, height);
     this.setPosition(x, y);
-    this.setBounds(width, height);
     this.setOpacity(opacity);
 }
 
 Container.prototype.isColliding = function(mouseX, mouseY, mouseRange) {
-    return isRectangleRectangleIntersect(this.position.x, this.position.y, this.width, this.height, mouseX, mouseY, mouseRange, mouseRange);
+    const { w, h } = this.bounds;
+    return isRectangleRectangleIntersect(this.position.x, this.position.y, w, h, mouseX, mouseY, mouseRange, mouseRange);
 }
 
 Container.prototype.onDebug = function(context, viewportX, viewportY,localX, localY) {
+    const { w, h } = this.bounds;
     context.globalAlpha = 0.2;
     context.fillStyle = "#0000ff";
-    context.fillRect(localX, localY, this.width, this.height);
+    context.fillRect(localX, localY, w, h);
 }

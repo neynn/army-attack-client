@@ -32,8 +32,6 @@ export const Camera = function(screenWidth, screenHeight) {
     this.events.listen(Camera.EVENT_VIEWPORT_LOAD);
     this.events.listen(Camera.EVENT_MAP_RENDER_COMPLETE);
 
-    this.events.subscribe(Camera.EVENT_VIEWPORT_LOAD, this.id, (width, height) => this.centerViewport(width/2, height/2));
-
     window.addEventListener("resize", () => this.resizeViewport(window.innerWidth, window.innerHeight));
 }
 
@@ -223,7 +221,7 @@ Camera.prototype.draw2DMap = function(gameContext) {
         this.drawTileLayer(gameContext, gameMap, layerID, clampedStartX, clampedStartY, clampedEndX, clampedEndY);
     }
     
-    for(const layerID of spriteManager.order) {
+    for(const layerID of spriteManager.drawOrder) {
         const layer = spriteManager.layers[layerID];
         this.drawSpriteLayer(gameContext, layer);
     }
@@ -241,13 +239,19 @@ Camera.prototype.draw2DMap = function(gameContext) {
 }
 
 Camera.prototype.drawUI = function(gameContext) {
-    const { uiManager } = gameContext;
-    const { drawableElements } = uiManager;
+    const { uiManager, timer } = gameContext;
+    const realTime = timer.getRealTime();
+    const deltaTime = timer.getDeltaTime();
 
-    drawableElements.forEach(element => element.draw(this.display.context, 0, 0, 0, 0));
+    for(const elementID of uiManager.drawableElements) {
+        const element = uiManager.getElement(elementID);
+        
+        element.update(realTime, deltaTime);
+        element.draw(this.display.context, 0, 0, 0, 0);
 
-    if(Camera.DEBUG) {
-        drawableElements.forEach(element => element.debug(this.display.context, 0, 0, 0, 0));
+        if(Camera.DEBUG) {
+            element.debug(this.display.context, 0, 0, 0, 0)
+        }
     }
 }
 

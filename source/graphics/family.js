@@ -1,5 +1,5 @@
-export const Family = function(id, reference) {
-    this.id = id;
+export const Family = function(reference, DEBUG_NAME = "") {
+    this.id = Symbol(DEBUG_NAME);
     this.reference = reference;
     this.name = null;
     this.parent = null;
@@ -16,8 +16,8 @@ Family.prototype.setName = function(name) {
     return true;
 }
 
-Family.prototype.setParent = function(member) {
-    if(member.id === this.id) {
+Family.prototype.setParent = function(parent) {
+    if(parent.id === this.id) {
         return false;
     }
 
@@ -25,33 +25,31 @@ Family.prototype.setParent = function(member) {
         this.parent.removeChild(this);
     }
 
-    this.parent = member;
+    this.parent = parent;
 
     return true;
 }
 
-Family.prototype.addChild = function(member) {
-    if(member.id === this.id) {
+Family.prototype.addChild = function(child) {
+    if(child.id === this.id) {
         return false;
     }
 
-    if(this.hasChild(member)) {
+    if(this.hasChild(child)) {
         return false;
     }
 
-    this.children.push(member);
-    member.setParent(this);
+    this.children.push(child);
+    child.setParent(this);
     
     return true;
 }
 
-Family.prototype.removeChild = function(member) {
+Family.prototype.removeChild = function(child) {
     for(let i = 0; i < this.children.length; i++) {
-        const child = this.children[i];
-
-        if(child.id === member.id) {
+        if(this.children[i].id === child.id) {
             this.children.splice(i, 1);
-            member.parent = null;
+            child.parent = null;
 
             return true;
         }

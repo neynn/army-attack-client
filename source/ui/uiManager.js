@@ -1,5 +1,6 @@
 import { Camera } from "../camera/camera.js";
 import { response } from "../response.js";
+import { Button } from "./elements/button.js";
 import { ButtonCircle } from "./elements/button/buttonCircle.js";
 import { ButtonSquare } from "./elements/button/buttonSquare.js";
 import { Container } from "./elements/container.js";
@@ -12,18 +13,15 @@ export const UIManager = function() {
     this.iconTypes = {};
     this.fontTypes = {};
     this.interfaceStack = [];
-    this.icons = new Map();
-    this.buttons = new Map();
-    this.texts = new Map();
-    this.containers = new Map();
-    this.drawableElements = new Map();
-    this.elementsToUpdate = new Map();
+    this.elements = new Map();
+    this.drawableElements = new Set();
+    this.elementsToUpdate = new Set();
     this.elementTypes = {
-        [UIManager.ELEMENT_TYPE_TEXT]: { "object": TextElement, "list": this.texts },
-        [UIManager.ELEMENT_TYPE_BUTTON_SQUARE]: { "object": ButtonSquare, "list": this.buttons },
-        [UIManager.ELEMENT_TYPE_BUTTON_CIRCLE]: { "object": ButtonCircle, "list": this.buttons },
-        [UIManager.ELEMENT_TYPE_ICON]: { "object": Icon, "list": this.icons },
-        [UIManager.ELEMENT_TYPE_CONTAINER]: { "object": Container, "list": this.containers }
+        [UIManager.ELEMENT_TYPE_TEXT]: TextElement,
+        [UIManager.ELEMENT_TYPE_BUTTON_SQUARE]: ButtonSquare,
+        [UIManager.ELEMENT_TYPE_BUTTON_CIRCLE]: ButtonCircle,
+        [UIManager.ELEMENT_TYPE_ICON]: Icon,
+        [UIManager.ELEMENT_TYPE_CONTAINER]: Container
     };
     this.effectTypes = {
         [UIManager.EFFECT_TYPE_FADE_IN]: { "function": "addFadeInEffect" },
@@ -60,6 +58,16 @@ UIManager.prototype.loadIconTypes = function(icons) {
     return response(true, "IconTypes have been loaded!", "UIManager.prototype.loadIconTypes", null, null);
 }
 
+UIManager.prototype.getElement = function(uniqueID) {
+    const element = this.elements.get(uniqueID);
+
+    if(!element) {
+        return null;
+    }
+
+    return element;
+}
+
 UIManager.prototype.loadUserInterfaceTypes = function(userInterfaces) {    
     if(!userInterfaces) {
         return response(false, "UserInterfaceTypes cannot be undefined!", "UIManager.prototype.loadUserInterfaceTypes", null, null);
@@ -83,10 +91,7 @@ UIManager.prototype.getCurrentInterface = function() {
 }
 
 UIManager.prototype.workEnd = function() {
-    this.texts.clear();
-    this.buttons.clear();
-    this.icons.clear();
-    this.containers.clear();
+    this.elements.clear();
     this.elementsToUpdate.clear();
     this.drawableElements.clear();
     this.interfaceStack = [];
@@ -97,7 +102,8 @@ UIManager.prototype.update = function(gameContext) {
     const { cursor } = client;
     const deltaTime = timer.getDeltaTime();
 
-    for(const [uniqueID, element] of this.elementsToUpdate) {
+    for(const elementID of this.elementsToUpdate) {
+        const element = this.elements.get(elementID);
         const completedGoals = [];
 
         for(const [goalID, callback] of element.goals) {
@@ -114,12 +120,14 @@ UIManager.prototype.update = function(gameContext) {
         }
 
         if(element.goals.size === 0) {
-            this.elementsToUpdate.delete(uniqueID);
+            this.elementsToUpdate.delete(elementID);
         }
     }
 
-    for(const [uniqueID, textElement] of this.texts) {
-        textElement.update(deltaTime);
+    for(const [elementID, element] of this.elements) {
+        if(element instanceof TextElement) {
+            element.onUpdate(0, deltaTime);
+        }
     }
 
     const collidedElements = this.checkCollisions(cursor.position.x, cursor.position.y, cursor.radius);
@@ -137,18 +145,14 @@ UIManager.prototype.checkCollisions = function(mouseX, mouseY, mouseRange) {
         return collidedElements;
     }
 
-    for(const [key, element] of this.drawableElements) {
+    for(const elementID of this.drawableElements) {
+        const element = this.elements.get(elementID);
+
         if(element.interfaceID !== currentInterface) {
             continue;
         }
 
-        const isColliding = element.isColliding(mouseX, mouseY, mouseRange);
-
-        if(!isColliding) {
-            continue;
-        }
-
-        element.handleCollisionTree(mouseX, mouseY, mouseRange, collidedElements);
+        element.getCollisions(mouseX, mouseY, mouseRange, collidedElements);
     }
 
     return collidedElements;
@@ -173,16 +177,15 @@ UIManager.prototype.parseEffects = function(element, effects) {
 
 UIManager.prototype.parseElement = function(uniqueID, config) {
     const { type } = config;
-    const elementType = this.elementTypes[type];
+    const Type = this.elementTypes[type];
 
-    if(!elementType) {
+    if(!Type) {
         return null;
     }
 
-    const { object, list } = elementType;
-    const element = new object(config);
+    const element = new Type(config);
 
-    list.set(uniqueID, element);
+    this.elements.set(uniqueID, element);
 
     return element;
 }
@@ -243,7 +246,7 @@ UIManager.prototype.parseUI = function(userInterfaceID, gameContext) {
                 renderer.events.subscribe(Camera.EVENT_SCREEN_RESIZE, uniqueID, (width, height) => element.adjustAnchor(config.anchor, config.position.x, config.position.y, width, height));    
             }
           
-            this.drawableElements.set(uniqueID, element);
+            this.drawableElements.add(uniqueID);
         }
 
         if(!config.children) {
@@ -270,21 +273,15 @@ UIManager.prototype.parseUI = function(userInterfaceID, gameContext) {
     return response(true, "UserInterface has been parsed!", "UIManager.prototype.parseUI", null, {userInterfaceID});
 }
 
-UIManager.prototype.unparseElement = function(uniqueID, type) {
-    const elementType = this.elementTypes[type];
+UIManager.prototype.unparseElement = function(uniqueID) {
+    const element = this.elements.get(uniqueID);
 
-    if(!elementType) {
-        return response(false, "UIElementType does not exist!", "UIManager.prototype.unparseElement", null, {uniqueID, type});
+    if(!element) {
+        return response(false, "Element does not exist!", "UIManager.prototype.unparseElement", null, {uniqueID});
     }
 
-    const { object, list } = elementType;
-
-    if(!list.has(uniqueID)) {
-        return response(false, "Element does not exist!", "UIManager.prototype.unparseElement", null, {uniqueID, type});
-    }
-
-    list.get(uniqueID).closeFamily();
-    list.delete(uniqueID);
+    element.closeFamily();
+    this.elements.delete(uniqueID);
 
     return response(true, "Element has been unparsed!", "UIManager.prototype.unparseElement", null, {uniqueID});
 }
@@ -301,7 +298,7 @@ UIManager.prototype.unparseUI = function(userInterfaceID, gameContext) {
         const config = userInterface[configID];
         const uniqueID = this.generateUniqueID(userInterfaceID, config.id);
 
-        this.unparseElement(uniqueID, config.type);
+        this.unparseElement(uniqueID);
 
         if(this.drawableElements.has(uniqueID)) {
             this.drawableElements.delete(uniqueID);
@@ -315,15 +312,79 @@ UIManager.prototype.unparseUI = function(userInterfaceID, gameContext) {
     return response(true, "Interface has been unparsed!", "UIManager.prototype.unparseUI", null, {userInterfaceID});
 }
 
+UIManager.prototype.addClick = function(interfaceID, buttonID, callback) {
+    if(this.userInterfaces[interfaceID] === undefined) {
+        return response(false, "Interface does not exist!", "UIManager.prototype.addClick", null, {interfaceID});
+    }
+
+    const uniqueID = this.generateUniqueID(interfaceID, buttonID);
+    const button = this.elements.get(uniqueID);
+
+    if(!button || !(button instanceof Button)) {
+        return response(false, "Button does not exist!", "UIManager.prototype.addClick", null, {interfaceID, buttonID, uniqueID});
+    }
+
+    button.events.subscribe(UIElement.EVENT_CLICKED, "UI_MANAGER", callback);
+
+    return response(true, "Callback has been attached to button", "UIManager.prototype.addClick", null, {interfaceID, buttonID, uniqueID});
+}
+
+UIManager.prototype.getButton = function(interfaceID, buttonID) {
+    if(this.userInterfaces[interfaceID] === undefined) {
+        return null;
+    }
+
+    const uniqueID = this.generateUniqueID(interfaceID, buttonID);
+    const button = this.elements.get(uniqueID);
+
+    if(!button || !(button instanceof Button)) {
+        return null;
+    }
+
+    return button;
+}
+
+UIManager.prototype.getText = function(interfaceID, textID) {
+    if(this.userInterfaces[interfaceID] === undefined) {
+        return null;
+    }
+
+    const uniqueID = this.generateUniqueID(interfaceID, textID);
+    const text = this.elements.get(uniqueID);
+
+    if(!text || !(text instanceof TextElement)) {
+        return null;
+    }
+
+    return text;
+}
+
+UIManager.prototype.setText = function(interfaceID, textID, message) {
+    if(this.userInterfaces[interfaceID] === undefined) {
+        return response(false, "Interface does not exist!", "UIManager.prototype.setText", null, {interfaceID});
+    }
+
+    const uniqueID = this.generateUniqueID(interfaceID, textID);
+    const text = this.elements.get(uniqueID);
+
+    if(!text || !(text instanceof TextElement)) {
+        return response(false, "Text does not exist!", "UIManager.prototype.setText", null, {interfaceID, textID, uniqueID});
+    }
+
+    text.setText(message);
+
+    return response(true, "Text has been changed!", "UIManager.prototype.setText", null, {interfaceID, textID, uniqueID, message})
+}
+
 UIManager.prototype.removeTextRequest = function(interfaceID, textID) {
     if(this.userInterfaces[interfaceID] === undefined) {
         return response(false, "Interface does not exist!", "UIManager.prototype.removeTextRequest", null, { interfaceID });
     }
 
     const uniqueID = this.generateUniqueID(interfaceID, textID);
-    const text = this.texts.get(uniqueID);
+    const text = this.elements.get(uniqueID);
 
-    if(!text) {
+    if(!text || !(text instanceof TextElement)) {
         return response(false, "Text does not exist!", "UIManager.prototype.removeTextRequest", null, { interfaceID, textID, uniqueID });
     }
 
@@ -339,82 +400,19 @@ UIManager.prototype.addTextRequest = function(interfaceID, textID, callback) {
     }
 
     const uniqueID = this.generateUniqueID(interfaceID, textID);
-    const text = this.texts.get(uniqueID);
+    const text = this.elements.get(uniqueID);
 
-    if(!text) {
+    if(!text || !(text instanceof TextElement)) {
         return response(false, "Text does not exist!", "UIManager.prototype.addTextRequest", null, {interfaceID, textID, uniqueID});
     }
 
-    const requestResponse = this.removeTextRequest(interfaceID, textID);
+    this.removeTextRequest(interfaceID, textID);
     text.setDynamic(true);
     text.events.subscribe(TextElement.EVENT_REQUEST_TEXT, "UI_MANAGER", (answer) => answer(callback()));
 
-    return response(true, "Request has been added!", "UIManager.prototype.addTextRequest", [requestResponse], {textID});
+    return response(true, "Request has been added!", "UIManager.prototype.addTextRequest", null, {textID});
 }
 
-UIManager.prototype.addClick = function(interfaceID, buttonID, callback) {
-    if(this.userInterfaces[interfaceID] === undefined) {
-        return response(false, "Interface does not exist!", "UIManager.prototype.addClick", null, {interfaceID});
-    }
-
-    const uniqueID = this.generateUniqueID(interfaceID, buttonID);
-
-    if(!this.buttons.has(uniqueID)) {
-        return response(false, "Button does not exist!", "UIManager.prototype.addClick", null, {interfaceID, buttonID, uniqueID});
-    }
-
-    const button = this.buttons.get(uniqueID);
-    button.events.subscribe(UIElement.EVENT_CLICKED, "UI_MANAGER", callback);
-
-    return response(true, "Callback has been attached to button", "UIManager.prototype.addClick", null, {interfaceID, buttonID, uniqueID});
-}
-
-UIManager.prototype.getButton = function(interfaceID, buttonID) {
-    if(this.userInterfaces[interfaceID] === undefined) {
-        return null;
-    }
-
-    const uniqueID = this.generateUniqueID(interfaceID, buttonID);
-
-    if(!this.buttons.has(uniqueID)) {
-        return null;
-    }
-
-    return this.buttons.get(uniqueID);
-}
-
-UIManager.prototype.getText = function(interfaceID, textID) {
-    if(this.userInterfaces[interfaceID] === undefined) {
-        return null;
-    }
-
-    const uniqueID = this.generateUniqueID(interfaceID, textID);
-
-    if(!this.texts.has(uniqueID)) {
-        return null;
-    }
-
-    return this.texts.get(uniqueID);
-}
-
-UIManager.prototype.setText = function(interfaceID, textID, message) {
-    if(this.userInterfaces[interfaceID] === undefined) {
-        return response(false, "Interface does not exist!", "UIManager.prototype.setText", null, {interfaceID});
-    }
-
-    const uniqueID = this.generateUniqueID(interfaceID, textID);
-
-    if(!this.texts.has(uniqueID)) {
-        return response(false, "Text does not exist!", "UIManager.prototype.setText", null, {interfaceID, textID, uniqueID});
-    }
-
-    const text = this.texts.get(uniqueID);
-    text.setText(message);
-
-    return response(true, "Text has been changed!", "UIManager.prototype.setText", null, {interfaceID, textID, uniqueID, message})
-}
-
-//TODO this is shit.
 UIManager.prototype.addFadeOutEffect = function(element, fadeDecrement, fadeThreshold) {
     const id = Symbol("FadeEffect");
     const uid = element.getUniqueID();
@@ -423,13 +421,14 @@ UIManager.prototype.addFadeOutEffect = function(element, fadeDecrement, fadeThre
         const opacity = element.opacity - (fadeDecrement * deltaTime);
 
         element.opacity = Math.max(opacity, fadeThreshold);
-        if (element.opacity <= fadeThreshold) {
+        if(element.opacity <= fadeThreshold) {
             element.goalsReached.add(id);
         }
     };
 
     element.goals.set(id, fadeFunction);
-    this.elementsToUpdate.set(uid, element);
+
+    this.elementsToUpdate.add(uid);
 }
 
 UIManager.prototype.addFadeInEffect = function(element, fadeIncrement, fadeThreshold) {
@@ -446,5 +445,6 @@ UIManager.prototype.addFadeInEffect = function(element, fadeIncrement, fadeThres
     };
 
     element.goals.set(id, fadeFunction);
-    this.elementsToUpdate.set(uid, element);
+
+    this.elementsToUpdate.add(uid);
 }

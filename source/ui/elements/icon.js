@@ -26,19 +26,20 @@ Icon.prototype.onDraw = function(context, viewportX, viewportY, localX, localY) 
         return;
     }
 
-    context.drawImage(this.image, localX, localY, this.width, this.height);
+    const { w, h } = this.bounds;
+    context.drawImage(this.image, localX, localY, w, h);
 }
 
 Icon.prototype.onDebug = function(context, viewportX, viewportY, localX, localY) {
+    const { w, h } = this.bounds;
     context.globalAlpha = 0.5;
     context.fillStyle = "#0000ff";
-    context.fillRect(localX, localY, this.width, this.height);
+    context.fillRect(localX, localY, w, h);
 }
 
 Icon.prototype.setImage = function(image) {
     this.image = image;
-    this.width = image.width;
-    this.height = image.height;
+    this.bounds.set(0, 0, image.width, image.height);
 }
 
 Icon.prototype.getImage = function() {

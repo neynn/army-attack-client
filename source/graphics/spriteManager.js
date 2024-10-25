@@ -17,7 +17,7 @@ export const SpriteManager = function() {
         [SpriteManager.LAYER_MIDDLE]: [],
         [SpriteManager.LAYER_TOP]: []
     };
-    this.order = [
+    this.drawOrder = [
         SpriteManager.LAYER_BOTTOM,
         SpriteManager.LAYER_MIDDLE,
         SpriteManager.LAYER_TOP
@@ -120,11 +120,14 @@ SpriteManager.prototype.workEnd = function() {
 }
 
 SpriteManager.prototype.createSprite = function(typeID, layerID, animationID) {
+    if(!this.spriteTypes[typeID]) {
+        return null;
+    }
+
     const spriteID = this.IDgenerator.getID();
     const sprite = new Sprite(spriteID, typeID);
     
     sprite.events.subscribe(Sprite.FINISHED, this.id, (sprite) => this.removeSprite(sprite.id));
-
     sprite.events.subscribe(Sprite.REQUEST_FRAME, this.id, (sprite, onResponse) => {
         const {typeID, animationID, currentFrame} = sprite;
         const spriteType = this.spriteTypes[typeID];
@@ -154,6 +157,7 @@ SpriteManager.prototype.createSprite = function(typeID, layerID, animationID) {
     return sprite;
 }
 
+//TODO listen to drawable.event family close and blablabla remove children if the sprite was not in layer null.
 SpriteManager.prototype.removeSprite = function(spriteID) {
     const sprite = this.sprites.get(spriteID);
 
@@ -188,6 +192,22 @@ SpriteManager.prototype.getSprite = function(spriteID) {
     return sprite;
 }
 
+SpriteManager.prototype.addSpriteToDrawable = function(drawable, childName, typeID, animationID) {
+    const sprite = this.createSprite(typeID, null, animationID);
+
+    if(!sprite) {
+        return false;
+    }
+
+    if(!drawable.hasFamily()) {
+        drawable.openFamily();
+    }
+
+    const isSuccess = drawable.addChild(sprite, childName);
+
+    return isSuccess;
+}
+
 SpriteManager.prototype.addChildSprite = function(parentID, childID, customChildID) {
     const parent = this.sprites.get(parentID);
 
@@ -215,7 +235,7 @@ SpriteManager.prototype.createChildSprite = function(spriteID, childTypeID, cust
         return null;
     }
 
-    const childSprite = this.createSprite(childTypeID, null, ImageSheet.DEFAULT_ANIMATION_ID);
+    const childSprite = this.createSprite(childTypeID, null);
 
     parent.openFamily(parent.typeID);
     parent.addChild(childSprite, customChildID);
@@ -279,31 +299,31 @@ SpriteManager.prototype.removeFromLayer = function(layerID, sprite) {
     return response(true, "Sprite has removed from layer!", "SpriteManager.prototype.removeFromLayer", null, {layerID});
 }
 
-SpriteManager.prototype.updateSprite = function(spriteID, setID, animationID) {
+SpriteManager.prototype.updateSprite = function(spriteID, typeID, animationID = ImageSheet.DEFAULT_ANIMATION_ID) {
     const sprite = this.sprites.get(spriteID);
     
     if(!sprite) {
         return response(false, "Sprite does not exist!", "SpriteManager.prototype.updateSprite", null, {spriteID});
     }
 
-    const spriteType = this.spriteTypes[setID];
+    const spriteType = this.spriteTypes[typeID];
 
     if(!spriteType) {
-        return response(false, "SpriteType does not exist!", "SpriteManager.prototype.updateSprite", null, {spriteID, setID});
+        return response(false, "SpriteType does not exist!", "SpriteManager.prototype.updateSprite", null, {spriteID, typeID});
     }
 
     const animationType = spriteType.getAnimation(animationID);
 
     if(!animationType) {
-        return response(false, "Parameter is undefined!", "SpriteManager.prototype.updateSprite", null, {spriteID, setID, animationID});
+        return response(false, "Parameter is undefined!", "SpriteManager.prototype.updateSprite", null, {spriteID, typeID, animationID});
     }
 
-    if(sprite.typeID !== setID || sprite.animationID !== animationID) {
-        sprite.initialize(setID, animationID, animationType.frameCount, animationType.frameTime);
+    if(sprite.typeID !== typeID || sprite.animationID !== animationID) {
+        sprite.initialize(typeID, animationID, animationType.frameCount, animationType.frameTime);
         sprite.initializeBounds();
     }
 
-    return response(true, "Sprite has been updated!", "SpriteManager.prototype.updateSprite", null, {spriteID, setID, animationID});
+    return response(true, "Sprite has been updated!", "SpriteManager.prototype.updateSprite", null, {spriteID, typeID, animationID});
 }
 
 SpriteManager.prototype.drawTileGraphics = function(graphics, context, renderX, renderY, scaleX = 1, scaleY = 1) {
