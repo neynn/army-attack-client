@@ -1,5 +1,5 @@
 import { IDGenerator } from "../idGenerator.js";
-import { response } from "../response.js";
+import { Logger } from "../logger.js";
 import { Entity } from "./entity.js";
 
 export const EntityManager = function() {
@@ -14,42 +14,50 @@ export const EntityManager = function() {
 
 EntityManager.prototype.setSaveableComponents = function(saveableComponents) {
     if(typeof saveableComponents !== "object") {
-        return response(false, "SaveableComponents must be an object!", "EntityManager.prototype.setSaveableComponents", null, null);
+        Logger.log(false, "SaveableComponents must be an object!", "EntityManager.prototype.setSaveableComponents", null);
+
+        return false;
     }
 
     this.saveableComponents = saveableComponents;
 
-    return response(true, "SaveableComponents have been loaded!", "EntityManager.prototype.setSaveableComponents", null, null);
+    return true;
 }
 
 EntityManager.prototype.setLoadableComponents = function(loadableComponents) {
     if(typeof loadableComponents !== "object") {
-        return response(false, "LoadableComponents must be an object!", "EntityManager.prototype.setLoadableComponents", null, null);
+        Logger.log(false, "LoadableComponents must be an object!", "EntityManager.prototype.setLoadableComponents", null);
+
+        return false;
     }
 
     this.loadableComponents = loadableComponents;
 
-    return response(true, "LoadableComponents have been loaded!", "EntityManager.prototype.setLoadableComponents", null, null);
+    return true;
 }
 
 EntityManager.prototype.loadEntityTypes = function(entityTypes) {
     if(typeof entityTypes !== "object") {
-        return response(false, "EntityTypes must be an object!", "EntityManager.prototype.loadEntityTypes", null, null);
+        Logger.log(false, "EntityTypes must be an object!", "EntityManager.prototype.loadEntityTypes", null);
+
+        return false;
     }
 
     this.entityTypes = entityTypes;
 
-    return response(true, "EntityTypes have been loaded!", "EntityManager.prototype.loadEntityTypes", null, null);
+    return true;
 }
 
 EntityManager.prototype.loadTraitTypes = function(traitTypes) {
     if(typeof traitTypes !== "object") {
-        return response(false, "TraitTypes must be an object!", "EntityManager.prototype.loadTraitTypes", null, null);
+        Logger.log(false, "TraitTypes must be an object!", "EntityManager.prototype.loadTraitTypes", null);
+
+        return false;
     }
 
     this.traitTypes = traitTypes;
 
-    return response(true, "TraitTypes have been loaded!", "EntityManager.prototype.loadTraitTypes", null, null);
+    return true;
 }
 
 EntityManager.prototype.saveComponents = function(entity) {
@@ -79,7 +87,8 @@ EntityManager.prototype.saveComponents = function(entity) {
 
 EntityManager.prototype.loadComponents = function(entity, savedComponents) {
     if(!savedComponents) {
-        console.warn(`SavedComponents cannot be undefined!`);
+        Logger.log(false, "SavedComponents cannot be undefined", "EntityManager.prototype.loadComponents", null); 
+
         return false; 
     }
 
@@ -87,14 +96,16 @@ EntityManager.prototype.loadComponents = function(entity, savedComponents) {
         const componentType = this.loadableComponents[componentID];
 
         if(!componentType) {
-            console.warn(`Component ${componentID} is not registered as loadable!`);
+            Logger.log(false, "Component is not registered as loadable!", "EntityManager.prototype.loadComponents", {componentID}); 
+
             continue;
         }
 
         const component = entity.getComponent(componentType);
 
         if(!component) {
-            console.warn(`Entity ${entity.id} does not have component ${componentID}!`);
+            Logger.log(false, `Entity does not have component!`, "EntityManager.prototype.loadComponents", {"entityID": entity.id, componentID}); 
+
             continue;
         }
 
@@ -102,7 +113,8 @@ EntityManager.prototype.loadComponents = function(entity, savedComponents) {
 
         for(const fieldID in componentSetup) {
             if(component[fieldID] === undefined) {
-                console.warn(`Field ${fieldID} does not exist on component ${componentID}!`);
+                Logger.log(false, `Field does not exist on component!`, "EntityManager.prototype.loadComponents", {fieldID, componentID}); 
+
                 continue;
             }
 
@@ -118,7 +130,8 @@ EntityManager.prototype.loadTraits = function(entity, traits) {
         const traitType = this.traitTypes[traitID];
 
         if(!traitType || !traitType.components) {
-            console.warn(`TraitType ${traitID} does not exist!`);
+            Logger.log(false, `TraitType does not exist!`, "EntityManager.prototype.loadTraits", {traitID}); 
+
             continue;
         }
 
@@ -128,7 +141,8 @@ EntityManager.prototype.loadTraits = function(entity, traits) {
             const componentType = this.loadableComponents[componentID];
 
             if(!componentType) {
-                console.warn(`Component ${componentID} is not registered as loadable!`);
+                Logger.log(false, `Component is not registered as loadable!`, "EntityManager.prototype.loadTraits", {traitID, componentID}); 
+
                 continue;
             }
 
@@ -145,6 +159,8 @@ EntityManager.prototype.overwriteID = function(entityID, forcedID) {
     const entity = this.entities.get(entityID);
 
     if(!entity || !forcedID) {
+        Logger.log(false, "Entity does not exist!", "EntityManager.prototype.overwriteID", {entityID, forcedID});
+
         return false;
     }
 
@@ -176,30 +192,44 @@ EntityManager.prototype.workEnd = function() {
 
 EntityManager.prototype.enableEntity = function(entityID) {
     if(!this.entities.has(entityID)) {
-        console.warn(`Entity ${entityID} does not exist! Returning...`);
-        return;
+        Logger.log(false, "Entity does not exist!", "EntityManager.prototype.enableEntity", {entityID});
+
+        return false;
     }
 
-    if(!this.activeEntities.has(entityID)) {
-        this.activeEntities.add(entityID);
+    if(this.activeEntities.has(entityID)) {
+        Logger.log(false, "Entity is already active!", "EntityManager.prototype.enableEntity", {entityID});
+
+        return false;
     }
+
+    this.activeEntities.add(entityID);
+
+    return true;
 }
 
 EntityManager.prototype.disableEntity = function(entityID) {
     if(!this.entities.has(entityID)) {
-        console.warn(`Entity ${entityID} does not exist! Returning...`);
-        return;
+        Logger.log(false, "Entity does not exist!", "EntityManager.prototype.disableEntity", {entityID});
+
+        return false;
     }
 
-    if(this.activeEntities.has(entityID)) {
-        this.activeEntities.delete(entityID);
+    if(!this.activeEntities.has(entityID)) {
+        Logger.log(false, "Entity is not active!", "EntityManager.prototype.disableEntity", {entityID});
+
+        return false;
     }
+
+    this.activeEntities.delete(entityID);
+
+    return true;
 }
 
 EntityManager.prototype.getEntity = function(entityID) {
     if(!this.entities.has(entityID)) {
-        //response
-        console.warn(`Entity ${entityID} does not exist! Returning null...`);
+        Logger.log(false, "Entity does not exist", "EntityManager.prototype.getEntity", {entityID});
+
         return null;
     }
 
@@ -214,7 +244,7 @@ EntityManager.prototype.createEntity = function(entityTypeID, externalID) {
     if(config) {
         entity.setConfig(config);
     } else {
-        console.warn(`EntityType ${entityTypeID} does not exist! Using empty config! Proceeding...`);
+        Logger.log(false, "EntityType does not exist", "EntityManager.prototype.createEntity", {entityID, externalID});
     }
 
     entity.setID(entityID);
@@ -225,7 +255,9 @@ EntityManager.prototype.createEntity = function(entityTypeID, externalID) {
 
 EntityManager.prototype.removeEntity = function(entityID) {
     if(!this.entities.has(entityID)) {
-        return response(false, "Entity does not exist!", "EntityManager.prototype.removeEntity", null, {entityID});
+        Logger.log(false, "Entity does not exist!", "EntityManager.prototype.removeEntity", {entityID});
+
+        return false;
     }
 
     if(this.activeEntities.has(entityID)) {
@@ -234,12 +266,13 @@ EntityManager.prototype.removeEntity = function(entityID) {
     
     this.entities.delete(entityID);
 
-    return response(true, "Entity does not exist!", "EntityManager.prototype.removeEntity", null, {entityID});
+    return true;
 }
 
 EntityManager.prototype.getEntityType = function(entityTypeID) {
     if(this.entityTypes[entityTypeID] === undefined) {
-        console.warn(`EntityType ${entityTypeID} does not exist! Returning null...`);
+        Logger.log(false, "EntityType does not exist!", "EntityManager.prototype.getEntityType", {entityTypeID});
+
         return null;
     }
 

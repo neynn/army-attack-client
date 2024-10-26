@@ -1,5 +1,5 @@
+import { Logger } from "../logger.js";
 import { ResourceLoader } from "../resourceLoader.js";
-import { response } from "../response.js";
 
 export const SoundPlayer = function() {
     this.context = new AudioContext();
@@ -11,12 +11,14 @@ export const SoundPlayer = function() {
 
 SoundPlayer.prototype.loadSoundTypes = function(soundTypes) {
     if(soundTypes === undefined) {
-        return response(false, "SoundTypes cannot be undefined!", "SoundPlayer.prototype.loadSoundTypes", null, null);
+        Logger.log(false, "SoundTypes cannot be undefined!", "SoundPlayer.prototype.loadSoundTypes", null);
+
+        return false;
     }
 
     this.soundTypes = soundTypes;
 
-    return response(true, "SoundTypes have been loaded!", "SoundPlayer.prototype.loadSoundTypes", null, null);
+    return true;
 } 
 
 SoundPlayer.prototype.clear = function() {
@@ -30,7 +32,9 @@ SoundPlayer.prototype.isPlaying = function(audioID) {
 
 SoundPlayer.prototype.playRandom = function(soundList, volume) {
     if(!soundList || soundList.length === 0) {
-        return response(false, "List is undefined or empty!", "SoundPlayer.prototype.playRandom", null, null);
+        Logger.log(false, "List is undefined or empty!", "SoundPlayer.prototype.playRandom", null);
+
+        return false;
     }
 
     const index = Math.floor(Math.random() * soundList.length);
@@ -38,24 +42,29 @@ SoundPlayer.prototype.playRandom = function(soundList, volume) {
     const soundType = this.soundTypes[soundID];
 
     if(!soundType) {
-        return response(false, "Sound does not exist!", "SoundPlayer.prototype.playRandom", null, {soundID});
+        Logger.log(false, "Sound does not exist!", "SoundPlayer.prototype.playRandom", {soundID});
+
+        return false;
     }
 
     if(this.isPlaying(soundID) && !soundType.allowStacking) {
         const newList = soundList.filter(id => id !== soundID);
+
         return this.playRandom(newList, volume);
     }
 
     this.playSound(soundID, volume);
 
-    return response(true, "Sound is playing!", "SoundPlayer.prototype.playRandom", null, {soundID});
+    return true;
 }
 
 SoundPlayer.prototype.playSound = async function(audioID, volume = this.defaultVolume) {
     const soundType = this.soundTypes[audioID];
 
     if(!soundType) {
-        return response(false, "SoundType does not exist!", "SoundPlayer.prototype.playSound", null, {audioID});
+        Logger.log(false, "SoundType does not exist!", "SoundPlayer.prototype.playSound", {audioID});
+
+        return false;
     }
 
     if(!this.buffers.has(audioID)) {
@@ -65,7 +74,9 @@ SoundPlayer.prototype.playSound = async function(audioID, volume = this.defaultV
     const buffer = this.buffers.get(audioID);
 
     if(this.isPlaying(audioID) && !soundType.allowStacking) {
-        return response(false, "Sound is already playing!", "SoundPlayer.prototype.playSound", null, {audioID});;
+        Logger.log(false, "Sound is already playing!", "SoundPlayer.prototype.playSound", {audioID});
+
+        return false;
     }
 
     const gainNode = this.context.createGain();
@@ -80,28 +91,31 @@ SoundPlayer.prototype.playSound = async function(audioID, volume = this.defaultV
 
     this.activeSounds.set(audioID, source);
 
-    return response(true, "Sound is now playing!", "SoundPlayer.prototype.playSound", null, {audioID});;
+    return true;
 }
 
 SoundPlayer.prototype.stopSound = function(audioID) {
     const sound = this.activeSounds.get(audioID);
 
     if(!sound) {
-        return response(false, "Sound is not active!", "SoundPlayer.prototype.stopSound", null, {audioID});;
+        Logger.log(false, "Sound is not active!", "SoundPlayer.prototype.stopSound", {audioID});
+
+        return false;
     }
 
     sound.stop();
 
     this.activeSounds.delete(audioID);
 
-    return response(true, "Sound is now stopped!", "SoundPlayer.prototype.stopSound", null, {audioID});;
+    return true;
 }
 
 SoundPlayer.prototype.loadSound = async function(audioID) {
     const soundType = this.soundTypes[audioID];
 
     if(!soundType) {
-        response(false, "SoundType does not exist!", "SoundPlayer.prototype.loadSound", null, {audioID});
+        Logger.log(false, "SoundType does not exist!", "SoundPlayer.prototype.loadSound", {audioID});
+
         return null;
     }
 
@@ -120,6 +134,4 @@ SoundPlayer.prototype.loadAllSounds = async function() {
     }
 
     await Promise.allSettled(promises);
-
-    response(true, "SoundTypes have been loaded!", "SoundPlayer.prototype.loadAllSounds", null);
 }

@@ -45,7 +45,7 @@ StoryModeState.prototype.enter = async function(stateMachine) {
         "master": "neyn"
     });
     const blueCommando = initializeEntity(gameContext, { 
-        "type": "blue_sniper",
+        "type": "blue_commando",
         "tileX": 1,
         "tileY": 3,
         "team": "1",
@@ -53,7 +53,7 @@ StoryModeState.prototype.enter = async function(stateMachine) {
     });
     const battleTank = initializeEntity(gameContext, { 
         "type": "blue_battletank",
-        "tileX": 1,
+        "tileX": 0,
         "tileY": 1,
         "team": "1",
         "master": "neyn",
@@ -71,7 +71,7 @@ StoryModeState.prototype.enter = async function(stateMachine) {
         }
     });
 
-    actionQueue.addAction(createMoveRequest(battleTank.id, 1, 3));
+    actionQueue.addAction(createMoveRequest(battleTank.id, 7, 1));
     //actionQueue.addAction(createMoveRequest(battleTank.id, 4, 4));
     //actionQueue.addAction(createMoveRequest(battleTank.id, 0, 1));
 }

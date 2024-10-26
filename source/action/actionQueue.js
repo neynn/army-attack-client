@@ -1,5 +1,5 @@
 import { EventEmitter } from "../events/eventEmitter.js";
-import { response } from "../response.js";
+import { Logger } from "../logger.js";
 
 export const ActionQueue = function() {
     this.actionTypes = {};
@@ -57,12 +57,14 @@ ActionQueue.prototype.addPriorityAction = function(gameContext, request) {
 
 ActionQueue.prototype.registerAction = function(actionID, action) {
     if(this.actionTypes[actionID] !== undefined || !action) {
-        return response(false, "ActionType is already registered!", "ActionQueue.prototype.registerAction", null, {actionID});
+        Logger.log(false, "ActionType is already registered!", "ActionQueue.prototype.registerAction", {actionID});
+
+        return false;
     }
 
     this.actionTypes[actionID] = action;
 
-    return response(true, "ActionType has been registered!", "ActionQueue.prototype.registerAction", null, {actionID});
+    return true;
 }
 
 ActionQueue.prototype.workStart = function() {

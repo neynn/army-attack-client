@@ -7,6 +7,9 @@ const gameContext = new GameContext();
 
 //packerToJSON("clouds", await ResourceLoader.loadJSON("./clouds.json"));
 
+//TODO add mb, gb to resource loader!
+//let the loader keep track of files loaded!
+
 ResourceLoader.loadConfigFiles("assets", "files.json").then(async files => {
   let totalMegabytes = 0;
   let totalMegabytesLargeFiles = 0;

@@ -45,16 +45,9 @@ Camera.EVENT_VIEWPORT_LOAD = "Camera.EVENT_VIEWPORT_LOAD";
 Camera.EVENT_MAP_RENDER_COMPLETE = "Camera.EVENT_MAP_RENDER_COMPLETE";
 
 Camera.prototype.getViewportPosition = function() {
-    if(this.isBound) {
-        return {
-            "viewportX": this.viewportX - this.centerOffsetX,
-            "viewportY": this.viewportY - this.centerOffsetY
-        }
-    }
-
     return {
-        "viewportX": this.viewportX,
-        "viewportY": this.viewportY
+        "viewportX": this.viewportX - this.centerOffsetX,
+        "viewportY": this.viewportY - this.centerOffsetY
     }
 }
 
@@ -70,13 +63,14 @@ Camera.prototype.unbindFromScreen = function() {
 
 Camera.prototype.drawTypeLayer = function(gameContext, gameMap, startX, startY, endX, endY) {
     const tileTypes = gameContext.getConfig("tileTypes");
-    const layer = gameMap.layers["type"];
     const opacity = gameMap.layerOpacity["type"];
-    const { viewportX, viewportY } = this.getViewportPosition();
 
     if(!opacity || !tileTypes) {
         return;
     }
+
+    const layer = gameMap.layers["type"];
+    const { viewportX, viewportY } = this.getViewportPosition();
 
     this.display.context.globalAlpha = opacity;
     this.display.context.font = "16px Arial";
@@ -92,7 +86,7 @@ Camera.prototype.drawTypeLayer = function(gameContext, gameMap, startX, startY, 
             const tileID = layer[index];
             const tileType = tileTypes[tileID];
 
-            if(tileID === null || !tileType) {
+            if(!tileType) {
                 continue;
             }
 
@@ -142,21 +136,22 @@ Camera.prototype.drawSpriteLayer = function(gameContext, spriteLayer) {
     }
 }
 
-Camera.prototype.drawTileLayer = function(gameContext, gameMap, layerID, startX, startY, endX, endY) {
+Camera.prototype.drawTileLayer = function(gameContext, map2D, layerID, startX, startY, endX, endY) {
+    const opacity = map2D.layerOpacity[layerID];
+    
+    if(!opacity) {
+        return;
+    }
+
     const { spriteManager } = gameContext;
     const { viewportX, viewportY } = this.getViewportPosition();
-    const layer = gameMap.layers[layerID];
-    const opacity = gameMap.layerOpacity[layerID];
-    
-    if(opacity === 0) {
-        return false;
-    }
+    const layer = map2D.layers[layerID];
 
     this.display.context.globalAlpha = opacity;
 
     for(let i = startY; i <= endY; i++) {
         const renderY = i * Camera.TILE_HEIGHT - viewportY;
-        const row = i * gameMap.width;
+        const row = i * map2D.width;
 
         for(let j = startX; j <= endX; j++) {
             const renderX = j * Camera.TILE_WIDTH - viewportX;
@@ -172,8 +167,6 @@ Camera.prototype.drawTileLayer = function(gameContext, gameMap, layerID, startX,
     }
 
     this.display.context.globalAlpha = 1;
-
-    return true;
 }
 
 Camera.prototype.draw2DMapOutlines = function(mapWidth, mapHeight) {
@@ -197,9 +190,9 @@ Camera.prototype.draw2DMapOutlines = function(mapWidth, mapHeight) {
 
 Camera.prototype.draw2DMap = function(gameContext) {
     const { mapLoader, spriteManager } = gameContext;
-    const gameMap = mapLoader.getActiveMap();
+    const activeMap = mapLoader.getActiveMap();
 
-    if(!gameMap) {
+    if(!activeMap) {
         return;
     }
 
@@ -209,16 +202,16 @@ Camera.prototype.draw2DMap = function(gameContext) {
     const startY = Math.floor(this.viewportY / Camera.TILE_HEIGHT);
     const endX = Math.floor((this.viewportX + this.getViewportWidth()) / Camera.TILE_WIDTH) + offsetX;
     const endY = Math.floor((this.viewportY + this.getViewportHeight()) / Camera.TILE_HEIGHT) + offsetY;
-    const clampedStartX = clampValue(startX, gameMap.width - 1, 0);
-    const clampedStartY = clampValue(startY, gameMap.height - 1, 0);
-    const clampedEndX = clampValue(endX, gameMap.width - 1, 0);
-    const clampedEndY = clampValue(endY, gameMap.height - 1, 0);
+    const clampedStartX = clampValue(startX, activeMap.width - 1, 0);
+    const clampedStartY = clampValue(startY, activeMap.height - 1, 0);
+    const clampedEndX = clampValue(endX, activeMap.width - 1, 0);
+    const clampedEndY = clampValue(endY, activeMap.height - 1, 0);
 
     this.display.context.save();
     this.display.context.scale(Camera.SCALE, Camera.SCALE);
 
-    for(const layerID of gameMap.backgroundLayers) {
-        this.drawTileLayer(gameContext, gameMap, layerID, clampedStartX, clampedStartY, clampedEndX, clampedEndY);
+    for(const layerID of activeMap.backgroundLayers) {
+        this.drawTileLayer(gameContext, activeMap, layerID, clampedStartX, clampedStartY, clampedEndX, clampedEndY);
     }
     
     for(const layerID of spriteManager.drawOrder) {
@@ -226,16 +219,17 @@ Camera.prototype.draw2DMap = function(gameContext) {
         this.drawSpriteLayer(gameContext, layer);
     }
 
-    for(const layerID of gameMap.foregroundLayers) {
-        this.drawTileLayer(gameContext, gameMap, layerID, clampedStartX, clampedStartY, clampedEndX, clampedEndY);
+    for(const layerID of activeMap.foregroundLayers) {
+        this.drawTileLayer(gameContext, activeMap, layerID, clampedStartX, clampedStartY, clampedEndX, clampedEndY);
     }
 
     if(Camera.DEBUG) {
-        this.drawTypeLayer(gameContext, gameMap, clampedStartX, clampedStartY, clampedEndX, clampedEndY);
-        this.draw2DMapOutlines(gameMap.width, gameMap.height);
+        this.drawTypeLayer(gameContext, activeMap, clampedStartX, clampedStartY, clampedEndX, clampedEndY);
+        this.draw2DMapOutlines(activeMap.width, activeMap.height);
     }
 
     this.display.context.restore();
+    this.events.emit(Camera.EVENT_MAP_RENDER_COMPLETE, this);
 }
 
 Camera.prototype.drawUI = function(gameContext) {
@@ -244,18 +238,18 @@ Camera.prototype.drawUI = function(gameContext) {
     const deltaTime = timer.getDeltaTime();
 
     for(const elementID of uiManager.drawableElements) {
-        const element = uiManager.getElement(elementID);
+        const element = uiManager.getElementUnique(elementID);
         
         element.update(realTime, deltaTime);
         element.draw(this.display.context, 0, 0, 0, 0);
 
         if(Camera.DEBUG) {
-            element.debug(this.display.context, 0, 0, 0, 0)
+            element.debug(this.display.context, 0, 0, 0, 0);
         }
     }
 }
 
-Camera.prototype.calculateFPS = function(deltaTime) {
+Camera.prototype.updateFPS = function(deltaTime) {
     const fps = 1 / deltaTime;
     const smoothedFPS = (fps - this.smoothedFPS) * (this.smoothingFactor);
 
@@ -269,18 +263,13 @@ Camera.prototype.update = function(gameContext) {
 
     this.display.clear();
     this.followViewport(deltaTime);
-    this.calculateFPS(deltaTime);
+    this.updateFPS(deltaTime);
     this.draw2DMap(gameContext);
-    this.events.emit(Camera.EVENT_MAP_RENDER_COMPLETE, this);
     this.drawUI(gameContext);
 }
 
-Camera.prototype.addTarget = function(targetX, targetY, factor) {
+Camera.prototype.addTarget = function(targetX = 0, targetY = 0, factor = 0) {
     if(!this.isFollowing) {
-        return false;
-    }
-
-    if(targetX === undefined || targetY === undefined || factor === undefined) {
         return false;
     }
 
@@ -389,7 +378,12 @@ Camera.prototype.loadViewport = function(mapWidth, mapHeight) {
 
     if(width <= viewportWidth) {
         this.viewportX_limit = 0;
-        this.centerOffsetX = (viewportWidth - width) / 2;
+
+        if(this.isBound) {
+            this.centerOffsetX = (viewportWidth - width) / 2;
+        } else {
+            this.centerOffsetX = 0;
+        }
     } else {
         this.viewportX_limit = width - viewportWidth;
         this.centerOffsetX = 0;
@@ -397,7 +391,12 @@ Camera.prototype.loadViewport = function(mapWidth, mapHeight) {
 
     if(height <= viewportHeight) {
         this.viewportY_limit = 0;
-        this.centerOffsetY = (viewportHeight - height) / 2;
+        
+        if(this.isBound) {
+            this.centerOffsetY = (viewportHeight - height) / 2;
+        } else {
+            this.centerOffsetY = 0;
+        }
     } else {
         this.viewportY_limit = height - viewportHeight;
         this.centerOffsetY = 0;  

@@ -12,9 +12,9 @@ import { Timer } from "./source/timer.js";
 import { ActionQueue } from "./source/action/actionQueue.js";
 import { UIElement } from "./source/ui/uiElement.js";
 import { Entity } from "./source/entity/entity.js";
-import { response } from "./source/response.js";
 import { MapEditor } from "./source/map/mapEditor.js";
 import { GAME_EVENTS } from "./enums.js";
+import { Logger } from "./source/logger.js";
 
 export const GameContext = function() {
     this.id = "GAME_CONTEXT";
@@ -50,36 +50,33 @@ export const GameContext = function() {
     }
 
     this.initializeController();
-    this.initializeEvents();
+    this.initializeActionQueue();
 }
 
 GameContext.prototype.loadResources = function(resources) {
-    const responses = [
-        this.uiManager.loadFontTypes(resources.fonts),
-        this.uiManager.loadIconTypes(resources.icons),
-        this.uiManager.loadUserInterfaceTypes(resources.uiConfig),
-        this.client.musicPlayer.loadMusicTypes(resources.music),
-        this.entityManager.loadEntityTypes(resources.entities),
-        this.entityManager.loadTraitTypes(resources.traits),
-        this.mapLoader.loadMapTypes(resources.maps),
-        this.mapLoader.loadConfig(resources.config.mapLoader),
-        this.mapEditor.loadConfig(resources.config.mapEditor),
-        this.mapEditor.loadTileSetKeys(resources.tiles),
-        this.spriteManager.loadTileSprites(resources.tiles),
-        this.spriteManager.loadSpriteTypes(resources.sprites),
-        this.client.soundPlayer.loadSoundTypes(resources.sounds),
-        this.client.socket.loadConfig(resources.config.socket)
-    ];
-
-    this.config = resources.gameConfig;
-    this.settings = resources.config;
-
-    console.log(responses);
+    this.uiManager.loadFontTypes(resources.fonts),
+    this.uiManager.loadIconTypes(resources.icons),
+    this.uiManager.loadUserInterfaceTypes(resources.uiConfig),
+    this.client.musicPlayer.loadMusicTypes(resources.music),
+    this.entityManager.loadEntityTypes(resources.entities),
+    this.entityManager.loadTraitTypes(resources.traits),
+    this.mapLoader.loadMapTypes(resources.maps),
+    this.mapLoader.loadConfig(resources.settings.mapLoader),
+    this.mapEditor.loadConfig(resources.settings.mapEditor),
+    this.mapEditor.loadTileSetKeys(resources.tiles),
+    this.spriteManager.loadTileSprites(resources.tiles),
+    this.spriteManager.loadSpriteTypes(resources.sprites),
+    this.client.soundPlayer.loadSoundTypes(resources.sounds),
+    this.client.socket.loadConfig(resources.config.socket)
+    this.config = resources.config;
+    this.settings = resources.settings;
 }
 
-GameContext.prototype.initializeEvents = function() {
+GameContext.prototype.initializeActionQueue = function() {
     this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_PROCESS, this.id, (request) => console.log(request));
+
     this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_INVALID, this.id, (request) => console.log(request, "IS INVALID"));
+
     this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_VALID, this.id, (request) => {
         if(this.client.isOnline()) {
             console.log("TO SERVER!");
@@ -127,35 +124,37 @@ GameContext.prototype.exitGame = function() {
 }
 
 GameContext.prototype.loadMap = function(mapID) {
-    const gameMap = this.mapLoader.getLoadedMap(mapID);
+    const nextMap = this.mapLoader.getLoadedMap(mapID);
     const activeMapID = this.mapLoader.getActiveMapID();
 
-    if(!gameMap) {
-        return response(false, "Map could not be loaded!", "GameContext.prototype.loadMap", null, {mapID});
+    if(!nextMap) {
+        Logger.log(false, "Map could not be loaded!", "GameContext.prototype.loadMap", {mapID});
+        return null;
     }
 
     if(activeMapID) {
         if(activeMapID === mapID) {
-            return response(false, "Map is already loaded!", "GameContext.prototype.loadMap", null, {mapID});
+            Logger.log(false, "Map is already loaded!", "GameContext.prototype.loadMap", {mapID});
+            return null;
         }
         
         this.mapLoader.unloadMap(activeMapID);
     }
 
     this.mapLoader.setActiveMap(mapID);
-    this.renderer.loadViewport(gameMap.width, gameMap.height);
+    this.renderer.loadViewport(nextMap.width, nextMap.height);
     this.actionQueue.workStart();
 
-    if(gameMap.music) {
-        this.client.musicPlayer.loadTrack(gameMap.music);
-        this.client.musicPlayer.swapTrack(gameMap.music);
+    if(nextMap.music) {
+        this.client.musicPlayer.loadTrack(nextMap.music);
+        this.client.musicPlayer.swapTrack(nextMap.music);
     }
     
     if(!this.mapLoader.mapCache[mapID]) {
         this.mapLoader.mapCache[mapID] = 1;
     }
     
-    return response(true, "Map is loaded!", "GameContext.prototype.loadMap", null, {mapID});
+    return nextMap;
 }
 
 GameContext.prototype.getConfig = function(key) {

@@ -58,7 +58,18 @@ UIManager.prototype.loadIconTypes = function(icons) {
     return response(true, "IconTypes have been loaded!", "UIManager.prototype.loadIconTypes", null, null);
 }
 
-UIManager.prototype.getElement = function(uniqueID) {
+UIManager.prototype.getElement = function(interfaceID, elementID) {
+    const uniqueID = this.generateUniqueID(interfaceID, elementID);
+    const element = this.elements.get(uniqueID);
+
+    if(!element) {
+        return null;
+    }
+
+    return element;
+}
+
+UIManager.prototype.getElementUnique = function(uniqueID) {
     const element = this.elements.get(uniqueID);
 
     if(!element) {
@@ -104,6 +115,11 @@ UIManager.prototype.update = function(gameContext) {
 
     for(const elementID of this.elementsToUpdate) {
         const element = this.elements.get(elementID);
+
+        if(!element) {
+            continue;
+        }
+        
         const completedGoals = [];
 
         for(const [goalID, callback] of element.goals) {

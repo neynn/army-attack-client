@@ -1,20 +1,19 @@
 import { DirectionComponent } from "../components/direction.js";
 import { SpriteComponent } from "../components/sprite.js";
 import { ENTITY_EVENTS } from "../enums.js";
-import { response } from "../source/response.js";
 
 export const MorphSystem = function() {}
 
 MorphSystem.updateSprite = function(entity, spriteTypeID) {
     if(!entity.config.sprites[spriteTypeID]) {
-        return response(false, "Sprite does not exist!", "MorphSystem.updateSprite", null, {spriteTypeID});
+        return false;
     }
 
     const spriteComponent = entity.getComponent(SpriteComponent);
     const spriteType = entity.config.sprites[spriteTypeID];
 
     if(spriteType === spriteComponent.spriteType) {
-        return response(false, "Sprite is the same!", "MorphSystem.updateSprite", null, {spriteTypeID});
+        return false;
     }
 
     spriteComponent.spriteType = spriteType;
@@ -40,7 +39,7 @@ MorphSystem.morphDirectional = function(entity, southTypeID, northTypeID) {
     const directionComponent = entity.getComponent(DirectionComponent);
 
     if(northTypeID === undefined && southTypeID === undefined) {
-        return response(false, "Parameter is undefined!", "MorphSystem.morphDirectional", null, {northTypeID, southTypeID});
+        return false;
     }
 
     if(directionComponent.directionX === DirectionComponent.DIRECTION_WEST) {
@@ -51,13 +50,13 @@ MorphSystem.morphDirectional = function(entity, southTypeID, northTypeID) {
 
     if(directionComponent.directionY === DirectionComponent.DIRECTION_NORTH) {
         if(!entity.config.sprites[northTypeID]) {
-            return response(false, "Sprite does not exist!", "MorphSystem.morphDirectional", null, {southTypeID, northTypeID});
+            return false;
         }
 
         spriteComponent.spriteType = entity.config.sprites[northTypeID];
     } else {
         if(!entity.config.sprites[southTypeID]) {
-            return response(false, "Sprite does not exist!", "MorphSystem.morphDirectional", null, {southTypeID, northTypeID});
+            return false;
         }
 
         spriteComponent.spriteType = entity.config.sprites[southTypeID];
