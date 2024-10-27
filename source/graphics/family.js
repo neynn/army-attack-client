@@ -35,7 +35,7 @@ Family.prototype.addChild = function(child) {
         return false;
     }
 
-    if(this.hasChild(child)) {
+    if(this.hasChild(child.id, child.name)) {
         return false;
     }
 
@@ -73,9 +73,9 @@ Family.prototype.onRemove = function() {
     return true;
 }
 
-Family.prototype.hasChild = function(member) {
+Family.prototype.hasChild = function(id, name) {
     for(const child of this.children) {
-        if(child.id === member.id || child.name !== null && child.name === member.name) {
+        if(child.id === id || child.name !== null && child.name === name) {
             return true;
         }
     }

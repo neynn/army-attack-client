@@ -1,3 +1,4 @@
+import { createAttackRequest } from "../../actions/attackAction.js";
 import { createMoveRequest } from "../../actions/moveAction.js";
 import { initializeController, initializeEntity, initializeTilemap } from "../../init/initializers.js";
 import { State } from "../../source/state/state.js";
@@ -51,8 +52,20 @@ StoryModeState.prototype.enter = async function(stateMachine) {
         "team": "1",
         "master": "neyn"
     });
+    const blueEliteInfantry = initializeEntity(gameContext, { 
+        "type": "blue_elite_infantry",
+        "tileX": 6,
+        "tileY": 5,
+        "team": "1",
+        "master": "neyn",
+        "components": {
+            "Move": {
+                "range": 15
+            }
+        }
+    });
     const battleTank = initializeEntity(gameContext, { 
-        "type": "blue_battletank",
+        "type": "blue_elite_battletank",
         "tileX": 0,
         "tileY": 1,
         "team": "1",
@@ -66,14 +79,15 @@ StoryModeState.prototype.enter = async function(stateMachine) {
                 maxHealth: 99
             },
             "Attack": {
-                damage: 99
+                damage: 4
             }
         }
     });
 
     actionQueue.addAction(createMoveRequest(battleTank.id, 7, 1));
-    //actionQueue.addAction(createMoveRequest(battleTank.id, 4, 4));
-    //actionQueue.addAction(createMoveRequest(battleTank.id, 0, 1));
+    actionQueue.addAction(createMoveRequest(battleTank.id, 3, 0));
+    actionQueue.addAction(createAttackRequest(redBattletank.id));
+    actionQueue.addAction(createAttackRequest(redBattletank.id));
 }
 
 StoryModeState.prototype.exit = function(stateMachine) {

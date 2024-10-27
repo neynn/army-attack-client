@@ -1,5 +1,6 @@
 import { ArmorComponent } from "../components/armor.js";
 import { AttackComponent } from "../components/attack.js";
+import { SpriteComponent } from "../components/sprite.js";
 import { DirectionSystem } from "./direction.js";
 import { MorphSystem } from "./morph.js";
 
@@ -31,15 +32,20 @@ FireSystem.getDamage = function(gameContext, target, attackers) {
 }
 
 FireSystem.startAttack = function(gameContext, entity, attackers) {
-    const { entityManager, client } = gameContext;
+    const { entityManager, client, spriteManager } = gameContext;
     const { soundPlayer } = client;
-    
+    const spriteComponent = entity.getComponent(SpriteComponent);
+
     for(const attackerID of attackers) {
         const attacker = entityManager.getEntity(attackerID);
-
+        
         DirectionSystem.lookAt(attacker, entity);
         MorphSystem.morphDirectional(attacker, "fire", "fire_ne");
         soundPlayer.playRandom(attacker.config.sounds.fire);
+        
+        spriteManager
+        .createChildSprite(spriteComponent.spriteID, attacker.config.sprites.weapon)
+        .setLooping(false);
     }
 
     MorphSystem.updateSprite(entity, "hit");

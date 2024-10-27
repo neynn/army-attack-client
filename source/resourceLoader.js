@@ -1,8 +1,10 @@
-export const ResourceLoader = function() {}
-
-ResourceLoader.DEFAULT_IMAGE_TYPE = ".png";
-ResourceLoader.DEFAULT_AUDIO_TYPE = ".mp3";
-ResourceLoader.FILE_SERVER_ADDRESS = "https://neynn.github.io/Army_Attack_Client/";
+export const ResourceLoader = {
+    SIZE_MB: 1048576,
+    BIG_IMAGE: 2048 * 2048 * 4,
+    DEFAULT_IMAGE_TYPE: ".png",
+    DEFAULT_AUDIO_TYPE: ".mp3",
+    FILE_SERVER_ADDRESS: "https://neynn.github.io/army-attack-client"
+}
 
 ResourceLoader.getPath = function(directory, source) {
     const path = `${directory}/${source}`;

@@ -13,10 +13,8 @@ export const Drawable = function(DEBUG_NAME) {
     this.position = new Vec2(0, 0);
     this.bounds = new Rectangle(0, 0, 0, 0);
     this.events = new EventEmitter();
-    this.events.listen(Drawable.EVENT_FAMILY_CLOSED);
 }
 
-Drawable.EVENT_FAMILY_CLOSED = "Drawable.EVENT_FAMILY_CLOSED";
 Drawable.DEFAULT_FAMILY_NAME = "default";
 
 Drawable.prototype.onUpdate = function(timestamp, deltaTime) {
@@ -105,6 +103,14 @@ Drawable.prototype.setPosition = function(positionX, positionY) {
     return true;
 }
 
+Drawable.prototype.hasChild = function(name) {
+    if(!this.family) {
+        return false;
+    }
+
+    return this.family.hasChild(null, name);
+}
+
 Drawable.prototype.getChild = function(name) {
     if(!this.family) {
         return null;
@@ -154,7 +160,6 @@ Drawable.prototype.closeFamily = function() {
 
     this.family.onRemove();
     this.family = null;
-    this.events.emit(Drawable.EVENT_FAMILY_CLOSED);
 
     return true;
 }

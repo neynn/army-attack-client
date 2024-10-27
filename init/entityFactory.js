@@ -20,11 +20,9 @@ const createUnitStatCard = function(gameContext, entity, sprite) {
 
     const teamTypes = gameContext.getConfig("teamTypes");
     const starCardType = teamTypes[entity.getComponent(TeamComponent).teamID].sprites.statCard;
-    const statCard = spriteManager.createSprite(starCardType, null, ImageSheet.DEFAULT_ANIMATION_ID);
+    const statCard = spriteManager.createChildSprite(sprite.id, starCardType, "STATS");
     const healthText = new SimpleText();
     const damageText = new SimpleText();
-
-    spriteManager.addChildSprite(sprite.id, statCard.id, "STATS");
 
     healthText.style.setFontType("ArmyAttack Arial");
     healthText.style.setAlignment(TextStyle.TEXT_ALIGN_RIGHT);

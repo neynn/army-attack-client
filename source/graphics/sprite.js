@@ -14,8 +14,8 @@ export const Sprite = function(id, DEBUG_NAME) {
     this.currentFrame = 0;
     this.loopCount = 0;
     this.loopLimit = 0;
+    this.isLooping = true;
     this.isStatic = false;
-    this.isRepeating = true;
     this.isFlipped = false;
 
     this.events.listen(Sprite.FINISHED);
@@ -144,11 +144,11 @@ Sprite.prototype.onDraw = function(context, viewportX, viewportY, localX, localY
     });
 }
 
-Sprite.prototype.setLoop = function(isLooping) {
-    this.isRepeating = isLooping;
+Sprite.prototype.setLooping = function(isLooping = false) {
+    this.isLooping = isLooping;
 }
 
-Sprite.prototype.setLoopLimit = function(loopLimit) {
+Sprite.prototype.setLoopLimit = function(loopLimit = 0) {
     this.loopLimit = loopLimit;
 }
 
@@ -200,7 +200,7 @@ Sprite.prototype.updateFrame = function(passedFloatFrames = 0) {
         this.events.emit(Sprite.LOOP_COMPLETE, this, skippedLoops);
     }
 
-    if(this.loopCount > this.loopLimit && !this.isRepeating) {
+    if(this.loopCount > this.loopLimit && !this.isLooping) {
         this.setVisible(false);
         this.setStatic(true);
         this.events.emit(Sprite.FINISHED, this);

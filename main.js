@@ -7,7 +7,7 @@ const gameContext = new GameContext();
 
 //packerToJSON("clouds", await ResourceLoader.loadJSON("./clouds.json"));
 
-//TODO add mb, gb to resource loader!
+//instead of returning, use action.end();
 //let the loader keep track of files loaded!
 
 ResourceLoader.loadConfigFiles("assets", "files.json").then(async files => {
@@ -17,12 +17,11 @@ ResourceLoader.loadConfigFiles("assets", "files.json").then(async files => {
   await ResourceLoader.loadImages(files.sprites, ((key, image, config) => {
     const imageSheet = new ImageSheet(image, config);
     imageSheet.defineDefaultAnimation();
-    const BIG = 2048 * 2048 * 4;
-    const MB = 1048576;
-    const imageSize = image.width * image.height * 4;
-    const imageSizeMB = imageSize / MB;
 
-    if(imageSize >= BIG) {
+    const imageSize = image.width * image.height * 4;
+    const imageSizeMB = imageSize / ResourceLoader.SIZE_MB;
+
+    if(imageSize >= ResourceLoader.BIG_IMAGE) {
       totalMegabytesLargeFiles += imageSizeMB;
       console.log(key, imageSizeMB);
     }

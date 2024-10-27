@@ -1,5 +1,6 @@
 import { EventEmitter } from "../events/eventEmitter.js";
 import { IDGenerator } from "../idGenerator.js";
+import { Logger } from "../logger.js";
 import { response } from "../response.js";
 import { ImageSheet } from "./imageSheet.js";
 import { Sprite } from "./sprite.js";
@@ -114,8 +115,8 @@ SpriteManager.prototype.workEnd = function() {
     this.sprites.clear();
     this.IDgenerator.reset();
 
-    for(const id in this.layers) {
-        this.layers[id] = [];
+    for(const layerID in this.layers) {
+        this.layers[layerID] = [];
     }
 }
 
@@ -157,12 +158,13 @@ SpriteManager.prototype.createSprite = function(typeID, layerID, animationID) {
     return sprite;
 }
 
-//TODO listen to drawable.event family close and blablabla remove children if the sprite was not in layer null.
 SpriteManager.prototype.removeSprite = function(spriteID) {
     const sprite = this.sprites.get(spriteID);
 
     if(!sprite) {
-        return response(false, "Sprite does not exist!", "SpriteManager.prototype.removeSprite", null, {spriteID});
+        Logger.log(false, "Sprite does not exist!", "SpriteManager.prototype.removeSprite", {spriteID});
+
+        return false;
     }
     
     const references = sprite.getAllChildrenReferences();
@@ -179,7 +181,7 @@ SpriteManager.prototype.removeSprite = function(spriteID) {
 
     this.sprites.delete(sprite.id);
 
-    return response(true, "Sprite has been removed!", "SpriteManager.prototype.removeSprite", null, {spriteID});
+    return true;
 }
 
 SpriteManager.prototype.getSprite = function(spriteID) {
@@ -203,64 +205,85 @@ SpriteManager.prototype.addSpriteToDrawable = function(drawable, childName, type
         drawable.openFamily();
     }
 
-    const isSuccess = drawable.addChild(sprite, childName);
-
-    return isSuccess;
+    return drawable.addChild(sprite, childName);
 }
 
-SpriteManager.prototype.addChildSprite = function(parentID, childID, customChildID) {
+SpriteManager.prototype.addChildSprite = function(parentID, childID, childName = Symbol("AUTO")) {
     const parent = this.sprites.get(parentID);
 
     if(!parent) {
-        return response(false, "Sprite does not exist!", "SpriteManager.prototype.addChildSprite", null, {parentID, childID, customChildID});
+        Logger.log(false, "Sprite does not exist!", "SpriteManager.prototype.addChildSprite", {parentID, childID, childName});
+
+        return false;
     }
 
     const child = this.sprites.get(childID);
 
     if(!child) {
-        return response(false, "Sprite does not exist!", "SpriteManager.prototype.addChildSprite", null, {parentID, childID, customChildID});
+        Logger.log(false, "Sprite does not exist!", "SpriteManager.prototype.addChildSprite", {parentID, childID, childName});
+
+        return false;
     }
 
     parent.openFamily(parent.typeID);
-    parent.addChild(child, customChildID);
 
-    return response(true, "Sprite has been added to parent!", "SpriteManager.prototype.addChildSprite", null, {parentID, childID, customChildID});
+    if(parent.hasChild(childName)) {
+        Logger.log(false, "Child already exists!", "SpriteManager.prototype.addChildSprite", {parentID, childID, childName});
+
+        return false;
+    }
+
+    parent.addChild(child, childName);
+
+    return true;
 }
 
-SpriteManager.prototype.createChildSprite = function(spriteID, childTypeID, customChildID) {
+SpriteManager.prototype.createChildSprite = function(spriteID, childTypeID, childName = Symbol("AUTO")) {
     const parent = this.sprites.get(spriteID);
 
     if(!parent) {
-        response(false, "Sprite does not exist!", "SpriteManager.prototype.createChildSprite", null, {spriteID, childTypeID, customChildID});
+        Logger.log(false, "Sprite does not exist!", "SpriteManager.prototype.createChildSprite", {spriteID, childTypeID, childName});
+
+        return null;
+    }
+
+    parent.openFamily(parent.typeID);
+
+    if(parent.hasChild(childName)) {
+        Logger.log(false, "Child already exists!", "SpriteManager.prototype.createChildSprite", {spriteID, childTypeID, childName})
+
         return null;
     }
 
     const childSprite = this.createSprite(childTypeID, null);
 
-    parent.openFamily(parent.typeID);
-    parent.addChild(childSprite, customChildID);
+    parent.addChild(childSprite, childName);
 
     return childSprite;
 }
 
-SpriteManager.prototype.removeChildSprite = function(parentID, customChildID) {
+SpriteManager.prototype.removeChildSprite = function(parentID, childName) {
     const parent = this.sprites.get(parentID);
 
     if(!parent) {
-        return response(false, "Sprite does not exist!", "SpriteManager.prototype.removeChildSprite", null, {parentID, customChildID});
+        Logger.log(false, "Sprite does not exist!", "SpriteManager.prototype.removeChildSprite", {parentID, childName});
+        
+        return false;
     }
 
-    const child = parent.getChild(customChildID);
+    const child = parent.getChild(childName);
 
     if(!child) {
-        return response(false, "Child does not exist!", "SpriteManager.prototype.removeChildSprite", null, {parentID, customChildID});
+        Logger.log(false, "Child does not exist!", "SpriteManager.prototype.removeChildSprite", {parentID, childName});
+
+        return false;
     }
 
     const reference = child.getReference();
 
     this.removeSprite(reference.id);
     
-    return response(true, "Sprite has been removed!", "SpriteManager.prototype.removeChildSprite", null, {parentID, customChildID});
+    return true;
 }
 
 SpriteManager.prototype.addToLayer = function(layerID, sprite) {

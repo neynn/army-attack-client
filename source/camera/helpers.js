@@ -1,15 +1,12 @@
 import { Camera } from "./camera.js";
 
 export const getViewportTile = function(positionX, positionY, viewportX, viewportY) {
-	const renderWidth = Camera.TILE_WIDTH;
-	const renderHeight = Camera.TILE_HEIGHT;
-
-	const tileX = Math.floor((positionX / Camera.SCALE + viewportX) / renderWidth);
-	const tileY = Math.floor((positionY / Camera.SCALE + viewportY) / renderHeight);
+	const tileX = Math.floor((positionX / Camera.SCALE + viewportX) / Camera.TILE_WIDTH);
+	const tileY = Math.floor((positionY / Camera.SCALE + viewportY) / Camera.TILE_HEIGHT);
 	
 	return {
-	"x": tileX,
-	"y": tileY
+		"x": tileX,
+		"y": tileY
 	}
 }
 
@@ -31,33 +28,27 @@ export const tileToPosition_center = function(tileX, tileY) {
 	const positionY = tileY * renderHeight + renderHeight / 2;
 
 	return {
-	"x": positionX,
-	"y": positionY
+		"x": positionX,
+		"y": positionY
 	}
 }
 
 export const tileToPosition_corner = function(tileX, tileY) {
-	const renderWidth = Camera.TILE_WIDTH;
-	const renderHeight = Camera.TILE_HEIGHT;
-
-	const positionX = tileX * renderWidth;
-	const positionY = tileY * renderHeight;
+	const positionX = tileX * Camera.TILE_WIDTH;
+	const positionY = tileY * Camera.TILE_HEIGHT;
 
 	return {
-	"x": positionX,
-	"y": positionY
+		"x": positionX,
+		"y": positionY
 	}
 }
 
 export const positionToTile = function(positionX, positionY) {
-	const renderWidth = Camera.TILE_WIDTH;
-	const renderHeight = Camera.TILE_HEIGHT;
-
-	const tileX = Math.trunc(positionX / renderWidth);
-	const tileY = Math.trunc(positionY / renderHeight);
+	const tileX = Math.trunc(positionX / Camera.TILE_WIDTH);
+	const tileY = Math.trunc(positionY / Camera.TILE_HEIGHT);
 
 	return {
-	"x": tileX,
-	"y": tileY 
+		"x": tileX,
+		"y": tileY 
 	}
 }
