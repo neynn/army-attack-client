@@ -54,28 +54,33 @@ export const GameContext = function() {
 }
 
 GameContext.prototype.loadResources = function(resources) {
-    this.uiManager.loadFontTypes(resources.fonts),
-    this.uiManager.loadIconTypes(resources.icons),
-    this.uiManager.loadUserInterfaceTypes(resources.uiConfig),
-    this.client.musicPlayer.loadMusicTypes(resources.music),
-    this.entityManager.loadEntityTypes(resources.entities),
-    this.entityManager.loadTraitTypes(resources.traits),
-    this.mapLoader.loadMapTypes(resources.maps),
-    this.mapLoader.loadConfig(resources.settings.mapLoader),
-    this.mapEditor.loadConfig(resources.settings.mapEditor),
-    this.mapEditor.loadTileSetKeys(resources.tiles),
-    this.spriteManager.loadTileSprites(resources.tiles),
-    this.spriteManager.loadSpriteTypes(resources.sprites),
-    this.client.soundPlayer.loadSoundTypes(resources.sounds),
-    this.client.socket.loadConfig(resources.config.socket)
+    this.uiManager.loadFontTypes(resources.fonts);
+    this.uiManager.loadIconTypes(resources.icons);
+    this.uiManager.loadUserInterfaceTypes(resources.uiConfig);
+    this.client.musicPlayer.loadMusicTypes(resources.music);
+    this.entityManager.loadEntityTypes(resources.entities);
+    this.entityManager.loadTraitTypes(resources.traits);
+    this.mapLoader.loadMapTypes(resources.maps);
+    this.mapLoader.loadConfig(resources.settings.mapLoader);
+    this.mapEditor.loadConfig(resources.settings.mapEditor);
+    this.mapEditor.loadTileSetKeys(resources.tiles);
+    this.spriteManager.loadTileSprites(resources.tiles);
+    this.spriteManager.loadSpriteTypes(resources.sprites);
+    this.client.soundPlayer.loadSoundTypes(resources.sounds);
+    this.client.socket.loadConfig(resources.settings.socket);
     this.config = resources.config;
     this.settings = resources.settings;
 }
 
 GameContext.prototype.initializeActionQueue = function() {
-    this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_PROCESS, this.id, (request) => console.log(request));
+    this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_PROCESS, this.id, (request) => {
+        console.log(request, "IS VALID");
+    });
 
-    this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_INVALID, this.id, (request) => console.log(request, "IS INVALID"));
+    this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_INVALID, this.id, (request) => {
+        this.client.soundPlayer.playSound("sound_error", 0.5);
+        console.log(request, "IS INVALID");
+    });
 
     this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_VALID, this.id, (request) => {
         if(this.client.isOnline()) {
@@ -123,18 +128,32 @@ GameContext.prototype.exitGame = function() {
     this.uiManager.workEnd();
 }
 
-GameContext.prototype.loadMap = function(mapID) {
+GameContext.prototype.loadMap = async function(mapID) {
+    const map2D =  await this.mapLoader.loadMap(mapID);
+
+    if(!map2D) {
+        return null;
+    }
+
+    const nextMap = this.initMap(mapID);
+    
+    return nextMap;
+}
+
+GameContext.prototype.initMap = function(mapID) {
     const nextMap = this.mapLoader.getLoadedMap(mapID);
     const activeMapID = this.mapLoader.getActiveMapID();
 
     if(!nextMap) {
         Logger.log(false, "Map could not be loaded!", "GameContext.prototype.loadMap", {mapID});
+
         return null;
     }
 
     if(activeMapID) {
         if(activeMapID === mapID) {
             Logger.log(false, "Map is already loaded!", "GameContext.prototype.loadMap", {mapID});
+
             return null;
         }
         

@@ -351,7 +351,7 @@ const initializeMapEditor = function(gameContext) {
         mapLoader.createEmptyMap(MAP_ID);
     });
 
-    uiManager.addClick(editorInterface.id, "BUTTON_LOAD", async () => {
+    uiManager.addClick(editorInterface.id, "BUTTON_LOAD", () => {
         const mapID = prompt("MAP-ID?");
 
         if(mapID.length === 0) {
@@ -360,7 +360,6 @@ const initializeMapEditor = function(gameContext) {
             EDITOR_MAP_ID = mapID;
         }
 
-        await mapLoader.loadMap(EDITOR_MAP_ID);
         gameContext.loadMap(EDITOR_MAP_ID);
     });
 

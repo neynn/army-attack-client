@@ -228,8 +228,6 @@ EntityManager.prototype.disableEntity = function(entityID) {
 
 EntityManager.prototype.getEntity = function(entityID) {
     if(!this.entities.has(entityID)) {
-        Logger.log(false, "Entity does not exist", "EntityManager.prototype.getEntity", {entityID});
-
         return null;
     }
 

@@ -1,3 +1,4 @@
+import { Logger } from "../logger.js";
 import { ResourceLoader } from "../resourceLoader.js";
 import { response } from "../response.js";
 import { Map2D } from "./map2D.js";
@@ -73,12 +74,15 @@ MapLoader.prototype.loadMap = function(mapID) {
 
     if(cachedMap) {
         this.loadedMaps.set(mapID, cachedMap);
-        return response(true, "Map was in cache!", "loadMap", null, {mapID});
+
+        return cachedMap;
     }
 
     return this.loadMapData(mapID).then(mapData => {
         if(!mapData) {
-            return response(false, "MapData could not be loaded!", "loadMap", null, {mapID});
+            Logger.log(false, "MapData could not be loaded!", "loadMap", {mapID});
+
+            return null;
         }
 
         const map2D = new Map2D(mapID, mapData);
@@ -86,7 +90,7 @@ MapLoader.prototype.loadMap = function(mapID) {
         this.loadedMaps.set(mapID, map2D);
         this.cachedMaps.set(mapID, map2D);
 
-        return response(true, "Map has been loaded!", "loadMap", null, {mapID});
+        return map2D;
     });
 }
 
@@ -161,7 +165,7 @@ MapLoader.prototype.createMapFromData = function(mapID, mapData) {
     this.loadedMaps.set(mapID, map2D);
     this.cachedMaps.set(mapID, map2D);
 
-    return response(true, "Map has been loaded!", "createMapFromData", null, {mapID});
+    return map2D;
 }
 
 MapLoader.prototype.createEmptyMap = function(mapID) {

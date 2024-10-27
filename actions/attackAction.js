@@ -1,5 +1,6 @@
 import { ACTION_TYPES } from "../enums.js";
 import { Action } from "../source/action/action.js";
+import { ControllerSystem } from "../systems/controller.js";
 import { FireSystem } from "../systems/fire.js";
 import { HealthSystem } from "../systems/health.js";
 import { TargetSystem } from "../systems/target.js";
@@ -23,6 +24,7 @@ AttackAction.prototype.onStart = function(gameContext, request) {
     const { entityID, attackers, damage } = request;
     const target = entityManager.getEntity(entityID);
 
+    ControllerSystem.clearAttackers(gameContext);
     FireSystem.startAttack(gameContext, target, attackers);
     HealthSystem.reduceHealth(target, damage);
 

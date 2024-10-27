@@ -44,7 +44,7 @@ VersusModeLobbyState.prototype.enter = function(stateMachine) {
             case GAME_EVENTS.INSTANCE_MAP: {
                 const { id, data } = payload;
                 mapLoader.createMapFromData(id, data);
-                gameContext.loadMap(id);
+                gameContext.initMap(id);
                 initializeTilemap(gameContext, id);
                 break;
             }
