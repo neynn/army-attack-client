@@ -4,4 +4,4 @@ Play a custom test here: https://neynn.github.io/army-attack-client/
 
 Note:
 The game is still in early development and is thus only a test of features.
-Loading times may be longer than expected all all assets get loaded in.
+Loading times may be longer than expected as all assets get loaded in at the start.
