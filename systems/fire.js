@@ -1,6 +1,8 @@
 import { ArmorComponent } from "../components/armor.js";
 import { AttackComponent } from "../components/attack.js";
+import { PositionComponent } from "../components/position.js";
 import { SpriteComponent } from "../components/sprite.js";
+import { SpriteManager } from "../source/graphics/spriteManager.js";
 import { DirectionSystem } from "./direction.js";
 import { MorphSystem } from "./morph.js";
 
@@ -31,15 +33,20 @@ FireSystem.getDamage = function(gameContext, target, attackers) {
     return totalDamage;
 }
 
-FireSystem.startAttack = function(gameContext, entity, attackers) {
+FireSystem.getFatal = function(gameContext, target, attackers) {
+    const { entityManager } = gameContext;
+    return false;
+}
+
+FireSystem.startAttack = function(gameContext, attackers, target) {
     const { entityManager, client, spriteManager } = gameContext;
     const { soundPlayer } = client;
-    const spriteComponent = entity.getComponent(SpriteComponent);
+    const spriteComponent = target.getComponent(SpriteComponent);
 
     for(const attackerID of attackers) {
         const attacker = entityManager.getEntity(attackerID);
         
-        DirectionSystem.lookAt(attacker, entity);
+        DirectionSystem.lookAt(attacker, target);
         MorphSystem.morphDirectional(attacker, "fire", "fire_ne");
         soundPlayer.playRandom(attacker.config.sounds.fire);
         
@@ -47,18 +54,25 @@ FireSystem.startAttack = function(gameContext, entity, attackers) {
         .createChildSprite(spriteComponent.spriteID, attacker.config.sprites.weapon)
         .setLooping(false);
     }
-
-    MorphSystem.updateSprite(entity, "hit");
 }
 
-FireSystem.endAttack = function(gameContext, entity, attackers) {
+FireSystem.endAttack = function(gameContext, attackers) {
     const { entityManager } = gameContext;
     
     for(const attackerID of attackers) {
         const attacker = entityManager.getEntity(attackerID);
-
         MorphSystem.updateSprite(attacker, "idle");
     }
+}
 
-    MorphSystem.updateSprite(entity, "idle");
+FireSystem.playDeath = function(gameContext, entity) {
+    const { spriteManager, client } = gameContext;
+    const { soundPlayer } = client;
+    const positionComponent = entity.getComponent(PositionComponent);
+    const deathAnimation = spriteManager.createSprite(entity.config.sprites.death, SpriteManager.LAYER_MIDDLE);
+
+    deathAnimation.setLooping(false);
+    deathAnimation.setPosition(positionComponent.positionX, positionComponent.positionY);
+
+    soundPlayer.playRandom(entity.config.sounds.death);
 }

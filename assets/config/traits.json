@@ -12,8 +12,9 @@
     "Cloak": { "id": "Cloak", "components": { "Move": { "isStealth": true, "isCloaked": true } }, "description": "If a unit can walk through enemy units." },
     "Avian": { "id": "Avian", "components": { "Move": { "isAvian": true } }, "description": "If a unit is flying. When flying, other units can go below it."},
  
-    "Elite": { "id": "Elite", "component": "EliteComponent", "data": null, "description": "If an entity has the elite status." },
-    "Reviveable": { "id": "Reviveable", "component": "ReviveableComponent", "data": { "assign": { "isReviveable": true } }, "description": "If an entity can be revived." },
+    "Elite": { "id": "Elite", "components": { "Revive": { "isReviveable": true, "isElite": true } }, "description": "If an entity has the elite status." },
+    "Reviveable": { "id": "Reviveable", "components": { "Revive": { "isReviveable": true } }, "description": "If an entity can be revived." },
+    
     "Coward": { "id": "Coward", "component": "CowardComponent", "data": null, "description": "Not implemented. See Pathfinder. Disallows tile conquering." },
     "Bulldoze": { "id": "Bulldoze", "description": "Used by enemy bulldozers to ignore the revive of the specified entityTypes.", "component": "IgnoreReviveComponent", "data": { "assign": { "ignoreRevive": ["Defense", "Building", "Unit"] } } },
     "IgnoreTargeting": { "id": "IgnoreTargeting", "component": "IgnoreTargetingComponent", "data": null, "description": "Not implemented. Allows a unit to not be targeted." },

@@ -2,6 +2,14 @@ export const Action = function() {}
 
 /**
  * 
+ * @returns {void} 
+ */
+Action.prototype.onClear = function() {
+
+}
+
+/**
+ * 
  * @param {*} gameContext 
  * @param {*} request 
  * @returns {void} 

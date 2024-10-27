@@ -9,11 +9,35 @@ HealthSystem.isAlive = function(entity) {
     return healthComponent.health !== 0;
 }
 
-HealthSystem.wouldDie = function(entity, damage) {
+HealthSystem.getRemainingHealth = function(entity, damage) {
     const healthComponent = entity.getComponent(HealthComponent);
     const remainingHealth = healthComponent.health - damage;
 
-    return remainingHealth <= 0;
+    if(remainingHealth < 0) {
+        return 0;
+    }
+
+    return remainingHealth;
+}
+
+HealthSystem.toMax = function(entity) {
+    const healthComponent = entity.getComponent(HealthComponent);
+    
+    healthComponent.health = healthComponent.maxHealth;
+
+    entity.events.emit(ENTITY_EVENTS.STAT_UPDATE);
+}
+
+HealthSystem.setHealth = function(entity, value) {
+    const healthComponent = entity.getComponent(HealthComponent);
+
+    if(value < 0) {
+        healthComponent.health = 0;
+    }  else {
+        healthComponent.health = value;
+    }
+
+    entity.events.emit(ENTITY_EVENTS.STAT_UPDATE);
 }
 
 HealthSystem.reduceHealth = function(entity, value) {

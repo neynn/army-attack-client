@@ -16,7 +16,7 @@
     "sound_enemy_action_alert_3": { "id": "sound_enemy_action_alert_3", "directory": "assets/sounds", "source": "UI_sounds/enemy_action_alert3.mp3", "allowStacking": true, "isLooping": false, "defaultVolume": 1 },
     "sound_enemy_action_alert4": { "id": "sound_enemy_action_alert4", "directory": "assets/sounds", "source": "UI_sounds/enemy_action_alert4.mp3", "allowStacking": true, "isLooping": false, "defaultVolume": 1 },
     "sound_energy_boost": { "id": "sound_energy_boost", "directory": "assets/sounds", "source": "UI_sounds/energy_boost.mp3", "allowStacking": true, "isLooping": false, "defaultVolume": 1 },
-    "sound_error": { "id": "sound_error", "directory": "assets/sounds", "source": "UI_sounds/error.mp3", "allowStacking": true, "isLooping": false, "defaultVolume": 1 },
+    "sound_error": { "id": "sound_error", "directory": "assets/sounds", "source": "UI_sounds/error.mp3", "allowStacking": false, "isLooping": false, "defaultVolume": 1 },
     "sound_goldbars_bought": { "id": "sound_goldbars_bought", "directory": "assets/sounds", "source": "UI_sounds/goldbars_bought.mp3", "allowStacking": true, "isLooping": false, "defaultVolume": 1 },
     "sound_item_bought": { "id": "sound_item_bought", "directory": "assets/sounds", "source": "UI_sounds/item_bought.mp3", "allowStacking": true, "isLooping": false, "defaultVolume": 1 },
     "sound_item_placed": { "id": "sound_item_placed", "directory": "assets/sounds", "source": "UI_sounds/item_placed.mp3", "allowStacking": true, "isLooping": false, "defaultVolume": 1 },

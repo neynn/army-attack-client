@@ -26,6 +26,8 @@ import { TeamComponent } from "../components/team.js";
 import { SubTypeComponent } from "../components/subType.js";
 import { AttackAction } from "../actions/attackAction.js";
 import { Camera } from "../source/camera/camera.js";
+import { ReviveComponent } from "../components/revive.js";
+import { ArmorComponent } from "../components/armor.js";
 
 export const initializeTilemap = function(gameContext, mapID) {
     const { mapLoader } = gameContext;
@@ -168,7 +170,8 @@ export const initializeGameContext = function(gameContext) {
 
     entityManager.setSaveableComponents({
         "Health": HealthComponent,
-        "Construction": ConstructionComponent
+        "Construction": ConstructionComponent,
+        "Revive": ReviveComponent
     });
 
     entityManager.setLoadableComponents({
@@ -176,7 +179,9 @@ export const initializeGameContext = function(gameContext) {
         "Attack": AttackComponent,
         "Construction": ConstructionComponent,
         "Move": MoveComponent,
-        "SubType": SubTypeComponent
+        "SubType": SubTypeComponent,
+        "Revive": ReviveComponent,
+        "Armor": ArmorComponent
     });
 
     states.setNextState(CONTEXT_STATES.MAIN_MENU);

@@ -32,6 +32,7 @@ export const GameContext = function() {
     this.actionQueue = new ActionQueue();
     this.events = new EventEmitter();
     this.states = new StateMachine(this);
+    this.systems = new Map();
 
     this.timer.inputFunction = () => {
         this.client.update(this);

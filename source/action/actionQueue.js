@@ -142,6 +142,7 @@ ActionQueue.prototype.update = function(gameContext) {
 
         if(isFinished) {
             actionType.onEnd(gameContext, request);
+            actionType.onClear();
             this.state = ActionQueue.IDLE;
             this.currentAction = null; // <-- Causes processRequests to immediately process a new action!
         }

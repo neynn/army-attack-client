@@ -63,6 +63,10 @@ ResourceLoader.loadConfigFiles("assets", "files.json").then(async files => {
 //added fireSystem
 //added healthSystem
 //added armorComponent
+//added reviveableComponent
+//added reviveable and elite traits
+
+//TODO: add action.clearState();
 
 //default move time; (96 * moveComponent.path.length) / 480;
 //sprite manager gets add icon / add sprite functions.

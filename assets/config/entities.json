@@ -237,7 +237,7 @@
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
         "stats": {
-            "story": { "health": 8, "damage": 3, "attackRange": 3, "moveRange": 2, "traits": ["Artillery"] }, 
+            "story": { "health": 8, "damage": 3, "attackRange": 3, "moveRange": 2, "traits": ["Artillery", "Elite"] }, 
             "versus": { "health": 8, "damage": 3, "attackRange": 3, "moveRange": 2, "traits": ["Artillery"] }
         },
         "sprites": {
@@ -266,7 +266,7 @@
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
         "stats": {
-            "story": { "health": 10, "damage": 4, "attackRange": 4, "moveRange": 2, "traits": ["Artillery"] }, 
+            "story": { "health": 10, "damage": 4, "attackRange": 4, "moveRange": 2, "traits": ["Artillery", "Elite"] }, 
             "versus": { "health": 10, "damage": 4, "attackRange": 4, "moveRange": 2, "traits": ["Artillery"] }
         },
         "sprites": {
@@ -295,7 +295,7 @@
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
         "stats": {
-            "story": { "health": 20, "damage": 3, "attackRange": 1, "moveRange": 4, "traits": ["Armor"] }, 
+            "story": { "health": 20, "damage": 3, "attackRange": 1, "moveRange": 4, "traits": ["Armor", "Elite"] }, 
             "versus": { "health": 20, "damage": 3, "attackRange": 1, "moveRange": 4, "traits": ["Armor"] }
         },
         "sprites": {
@@ -324,7 +324,7 @@
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
         "stats": {
-            "story": { "health": 25, "damage": 4, "attackRange": 1, "moveRange": 4, "traits": ["Armor"] }, 
+            "story": { "health": 25, "damage": 4, "attackRange": 1, "moveRange": 4, "traits": ["Armor", "Elite"] }, 
             "versus": { "health": 25, "damage": 4, "attackRange": 1, "moveRange": 4, "traits": ["Armor"] }
         },
         "sprites": {
@@ -353,7 +353,7 @@
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
         "stats": {
-            "story": { "health": 30, "damage": 10, "attackRange": 1, "moveRange": 2, "traits": ["Infantry"] }, 
+            "story": { "health": 30, "damage": 10, "attackRange": 1, "moveRange": 2, "traits": ["Infantry", "Elite"] }, 
             "versus": { "health": 30, "damage": 10, "attackRange": 1, "moveRange": 2, "traits": ["Infantry"] }
         },
         "sprites": {
@@ -382,7 +382,7 @@
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
         "stats": {
-            "story": { "health": 5, "damage": 2, "attackRange": 1, "moveRange": 5, "traits": ["Infantry"] }, 
+            "story": { "health": 5, "damage": 2, "attackRange": 1, "moveRange": 5, "traits": ["Infantry", "Elite"] }, 
             "versus": { "health": 5, "damage": 2, "attackRange": 1, "moveRange": 5, "traits": ["Infantry"] }
         },
         "sprites": {
@@ -411,7 +411,7 @@
         "dimX": 1, "dimY": 1, "dimZ": 1, 
         "passability": ["Land"],
         "stats": {
-            "story": { "health": 8, "damage": 3, "attackRange": 1, "moveRange": 5, "traits": ["Infantry"] }, 
+            "story": { "health": 8, "damage": 3, "attackRange": 1, "moveRange": 5, "traits": ["Infantry", "Elite"] }, 
             "versus": { "health": 8, "damage": 3, "attackRange": 1, "moveRange": 5, "traits": ["Infantry"] }
         },
         "sprites": {

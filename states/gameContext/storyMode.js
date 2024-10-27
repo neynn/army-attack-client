@@ -37,7 +37,7 @@ StoryModeState.prototype.enter = async function(stateMachine) {
         "master": "neyn"
     });
     const redBattletank = initializeEntity(gameContext, { 
-        "type": "red_battletank",
+        "type": "blue_elite_battery",
         "tileX": 4,
         "tileY": 1,
         "team": "0",
@@ -77,7 +77,7 @@ StoryModeState.prototype.enter = async function(stateMachine) {
                 maxHealth: 99
             },
             "Attack": {
-                damage: 4
+                damage: 3
             }
         }
     });

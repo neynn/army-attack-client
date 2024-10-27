@@ -3,13 +3,10 @@ import { Action } from "../source/action/action.js";
 import { ControllerSystem } from "../systems/controller.js";
 import { FireSystem } from "../systems/fire.js";
 import { HealthSystem } from "../systems/health.js";
+import { MorphSystem } from "../systems/morph.js";
+import { ReviveSystem } from "../systems/revive.js";
 import { TargetSystem } from "../systems/target.js";
 
-//TODO add nextAction field, that pushes the next action on the queue. that gets validated before being sent to the client/server.
-/**
- * Client-Side action.
- * timePassed is in seconds.
- */
 export const AttackAction = function() {
     Action.call(this);
     this.id = ACTION_TYPES.ATTACK;
@@ -19,27 +16,49 @@ export const AttackAction = function() {
 AttackAction.prototype = Object.create(Action.prototype);
 AttackAction.prototype.constructor = AttackAction;
 
-AttackAction.prototype.onStart = function(gameContext, request) {
-    const { entityManager } = gameContext;
-    const { entityID, attackers, damage } = request;
-    const target = entityManager.getEntity(entityID);
-
-    ControllerSystem.clearAttackers(gameContext);
-    FireSystem.startAttack(gameContext, target, attackers);
-    HealthSystem.reduceHealth(target, damage);
-
+AttackAction.prototype.onClear = function() {
     this.timePassed = 0;
 }
 
-AttackAction.prototype.onEnd = function(gameContext, request) {
+AttackAction.prototype.onStart = function(gameContext, request) {
     const { entityManager } = gameContext;
-    const { entityID, attackers, damage } = request;
+    const { entityID, attackers, damage, remainingHealth, isFatal } = request;
     const target = entityManager.getEntity(entityID);
 
-    FireSystem.endAttack(gameContext, target, attackers);
-    //Return to idle animation
-    //if request.isDead -> if NOT reviveable -> killDaHo!
-    this.timePassed = 0;
+    ControllerSystem.clearAttackers(gameContext);
+    FireSystem.startAttack(gameContext, attackers, target);
+    HealthSystem.setHealth(target, remainingHealth);
+
+    const isDead = !HealthSystem.isAlive(target);
+    const isReviveable = ReviveSystem.isReviveable(target);
+
+    if(isDead && isReviveable && !isFatal) {
+        ReviveSystem.downEntity(gameContext, target);
+    } else {
+        MorphSystem.updateSprite(target, "hit");
+    }
+}
+
+AttackAction.prototype.onEnd = function(gameContext, request) {
+    const { entityManager, spriteManager } = gameContext;
+    const { entityID, attackers, damage, remainingHealth, isFatal } = request;
+    const target = entityManager.getEntity(entityID);
+
+    FireSystem.endAttack(gameContext, attackers);
+
+    const isDead = !HealthSystem.isAlive(target);
+    const isReviveable = ReviveSystem.isReviveable(target);
+
+    if(isDead) {
+        if(!isReviveable || isFatal) {
+            FireSystem.playDeath(gameContext, target);
+            //TODO: Remove the entity from the game!
+            //TODO: Drop kill items. -> Use drop trait!
+        }
+    } else {
+        MorphSystem.updateSprite(target, "idle");
+        //TODO: Drop hit items. -> Use drop trait!
+    }
 }
 
 AttackAction.prototype.onUpdate = function(gameContext, request) {
@@ -50,11 +69,7 @@ AttackAction.prototype.onUpdate = function(gameContext, request) {
 
     this.timePassed += deltaTime;
 
-    if(this.timePassed >= timeRequired) {
-        return true;
-    }
-
-    return false;
+    return this.timePassed >= timeRequired;
 }
 
 AttackAction.prototype.validate = function(gameContext, request) {
@@ -78,12 +93,13 @@ AttackAction.prototype.validate = function(gameContext, request) {
         return false;
     }
 
-    request.attackers = attackers;
-    request.damage = damage;
+    const isFatal = FireSystem.getFatal(gameContext, targetEntity, attackers);
+    const remainingHealth = HealthSystem.getRemainingHealth(targetEntity, damage);
 
-    if(HealthSystem.wouldDie(targetEntity, damage)) {
-        request.isFatal = true;
-    }
+    request.attackers = attackers;
+    request.remainingHealth = remainingHealth;
+    request.damage = damage;
+    request.isFatal = isFatal;
 
     return true;
 }
@@ -92,8 +108,9 @@ export const createAttackRequest = function(entityID) {
     return {
         "type": ACTION_TYPES.ATTACK,
         "entityID": entityID,
-        "attackers": [], //list of attackerIDs
+        "attackers": [],
+        "remainingHealth": 0,
         "damage": 0,
-        "isFatal": false, //TODO rename
+        "isFatal": false
     }
 }
