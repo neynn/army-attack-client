@@ -220,6 +220,10 @@ Map2D.prototype.getTileEntity = function(tileX, tileY) {
     const index = tileY * this.width + tileX;
     const tile = this.tiles[index];
     
+    if(!tile) {
+        return null;
+    }
+    
     return tile.getFirstEntity();
 }
 

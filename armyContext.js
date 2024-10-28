@@ -44,11 +44,6 @@ ArmyContext.prototype.initializeContext = function() {
     this.states.addState(CONTEXT_STATES.VERSUS_MODE_LOBBY, new VersusModeLobbyState());
     this.states.addState(CONTEXT_STATES.VERSUS_MODE, new VersusModeState())
 
-    this.actionQueue.setMaxSize(20);
-    this.actionQueue.setMaxRequests(20);
-    this.actionQueue.registerAction(ACTION_TYPES.MOVE, new MoveAction());
-    this.actionQueue.registerAction(ACTION_TYPES.ATTACK, new AttackAction());
-
     this.renderer.events.subscribe(Camera.EVENT_VIEWPORT_LOAD, this.id, (width, height) => this.renderer.centerViewport(width / 2, height / 2));
 
     this.client.soundPlayer.loadAllSounds();
@@ -70,6 +65,33 @@ ArmyContext.prototype.initializeContext = function() {
     });
 
     this.states.setNextState(CONTEXT_STATES.MAIN_MENU);
+}
+
+ArmyContext.prototype.initializeActionQueue = function() {
+    this.actionQueue.setMaxSize(20);
+    this.actionQueue.setMaxRequests(20);
+    
+    this.actionQueue.registerAction(ACTION_TYPES.MOVE, new MoveAction());
+    this.actionQueue.registerAction(ACTION_TYPES.ATTACK, new AttackAction());
+
+    this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_PROCESS, this.id, (request) => {
+        console.log(request, "IS VALID");
+    });
+
+    this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_INVALID, this.id, (request) => {
+        this.client.soundPlayer.playSound("sound_error", 0.5);
+        console.log(request, "IS INVALID");
+    });
+
+    this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_VALID, this.id, (request) => {
+        if(this.client.isOnline()) {
+            console.log("TO SERVER!");
+            this.client.socket.messageRoom(GAME_EVENTS.ENTITY_ACTION, request);
+        } else {
+            console.log("TO CLIENT!");
+            this.actionQueue.queueAction(request);
+        }
+    });
 }
 
 ArmyContext.prototype.initializeController = function(config) {
@@ -170,27 +192,6 @@ ArmyContext.prototype.initializeTilemap = function(mapID) {
     });
 
     return true;
-}
-
-ArmyContext.prototype.initializeActionQueue = function() {
-    this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_PROCESS, this.id, (request) => {
-        console.log(request, "IS VALID");
-    });
-
-    this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_INVALID, this.id, (request) => {
-        this.client.soundPlayer.playSound("sound_error", 0.5);
-        console.log(request, "IS INVALID");
-    });
-
-    this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_VALID, this.id, (request) => {
-        if(this.client.isOnline()) {
-            console.log("TO SERVER!");
-            this.client.socket.messageRoom(GAME_EVENTS.ENTITY_ACTION, request);
-        } else {
-            console.log("TO CLIENT!");
-            this.actionQueue.queueAction(request);
-        }
-    });
 }
 
 ArmyContext.prototype.saveEntity = function(entityID) {

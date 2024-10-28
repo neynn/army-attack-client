@@ -15,7 +15,7 @@ import { SpriteComponent } from "../components/sprite.js";
 const EXAMPLE_SETUP = {"tileX": 0, "tileY": 0, "type": null, "team": null, "master": null, "components": {"Health": {"health": 5, "maxHealth": 20}}};
 const MODE_STAT_TYPE_ID = "story";
 
-const createUnitStatCard = function(gameContext, entity, sprite) {
+const createStatCard = function(gameContext, entity, sprite) {
     const { spriteManager } = gameContext;
 
     const teamTypes = gameContext.getConfig("teamTypes");
@@ -59,7 +59,7 @@ const createUnit = function(gameContext, entity, entitySprite, entitySetup, type
     entity.addComponent(attackComponent);
     entity.addComponent(moveComponent);
     
-    createUnitStatCard(gameContext, entity, entitySprite);
+    createStatCard(gameContext, entity, entitySprite);
 
     return entity;
 }
@@ -68,6 +68,8 @@ const createDefense = function(gameContext, entity, entitySprite, entitySetup, t
     const attackComponent = componentSetup.setupAttackComponent(typeConfig, typeConfig.stats[MODE_STAT_TYPE_ID]);
 
     entity.addComponent(attackComponent);
+
+    createStatCard(gameContext, entity, entitySprite);
 
     return entity;
 }

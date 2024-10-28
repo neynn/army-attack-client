@@ -61,7 +61,7 @@ MapLoader.prototype.loadMapData = function(mapID) {
 
     if(!mapType) {
         response(false, "MapType does not exist!", "loadMapData", null, {mapID});
-        return null;
+        return Promise.resolve(null);
     }
 
     const mapPath = ResourceLoader.getPath(mapType.directory, mapType.source);
@@ -75,7 +75,7 @@ MapLoader.prototype.loadMap = function(mapID) {
     if(cachedMap) {
         this.loadedMaps.set(mapID, cachedMap);
 
-        return cachedMap;
+        return Promise.resolve(cachedMap);
     }
 
     return this.loadMapData(mapID).then(mapData => {

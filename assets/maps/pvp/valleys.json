@@ -1,5 +1,5 @@
 {
-    "music": "null",
+    "music": "music_desertscorpion",
     "width": 11,
     "height": 11,
     "layerOpacity": { "ground": 1, "border": 1, "decoration": 1, "overlay": 1, "cloud": 0, "type": 1, "team": 1 },
