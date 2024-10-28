@@ -5,6 +5,7 @@ export const MoveComponent = function() {
     this.distance = 0;
     this.maxDistance = 96; //Also magic! (It's the tile size)
     this.passability = {};
+    this.isCoward = false;
     this.isStealth = false;
     this.isCloaked = false;
     this.isAvian = false;

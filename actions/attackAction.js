@@ -1,6 +1,7 @@
 import { ACTION_TYPES } from "../enums.js";
 import { Action } from "../source/action/action.js";
 import { ControllerSystem } from "../systems/controller.js";
+import { DeathSystem } from "../systems/death.js";
 import { FireSystem } from "../systems/fire.js";
 import { HealthSystem } from "../systems/health.js";
 import { MorphSystem } from "../systems/morph.js";
@@ -40,7 +41,7 @@ AttackAction.prototype.onStart = function(gameContext, request) {
 }
 
 AttackAction.prototype.onEnd = function(gameContext, request) {
-    const { entityManager, spriteManager } = gameContext;
+    const { entityManager } = gameContext;
     const { entityID, attackers, damage, remainingHealth, isFatal } = request;
     const target = entityManager.getEntity(entityID);
 
@@ -51,8 +52,8 @@ AttackAction.prototype.onEnd = function(gameContext, request) {
 
     if(isDead) {
         if(!isReviveable || isFatal) {
-            FireSystem.playDeath(gameContext, target);
-            //TODO: Remove the entity from the game!
+            DeathSystem.playDeathAnimation(gameContext, target);
+            DeathSystem.destroyEntity(gameContext, entityID);
             //TODO: Drop kill items. -> Use drop trait!
         }
     } else {

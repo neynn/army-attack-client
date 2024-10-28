@@ -1,4 +1,3 @@
-import { EventEmitter } from "../events/eventEmitter.js";
 import { IDGenerator } from "../idGenerator.js";
 import { Logger } from "../logger.js";
 import { response } from "../response.js";
@@ -7,12 +6,12 @@ import { Sprite } from "./sprite.js";
 
 export const SpriteManager = function() {
     this.id = "SPRITE_MANAGER";
+    this.timestamp = 0;
     this.tileSprites = {};
     this.spriteTypes = {};
     this.sprites = new Map();
     this.spriteReferences = new Map();
     this.IDgenerator = new IDGenerator();
-    this.events = new EventEmitter();
     this.layers = {
         [SpriteManager.LAYER_BOTTOM]: [],
         [SpriteManager.LAYER_MIDDLE]: [],
@@ -23,18 +22,14 @@ export const SpriteManager = function() {
         SpriteManager.LAYER_MIDDLE,
         SpriteManager.LAYER_TOP
     ];
-    this.events.listen(SpriteManager.EVENT_REQUEST_TIMESTAMP);
 }
 
-SpriteManager.EVENT_REQUEST_TIMESTAMP = "SpriteManager.EVENT_REQUEST_TIMESTAMP";
 SpriteManager.LAYER_BOTTOM = 0;
 SpriteManager.LAYER_MIDDLE = 1;
 SpriteManager.LAYER_TOP = 2;
 
-SpriteManager.prototype.update = function(gameContext) {
-    const { timer } = gameContext;
-    const realTime = timer.getRealTime();
-    
+SpriteManager.prototype.update = function(gameContext, realTime, deltaTime) {
+    this.timestamp = realTime;
     this.updateTileFrames(realTime);
     //TODO: Update random sprites! (like desert clouds, ect.)
 }
@@ -128,6 +123,7 @@ SpriteManager.prototype.createSprite = function(typeID, layerID, animationID) {
     const spriteID = this.IDgenerator.getID();
     const sprite = new Sprite(spriteID, typeID);
     
+    sprite.setLastCallTime(this.timestamp);
     sprite.events.subscribe(Sprite.FINISHED, this.id, (sprite) => this.removeSprite(sprite.id));
     sprite.events.subscribe(Sprite.REQUEST_FRAME, this.id, (sprite, onResponse) => {
         const {typeID, animationID, currentFrame} = sprite;
@@ -146,7 +142,6 @@ SpriteManager.prototype.createSprite = function(typeID, layerID, animationID) {
     });
 
     this.sprites.set(sprite.id, sprite);
-    this.events.emit(SpriteManager.EVENT_REQUEST_TIMESTAMP, (timestamp) => sprite.setLastCallTime(timestamp));
 
     if(layerID !== null) {
         this.addToLayer(layerID, sprite);

@@ -40,11 +40,11 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
     const entityEnemies = teamTypes[teamComponent.teamID].enemies;
 
     const nodeList = FloodFill.search(positionComponent.tileX, positionComponent.tileY, moveComponent.range, activeMap.width, activeMap.height, activeMap.tiles, (next, previous) => {
-        if(!moveComponent.passability[next.getPassability()]) {
+        if(!moveComponent.passability[next.passability]) {
             return false;
         }
         
-        if(!entityAllies[previous.getTeam()] && !moveComponent.isStealth/* || IS_COWARD*/) {
+        if(!entityAllies[previous.team] && !moveComponent.isStealth || moveComponent.isCoward) {
             return false;
         }
 

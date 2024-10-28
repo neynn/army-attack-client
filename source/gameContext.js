@@ -1,20 +1,19 @@
-import { Camera } from "./source/camera/camera.js";
-import { Client } from "./source/client/client.js";
-import { Cursor } from "./source/client/cursor.js";
-import { EntityManager } from "./source/entity/entityManager.js";
-import { EventEmitter } from "./source/events/eventEmitter.js";
-import { SpriteManager } from "./source/graphics/spriteManager.js";
-import { UIManager } from "./source/ui/uiManager.js";
-import { getViewportTile } from "./source/camera/helpers.js";
-import { MapLoader } from "./source/map/mapLoader.js";
-import { StateMachine } from "./source/state/stateMachine.js";
-import { Timer } from "./source/timer.js";
-import { ActionQueue } from "./source/action/actionQueue.js";
-import { UIElement } from "./source/ui/uiElement.js";
-import { Entity } from "./source/entity/entity.js";
-import { MapEditor } from "./source/map/mapEditor.js";
-import { GAME_EVENTS } from "./enums.js";
-import { Logger } from "./source/logger.js";
+import { Camera } from "./camera/camera.js";
+import { Client } from "./client/client.js";
+import { Cursor } from "./client/cursor.js";
+import { EntityManager } from "./entity/entityManager.js";
+import { EventEmitter } from "./events/eventEmitter.js";
+import { SpriteManager } from "./graphics/spriteManager.js";
+import { UIManager } from "./ui/uiManager.js";
+import { getViewportTile } from "./camera/helpers.js";
+import { MapLoader } from "./map/mapLoader.js";
+import { StateMachine } from "./state/stateMachine.js";
+import { Timer } from "./timer.js";
+import { ActionQueue } from "./action/actionQueue.js";
+import { UIElement } from "./ui/uiElement.js";
+import { Entity } from "./entity/entity.js";
+import { MapEditor } from "./map/mapEditor.js";
+import { Logger } from "./logger.js";
 
 export const GameContext = function() {
     this.id = "GAME_CONTEXT";
@@ -32,26 +31,58 @@ export const GameContext = function() {
     this.actionQueue = new ActionQueue();
     this.events = new EventEmitter();
     this.states = new StateMachine(this);
-    this.systems = new Map();
 
-    this.timer.inputFunction = () => {
+    this.timer.inputFunction = (realTime, deltaTime) => {
         this.client.update(this);
     }
 
-    this.timer.updateFunction = () => {
+    this.timer.updateFunction = (gameTime, fixedDeltaTime) => {
         this.controller.update(this);
         this.actionQueue.update(this);
         this.entityManager.update(this);
     }
 
-    this.timer.renderFunction = () => {
-        this.spriteManager.update(this);
+    this.timer.renderFunction = (realTime, deltaTime) => {
+        this.spriteManager.update(this, realTime, deltaTime);
         this.uiManager.update(this);
         this.renderer.update(this);
     }
+}
 
-    this.initializeController();
-    this.initializeActionQueue();
+GameContext.prototype.initializeActionQueue = function() {
+
+}
+
+GameContext.prototype.initializeController = function() {
+    
+}
+
+GameContext.prototype.initializeContext = function() {
+
+}
+
+GameContext.prototype.initializeInput = function() {
+    const { cursor } = this.client;
+
+    cursor.events.subscribe(Cursor.LEFT_MOUSE_DRAG, this.id, (deltaX, deltaY) => this.renderer.dragViewport(deltaX, deltaY));
+    
+    cursor.events.subscribe(Cursor.LEFT_MOUSE_CLICK, this.id, () => {
+        const clickedElements = this.uiManager.checkCollisions(cursor.position.x, cursor.position.y, cursor.radius);
+        const viewportTile = this.getViewportTile();
+
+        if(clickedElements.length === 0) {
+            if(!viewportTile) {
+                return;
+            }
+
+            this.controller.states.onEventEnter(this, viewportTile);
+            return;
+        }
+
+        for(const element of clickedElements) {
+            element.events.emit(UIElement.EVENT_CLICKED);
+        }
+    });
 }
 
 GameContext.prototype.loadResources = function(resources) {
@@ -71,54 +102,6 @@ GameContext.prototype.loadResources = function(resources) {
     this.client.socket.loadConfig(resources.settings.socket);
     this.config = resources.config;
     this.settings = resources.settings;
-}
-
-GameContext.prototype.initializeActionQueue = function() {
-    this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_PROCESS, this.id, (request) => {
-        console.log(request, "IS VALID");
-    });
-
-    this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_INVALID, this.id, (request) => {
-        this.client.soundPlayer.playSound("sound_error", 0.5);
-        console.log(request, "IS INVALID");
-    });
-
-    this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_VALID, this.id, (request) => {
-        if(this.client.isOnline()) {
-            console.log("TO SERVER!");
-            this.client.socket.messageRoom(GAME_EVENTS.ENTITY_ACTION, request);
-        } else {
-            console.log("TO CLIENT!");
-            this.actionQueue.queueAction(request);
-        }
-    });
-
-    this.spriteManager.events.subscribe(SpriteManager.EVENT_REQUEST_TIMESTAMP, this.id, (answer) => answer(this.timer.getRealTime()));
-}
-
-GameContext.prototype.initializeController = function() {
-    const { client, renderer, uiManager, controller } = this;
-    const { cursor } = client;
-
-    cursor.events.subscribe(Cursor.LEFT_MOUSE_DRAG, this.id, (deltaX, deltaY) => renderer.dragViewport(deltaX, deltaY));
-    
-    cursor.events.subscribe(Cursor.LEFT_MOUSE_CLICK, this.id, () => {
-        const clickedElements = uiManager.checkCollisions(cursor.position.x, cursor.position.y, cursor.radius);
-        const viewportTile = this.getViewportTile();
-
-        if(clickedElements.length === 0) {
-            if(!viewportTile) {
-                return;
-            }
-
-            controller.states.onEventEnter(this, viewportTile);
-            return;
-        }
-
-        for(const element of clickedElements) {
-            element.events.emit(UIElement.EVENT_CLICKED);
-        }
-    });
 }
 
 GameContext.prototype.exitGame = function() {

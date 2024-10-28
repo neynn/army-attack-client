@@ -57,15 +57,3 @@ Entity.prototype.getComponent = function(componentConstructor) {
 Entity.prototype.removeComponent = function(componentConstructor) {
     this.components.delete(componentConstructor);
 }
-
-Entity.prototype.assignData = function(assign, componentType) {
-    const component = this.getComponent(componentType);
-
-    for(const key in assign) {
-        if(component.hasOwnProperty(key)) {
-            component[key] = assign[key];
-        } else {
-            console.warn(`Property ${key} on component ${componentType} does not exist! Continuing...`);
-        }
-    }
-}

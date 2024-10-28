@@ -1,5 +1,4 @@
 import { CONTEXT_STATES, GAME_EVENTS } from "../../enums.js";
-import { initializeController, initializeEntity, initializeTilemap } from "../../init/initializers.js";
 import { ROOM_EVENTS } from "../../source/client/network/events.js";
 import { Socket } from "../../source/client/network/socket.js";
 import { State } from "../../source/state/state.js";
@@ -38,19 +37,19 @@ VersusModeLobbyState.prototype.enter = function(stateMachine) {
                 break;
             }
             case GAME_EVENTS.INSTANCE_CONTROLLER: {
-                initializeController(gameContext, payload);
+                gameContext.initializeController(payload);
                 break;
             }
             case GAME_EVENTS.INSTANCE_MAP: {
                 const { id, data } = payload;
                 mapLoader.createMapFromData(id, data);
                 gameContext.initMap(id);
-                initializeTilemap(gameContext, id);
+                gameContext.initializeTilemap(id);
                 break;
             }
             case GAME_EVENTS.INSTANCE_ENTITY: {
                 const { id, setup } = payload;
-                initializeEntity(gameContext, setup, id);
+                gameContext.initializeEntity(setup, id);
                 break;
             }
             case GAME_EVENTS.ENTITY_ACTION: {

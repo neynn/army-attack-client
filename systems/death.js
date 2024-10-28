@@ -1,8 +1,21 @@
 import { PositionComponent } from "../components/position.js";
 import { SizeComponent } from "../components/size.js";
 import { SpriteComponent } from "../components/sprite.js";
+import { SpriteManager } from "../source/graphics/spriteManager.js";
 
 export const DeathSystem = function() {}
+
+DeathSystem.playDeathAnimation = function(gameContext, entity) {
+    const { spriteManager, client } = gameContext;
+    const { soundPlayer } = client;
+    const positionComponent = entity.getComponent(PositionComponent);
+    const deathAnimation = spriteManager.createSprite(entity.config.sprites.death, SpriteManager.LAYER_MIDDLE);
+
+    deathAnimation.setLooping(false);
+    deathAnimation.setPosition(positionComponent.positionX, positionComponent.positionY);
+
+    soundPlayer.playRandom(entity.config.sounds.death);
+}
 
 DeathSystem.destroyEntity = function(gameContext, entityID) {
     const { entityManager, mapLoader, spriteManager } = gameContext;
@@ -12,16 +25,6 @@ DeathSystem.destroyEntity = function(gameContext, entityID) {
     if(!entity || !activeMap) {
         return false;
     }
-
-    const { config } = entity;
-    const { sprites } = config;
-
-    for(const spriteID in sprites) {
-        const spriteType = sprites[spriteID];
-        spriteManager.removeSpriteReference(spriteType)
-    }
-
-    //TODO: Children don't lose their reference!!! Real nice, how about details?
     
     const positionComponent = entity.getComponent(PositionComponent);
     const sizeComponent = entity.getComponent(SizeComponent);

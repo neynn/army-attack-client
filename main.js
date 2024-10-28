@@ -1,14 +1,10 @@
 import { ResourceLoader } from "./source/resourceLoader.js";
-import { GameContext } from "./gameContext.js";
 import { ImageSheet } from "./source/graphics/imageSheet.js";
-import { initializeGameContext } from "./init/initializers.js";
+import { ArmyContext } from "./armyContext.js";
 
-const gameContext = new GameContext();
+const gameContext = new ArmyContext();
 
 //packerToJSON("clouds", await ResourceLoader.loadJSON("./clouds.json"));
-
-//instead of returning, use action.end();
-//let the loader keep track of files loaded!
 
 ResourceLoader.loadConfigFiles("assets", "files.json").then(async files => {
   let totalMegabytes = 0;
@@ -46,28 +42,9 @@ ResourceLoader.loadConfigFiles("assets", "files.json").then(async files => {
   return files;
 }).then(async resources => {
   gameContext.loadResources(resources);
-  initializeGameContext(gameContext);
+  gameContext.initializeActionQueue();
+  gameContext.initializeInput();
+  gameContext.initializeContext();
   gameContext.timer.start();
   console.log(gameContext, resources);
 });
-
-
-//TODO: sprites do not get unparsed after their parent is deleted!
-//ADD: DRAWABLE.EVENT_PARENT_REMOVED and react to that.
-//controller system, hover
-
-//added attackAction.js
-//added action_type.attack
-//registered attackAction
-//added targetSystem
-//added fireSystem
-//added healthSystem
-//added armorComponent
-//added reviveableComponent
-//added reviveable and elite traits
-
-//TODO: add action.clearState();
-
-//default move time; (96 * moveComponent.path.length) / 480;
-//sprite manager gets add icon / add sprite functions.
-//export const log instead of response.

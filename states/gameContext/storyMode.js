@@ -1,6 +1,5 @@
 import { createAttackRequest } from "../../actions/attackAction.js";
 import { createMoveRequest } from "../../actions/moveAction.js";
-import { initializeController, initializeEntity, initializeTilemap } from "../../init/initializers.js";
 import { State } from "../../source/state/state.js";
 import { StateMachine } from "../../source/state/stateMachine.js";
 
@@ -26,31 +25,32 @@ StoryModeState.prototype.enter = async function(stateMachine) {
 
     uiManager.parseUI("STORY_MODE", gameContext);
     
-    initializeController(gameContext, { "team": "1", "master": "neyn" });
-    initializeTilemap(gameContext, MAP);
+    gameContext.initializeController({ "team": "1", "master": "neyn" });
 
-    const blueGuardtower = initializeEntity(gameContext, { 
+    gameContext.initializeTilemap(MAP);
+
+    const blueGuardtower = gameContext.initializeEntity({ 
         "type": "blue_guardtower",
         "tileX": 0,
         "tileY": 3,
         "team": "1",
         "master": "neyn"
     });
-    const redBattletank = initializeEntity(gameContext, { 
-        "type": "blue_elite_battery",
+    const redBattletank = gameContext.initializeEntity({ 
+        "type": "red_battletank",
         "tileX": 4,
         "tileY": 1,
         "team": "0",
         "master": null
     });
-    const blueCommando = initializeEntity(gameContext, { 
+    const blueCommando = gameContext.initializeEntity({ 
         "type": "blue_commando",
         "tileX": 1,
         "tileY": 3,
         "team": "1",
         "master": "neyn"
     });
-    const blueEliteInfantry = initializeEntity(gameContext, { 
+    const blueEliteInfantry = gameContext.initializeEntity({ 
         "type": "blue_elite_infantry",
         "tileX": 6,
         "tileY": 5,
@@ -62,7 +62,7 @@ StoryModeState.prototype.enter = async function(stateMachine) {
             }
         }
     });
-    const battleTank = initializeEntity(gameContext, { 
+    const battleTank = gameContext.initializeEntity({ 
         "type": "blue_elite_battletank",
         "tileX": 0,
         "tileY": 1,

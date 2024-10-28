@@ -63,13 +63,11 @@ ConquerSystem.updateBorder = function(gameContext, tileX, tileY) {
 
     const centerTile = activeMap.getTile(tileX, tileY);
 
-    if(!centerTile || !centerTile.getBorder()) {
+    if(!centerTile || !centerTile.hasBorder) {
         return false;
     }
 
-    const centerTileTeam = centerTile.getTeam();
-
-    if(!TeamSystem.isTileFriendly(gameContext, controller, centerTileTeam)) {
+    if(!TeamSystem.isTileFriendly(gameContext, controller, centerTile.team)) {
         return false;
     }
 
@@ -78,7 +76,7 @@ ConquerSystem.updateBorder = function(gameContext, tileX, tileY) {
     const autoIndex = Autotiler.autotile8Bits(directions, (center, neighbor) => {
         const neighborTile = activeMap.getTile(neighbor.x, neighbor.y);
 
-        if(!neighborTile || !neighborTile.getBorder()) {
+        if(!neighborTile || !neighborTile.hasBorder) {
             return false;
         }
 

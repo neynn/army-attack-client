@@ -22,6 +22,25 @@ ImageSheet.BUFFER_NOT_FLIPPED = 0;
 ImageSheet.BUFFER_FLIPPED = 1;
 ImageSheet.DEFAULT_ANIMATION_ID = "default";
 
+ImageSheet.prototype.toBuffer = function() {
+    const canvas = document.createElement("canvas");
+
+    canvas.width = this.image.width;
+    canvas.height = this.image.height;
+
+    const context = canvas.getContext("2d");
+    
+    context.imageSmoothingEnabled = false;
+
+    context.drawImage(
+        this.image,
+        0, 0, canvas.width, canvas.height,
+        0, 0, canvas.width, canvas.height
+    );
+
+    this.image = canvas;
+}
+
 ImageSheet.prototype.hasAnimation = function(animationID) {
     return this.loadedAnimations.has(animationID);
 }
