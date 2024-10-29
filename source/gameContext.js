@@ -47,6 +47,9 @@ export const GameContext = function() {
         this.uiManager.update(this);
         this.renderer.update(this);
     }
+
+    this.controller.initializeEvents();
+    this.controller.initializeStates();
 }
 
 GameContext.prototype.initializeActionQueue = function() {

@@ -44,6 +44,14 @@ Camera.EVENT_SCREEN_RESIZE = "Camera.EVENT_SCREEN_RESIZE";
 Camera.EVENT_VIEWPORT_LOAD = "Camera.EVENT_VIEWPORT_LOAD";
 Camera.EVENT_MAP_RENDER_COMPLETE = "Camera.EVENT_MAP_RENDER_COMPLETE";
 
+Camera.prototype.updateFPS = function(deltaTime) {
+    const fps = 1 / deltaTime;
+    const smoothedFPS = (1 - this.smoothingFactor) * this.smoothedFPS + this.smoothingFactor * fps;
+
+    this.smoothedFPS = smoothedFPS;
+    this.fps = fps;
+}
+
 Camera.prototype.getViewportPosition = function() {
     return {
         "viewportX": this.viewportX - this.centerOffsetX,
@@ -247,14 +255,6 @@ Camera.prototype.drawUI = function(gameContext) {
             element.debug(this.display.context, 0, 0, 0, 0);
         }
     }
-}
-
-Camera.prototype.updateFPS = function(deltaTime) {
-    const fps = 1 / deltaTime;
-    const smoothedFPS = (fps - this.smoothedFPS) * (this.smoothingFactor);
-
-    this.fps = fps;
-    this.smoothedFPS += smoothedFPS;
 }
 
 Camera.prototype.update = function(gameContext) {

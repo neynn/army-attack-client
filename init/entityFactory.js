@@ -2,7 +2,6 @@ import { AttackComponent } from "../components/attack.js";
 import { HealthComponent } from "../components/health.js";
 import { TeamComponent } from "../components/team.js";
 import { ENTITY_EVENTS, ENTITY_STATES } from "../enums.js";
-import { ImageSheet } from "../source/graphics/imageSheet.js";
 import { SimpleText } from "../source/graphics/simpleText.js";
 import { UnitDownState } from "../states/unit/unitDown.js";
 import { UnitIdleState } from "../states/unit/unitIdle.js";
@@ -11,6 +10,7 @@ import { TextStyle } from "../source/graphics/textStyle.js";
 import { componentSetup } from "./components.js";
 import { PositionComponent } from "../components/position.js";
 import { SpriteComponent } from "../components/sprite.js";
+import { SpriteManager } from "../source/graphics/spriteManager.js";
 
 const EXAMPLE_SETUP = {"tileX": 0, "tileY": 0, "type": null, "team": null, "master": null, "components": {"Health": {"health": 5, "maxHealth": 20}}};
 const MODE_STAT_TYPE_ID = "story";
@@ -113,23 +113,24 @@ export const entityFactory = {
     "Town": createTown
 };
 
-entityFactory.isBuildable = function(archetype) {
-    if(entityFactory[archetype]) {
-        return true;
+entityFactory.buildEntity = function(gameContext, type, setup, externalID) {
+    const { spriteManager, entityManager } = gameContext;
+    const { stats, archetype } = type;
+    const builder = entityFactory[archetype];
+    const usedStats = stats[MODE_STAT_TYPE_ID];
+
+    if(!builder) {
+        return null;
     }
 
-    return true;
-}
-
-entityFactory.buildEntity = function(gameContext, entity, sprite, type, setup) {
-    //Based on gamemode, grab the correct stats and give them to the component builder.
-    const { spriteManager, entityManager } = gameContext;
+    const entity = entityManager.createEntity(setup.type, externalID);
+    const sprite = spriteManager.createSprite(type.sprites.idle, SpriteManager.LAYER_MIDDLE);
     const directionComponent = componentSetup.setupDirectionComponent();
     const positionComponent = componentSetup.setupPositionComponent(setup);
     const teamComponent = componentSetup.setupTeamComponent(setup);
     const spriteComponent = componentSetup.setupSpriteComponent(sprite);
     const sizeComponent = componentSetup.setupSizeComponent(type);
-    const healthComponent = componentSetup.setupHealthComponent(type, type.stats[MODE_STAT_TYPE_ID]);
+    const healthComponent = componentSetup.setupHealthComponent(type, usedStats);
 
     entity.addComponent(positionComponent);
     entity.addComponent(spriteComponent);
@@ -165,12 +166,14 @@ entityFactory.buildEntity = function(gameContext, entity, sprite, type, setup) {
         spriteManager.updateSprite(spriteID, spriteType, animationType);
     });
 
-    entityFactory[type.archetype](gameContext, entity, sprite, setup, type);
+    builder(gameContext, entity, sprite, setup, type);
+    entityManager.loadTraits(entity, usedStats.traits);
     entityManager.loadComponents(entity, setup.components);
-    entityManager.loadTraits(entity, type.stats[MODE_STAT_TYPE_ID].traits);
 
     sprite.setPosition(positionComponent.positionX, positionComponent.positionY);
 
     entity.states.setNextState(ENTITY_STATES.IDLE);
     entity.events.emit(ENTITY_EVENTS.STAT_UPDATE);
+
+    return entity;
 }

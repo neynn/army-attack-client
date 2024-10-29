@@ -6,8 +6,28 @@ export const Entity = function(DEBUG_NAME) {
     this.id = null;
     this.config = {};
     this.components = new Map();
+    this.states = null;
+    this.events = null;
+}
+
+Entity.prototype.initializeStates = function() {
+    if(this.states) {
+        return false;
+    }
+
     this.states = new StateMachine(this);
+
+    return true;
+}
+
+Entity.prototype.initializeEvents = function() {
+    if(this.events) {
+        return false;
+    }
+
     this.events = new EventEmitter();
+
+    return true;
 }
 
 Entity.prototype.update = function(gameContext) {

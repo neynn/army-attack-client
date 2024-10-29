@@ -131,18 +131,14 @@ ArmyContext.prototype.initializeEntity = function(entitySetup, externalID) {
         console.warn(`EntityType ${type} does not exist! Returning null...`);
         return null;
     }
+    
+    const entity = entityFactory.buildEntity(this, typeConfig, entitySetup, externalID);
 
-    const { sprites, archetype } = typeConfig;
-
-    if(!entityFactory.isBuildable(archetype)) {
-        console.warn(`Archetype ${archetype} does not exist! Returning null...`);
+    if(!entity) {
+        console.warn(`Entity creation failed! Returning null...`);
         return null;
     }
-    
-    const entity = this.entityManager.createEntity(type, externalID);
-    const entitySprite = this.spriteManager.createSprite(sprites.idle, SpriteManager.LAYER_MIDDLE);
 
-    entityFactory.buildEntity(this, entity, entitySprite, typeConfig, entitySetup);
     PlaceSystem.placeEntity(this, entity);
 
     this.entityManager.enableEntity(entity.id); 
