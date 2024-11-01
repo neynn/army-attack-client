@@ -40,8 +40,6 @@ MoveAction.prototype.onUpdate = function(gameContext, request) {
     const { entityManager } = gameContext;
     const entity = entityManager.getEntity(entityID);
 
-    MoveSystem.updatePath(gameContext, entity);
-
     return MoveSystem.isPathFinished(entity);
 }
 

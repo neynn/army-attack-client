@@ -33,6 +33,7 @@ import { DownSystem } from "./systems/down.js";
 import { PlaceSystem } from "./systems/place.js";
 import { StoryModePlayState } from "./states/context/story/storyModePlay.js";
 import { StoryModeIntroState } from "./states/context/story/storyModeIntro.js";
+import { MoveSystem } from "./systems/move.js";
 
 export const ArmyContext = function() {
     GameContext.call(this);
@@ -43,6 +44,7 @@ ArmyContext.prototype.constructor = ArmyContext;
 
 ArmyContext.prototype.initializeSystems = function() {
     this.systemManager.registerSystem(SYSTEM_TYPES.DOWN, DownSystem);
+    this.systemManager.registerSystem(SYSTEM_TYPES.MOVE, MoveSystem);
 }
 
 ArmyContext.prototype.initializeContext = function() {

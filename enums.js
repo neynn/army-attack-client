@@ -10,7 +10,8 @@ export const GAME_EVENTS = Object.freeze({
 });
 
 export const SYSTEM_TYPES = Object.freeze({
-    "DOWN": "DOWN"
+    "DOWN": "DOWN",
+    "MOVE": "MOVE"
 });
 
 export const ACTION_TYPES = Object.freeze({

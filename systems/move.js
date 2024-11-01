@@ -1,17 +1,12 @@
 import { MoveComponent } from "../components/move.js";
 import { PositionComponent } from "../components/position.js";
-import { ENTITY_EVENTS } from "../enums.js";
+import { ENTITY_EVENTS, SYSTEM_TYPES } from "../enums.js";
 import { tileToPosition_center } from "../source/camera/helpers.js";
 
 export const MoveSystem = function() {}
 
-MoveSystem.isPathFinished = function(entity) {
-    const moveComponent = entity.getComponent(MoveComponent);
-    return moveComponent.path.length === 0;
-}
-
-MoveSystem.updatePath = function(gameContext, entity) {
-    const {timer} = gameContext;
+MoveSystem.update = function(gameContext, entity) {
+    const { timer } = gameContext;
     const deltaTime = timer.getFixedDeltaTime();
 
     const positionComponent = entity.getComponent(PositionComponent);
@@ -45,16 +40,23 @@ MoveSystem.updatePath = function(gameContext, entity) {
     entity.events.emit(ENTITY_EVENTS.POSITION_UPDATE);
 }
 
+MoveSystem.isPathFinished = function(entity) {
+    const moveComponent = entity.getComponent(MoveComponent);
+    return moveComponent.path.length === 0;
+}
+
 MoveSystem.beginMove = function(gameContext, entity, path) {
-    const { client } = gameContext;
+    const { client, systemManager } = gameContext;
     const { soundPlayer } = client;
     const moveComponent = entity.getComponent(MoveComponent);
 
-    soundPlayer.playRandom(entity.config.sounds.move);
     moveComponent.path = path;
+    soundPlayer.playRandom(entity.config.sounds.move);
+    systemManager.addEntity(SYSTEM_TYPES.MOVE, entity.id);
 }
 
 MoveSystem.endMove = function(gameContext, entity, targetX, targetY) {
+    const { systemManager } = gameContext;
     const positionComponent = entity.getComponent(PositionComponent);
     const moveComponent = entity.getComponent(MoveComponent);
     const {x, y} = tileToPosition_center(targetX, targetY);
@@ -68,4 +70,5 @@ MoveSystem.endMove = function(gameContext, entity, targetX, targetY) {
     moveComponent.path = [];
 
     entity.events.emit(ENTITY_EVENTS.POSITION_UPDATE);
+    systemManager.removeEntity(SYSTEM_TYPES.MOVE, entity.id);
 }
