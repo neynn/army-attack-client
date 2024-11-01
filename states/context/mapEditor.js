@@ -40,7 +40,7 @@ const initializeMapEditor = function(gameContext) {
     const updateLayerOpacity = () => {
         const layerButtons = editorInterface.layerButtons;
         const layerButtonStates = editorInterface.layerButtonStates;
-        const editorMap = mapLoader.getCachedMap(EDITOR_MAP_ID);
+        const editorMap = mapLoader.getLoadedMap(EDITOR_MAP_ID);
 
         if(!editorMap) {
             return;
@@ -144,7 +144,7 @@ const initializeMapEditor = function(gameContext) {
     }
 
     const incrementTypeIndex = () => {
-        const gameMap = mapLoader.getCachedMap(EDITOR_MAP_ID);
+        const gameMap = mapLoader.getLoadedMap(EDITOR_MAP_ID);
 
         if(!gameMap) {
             return;
@@ -366,7 +366,7 @@ const initializeMapEditor = function(gameContext) {
     });
 
     uiManager.addClick(editorInterface.id, "BUTTON_RESIZE", () => {
-        const gameMap = mapLoader.getCachedMap(EDITOR_MAP_ID);
+        const gameMap = mapLoader.getLoadedMap(EDITOR_MAP_ID);
 
         if(!gameMap) {
             console.warn(`GameMap cannot be undefined! Returning...`);

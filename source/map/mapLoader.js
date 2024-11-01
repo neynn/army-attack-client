@@ -1,6 +1,5 @@
 import { Logger } from "../logger.js";
 import { ResourceLoader } from "../resourceLoader.js";
-import { response } from "../response.js";
 import { Map2D } from "./map2D.js";
 
 export const MapLoader = function() {
@@ -14,32 +13,38 @@ export const MapLoader = function() {
 
 MapLoader.prototype.loadMapTypes = function(mapTypes) {
     if(!mapTypes) {
-        return response(false, "MapTypes cannot be undefined!", "MapLoader.prototype.loadMapTypes", null, null);
+        Logger.log(false, "MapTypes cannot be undefined!", "MapLoader.prototype.loadMapTypes", null);
+
+        return false;
     }
 
     this.mapTypes = mapTypes;
 
-    return response(true, "MapTypes have been loaded!", "MapLoader.prototype.loadMapTypes", null, null);
+    return true;
 }
 
 MapLoader.prototype.loadConfig = function(config) {
     if(!config) {
-        return response(false, "Config cannot be undefined!", "MapLoader.prototype.MapLoader.prototype.loadConfig", null, null);
+        Logger.log(false, "Config cannot be undefined!", "MapLoader.prototype.MapLoader.prototype.loadConfig", null);
+
+        return false;
     }
 
     this.config = config;
 
-    return response(true, "Config have been loaded!", "MapLoader.prototype.MapLoader.prototype.loadConfig", null, null);
+    return true;
 }
 
 MapLoader.prototype.setActiveMap = function(mapID) {
     if(!this.loadedMaps.has(mapID)) {
-        return response(false, "Map is not loaded!", "MapLoader.prototype.MapLoader.prototype.setActiveMap", null, {mapID});
+        Logger.log(false, "Map is not loaded!", "MapLoader.prototype.MapLoader.prototype.setActiveMap", {mapID});
+
+        return false;
     }
 
     this.activeMapID = mapID;
 
-    return response(true, "Map has been set as active!", "MapLoader.prototype.MapLoader.prototype.setActiveMap", null, {mapID});
+    return true;
 }
 
 MapLoader.prototype.getActiveMap = function() {
@@ -60,22 +65,37 @@ MapLoader.prototype.loadMapData = function(mapID) {
     const mapType = this.mapTypes[mapID];
 
     if(!mapType) {
-        response(false, "MapType does not exist!", "loadMapData", null, {mapID});
+        Logger.log(false, "MapType does not exist!", "loadMapData", {mapID});
+
         return Promise.resolve(null);
     }
 
-    const mapPath = ResourceLoader.getPath(mapType.directory, mapType.source);
+    const cachedData = this.cachedMaps.get(mapID);
 
-    return ResourceLoader.loadJSON(mapPath);
+    if(cachedData) {
+        return Promise.resolve(cachedData);
+    }
+
+    const mapPath = ResourceLoader.getPath(mapType.directory, mapType.source);
+    
+    return ResourceLoader.loadJSON(mapPath).then(mapData => {
+        if(!mapData) {
+            return null;
+        }
+
+        if(this.config.mapCacheEnabled) {
+            this.cachedMaps.set(mapID, mapData);
+        }
+
+        return mapData;
+    });
 }
 
 MapLoader.prototype.loadMap = function(mapID) {
-    const cachedMap = this.cachedMaps.get(mapID);
+    const loadedMap = this.loadedMaps.get(mapID);
 
-    if(cachedMap) {
-        this.loadedMaps.set(mapID, cachedMap);
-
-        return Promise.resolve(cachedMap);
+    if(loadedMap) {
+        return Promise.resolve(loadedMap);
     }
 
     return this.loadMapData(mapID).then(mapData => {
@@ -85,12 +105,7 @@ MapLoader.prototype.loadMap = function(mapID) {
             return null;
         }
 
-        const map2D = new Map2D(mapID, mapData);
-
-        this.loadedMaps.set(mapID, map2D);
-        this.cachedMaps.set(mapID, map2D);
-
-        return map2D;
+        return this.createMapFromData(mapID, mapData);
     });
 }
 
@@ -98,7 +113,9 @@ MapLoader.prototype.unloadMap = function(mapID) {
     const loadedMap = this.loadedMaps.get(mapID);
 
     if(!loadedMap) {
-        return response(false, "Map is not loaded!", "unloadMap", null, {mapID});
+        Logger.log(false, "Map is not loaded!", "unloadMap", {mapID});
+
+        return false;
     }
 
     if(this.activeMapID === mapID) {
@@ -109,7 +126,7 @@ MapLoader.prototype.unloadMap = function(mapID) {
 
     this.loadedMaps.delete(mapID);
 
-    return response(true, "Map has been unloaded!", "unloadMap", null, {mapID});
+    return true;
 }
 
 MapLoader.prototype.getLoadedMap = function(mapID) {
@@ -163,7 +180,6 @@ MapLoader.prototype.createMapFromData = function(mapID, mapData) {
     const map2D = new Map2D(mapID, mapSetup);
 
     this.loadedMaps.set(mapID, map2D);
-    this.cachedMaps.set(mapID, map2D);
 
     return map2D;
 }
@@ -180,55 +196,66 @@ MapLoader.prototype.createEmptyMap = function(mapID) {
     }
 
     this.loadedMaps.set(mapID, map2D);
-    this.cachedMaps.set(mapID, map2D);
 
-    return response(true, "Map has been created!", "createEmptyMap", null, {mapID});;
+    return map2D;
 }
 
 MapLoader.prototype.resizeMap = function(mapID, width, height) {
-    const cachedMap = this.cachedMaps.get(mapID);
+    const loadedMap = this.loadedMaps.get(mapID);
 
-    if(!cachedMap) {
-        return response(false, "Map is not cached!", "MapLoader.prototype.resizeMap", null, {mapID, width, height});
+    if(!loadedMap) {
+        Logger.log(false, "Map is not loaded!", "MapLoader.prototype.resizeMap", {mapID, width, height});
+
+        return false;
     }
 
-    for(const layerID in cachedMap.layers) {
+    for(const layerID in loadedMap.layers) {
         const layerSetup = this.config.mapSetup.layers[layerID];
 
         if(!layerSetup) {
-            cachedMap.resizeLayer(layerID, width, height, null);
+            loadedMap.resizeLayer(layerID, width, height, null);
             continue;
         }
 
-        console.log(layerSetup);
         const { fill } = layerSetup;
-        cachedMap.resizeLayer(layerID, width, height, fill);
+
+        loadedMap.resizeLayer(layerID, width, height, fill);
     }
 
-    cachedMap.width = width;
-    cachedMap.height = height;
+    loadedMap.width = width;
+    loadedMap.height = height;
 
-    return response(true, "Map has been resized!", "MapLoader.prototype.resizeMap", null, {mapID, width, height});
+    return true;
 }
 
 MapLoader.prototype.dirtySave = function(gameMapID) {
-    const gameMap = this.getCachedMap(gameMapID);
+    const loadedMap = this.getLoadedMap(gameMapID);
 
-    if(!gameMap) {
-        return `{ "ERROR": "NO MAP CACHED! USE CREATE OR LOAD!" }`;
+    if(!loadedMap) {
+        return `{ "ERROR": "MAP NOT LOADED! USE CREATE OR LOAD!" }`;
     }
 
-    const { music, width, height, layerOpacity, backgroundLayers, foregroundLayers, metaLayers, layers, entities, flags } = gameMap;
-    const copy = { music, width, height, layerOpacity, backgroundLayers, foregroundLayers, metaLayers, layers, entities, flags };
+    const { music, width, height, layerOpacity, backgroundLayers, foregroundLayers, metaLayers, layers, entities, flags } = loadedMap;
 
-    return JSON.stringify(copy);
+    return JSON.stringify({
+        music,
+        width,
+        height,
+        layerOpacity,
+        backgroundLayers,
+        foregroundLayers,
+        metaLayers,
+        layers,
+        entities,
+        flags
+    });
 }
 
 MapLoader.prototype.saveMap = function(gameMapID) {
-    const gameMap = this.getCachedMap(gameMapID);
+    const gameMap = this.getLoadedMap(gameMapID);
 
     if(!gameMap) {
-        return `{ "ERROR": "NO MAP CACHED! USE CREATE OR LOAD!" }`;
+        return `{ "ERROR": "MAP NOT LOADED! USE CREATE OR LOAD!" }`;
     }
     
     const stringifyArray = (array) => {

@@ -225,7 +225,7 @@ MapEditor.prototype.scrollCurrentSet = function(value) {
 MapEditor.prototype.swapFlag = function(gameContext, mapID, layerID) {
     const { mapLoader } = gameContext;
     const cursorTile = gameContext.getViewportTilePosition();
-    const gameMap = mapLoader.getCachedMap(mapID);
+    const gameMap = mapLoader.getLoadedMap(mapID);
 
     if(!gameMap) {
         return false;
@@ -249,7 +249,7 @@ MapEditor.prototype.swapFlag = function(gameContext, mapID, layerID) {
 MapEditor.prototype.paint = function(gameContext, mapID, layerID) {
     const { mapLoader } = gameContext;
     const cursorTile = gameContext.getViewportTilePosition();
-    const gameMap = mapLoader.getCachedMap(mapID);
+    const gameMap = mapLoader.getLoadedMap(mapID);
     const brush = this.getSelectedBrush();
 
     if(!gameMap || brush === undefined) {
