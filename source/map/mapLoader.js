@@ -5,7 +5,7 @@ import { Map2D } from "./map2D.js";
 export const MapLoader = function() {
     this.config = {};
     this.mapCache = {};
-    this.mapTypes = null;
+    this.mapTypes = {};
     this.loadedMaps = new Map();
     this.cachedMaps = new Map();
     this.activeMapID = null;
