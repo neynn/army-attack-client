@@ -1,17 +1,15 @@
-import { createAttackRequest } from "../../actions/attackAction.js";
-import { createMoveRequest } from "../../actions/moveAction.js";
-import { State } from "../../source/state/state.js";
-import { StateMachine } from "../../source/state/stateMachine.js";
+import { createAttackRequest } from "../../../actions/attackAction.js";
+import { createMoveRequest } from "../../../actions/moveAction.js";
+import { State } from "../../../source/state/state.js";
 
-export const StoryModeState = function() {
+export const StoryModePlayState = function() {
     State.call(this);
-    this.states = new StateMachine(this);
 }
 
-StoryModeState.prototype = Object.create(State.prototype);
-StoryModeState.prototype.constructor = StoryModeState;
+StoryModePlayState.prototype = Object.create(State.prototype);
+StoryModePlayState.prototype.constructor = StoryModePlayState;
 
-StoryModeState.prototype.enter = async function(stateMachine) {
+StoryModePlayState.prototype.enter = async function(stateMachine) {
     const gameContext = stateMachine.getContext();
     const { uiManager, spriteManager, controller, entityManager, mapLoader, actionQueue } = gameContext;
     const MAP = "pvp_valleys";
@@ -93,13 +91,11 @@ StoryModeState.prototype.enter = async function(stateMachine) {
     actionQueue.addAction(createMoveRequest(battleTank.id, 7, 1));
     actionQueue.addAction(createMoveRequest(battleTank.id, 3, 0));
     actionQueue.addAction(createAttackRequest(redBattletank.id));
-    actionQueue.addAction(createAttackRequest(redBattletank.id));
 }
 
-StoryModeState.prototype.exit = function(stateMachine) {
+StoryModePlayState.prototype.exit = function(stateMachine) {
     const gameContext = stateMachine.getContext();
-    const { uiManager, controller } = gameContext;
+    const { uiManager } = gameContext;
 
     uiManager.unparseUI("PLAY_GAME", gameContext);
-    controller.states.reset();
 }   

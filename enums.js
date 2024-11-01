@@ -27,10 +27,14 @@ export const CONTROLLER_STATES = Object.freeze({
 export const CONTEXT_STATES = Object.freeze({
     "MAIN_MENU": "MAIN_MENU",
     "STORY_MODE": "STORY_MODE",
+    "STORY_MODE_INTRO": "STORY_MODE_INTRO",
+    "STORY_MODE_PLAY": "STORY_MODE_PLAY",
     "VERSUS_MODE": "VERSUS_MODE",
     "VERSUS_MODE_LOBBY": "VERSUS_MODE_LOBBY",
+    "VERSUS_MODE_PLAY": "VERSUS_MODE_PLAY",
     "EDIT_MODE": "EDIT_MODE"
 });
+
 
 export const ENTITY_EVENTS = Object.freeze({
     "POSITION_UPDATE": Symbol("POSITION_UPDATE"),

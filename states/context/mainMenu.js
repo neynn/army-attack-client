@@ -19,7 +19,7 @@ MainMenuState.prototype.enter = function(stateMachine) {
     uiManager.addTextRequest("FPS_COUNTER", "TEXT_FPS", () => `FPS: ${Math.floor(renderer.smoothedFPS)}`);
     uiManager.addClick("MAIN_MENU", "BUTTON_PLAY", () => stateMachine.setNextState(CONTEXT_STATES.STORY_MODE));
     uiManager.addClick("MAIN_MENU", "BUTTON_EDIT", () => stateMachine.setNextState(CONTEXT_STATES.EDIT_MODE));
-    uiManager.addClick("MAIN_MENU", "BUTTON_PVP", () => stateMachine.setNextState(CONTEXT_STATES.VERSUS_MODE_LOBBY));
+    uiManager.addClick("MAIN_MENU", "BUTTON_PVP", () => stateMachine.setNextState(CONTEXT_STATES.VERSUS_MODE));
 
     spriteManager.addSpriteToDrawable(uiManager.getButton("MAIN_MENU", "BUTTON_PLAY"), "TANK", "blue_battletank_idle");
 }

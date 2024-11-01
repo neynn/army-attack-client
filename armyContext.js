@@ -22,14 +22,17 @@ import { SpriteManager } from "./source/graphics/spriteManager.js";
 import { ControllerBuildState } from "./states/controller/build.js";
 import { ControllerEntitySelectedState } from "./states/controller/entitySelected.js";
 import { ControllerIdleState } from "./states/controller/idle.js";
-import { MainMenuState } from "./states/gameContext/mainMenu.js";
-import { MapEditorState } from "./states/gameContext/mapEditor.js";
-import { StoryModeState } from "./states/gameContext/storyMode.js";
-import { VersusModeState } from "./states/gameContext/versusMode.js";
-import { VersusModeLobbyState } from "./states/gameContext/versusModeLobby.js";
+import { MainMenuState } from "./states/context/mainMenu.js";
+import { MapEditorState } from "./states/context/mapEditor.js";
+import { StoryModeState } from "./states/context/storyMode.js";
+import { VersusModePlayState } from "./states/context/versus/versusModePlay.js";
+import { VersusModeState } from "./states/context/versusMode.js";
+import { VersusModeLobbyState } from "./states/context/versus/versusModeLobby.js";
 import { ConquerSystem } from "./systems/conquer.js";
 import { DownSystem } from "./systems/down.js";
 import { PlaceSystem } from "./systems/place.js";
+import { StoryModePlayState } from "./states/context/story/storyModePlay.js";
+import { StoryModeIntroState } from "./states/context/story/storyModeIntro.js";
 
 export const ArmyContext = function() {
     GameContext.call(this);
@@ -43,11 +46,23 @@ ArmyContext.prototype.initializeSystems = function() {
 }
 
 ArmyContext.prototype.initializeContext = function() {
-    this.states.addState(CONTEXT_STATES.MAIN_MENU, new MainMenuState());
-    this.states.addState(CONTEXT_STATES.EDIT_MODE, new MapEditorState());
-    this.states.addState(CONTEXT_STATES.STORY_MODE, new StoryModeState());
-    this.states.addState(CONTEXT_STATES.VERSUS_MODE_LOBBY, new VersusModeLobbyState());
-    this.states.addState(CONTEXT_STATES.VERSUS_MODE, new VersusModeState())
+    const mainMenuState = new MainMenuState();
+    const storyModeState = new StoryModeState();
+    const versusModeState = new VersusModeState();
+    const mapEditorState = new MapEditorState();
+
+    storyModeState.initializeStates(this);
+    storyModeState.addSubstate(CONTEXT_STATES.STORY_MODE_INTRO, new StoryModeIntroState());
+    storyModeState.addSubstate(CONTEXT_STATES.STORY_MODE_PLAY, new StoryModePlayState());
+
+    versusModeState.initializeStates(this);
+    versusModeState.addSubstate(CONTEXT_STATES.VERSUS_MODE_LOBBY, new VersusModeLobbyState());
+    versusModeState.addSubstate(CONTEXT_STATES.VERSUS_MODE_PLAY, new VersusModePlayState());
+
+    this.states.addState(CONTEXT_STATES.MAIN_MENU, mainMenuState);
+    this.states.addState(CONTEXT_STATES.STORY_MODE, storyModeState);
+    this.states.addState(CONTEXT_STATES.VERSUS_MODE, versusModeState);
+    this.states.addState(CONTEXT_STATES.EDIT_MODE, mapEditorState);
 
     this.renderer.events.subscribe(Camera.EVENT_VIEWPORT_LOAD, this.id, (width, height) => this.renderer.centerViewport(width / 2, height / 2));
 

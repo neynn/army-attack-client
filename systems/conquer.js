@@ -1,9 +1,7 @@
 import { Autotiler } from "../source/tile/autotiler.js";
 import { TeamSystem } from "./team.js";
 
-export const ConquerSystem = function() {
-    this.id = "ConquerSystem";
-}
+export const ConquerSystem = function() {}
 
 ConquerSystem.convertTileGraphics = function(gameContext, tileX, tileY, teamID) {
     const { mapLoader } = gameContext;
