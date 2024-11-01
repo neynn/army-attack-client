@@ -19,7 +19,7 @@ export const componentSetup = {};
 
 componentSetup.setupControllerComponent = function() {
     const controllerComponent = new ControllerComponent();
-
+    
     return controllerComponent;
 }
 

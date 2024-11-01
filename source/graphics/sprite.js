@@ -7,7 +7,7 @@ export const Sprite = function(id, DEBUG_NAME) {
     this.typeID = null;
     this.layerID = null;
     this.animationID = null;
-    this.lastCallTime = null;
+    this.lastCallTime = 0;
     this.frameCount = 0;
     this.frameTime = 0;
     this.floatFrame = 0;
@@ -84,10 +84,6 @@ Sprite.prototype.getBounds = function() {
 }
 
 Sprite.prototype.onUpdate = function(timeStamp, deltaTime) {
-    if(this.lastCallTime === null) {
-        this.lastCallTime = timeStamp;
-    }
-
     const passedTime = timeStamp - this.lastCallTime;
     const passedFrames = passedTime / this.frameTime;
 

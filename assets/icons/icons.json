@@ -261,6 +261,7 @@
     "resource_icon_cash": { "id": "resource_icon_cash", "directory": "assets/icons/resources/", "source": "resource_icon_cash.png" },
     "resource_icon_credits": { "id": "resource_icon_credits", "directory": "assets/icons/resources/", "source": "resource_icon_credits.png" },
     "resource_icon_energy": { "id": "resource_icon_energy", "directory": "assets/icons/resources/", "source": "resource_icon_energy.png" },
+    "resource_icon_gold": { "id": "resource_icon_gold", "directory": "assets/icons/resources/", "source": "resource_icon_gold.png" },
     "resource_icon_honor": { "id": "resource_icon_honor", "directory": "assets/icons/resources/", "source": "resource_icon_honor.png" },
     "resource_icon_social_energy": { "id": "resource_icon_social_energy", "directory": "assets/icons/resources/", "source": "resource_icon_social_energy.png" },
     "resource_icon_supplies": { "id": "resource_icon_supplies", "directory": "assets/icons/resources/", "source": "resource_icon_supplies.png" },

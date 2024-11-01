@@ -1,10 +1,13 @@
 //Player can only MOVE and click on entities they have control over.
 //When attacking, check if the target is an ENEMY, then perform attack.
-
+//packerToJSON("clouds", await ResourceLoader.loadJSON("./clouds.json"));
 //TODO: sprites do not get unparsed after their parent is deleted!
 
 //BUG: (sort of) clients could start attack actions agains themselves. or worse: force other player units to move.
 //the same goes for moving entities. FIX ON SERVER: check if the target is an enemy of the messengerids team!
+
+//TODO: Drop kill items. -> Use drop trait!
+//TODO: Drop hit items. -> Use drop trait!
 
 //added attackAction.js
 //added action_type.attack
@@ -18,3 +21,9 @@
 //default move time; (96 * moveComponent.path.length) / 480;
 //sprite manager gets add icon / add sprite functions.
 //export const log instead of response.
+//give versus mode self-states, one is lobby and one is game.
+//give story mode self states, one is intro and one is game.
+//if intro has been done, skip it.
+
+//IMPORTANT: Cached maps refers to the cached map data, not the map itself! Cached maps is used to re-initialize the map!
+//This will be a pain to fix lul.

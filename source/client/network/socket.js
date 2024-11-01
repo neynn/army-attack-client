@@ -45,7 +45,17 @@ Socket.prototype.connect = async function() {
     });
 
     socket.on(NETWORK_EVENTS.MESSAGE, (message) => {
-        this.events.emit(Socket.EVENT_MESSAGE_FROM_SERVER, message);
+        if(typeof message !== "object") {
+            return;
+        }
+
+        const { type, payload } = message;
+
+        if(!type || !payload) {
+            return;
+        }
+        
+        this.events.emit(Socket.EVENT_MESSAGE_FROM_SERVER, type, payload);
     });
 
     socket.on(NETWORK_EVENTS.DISCONNECT, (reason) => {

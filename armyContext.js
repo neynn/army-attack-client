@@ -84,14 +84,14 @@ ArmyContext.prototype.initializeActionQueue = function() {
     });
 
     this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_VALID, this.id, (request) => {
-        if(this.client.isOnline()) {
+;        if(this.client.isOnline()) {
             console.log("TO SERVER!");
             this.client.socket.messageRoom(GAME_EVENTS.ENTITY_ACTION, request);
         } else {
             console.log("TO CLIENT!");
             this.actionQueue.queueAction(request);
         }
-    });
+    })
 }
 
 ArmyContext.prototype.initializeController = function(config) {

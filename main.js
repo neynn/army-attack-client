@@ -4,8 +4,6 @@ import { ArmyContext } from "./armyContext.js";
 
 const gameContext = new ArmyContext();
 
-//packerToJSON("clouds", await ResourceLoader.loadJSON("./clouds.json"));
-
 ResourceLoader.loadConfigFiles("assets", "files.json").then(async files => {
   let totalMegabytes = 0;
   let totalMegabytesLargeFiles = 0;

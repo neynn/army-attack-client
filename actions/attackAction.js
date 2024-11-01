@@ -54,11 +54,9 @@ AttackAction.prototype.onEnd = function(gameContext, request) {
         if(!isReviveable || isFatal) {
             DeathSystem.playDeathAnimation(gameContext, target);
             DeathSystem.destroyEntity(gameContext, entityID);
-            //TODO: Drop kill items. -> Use drop trait!
         }
     } else {
         MorphSystem.updateSprite(target, "idle");
-        //TODO: Drop hit items. -> Use drop trait!
     }
 }
 

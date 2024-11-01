@@ -15,18 +15,8 @@ VersusModeLobbyState.prototype.enter = function(stateMachine) {
     const { uiManager, spriteManager, controller, entityManager, mapLoader, actionQueue, client } = gameContext;
     const { socket } = client;
     
-    socket.events.subscribe(Socket.EVENT_MESSAGE_FROM_SERVER, gameContext.id, (message) => {
-        console.log(message);
-
-        if(!message) {
-            return;
-        }
-
-        const { type, payload } = message;
-
-        if(!type || !payload) {
-            return;
-        }
+    socket.events.subscribe(Socket.EVENT_MESSAGE_FROM_SERVER, gameContext.id, (type, payload) => {
+        console.log(type, payload, "FROM SERVER");
 
         switch(type) {
             case ROOM_EVENTS.ROOM_UPDATE: {
@@ -41,10 +31,27 @@ VersusModeLobbyState.prototype.enter = function(stateMachine) {
                 break;
             }
             case GAME_EVENTS.INSTANCE_MAP: {
+                const { id } = payload;
+
+                mapLoader.loadMap(id).then(map2D => {
+                    if(!map2D) {
+                        socket.messageRoom(GAME_EVENTS.INSTANCE_MAP, { "success": false, "error": "NO_MAP_FILE" });
+                    } else {
+                        gameContext.initializeMap(id);
+                        gameContext.initializeTilemap(id);
+                        socket.messageRoom(GAME_EVENTS.INSTANCE_MAP, { "success": true, "error": null });
+                    }
+                })
+                break;
+            }
+            case GAME_EVENTS.INSTANCE_MAP_FROM_DATA: {
                 const { id, data } = payload;
+
                 mapLoader.createMapFromData(id, data);
                 gameContext.initializeMap(id);
                 gameContext.initializeTilemap(id);
+
+                socket.messageRoom(GAME_EVENTS.INSTANCE_MAP, { "success": true, "error": null });
                 break;
             }
             case GAME_EVENTS.INSTANCE_ENTITY: {
@@ -52,8 +59,25 @@ VersusModeLobbyState.prototype.enter = function(stateMachine) {
                 gameContext.initializeEntity(setup, id);
                 break;
             }
+            case GAME_EVENTS.INSTANCE_ENTITY_BATCH: {
+                const { batch } = payload;
+                
+                for(const setup of batch) {
+                    gameContext.initializeEntity(setup, setup.id);
+                }
+                break;
+            }
             case GAME_EVENTS.ENTITY_ACTION: {
+                //payload = request!
                 actionQueue.queueAction(payload);
+                break;
+            }
+            case GAME_EVENTS.ENTITY_DEATH: {
+                //Handles the death of an entity
+                break;
+            }
+            case GAME_EVENTS.DROP_ITEM: {
+                //handles the drop of an item.
                 break;
             }
             default: {
