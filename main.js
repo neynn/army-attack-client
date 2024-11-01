@@ -41,6 +41,7 @@ ResourceLoader.loadConfigFiles("assets", "files.json").then(async files => {
 }).then(async resources => {
   gameContext.loadResources(resources);
   gameContext.initializeActionQueue();
+  gameContext.initializeSystems();
   gameContext.initializeInput();
   gameContext.initializeContext();
   gameContext.timer.start();

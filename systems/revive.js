@@ -1,4 +1,5 @@
 import { ReviveComponent } from "../components/revive.js";
+import { SYSTEM_TYPES } from "../enums.js";
 import { MorphSystem } from "./morph.js";
 
 export const ReviveSystem = function() {}
@@ -14,9 +15,10 @@ ReviveSystem.isReviveable = function(entity) {
 }
 
 ReviveSystem.downEntity = function(gameContext, entity) {
-    const { client } = gameContext;
+    const { client, systemManager } = gameContext;
     const { soundPlayer } = client;
 
     MorphSystem.updateSprite(entity, "downed");
     soundPlayer.playRandom(entity.config.sounds.death);
+    systemManager.addEntity(SYSTEM_TYPES.DOWN, entity.id);
 }

@@ -44,6 +44,13 @@ StoryModeState.prototype.enter = async function(stateMachine) {
         "team": "0",
         "master": null
     });
+    const blue_elite_battery = gameContext.initializeEntity({ 
+        "type": "blue_elite_battery",
+        "tileX": 4,
+        "tileY": 3,
+        "team": "0",
+        "master": null
+    });
     const blueCommando = gameContext.initializeEntity({ 
         "type": "blue_commando",
         "tileX": 1,

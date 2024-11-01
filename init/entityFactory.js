@@ -1,11 +1,8 @@
 import { AttackComponent } from "../components/attack.js";
 import { HealthComponent } from "../components/health.js";
 import { TeamComponent } from "../components/team.js";
-import { ENTITY_EVENTS, ENTITY_STATES } from "../enums.js";
+import { ENTITY_EVENTS } from "../enums.js";
 import { SimpleText } from "../source/graphics/simpleText.js";
-import { UnitDownState } from "../states/unit/unitDown.js";
-import { UnitIdleState } from "../states/unit/unitIdle.js";
-import { ConstructionIdleState } from "../states/construction/constructionIdle.js";
 import { TextStyle } from "../source/graphics/textStyle.js";
 import { componentSetup } from "./components.js";
 import { PositionComponent } from "../components/position.js";
@@ -53,9 +50,6 @@ const createUnit = function(gameContext, entity, entitySprite, entitySetup, type
     const attackComponent = componentSetup.setupAttackComponent(typeConfig, typeConfig.stats[MODE_STAT_TYPE_ID]);
     const moveComponent = componentSetup.setupMoveComponent(typeConfig, typeConfig.stats[MODE_STAT_TYPE_ID]);
 
-    entity.states.addState(ENTITY_STATES.IDLE, new UnitIdleState());
-    entity.states.addState(ENTITY_STATES.DOWN, new UnitDownState());
-
     entity.addComponent(attackComponent);
     entity.addComponent(moveComponent);
     
@@ -96,8 +90,6 @@ const createConstruction = function(gameContext, entity, entitySprite, entitySet
     entitySprite.setStatic(true);
     entitySprite.setFrame(2);
 
-    entity.states.addState(ENTITY_STATES.IDLE, new ConstructionIdleState());
-
     entity.addComponent(constructionComponent);
 
     return entity;
@@ -131,6 +123,8 @@ entityFactory.buildEntity = function(gameContext, type, setup, externalID) {
     const spriteComponent = componentSetup.setupSpriteComponent(sprite);
     const sizeComponent = componentSetup.setupSizeComponent(type);
     const healthComponent = componentSetup.setupHealthComponent(type, usedStats);
+
+    entity.initializeEvents();
 
     entity.addComponent(positionComponent);
     entity.addComponent(spriteComponent);
@@ -172,7 +166,6 @@ entityFactory.buildEntity = function(gameContext, type, setup, externalID) {
 
     sprite.setPosition(positionComponent.positionX, positionComponent.positionY);
 
-    entity.states.setNextState(ENTITY_STATES.IDLE);
     entity.events.emit(ENTITY_EVENTS.STAT_UPDATE);
 
     return entity;

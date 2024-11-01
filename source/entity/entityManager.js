@@ -245,8 +245,6 @@ EntityManager.prototype.createEntity = function(entityTypeID, externalID) {
         Logger.log(false, "EntityType does not exist", "EntityManager.prototype.createEntity", {entityID, externalID});
     }
 
-    entity.initializeEvents();
-    entity.initializeStates();
     entity.setID(entityID);
     this.entities.set(entityID, entity)
 

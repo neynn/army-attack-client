@@ -14,6 +14,7 @@ import { UIElement } from "./ui/uiElement.js";
 import { Entity } from "./entity/entity.js";
 import { MapEditor } from "./map/mapEditor.js";
 import { Logger } from "./logger.js";
+import { SystemManager } from "./system/systemManager.js";
 
 export const GameContext = function() {
     this.id = "GAME_CONTEXT";
@@ -27,6 +28,7 @@ export const GameContext = function() {
     this.timer = new Timer(60);
     this.mapLoader = new MapLoader();
     this.mapEditor = new MapEditor();
+    this.systemManager = new SystemManager();
     this.entityManager = new EntityManager();
     this.actionQueue = new ActionQueue();
     this.events = new EventEmitter();
@@ -39,6 +41,7 @@ export const GameContext = function() {
     this.timer.updateFunction = (gameTime, fixedDeltaTime) => {
         this.controller.update(this);
         this.actionQueue.update(this);
+        this.systemManager.update(this);
         this.entityManager.update(this);
     }
 
@@ -53,6 +56,10 @@ export const GameContext = function() {
 }
 
 GameContext.prototype.initializeActionQueue = function() {
+
+}
+
+GameContext.prototype.initializeSystems = function() {
 
 }
 

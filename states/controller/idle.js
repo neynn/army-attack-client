@@ -38,7 +38,6 @@ ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext,
 
     if(isControlled) {
         const isSelectable = SelectSystem.isSelectable(entity);
-        entity.states.onEventEnter(gameContext, CONTROLLER_EVENTS.CLICK);
 
         if(isSelectable) {
             SelectSystem.selectEntity(entity, gameContext);

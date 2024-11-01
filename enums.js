@@ -5,9 +5,12 @@ export const GAME_EVENTS = Object.freeze({
     "INSTANCE_MAP_FROM_DATA": "INSTANCE_MAP_FROM_DATA",
     "INSTANCE_CONTROLLER": "INSTANCE_CONTROLLER",
     "ENTITY_ACTION": "ENTITY_ACTION",
-    "CLIENT_MAP_LOADED": "CLIENT_MAP_LOADED",
     "ENTITY_DEATH": "ENTITY_DEATH",
     "DROP_ITEM": "DROP_ITEM"
+});
+
+export const SYSTEM_TYPES = Object.freeze({
+    "DOWN": "DOWN"
 });
 
 export const ACTION_TYPES = Object.freeze({
@@ -27,15 +30,6 @@ export const CONTEXT_STATES = Object.freeze({
     "VERSUS_MODE": "VERSUS_MODE",
     "VERSUS_MODE_LOBBY": "VERSUS_MODE_LOBBY",
     "EDIT_MODE": "EDIT_MODE"
-});
-
-export const ENTITY_STATES = Object.freeze({
-    "IDLE": "IDLE",
-    "FIRE": "FIRE",
-    "HIT": "HIT",
-    "MOVE": "MOVE",
-    "DOWN": "DOWN",
-    "CONSTRUCTION": "CONSTRUCTION"
 });
 
 export const ENTITY_EVENTS = Object.freeze({

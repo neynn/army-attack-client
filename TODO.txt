@@ -16,8 +16,6 @@
 //added fireSystem
 //added healthSystem
 
-//TODO: add action.clearState();
-
 //default move time; (96 * moveComponent.path.length) / 480;
 //sprite manager gets add icon / add sprite functions.
 //export const log instead of response.

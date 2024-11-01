@@ -1,4 +1,4 @@
-import { ACTION_TYPES } from "../enums.js";
+import { ACTION_TYPES, SYSTEM_TYPES } from "../enums.js";
 import { Action } from "../source/action/action.js";
 import { ControllerSystem } from "../systems/controller.js";
 import { DeathSystem } from "../systems/death.js";

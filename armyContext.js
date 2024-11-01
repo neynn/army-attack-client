@@ -9,7 +9,7 @@ import { PositionComponent } from "./components/position.js";
 import { ReviveComponent } from "./components/revive.js";
 import { SubTypeComponent } from "./components/subType.js";
 import { TeamComponent } from "./components/team.js";
-import { ACTION_TYPES, CONTEXT_STATES, CONTROLLER_STATES, GAME_EVENTS } from "./enums.js";
+import { ACTION_TYPES, CONTEXT_STATES, CONTROLLER_STATES, GAME_EVENTS, SYSTEM_TYPES } from "./enums.js";
 import { ArmyTile } from "./init/armyTile.js";
 import { componentSetup } from "./init/components.js";
 import { entityFactory } from "./init/entityFactory.js";
@@ -28,6 +28,7 @@ import { StoryModeState } from "./states/gameContext/storyMode.js";
 import { VersusModeState } from "./states/gameContext/versusMode.js";
 import { VersusModeLobbyState } from "./states/gameContext/versusModeLobby.js";
 import { ConquerSystem } from "./systems/conquer.js";
+import { DownSystem } from "./systems/down.js";
 import { PlaceSystem } from "./systems/place.js";
 
 export const ArmyContext = function() {
@@ -36,6 +37,10 @@ export const ArmyContext = function() {
 
 ArmyContext.prototype = Object.create(GameContext.prototype);
 ArmyContext.prototype.constructor = ArmyContext;
+
+ArmyContext.prototype.initializeSystems = function() {
+    this.systemManager.registerSystem(SYSTEM_TYPES.DOWN, DownSystem);
+}
 
 ArmyContext.prototype.initializeContext = function() {
     this.states.addState(CONTEXT_STATES.MAIN_MENU, new MainMenuState());
@@ -140,8 +145,6 @@ ArmyContext.prototype.initializeEntity = function(entitySetup, externalID) {
     }
 
     PlaceSystem.placeEntity(this, entity);
-
-    this.entityManager.enableEntity(entity.id); 
 
     const saveData = this.saveEntity(entity.id);
 
