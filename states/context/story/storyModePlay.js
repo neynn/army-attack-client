@@ -26,6 +26,7 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
     gameContext.initializeController({"team": "1", "master": "neyn"});
     gameContext.initializeMap(MAP);
     gameContext.initializeTilemap(MAP);
+    gameContext.renderer.centerOnMap();
     gameContext.renderer.bindToScreen();
 
     const blueGuardtower = gameContext.initializeEntity({ 

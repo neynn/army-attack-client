@@ -66,8 +66,6 @@ ArmyContext.prototype.initializeContext = function() {
     this.states.addState(CONTEXT_STATES.VERSUS_MODE, versusModeState);
     this.states.addState(CONTEXT_STATES.EDIT_MODE, mapEditorState);
 
-    this.renderer.events.subscribe(Camera.EVENT_VIEWPORT_LOAD, this.id, (width, height) => this.renderer.centerViewport(width / 2, height / 2));
-
     this.client.soundPlayer.loadAllSounds();
 
     this.entityManager.setSaveableComponents({

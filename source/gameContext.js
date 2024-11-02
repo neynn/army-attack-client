@@ -1,4 +1,3 @@
-import { Camera } from "./camera/camera.js";
 import { Client } from "./client/client.js";
 import { Cursor } from "./client/cursor.js";
 import { EntityManager } from "./entity/entityManager.js";
@@ -15,6 +14,7 @@ import { Entity } from "./entity/entity.js";
 import { MapEditor } from "./map/mapEditor.js";
 import { Logger } from "./logger.js";
 import { SystemManager } from "./system/systemManager.js";
+import { Camera2D } from "./camera/2D/camera2D.js";
 
 export const GameContext = function() {
     this.id = "GAME_CONTEXT";
@@ -22,7 +22,7 @@ export const GameContext = function() {
     this.settings = {};
     this.client = new Client();
     this.controller = new Entity("CONTROLLER");
-    this.renderer = new Camera(window.innerWidth, window.innerHeight);
+    this.renderer = new Camera2D(window.innerWidth, window.innerHeight);
     this.spriteManager = new SpriteManager();
     this.uiManager = new UIManager();
     this.timer = new Timer(60);

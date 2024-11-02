@@ -16,7 +16,7 @@ MainMenuState.prototype.enter = function(stateMachine) {
     uiManager.parseUI("FPS_COUNTER", gameContext);
     uiManager.parseUI("MAIN_MENU", gameContext);
 
-    uiManager.addTextRequest("FPS_COUNTER", "TEXT_FPS", () => `FPS: ${Math.floor(renderer.smoothedFPS)}`);
+    uiManager.addTextRequest("FPS_COUNTER", "TEXT_FPS", () => `FPS: ${Math.floor(renderer.fpsCounter.getSmoothFPS())}`);
     uiManager.addClick("MAIN_MENU", "BUTTON_PLAY", () => stateMachine.setNextState(CONTEXT_STATES.STORY_MODE));
     uiManager.addClick("MAIN_MENU", "BUTTON_EDIT", () => stateMachine.setNextState(CONTEXT_STATES.EDIT_MODE));
     uiManager.addClick("MAIN_MENU", "BUTTON_PVP", () => stateMachine.setNextState(CONTEXT_STATES.VERSUS_MODE));

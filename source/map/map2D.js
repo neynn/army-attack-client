@@ -1,6 +1,6 @@
 import { clampValue } from "../math/math.js";
 
-export const Map2D = function(id, config) {
+export const Map2D = function(id) {
     this.id = id;
     this.music = null;
     this.width = 0;
@@ -13,8 +13,6 @@ export const Map2D = function(id, config) {
     this.tiles = [];
     this.entities = [];
     this.flags = {};
-
-    this.initialize(config);
 }
 
 Map2D.prototype.initialize = function(config) {

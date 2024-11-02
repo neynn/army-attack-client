@@ -1,7 +1,7 @@
 import { Camera } from "../../source/camera/camera.js";
 import { Cursor } from "../../source/client/cursor.js";
 import { loopValue } from "../../source/math/math.js";
-import { saveTemplateAsFile } from "../../source/helpers.js";
+import { saveMap, saveTemplateAsFile } from "../../source/helpers.js";
 import { State } from "../../source/state/state.js";
 import { UIElement } from "../../source/ui/uiElement.js";
 
@@ -343,7 +343,8 @@ const initializeMapEditor = function(gameContext) {
     });
 
     uiManager.addClick(editorInterface.id, "BUTTON_SAVE", () => {
-        const saveData = mapLoader.saveMap(EDITOR_MAP_ID);
+        const mapData = mapLoader.getLoadedMap(EDITOR_MAP_ID);
+        const saveData = saveMap(mapData);
         saveTemplateAsFile(EDITOR_MAP_ID + ".json", saveData);
     });
 

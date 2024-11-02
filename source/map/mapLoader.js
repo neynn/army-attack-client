@@ -177,7 +177,9 @@ MapLoader.prototype.hasCachedMap = function(mapID) {
 
 MapLoader.prototype.createMapFromData = function(mapID, mapData) {
     const mapSetup = JSON.parse(JSON.stringify(mapData));
-    const map2D = new Map2D(mapID, mapSetup);
+    const map2D = new Map2D(mapID);
+
+    map2D.initialize(mapSetup);
 
     this.loadedMaps.set(mapID, map2D);
 
@@ -187,7 +189,10 @@ MapLoader.prototype.createMapFromData = function(mapID, mapData) {
 MapLoader.prototype.createEmptyMap = function(mapID) {
     const mapSetup = JSON.parse(JSON.stringify(this.config.mapSetup));
     const { layers } = mapSetup;
-    const map2D = new Map2D(mapID, mapSetup);
+    const map2D = new Map2D(mapID);
+
+    
+    map2D.initialize(mapSetup);
 
     for(const layerID in layers) {
         const layerConfig = layers[layerID];
@@ -226,122 +231,4 @@ MapLoader.prototype.resizeMap = function(mapID, width, height) {
     loadedMap.height = height;
 
     return true;
-}
-
-MapLoader.prototype.dirtySave = function(gameMapID) {
-    const loadedMap = this.getLoadedMap(gameMapID);
-
-    if(!loadedMap) {
-        return `{ "ERROR": "MAP NOT LOADED! USE CREATE OR LOAD!" }`;
-    }
-
-    const { music, width, height, layerOpacity, backgroundLayers, foregroundLayers, metaLayers, layers, entities, flags } = loadedMap;
-
-    return JSON.stringify({
-        music,
-        width,
-        height,
-        layerOpacity,
-        backgroundLayers,
-        foregroundLayers,
-        metaLayers,
-        layers,
-        entities,
-        flags
-    });
-}
-
-MapLoader.prototype.saveMap = function(gameMapID) {
-    const gameMap = this.getLoadedMap(gameMapID);
-
-    if(!gameMap) {
-        return `{ "ERROR": "MAP NOT LOADED! USE CREATE OR LOAD!" }`;
-    }
-    
-    const stringifyArray = (array) => {
-        let result = `[\n            `;
-    
-        for (let i = 0; i < gameMap.height; i++) {
-            let row = ``;
-    
-            for (let j = 0; j < gameMap.width; j++) {
-                const element = array[i * gameMap.width + j];
-                const jsonElement = JSON.stringify(element);
-                
-                row += jsonElement;
-
-                if(j < gameMap.width - 1) {
-                    row += `,`
-                }
-            }
-    
-            result += row;
-    
-            if (i < gameMap.height - 1) {
-                result += `,\n            `;
-            }
-        }
-    
-        result += `\n        ]`;
-        
-        return result;
-    };
-
-    const stringify2DArray = array => {
-        if(!array) {
-            return null;
-        }
-
-        const rows = array.map(row => JSON.stringify(row));
-        return `[
-            ${rows.join(`,
-            `)}
-        ]`;
-    }
-
-    const formattedEntities = gameMap.entities.map(data => 
-        `{ "type": "${data.type}", "tileX": ${data.tileX}, "tileY": ${data.tileY} }`
-    ).join(',\n        ');
-
-    const formattedOpacity = Object.keys(gameMap.layerOpacity).map(key => 
-        `"${key}": 1`
-    ).join(', ');
-
-    const formattedBackground = gameMap.backgroundLayers.map(data =>
-        `"${data}"`
-    ).join(', ');
-
-    const formattedForeground = gameMap.foregroundLayers.map(data =>
-        `"${data}"`
-    ).join(', ');
-
-    const formattedMeta = gameMap.metaLayers.map(data =>
-        `"${data}"`
-    ).join(', ');
-
-    const formattedLayers = Object.keys(gameMap.layers).map(key =>
-        `"${key}": ${stringifyArray(gameMap.layers[key])}`
-    ).join(',\n        ');
-
-    const downloadableString = 
-`{
-    "music": "${gameMap.music}",
-    "width": ${gameMap.width},
-    "height": ${gameMap.height},
-    "layerOpacity": { ${formattedOpacity} },
-    "backgroundLayers": [ ${formattedBackground} ],
-    "foregroundLayers": [ ${formattedForeground} ],
-    "metaLayers": [ ${formattedMeta} ],
-    "layers": {
-        ${formattedLayers}
-    },
-    "entities" : [
-        ${formattedEntities}
-    ],
-    "flags" : {
-        
-    }
-}`;
-
-    return downloadableString;
 }
