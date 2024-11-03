@@ -274,7 +274,7 @@ MapEditor.prototype.paint = function(gameContext, mapID, layerID) {
     
     return true;
     /*
-    const tileSet = spriteManager.tileSprites[tileSetID];
+    const tileSet = tileManager.tileTypes[tileSetID];
     if(brushModeID === MapEditor.MODE_TYPE_PATTERN) {
         const pattern = tileSet.patterns[frameID];
 

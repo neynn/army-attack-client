@@ -1,0 +1,114 @@
+import { ImageSheet } from "../graphics/imageSheet.js";
+import { Logger } from "../logger.js";
+
+export const TileManager = function() {
+    this.id = "TILE_MANAGER";
+    this.tileTypes = {};
+    this.tileMeta = {};
+    this.invertedTileMeta = {};
+}
+
+TileManager.prototype.update = function(gameContext, realTime, deltaTime) {
+    this.updateTileTypes(realTime);
+}
+
+TileManager.prototype.loadTileTypes = function(tileTypes) {
+    if(!tileTypes) {
+        Logger.log(false, "TileTypes cannot be undefined!", "TileManager.prototype.loadTileTypes", null);
+
+        return false;
+    }
+
+    this.tileTypes = tileTypes;
+
+    return true;
+}
+
+TileManager.prototype.loadTileMeta = function(tileMeta) {
+    if(!tileMeta) {
+        Logger.log(false, "TileMeta cannot be undefined!", "TileManager.prototype.loadTileMeta", null);
+
+        return false;
+    }
+
+    this.tileMeta = tileMeta;
+    this.invertTileMeta();
+
+    return true;
+}
+
+TileManager.prototype.updateTileTypes = function(timestamp) {
+    for(const key in this.tileTypes) {
+        const tileSet = this.tileTypes[key];
+        const animations = tileSet.getAnimations();
+
+        for(const [animationID, animation] of animations) {
+            if(animation.frameCount > 1) {
+                const currentFrameTime = timestamp % animation.frameTimeTotal;
+                const frameIndex = Math.floor(currentFrameTime / animation.frameTime);
+
+                animation.setFrameIndex(frameIndex);
+            }
+        }
+    }
+}
+
+TileManager.prototype.drawTileGraphics = function(graphics, context, renderX, renderY, scaleX = 1, scaleY = 1) {
+    const [setID, animationID] = graphics;
+    const tileSet = this.tileTypes[setID];
+    const animation = tileSet.getAnimation(animationID);
+    const currentFrame = animation.getCurrentFrame();
+
+    for(const component of currentFrame) {
+        const { id, offsetX, offsetY } = component;
+        const { width, height, offset, bitmap } = tileSet.getBuffersByID(id)[ImageSheet.BUFFER_NOT_FLIPPED];
+        const drawX = renderX + offset.x + offsetX;
+        const drawY = renderY + offset.y + offsetY;
+        const drawWidth = width * scaleX;
+        const drawHeight = height * scaleY;
+
+        context.drawImage(
+            bitmap,
+            0, 0, width, height,
+            drawX, drawY, drawWidth, drawHeight
+        );
+    }
+}
+
+TileManager.prototype.invertTileMeta = function() {
+    for(const tileID in this.tileMeta) {
+        const { id, set, animation } = this.tileMeta[tileID];
+
+        if(this.invertedTileMeta[set] === undefined) {
+            this.invertedTileMeta[set] = {};
+        }
+
+        this.invertedTileMeta[set][animation] = id;
+    }
+}
+
+TileManager.prototype.getTileGraphics = function(tileID) {
+    const graphics = this.tileMeta[tileID];
+
+    if(!graphics) {
+        return null;
+    }
+
+    return graphics;
+}
+
+TileManager.prototype.getTileID = function(setID, animationID) {
+    const metaSet = this.invertedTileMeta[setID];
+
+    if(!metaSet) {
+        return null;
+    }
+
+    const metaID = metaSet[animationID];
+
+    if(metaID === undefined) {
+        return null;
+    }
+
+    return metaID;
+}

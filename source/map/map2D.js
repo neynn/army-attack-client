@@ -5,7 +5,6 @@ export const Map2D = function(id) {
     this.music = null;
     this.width = 0;
     this.height = 0;
-    this.layerOpacity = {};
     this.layers = {};
     this.backgroundLayers = [];
     this.foregroundLayers = [];
@@ -15,52 +14,48 @@ export const Map2D = function(id) {
     this.flags = {};
 }
 
+Map2D.prototype.getAutoGeneratingLayers = function() {
+    const layerIDs = new Set();
+
+    for(const layerConfig of this.backgroundLayers) {
+        const { id, autoGenerate } = layerConfig;
+
+        if(autoGenerate) {
+            layerIDs.add(id);
+        }
+    }
+
+    for(const layerConfig of this.foregroundLayers) {
+        const { id, autoGenerate } = layerConfig;
+
+        if(autoGenerate) {
+            layerIDs.add(id);
+        }
+    }
+
+    for(const layerConfig of this.metaLayers) {
+        const { id, autoGenerate } = layerConfig;
+
+        if(autoGenerate) {
+            layerIDs.add(id);
+        }
+    }
+
+    return layerIDs;
+}
+
 Map2D.prototype.initialize = function(config) {
-    const { music, width, height, layerOpacity, layers, tiles, entities, flags, backgroundLayers, foregroundLayers, metaLayers } = config;
+    const { music, width, height, layers, entities, flags, backgroundLayers, foregroundLayers, metaLayers } = config;
 
-    if(music) {
-        this.music = music;
-    }
-
-    if(width) {
-        this.width = width;
-    }
-
-    if(height) {
-        this.height = height;
-    }
-
-    if(layerOpacity) {
-        this.layerOpacity = layerOpacity;
-    }
-
-    if(layers) {
-        this.layers = layers;
-    }
-    
-    if(tiles) {
-        this.tiles = tiles;
-    }
-
-    if(entities) {
-        this.entities = entities;
-    }
-
-    if(flags) {
-        this.flags = flags;
-    }
-
-    if(backgroundLayers) {
-        this.backgroundLayers = backgroundLayers;
-    }
-
-    if(foregroundLayers) {
-        this.foregroundLayers = foregroundLayers;
-    }
-
-    if(metaLayers) {
-        this.metaLayers = metaLayers;
-    }
+    if(music) this.music = music;
+    if(width) this.width = width;
+    if(height) this.height = height;
+    if(layers) this.layers = layers;
+    if(entities) this.entities = entities;
+    if(flags) this.flags = flags;
+    if(backgroundLayers) this.backgroundLayers = backgroundLayers;
+    if(foregroundLayers) this.foregroundLayers = foregroundLayers;
+    if(metaLayers) this.metaLayers = metaLayers;
 }
 
 Map2D.prototype.setLayerOpacity = function(layerID, opacity) {
@@ -70,9 +65,37 @@ Map2D.prototype.setLayerOpacity = function(layerID, opacity) {
 
     opacity = clampValue(opacity, 1, 0);
 
-    this.layerOpacity[layerID] = opacity;
+    for(const layerConfig of this.backgroundLayers) {
+        const { id } = layerConfig;
 
-    return true;
+        if(id === layerID) {
+            layerConfig.opacity = opacity;
+
+            return true;
+        }
+    }
+
+    for(const layerConfig of this.foregroundLayers) {
+        const { id } = layerConfig;
+
+        if(id === layerID) {
+            layerConfig.opacity = opacity;
+
+            return true;
+        }
+    }
+
+    for(const layerConfig of this.metaLayers) {
+        const { id } = layerConfig;
+
+        if(id === layerID) {
+            layerConfig.opacity = opacity;
+
+            return true;
+        }
+    }
+
+    return false;
 } 
 
 Map2D.prototype.getSurroundingTiles = function(directions) {

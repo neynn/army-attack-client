@@ -15,6 +15,7 @@ import { MapEditor } from "./map/mapEditor.js";
 import { Logger } from "./logger.js";
 import { SystemManager } from "./system/systemManager.js";
 import { Camera2D } from "./camera/2D/camera2D.js";
+import { TileManager } from "./tile/tileManager.js";
 
 export const GameContext = function() {
     this.id = "GAME_CONTEXT";
@@ -23,6 +24,7 @@ export const GameContext = function() {
     this.client = new Client();
     this.controller = new Entity("CONTROLLER");
     this.renderer = new Camera2D(window.innerWidth, window.innerHeight);
+    this.tileManager = new TileManager();
     this.spriteManager = new SpriteManager();
     this.uiManager = new UIManager();
     this.timer = new Timer(60);
@@ -47,6 +49,7 @@ export const GameContext = function() {
 
     this.timer.renderFunction = (realTime, deltaTime) => {
         this.spriteManager.update(this, realTime, deltaTime);
+        this.tileManager.update(this, realTime, deltaTime);
         this.uiManager.update(this);
         this.renderer.update(this);
     }
@@ -135,15 +138,16 @@ GameContext.prototype.loadResources = function(resources) {
     this.uiManager.loadFontTypes(resources.fonts);
     this.uiManager.loadIconTypes(resources.icons);
     this.uiManager.loadUserInterfaceTypes(resources.uiConfig);
-    this.client.musicPlayer.loadMusicTypes(resources.music);
     this.entityManager.loadEntityTypes(resources.entities);
     this.entityManager.loadTraitTypes(resources.traits);
     this.mapLoader.loadMapTypes(resources.maps);
     this.mapLoader.loadConfig(resources.settings.mapLoader);
     this.mapEditor.loadConfig(resources.settings.mapEditor);
     this.mapEditor.loadTileSetKeys(resources.tiles);
-    this.spriteManager.loadTileSprites(resources.tiles);
     this.spriteManager.loadSpriteTypes(resources.sprites);
+    this.tileManager.loadTileMeta(resources.tileMeta);
+    this.tileManager.loadTileTypes(resources.tiles);
+    this.client.musicPlayer.loadMusicTypes(resources.music);
     this.client.soundPlayer.loadSoundTypes(resources.sounds);
     this.client.socket.loadConfig(resources.settings.socket);
     this.config = resources.config;

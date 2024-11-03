@@ -47,7 +47,7 @@ ConquerSystem.convertTileGraphics = function(gameContext, tileX, tileY, teamID) 
 }
 
 ConquerSystem.updateBorder = function(gameContext, tileX, tileY) {
-    const { mapLoader, spriteManager, controller } = gameContext;
+    const { mapLoader, tileManager, controller } = gameContext;
     const settings = gameContext.getConfig("settings");
     const activeMap = mapLoader.getActiveMap();
 
@@ -82,7 +82,7 @@ ConquerSystem.updateBorder = function(gameContext, tileX, tileY) {
     });
 
     //HÄCK
-    const border = spriteManager.tileSprites["border"];
+    const border = tileManager.tileTypes["border"];
     const borderValue = border.autoTiler.values[autoIndex];
     
     if(borderValue) {

@@ -1,0 +1,13 @@
+{
+    "0": { "id": 0, "set": "ground", "animation": "Bg_BadTile_01" },
+    "1": { "id": 1, "set": "ground", "animation": "Bg_BadTile_02" },
+    "2": { "id": 2, "set": "ground", "animation": "Bg_BadTile_01_desert" },
+    "3": { "id": 3, "set": "ground", "animation": "Bg_GoodTile_01" },
+    "4": { "id": 4, "set": "ground", "animation": "Bg_GoodTile_02" },
+    "5": { "id": 5, "set": "ground", "animation": "Bg_GoodTile_01_desert" },
+    "6": { "id": 6, "set": "ground", "animation": "Bg_WaterTile_01" },
+    "7": { "id": 7, "set": "ground", "animation": "Bg_WaterTile_01_desert" },
+    "8": { "id": 8, "set": "ground", "animation": "Bg_CloudTile_01" },
+    "9": { "id": 9, "set": "ground", "animation": "Bg_DebrisTile_01" },
+    "10": { "id": 10, "set": "ground", "animation": "Bg_FogTile_01" }
+}

@@ -93,8 +93,8 @@ Camera2D.prototype.drawMap = function(gameContext) {
     this.display.context.save();
     this.display.context.scale(Camera.SCALE, Camera.SCALE);
 
-    for(const layerID of activeMap.backgroundLayers) {
-        this.drawTileLayer(gameContext, activeMap, layerID, startX, startY, endX, endY);
+    for(const layerConfig of activeMap.backgroundLayers) {
+        this.drawTileLayer(gameContext, activeMap, layerConfig, startX, startY, endX, endY);
     }
     
     for(const layerID of spriteManager.drawOrder) {
@@ -102,8 +102,8 @@ Camera2D.prototype.drawMap = function(gameContext) {
         this.drawSpriteLayer(gameContext, layer);
     }
 
-    for(const layerID of activeMap.foregroundLayers) {
-        this.drawTileLayer(gameContext, activeMap, layerID, startX, startY, endX, endY);
+    for(const layerConfig of activeMap.foregroundLayers) {
+        this.drawTileLayer(gameContext, activeMap, layerConfig, startX, startY, endX, endY);
     }
 
     if(Camera.DEBUG) {
@@ -117,7 +117,7 @@ Camera2D.prototype.drawMap = function(gameContext) {
 
 Camera2D.prototype.drawTypeLayer = function(gameContext, gameMap, startX, startY, endX, endY) {
     const tileTypes = gameContext.getConfig("tileTypes");
-    const opacity = gameMap.layerOpacity["type"];
+    const opacity = gameMap.metaLayers[1].opacity; //HäCK aus der Hölle.
 
     if(!opacity || !tileTypes) {
         return;
@@ -190,33 +190,34 @@ Camera2D.prototype.drawSpriteLayer = function(gameContext, spriteLayer) {
     }
 }
 
-Camera2D.prototype.drawTileLayer = function(gameContext, map2D, layerID, startX, startY, endX, endY) {
-    const opacity = map2D.layerOpacity[layerID];
-    
+Camera2D.prototype.drawTileLayer = function(gameContext, map2D, layerConfig, startX, startY, endX, endY) {
+    const { id, opacity } = layerConfig;
+
     if(!opacity) {
         return;
     }
 
-    const { spriteManager } = gameContext;
+    const { tileManager } = gameContext;
     const { viewportX, viewportY } = this.getViewportPosition();
-    const layer = map2D.layers[layerID];
+    const width = map2D.width;
+    const layer = map2D.layers[id];
 
     this.display.context.globalAlpha = opacity;
 
     for(let i = startY; i <= endY; i++) {
         const renderY = i * Camera.TILE_HEIGHT - viewportY;
-        const row = i * map2D.width;
+        const row = i * width;
 
         for(let j = startX; j <= endX; j++) {
             const renderX = j * Camera.TILE_WIDTH - viewportX;
             const index = row + j;
             const graphics = layer[index];
 
-            if(!graphics) {
+            if(graphics === null) {
                 continue;
             }
             
-            spriteManager.drawTileGraphics(graphics, this.display.context, renderX, renderY);
+            tileManager.drawTileGraphics(graphics, this.display.context, renderX, renderY);
         }
     }
 

@@ -4,10 +4,11 @@
         "maxMapWidth": 100,
         "maxMapHeight": 100,
         "mapSetup": {
+            "music": null,
             "width": 20,
             "height": 20,
             "layers": {
-                "ground": { "id": "ground", "fill": ["ground", "Bg_GoodTile_01_desert"] },
+                "ground": { "id": "ground", "fill": ["ground", "Bg_GoodTile_01"] },
                 "border": { "id": "border", "fill": null },
                 "decoration": { "id": "decoration", "fill": null },
                 "overlay": { "id": "overlay", "fill": null },
@@ -15,27 +16,18 @@
                 "type": { "id": "type", "fill": "0" },
                 "team": { "id": "team", "fill": "0" }
             },
-            "layerOpacity": {
-                "ground": 1,
-                "border": 1,
-                "decoration": 1,
-                "overlay": 1,
-                "cloud": 1,
-                "type": 1,
-                "team": 1
-            },
             "backgroundLayers": [
-                "ground",
-                "border",
-                "decoration",
-                "overlay"
+                { "id": "ground", "opacity": 1, "autoGenerate": false },
+                { "id": "border", "opacity": 1, "autoGenerate": true },
+                { "id": "decoration", "opacity": 1, "autoGenerate": false },
+                { "id": "overlay", "opacity": 1, "autoGenerate": true }
             ],
             "foregroundLayers": [
-                "cloud"
+                { "id":"cloud", "opacity": 1, "autoGenerate": false }
             ],
             "metaLayers": [
-                "type",
-                "team"
+                { "id": "type", "opacity": 1, "autoGenerate": false }, 
+                { "id": "team", "opacity": 1, "autoGenerate": false } 
             ]
         }
     },

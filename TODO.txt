@@ -16,6 +16,8 @@
 //added fireSystem
 //added healthSystem
 
+//restructure layers: -> layeropacity removed setLayerOpacity unfortunately has to search through all layers
+
 //default move time; (96 * moveComponent.path.length) / 480;
 //sprite manager gets add icon / add sprite functions.
 //export const log instead of response.
@@ -25,3 +27,10 @@
 
 //IMPORTANT: Cached maps refers to the cached map data, not the map itself! Cached maps is used to re-initialize the map!
 //This will be a pain to fix lul.
+
+//Added tilemeta and inverted tile meta
+//Put tile rendering to tileManager
+
+//TODO: Add all tiles to tilemeta.json.
+//TODO: Change rendering to use get graphics from tileID <- function already added
+//TODO: maps use integers instead of arrays. this vastly increases performance

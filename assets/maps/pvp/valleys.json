@@ -2,10 +2,19 @@
     "music": "music_desertscorpion",
     "width": 11,
     "height": 11,
-    "layerOpacity": { "ground": 1, "border": 1, "decoration": 1, "overlay": 1, "cloud": 0, "type": 1, "team": 1 },
-    "backgroundLayers": [ "ground", "border", "decoration", "overlay" ],
-    "foregroundLayers": [ "cloud" ],
-    "metaLayers": [ "type", "team" ],
+    "backgroundLayers": [ 
+        { "id": "ground", "opacity": 1, "autoGenerate": false },
+        { "id": "border", "opacity": 1, "autoGenerate": true },
+        { "id": "decoration", "opacity": 1, "autoGenerate": false },
+        { "id": "overlay", "opacity": 1, "autoGenerate": true }
+    ],
+    "foregroundLayers": [ 
+        { "id":"cloud", "opacity": 0, "autoGenerate": false }
+    ],
+    "metaLayers": [ 
+        { "id": "type", "opacity": 1, "autoGenerate": false }, 
+        { "id": "team", "opacity": 1, "autoGenerate": false } 
+    ],
     "layers": {
         "ground": [
             ["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_02"],
@@ -20,19 +29,6 @@
             ["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_02"],
             ["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_01"]
         ],
-        "border": [
-            null,null,null,null,null,null,null,null,null,null,null,
-            null,null,null,null,null,null,null,null,null,null,null,
-            null,null,null,null,null,null,null,null,null,null,null,
-            null,null,null,null,null,null,null,null,null,null,null,
-            null,null,null,null,null,null,null,null,null,null,null,
-            null,null,null,null,null,null,null,null,null,null,null,
-            null,null,null,null,null,null,null,null,null,null,null,
-            null,null,null,null,null,null,null,null,null,null,null,
-            null,null,null,null,null,null,null,null,null,null,null,
-            null,null,null,null,null,null,null,null,null,null,null,
-            null,null,null,null,null,null,null,null,null,null,null
-        ],
         "decoration": [
             null,null,null,["deco_good","Bg_GoodTile_Deco_04"],["deco_good","Bg_GoodTile_Deco_01"],null,["deco_good","Bg_GoodTile_Deco_02"],["deco_good","Bg_GoodTile_Deco_03"],null,null,null,
             null,["mountain","Bg_MountainTile_01"],["mountain","Bg_MountainTile_01"],["deco_good","Bg_GoodTile_Deco_13"],null,["mountain","Bg_MountainTile_01"],["deco_good","Bg_GoodTile_Deco_15"],null,["mountain","Bg_MountainTile_01"],["mountain","Bg_MountainTile_01"],null,
@@ -45,19 +41,6 @@
             null,["mountain","Bg_MountainTile_01"],["mountain","Bg_MountainTile_01"],["deco_good","Bg_GoodTile_Deco_08"],["mountain","Bg_MountainTile_01"],null,["deco_good","Bg_GoodTile_Deco_13"],["mountain","Bg_MountainTile_01"],["deco_good","Bg_GoodTile_Deco_15"],null,null,
             null,["mountain","Bg_MountainTile_01"],null,null,["deco_good","Bg_GoodTile_Deco_02"],null,null,["mountain","Bg_MountainTile_01"],["mountain","Bg_MountainTile_01"],["mountain","Bg_MountainTile_01"],null,
             null,null,null,["deco_good","Bg_GoodTile_Deco_02"],["deco_good","Bg_GoodTile_Deco_17"],["deco_good","Bg_GoodTile_Deco_04"],null,["deco_good","Bg_GoodTile_Deco_02"],null,null,null
-        ],
-        "overlay": [
-            null,null,null,null,null,null,null,null,null,null,null,
-            null,null,null,null,null,null,null,null,null,null,null,
-            null,null,null,null,null,null,null,null,null,null,null,
-            null,null,null,null,null,null,null,null,null,null,null,
-            null,null,null,null,null,null,null,null,null,null,null,
-            null,null,null,null,null,null,null,null,null,null,null,
-            null,null,null,null,null,null,null,null,null,null,null,
-            null,null,null,null,null,null,null,null,null,null,null,
-            null,null,null,null,null,null,null,null,null,null,null,
-            null,null,null,null,null,null,null,null,null,null,null,
-            null,null,null,null,null,null,null,null,null,null,null
         ],
         "cloud": [
             ["clouds","Bg_CloudTile_10"],["clouds","Bg_CloudTile_08"],["clouds","Bg_CloudTile_08"],["clouds","Bg_CloudTile_08"],["clouds","Bg_CloudTile_08"],["clouds","Bg_CloudTile_08"],["clouds","Bg_CloudTile_08"],["clouds","Bg_CloudTile_08"],["clouds","Bg_CloudTile_08"],["clouds","Bg_CloudTile_08"],["clouds","Bg_CloudTile_12"],

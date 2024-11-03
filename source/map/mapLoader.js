@@ -181,6 +181,18 @@ MapLoader.prototype.createMapFromData = function(mapID, mapData) {
 
     map2D.initialize(mapSetup);
 
+    const autoLayers = map2D.getAutoGeneratingLayers();
+
+    for(const layerID of autoLayers) {
+        const layerSetup = this.config.mapSetup.layers[layerID];
+
+        if(layerSetup) {
+            map2D.generateEmptyLayer(layerID, layerSetup.fill);
+        } else {
+            map2D.generateEmptyLayer(layerID, null);
+        }
+    }
+
     this.loadedMaps.set(mapID, map2D);
 
     return map2D;

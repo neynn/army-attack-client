@@ -65,7 +65,7 @@ Minimap.prototype.drawPlayer = function(playerRay, roationRadians, context) {
 }
 
 Minimap.prototype.draw = function(gameContext, minimapLayer, context) {
-    const { spriteManager } = gameContext;
+    const { tileManager } = gameContext;
     const startX = Math.floor(this.viewportX / Minimap.TILE_WIDTH);
     const startY = Math.floor(this.viewportY / Minimap.TILE_HEIGHT);
     const endX = Math.floor((this.viewportX + this.viewportWidth) / Minimap.TILE_WIDTH);
@@ -91,7 +91,7 @@ Minimap.prototype.draw = function(gameContext, minimapLayer, context) {
             }
 
             //TODO add default width and height.
-            spriteManager.drawTileGraphics(tile, context, renderX, renderY, 96 / Minimap.TILE_WIDTH, 96 / Minimap.TILE_HEIGHT);
+            tileManager.drawTileGraphics(tile, context, renderX, renderY, 96 / Minimap.TILE_WIDTH, 96 / Minimap.TILE_HEIGHT);
         }
     }
 

@@ -10,5 +10,6 @@
     "music": { "id": "music", "directory": "assets/music", "source": "music.json" },
     "sounds": { "id": "sounds", "directory": "assets/sounds", "source": "sounds.json" },
     "sprites": { "id": "sprites", "directory": "assets/sprites", "source": "sprites.json" },
-    "tiles": { "id": "tiles", "directory": "assets/tiles", "source": "tiles.json" }
+    "tiles": { "id": "tiles", "directory": "assets/tiles", "source": "tiles.json" },
+    "tileMeta": { "id": "tileMeta", "directory": "assets/tiles", "source": "tileMeta.json" }
 }

@@ -15,7 +15,7 @@ MapEditorState.prototype.constructor = MapEditorState;
 //EBOLA-HÄCK-CONTAINMENT-CENTER
 //TODO: Attack layers properly.
 const initializeMapEditor = function(gameContext) {
-    const { mapLoader, client, uiManager, spriteManager, renderer, mapEditor } = gameContext;
+    const { mapLoader, client, uiManager, spriteManager, renderer, mapEditor, tileManager } = gameContext;
     const { cursor } = client;
 
     const editorInterface = mapEditor.config.interface;
@@ -135,7 +135,7 @@ const initializeMapEditor = function(gameContext) {
             const [tileSetID, frameID, brushModeID] = brushData;
 
             button.events.subscribe(UIElement.EVENT_DRAW, MAP_EDITOR_ID, (context, localX, localY) => {
-                spriteManager.drawTileGraphics(brushData, context, localX, localY, GRAPHICS_BUTTON_SCALE, GRAPHICS_BUTTON_SCALE);
+                tileManager.drawTileGraphics(brushData, context, localX, localY, GRAPHICS_BUTTON_SCALE, GRAPHICS_BUTTON_SCALE);
                 context.fillStyle = "#eeeeee";
                 context.textAlign = "center";
                 context.fillText(frameID, localX + 25, localY + 25);
@@ -223,7 +223,7 @@ const initializeMapEditor = function(gameContext) {
                     continue;
                 }
 
-                spriteManager.drawTileGraphics(brush, renderer.display.context, renderX, renderY);
+                tileManager.drawTileGraphics(brush, renderer.display.context, renderX, renderY);
             }
         }
 
@@ -281,7 +281,7 @@ const initializeMapEditor = function(gameContext) {
 
     uiManager.addClick(editorInterface.id, "BUTTON_TILESET_MODE", () => {
         mapEditor.scrollBrushMode(1);
-        mapEditor.reloadPageElements(spriteManager.tileSprites);
+        mapEditor.reloadPageElements(tileManager.tileTypes);
         loadPageButtonsEvents(mapEditor.getPageElements(AVAILABLE_BUTTON_SLOTS.length));
 
         uiManager.setText(editorInterface.id, "TEXT_TILESET_MODE", `MODE: ${mapEditor.getBrushModeID()}`);
@@ -290,7 +290,7 @@ const initializeMapEditor = function(gameContext) {
 
     uiManager.addClick(editorInterface.id, "BUTTON_TILESET_LEFT", () => {
         mapEditor.scrollCurrentSet(-1);
-        mapEditor.reloadPageElements(spriteManager.tileSprites);
+        mapEditor.reloadPageElements(tileManager.tileTypes);
         loadPageButtonsEvents(mapEditor.getPageElements(AVAILABLE_BUTTON_SLOTS.length));
 
         uiManager.setText(editorInterface.id, "TEXT_TILESET", `${mapEditor.getCurrentSetID()}`);
@@ -299,7 +299,7 @@ const initializeMapEditor = function(gameContext) {
 
     uiManager.addClick(editorInterface.id, "BUTTON_TILESET_RIGHT", () => {
         mapEditor.scrollCurrentSet(1);
-        mapEditor.reloadPageElements(spriteManager.tileSprites);
+        mapEditor.reloadPageElements(tileManager.tileTypes);
         loadPageButtonsEvents(mapEditor.getPageElements(AVAILABLE_BUTTON_SLOTS.length));
 
         uiManager.setText(editorInterface.id, "TEXT_TILESET", `${mapEditor.getCurrentSetID()}`);
