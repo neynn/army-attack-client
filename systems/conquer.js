@@ -82,14 +82,15 @@ ConquerSystem.updateBorder = function(gameContext, tileX, tileY) {
     });
 
     //HÄCK
-    const border = tileManager.tileTypes["border"];
-    const borderValue = border.autoTiler.values[autoIndex];
+    const borderAutoTiler = tileManager.tileMeta.autotilers["border"];
+    const borderValue = borderAutoTiler.values[autoIndex];
     
     if(borderValue) {
-        const animationID = borderValue.type;
+        const setID = borderValue.set;
+        const animationID = borderValue.animation;
 
         if(animationID) {
-            activeMap.placeTile(["border", animationID], "border", tileX, tileY);
+            activeMap.placeTile([setID, animationID], "border", tileX, tileY);
         }
     }
 }

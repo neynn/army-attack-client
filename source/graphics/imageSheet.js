@@ -54,7 +54,7 @@ ImageSheet.prototype.getAnimations = function() {
 }
 
 ImageSheet.prototype.loadFromConfig = function(config) {
-    const { id, directory, source, offset, frameTime, frames, allowFlip, animations, patterns, autoTiler } = config;
+    const { id, directory, source, offset, frameTime, frames, allowFlip, animations, patterns } = config;
 
     this.id = id;
     this.directory = directory;
@@ -62,33 +62,14 @@ ImageSheet.prototype.loadFromConfig = function(config) {
     this.frameTime = frameTime;
     this.allowFlip = allowFlip;
 
-    if(allowFlip) {
-        this.allowFlip = allowFlip;
-    }
-
-    if(frameTime) {
-        this.frameTime = frameTime;
-    }
-
+    if(allowFlip) this.allowFlip = allowFlip;
+    if(frameTime) this.frameTime = frameTime;
+    if(frames) this.frames = frames;
+    if(animations) this.animations = animations;
+    if(patterns) this.patterns = patterns;
     if(offset) {
         this.offset.x = offset.x;
         this.offset.y = offset.y;
-    }
-
-    if(frames) {
-        this.frames = frames;
-    }
-
-    if(animations) {
-        this.animations = animations;
-    }
-
-    if(patterns) {
-        this.patterns = patterns;
-    }
-
-    if(autoTiler) {
-        this.autoTiler = autoTiler;
     }
 }
 

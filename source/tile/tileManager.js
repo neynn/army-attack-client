@@ -5,7 +5,6 @@ export const TileManager = function() {
     this.id = "TILE_MANAGER";
     this.tileTypes = {};
     this.tileMeta = {};
-    this.invertedTileMeta = {};
 }
 
 TileManager.prototype.update = function(gameContext, realTime, deltaTime) {
@@ -76,19 +75,19 @@ TileManager.prototype.drawTileGraphics = function(graphics, context, renderX, re
 }
 
 TileManager.prototype.invertTileMeta = function() {
-    for(const tileID in this.tileMeta) {
-        const { id, set, animation } = this.tileMeta[tileID];
+    for(const tileID in this.tileMeta.values) {
+        const { id, set, animation } = this.tileMeta.values[tileID];
 
-        if(this.invertedTileMeta[set] === undefined) {
-            this.invertedTileMeta[set] = {};
+        if(this.tileMeta.inversion[set] === undefined) {
+            this.tileMeta.inversion[set] = {};
         }
 
-        this.invertedTileMeta[set][animation] = id;
+        this.tileMeta.inversion[set][animation] = id;
     }
 }
 
 TileManager.prototype.getTileGraphics = function(tileID) {
-    const graphics = this.tileMeta[tileID];
+    const graphics = this.tileMeta.values[tileID];
 
     if(!graphics) {
         return null;
@@ -98,7 +97,7 @@ TileManager.prototype.getTileGraphics = function(tileID) {
 }
 
 TileManager.prototype.getTileID = function(setID, animationID) {
-    const metaSet = this.invertedTileMeta[setID];
+    const metaSet = this.tileMeta.inversion[setID];
 
     if(!metaSet) {
         return null;
