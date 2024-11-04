@@ -4,7 +4,7 @@ import { TeamSystem } from "./team.js";
 export const ConquerSystem = function() {}
 
 ConquerSystem.convertTileGraphics = function(gameContext, tileX, tileY, teamID) {
-    const { mapLoader } = gameContext;
+    const { mapLoader, tileManager } = gameContext;
     const activeMap = mapLoader.getActiveMap();
 
     if(!activeMap) {
@@ -15,32 +15,20 @@ ConquerSystem.convertTileGraphics = function(gameContext, tileX, tileY, teamID) 
     const tileConversions = gameContext.getConfig("tileConversions");
 
     for(const layerID in settings.convertableLayers) {
-        const graphics = activeMap.getLayerTile(layerID, tileX, tileY);
+        const tileID = activeMap.getLayerTile(layerID, tileX, tileY);
 
-        if(graphics === null) {
+        if(tileID === null) {
             continue;
         }
 
-        const [setID, animationID] = graphics;
-        const conversionSet = tileConversions[setID];
+        const conversion = tileConversions[tileID];
+        const nextTileID = conversion[teamID];
 
-        if(!conversionSet) {
-            continue; 
-        }
-
-        const conversionAnimation = conversionSet[animationID];
-
-        if(!conversionAnimation) {
+        if(!tileManager.hasTileMeta(nextTileID)) {
             continue;
         }
 
-        const conversion = conversionAnimation[teamID];
-
-        if(!conversion || !Array.isArray(conversion)) {
-            continue;
-        }
-
-        activeMap.placeTile(conversion, layerID, tileX, tileY);
+        activeMap.placeTile(nextTileID, layerID, tileX, tileY);
     }
 
     return true;
@@ -83,14 +71,12 @@ ConquerSystem.updateBorder = function(gameContext, tileX, tileY) {
 
     //HÄCK
     const borderAutoTiler = tileManager.tileMeta.autotilers["border"];
-    const borderValue = borderAutoTiler.values[autoIndex];
+    const borderConfig = borderAutoTiler.values[autoIndex];
     
-    if(borderValue) {
-        const setID = borderValue.set;
-        const animationID = borderValue.animation;
+    if(borderConfig) {
+        const { set, animation } = borderConfig;
+        const tileID = tileManager.getTileID(set, animation);
 
-        if(animationID) {
-            activeMap.placeTile([setID, animationID], "border", tileX, tileY);
-        }
+        activeMap.placeTile(tileID, "border", tileX, tileY);
     }
 }

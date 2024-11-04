@@ -28,7 +28,7 @@ ControllerSystem.clearAttackers = function(gameContext) {
 }
 
 ControllerSystem.hightlightAttackers = function(gameContext, target, attackers) {
-    const { controller, entityManager, mapLoader } = gameContext;
+    const { controller, entityManager, mapLoader, tileManager } = gameContext;
     const settings = gameContext.getConfig("settings");
     const activeMap = mapLoader.getActiveMap();
     const controllerComponent = controller.getComponent(ControllerComponent);
@@ -43,7 +43,8 @@ ControllerSystem.hightlightAttackers = function(gameContext, target, attackers) 
         }
 
         const positionComponent = attacker.getComponent(PositionComponent);
-        activeMap.placeTile(["overlay", "grid_attack_1x1"], settings.overlayLayerID, positionComponent.tileX, positionComponent.tileY);
+        const tileID = tileManager.getTileID("overlay", "grid_attack_1x1");
+        activeMap.placeTile(tileID, settings.overlayLayerID, positionComponent.tileX, positionComponent.tileY);
 
         DirectionSystem.lookAt(attacker, target);
         MorphSystem.morphDirectional(attacker, "aim", "aim_ne");

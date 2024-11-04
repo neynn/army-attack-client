@@ -3,6 +3,13 @@ import { response } from "../response.js";
 
 export const MapEditor = function() {
     this.config = {};
+    this.brushSizee = new Map([
+        [MapEditor.BRUSH_SIZE_SMALL, 0],
+        [MapEditor.BRUSH_SIZE_MEDIUM, 1],
+        [MapEditor.BRUSH_SIZE_LARGE, 2],
+        [MapEditor.BRUSH_SIZE_LARGE, 3],
+        [MapEditor.BRUSH_SIZE_EXTRALARGE, 4]
+    ]);
     this.brushSizes = [MapEditor.BRUSH_SIZE_SMALL, MapEditor.BRUSH_SIZE_MEDIUM, MapEditor.BRUSH_SIZE_LARGE, MapEditor.BRUSH_SIZE_EXTRALARGE, MapEditor.BRUSH_SIZE_COLOSSAL];
     this.currentBrushSizeIndex = 0;
     this.brushModes = [MapEditor.MODE_TYPE_TILE, MapEditor.MODE_TYPE_PATTERN, MapEditor.MODE_TYPE_ANIMATION];
@@ -273,21 +280,6 @@ MapEditor.prototype.paint = function(gameContext, mapID, layerID) {
     }
     
     return true;
-    /*
-    const tileSet = tileManager.tileTypes[tileSetID];
-    if(brushModeID === MapEditor.MODE_TYPE_PATTERN) {
-        const pattern = tileSet.patterns[frameID];
-
-        for(let i = 0; i < pattern.length; i++) {
-            for(let j = 0; j < pattern[i].length; j++) {
-                const patternFrameID = pattern[i][j];
-                gameMap.placeTile([tileSetID, patternFrameID], currentLayer, cursorTile.x + j, cursorTile.y + i);
-            }
-        }
-
-        return;
-    }
-    */
 }
 
 MapEditor.prototype.getBrushSize = function() {

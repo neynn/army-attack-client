@@ -137,7 +137,7 @@ GameContext.prototype.initializeMap = function(mapID) {
 GameContext.prototype.loadResources = function(resources) {
     this.uiManager.loadFontTypes(resources.fonts);
     this.uiManager.loadIconTypes(resources.icons);
-    this.uiManager.loadUserInterfaceTypes(resources.uiConfig);
+    this.uiManager.loadInterfaceTypes(resources.uiConfig);
     this.entityManager.loadEntityTypes(resources.entities);
     this.entityManager.loadTraitTypes(resources.traits);
     this.mapLoader.loadMapTypes(resources.maps);

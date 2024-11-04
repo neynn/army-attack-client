@@ -13,7 +13,7 @@ SelectSystem.isSelectable = function(entity) {
 }
 
 SelectSystem.selectEntity = function(entity, gameContext) {
-    const { controller, client, spriteManager } = gameContext;
+    const { controller, client, spriteManager, tileManager } = gameContext;
     const { soundPlayer } = client;
     const controllerComponent  = controller.getComponent(ControllerComponent);
     const nodeList = PathfinderSystem.generateNodeList(gameContext, entity);
@@ -24,6 +24,8 @@ SelectSystem.selectEntity = function(entity, gameContext) {
     }
 
     const activeMap = gameContext.mapLoader.getActiveMap();
+    const enableTileID = tileManager.getTileID("overlay", "grid_enabled_1x1");
+    const attackTileID = tileManager.getTileID("overlay", "grid_attack_1x1");
 
     for(const node of nodeList) {
         const {positionX, positionY} = node;
@@ -37,10 +39,10 @@ SelectSystem.selectEntity = function(entity, gameContext) {
         //flagging would be good.
         if(node.isValid) {
             if(PathfinderSystem.isEmpty(gameContext, positionX, positionY)) {
-                activeMap.placeTile(["overlay", "grid_enabled_1x1"], "overlay", positionX, positionY);
+                activeMap.placeTile(enableTileID, "overlay", positionX, positionY);
             }
         } else {
-            activeMap.placeTile(["overlay", "grid_attack_1x1"], "overlay", positionX, positionY);
+            activeMap.placeTile(attackTileID, "overlay", positionX, positionY);
         }
 
         ConquerSystem.convertTileGraphics(gameContext, positionX, positionY, 0);

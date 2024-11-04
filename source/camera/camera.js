@@ -48,7 +48,7 @@ Camera.prototype.drawUI = function(gameContext) {
     const deltaTime = timer.getDeltaTime();
 
     for(const elementID of uiManager.drawableElements) {
-        const element = uiManager.getElementUnique(elementID);
+        const element = uiManager.getElementByID(elementID);
         
         element.update(realTime, deltaTime);
         element.draw(this.display.context, 0, 0, 0, 0);

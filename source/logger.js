@@ -3,11 +3,53 @@ export const Logger = {
     failedLogs: 0,
     logs: [],
     log: function(isSuccess, reason, script, attachments) {},
+    warn: function(isSuccess, reason, script, attachments) {},
+    error: function(isSuccess, reason, script, attachments) {},
     clear: function() {},
     exportLogs: function() {}
 }
 
 Logger.log = function(isSuccess, reason, script, attachments) {
+    const logEntry = {
+        "success": isSuccess,
+        "reason": reason,
+        "script": script,
+        "attachments": attachments
+    }
+
+    if(!isSuccess) {
+        logEntry.timestamp = new Date().toISOString();
+        Logger.failedLogs ++;
+        Logger.logs.push(logEntry);
+        console.error(logEntry);
+    } else {
+        Logger.successfulLogs ++;
+    }
+
+    return logEntry;
+}
+
+Logger.warn = function(isSuccess, reason, script, attachments) {
+    const logEntry = {
+        "success": isSuccess,
+        "reason": reason,
+        "script": script,
+        "attachments": attachments
+    }
+
+    if(!isSuccess) {
+        logEntry.timestamp = new Date().toISOString();
+        Logger.failedLogs ++;
+        Logger.logs.push(logEntry);
+        console.warn(logEntry);
+    } else {
+        Logger.successfulLogs ++;
+    }
+
+    return logEntry;
+}
+
+Logger.error = function(isSuccess, reason, script, attachments) {
     const logEntry = {
         "success": isSuccess,
         "reason": reason,

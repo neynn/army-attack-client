@@ -52,11 +52,11 @@ TileManager.prototype.updateTileTypes = function(timestamp) {
     }
 }
 
-TileManager.prototype.drawTileGraphics = function(graphics, context, renderX, renderY, scaleX = 1, scaleY = 1) {
-    const [setID, animationID] = graphics;
-    const tileSet = this.tileTypes[setID];
-    const animation = tileSet.getAnimation(animationID);
-    const currentFrame = animation.getCurrentFrame();
+TileManager.prototype.drawTileGraphics = function(tileID, context, renderX, renderY, scaleX = 1, scaleY = 1) {
+    const { set, animation } = this.getTileMeta(tileID);
+    const tileSet = this.tileTypes[set];
+    const tileAnimation = tileSet.getAnimation(animation);
+    const currentFrame = tileAnimation.getCurrentFrame();
 
     for(const component of currentFrame) {
         const { id, offsetX, offsetY } = component;
@@ -86,14 +86,14 @@ TileManager.prototype.invertTileMeta = function() {
     }
 }
 
-TileManager.prototype.getTileGraphics = function(tileID) {
-    const graphics = this.tileMeta.values[tileID];
+TileManager.prototype.getTileMeta = function(tileID) {
+    const meta = this.tileMeta.values[tileID];
 
-    if(!graphics) {
+    if(!meta) {
         return null;
     }
 
-    return graphics;
+    return meta;
 }
 
 TileManager.prototype.getTileID = function(setID, animationID) {
@@ -110,4 +110,8 @@ TileManager.prototype.getTileID = function(setID, animationID) {
     }
 
     return metaID;
+}
+
+TileManager.prototype.hasTileMeta = function(tileID) {
+    return this.tileMeta.values[tileID] !== undefined;
 }
