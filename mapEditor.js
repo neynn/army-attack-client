@@ -203,10 +203,11 @@ MapEditor.prototype.paint = function(gameContext, mapID, layerID) {
     const gameMap = mapLoader.getLoadedMap(mapID);
     const brush = this.getBrush();
 
-    if(!gameMap || brush === undefined) {
-        return false;
+    if(!gameMap || !brush) {
+        return;
     }
 
+    const { tileID } = brush;
     const startX = cursorTile.x - this.brushSize;
     const startY = cursorTile.y - this.brushSize;
     const endX = cursorTile.x + this.brushSize;
@@ -214,14 +215,7 @@ MapEditor.prototype.paint = function(gameContext, mapID, layerID) {
 
     for(let i = startY; i <= endY; i++) {
         for(let j = startX; j <= endX; j++) {
-            if(brush === null) {
-                gameMap.placeTile(null, layerID, j, i);
-            } else {
-                const { tileID } = brush;
-                gameMap.placeTile(tileID, layerID, j, i);
-            }
+            gameMap.placeTile(tileID, layerID, j, i);
         }
     }
-    
-    return true;
 }
