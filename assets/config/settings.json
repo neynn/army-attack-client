@@ -8,7 +8,7 @@
             "width": 20,
             "height": 20,
             "layers": {
-                "ground": { "id": "ground", "fill": ["ground", "Bg_GoodTile_01"] },
+                "ground": { "id": "ground", "fill": 0 },
                 "border": { "id": "border", "fill": null },
                 "decoration": { "id": "decoration", "fill": null },
                 "overlay": { "id": "overlay", "fill": null },
@@ -34,6 +34,8 @@
     "mapEditor": {
         "id": "MAP_EDITOR",
         "overlayOpacity": 0.75,
+        "brushSizes": [0, 1, 2, 3, 4],
+        "brushModes": ["DRAW", "ERASE"],
         "interface": {
             "id": "MAP_EDITOR",
             "layerButtonStates": {
@@ -67,19 +69,8 @@
         },
         "hiddenSets": {
             "range": 1,
-            "overlay": 1
-        },
-        "orderedSets": {
-            "ground": {
-                "order": 0,
-                "tiles": []
-            },
-            "deco_bad": [],
-            "deco_good": [],
-            "mountain": [],
-            "river_good": [],
-            "river_bad": [],
-            "coast": []
+            "overlay": 1,
+            "border": 1
         }
     },
     "socket": {

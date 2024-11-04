@@ -32,12 +32,3 @@
 //Put tile rendering to tileManager
 
 //TODO: Add all tiles to tilemeta.json.
-//TODO: Change rendering to use get graphics from tileID <- function already added
-//TODO: maps use integers instead of arrays. this vastly increases performance
-
-//Rewrite the map editor
-    //Brushes sind jetzt { tileID: int, mode: string }
-    //Map editor grabs the inverse meta.
-    //Sorts it by set and then animation.
-    //Brush can either have null or an id. if its undefined, it has nothing.
-    //This also simplifies placeTile!

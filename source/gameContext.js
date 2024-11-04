@@ -11,7 +11,6 @@ import { Timer } from "./timer.js";
 import { ActionQueue } from "./action/actionQueue.js";
 import { UIElement } from "./ui/uiElement.js";
 import { Entity } from "./entity/entity.js";
-import { MapEditor } from "./map/mapEditor.js";
 import { Logger } from "./logger.js";
 import { SystemManager } from "./system/systemManager.js";
 import { Camera2D } from "./camera/2D/camera2D.js";
@@ -29,7 +28,6 @@ export const GameContext = function() {
     this.uiManager = new UIManager();
     this.timer = new Timer(60);
     this.mapLoader = new MapLoader();
-    this.mapEditor = new MapEditor();
     this.systemManager = new SystemManager();
     this.entityManager = new EntityManager();
     this.actionQueue = new ActionQueue();
@@ -142,8 +140,6 @@ GameContext.prototype.loadResources = function(resources) {
     this.entityManager.loadTraitTypes(resources.traits);
     this.mapLoader.loadMapTypes(resources.maps);
     this.mapLoader.loadConfig(resources.settings.mapLoader);
-    this.mapEditor.loadConfig(resources.settings.mapEditor);
-    this.mapEditor.loadTileSetKeys(resources.tiles);
     this.spriteManager.loadSpriteTypes(resources.sprites);
     this.tileManager.loadTileMeta(resources.tileMeta);
     this.tileManager.loadTileTypes(resources.tiles);

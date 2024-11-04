@@ -4,6 +4,7 @@ import { loopValue } from "../../source/math/math.js";
 import { saveMap, saveTemplateAsFile } from "../../source/helpers.js";
 import { State } from "../../source/state/state.js";
 import { UIElement } from "../../source/ui/uiElement.js";
+import { MapEditor } from "../../mapEditor.js";
 
 export const MapEditorState = function() {
     State.call(this);
@@ -13,11 +14,9 @@ MapEditorState.prototype = Object.create(State.prototype);
 MapEditorState.prototype.constructor = MapEditorState;
 
 //EBOLA-HÄCK-CONTAINMENT-CENTER
-//TODO: Attack layers properly.
-const initializeMapEditor = function(gameContext) {
-    const { mapLoader, client, uiManager, spriteManager, renderer, mapEditor, tileManager } = gameContext;
+const initializeMapEditor = function(mapEditor, gameContext) {
+    const { mapLoader, client, uiManager, renderer, tileManager } = gameContext;
     const { cursor } = client;
-
     const editorInterface = mapEditor.config.interface;
 
     const BUTTON_TYPE_BOOLEAN = "0";
@@ -100,7 +99,9 @@ const initializeMapEditor = function(gameContext) {
         updateLayerOpacity();
     }
 
-    const loadPageButtonsEvents = (pageElements) => {
+    const loadPageButtonsEvents = () => {
+        const pageElements = mapEditor.getPage();
+        
         for(const buttonID of AVAILABLE_BUTTON_SLOTS) {
             const button = uiManager.getButton(editorInterface.id, buttonID);
 
@@ -112,10 +113,11 @@ const initializeMapEditor = function(gameContext) {
             const brushData = pageElements[i];
             const buttonID = AVAILABLE_BUTTON_SLOTS[i];
             const button = uiManager.getButton(editorInterface.id, buttonID);
+            const { tileName, tileID } = brushData;
 
-            button.events.subscribe(UIElement.EVENT_CLICKED, MAP_EDITOR_ID, () => mapEditor.setSelectedBrush(brushData));
+            button.events.subscribe(UIElement.EVENT_CLICKED, MAP_EDITOR_ID, () => mapEditor.setBrush(brushData));
 
-            if(brushData === null) {
+            if(tileID === null) {
                 button.events.subscribe(UIElement.EVENT_DRAW, MAP_EDITOR_ID, (context, localX, localY) => {
                     context.fillStyle = "#701867";
                     context.fillRect(localX, localY, 25, 25);
@@ -124,22 +126,14 @@ const initializeMapEditor = function(gameContext) {
                     context.fillRect(localX + 25, localY, 25, 25);
                     context.fillRect(localX, localY + 25, 25, 25);
                 });
-
-                continue;
+            } else {
+                button.events.subscribe(UIElement.EVENT_DRAW, MAP_EDITOR_ID, (context, localX, localY) => {
+                    tileManager.drawTileGraphics(tileID, context, localX, localY, GRAPHICS_BUTTON_SCALE, GRAPHICS_BUTTON_SCALE);
+                    context.fillStyle = "#eeeeee";
+                    context.textAlign = "center";
+                    context.fillText(tileName, localX + 25, localY + 25);
+                });
             }
-
-            if(brushData === undefined) {
-                continue;
-            }
-
-            const [tileSetID, frameID, brushModeID] = brushData;
-
-            button.events.subscribe(UIElement.EVENT_DRAW, MAP_EDITOR_ID, (context, localX, localY) => {
-                tileManager.drawTileGraphics(brushData, context, localX, localY, GRAPHICS_BUTTON_SCALE, GRAPHICS_BUTTON_SCALE);
-                context.fillStyle = "#eeeeee";
-                context.textAlign = "center";
-                context.fillText(frameID, localX + 25, localY + 25);
-            });
         }
     }
 
@@ -163,26 +157,32 @@ const initializeMapEditor = function(gameContext) {
     }
 
     const getPageText = () => {
-        const maxElementsPerPage = AVAILABLE_BUTTON_SLOTS.length;
-        const maxPagesNeeded = Math.ceil(mapEditor.allPageElements.length / maxElementsPerPage);
+        const maxPagesNeeded = Math.ceil(mapEditor.allPageElements.length / mapEditor.config.interface.slots.length);
         const showMaxPagesNeeded = maxPagesNeeded === 0 ? 1 : maxPagesNeeded;
 
-        return `${mapEditor.currentPageIndex + 1} / ${showMaxPagesNeeded}`;
+        return `${mapEditor.pageIndex + 1} / ${showMaxPagesNeeded}`;
     }
 
     const getSizeText = () => {
         const brushSize = mapEditor.getBrushSize();
         const tileSize = brushSize * 2 + 1;
 
-        return `SIZE: ${tileSize}x${tileSize} (${brushSize + 1} / ${mapEditor.brushSizes.length})`;
+        return `SIZE: ${tileSize}x${tileSize} (${brushSize + 1} / ${mapEditor.config.brushSizes.length})`;
+    }
+
+    const updateButtonText = () => {
+        uiManager.setText(editorInterface.id, "TEXT_TILESET_MODE", `MODE: ${mapEditor.getBrushMode()}`);
+        uiManager.setText(editorInterface.id, "TEXT_TILESET", `${mapEditor.getBrushSet().id}`);
+        uiManager.setText(editorInterface.id, "TEXT_PAGE", getPageText());
+        uiManager.setText(editorInterface.id, "TEXT_SIZE",  getSizeText());
     }
 
     renderer.events.subscribe(Camera.EVENT_MAP_RENDER_COMPLETE, MAP_EDITOR_ID, (renderer) => {
         const cursorTile = gameContext.getViewportTilePosition();
-        const brush = mapEditor.getSelectedBrush();
+        const brush = mapEditor.getBrush();
         const brushSize = mapEditor.getBrushSize();
 
-        if(brush === undefined) {
+        if(!brush) {
             return;
         }
 
@@ -195,6 +195,7 @@ const initializeMapEditor = function(gameContext) {
             }
         }
 
+        const { tileName, tileID } = brush;
         const { context } = renderer.display;
         const { viewportX, viewportY } = renderer.getViewportPosition();
         const tileWidth = Camera.TILE_WIDTH * Camera.SCALE;
@@ -210,20 +211,20 @@ const initializeMapEditor = function(gameContext) {
 
         for(let i = startY; i <= endY; i++) {
             const renderY = i * tileHeight - viewportY * Camera.SCALE;
+
             for(let j = startX; j <= endX; j++) {   
                 const renderX = j * tileWidth - viewportX * Camera.SCALE;
 
-                if(brush === null) {
+                if(tileID === null) {
                     context.fillStyle = "#701867";
                     context.fillRect(renderX, renderY, halfTileWidth, halfTileHeight);
                     context.fillRect(renderX + halfTileWidth, renderY + halfTileHeight, halfTileWidth, halfTileHeight);
                     context.fillStyle = "#000000";
                     context.fillRect(renderX + halfTileWidth, renderY, halfTileWidth, halfTileHeight);
                     context.fillRect(renderX, renderY + halfTileHeight, halfTileWidth, halfTileHeight);
-                    continue;
+                } else {
+                    tileManager.drawTileGraphics(tileID, renderer.display.context, renderX, renderY);   
                 }
-
-                tileManager.drawTileGraphics(brush, renderer.display.context, renderX, renderY);
             }
         }
 
@@ -232,14 +233,12 @@ const initializeMapEditor = function(gameContext) {
 
     cursor.events.subscribe(Cursor.UP_MOUSE_SCROLL, MAP_EDITOR_ID, () => {
         mapEditor.scrollBrushSize(1);
-    
-        uiManager.setText(editorInterface.id, "TEXT_SIZE", getSizeText());
+        updateButtonText();
     });
 
     cursor.events.subscribe(Cursor.DOWN_MOUSE_SCROLL, MAP_EDITOR_ID, () => {
         mapEditor.scrollBrushSize(-1);
-    
-        uiManager.setText(editorInterface.id, "TEXT_SIZE", getSizeText());
+        updateButtonText();
     });
 
     cursor.events.subscribe(Cursor.RIGHT_MOUSE_DRAG, MAP_EDITOR_ID, () => {
@@ -272,58 +271,39 @@ const initializeMapEditor = function(gameContext) {
         }
     });
 
-    loadPageButtonsEvents(mapEditor.getPageElements(AVAILABLE_BUTTON_SLOTS.length));
-
-    uiManager.setText(editorInterface.id, "TEXT_TILESET_MODE", `MODE: ${mapEditor.getBrushModeID()}`);
-    uiManager.setText(editorInterface.id, "TEXT_TILESET", `${mapEditor.getCurrentSetID()}`);
-    uiManager.setText(editorInterface.id, "TEXT_PAGE", getPageText());
-    uiManager.setText(editorInterface.id, "TEXT_SIZE",  getSizeText());
-
     uiManager.addClick(editorInterface.id, "BUTTON_TILESET_MODE", () => {
         mapEditor.scrollBrushMode(1);
-        mapEditor.reloadPageElements(tileManager.tileTypes);
-        loadPageButtonsEvents(mapEditor.getPageElements(AVAILABLE_BUTTON_SLOTS.length));
-
-        uiManager.setText(editorInterface.id, "TEXT_TILESET_MODE", `MODE: ${mapEditor.getBrushModeID()}`);
-        uiManager.setText(editorInterface.id, "TEXT_PAGE", getPageText());
+        loadPageButtonsEvents();
+        updateButtonText();
     });
 
     uiManager.addClick(editorInterface.id, "BUTTON_TILESET_LEFT", () => {
-        mapEditor.scrollCurrentSet(-1);
-        mapEditor.reloadPageElements(tileManager.tileTypes);
-        loadPageButtonsEvents(mapEditor.getPageElements(AVAILABLE_BUTTON_SLOTS.length));
-
-        uiManager.setText(editorInterface.id, "TEXT_TILESET", `${mapEditor.getCurrentSetID()}`);
-        uiManager.setText(editorInterface.id, "TEXT_PAGE", getPageText());
+        mapEditor.scrollBrushSet(-1);
+        loadPageButtonsEvents();
+        updateButtonText();
     });
 
     uiManager.addClick(editorInterface.id, "BUTTON_TILESET_RIGHT", () => {
-        mapEditor.scrollCurrentSet(1);
-        mapEditor.reloadPageElements(tileManager.tileTypes);
-        loadPageButtonsEvents(mapEditor.getPageElements(AVAILABLE_BUTTON_SLOTS.length));
-
-        uiManager.setText(editorInterface.id, "TEXT_TILESET", `${mapEditor.getCurrentSetID()}`);
-        uiManager.setText(editorInterface.id, "TEXT_PAGE", getPageText());
+        mapEditor.scrollBrushSet(1);
+        loadPageButtonsEvents();
+        updateButtonText();
     });
 
     uiManager.addClick(editorInterface.id, "BUTTON_PAGE_LAST", () => {
-        mapEditor.scrollPage(AVAILABLE_BUTTON_SLOTS.length, -1);
-        loadPageButtonsEvents(mapEditor.getPageElements(AVAILABLE_BUTTON_SLOTS.length));
-
-        uiManager.setText(editorInterface.id, "TEXT_PAGE", getPageText());
+        mapEditor.scrollPage(-1);
+        loadPageButtonsEvents();
+        updateButtonText();
     });  
 
     uiManager.addClick(editorInterface.id, "BUTTON_PAGE_NEXT", () => {
-        mapEditor.scrollPage(AVAILABLE_BUTTON_SLOTS.length, 1);
-        loadPageButtonsEvents(mapEditor.getPageElements(AVAILABLE_BUTTON_SLOTS.length));
-
-        uiManager.setText(editorInterface.id, "TEXT_PAGE", getPageText());
+        mapEditor.scrollPage(1);
+        loadPageButtonsEvents();
+        updateButtonText();
     });  
 
     uiManager.addClick(editorInterface.id, "BUTTON_SCROLL_SIZE", () => {
         mapEditor.scrollBrushSize(1);
-    
-        uiManager.setText(editorInterface.id, "TEXT_SIZE", getSizeText());
+        updateButtonText();
     });  
 
     uiManager.addClick(editorInterface.id, "BUTTON_L1", () => {
@@ -409,18 +389,27 @@ const initializeMapEditor = function(gameContext) {
         currentLayerButtonID = null;
 
         updateLayerOpacity();
+        mapEditor.setBrush(null);
     });
+
+    loadPageButtonsEvents();
+    updateButtonText();
 }
 
 MapEditorState.prototype.enter = function(stateMachine) {
     const gameContext = stateMachine.getContext();
-    const { uiManager, renderer } = gameContext;
+    const { uiManager, renderer, settings, tileManager } = gameContext;
+    const mapEditor = new MapEditor();
 
-    renderer.unbindFromScreen();
+    mapEditor.loadConfig(settings.mapEditor);
+    mapEditor.loadBrushSets(tileManager.tileMeta);
+
     uiManager.parseUI("MAP_EDITOR", gameContext);
     uiManager.unparseUI("FPS_COUNTER", gameContext);
 
-    initializeMapEditor(gameContext);
+    renderer.unbindFromScreen();
+
+    initializeMapEditor(mapEditor, gameContext);
 }
 
 MapEditorState.prototype.exit = function(stateMachine) {
