@@ -3,8 +3,6 @@ import { Drawable } from "../graphics/drawable.js";
 export const UIElement = function(DEBUG_NAME) {
     Drawable.call(this, DEBUG_NAME);
 
-    this.uniqueID = null;
-    this.interfaceID = null;
     this.goals = new Map();
     this.goalsReached = new Set();
     
@@ -107,28 +105,4 @@ UIElement.prototype.getCollisions = function(mouseX, mouseY, mouseRange, collide
 
         reference.getCollisions(localX, localY, mouseRange, collidedElements);
     }
-}
-
-UIElement.prototype.setInterfaceID = function(interfaceID) {
-    if(interfaceID === undefined) {
-        return false;
-    }
-
-    this.interfaceID = interfaceID;
-
-    return true;
-}
-
-UIElement.prototype.setUniqueID = function(uniqueID) {
-    if(uniqueID === undefined) {
-        return false;
-    }
-
-    this.uniqueID = uniqueID;
-
-    return true;
-}
-
-UIElement.prototype.getUniqueID = function() {
-    return this.uniqueID;
 }

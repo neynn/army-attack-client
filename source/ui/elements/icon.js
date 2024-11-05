@@ -1,12 +1,11 @@
 import { UIElement } from "../uiElement.js";
 
-export const Icon = function(config) {
+export const Icon = function() {
     UIElement.call(this, "ICON");
     this.image = null;
-    this.loadFromConfig(config);
 }
 
-//The fuck? Icon should request an image!
+//TODO: Icon should request an image!
 
 Icon.prototype = Object.create(UIElement.prototype);
 Icon.prototype.constructor = Icon;
@@ -15,7 +14,6 @@ Icon.prototype.loadFromConfig = function(config) {
     const { id, opacity, position } = config;
     const { x, y } = position;
 
-    this.id = id;
     this.DEBUG_NAME = id;
     this.setPosition(x, y);
     this.setOpacity(opacity);

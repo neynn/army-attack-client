@@ -84,6 +84,10 @@ Drawable.prototype.setID = function(id) {
     return true;
 }
 
+Drawable.prototype.getID = function() {
+    return this.id;
+}
+
 Drawable.prototype.getBounds = function() {
     const { x, y, w, h } = this.bounds;
     const boundsX = this.position.x + x;
@@ -101,6 +105,14 @@ Drawable.prototype.setPosition = function(positionX, positionY) {
     this.position.y = positionY;
 
     return true;
+}
+
+Drawable.prototype.hasParent = function() {
+    if(!this.family) {
+        return false;
+    }
+
+    return this.family.parent !== null;
 }
 
 Drawable.prototype.hasChild = function(name) {

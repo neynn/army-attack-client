@@ -143,7 +143,10 @@ UIManager.prototype.createElement = function(uniqueID, config) {
         return null;
     }
 
-    const element = new Type(config);
+    const element = new Type();
+
+    element.loadFromConfig(config);
+    element.setID(uniqueID);
 
     this.elements.set(uniqueID, element);
 
@@ -354,46 +357,56 @@ UIManager.prototype.parseEffects = function(element, effects) {
     }
 }
 
-UIManager.prototype.loadInterface = function(userInterfaceID, userInterface) {
-    const children = new Set();
-    const parsedElements = new Map();
+UIManager.prototype.createInterface = function(userInterfaceID) {
+    const userInterface = this.interfaceTypes[userInterfaceID];
+    const elements = new Map();
 
-    for(const key in userInterface) {
-        const config = userInterface[key];
-        const elementID = config.id;
+    if(!userInterface) {
+        Logger.log(false, "Interface does not exist!", "UIManager.prototype.createInterface", {userInterfaceID});
 
-        if(!elementID) {
-            Logger.log(false, "ID of element is undefined!", "UIManager.prototype.loadInterface", {userInterfaceID, elementID});
+        return elements;
+    }
 
-            continue;
-        }
-
-        const uniqueID = this.getUniqueID(userInterfaceID, elementID);
+    for(const configID in userInterface) {
+        const config = userInterface[configID];
+        const uniqueID = this.getUniqueID(userInterfaceID, configID);
         const element = this.createElement(uniqueID, config);
 
         if(!element) {
-            Logger.log(false, "Element could not be created!", "UIManager.prototype.loadInterface", {userInterfaceID, elementID});
+            Logger.log(false, "Element could not be created!", "UIManager.prototype.createInterface", {userInterfaceID, configID});
 
             continue;
         }
 
-        if(config.children) {
-            for(const childID of config.children) {
-                if(userInterface[childID] !== undefined) {
-                    children.add(childID);
-                } else {
-                    Logger.log(false, "Child is not part of interface!", "UIManager.prototype.loadInterface", {childID, userInterfaceID});
-                }
-            }   
+        elements.set(configID, element);
+    }
+    
+    for(const configID in userInterface) {
+        const config = userInterface[configID];
+        const element = elements.get(configID);
+
+        if(!element || !config.children || typeof config.children !== "object") {
+            continue;
         }
 
-        element.setUniqueID(uniqueID);
-        element.setInterfaceID(userInterfaceID);
+        if(!element.hasFamily()) {
+            element.openFamily();
+        }
 
-        parsedElements.set(elementID, { config, element });
+        for(const childID of config.children) {
+            const child = elements.get(childID);
+
+            if(!child) {
+                Logger.log(false, "Child is not part of the interface!", "UIManager.prototype.createInterface", {configID, childID, userInterfaceID});
+
+                continue;
+            }
+
+            element.addChild(child, child.getID());
+        }
     }
 
-    return { children, parsedElements }
+    return elements;
 }
 
 UIManager.prototype.parseUI = function(userInterfaceID, gameContext) {
@@ -406,39 +419,24 @@ UIManager.prototype.parseUI = function(userInterfaceID, gameContext) {
         return false;
     }
 
-    const { children, parsedElements } = this.loadInterface(userInterfaceID, userInterface);
+    const elements = this.createInterface(userInterfaceID);
 
-    for(const [key, { config, element }] of parsedElements) {
+    for(const [configID, element] of elements) {
+        const config = userInterface[configID];
+        const elementID = element.getID();
+
         this.parseEffects(element, config.effects);
 
-        if(!children.has(element.id)) {
-            const uniqueID = element.getUniqueID();
-
-            if(config.anchor) {
-                element.adjustAnchor(config.anchor, config.position.x, config.position.y, renderer.viewportWidth, renderer.viewportHeight);
-                renderer.events.subscribe(Camera.EVENT_SCREEN_RESIZE, uniqueID, (width, height) => element.adjustAnchor(config.anchor, config.position.x, config.position.y, width, height));    
-            }
-          
-            this.drawableElements.add(uniqueID);
-        }
-
-        if(!config.children) {
+        if(element.hasParent()) {
             continue;
         }
 
-        for(const childID of config.children) {
-            if(!parsedElements.has(childID)) {
-                continue;
-            }
-
-            const child = parsedElements.get(childID);
-
-            if(!element.hasFamily()) {
-                element.openFamily();
-            }
-
-            element.addChild(child.element, child.element.id);
+        if(config.anchor) {
+            element.adjustAnchor(config.anchor, config.position.x, config.position.y, renderer.viewportWidth, renderer.viewportHeight);
+            renderer.events.subscribe(Camera.EVENT_SCREEN_RESIZE, elementID, (width, height) => element.adjustAnchor(config.anchor, config.position.x, config.position.y, width, height));    
         }
+
+        this.drawableElements.add(elementID);
     }
 
     this.pushInterface(userInterfaceID);
@@ -456,9 +454,8 @@ UIManager.prototype.unparseUI = function(userInterfaceID, gameContext) {
         return false;
     }
 
-    for(const key in userInterface) {
-        const config = userInterface[key];
-        const uniqueID = this.getUniqueID(userInterfaceID, config.id);
+    for(const elementID in userInterface) {
+        const uniqueID = this.getUniqueID(userInterfaceID, elementID);
 
         this.destroyElement(uniqueID);
 
@@ -475,37 +472,37 @@ UIManager.prototype.unparseUI = function(userInterfaceID, gameContext) {
 }
 
 UIManager.prototype.addFadeOutEffect = function(element, fadeDecrement, fadeThreshold) {
-    const id = Symbol("FadeEffect");
-    const uid = element.getUniqueID();
+    const effectID = Symbol("FadeEffect");
+    const elementID = element.getID();
 
     const fadeFunction = (element, deltaTime) => {
         const opacity = element.opacity - (fadeDecrement * deltaTime);
 
         element.opacity = Math.max(opacity, fadeThreshold);
         if(element.opacity <= fadeThreshold) {
-            element.goalsReached.add(id);
+            element.goalsReached.add(effectID);
         }
     };
 
-    element.goals.set(id, fadeFunction);
+    element.goals.set(effectID, fadeFunction);
 
-    this.elementsToUpdate.add(uid);
+    this.elementsToUpdate.add(elementID);
 }
 
 UIManager.prototype.addFadeInEffect = function(element, fadeIncrement, fadeThreshold) {
-    const id = Symbol("FadeEffect");
-    const uid = element.getUniqueID();
+    const effectID = Symbol("FadeEffect");
+    const elementID = element.getID();
 
     const fadeFunction = (element, deltaTime) => {
         const opacity = element.opacity + (fadeIncrement * deltaTime);
 
         element.opacity = Math.min(opacity, fadeThreshold);
         if (element.opacity >= fadeThreshold) {
-            element.goalsReached.add(id);
+            element.goalsReached.add(effectID);
         }
     };
 
-    element.goals.set(id, fadeFunction);
+    element.goals.set(effectID, fadeFunction);
 
-    this.elementsToUpdate.add(uid);
+    this.elementsToUpdate.add(elementID);
 }

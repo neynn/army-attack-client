@@ -1,59 +1,59 @@
 {
-    "music": "music_desertscorpion",
+    "music": "null",
     "width": 11,
     "height": 11,
-    "backgroundLayers": [ 
+    "backgroundLayers": [
         { "id": "ground", "opacity": 1, "autoGenerate": false },
         { "id": "border", "opacity": 1, "autoGenerate": true },
         { "id": "decoration", "opacity": 1, "autoGenerate": false },
         { "id": "overlay", "opacity": 1, "autoGenerate": true }
     ],
     "foregroundLayers": [ 
-        { "id":"cloud", "opacity": 0, "autoGenerate": false }
+        { "id": "cloud", "opacity": 1, "autoGenerate": false }
     ],
-    "metaLayers": [ 
-        { "id": "type", "opacity": 1, "autoGenerate": false }, 
-        { "id": "team", "opacity": 1, "autoGenerate": false } 
+    "metaLayers": [
+        { "id": "type", "opacity": 1, "autoGenerate": false },
+        { "id": "team", "opacity": 1, "autoGenerate": false }
     ],
     "layers": {
         "ground": [
-            ["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_02"],
-            ["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],
-            ["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_02"],
-            ["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_02"],
-            ["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],
-            ["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_01"],
-            ["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_01"],
-            ["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_01"],
-            ["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_02"],
-            ["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_02"],
-            ["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_01"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_02"],["ground","Bg_GoodTile_01"]
+            4,4,4,3,3,4,3,3,4,4,4,
+            4,3,3,3,3,3,3,4,3,3,3,
+            4,3,3,3,3,3,3,3,3,4,4,
+            4,4,3,4,3,3,4,3,4,3,4,
+            3,3,3,3,4,3,3,3,3,3,3,
+            3,4,3,3,3,3,3,3,3,4,3,
+            4,3,3,3,4,4,3,3,4,4,3,
+            4,3,3,3,3,3,3,3,4,4,3,
+            4,3,3,3,3,3,3,3,3,3,4,
+            4,3,4,3,3,4,4,3,3,3,4,
+            4,3,4,3,3,3,4,3,4,4,3
         ],
         "decoration": [
-            null,null,null,["deco_good","Bg_GoodTile_Deco_04"],["deco_good","Bg_GoodTile_Deco_01"],null,["deco_good","Bg_GoodTile_Deco_02"],["deco_good","Bg_GoodTile_Deco_03"],null,null,null,
-            null,["mountain","Bg_MountainTile_01"],["mountain","Bg_MountainTile_01"],["deco_good","Bg_GoodTile_Deco_13"],null,["mountain","Bg_MountainTile_01"],["deco_good","Bg_GoodTile_Deco_15"],null,["mountain","Bg_MountainTile_01"],["mountain","Bg_MountainTile_01"],null,
-            null,["deco_good","Bg_GoodTile_Deco_08"],["mountain","Bg_MountainTile_01"],["mountain","Bg_MountainTile_01"],["mountain","Bg_MountainTile_01"],["mountain","Bg_MountainTile_01"],["mountain","Bg_MountainTile_01"],["mountain","Bg_MountainTile_01"],["mountain","Bg_MountainTile_01"],null,null,
-            null,null,["deco_good","Bg_GoodTile_Deco_01"],null,["deco_good","Bg_GoodTile_Deco_03"],["deco_good","Bg_GoodTile_Deco_01"],null,["deco_good","Bg_GoodTile_Deco_04"],null,null,null,
-            null,null,["deco_good","Bg_GoodTile_Deco_11"],["mountain","Bg_MountainTile_01"],null,["mountain","Bg_MountainTile_01"],["mountain","Bg_MountainTile_01"],["mountain","Bg_MountainTile_01"],null,null,null,
-            ["deco_good","Bg_GoodTile_Deco_13"],null,null,["mountain","Bg_MountainTile_01"],["mountain","Bg_MountainTile_01"],["mountain","Bg_MountainTile_01"],["deco_good","Bg_GoodTile_Deco_08"],["mountain","Bg_MountainTile_01"],["deco_good","Bg_GoodTile_Deco_11"],null,["deco_good","Bg_GoodTile_Deco_15"],
-            ["deco_good","Bg_GoodTile_Deco_15"],null,null,["deco_good","Bg_GoodTile_Deco_02"],null,null,["deco_good","Bg_GoodTile_Deco_01"],["deco_good","Bg_GoodTile_Deco_01"],null,null,["deco_good","Bg_GoodTile_Deco_13"],
-            null,["deco_good","Bg_GoodTile_Deco_04"],["mountain","Bg_MountainTile_01"],["mountain","Bg_MountainTile_01"],["mountain","Bg_MountainTile_01"],["mountain","Bg_MountainTile_01"],["mountain","Bg_MountainTile_01"],["mountain","Bg_MountainTile_01"],null,null,null,
-            null,["mountain","Bg_MountainTile_01"],["mountain","Bg_MountainTile_01"],["deco_good","Bg_GoodTile_Deco_08"],["mountain","Bg_MountainTile_01"],null,["deco_good","Bg_GoodTile_Deco_13"],["mountain","Bg_MountainTile_01"],["deco_good","Bg_GoodTile_Deco_15"],null,null,
-            null,["mountain","Bg_MountainTile_01"],null,null,["deco_good","Bg_GoodTile_Deco_02"],null,null,["mountain","Bg_MountainTile_01"],["mountain","Bg_MountainTile_01"],["mountain","Bg_MountainTile_01"],null,
-            null,null,null,["deco_good","Bg_GoodTile_Deco_02"],["deco_good","Bg_GoodTile_Deco_17"],["deco_good","Bg_GoodTile_Deco_04"],null,["deco_good","Bg_GoodTile_Deco_02"],null,null,null
+            null,null,null,307,303,null,null,null,null,null,null,
+            null,605,605,null,null,605,null,null,605,605,null,
+            null,null,605,605,605,605,605,605,605,null,null,
+            null,null,null,null,null,null,null,null,null,null,null,
+            null,null,null,605,null,605,605,605,null,null,null,
+            null,null,null,605,605,605,null,605,null,null,null,
+            null,null,null,null,null,null,null,null,null,null,null,
+            null,null,605,605,605,605,605,605,null,null,null,
+            null,605,605,null,605,null,null,605,null,null,null,
+            null,605,null,null,null,null,null,605,605,605,null,
+            null,null,null,null,null,null,null,null,null,null,null
         ],
         "cloud": [
-            ["clouds","Bg_CloudTile_10"],["clouds","Bg_CloudTile_08"],["clouds","Bg_CloudTile_08"],["clouds","Bg_CloudTile_08"],["clouds","Bg_CloudTile_08"],["clouds","Bg_CloudTile_08"],["clouds","Bg_CloudTile_08"],["clouds","Bg_CloudTile_08"],["clouds","Bg_CloudTile_08"],["clouds","Bg_CloudTile_08"],["clouds","Bg_CloudTile_12"],
-            ["clouds","Bg_CloudTile_06"],null,null,null,null,null,null,null,null,null,["clouds","Bg_CloudTile_05"],
-            ["clouds","Bg_CloudTile_06"],null,null,null,null,null,null,null,null,null,["clouds","Bg_CloudTile_05"],
-            ["clouds","Bg_CloudTile_06"],null,null,null,null,null,null,null,null,null,["clouds","Bg_CloudTile_05"],
-            ["clouds","Bg_CloudTile_06"],null,null,null,null,null,null,null,null,null,["clouds","Bg_CloudTile_05"],
-            ["clouds","Bg_CloudTile_06"],null,null,null,null,null,null,null,null,null,["clouds","Bg_CloudTile_05"],
-            ["clouds","Bg_CloudTile_06"],null,null,null,null,null,null,null,null,null,["clouds","Bg_CloudTile_05"],
-            ["clouds","Bg_CloudTile_06"],null,null,null,null,null,null,null,null,null,["clouds","Bg_CloudTile_05"],
-            ["clouds","Bg_CloudTile_06"],null,null,null,null,null,null,null,null,null,["clouds","Bg_CloudTile_05"],
-            ["clouds","Bg_CloudTile_06"],null,null,null,null,null,null,null,null,null,["clouds","Bg_CloudTile_05"],
-            ["clouds","Bg_CloudTile_15"],["clouds","Bg_CloudTile_03"],["clouds","Bg_CloudTile_03"],["clouds","Bg_CloudTile_03"],["clouds","Bg_CloudTile_03"],["clouds","Bg_CloudTile_03"],["clouds","Bg_CloudTile_03"],["clouds","Bg_CloudTile_03"],["clouds","Bg_CloudTile_03"],["clouds","Bg_CloudTile_03"],["clouds","Bg_CloudTile_17"]
+            null,null,null,null,null,null,null,null,null,null,null,
+            null,null,null,null,null,null,null,null,null,null,null,
+            null,null,null,null,null,null,null,null,null,null,null,
+            null,null,null,null,null,null,null,null,null,null,null,
+            null,null,null,null,null,null,null,null,null,null,null,
+            null,null,null,null,null,null,null,null,null,null,null,
+            null,null,null,null,null,null,null,null,null,null,null,
+            null,null,null,null,null,null,null,null,null,null,null,
+            null,null,null,null,null,null,null,null,null,null,null,
+            null,null,null,null,null,null,null,null,null,null,null,
+            null,null,null,null,null,null,null,null,null,null,null
         ],
         "type": [
             "0","0","0","0","0","0","0","0","0","0","0",
@@ -69,23 +69,23 @@
             "0","0","0","0","0","0","0","0","0","0","0"
         ],
         "team": [
-            "2","2","2","2","2","2","2","2","2","2","2",
-            "2","2","2","2","2","2","2","2","2","2","2",
-            "2","2","2","2","2","2","2","2","2","2","2",
-            "2","2","2","2","2","2","2","2","2","2","2",
-            "2","2","2","2","2","2","2","2","2","2","2",
-            "2","2","2","2","2","2","2","2","2","2","2",
-            "2","2","2","2","2","2","2","2","2","2","2",
-            "2","2","2","2","2","2","2","2","2","2","2",
-            "2","2","2","2","2","2","2","2","2","2","2",
-            "2","2","2","2","2","2","2","2","2","2","2",
-            "2","2","2","2","2","2","2","2","2","2","2"
+            "0","0","0","0","0","0","0","0","0","0","0",
+            "0","0","0","0","0","0","0","0","0","0","0",
+            "0","0","0","0","0","0","0","0","0","0","0",
+            "0","0","0","0","0","0","0","0","0","0","0",
+            "0","0","0","0","0","0","0","0","0","0","0",
+            "0","0","0","0","0","0","0","0","0","0","0",
+            "0","0","0","0","0","0","0","0","0","0","0",
+            "0","0","0","0","0","0","0","0","0","0","0",
+            "0","0","0","0","0","0","0","0","0","0","0",
+            "0","0","0","0","0","0","0","0","0","0","0",
+            "0","0","0","0","0","0","0","0","0","0","0"
         ]
     },
     "entities" : [
         
     ],
     "flags" : {
-        
+      
     }
 }

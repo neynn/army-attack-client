@@ -25,10 +25,5 @@
 //give story mode self states, one is intro and one is game.
 //if intro has been done, skip it.
 
-//IMPORTANT: Cached maps refers to the cached map data, not the map itself! Cached maps is used to re-initialize the map!
-//This will be a pain to fix lul.
-
-//Added tilemeta and inverted tile meta
-//Put tile rendering to tileManager
-
-//TODO: Add all tiles to tilemeta.json.
+//TODO: Add all tiles to tilemeta.json. <- DONE
+//TODO: Add all conversions!

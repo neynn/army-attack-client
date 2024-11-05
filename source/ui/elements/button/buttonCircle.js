@@ -2,10 +2,9 @@ import { isCircleCicleIntersect } from "../../../math/math.js";
 import { UIElement } from "../../uiElement.js";
 import { Button } from "../button.js";
 
-export const ButtonCircle = function(config) {
+export const ButtonCircle = function() {
     Button.call(this, "BUTTON_CIRCLE");
     this.radius = 0;
-    this.loadFromConfig(config);
 }
 
 ButtonCircle.prototype = Object.create(Button.prototype);
@@ -15,7 +14,6 @@ ButtonCircle.prototype.loadFromConfig = function(config) {
     const { id, opacity, radius, position } = config;
     const { x, y } = position;
 
-    this.id = id;
     this.DEBUG_NAME = id;
     this.setPosition(x, y);
     this.setOpacity(opacity);

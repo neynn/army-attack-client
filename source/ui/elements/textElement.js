@@ -1,7 +1,7 @@
 import { TextStyle } from "../../graphics/textStyle.js";
 import { UIElement } from "../uiElement.js";
 
-export const TextElement = function(config) {
+export const TextElement = function() {
     UIElement.call(this, "TEXT_ELEMENT");
     this.style = new TextStyle();
     this.fullText = "";
@@ -13,7 +13,6 @@ export const TextElement = function(config) {
     this.isDynamic = false;
 
     this.events.listen(TextElement.EVENT_REQUEST_TEXT);
-    this.loadFromConfig(config);
 }
 
 TextElement.prototype = Object.create(UIElement.prototype);
@@ -25,7 +24,6 @@ TextElement.prototype.loadFromConfig = function(config) {
     const { id, opacity, position, font, align, color, text } = config;
     const { x, y } = position;
 
-    this.id = id;
     this.DEBUG_NAME = id;
     this.setText(text);
     this.setOpacity(opacity);

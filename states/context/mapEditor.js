@@ -223,7 +223,10 @@ const initializeMapEditor = function(mapEditor, gameContext) {
                     context.fillRect(renderX + halfTileWidth, renderY, halfTileWidth, halfTileHeight);
                     context.fillRect(renderX, renderY + halfTileHeight, halfTileWidth, halfTileHeight);
                 } else {
-                    tileManager.drawTileGraphics(tileID, renderer.display.context, renderX, renderY);   
+                    tileManager.drawTileGraphics(tileID, renderer.display.context, renderX, renderY);
+                    context.fillStyle = "#eeeeee";
+                    context.textAlign = "center";
+                    context.fillText(tileName, renderX + halfTileWidth, renderY);   
                 }
             }
         }

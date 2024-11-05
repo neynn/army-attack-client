@@ -1,9 +1,8 @@
 import { isRectangleRectangleIntersect } from "../../math/math.js";
 import { UIElement } from "../uiElement.js";
 
-export const Container = function(config) {
+export const Container = function() {
     UIElement.call(this, "CONTAINER");
-    this.loadFromConfig(config);
 } 
 
 Container.prototype = Object.create(UIElement.prototype);
@@ -13,7 +12,6 @@ Container.prototype.loadFromConfig = function(config) {
     const { id, width, height, opacity, position } = config;
     const { x, y } = position;
 
-    this.id = id;
     this.DEBUG_NAME = id;
     this.bounds.set(0, 0, width, height);
     this.setPosition(x, y);

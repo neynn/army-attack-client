@@ -1,8 +1,8 @@
 {
     "mapLoader": {
         "mapCacheEnabled": true,
-        "maxMapWidth": 100,
-        "maxMapHeight": 100,
+        "maxMapWidth": 255,
+        "maxMapHeight": 255,
         "mapSetup": {
             "music": null,
             "width": 20,
