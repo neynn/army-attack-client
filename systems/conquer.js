@@ -63,10 +63,14 @@ ConquerSystem.updateBorder = function(gameContext, tileX, tileY) {
         const neighborTile = activeMap.getTile(neighbor.x, neighbor.y);
 
         if(!neighborTile || !neighborTile.hasBorder) {
-            return false;
+            return 0;
         }
 
-        return neighborTile.team === centerTile.team;
+        if(neighborTile.team !== centerTile.team) {
+            return 0;
+        }
+
+        return 1;
     });
 
     //HÄCK

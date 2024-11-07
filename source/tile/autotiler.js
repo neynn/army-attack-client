@@ -1,22 +1,22 @@
 export const Autotiler = function() {}
 
-Autotiler.VALUESET_8 = {
-    "northwest": 1 << 0,
-    "north": 1 << 1,
-    "northeast": 1 << 2,
-    "west": 1 << 3,
-    "east": 1 << 4,
-    "southwest": 1 << 5,
-    "south": 1 << 6,
-    "southeast": 1 << 7
-};
+Autotiler.SHIFTSET_8 = {
+    "northwest": 0,
+    "north": 1,
+    "northeast": 2,
+    "west": 3,
+    "east": 4,
+    "southwest": 5,
+    "south": 6,
+    "southeast": 7
+}
 
-Autotiler.VALUESET_4 = {
-    "north": 1 << 0,
-    "west": 1 << 1,
-    "east": 1 << 2,
-    "south": 1 << 3
-};
+Autotiler.SHIFTSET_4 = {
+    "north": 0,
+    "west": 1,
+    "east": 2,
+    "south": 3
+}
 
 Autotiler.BITSET_8 = {"2": 1, "8": 2, "10": 3, "11": 4, "16": 5, "18": 6, "22": 7, "24": 8, "26": 9, "27": 10, "30": 11, "31": 12, "64": 13, "66": 14, "72": 15, "74": 16, "75": 17, "80": 18, "82": 19, "86": 20, "88": 21, "90": 22, "91": 23, "94": 24, "95": 25, "104": 26, "106": 27, "107": 28, "120": 29, "122": 30, "123": 31, "126": 32, "127": 33, "208": 34, "210": 35, "214": 36, "216": 37, "218": 38, "219": 39, "222": 40, "223": 41, "248": 42, "250": 43, "251": 44, "254": 45, "255": 46, "0": 47};
 
@@ -37,39 +37,61 @@ Autotiler.getDirections = function(tileX, tileY) {
 }
 
 Autotiler.autotile4Bits = function(directions, onCheck) {
+    let total = 0b00000000;
+
     if(!directions || !onCheck) {
-        return null;
+        return total;
     }
 
-    let total = 0b0000;
     const { center } = directions;
-    const { north, west, east, south } = Autotiler.VALUESET_4;
+    const { north, west, east, south } = Autotiler.SHIFTSET_4;
+    const northShift = onCheck(center, directions.north) << north;
+    const westShift = onCheck(center, directions.west) << west;
+    const eastShift = onCheck(center, directions.east) << east;
+    const southShift = onCheck(center, directions.south) << south;
 
-    if(onCheck(center, directions.north)) total |= north;
-    if(onCheck(center, directions.west)) total |= west;
-    if(onCheck(center, directions.east)) total |= east;
-    if(onCheck(center, directions.south)) total |= south;
+    total |= northShift;
+    total |= westShift;
+    total |= eastShift;
+    total |= southShift;
 
     return Autotiler.BITSET_4[total];
 }
 
 Autotiler.autotile8Bits = function(directions, onCheck) {
+    let total = 0b00000000;
+
     if(!directions || !onCheck) {
-        return null;
+        return total;
     }
 
-    let total = 0b00000000;
     const { center } = directions;
-    const { northwest, north, northeast, west, east, southwest, south, southeast } = Autotiler.VALUESET_8;
+    const { northwest, north, northeast, west, east, southwest, south, southeast } = Autotiler.SHIFTSET_8;
+    const northShift = onCheck(center, directions.north) << north;
+    const westShift = onCheck(center, directions.west) << west;
+    const eastShift = onCheck(center, directions.east) << east;
+    const southShift = onCheck(center, directions.south) << south;
 
-    if(onCheck(center, directions.north)) total |= north;
-    if(onCheck(center, directions.west)) total |= west;
-    if(onCheck(center, directions.east)) total |= east;
-    if(onCheck(center, directions.south)) total |= south;
-    if((total & north) && (total & west) && onCheck(center, directions.northwest)) total |= northwest;
-    if((total & north) && (total & east) && onCheck(center, directions.northeast)) total |= northeast;
-    if((total & south) && (total & west) && onCheck(center, directions.southwest)) total |= southwest;
-    if((total & south) && (total & east) && onCheck(center, directions.southeast)) total |= southeast;
+    total |= northShift;
+    total |= westShift;
+    total |= eastShift;
+    total |= southShift;
+
+    if((total & northShift) && (total & westShift)) {
+        total |= onCheck(center, directions.northwest) << northwest;
+    }
+
+    if((total & northShift) && (total & eastShift)) {
+        total |= onCheck(center, directions.northeast) << northeast;
+    }
+
+    if((total & southShift) && (total & westShift)) {
+        total |= onCheck(center, directions.southwest) << southwest;
+    }
+
+    if((total & southShift) && (total & eastShift)) {
+        total |= onCheck(center, directions.southeast) << southeast;
+    }
 
     return Autotiler.BITSET_8[total];
 }
