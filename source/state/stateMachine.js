@@ -10,15 +10,33 @@ export const StateMachine = function(context) {
     }
 }
 
+StateMachine.prototype.initializeSubstates = function(stateID) {
+    const state = this.states.get(stateID);
+
+    if(!state) {
+        console.warn(`State does not exist!`);
+        return;
+    }
+
+    if(state.states instanceof StateMachine) {
+        console.warn(`StateMachine is already initialized!`);
+        return;
+    }
+
+    state.states = new StateMachine(this.context);
+}
+
 StateMachine.prototype.addSubstate = function(stateID, substateID, substate) {
     const state = this.states.get(stateID);
 
     if(!state) {
+        console.warn(`State does not exist!`);
         return;
     }
 
-    if(!state.states) {
-        state.states = new StateMachine(this.context);
+    if(!(state.states instanceof StateMachine)) {
+        console.warn(`StateMachine is not initialized!`);
+        return;
     }
 
     state.states.addState(substateID, substate);
