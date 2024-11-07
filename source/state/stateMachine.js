@@ -10,6 +10,20 @@ export const StateMachine = function(context) {
     }
 }
 
+StateMachine.prototype.addSubstate = function(stateID, substateID, substate) {
+    const state = this.states.get(stateID);
+
+    if(!state) {
+        return;
+    }
+
+    if(!state.states) {
+        state.states = new StateMachine(this.context);
+    }
+
+    state.states.addState(substateID, substate);
+}
+
 StateMachine.prototype.hasState = function(stateID) {
     return this.states.has(stateID);
 }

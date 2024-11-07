@@ -27,3 +27,4 @@
 
 //TODO: Add all tiles to tilemeta.json. <- DONE
 //TODO: Add all conversions!
+//Fire system becomes attack system! Damage calculations are also done in that system!

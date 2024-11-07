@@ -48,23 +48,14 @@ ArmyContext.prototype.initializeSystems = function() {
 }
 
 ArmyContext.prototype.initializeContext = function() {
-    const mainMenuState = new MainMenuState();
-    const storyModeState = new StoryModeState();
-    const versusModeState = new VersusModeState();
-    const mapEditorState = new MapEditorState();
-
-    storyModeState.initializeStates(this);
-    storyModeState.addSubstate(CONTEXT_STATES.STORY_MODE_INTRO, new StoryModeIntroState());
-    storyModeState.addSubstate(CONTEXT_STATES.STORY_MODE_PLAY, new StoryModePlayState());
-
-    versusModeState.initializeStates(this);
-    versusModeState.addSubstate(CONTEXT_STATES.VERSUS_MODE_LOBBY, new VersusModeLobbyState());
-    versusModeState.addSubstate(CONTEXT_STATES.VERSUS_MODE_PLAY, new VersusModePlayState());
-
-    this.states.addState(CONTEXT_STATES.MAIN_MENU, mainMenuState);
-    this.states.addState(CONTEXT_STATES.STORY_MODE, storyModeState);
-    this.states.addState(CONTEXT_STATES.VERSUS_MODE, versusModeState);
-    this.states.addState(CONTEXT_STATES.EDIT_MODE, mapEditorState);
+    this.states.addState(CONTEXT_STATES.MAIN_MENU, new MainMenuState());
+    this.states.addState(CONTEXT_STATES.STORY_MODE, new StoryModeState());
+    this.states.addState(CONTEXT_STATES.VERSUS_MODE, new VersusModeState());
+    this.states.addState(CONTEXT_STATES.EDIT_MODE, new MapEditorState());
+    this.states.addSubstate(CONTEXT_STATES.STORY_MODE, CONTEXT_STATES.STORY_MODE_INTRO, new StoryModeIntroState());
+    this.states.addSubstate(CONTEXT_STATES.STORY_MODE, CONTEXT_STATES.STORY_MODE_PLAY, new StoryModePlayState());
+    this.states.addSubstate(CONTEXT_STATES.VERSUS_MODE, CONTEXT_STATES.VERSUS_MODE_LOBBY, new VersusModeLobbyState());
+    this.states.addSubstate(CONTEXT_STATES.VERSUS_MODE, CONTEXT_STATES.VERSUS_MODE_PLAY, new VersusModePlayState());
 
     this.client.soundPlayer.loadAllSounds();
 
