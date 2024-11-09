@@ -176,7 +176,7 @@ MapLoader.prototype.hasCachedMap = function(mapID) {
 }
 
 MapLoader.prototype.createMapFromData = function(mapID, mapData) {
-    const map2D = MapParser.parseMap2D(mapID, mapData);
+    const map2D = MapParser.parseMap2D(mapID, mapData, this.config.loadGraphics);
 
     this.loadedMaps.set(mapID, map2D);
 
@@ -184,7 +184,7 @@ MapLoader.prototype.createMapFromData = function(mapID, mapData) {
 }
 
 MapLoader.prototype.createEmptyMap = function(mapID) {
-    const map2D = MapParser.parseMap2DEmpty(mapID, this.config.mapSetup);
+    const map2D = MapParser.parseMap2DEmpty(mapID, this.config.mapSetup, this.config.loadGraphics);
 
     this.loadedMaps.set(mapID, map2D);
 
