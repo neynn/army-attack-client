@@ -175,7 +175,7 @@ MapEditor.prototype.setBrush = function(brush = null) {
 
 MapEditor.prototype.swapFlag = function(gameContext, mapID, layerID) {
     const { mapLoader } = gameContext;
-    const cursorTile = gameContext.getViewportTilePosition();
+    const cursorTile = gameContext.getWorldTilePosition();
     const gameMap = mapLoader.getLoadedMap(mapID);
 
     if(!gameMap) {
@@ -199,7 +199,7 @@ MapEditor.prototype.swapFlag = function(gameContext, mapID, layerID) {
 
 MapEditor.prototype.paint = function(gameContext, mapID, layerID) {
     const { mapLoader } = gameContext;
-    const cursorTile = gameContext.getViewportTilePosition();
+    const cursorTile = gameContext.getWorldTilePosition();
     const gameMap = mapLoader.getLoadedMap(mapID);
     const brush = this.getBrush();
 

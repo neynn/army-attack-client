@@ -54,7 +54,7 @@ ControllerSystem.hightlightAttackers = function(gameContext, target, attackers) 
 
 ControllerSystem.updateAttackers = function(gameContext) {
     const { controller } = gameContext;
-    const { x, y } = gameContext.getViewportTilePosition();
+    const { x, y } = gameContext.getWorldTilePosition();
     const tileEntity = gameContext.getTileEntity(x, y);
 
     ControllerSystem.clearAttackers(gameContext);
@@ -85,7 +85,7 @@ ControllerSystem.updateSelectedEntity = function(gameContext) {
     }
 
     const positionComponent = selectedEntity.getComponent(PositionComponent);
-    const { x, y } = gameContext.getViewportTilePosition();
+    const { x, y } = gameContext.getWorldTilePosition();
 
     if(x !== positionComponent.tileX) {
         DirectionSystem.lookHorizontal(selectedEntity, x < positionComponent.tileX);

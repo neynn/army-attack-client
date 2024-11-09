@@ -1,14 +1,11 @@
 import { Camera } from "../camera.js";
 import { clampValue, lerpValue } from "../../math/math.js";
 
-export const Camera2D = function(screenWidth, screenHeight) {
-    Camera.call(this, screenWidth, screenHeight);
+export const Camera2D = function(positionX, positionY, width, height) {
+    Camera.call(this, positionX, positionY, width, height);
 
     this.viewportX_limit = 0;
     this.viewportY_limit = 0;
-
-    this.offsetX = 0;
-    this.offsetY = 0;
 
     this.mapWidth = 0;
     this.mapHeight = 0;
@@ -20,9 +17,7 @@ export const Camera2D = function(screenWidth, screenHeight) {
 
     this.targets = [];
 
-    this.events.subscribe(Camera.EVENT_SCREEN_RESIZE, "CAMERA2D", (width, height) => {
-        this.loadViewport(this.mapWidth, this.mapHeight);
-    });
+    this.events.subscribe(Camera.EVENT_VIEWPORT_RESIZE, "CAMERA2D", (width, height) => this.loadViewport(this.mapWidth, this.mapHeight));
 }
 
 Camera2D.MAP_OUTLINE_COLOR = "#dddddd";
@@ -31,20 +26,7 @@ Camera2D.prototype = Object.create(Camera.prototype);
 Camera2D.prototype.constructor = Camera2D;
 
 Camera2D.prototype.update = function(gameContext) {
-    const { timer } = gameContext; 
-    const deltaTime = timer.getDeltaTime();
-
-    this.display.clear();
-    this.fpsCounter.update(deltaTime);
     this.drawMap(gameContext);
-    this.drawUI(gameContext);
-}
-
-Camera2D.prototype.getViewportPosition = function() {
-    return {
-        "viewportX": this.viewportX - this.offsetX,
-        "viewportY": this.viewportY - this.offsetY
-    }
 }
 
 Camera2D.prototype.getViewportBounds = function() {
@@ -80,8 +62,9 @@ Camera2D.prototype.clampViewportBounds = function(viewportBounds, mapWidth, mapH
 }
 
 Camera2D.prototype.drawMap = function(gameContext) {
-    const { mapLoader, spriteManager } = gameContext;
+    const { mapLoader, spriteManager, renderer } = gameContext;
     const activeMap = mapLoader.getActiveMap();
+    const context = renderer.getContext();
 
     if(!activeMap) {
         return;
@@ -90,8 +73,7 @@ Camera2D.prototype.drawMap = function(gameContext) {
     const viewportBounds = this.getViewportBounds();
     const { startX, startY, endX, endY } = this.clampViewportBounds(viewportBounds, activeMap.width, activeMap.height);
 
-    this.display.context.save();
-    this.display.context.scale(Camera.SCALE, Camera.SCALE);
+    context.scale(this.scale, this.scale);
 
     for(const layerConfig of activeMap.backgroundLayers) {
         this.drawTileLayer(gameContext, activeMap, layerConfig, startX, startY, endX, endY);
@@ -108,14 +90,12 @@ Camera2D.prototype.drawMap = function(gameContext) {
 
     if(Camera.DEBUG) {
         this.drawTypeLayer(gameContext, activeMap, startX, startY, endX, endY);
-        this.drawMapOutlines(activeMap.width, activeMap.height);
+        this.drawMapOutlines(gameContext, activeMap.width, activeMap.height);
     }
-
-    this.display.context.restore();
-    this.events.emit(Camera.EVENT_MAP_RENDER_COMPLETE, this);
 }
 
 Camera2D.prototype.drawTypeLayer = function(gameContext, gameMap, startX, startY, endX, endY) {
+    const { renderer } = gameContext;
     const tileTypes = gameContext.getConfig("tileTypes");
     const opacity = gameMap.metaLayers[1].opacity; //HäCK aus der Hölle.
 
@@ -123,17 +103,18 @@ Camera2D.prototype.drawTypeLayer = function(gameContext, gameMap, startX, startY
         return;
     }
 
+    const context = renderer.getContext();
     const layer = gameMap.layers["type"];
-    const { viewportX, viewportY } = this.getViewportPosition();
+    const { x, y } = this.getViewportPosition();
 
-    this.display.context.globalAlpha = opacity;
-    this.display.context.font = "16px Arial";
-    this.display.context.textBaseline = "middle";
-    this.display.context.textAlign = "center";
+    context.globalAlpha = opacity;
+    context.font = "16px Arial";
+    context.textBaseline = "middle";
+    context.textAlign = "center";
 
     for(let i = startY; i <= endY; i++) {
         const row = i * gameMap.width;
-        const renderY = i * Camera.TILE_HEIGHT - viewportY + Camera.TILE_HEIGHT / 2;
+        const renderY = i * Camera.TILE_HEIGHT - y + Camera.TILE_HEIGHT / 2;
 
         for(let j = startX; j <= endX; j++) {
             const index = row + j;
@@ -145,19 +126,15 @@ Camera2D.prototype.drawTypeLayer = function(gameContext, gameMap, startX, startY
             }
 
             const { color, name } = tileType;
-            const renderX = j * Camera.TILE_WIDTH - viewportX + Camera.TILE_WIDTH / 2;
+            const renderX = j * Camera.TILE_WIDTH - x + Camera.TILE_WIDTH / 2;
 
-            this.display.context.fillStyle = color;
-            this.display.context.fillText(name, renderX, renderY);
+            context.fillStyle = color;
+            context.fillText(name, renderX, renderY);
         }
     }
 }
 
 Camera2D.prototype.drawSpriteLayer = function(gameContext, spriteLayer) {
-    const { timer } = gameContext;
-    const { viewportX, viewportY } = this.getViewportPosition(); 
-    const realTime = timer.getRealTime();
-    const deltaTime = timer.getDeltaTime();
     const visibleSprites = [];
     const viewportLeftEdge = this.viewportX;
     const viewportTopEdge = this.viewportY;
@@ -166,7 +143,7 @@ Camera2D.prototype.drawSpriteLayer = function(gameContext, spriteLayer) {
 
     for(let i = 0; i < spriteLayer.length; i++) {
         const sprite = spriteLayer[i];
-        const {x, y, w, h} = sprite.getBounds();
+        const { x, y, w, h } = sprite.getBounds();
         const inBounds = x < viewportRightEdge && x + w > viewportLeftEdge && y < viewportBottomEdge && y + h > viewportTopEdge;
 
         if(inBounds) {
@@ -176,16 +153,22 @@ Camera2D.prototype.drawSpriteLayer = function(gameContext, spriteLayer) {
 
     visibleSprites.sort((spriteA, spriteB) => (spriteA.position.y) - (spriteB.position.y));
 
+    const { timer, renderer } = gameContext;
+    const context = renderer.getContext();
+    const { x, y } = this.getViewportPosition(); 
+    const realTime = timer.getRealTime();
+    const deltaTime = timer.getDeltaTime();
+
     for(let i = 0; i < visibleSprites.length; i++) {
         const sprite = visibleSprites[i];
         sprite.update(realTime, deltaTime);
-        sprite.draw(this.display.context, viewportX, viewportY, 0, 0);
+        sprite.draw(context, x, y, 0, 0);
     }
 
     if(Camera.DEBUG) {
         for(let i = 0; i < visibleSprites.length; i++) {
             const sprite = visibleSprites[i];
-            sprite.debug(this.display.context, viewportX, viewportY, 0, 0);
+            sprite.debug(context, x, y, 0, 0);
         }
     }
 }
@@ -197,19 +180,20 @@ Camera2D.prototype.drawTileLayer = function(gameContext, map2D, layerConfig, sta
         return;
     }
 
-    const { tileManager } = gameContext;
-    const { viewportX, viewportY } = this.getViewportPosition();
+    const { tileManager, renderer } = gameContext;
+    const { x, y } = this.getViewportPosition();
+    const context = renderer.getContext();
     const width = map2D.width;
     const layer = map2D.layers[id];
 
-    this.display.context.globalAlpha = opacity;
+    context.globalAlpha = opacity;
 
     for(let i = startY; i <= endY; i++) {
-        const renderY = i * Camera.TILE_HEIGHT - viewportY;
+        const renderY = i * Camera.TILE_HEIGHT - y;
         const row = i * width;
 
         for(let j = startX; j <= endX; j++) {
-            const renderX = j * Camera.TILE_WIDTH - viewportX;
+            const renderX = j * Camera.TILE_WIDTH - x;
             const index = row + j;
             const tileID = layer[index];
 
@@ -217,29 +201,31 @@ Camera2D.prototype.drawTileLayer = function(gameContext, map2D, layerConfig, sta
                 continue;
             }
             
-            tileManager.drawTileGraphics(tileID, this.display.context, renderX, renderY);
+            tileManager.drawTileGraphics(tileID, context, renderX, renderY);
         }
     }
 
-    this.display.context.globalAlpha = 1;
+    context.globalAlpha = 1;
 }
 
-Camera2D.prototype.drawMapOutlines = function(mapWidth, mapHeight) {
-    const { viewportX, viewportY } = this.getViewportPosition();
+Camera2D.prototype.drawMapOutlines = function(gameContext, mapWidth, mapHeight) {
+    const { renderer } = gameContext;
+    const context = renderer.getContext();
+    const { x, y } = this.getViewportPosition();
     const viewportWidth = this.getViewportWidth();
     const viewportHeight = this.getViewportHeight();
-    const lineSize = 1 / Camera.SCALE;
+    const lineSize = 1 / this.scale;
 
-    this.display.context.fillStyle = Camera2D.MAP_OUTLINE_COLOR;
+    context.fillStyle = Camera2D.MAP_OUTLINE_COLOR;
 
     for(let i = 0; i <= mapHeight; i++) {
-        const renderY = i * Camera.TILE_HEIGHT - viewportY;
-        this.display.context.fillRect(0, renderY, viewportWidth, lineSize);
+        const renderY = i * Camera.TILE_HEIGHT - y;
+        context.fillRect(0, renderY, viewportWidth + Camera.TILE_HEIGHT, lineSize);
     }
 
     for (let j = 0; j <= mapWidth; j++) {
-        const renderX = j * Camera.TILE_WIDTH - viewportX;
-        this.display.context.fillRect(renderX, 0, lineSize, viewportHeight);
+        const renderX = j * Camera.TILE_WIDTH - x;
+        context.fillRect(renderX, 0, lineSize, viewportHeight + Camera.TILE_HEIGHT);
     }
 }
 
@@ -261,32 +247,17 @@ Camera2D.prototype.loadViewport = function(mapWidth, mapHeight) {
 
     if(width <= viewportWidth) {
         this.viewportX_limit = 0;
-
-        if(this.isBound) {
-            this.offsetX = (viewportWidth - width) / 2;
-        } else {
-            this.offsetX = 0;
-        }
     } else {
         this.viewportX_limit = width - viewportWidth;
-        this.offsetX = 0;
     }
 
     if(height <= viewportHeight) {
         this.viewportY_limit = 0;
-        
-        if(this.isBound) {
-            this.offsetY = (viewportHeight - height) / 2;
-        } else {
-            this.offsetY = 0;
-        }
     } else {
         this.viewportY_limit = height - viewportHeight;
-        this.offsetY = 0;  
     }
 
     this.limitViewport();
-    this.events.emit(Camera.EVENT_VIEWPORT_LOAD, width, height);
 }
 
 Camera2D.prototype.limitViewport = function() {
@@ -323,8 +294,8 @@ Camera2D.prototype.dragViewport = function(param_dragX, param_dragY) {
         return;
     }
 
-    const viewportX = this.viewportX + param_dragX / Camera.SCALE;
-    const viewportY = this.viewportY + param_dragY / Camera.SCALE;
+    const viewportX = this.viewportX + param_dragX / this.scale;
+    const viewportY = this.viewportY + param_dragY / this.scale;
     
     this.moveViewport(viewportX, viewportY);
 }
@@ -336,12 +307,12 @@ Camera2D.prototype.centerViewport = function(positionX, positionY) {
     this.moveViewport(viewportX, viewportY);
 }
 
-Camera2D.prototype.bindToScreen = function() {
+Camera2D.prototype.bindViewport = function() {
     this.isBound = true;
     this.loadViewport(this.mapWidth, this.mapHeight);
 }
 
-Camera2D.prototype.unbindFromScreen = function() {
+Camera2D.prototype.unbindViewport = function() {
     this.isBound = false;
     this.loadViewport(this.mapWidth, this.mapHeight);
 }

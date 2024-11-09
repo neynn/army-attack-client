@@ -4,7 +4,6 @@ import { EntityManager } from "./entity/entityManager.js";
 import { EventEmitter } from "./events/eventEmitter.js";
 import { SpriteManager } from "./graphics/spriteManager.js";
 import { UIManager } from "./ui/uiManager.js";
-import { getViewportTile } from "./camera/helpers.js";
 import { MapLoader } from "./map/mapLoader.js";
 import { StateMachine } from "./state/stateMachine.js";
 import { Timer } from "./timer.js";
@@ -13,8 +12,8 @@ import { UIElement } from "./ui/uiElement.js";
 import { Entity } from "./entity/entity.js";
 import { Logger } from "./logger.js";
 import { SystemManager } from "./system/systemManager.js";
-import { Camera2D } from "./camera/2D/camera2D.js";
 import { TileManager } from "./tile/tileManager.js";
+import { Renderer } from "./renderer.js";
 
 export const GameContext = function() {
     this.id = "GAME_CONTEXT";
@@ -22,7 +21,7 @@ export const GameContext = function() {
     this.settings = {};
     this.client = new Client();
     this.controller = new Entity("CONTROLLER");
-    this.renderer = new Camera2D(window.innerWidth, window.innerHeight);
+    this.renderer = new Renderer();
     this.tileManager = new TileManager();
     this.spriteManager = new SpriteManager();
     this.uiManager = new UIManager();
@@ -75,11 +74,17 @@ GameContext.prototype.initializeContext = function() {
 GameContext.prototype.initializeInput = function() {
     const { cursor } = this.client;
 
-    cursor.events.subscribe(Cursor.LEFT_MOUSE_DRAG, this.id, (deltaX, deltaY) => this.renderer.dragViewport(deltaX, deltaY));
+    cursor.events.subscribe(Cursor.LEFT_MOUSE_DRAG, this.id, (deltaX, deltaY) => {
+        const camera = this.getCameraAtMouse();
+
+        if(camera) {
+            camera.dragViewport(deltaX, deltaY);
+        }
+    });
     
     cursor.events.subscribe(Cursor.LEFT_MOUSE_CLICK, this.id, () => {
         const clickedElements = this.uiManager.checkCollisions(cursor.position.x, cursor.position.y, cursor.radius);
-        const viewportTile = this.getViewportTile();
+        const viewportTile = this.getWorldTile();
 
         if(clickedElements.length === 0) {
             if(!viewportTile) {
@@ -116,8 +121,8 @@ GameContext.prototype.initializeMap = function(mapID) {
         this.mapLoader.unloadMap(activeMapID);
     }
 
+    this.renderer.getCamera("ARMY_CAMERA").loadViewport(nextMap.width, nextMap.height); //HÄCK
     this.mapLoader.setActiveMap(mapID);
-    this.renderer.loadViewport(nextMap.width, nextMap.height);
     this.actionQueue.workStart();
 
     if(nextMap.music) {
@@ -170,23 +175,35 @@ GameContext.prototype.getConfig = function(key) {
     return this.config[key];
 }
 
-GameContext.prototype.getViewportTilePosition = function() {
-    const { viewportX, viewportY } = this.renderer.getViewportPosition();
-    const viewportTilePosition = getViewportTile(this.client.cursor.position.x, this.client.cursor.position.y, viewportX, viewportY);
-
-    return viewportTilePosition;
+GameContext.prototype.getCameraAtMouse = function() {
+    const camera = this.renderer.getCollidedCamera(this.client.cursor.position.x, this.client.cursor.position.y, this.client.cursor.radius);
+    return camera;
 }
 
-GameContext.prototype.getViewportTile = function() {
+GameContext.prototype.getWorldTilePosition = function() {
+    const camera = this.getCameraAtMouse();
+
+    if(!camera) {
+        return {
+            "x": -1,
+            "y": -1
+        }
+    }
+
+    const worldTile = camera.screenToWorldTile(this.client.cursor.position.x, this.client.cursor.position.y);
+
+    return worldTile;
+}
+
+GameContext.prototype.getWorldTile = function() {
     const gameMap = this.mapLoader.getActiveMap();
 
     if(!gameMap) {
         return null;
     }
 
-    const { viewportX, viewportY } = this.renderer.getViewportPosition();
-    const viewportTilePosition = getViewportTile(this.client.cursor.position.x, this.client.cursor.position.y, viewportX, viewportY);
-    const viewportTile = gameMap.getTile(viewportTilePosition.x, viewportTilePosition.y);
+    const { x, y } = this.getWorldTilePosition();
+    const viewportTile = gameMap.getTile(x, y);
 
     return viewportTile;
 }

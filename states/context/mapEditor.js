@@ -5,6 +5,7 @@ import { saveMap, saveTemplateAsFile } from "../../source/helpers.js";
 import { State } from "../../source/state/state.js";
 import { UIElement } from "../../source/ui/uiElement.js";
 import { MapEditor } from "../../mapEditor.js";
+import { Renderer } from "../../source/renderer.js";
 
 export const MapEditorState = function() {
     State.call(this);
@@ -17,6 +18,7 @@ MapEditorState.prototype.constructor = MapEditorState;
 const initializeMapEditor = function(mapEditor, gameContext) {
     const { mapLoader, client, uiManager, renderer, tileManager } = gameContext;
     const { cursor } = client;
+    const camera = renderer.getCamera("ARMY_CAMERA");
     const editorInterface = mapEditor.config.interface;
 
     const BUTTON_TYPE_BOOLEAN = "0";
@@ -144,7 +146,7 @@ const initializeMapEditor = function(mapEditor, gameContext) {
             return;
         }
 
-        const {x, y} = gameContext.getViewportTilePosition();
+        const {x, y} = gameContext.getWorldTilePosition();
         const tileTypes = gameContext.getConfig("tileTypes");
 
         const tileTypesKeys = Object.keys(tileTypes);
@@ -177,8 +179,8 @@ const initializeMapEditor = function(mapEditor, gameContext) {
         uiManager.setText(editorInterface.id, "TEXT_SIZE",  getSizeText());
     }
 
-    renderer.events.subscribe(Camera.EVENT_MAP_RENDER_COMPLETE, MAP_EDITOR_ID, (renderer) => {
-        const cursorTile = gameContext.getViewportTilePosition();
+    renderer.events.subscribe(Renderer.EVENT_CAMERA_FINISH, MAP_EDITOR_ID, (renderer, camera) => {
+        const cursorTile = gameContext.getWorldTilePosition();
         const brush = mapEditor.getBrush();
         const brushSize = mapEditor.getBrushSize();
 
@@ -196,10 +198,10 @@ const initializeMapEditor = function(mapEditor, gameContext) {
         }
 
         const { tileName, tileID } = brush;
-        const { context } = renderer.display;
-        const { viewportX, viewportY } = renderer.getViewportPosition();
-        const tileWidth = Camera.TILE_WIDTH * Camera.SCALE;
-        const tileHeight = Camera.TILE_HEIGHT * Camera.SCALE;
+        const context = renderer.getContext();
+        const { x, y } = camera.getViewportPosition();
+        const tileWidth = Camera.TILE_WIDTH * camera.scale;
+        const tileHeight = Camera.TILE_HEIGHT * camera.scale;
         const halfTileWidth = tileWidth / 2;
         const halfTileHeight = tileHeight / 2;
         const startX = cursorTile.x - brushSize;
@@ -210,10 +212,10 @@ const initializeMapEditor = function(mapEditor, gameContext) {
         context.globalAlpha = mapEditor.config.overlayOpacity;
 
         for(let i = startY; i <= endY; i++) {
-            const renderY = i * tileHeight - viewportY * Camera.SCALE;
+            const renderY = i * tileHeight - y * camera.scale;
 
             for(let j = startX; j <= endX; j++) {   
-                const renderX = j * tileWidth - viewportX * Camera.SCALE;
+                const renderX = j * tileWidth - x * camera.scale;
 
                 if(tileID === 0) {
                     context.fillStyle = "#701867";
@@ -223,7 +225,7 @@ const initializeMapEditor = function(mapEditor, gameContext) {
                     context.fillRect(renderX + halfTileWidth, renderY, halfTileWidth, halfTileHeight);
                     context.fillRect(renderX, renderY + halfTileHeight, halfTileWidth, halfTileHeight);
                 } else {
-                    tileManager.drawTileGraphics(tileID, renderer.display.context, renderX, renderY);
+                    tileManager.drawTileGraphics(tileID, context, renderX, renderY);
                     context.fillStyle = "#eeeeee";
                     context.textAlign = "center";
                     context.fillText(tileName, renderX + halfTileWidth, renderY);   
@@ -373,7 +375,8 @@ const initializeMapEditor = function(mapEditor, gameContext) {
         }
 
         mapLoader.resizeMap(EDITOR_MAP_ID, newWidth, newHeight);
-        renderer.loadViewport(newWidth, newHeight);
+
+        camera.loadViewport(newWidth, newHeight);
     }); 
 
     uiManager.addClick(editorInterface.id, "BUTTON_VIEW_ALL", () => {
@@ -403,6 +406,7 @@ MapEditorState.prototype.enter = function(stateMachine) {
     const gameContext = stateMachine.getContext();
     const { uiManager, renderer, settings, tileManager } = gameContext;
     const mapEditor = new MapEditor();
+    const camera = renderer.getCamera("ARMY_CAMERA");
 
     mapEditor.loadConfig(settings.mapEditor);
     mapEditor.loadBrushSets(tileManager.tileMeta);
@@ -410,7 +414,7 @@ MapEditorState.prototype.enter = function(stateMachine) {
     uiManager.parseUI("MAP_EDITOR", gameContext);
     uiManager.unparseUI("FPS_COUNTER", gameContext);
 
-    renderer.unbindFromScreen();
+    camera.unbindViewport();
 
     initializeMapEditor(mapEditor, gameContext);
 }
@@ -422,7 +426,7 @@ MapEditorState.prototype.exit = function(stateMachine) {
 
     mapLoader.unparseUI("MAP_EDITOR", gameContext);
     
-    renderer.events.unsubscribe(Camera.EVENT_MAP_RENDER_COMPLETE, "MAP_EDITOR");
+    renderer.events.unsubscribe(Renderer.EVENT_CAMERA_FINISH, "MAP_EDITOR");
     cursor.events.unsubscribe(Cursor.RIGHT_MOUSE_DRAG, "MAP_EDITOR");
     cursor.events.unsubscribe(Cursor.RIGHT_MOUSE_CLICK, "MAP_EDITOR");
 }

@@ -1,47 +1,62 @@
 export const FloodFill = function() {}
 
-FloodFill.search = function(startX, startY, gLimit, mapWidth, mapHeight, array1D, isValid) {
-    const createNode = (g, positionX, positionY, parent) => { return { "g": g, "positionX": positionX, "positionY": positionY, "parent": parent, "isValid": false } }; 
-    const getNode = (positionX, positionY) => {
-        if(positionX >= mapWidth || positionX < 0 || positionY >= mapHeight || positionY < 0) {
-            return null;
-        }
+FloodFill.createNode = function(g, positionX, positionY, parent) {
+    return { 
+        "g": g,
+        "positionX": positionX,
+        "positionY": positionY,
+        "parent": parent,
+        "isValid": false
+    }
+}
 
-        return array1D[positionY * mapWidth + positionX];
-    };
-    const getKeyForPosition = (positionX, positionY) => `${positionX},${positionY}`;
-    const getFirstEntry = (map) => map.entries().next().value;
-    
+FloodFill.getNode = function(list, positionX, positionY, mapWidth, mapHeight) {
+    if(positionX >= mapWidth || positionX < 0 || positionY >= mapHeight || positionY < 0) {
+        return null;
+    }
+
+    return list[positionY * mapWidth + positionX];
+}
+
+FloodFill.getPositionKey = function(positionX, positionY) {
+    return `${positionX}-${positionY}`;
+}
+
+FloodFill.getFirstEntry = function(map) {
+    return map.entries().next().value;
+}
+
+FloodFill.search = function(startX, startY, gLimit, mapWidth, mapHeight, list, onCheck) {
     const openNodes = new Map();
-    const visitedNodes = new Map();
+    const visitedNodes = new Set();
     const allNodes = [];
-    const startNode = createNode(0, startX, startY, null);
+    const startNode = FloodFill.createNode(0, startX, startY, null);
 
-    openNodes.set(getKeyForPosition(startNode.positionX, startNode.positionY), startNode);
+    openNodes.set(FloodFill.getPositionKey(startNode.positionX, startNode.positionY), startNode);
 
     while(openNodes.size !== 0) {
-        const [nodeID, node] = getFirstEntry(openNodes);
-        const {g, positionX, positionY} = node;
+        const [nodeID, node] = FloodFill.getFirstEntry(openNodes);
+        const { g, positionX, positionY } = node;
 
         openNodes.delete(nodeID);
-        visitedNodes.set(nodeID, node);
+        visitedNodes.add(nodeID);
 
         if(g >= gLimit) {
             return allNodes;
         }
 
-        const matrixNode = getNode(positionX, positionY);
+        const matrixNode = FloodFill.getNode(list, positionX, positionY, mapWidth, mapHeight);
         const children = [
-            createNode(g + 1, positionX, positionY - 1, node),
-            createNode(g + 1, positionX + 1, positionY, node),
-            createNode(g + 1, positionX, positionY + 1, node),
-            createNode(g + 1, positionX - 1, positionY, node),
+            FloodFill.createNode(g + 1, positionX, positionY - 1, node),
+            FloodFill.createNode(g + 1, positionX + 1, positionY, node),
+            FloodFill.createNode(g + 1, positionX, positionY + 1, node),
+            FloodFill.createNode(g + 1, positionX - 1, positionY, node),
         ];
 
         for(const childNode of children) {
             const {positionX, positionY} = childNode;
-            const childKey = getKeyForPosition(positionX, positionY);
-            const childMatrixNode = getNode(positionX, positionY);
+            const childKey = FloodFill.getPositionKey(positionX, positionY);
+            const childMatrixNode = FloodFill.getNode(list, positionX, positionY, mapWidth, mapHeight);
 
             if(!childMatrixNode || visitedNodes.has(childKey)) {
                 continue;
@@ -53,7 +68,7 @@ FloodFill.search = function(startX, startY, gLimit, mapWidth, mapHeight, array1D
 
             allNodes.push(childNode);
 
-            if(isValid(childMatrixNode, matrixNode)) {
+            if(onCheck(childMatrixNode, matrixNode)) {
                 childNode.isValid = true;
                 openNodes.set(childKey, childNode);
             }
@@ -63,20 +78,19 @@ FloodFill.search = function(startX, startY, gLimit, mapWidth, mapHeight, array1D
     return allNodes;
 }
 
-FloodFill.flatten = function(treeNode) {
-    const walkedNodes = [];
+FloodFill.walkTree = function(node, walkedNodes) {
+    walkedNodes.push(node);
 
-    const walkTree = (node) => {
-        walkedNodes.push(node);
-
-        if(node.parent === null) {
-            return walkedNodes;
-        }
-
-        return walkTree(node.parent);
+    if(node.parent === null) {
+        return walkedNodes;
     }
 
-    return walkTree(treeNode);
+    return FloodFill.walkTree(node.parent, walkedNodes);
+}
+
+FloodFill.flatten = function(mainNode) {
+    const walkedNodes = [];
+    return FloodFill.walkTree(mainNode, walkedNodes);
 }
 
 FloodFill.reverse = function(flatTree) {

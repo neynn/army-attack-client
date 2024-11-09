@@ -11,11 +11,12 @@ StoryModePlayState.prototype.constructor = StoryModePlayState;
 
 StoryModePlayState.prototype.enter = async function(stateMachine) {
     const gameContext = stateMachine.getContext();
-    const { uiManager, spriteManager, controller, entityManager, mapLoader, actionQueue } = gameContext;
+    const { uiManager, spriteManager, controller, entityManager, mapLoader, actionQueue, renderer } = gameContext;
     const MAP = "pvp_valleys";
 
     const map2D = await mapLoader.loadMap(MAP);
-    
+    const camera = renderer.getCamera("ARMY_CAMERA");
+
     if(!map2D) {
         console.error("Error loading map!");
         return;
@@ -26,8 +27,8 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
     gameContext.initializeController({"team": "1", "master": "neyn"});
     gameContext.initializeMap(MAP);
     gameContext.initializeTilemap(MAP);
-    gameContext.renderer.centerOnMap();
-    gameContext.renderer.bindToScreen();
+    camera.centerOnMap();
+    camera.bindViewport();
 
     const blueGuardtower = gameContext.initializeEntity({ 
         "type": "blue_guardtower",

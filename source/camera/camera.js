@@ -1,82 +1,93 @@
 import { EventEmitter } from "../events/eventEmitter.js";
-import { Canvas } from "./canvas.js";
-import { FPSCounter } from "./fpsCounter.js";
+import { Vec2 } from "../math/vec2.js";
 
-export const Camera = function(screenWidth, screenHeight) {
+export const Camera = function(positionX, positionY, width, height) {
     this.id = "CAMERA";
-    
+    this.position = new Vec2(positionX, positionY);
     this.viewportX = 0;
     this.viewportY = 0;
-    this.viewportWidth = screenWidth;
-    this.viewportHeight = screenHeight;
-
-    this.fpsCounter = new FPSCounter();
-
-    this.display = new Canvas();
-    this.display.create(screenWidth, screenHeight, true);
-
+    this.viewportWidth = width;
+    this.viewportHeight = height;
+    this.mode = Camera.MODE_AUTO_SCALE;
+    this.scale = 1;
     this.events = new EventEmitter();
-    this.events.listen(Camera.EVENT_SCREEN_RESIZE);
-    this.events.listen(Camera.EVENT_VIEWPORT_LOAD);
-    this.events.listen(Camera.EVENT_MAP_RENDER_COMPLETE);
-
-    window.addEventListener("resize", () => {
-        this.resizeViewport(window.innerWidth, window.innerHeight)
-    });
+    this.events.listen(Camera.EVENT_VIEWPORT_RESIZE);
 }
 
-Camera.SCALE = 1;
-Camera.DEBUG = 0;
+Camera.EVENT_VIEWPORT_RESIZE = "EVENT_VIEWPORT_RESIZE";
+Camera.MODE_AUTO_SCALE = 0;
+Camera.MODE_FIXED_SCALE = 1;
+Camera.MODE_FORCED_SCALE = 2;
 Camera.TILE_WIDTH = 96;
 Camera.TILE_HEIGHT = 96;
-Camera.EVENT_SCREEN_RESIZE = "Camera.EVENT_SCREEN_RESIZE";
-Camera.EVENT_VIEWPORT_LOAD = "Camera.EVENT_VIEWPORT_LOAD";
-Camera.EVENT_MAP_RENDER_COMPLETE = "Camera.EVENT_MAP_RENDER_COMPLETE";
+Camera.DEBUG = 0;
 
-Camera.prototype.update = function(gameContext) {
-    const { timer } = gameContext; 
-    const deltaTime = timer.getDeltaTime();
+Camera.prototype.update = function(gameContext) {}
 
-    this.display.clear();
-    this.fpsCounter.update(deltaTime);
-    this.drawUI(gameContext);
-}
+Camera.prototype.screenToWorldTile = function(screenX, screenY) {
+    const { x, y } = this.getViewportPosition();
+    const worldTileX = Math.floor((screenX / this.scale + x) / Camera.TILE_WIDTH);
+    const worldTileY = Math.floor((screenY / this.scale + y) / Camera.TILE_HEIGHT);
 
-Camera.prototype.drawUI = function(gameContext) {
-    const { uiManager, timer } = gameContext;
-    const realTime = timer.getRealTime();
-    const deltaTime = timer.getDeltaTime();
-
-    for(const elementID of uiManager.drawableElements) {
-        const element = uiManager.getElementByID(elementID);
-        
-        element.update(realTime, deltaTime);
-        element.draw(this.display.context, 0, 0, 0, 0);
-
-        if(Camera.DEBUG) {
-            element.debug(this.display.context, 0, 0, 0, 0);
-        }
+    return {
+        "x": worldTileX,
+        "y": worldTileY
     }
 }
 
-Camera.prototype.resizeViewport = function(width, height) {
-    this.viewportWidth = width;
-    this.viewportHeight = height;
-    this.display.resize(width, height);
-    this.events.emit(Camera.EVENT_SCREEN_RESIZE, width, height);
+Camera.prototype.screenToWorld = function(screenX, screenY) {
+    const { x, y } = this.getViewportPosition();
+    const worldX = Math.floor(screenX / this.scale + x);
+    const worldY = Math.floor(screenY / this.scale + y);
+
+    return {
+        "x": worldX,
+        "y": worldY
+    }
+}
+
+Camera.prototype.getBounds = function() {
+    return {
+        "x": this.position.x,
+        "y": this.position.y,
+        "w": this.viewportWidth,
+        "h": this.viewportHeight
+    }
+}
+
+Camera.prototype.setPosition = function(x = 0, y = 0) {
+    this.position.x = x;
+    this.position.y = y;
+}
+
+Camera.prototype.getPosition = function() {
+    return this.position;
 }
 
 Camera.prototype.getViewportPosition = function() {
     return {
-        "viewportX": this.viewportX,
-        "viewportY": this.viewportY
+        "x": this.viewportX - this.position.x,
+        "y": this.viewportY - this.position.y
     }
 }
 
 Camera.prototype.getViewportWidth = function() {
-    return this.viewportWidth / Camera.SCALE;
+    return this.viewportWidth / this.scale;
 }
 
 Camera.prototype.getViewportHeight = function() {
-    return this.viewportHeight / Camera.SCALE;
+    return this.viewportHeight / this.scale;
+}
+
+Camera.prototype.onWindowResize = function(width, height) {
+    if(this.mode === Camera.MODE_AUTO_SCALE) {
+        this.position.x = 0;
+        this.position.y = 0;
+        this.viewportWidth = width;
+        this.viewportHeight = height;
+    } else if(this.mode === Camera.MODE_FIXED_SCALE) {
+        //TODO
+    }
+
+    this.events.emit(Camera.EVENT_VIEWPORT_RESIZE);
 }

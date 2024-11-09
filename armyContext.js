@@ -33,6 +33,7 @@ import { PlaceSystem } from "./systems/place.js";
 import { StoryModePlayState } from "./states/context/story/storyModePlay.js";
 import { StoryModeIntroState } from "./states/context/story/storyModeIntro.js";
 import { MoveSystem } from "./systems/move.js";
+import { Camera2D } from "./source/camera/2D/camera2D.js";
 
 export const ArmyContext = function() {
     GameContext.call(this);
@@ -81,6 +82,13 @@ ArmyContext.prototype.initializeContext = function() {
     this.states.setNextState(CONTEXT_STATES.MAIN_MENU);
 
     this.config.tileConversions = this.getNewConversions();
+
+    this.renderer.addCamera("ARMY_CAMERA", new Camera2D(200, 200, 500, 500));
+    this.renderer.addCamera("ARMY_CAMERA_2", new Camera2D(0, 0, 200, 200));
+
+    this.renderer.getCamera("ARMY_CAMERA_2").mode = 1;
+    this.renderer.getCamera("ARMY_CAMERA_2").scale = 0.5;
+    this.renderer.resizeDisplay(window.innerWidth, window.innerHeight);
 }
 
 ArmyContext.prototype.initializeActionQueue = function() {
@@ -126,7 +134,7 @@ ArmyContext.prototype.initializeController = function(config) {
     controller.addComponent(spriteComponent);
 
     this.client.cursor.events.subscribe(Cursor.MOVE, this.id, (deltaX, deltaY) => {
-        const viewportTile = this.getViewportTilePosition();
+        const viewportTile = this.getWorldTilePosition();
         const centerPosition = tileToPosition_center(viewportTile.x, viewportTile.y);
 
         controllerSprite.setPosition(centerPosition.x, centerPosition.y);

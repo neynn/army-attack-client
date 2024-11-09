@@ -33,7 +33,7 @@ ControllerEntitySelectedState.prototype.onEventEnter = function(stateMachine, ga
             soundPlayer.playSound("sound_error", 0.5);
         }
     } else {
-        const { x, y } = gameContext.getViewportTilePosition();
+        const { x, y } = gameContext.getWorldTilePosition();
 
         actionQueue.addAction(createMoveRequest(selectedEntityID, x, y));
     }

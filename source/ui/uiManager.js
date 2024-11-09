@@ -1,5 +1,5 @@
-import { Camera } from "../camera/camera.js";
 import { Logger } from "../logger.js";
+import { Renderer } from "../renderer.js";
 import { Button } from "./elements/button.js";
 import { ButtonCircle } from "./elements/button/buttonCircle.js";
 import { ButtonSquare } from "./elements/button/buttonSquare.js";
@@ -420,6 +420,8 @@ UIManager.prototype.parseUI = function(userInterfaceID, gameContext) {
     }
 
     const elements = this.createInterface(userInterfaceID);
+    const windowWidth = renderer.getWidth();
+    const windowHeight = renderer.getHeight();
 
     for(const [configID, element] of elements) {
         const config = userInterface[configID];
@@ -432,8 +434,8 @@ UIManager.prototype.parseUI = function(userInterfaceID, gameContext) {
         }
 
         if(config.anchor) {
-            element.adjustAnchor(config.anchor, config.position.x, config.position.y, renderer.viewportWidth, renderer.viewportHeight);
-            renderer.events.subscribe(Camera.EVENT_SCREEN_RESIZE, elementID, (width, height) => element.adjustAnchor(config.anchor, config.position.x, config.position.y, width, height));    
+            element.adjustAnchor(config.anchor, config.position.x, config.position.y, windowWidth, windowHeight);
+            renderer.events.subscribe(Renderer.EVENT_SCREEN_RESIZE, elementID, (width, height) => element.adjustAnchor(config.anchor, config.position.x, config.position.y, width, height));    
         }
 
         this.drawableElements.add(elementID);
@@ -462,7 +464,7 @@ UIManager.prototype.unparseUI = function(userInterfaceID, gameContext) {
         if(this.drawableElements.has(uniqueID)) {
             this.drawableElements.delete(uniqueID);
 
-            renderer.events.unsubscribe(Camera.EVENT_SCREEN_RESIZE, uniqueID);
+            renderer.events.unsubscribe(Renderer.EVENT_SCREEN_RESIZE, uniqueID);
         }
     }
 
