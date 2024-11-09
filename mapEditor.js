@@ -78,7 +78,7 @@ MapEditor.prototype.getPage = function() {
         for(let i = 0; i < maxSlots; i++) {
             pageElements.push({
                 "tileName": "",
-                "tileID": null
+                "tileID": 0
             });
         }
 
@@ -93,7 +93,7 @@ MapEditor.prototype.getPage = function() {
         if(index > this.allPageElements.length - 1) {
             pageElements.push({
                 "tileName": "",
-                "tileID": null
+                "tileID": 0
             });
 
             continue;

@@ -1,6 +1,6 @@
 import { Logger } from "../logger.js";
 import { ResourceLoader } from "../resourceLoader.js";
-import { Map2D } from "./map2D.js";
+import { MapParser } from "./mapParser.js";
 
 export const MapLoader = function() {
     this.config = {};
@@ -176,22 +176,7 @@ MapLoader.prototype.hasCachedMap = function(mapID) {
 }
 
 MapLoader.prototype.createMapFromData = function(mapID, mapData) {
-    const mapSetup = JSON.parse(JSON.stringify(mapData));
-    const map2D = new Map2D(mapID);
-
-    map2D.initialize(mapSetup);
-
-    const autoLayers = map2D.getAutoGeneratingLayers();
-
-    for(const layerID of autoLayers) {
-        const layerSetup = this.config.mapSetup.layers[layerID];
-
-        if(layerSetup) {
-            map2D.generateEmptyLayer(layerID, layerSetup.fill);
-        } else {
-            map2D.generateEmptyLayer(layerID, null);
-        }
-    }
+    const map2D = MapParser.parseMap2D(mapID, mapData);
 
     this.loadedMaps.set(mapID, map2D);
 
@@ -199,18 +184,7 @@ MapLoader.prototype.createMapFromData = function(mapID, mapData) {
 }
 
 MapLoader.prototype.createEmptyMap = function(mapID) {
-    const mapSetup = JSON.parse(JSON.stringify(this.config.mapSetup));
-    const { layers } = mapSetup;
-    const map2D = new Map2D(mapID);
-
-    
-    map2D.initialize(mapSetup);
-
-    for(const layerID in layers) {
-        const layerConfig = layers[layerID];
-        const { id, fill } = layerConfig;
-        map2D.generateEmptyLayer(id, fill);
-    }
+    const map2D = MapParser.parseMap2DEmpty(mapID, this.config.mapSetup);
 
     this.loadedMaps.set(mapID, map2D);
 

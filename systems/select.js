@@ -67,7 +67,7 @@ SelectSystem.deselectEntity = function(entity, gameContext) {
 
     for(const node of controllerComponent.nodeList) {
         const {positionX, positionY} = node;
-        activeMap.placeTile(null, "overlay", positionX, positionY);
+        activeMap.clearTile("overlay", positionX, positionY);
         ConquerSystem.convertTileGraphics(gameContext, positionX, positionY, 1);
     }
 

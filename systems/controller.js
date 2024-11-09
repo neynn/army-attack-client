@@ -21,7 +21,8 @@ ControllerSystem.clearAttackers = function(gameContext) {
         }
 
         const positionComponent = attacker.getComponent(PositionComponent);
-        activeMap.placeTile(null, settings.overlayLayerID, positionComponent.tileX, positionComponent.tileY);
+
+        activeMap.clearTile(settings.overlayLayerID, positionComponent.tileX, positionComponent.tileY);
 
         MorphSystem.updateSprite(attacker, "idle");
     }

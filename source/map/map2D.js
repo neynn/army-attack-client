@@ -44,20 +44,6 @@ Map2D.prototype.getAutoGeneratingLayers = function() {
     return layerIDs;
 }
 
-Map2D.prototype.initialize = function(config) {
-    const { music, width, height, layers, entities, flags, backgroundLayers, foregroundLayers, metaLayers } = config;
-
-    if(music) this.music = music;
-    if(width) this.width = width;
-    if(height) this.height = height;
-    if(layers) this.layers = layers;
-    if(entities) this.entities = entities;
-    if(flags) this.flags = flags;
-    if(backgroundLayers) this.backgroundLayers = backgroundLayers;
-    if(foregroundLayers) this.foregroundLayers = foregroundLayers;
-    if(metaLayers) this.metaLayers = metaLayers;
-}
-
 Map2D.prototype.setLayerOpacity = function(layerID, opacity) {
     if(this.layers[layerID] === undefined || opacity === undefined) {
         return false;
@@ -128,22 +114,6 @@ Map2D.prototype.getID = function() {
     return this.id;
 }
 
-Map2D.prototype.generateEmptyLayer = function(layerID, fillID) {
-    const layer = new Array(this.height * this.width);
-
-    for(let i = 0; i < this.height; i++) {
-        const row = i * this.width;
-
-        for(let j = 0; j < this.width; j++) {
-            const index = row + j;
-
-            layer[index] = fillID;
-        }
-    }
-
-    this.layers[layerID] = layer;
-}
-
 Map2D.prototype.resizeLayer = function(layerID, width, height, fill) {
     const oldLayer = this.layers[layerID];
 
@@ -152,7 +122,8 @@ Map2D.prototype.resizeLayer = function(layerID, width, height, fill) {
     }
 
     const layerSize = width * height;
-    const newLayer = new Array(layerSize);
+    const ArrayType = oldLayer.constructor;
+    const newLayer = new ArrayType(layerSize);
     
     for(let i = 0; i < layerSize; i++) {
         newLayer[i] = fill;
@@ -179,6 +150,26 @@ Map2D.prototype.resizeLayer = function(layerID, width, height, fill) {
     }
 
     this.layers[layerID] = newLayer;
+}
+
+Map2D.prototype.clearTile = function(layerID, tileX, tileY) {
+    const layer = this.layers[layerID];
+
+    if(!layer) {
+        console.warn(`Layer ${layerID} does not exist! Returning...`);
+        return false;
+    }
+
+    if(this.isTileOutOfBounds(tileX, tileY)) {
+        console.warn(`Tile ${tileY},${tileX} does not exist! Returning...`);
+        return false;
+    }
+    
+    const index = tileY * this.width + tileX;
+
+    layer[index] = 0;
+
+    return true;
 }
 
 Map2D.prototype.placeTile = function(data, layerID, tileX, tileY) {

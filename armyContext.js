@@ -14,7 +14,6 @@ import { ArmyTile } from "./init/armyTile.js";
 import { componentSetup } from "./init/components.js";
 import { entityFactory } from "./init/entityFactory.js";
 import { ActionQueue } from "./source/action/actionQueue.js";
-import { Camera } from "./source/camera/camera.js";
 import { tileToPosition_center } from "./source/camera/helpers.js";
 import { Cursor } from "./source/client/cursor.js";
 import { GameContext } from "./source/gameContext.js";
@@ -80,6 +79,8 @@ ArmyContext.prototype.initializeContext = function() {
     });
 
     this.states.setNextState(CONTEXT_STATES.MAIN_MENU);
+
+    this.config.tileConversions = this.getNewConversions();
 }
 
 ArmyContext.prototype.initializeActionQueue = function() {
@@ -222,4 +223,38 @@ ArmyContext.prototype.saveEntity = function(entityID) {
         "master": teamComponent.masterID,
         "components": savedComponents
     }
+}
+
+ArmyContext.prototype.getNewConversions = function() {
+    const { tileManager } = this;
+    const conversions = this.getConfig("tileConversions");
+    const newConversions = {};
+
+    for(const setID in conversions) {
+        const set = conversions[setID];
+
+        for(const frameID in set) {
+            const config = {};
+            const mainID = tileManager.getTileID(setID, frameID);
+
+            if(mainID === null) {
+                continue;
+            }
+
+            const teamConversions = set[frameID];
+
+            for(const teamID in teamConversions) {
+                const [tileSetID, tileFrameID] = teamConversions[teamID];
+                const tileID = tileManager.getTileID(tileSetID, tileFrameID);
+
+                if(teamID !== null) {
+                    config[teamID] = tileID;
+                }
+            }
+
+            newConversions[mainID] = config;
+        }
+    }
+
+    return newConversions;
 }

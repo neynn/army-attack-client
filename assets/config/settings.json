@@ -4,17 +4,17 @@
         "maxMapWidth": 255,
         "maxMapHeight": 255,
         "mapSetup": {
-            "music": null,
+            "music": "music_remastered",
             "width": 20,
             "height": 20,
             "layers": {
-                "ground": { "id": "ground", "fill": 0 },
-                "border": { "id": "border", "fill": null },
-                "decoration": { "id": "decoration", "fill": null },
-                "overlay": { "id": "overlay", "fill": null },
-                "cloud": { "id": "cloud", "fill": null },
-                "type": { "id": "type", "fill": "0" },
-                "team": { "id": "team", "fill": "0" }
+                "ground": { "id": "ground", "fill": 1 },
+                "border": { "id": "border", "fill": 0 },
+                "decoration": { "id": "decoration", "fill": 0 },
+                "overlay": { "id": "overlay", "fill": 0 },
+                "cloud": { "id": "cloud", "fill": 0 },
+                "type": { "id": "type", "fill": 0 },
+                "team": { "id": "team", "fill": 0 }
             },
             "backgroundLayers": [
                 { "id": "ground", "opacity": 1, "autoGenerate": false },

@@ -211,13 +211,13 @@ Camera2D.prototype.drawTileLayer = function(gameContext, map2D, layerConfig, sta
         for(let j = startX; j <= endX; j++) {
             const renderX = j * Camera.TILE_WIDTH - viewportX;
             const index = row + j;
-            const graphics = layer[index];
+            const tileID = layer[index];
 
-            if(graphics === null) {
+            if(tileID === 0) {
                 continue;
             }
             
-            tileManager.drawTileGraphics(graphics, this.display.context, renderX, renderY);
+            tileManager.drawTileGraphics(tileID, this.display.context, renderX, renderY);
         }
     }
 

@@ -100,13 +100,13 @@ TileManager.prototype.getTileID = function(setID, animationID) {
     const metaSet = this.tileMeta.inversion[setID];
 
     if(!metaSet) {
-        return null;
+        return 0;
     }
 
     const metaID = metaSet[animationID];
 
     if(metaID === undefined) {
-        return null;
+        return 0;
     }
 
     return metaID;

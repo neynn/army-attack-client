@@ -117,7 +117,7 @@ const initializeMapEditor = function(mapEditor, gameContext) {
 
             button.events.subscribe(UIElement.EVENT_CLICKED, MAP_EDITOR_ID, () => mapEditor.setBrush(brushData));
 
-            if(tileID === null) {
+            if(tileID === 0) {
                 button.events.subscribe(UIElement.EVENT_DRAW, MAP_EDITOR_ID, (context, localX, localY) => {
                     context.fillStyle = "#701867";
                     context.fillRect(localX, localY, 25, 25);
@@ -215,7 +215,7 @@ const initializeMapEditor = function(mapEditor, gameContext) {
             for(let j = startX; j <= endX; j++) {   
                 const renderX = j * tileWidth - viewportX * Camera.SCALE;
 
-                if(tileID === null) {
+                if(tileID === 0) {
                     context.fillStyle = "#701867";
                     context.fillRect(renderX, renderY, halfTileWidth, halfTileHeight);
                     context.fillRect(renderX + halfTileWidth, renderY + halfTileHeight, halfTileWidth, halfTileHeight);

@@ -22,6 +22,11 @@ ConquerSystem.convertTileGraphics = function(gameContext, tileX, tileY, teamID) 
         }
 
         const conversion = tileConversions[tileID];
+
+        if(!conversion) {
+            continue;
+        }
+
         const nextTileID = conversion[teamID];
 
         if(!tileManager.hasTileMeta(nextTileID)) {
@@ -37,11 +42,12 @@ ConquerSystem.convertTileGraphics = function(gameContext, tileX, tileY, teamID) 
 ConquerSystem.updateBorder = function(gameContext, tileX, tileY) {
     const { mapLoader, tileManager, controller } = gameContext;
     const settings = gameContext.getConfig("settings");
-    const activeMap = mapLoader.getActiveMap();
 
     if(!settings.drawBorder) {
         return false;
     }
+
+    const activeMap = mapLoader.getActiveMap();
 
     if(!activeMap) {
         return false;
@@ -57,9 +63,7 @@ ConquerSystem.updateBorder = function(gameContext, tileX, tileY) {
         return false;
     }
 
-    const directions = Autotiler.getDirections(tileX, tileY);
-
-    const autoIndex = Autotiler.autotile8Bits(directions, (center, neighbor) => {
+    const autoIndex = Autotiler.autotile8Bits(tileX, tileY, (center, neighbor) => {
         const neighborTile = activeMap.getTile(neighbor.x, neighbor.y);
 
         if(!neighborTile || !neighborTile.hasBorder) {

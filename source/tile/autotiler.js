@@ -36,13 +36,14 @@ Autotiler.getDirections = function(tileX, tileY) {
     }
 }
 
-Autotiler.autotile4Bits = function(directions, onCheck) {
+Autotiler.autotile4Bits = function(tileX, tileY, onCheck) {
     let total = 0b00000000;
 
-    if(!directions || !onCheck) {
+    if(tileX === undefined || tileY === undefined || !onCheck) {
         return total;
     }
 
+    const directions = Autotiler.getDirections(tileX, tileY);
     const { center } = directions;
     const { north, west, east, south } = Autotiler.SHIFTSET_4;
     const northShift = onCheck(center, directions.north) << north;
@@ -58,13 +59,14 @@ Autotiler.autotile4Bits = function(directions, onCheck) {
     return Autotiler.BITSET_4[total];
 }
 
-Autotiler.autotile8Bits = function(directions, onCheck) {
+Autotiler.autotile8Bits = function(tileX, tileY, onCheck) {
     let total = 0b00000000;
 
-    if(!directions || !onCheck) {
+    if(tileX === undefined || tileY === undefined || !onCheck) {
         return total;
     }
 
+    const directions = Autotiler.getDirections(tileX, tileY);
     const { center } = directions;
     const { northwest, north, northeast, west, east, southwest, south, southeast } = Autotiler.SHIFTSET_8;
     const northShift = onCheck(center, directions.north) << north;
