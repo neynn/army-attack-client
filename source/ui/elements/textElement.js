@@ -1,4 +1,4 @@
-import { TextStyle } from "../../graphics/textStyle.js";
+import { TextStyle } from "../../graphics/applyable/textStyle.js";
 import { UIElement } from "../uiElement.js";
 
 export const TextElement = function() {
@@ -21,7 +21,7 @@ TextElement.prototype.constructor = TextElement;
 TextElement.EVENT_REQUEST_TEXT = "TextElement.EVENT_REQUEST_TEXT";
 
 TextElement.prototype.loadFromConfig = function(config) {
-    const { id, opacity, position, font, align, color, text } = config;
+    const { id, opacity, position, font, align, color = [0, 0, 0, 0], text } = config;
     const { x, y } = position;
 
     this.DEBUG_NAME = id;
@@ -30,7 +30,7 @@ TextElement.prototype.loadFromConfig = function(config) {
     this.setPosition(x, y);
     this.style.setFont(font);
     this.style.setAlignment(align);
-    this.style.setColor(color);
+    this.style.setColorArray(color);
 }
 
 TextElement.prototype.setRevealSpeed = function(revealSpeed) {

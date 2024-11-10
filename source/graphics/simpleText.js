@@ -1,11 +1,13 @@
 import { Drawable } from "./drawable.js";
-import { TextStyle } from "./textStyle.js";
+import { TextStyle } from "./applyable/textStyle.js";
 
 export const SimpleText = function() {
     Drawable.call(this, "SIMPLE_TEXT");
 
     this.style = new TextStyle();
     this.text = "SAMPLE TEXT";
+
+    this.style.setColor(238, 238, 238, 255);
 }
 
 SimpleText.prototype = Object.create(Drawable.prototype);

@@ -34,15 +34,15 @@ ButtonSquare.prototype.onDebug = function(context, viewportX, viewportY, localX,
 ButtonSquare.prototype.onDraw = function(context, viewportX, viewportY, localX, localY) {
     this.events.emit(UIElement.EVENT_DRAW, context, localX, localY);
 
-    if(!this.isHighlighted) {
-        return;
+    if(this.highlight.getActive()) {
+        const { w, h } = this.bounds;
+
+        this.highlight.apply(context);
+    
+        context.fillRect(localX, localY, w, h);
     }
 
-    const [r, g, b, a] = this.highlightColor;
-    const { w, h } = this.bounds;
-
-    context.fillStyle = `rgba(${r}, ${g}, ${b}, ${a})`;
-    context.fillRect(localX, localY, w, h);
-
-    this.isHighlighted = false;
+    this.outline.apply(context);
+    
+    context.strokeRect(localX, localY, this.bounds.w, this.bounds.h);
 }

@@ -39,15 +39,10 @@ ButtonCircle.prototype.onDebug = function(context, viewportX, viewportY, localX,
 ButtonCircle.prototype.onDraw = function(context, viewportX, viewportY, localX, localY) {
     this.events.emit(UIElement.EVENT_DRAW, context, localX, localY);
 
-    if(!this.isHighlighted) {
-        return;
+    if(this.highlight.getActive()) {
+        this.highlight.apply(context);
+
+        context.arc(localX, localY, this.radius, 0, 2 * Math.PI);
+        context.fill();
     }
-
-    const [r, g, b, a] = this.highlightColor;
-
-    context.fillStyle = `rgba(${r}, ${g}, ${b}, ${a})`;
-    context.arc(localX, localY, this.radius, 0, 2 * Math.PI);
-    context.fill();
-
-    this.isHighlighted = false;
 }

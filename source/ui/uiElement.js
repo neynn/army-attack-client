@@ -11,9 +11,9 @@ export const UIElement = function(DEBUG_NAME) {
     this.events.listen(UIElement.EVENT_COLLIDES);
 }
 
-UIElement.EVENT_CLICKED = "UIElement.EVENT_CLICKED";
-UIElement.EVENT_DRAW = "UIElement.EVENT_DRAW";
-UIElement.EVENT_COLLIDES = "UIElement.EVENT_COLLIDES";
+UIElement.EVENT_CLICKED = "EVENT_CLICKED";
+UIElement.EVENT_DRAW = "EVENT_DRAW";
+UIElement.EVENT_COLLIDES = "EVENT_COLLIDES";
 
 UIElement.prototype = Object.create(Drawable.prototype);
 UIElement.prototype.constructor = UIElement;

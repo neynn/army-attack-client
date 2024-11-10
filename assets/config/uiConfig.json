@@ -7,7 +7,7 @@
             "position": { "x": 0, "y": 25 },
             "text": "FPS",
             "font": "50px Arial",
-            "color": "#eeeeee",
+            "color": [238, 238, 238, 255],
             "align": "left",
             "opacity": 1
         }
@@ -20,7 +20,7 @@
             "position": { "x": 0, "y": 150 },
             "text": "ARMY ATTACK",
             "font": "50px Arial",
-            "color": "#eeeeee",
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 0.5,
             "effects": [ { "type": "FADE_IN", "threshold": 1, "value": 0.3 } ]
@@ -41,7 +41,7 @@
             "position": { "x": 150, "y": 50 },
             "text": "PLAY",
             "font": "50px Arial",
-            "color": "#eeeeee",
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 0.5,
             "effects": [ { "type": "FADE_IN", "threshold": 1, "value": 0.3 } ]
@@ -62,7 +62,7 @@
             "position": { "x": 150, "y": 50 },
             "text": "VERSUS",
             "font": "50px Arial",
-            "color": "#eeeeee",
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 0.5,
             "effects": [ { "type": "FADE_IN", "threshold": 1, "value": 0.3 } ]
@@ -83,7 +83,7 @@
             "position": { "x": 150, "y": 50 },
             "text": "EDIT",
             "font": "50px Arial",
-            "color": "#eeeeee",
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 0.5,
             "effects": [ { "type": "FADE_IN", "threshold": 1, "value": 0.3 } ]
@@ -106,7 +106,7 @@
             "position": { "x": 150, "y": 50 },
             "text": "CREATE",
             "font": "50px Arial",
-            "color": "#eeeeee",
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 0.5,
             "effects": [ { "type": "FADE_IN", "threshold": 1, "value": 0.3 } ]
@@ -127,7 +127,7 @@
             "position": { "x": 150, "y": 50 },
             "text": "JOIN",
             "font": "50px Arial",
-            "color": "#eeeeee",
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 0.5,
             "effects": [ { "type": "FADE_IN", "threshold": 1, "value": 0.3 } ]
@@ -148,7 +148,7 @@
             "position": { "x": 150, "y": 50 },
             "text": "LEAVE",
             "font": "50px Arial",
-            "color": "#eeeeee",
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 0.5,
             "effects": [ { "type": "FADE_IN", "threshold": 1, "value": 0.3 } ]
@@ -169,7 +169,7 @@
             "position": { "x": 150, "y": 50 },
             "text": "START",
             "font": "50px Arial",
-            "color": "#eeeeee",
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 0.5,
             "effects": [ { "type": "FADE_IN", "threshold": 1, "value": 0.3 } ]
@@ -192,7 +192,7 @@
             "position": { "x": 50, "y": 25 },
             "text": "SAVE",
             "font": "20px Arial",
-            "color": "#eeeeee",
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 0.5,
             "effects": [ { "type": "FADE_IN", "threshold": 1, "value": 0.3 } ]
@@ -214,7 +214,7 @@
             "position": { "x": 50, "y": 25 },
             "text": "LOAD",
             "font": "20px Arial",
-            "color": "#eeeeee",
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 0.5,
             "effects": [ { "type": "FADE_IN", "threshold": 1, "value": 0.3 } ]
@@ -236,7 +236,7 @@
             "position": { "x": 50, "y": 25 },
             "text": "CREATE",
             "font": "20px Arial",
-            "color": "#eeeeee",
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 0.5,
             "effects": [ { "type": "FADE_IN", "threshold": 1, "value": 0.3 } ]
@@ -258,7 +258,7 @@
             "position": { "x": 50, "y": 25 },
             "text": "RESIZE",
             "font": "20px Arial",
-            "color": "#eeeeee",
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 0.5,
             "effects": [ { "type": "FADE_IN", "threshold": 1, "value": 0.3 } ]
@@ -280,7 +280,7 @@
             "position": { "x": 50, "y": 25 },
             "text": "GROUND",
             "font": "15px Arial",
-            "color": "#eeeeee",
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 0.5,
             "effects": [ { "type": "FADE_IN", "threshold": 1, "value": 0.3 } ]
@@ -302,7 +302,7 @@
             "position": { "x": 50, "y": 25 },
             "text": "DECORATION",
             "font": "15px Arial",
-            "color": "#eeeeee",
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 0.5,
             "effects": [ { "type": "FADE_IN", "threshold": 1, "value": 0.3 } ]
@@ -324,7 +324,7 @@
             "position": { "x": 50, "y": 25 },
             "text": "CLOUD",
             "font": "15px Arial",
-            "color": "#eeeeee",
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 0.5,
             "effects": [ { "type": "FADE_IN", "threshold": 1, "value": 0.3 } ]
@@ -346,7 +346,7 @@
             "position": { "x": 50, "y": 25 },
             "text": "TYPE",
             "font": "15px Arial",
-            "color": "#eeeeee",
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 0.5,
             "effects": [ { "type": "FADE_IN", "threshold": 1, "value": 0.3 } ]
@@ -368,7 +368,7 @@
             "position": { "x": 50, "y": 25 },
             "text": "VIEW ALL",
             "font": "15px Arial",
-            "color": "#eeeeee",
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 0.5,
             "effects": [ { "type": "FADE_IN", "threshold": 1, "value": 0.3 } ]
@@ -389,7 +389,7 @@
             "position": { "x": 175, "y": 475 },
             "text": "PAGE",
             "font": "20px Arial",
-            "color": "#eeeeee",
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 1
         },
@@ -408,7 +408,7 @@
             "position": { "x": 75, "y": 25 },
             "text": "<<",
             "font": "20px Arial",
-            "color": "#eeeeee",
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 1
         },
@@ -427,7 +427,7 @@
             "position": { "x": 75, "y": 25 },
             "text": ">>",
             "font": "20px Arial",
-            "color": "#eeeeee",
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 1
         },
@@ -446,7 +446,7 @@
             "position": { "x": 175, "y": 25 },
             "text": "<SIZE>",
             "font": "20px Arial",
-            "color": "#eeeeee",
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 1
         },
@@ -456,7 +456,7 @@
             "position": { "x": 175, "y": 25 },
             "text": "<TILESET>",
             "font": "20px Arial",
-            "color": "#eeeeee",
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 1
         },
@@ -475,7 +475,7 @@
             "position": { "x": 125, "y": 25 },
             "text": "<MODE>",
             "font": "20px Arial",
-            "color": "#eeeeee",
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 1
         },
@@ -494,7 +494,7 @@
             "position": { "x": 25, "y": 50 },
             "text": ">>",
             "font": "20px Arial",
-            "color": "#eeeeee",
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 1
         },
@@ -513,7 +513,7 @@
             "position": { "x": 25, "y": 50 },
             "text": "<<",
             "font": "20px Arial",
-            "color": "#eeeeee",
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 1
         },

@@ -40,9 +40,9 @@
         "interface": {
             "id": "MAP_EDITOR",
             "layerButtonStates": {
-                "0": { "id": "0", "description": "HIDDEN", "textColor": "#cf3723", "opacity": 0, "nextState": "1" },
-                "1": { "id": "1", "description": "VISIBLE", "textColor": "#eeeeee", "opacity": 1, "nextState": "2" },
-                "2": { "id": "2", "description": "EDIT", "textColor": "#fcfc3f", "opacity": 1, "nextState": "0" }
+                "0": { "id": "0", "description": "HIDDEN", "textColor": [207, 55, 35, 255], "opacity": 0, "nextState": "1" },
+                "1": { "id": "1", "description": "VISIBLE", "textColor": [238, 238, 238, 255], "opacity": 1, "nextState": "2" },
+                "2": { "id": "2", "description": "EDIT", "textColor": [252, 252, 63, 255], "opacity": 1, "nextState": "0" }
             },
             "layerButtonTypes": {
                 "0": { "id": "0", "description": "BOOLEAN" },

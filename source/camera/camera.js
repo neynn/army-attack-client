@@ -8,19 +8,18 @@ export const Camera = function(positionX, positionY, width, height) {
     this.viewportY = 0;
     this.viewportWidth = width;
     this.viewportHeight = height;
-    this.mode = Camera.MODE_AUTO_SCALE;
+    this.mode = Camera.MODE_AUTO;
     this.scale = 1;
     this.events = new EventEmitter();
     this.events.listen(Camera.EVENT_VIEWPORT_RESIZE);
 }
 
 Camera.EVENT_VIEWPORT_RESIZE = "EVENT_VIEWPORT_RESIZE";
-Camera.MODE_AUTO_SCALE = 0;
-Camera.MODE_FIXED_SCALE = 1;
-Camera.MODE_FORCED_SCALE = 2;
+Camera.MODE_AUTO = 0;
+Camera.MODE_FIXED = 1;
+Camera.MODE_FORCED = 2;
 Camera.TILE_WIDTH = 96;
 Camera.TILE_HEIGHT = 96;
-Camera.DEBUG = 0;
 
 Camera.prototype.update = function(gameContext) {}
 
@@ -56,8 +55,13 @@ Camera.prototype.getBounds = function() {
 }
 
 Camera.prototype.setPosition = function(x = 0, y = 0) {
-    this.position.x = x;
-    this.position.y = y;
+    if(this.mode === Camera.MODE_AUTO) {
+        this.position.x = 0;
+        this.position.y = 0;
+    } else {
+        this.position.x = Math.floor(x);
+        this.position.y = Math.floor(y);
+    }
 }
 
 Camera.prototype.getPosition = function() {
@@ -80,12 +84,11 @@ Camera.prototype.getViewportHeight = function() {
 }
 
 Camera.prototype.onWindowResize = function(width, height) {
-    if(this.mode === Camera.MODE_AUTO_SCALE) {
-        this.position.x = 0;
-        this.position.y = 0;
+    if(this.mode === Camera.MODE_AUTO) {
         this.viewportWidth = width;
         this.viewportHeight = height;
-    } else if(this.mode === Camera.MODE_FIXED_SCALE) {
+    } else if(this.mode === Camera.MODE_FIXED) {
+        //keep anchor of camera
         //TODO
     }
 

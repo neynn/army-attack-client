@@ -33,7 +33,7 @@ import { PlaceSystem } from "./systems/place.js";
 import { StoryModePlayState } from "./states/context/story/storyModePlay.js";
 import { StoryModeIntroState } from "./states/context/story/storyModeIntro.js";
 import { MoveSystem } from "./systems/move.js";
-import { Camera2D } from "./source/camera/2D/camera2D.js";
+import { Renderer } from "./source/renderer.js";
 
 export const ArmyContext = function() {
     GameContext.call(this);
@@ -80,11 +80,8 @@ ArmyContext.prototype.initializeContext = function() {
     });
 
     this.states.setNextState(CONTEXT_STATES.MAIN_MENU);
-
     this.config.tileConversions = this.getNewConversions();
-
-    const cameraMain = new Camera2D(200, 200, 500, 500);
-    this.renderer.addCamera("ARMY_CAMERA", cameraMain);
+    this.renderer.createCamera("ARMY_CAMERA", Renderer.CAMERA_TYPE_2D, 0, 0, 500, 500);    
     this.renderer.resizeDisplay(window.innerWidth, window.innerHeight);
 }
 

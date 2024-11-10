@@ -1,11 +1,17 @@
+import { Applyable } from "../applyable.js";
+
 export const TextStyle = function() {
+    Applyable.call(this);
+
     this.fontSize = 10;
     this.fontType = "sans-serif";
     this.font = "10px sans-serif";
     this.baseline = "middle";
     this.alignment = "left"
-    this.color = "#ffffff";
 }
+
+TextStyle.prototype = Object.create(Applyable.prototype);
+TextStyle.prototype.constructor = TextStyle;
 
 TextStyle.TEXT_BASELINE_MIDDLE = "middle";
 TextStyle.TEXT_ALIGN_RIGHT = "right";
@@ -58,16 +64,6 @@ TextStyle.prototype.setFontSize = function(fontSize) {
     return true;
 }
 
-TextStyle.prototype.setColor = function(colorHex) {
-    if(colorHex === undefined) {
-        return false;
-    }
-
-    this.color = colorHex;
-
-    return true;
-}
-
 TextStyle.prototype.setFont = function(font) {
     if(font === undefined) {
         return false;
@@ -79,8 +75,10 @@ TextStyle.prototype.setFont = function(font) {
 }
 
 TextStyle.prototype.apply = function(context) {
+    const fillStyle = this.getRGBAString();
+
     context.font = this.font;
-    context.fillStyle = this.color;
+    context.fillStyle = fillStyle;
     context.textAlign = this.alignment;
     context.textBaseline = this.baseline;
 }

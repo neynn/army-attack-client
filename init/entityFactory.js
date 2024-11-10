@@ -3,7 +3,7 @@ import { HealthComponent } from "../components/health.js";
 import { TeamComponent } from "../components/team.js";
 import { ENTITY_EVENTS } from "../enums.js";
 import { SimpleText } from "../source/graphics/simpleText.js";
-import { TextStyle } from "../source/graphics/textStyle.js";
+import { TextStyle } from "../source/graphics/applyable/textStyle.js";
 import { componentSetup } from "./components.js";
 import { PositionComponent } from "../components/position.js";
 import { SpriteComponent } from "../components/sprite.js";

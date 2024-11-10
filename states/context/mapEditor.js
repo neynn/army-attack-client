@@ -82,7 +82,7 @@ const initializeMapEditor = function(mapEditor, gameContext) {
                 const currentLayerButtonTextColor = editorInterface.layerButtonStates[BUTTON_STATE_VISIBLE].textColor;
 
                 currentLayerButton.state = BUTTON_STATE_VISIBLE;
-                currentLayerButtonText.style.setColor(currentLayerButtonTextColor);
+                currentLayerButtonText.style.setColorArray(currentLayerButtonTextColor);
 
                 currentLayer = null;
                 currentLayerButtonID = null;
@@ -95,7 +95,7 @@ const initializeMapEditor = function(mapEditor, gameContext) {
         const layerButtonText = uiManager.getText(editorInterface.id, layerButton.text);
         const layerButtonTextColor = editorInterface.layerButtonStates[nextState].textColor;
 
-        layerButtonText.style.setColor(layerButtonTextColor);
+        layerButtonText.style.setColorArray(layerButtonTextColor);
         layerButton.state = nextState;
 
         updateLayerOpacity();
@@ -335,6 +335,14 @@ const initializeMapEditor = function(mapEditor, gameContext) {
 
     uiManager.addClick(editorInterface.id, "BUTTON_CREATE", () => {
         mapLoader.createEmptyMap(MAP_ID);
+
+        if(EDITOR_MAP_ID === null) {
+            EDITOR_MAP_ID = MAP_ID;
+
+            mapLoader.loadMap(EDITOR_MAP_ID).then(map2D => {
+                gameContext.initializeMap(EDITOR_MAP_ID);
+            });
+        }
     });
 
     uiManager.addClick(editorInterface.id, "BUTTON_LOAD", () => {
@@ -388,7 +396,7 @@ const initializeMapEditor = function(mapEditor, gameContext) {
             const layerButtonTextColor = editorInterface.layerButtonStates[BUTTON_STATE_VISIBLE].textColor;
 
             layerButton.state = BUTTON_STATE_VISIBLE;
-            layerButtonText.style.setColor(layerButtonTextColor);
+            layerButtonText.style.setColorArray(layerButtonTextColor);
         }
 
         currentLayer = null;

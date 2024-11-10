@@ -1,4 +1,4 @@
-import { Camera } from "./camera/camera.js";
+import { Camera2D } from "./camera/2D/camera2D.js";
 import { Canvas } from "./camera/canvas.js";
 import { FPSCounter } from "./camera/fpsCounter.js";
 import { EventEmitter } from "./events/eventEmitter.js";
@@ -20,13 +20,21 @@ export const Renderer = function() {
 
     this.cameras = new Map();
     this.cameraStack = [];
+    this.cameraTypes = {
+        [Renderer.CAMERA_TYPE_2D]: Camera2D
+    }
 
     window.addEventListener("resize", () => {
         this.resizeDisplay(window.innerWidth, window.innerHeight);
     });
 }
 
-Renderer.DEBUG = 0;
+Renderer.DEBUG = 0b00000001;
+Renderer.DEBUG_CAMERA = 1 << 0;
+Renderer.DEBUG_INTERFACE = 1 << 1;
+Renderer.DEBUG_SPRITES = 1 << 2;
+Renderer.DEBUG_MAP = 1 << 3;
+Renderer.CAMERA_TYPE_2D = "2D";
 Renderer.EVENT_SCREEN_RESIZE = "EVENT_SCREEN_RESIZE";
 Renderer.EVENT_CAMERA_FINISH = "EVENT_CAMERA_FINISH";
 Renderer.ANCHOR_TYPE_TOP_CENTER = "TOP_CENTER";
@@ -38,15 +46,6 @@ Renderer.ANCHOR_TYPE_BOTTOM_RIGHT = "BOTTOM_RIGHT";
 Renderer.ANCHOR_TYPE_RIGHT_CENTER = "RIGHT_CENTER";
 Renderer.ANCHOR_TYPE_LEFT_CENTER = "LEFT_CENTER";
 Renderer.ANCHOR_TYPE_CENTER = "CENTER";
-
-Renderer.prototype.drawCameraOutlines = function() {
-    this.display.context.strokeStyle = "#eeeeee";
-    this.display.context.lineWidth = 3;
-
-    for(const [cameraID, camera] of this.cameras) {
-        this.display.context.strokeRect(camera.position.x, camera.position.y, camera.viewportWidth, camera.viewportHeight);
-    }
-}
 
 Renderer.prototype.getContext = function() {
     return this.display.context;
@@ -70,22 +69,26 @@ Renderer.prototype.getCamera = function(cameraID) {
     return camera;
 }
 
-Renderer.prototype.addCamera = function(cameraID = "DEFAULT", camera) {
-    if(!(camera instanceof Camera)) {
-        return false;
+Renderer.prototype.createCamera = function(cameraID, type, x, y, w, h) {
+    const CameraType = this.cameraTypes[type];
+
+    if(!CameraType) {
+        return null;
     }
 
-    if(this.cameras.has(cameraID)) {
-        return false;
+    if(typeof cameraID !== "string" || this.cameras.has(cameraID)) {
+        return null;
     }
+
+    const camera = new CameraType(x, y, w, h);
 
     this.cameras.set(cameraID, camera);
     this.cameraStack.push(cameraID);
 
-    return true;
+    return camera;
 }
 
-Renderer.prototype.removeCamera = function(cameraID) {
+Renderer.prototype.destroyCamera = function(cameraID) {
     if(!this.cameras.has(cameraID)) {
         return false;
     }
@@ -115,9 +118,18 @@ Renderer.prototype.drawUI = function(gameContext) {
         element.update(realTime, deltaTime);
         element.draw(this.display.context, 0, 0, 0, 0);
 
-        if(Renderer.DEBUG) {
+        if((Renderer.DEBUG & Renderer.DEBUG_INTERFACE) !== 0) {
             element.debug(this.display.context, 0, 0, 0, 0);
         }
+    }
+}
+
+Renderer.prototype.drawCameraOutlines = function() {
+    this.display.context.strokeStyle = "#eeeeee";
+    this.display.context.lineWidth = 3;
+
+    for(const [cameraID, camera] of this.cameras) {
+        this.display.context.strokeRect(camera.position.x, camera.position.y, camera.viewportWidth, camera.viewportHeight);
     }
 }
 
@@ -139,7 +151,10 @@ Renderer.prototype.update = function(gameContext) {
         context.restore();
     }
 
-    this.drawCameraOutlines();
+    if((Renderer.DEBUG & Renderer.DEBUG_CAMERA) !== 0) {
+        this.drawCameraOutlines();
+    }
+
     this.drawUI(gameContext);
 }
 

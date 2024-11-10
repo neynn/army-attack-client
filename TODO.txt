@@ -16,15 +16,10 @@
 //added fireSystem
 //added healthSystem
 
-//restructure layers: -> layeropacity removed setLayerOpacity unfortunately has to search through all layers
-
 //default move time; (96 * moveComponent.path.length) / 480;
 //sprite manager gets add icon / add sprite functions.
-//export const log instead of response.
-//give versus mode self-states, one is lobby and one is game.
-//give story mode self states, one is intro and one is game.
-//if intro has been done, skip it.
-
-//TODO: Add all tiles to tilemeta.json. <- DONE
-//TODO: Add all conversions!
 //Fire system becomes attack system! Damage calculations are also done in that system!
+
+//TODO: Add "Auto" mode to mapEditor.
+//TODO: Add "Debug-Menu"
+//TODO: Remove "Goals" from UIElement.

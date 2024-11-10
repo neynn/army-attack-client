@@ -1,5 +1,6 @@
 import { Camera } from "../camera.js";
 import { clampValue, lerpValue } from "../../math/math.js";
+import { Renderer } from "../../renderer.js";
 
 export const Camera2D = function(positionX, positionY, width, height) {
     Camera.call(this, positionX, positionY, width, height);
@@ -88,7 +89,7 @@ Camera2D.prototype.drawMap = function(gameContext) {
         this.drawTileLayer(gameContext, activeMap, layerConfig, startX, startY, endX, endY);
     }
 
-    if(Camera.DEBUG) {
+    if((Renderer.DEBUG & Renderer.DEBUG_MAP) !== 0) {
         this.drawTypeLayer(gameContext, activeMap, startX, startY, endX, endY);
         this.drawMapOutlines(gameContext, activeMap.width, activeMap.height);
     }
@@ -165,7 +166,7 @@ Camera2D.prototype.drawSpriteLayer = function(gameContext, spriteLayer) {
         sprite.draw(context, x, y, 0, 0);
     }
 
-    if(Camera.DEBUG) {
+    if((Renderer.DEBUG & Renderer.DEBUG_SPRITES) !== 0) {
         for(let i = 0; i < visibleSprites.length; i++) {
             const sprite = visibleSprites[i];
             sprite.debug(context, x, y, 0, 0);
