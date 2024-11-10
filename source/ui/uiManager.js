@@ -420,8 +420,6 @@ UIManager.prototype.parseUI = function(userInterfaceID, gameContext) {
     }
 
     const elements = this.createInterface(userInterfaceID);
-    const windowWidth = renderer.getWidth();
-    const windowHeight = renderer.getHeight();
 
     for(const [configID, element] of elements) {
         const config = userInterface[configID];
@@ -434,8 +432,15 @@ UIManager.prototype.parseUI = function(userInterfaceID, gameContext) {
         }
 
         if(config.anchor) {
-            element.adjustAnchor(config.anchor, config.position.x, config.position.y, windowWidth, windowHeight);
-            renderer.events.subscribe(Renderer.EVENT_SCREEN_RESIZE, elementID, (width, height) => element.adjustAnchor(config.anchor, config.position.x, config.position.y, width, height));    
+            const { x, y } = renderer.getAnchor(config.anchor, config.position.x, config.position.y, element.bounds.w, element.bounds.h);
+            
+            element.setPosition(x, y);
+
+            renderer.events.subscribe(Renderer.EVENT_SCREEN_RESIZE, elementID, (width, height) => {
+                const { x, y } = renderer.getAnchor(config.anchor, config.position.x, config.position.y, element.bounds.w, element.bounds.h);
+                
+                element.setPosition(x, y);
+            });    
         }
 
         this.drawableElements.add(elementID);

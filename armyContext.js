@@ -83,11 +83,8 @@ ArmyContext.prototype.initializeContext = function() {
 
     this.config.tileConversions = this.getNewConversions();
 
-    this.renderer.addCamera("ARMY_CAMERA", new Camera2D(200, 200, 500, 500));
-    this.renderer.addCamera("ARMY_CAMERA_2", new Camera2D(0, 0, 200, 200));
-
-    this.renderer.getCamera("ARMY_CAMERA_2").mode = 1;
-    this.renderer.getCamera("ARMY_CAMERA_2").scale = 0.5;
+    const cameraMain = new Camera2D(200, 200, 500, 500);
+    this.renderer.addCamera("ARMY_CAMERA", cameraMain);
     this.renderer.resizeDisplay(window.innerWidth, window.innerHeight);
 }
 

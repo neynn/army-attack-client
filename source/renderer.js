@@ -19,6 +19,7 @@ export const Renderer = function() {
     this.events.listen(Renderer.EVENT_CAMERA_FINISH);
 
     this.cameras = new Map();
+    this.cameraStack = [];
 
     window.addEventListener("resize", () => {
         this.resizeDisplay(window.innerWidth, window.innerHeight);
@@ -28,6 +29,15 @@ export const Renderer = function() {
 Renderer.DEBUG = 0;
 Renderer.EVENT_SCREEN_RESIZE = "EVENT_SCREEN_RESIZE";
 Renderer.EVENT_CAMERA_FINISH = "EVENT_CAMERA_FINISH";
+Renderer.ANCHOR_TYPE_TOP_CENTER = "TOP_CENTER";
+Renderer.ANCHOR_TYPE_TOP_LEFT = "TOP_LEFT";
+Renderer.ANCHOR_TYPE_TOP_RIGHT = "TOP_RIGHT";
+Renderer.ANCHOR_TYPE_BOTTOM_CENTER = "BOTTOM_CENTER";
+Renderer.ANCHOR_TYPE_BOTTOM_LEFT = "BOTTOM_LEFT";
+Renderer.ANCHOR_TYPE_BOTTOM_RIGHT = "BOTTOM_RIGHT";
+Renderer.ANCHOR_TYPE_RIGHT_CENTER = "RIGHT_CENTER";
+Renderer.ANCHOR_TYPE_LEFT_CENTER = "LEFT_CENTER";
+Renderer.ANCHOR_TYPE_CENTER = "CENTER";
 
 Renderer.prototype.drawCameraOutlines = function() {
     this.display.context.strokeStyle = "#eeeeee";
@@ -70,6 +80,7 @@ Renderer.prototype.addCamera = function(cameraID = "DEFAULT", camera) {
     }
 
     this.cameras.set(cameraID, camera);
+    this.cameraStack.push(cameraID);
 
     return true;
 }
@@ -80,6 +91,15 @@ Renderer.prototype.removeCamera = function(cameraID) {
     }
 
     this.cameras.delete(cameraID);
+
+    for(let i = 0; i < this.cameraStack.length; i++) {
+        const stackedCameraID = this.cameraStack[i];
+
+        if(stackedCameraID === cameraID) {
+            this.cameraStack.splice(i, 1);
+            break;
+        }
+    }
 
     return true;
 }
@@ -131,10 +151,73 @@ Renderer.prototype.resizeDisplay = function(width, height) {
     this.events.emit(Renderer.EVENT_SCREEN_RESIZE, width, height);
 }
 
-Renderer.prototype.getCollidedCamera = function(mouseX, mouseY, mouseRange) {
-    for(const [cameraID, camera] of this.cameras) {
-        const { x, y, w, h } = camera.getBounds();
+Renderer.prototype.getAnchor = function(type, originX, originY, width, height) {
+    let x = originX;
+    let y = originY;
 
+    switch(type) {
+        case Renderer.ANCHOR_TYPE_TOP_LEFT: {
+            x = originX;
+            y = originY;
+            break;
+        }
+        case Renderer.ANCHOR_TYPE_TOP_CENTER: {
+            x = this.windowWidth / 2 - originX - width / 2;
+            y = originY;
+            break;
+        }
+        case Renderer.ANCHOR_TYPE_TOP_RIGHT: {
+            x = this.windowWidth - originX - width;
+            y = originY;
+            break;
+        }
+        case Renderer.ANCHOR_TYPE_BOTTOM_LEFT: {
+            x = originX;
+            y = this.windowHeight - originY - height;
+            break;
+        }
+        case Renderer.ANCHOR_TYPE_BOTTOM_CENTER: {
+            x = this.windowWidth / 2 - originX - width / 2;
+            y = this.windowHeight - originY - height;
+            break;
+        }
+        case Renderer.ANCHOR_TYPE_BOTTOM_RIGHT: {
+            x = this.windowWidth - originX - width;
+            y = this.windowHeight - originY - height;
+            break;
+        }
+        case Renderer.ANCHOR_TYPE_LEFT_CENTER: {
+            x = originX;
+            y = this.windowHeight / 2 - originY - height / 2;
+            break;
+        }
+        case Renderer.ANCHOR_TYPE_CENTER: {
+            x = this.windowWidth / 2 - originX - width / 2;
+            y = this.windowHeight / 2 - originY - height / 2;
+            break;
+        }
+        case Renderer.ANCHOR_TYPE_RIGHT_CENTER: {
+            x = this.windowWidth - originX - width;
+            y = this.windowHeight / 2 - originY - height / 2;
+            break;
+        }
+        default: {
+            console.warn(`Anchor Type ${type} does not exist!`);
+            break;
+        }
+    }
+
+    return {
+        "x": x,
+        "y": y
+    }
+}
+
+Renderer.prototype.getCollidedCamera = function(mouseX, mouseY, mouseRange) {
+    for(let i = this.cameraStack.length - 1; i > - 1; i--) {
+        const cameraID = this.cameraStack[i];
+        const camera = this.getCamera(cameraID);
+        const { x, y, w, h } = camera.getBounds();
         const isColliding = isRectangleRectangleIntersect(
             x, y, w, h,
             mouseX, mouseY, mouseRange, mouseRange

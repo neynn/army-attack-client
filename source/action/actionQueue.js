@@ -105,7 +105,7 @@ ActionQueue.prototype.processRequests = function(gameContext) {
         break;
     }
 
-    for(let i = deletableActions.length - 1; i > -1; i--) {
+    for(let i = deletableActions.length - 1; i > - 1; i--) {
         const actionIndex = deletableActions[i];
         this.requests.splice(actionIndex, 1);
     }
