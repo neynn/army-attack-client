@@ -14,18 +14,20 @@ import { Logger } from "./logger.js";
 import { SystemManager } from "./system/systemManager.js";
 import { TileManager } from "./tile/tileManager.js";
 import { Renderer } from "./renderer.js";
+import { ControllerManager } from "./controller/controllerManager.js";
 
-export const GameContext = function() {
+export const GameContext = function(fps = 60) {
     this.id = "GAME_CONTEXT";
     this.config = {};
     this.settings = {};
     this.client = new Client();
-    this.controller = new Entity("CONTROLLER");
+    this.controller = new Entity("CONTROLLER", "CONTROLLER"); //TODO: "Controllers!";
+    this.controllerManager = new ControllerManager();
     this.renderer = new Renderer();
     this.tileManager = new TileManager();
     this.spriteManager = new SpriteManager();
     this.uiManager = new UIManager();
-    this.timer = new Timer(60);
+    this.timer = new Timer(fps);
     this.mapLoader = new MapLoader();
     this.systemManager = new SystemManager();
     this.entityManager = new EntityManager();
@@ -39,6 +41,7 @@ export const GameContext = function() {
 
     this.timer.updateFunction = (gameTime, fixedDeltaTime) => {
         this.controller.update(this);
+        this.controllerManager.update(this);
         this.actionQueue.update(this);
         this.systemManager.update(this);
         this.entityManager.update(this);
@@ -55,21 +58,13 @@ export const GameContext = function() {
     this.controller.initializeStates();
 }
 
-GameContext.prototype.initializeActionQueue = function() {
+GameContext.prototype.load = function(resources) {}
 
-}
+GameContext.prototype.initializeActionQueue = function() {}
 
-GameContext.prototype.initializeSystems = function() {
+GameContext.prototype.initializeController = function() {}
 
-}
-
-GameContext.prototype.initializeController = function() {
-    
-}
-
-GameContext.prototype.initializeContext = function() {
-
-}
+GameContext.prototype.initializeContext = function() {}
 
 GameContext.prototype.initializeInput = function() {
     const { cursor } = this.client;
@@ -137,30 +132,12 @@ GameContext.prototype.initializeMap = function(mapID) {
     return nextMap;
 }
 
-GameContext.prototype.loadResources = function(resources) {
-    this.uiManager.loadFontTypes(resources.fonts);
-    this.uiManager.loadIconTypes(resources.icons);
-    this.uiManager.loadInterfaceTypes(resources.uiConfig);
-    this.entityManager.loadEntityTypes(resources.entities);
-    this.entityManager.loadTraitTypes(resources.traits);
-    this.mapLoader.loadMapTypes(resources.maps);
-    this.mapLoader.loadConfig(resources.settings.mapLoader);
-    this.spriteManager.loadSpriteTypes(resources.sprites);
-    this.tileManager.loadTileMeta(resources.tileMeta);
-    this.tileManager.loadTileTypes(resources.tiles);
-    this.client.musicPlayer.loadMusicTypes(resources.music);
-    this.client.soundPlayer.loadSoundTypes(resources.sounds);
-    this.client.socket.loadConfig(resources.settings.socket);
-    this.config = resources.config;
-    this.settings = resources.settings;
-}
-
 GameContext.prototype.exitGame = function() {
-    this.actionQueue.workEnd();
-    this.entityManager.workEnd();
-    this.spriteManager.workEnd();
-    this.tileManager.workEnd();
-    this.uiManager.workEnd();
+    this.actionQueue.end();
+    this.entityManager.end();
+    this.spriteManager.end();
+    this.tileManager.end();
+    this.uiManager.end();
 }
 
 GameContext.prototype.getConfig = function(key) {
@@ -225,3 +202,52 @@ GameContext.prototype.getTileEntity = function(tileX, tileY) {
 
     return this.entityManager.getEntity(entityID);
 }
+
+GameContext.prototype.createEntity = function(setup, externalID) {
+    if(typeof setup !== "object") {
+        Logger.error(false, "Setup does not exist!", "GameContext.prototype.createEntity", null);
+
+        return null;
+    }
+
+    const { type } = setup;
+    const typeConfig = this.entityManager.getEntityType(type);
+
+    if(typeof typeConfig !== "object") {
+        Logger.error(false, "TypeConfig does not exist!", "GameContext.prototype.createEntity", {type});
+
+        return null; 
+    }
+
+    const entity = this.entityManager.createEntity(type, externalID);
+    const { archetype } = typeConfig;
+    const archetypeBuilder = this.entityManager.getArchetype(archetype);
+
+    if(typeof archetypeBuilder === "function") {
+        archetypeBuilder(this, entity, typeConfig, setup);
+    } else {
+        Logger.error(false, "Archetype does not exist!", "GameContext.prototype.createEntity", {archetype});
+    }
+
+    this.onEntityCreate(entity);
+
+    return entity;
+}
+
+GameContext.prototype.destroyEntity = function(entityID) {
+    const entity = this.entityManager.getEntity(entityID);
+
+    if(!entity) {
+        return false;
+    }
+
+    this.entityManager.destroyEntity(entityID);
+
+    this.onEntityDestroy(entity);
+
+    return true;
+}
+
+GameContext.prototype.onEntityCreate = function(entity) {}
+
+GameContext.prototype.onEntityDestroy = function(entity) {}

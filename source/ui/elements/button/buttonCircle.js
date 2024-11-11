@@ -2,8 +2,8 @@ import { isCircleCicleIntersect } from "../../../math/math.js";
 import { UIElement } from "../../uiElement.js";
 import { Button } from "../button.js";
 
-export const ButtonCircle = function() {
-    Button.call(this, "BUTTON_CIRCLE");
+export const ButtonCircle = function(id) {
+    Button.call(this, id, "BUTTON_CIRCLE");
     this.radius = 0;
 }
 

@@ -9,6 +9,20 @@ export const GAME_EVENTS = Object.freeze({
     "DROP_ITEM": "DROP_ITEM"
 });
 
+export const ENTITY_ARCHETYPES = Object.freeze({
+    "Unit": "Unit",
+    "Defense": "Defense",
+    "Deco": "Deco",
+    "Building": "Building",
+    "Construction": "Construction",
+    "HFE": "HFE",
+    "Town": "Town"
+});
+
+export const CONTROLLER_TYPES = Object.freeze({
+    "PLAYER": "PLAYER"
+});
+
 export const SYSTEM_TYPES = Object.freeze({
     "DOWN": "DOWN",
     "MOVE": "MOVE"

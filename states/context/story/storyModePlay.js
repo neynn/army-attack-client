@@ -30,35 +30,35 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
     camera.centerOnMap();
     camera.bindViewport();
 
-    const blueGuardtower = gameContext.initializeEntity({ 
+    const blueGuardtower = gameContext.createEntity({ 
         "type": "blue_guardtower",
         "tileX": 0,
         "tileY": 3,
         "team": "1",
         "master": "neyn"
     });
-    const redBattletank = gameContext.initializeEntity({ 
+    const redBattletank = gameContext.createEntity({ 
         "type": "red_battletank",
         "tileX": 4,
         "tileY": 1,
         "team": "0",
         "master": null
     });
-    const blue_elite_battery = gameContext.initializeEntity({ 
+    const blue_elite_battery = gameContext.createEntity({ 
         "type": "blue_elite_battery",
         "tileX": 4,
         "tileY": 3,
         "team": "0",
         "master": null
     });
-    const blueCommando = gameContext.initializeEntity({ 
+    const blueCommando = gameContext.createEntity({ 
         "type": "blue_commando",
         "tileX": 1,
         "tileY": 3,
         "team": "1",
         "master": "neyn"
     });
-    const blueEliteInfantry = gameContext.initializeEntity({ 
+    const blueEliteInfantry = gameContext.createEntity({ 
         "type": "blue_elite_infantry",
         "tileX": 6,
         "tileY": 5,
@@ -70,7 +70,7 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
             }
         }
     });
-    const battleTank = gameContext.initializeEntity({ 
+    const battleTank = gameContext.createEntity({ 
         "type": "blue_elite_battletank",
         "tileX": 0,
         "tileY": 1,

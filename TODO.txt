@@ -23,3 +23,5 @@
 //TODO: Add "Auto" mode to mapEditor.
 //TODO: Add "Debug-Menu"
 //TODO: Remove "Goals" from UIElement.
+
+//decouple controller, the cancer, from the game. enjoy :)

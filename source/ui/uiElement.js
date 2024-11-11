@@ -1,7 +1,7 @@
 import { Drawable } from "../graphics/drawable.js";
 
-export const UIElement = function(DEBUG_NAME) {
-    Drawable.call(this, DEBUG_NAME);
+export const UIElement = function(id, DEBUG_NAME) {
+    Drawable.call(this, id, DEBUG_NAME);
 
     this.goals = new Map();
     this.goalsReached = new Set();

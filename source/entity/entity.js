@@ -1,9 +1,9 @@
 import { EventEmitter } from "../events/eventEmitter.js";
 import { StateMachine } from "../state/stateMachine.js";
 
-export const Entity = function(DEBUG_NAME) {
+export const Entity = function(id = null, DEBUG_NAME = null) {
     this.DEBUG_NAME = DEBUG_NAME;
-    this.id = null;
+    this.id = id;
     this.config = {};
     this.components = new Map();
     this.states = null;
@@ -45,17 +45,6 @@ Entity.prototype.setConfig = function(config) {
 
 Entity.prototype.getConfig = function() {
     return this.config;
-}
-
-Entity.prototype.setID = function(id) {
-    if(id === undefined) {
-        console.warn(`EntityID cannot be undefined! Returning...`);
-        return false;
-    }
-
-    this.id = id;
-
-    return true;
 }
 
 Entity.prototype.getID = function() {

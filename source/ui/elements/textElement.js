@@ -1,8 +1,8 @@
 import { TextStyle } from "../../graphics/applyable/textStyle.js";
 import { UIElement } from "../uiElement.js";
 
-export const TextElement = function() {
-    UIElement.call(this, "TEXT_ELEMENT");
+export const TextElement = function(id) {
+    UIElement.call(this, id, "TEXT_ELEMENT");
     this.style = new TextStyle();
     this.fullText = "";
     this.revealedText = "";

@@ -1,9 +1,8 @@
 import { Drawable } from "./drawable.js";
 
 export const Sprite = function(id, DEBUG_NAME) {
-    Drawable.call(this, DEBUG_NAME);
+    Drawable.call(this, id, DEBUG_NAME);
     
-    this.id = id;
     this.typeID = null;
     this.layerID = null;
     this.animationID = null;

@@ -56,14 +56,14 @@ VersusModeState.prototype.enter = function(stateMachine) {
             }
             case GAME_EVENTS.INSTANCE_ENTITY: {
                 const { id, setup } = payload;
-                gameContext.initializeEntity(setup, id);
+                gameContext.createEntity(setup, id);
                 break;
             }
             case GAME_EVENTS.INSTANCE_ENTITY_BATCH: {
                 const { batch } = payload;
                 
                 for(const setup of batch) {
-                    gameContext.initializeEntity(setup, setup.id);
+                    gameContext.createEntity(setup, setup.id);
                 }
                 break;
             }

@@ -1,7 +1,7 @@
 import { Drawable } from "./drawable.js";
 
 export const SimpleImage = function() {
-    Drawable.call(this, "SIMPLE_IMAGE");
+    Drawable.call(this, null, "SIMPLE_IMAGE");
     this.image = null;
 }
 

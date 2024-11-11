@@ -54,8 +54,6 @@ const createUnit = function(gameContext, entity, entitySprite, entitySetup, type
     entity.addComponent(moveComponent);
     
     createStatCard(gameContext, entity, entitySprite);
-
-    return entity;
 }
 
 const createDefense = function(gameContext, entity, entitySprite, entitySetup, typeConfig) {
@@ -64,25 +62,15 @@ const createDefense = function(gameContext, entity, entitySprite, entitySetup, t
     entity.addComponent(attackComponent);
 
     createStatCard(gameContext, entity, entitySprite);
-
-    return entity;
 }
 
-const createDeco = function(gameContext, entity, entitySprite, entitySetup, typeConfig) {
-    return entity;
-}
+const createDeco = function(gameContext, entity, entitySprite, entitySetup, typeConfig) {}
 
-const createBuilding = function(gameContext, entity, entitySprite, entitySetup, typeConfig) {
-    return entity;
-}
+const createBuilding = function(gameContext, entity, entitySprite, entitySetup, typeConfig) {}
 
-const createHFE = function(gameContext, entity, entitySprite, entitySetup, typeConfig) {
-    return entity;
-}
+const createHFE = function(gameContext, entity, entitySprite, entitySetup, typeConfig) {}
 
-const createTown = function(gameContext, entity, entitySprite, entitySetup, typeConfig) {
-    return entity;
-}
+const createTown = function(gameContext, entity, entitySprite, entitySetup, typeConfig) {}
 
 const createConstruction = function(gameContext, entity, entitySprite, entitySetup, typeConfig) {
     const constructionComponent = componentSetup.setupConstructionComponent(entitySetup, typeConfig);
@@ -91,32 +79,13 @@ const createConstruction = function(gameContext, entity, entitySprite, entitySet
     entitySprite.setFrame(2);
 
     entity.addComponent(constructionComponent);
-
-    return entity;
 }
 
-export const entityFactory = {
-    "Unit": createUnit,
-    "Defense": createDefense,
-    "Deco": createDeco,
-    "Building": createBuilding,
-    "Construction": createConstruction,
-    "HFE": createHFE,
-    "Town": createTown
-};
-
-entityFactory.buildEntity = function(gameContext, type, setup, externalID) {
-    const { spriteManager, entityManager } = gameContext;
-    const { stats, archetype } = type;
-    const builder = entityFactory[archetype];
+const createBaseEntity = function(gameContext, entity, sprite, type, setup) {
+    const { spriteManager } = gameContext;
+    const { stats } = type;
     const usedStats = stats[MODE_STAT_TYPE_ID];
 
-    if(!builder) {
-        return null;
-    }
-
-    const entity = entityManager.createEntity(setup.type, externalID);
-    const sprite = spriteManager.createSprite(type.sprites.idle, SpriteManager.LAYER_MIDDLE);
     const directionComponent = componentSetup.setupDirectionComponent();
     const positionComponent = componentSetup.setupPositionComponent(setup);
     const teamComponent = componentSetup.setupTeamComponent(setup);
@@ -160,13 +129,34 @@ entityFactory.buildEntity = function(gameContext, type, setup, externalID) {
         spriteManager.updateSprite(spriteID, spriteType, animationType);
     });
 
-    builder(gameContext, entity, sprite, setup, type);
+    sprite.setPosition(positionComponent.positionX, positionComponent.positionY);
+}
+
+const finalizeEntity = function(gameContext, entity, type, setup) {
+    const { entityManager } = gameContext;
+    const { stats } = type;
+    const usedStats = stats[MODE_STAT_TYPE_ID];
+
     entityManager.loadTraits(entity, usedStats.traits);
     entityManager.loadComponents(entity, setup.components);
 
-    sprite.setPosition(positionComponent.positionX, positionComponent.positionY);
-
     entity.events.emit(ENTITY_EVENTS.STAT_UPDATE);
+}
 
-    return entity;
+export const buildUnit = function(gameContext, entity, type, setup) {
+    const { spriteManager } = gameContext;
+    const sprite = spriteManager.createSprite(type.sprites.idle, SpriteManager.LAYER_MIDDLE);
+
+    createBaseEntity(gameContext, entity, sprite, type, setup);
+    createUnit(gameContext, entity, sprite, setup, type);
+    finalizeEntity(gameContext, entity, type, setup);
+}
+
+export const buildDefense = function(gameContext, entity, type, setup) {
+    const { spriteManager } = gameContext;
+    const sprite = spriteManager.createSprite(type.sprites.idle, SpriteManager.LAYER_MIDDLE);
+
+    createBaseEntity(gameContext, entity, sprite, type, setup);
+    createDefense(gameContext, entity, sprite, setup, type);
+    finalizeEntity(gameContext, entity, type, setup);
 }

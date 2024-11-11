@@ -38,40 +38,24 @@ UIManager.ELEMENT_TYPE_ICON = "ICON";
 UIManager.EFFECT_TYPE_FADE_IN = "FADE_IN";
 UIManager.EFFECT_TYPE_FADE_OUT = "FADE_OUT";
 
-UIManager.prototype.loadInterfaceTypes = function(interfaceTypes) {    
-    if(!interfaceTypes) {
-        Logger.log(false, "InterfaceTypes cannot be undefined!", "UIManager.prototype.loadInterfaceTypes", null);
-
-        return false;
+UIManager.prototype.load = function(interfaceTypes, iconTypes, fontTypes) {
+    if(typeof interfaceTypes === "object") {
+        this.interfaceTypes = interfaceTypes;
+    } else {
+        Logger.log(false, "InterfaceTypes cannot be undefined!", "UIManager.prototype.load", null);
     }
 
-    this.interfaceTypes = interfaceTypes;
-
-    return true;
-}
-
-UIManager.prototype.loadIconTypes = function(icons) {    
-    if(!icons) {
-        Logger.log(false, "IconTypes cannot be undefined!", "UIManager.prototype.loadIconTypes", null);
-
-        return false;
+    if(typeof iconTypes === "object") {
+        this.iconTypes = iconTypes;
+    } else {
+        Logger.log(false, "IconTypes cannot be undefined!", "UIManager.prototype.load", null);
     }
 
-    this.iconTypes = icons;
-
-    return true;
-}
-
-UIManager.prototype.loadFontTypes = function(fonts) {
-    if(!fonts) {
-        Logger.log(false, "FontTypes cannot be undefined!", "UIManager.prototype.loadFontTypes", null);
-
-        return false;
+    if(typeof fontTypes === "object") {
+        this.fontTypes = fontTypes;
+    } else {
+        Logger.log(false, "FontTypes cannot be undefined!", "UIManager.prototype.load", null);
     }
-
-    this.fontTypes = fonts;
-
-    return true;
 }
 
 UIManager.prototype.getUniqueID = function(interfaceID, elementID) {
@@ -143,10 +127,9 @@ UIManager.prototype.createElement = function(uniqueID, config) {
         return null;
     }
 
-    const element = new Type();
+    const element = new Type(uniqueID);
 
     element.loadFromConfig(config);
-    element.setID(uniqueID);
 
     this.elements.set(uniqueID, element);
 
@@ -208,13 +191,6 @@ UIManager.prototype.popInterface = function(userInterfaceID) {
     return false;
 }
 
-UIManager.prototype.workEnd = function() {
-    this.elements.clear();
-    this.elementsToUpdate.clear();
-    this.drawableElements.clear();
-    this.interfaceStack = [];
-}
-
 UIManager.prototype.update = function(gameContext) {
     const { timer, client } = gameContext;
     const { cursor } = client;
@@ -258,6 +234,13 @@ UIManager.prototype.update = function(gameContext) {
     for(const element of collidedElements) {
         element.events.emit(UIElement.EVENT_COLLIDES);
     }
+}
+
+UIManager.prototype.end = function() {
+    this.elements.clear();
+    this.elementsToUpdate.clear();
+    this.drawableElements.clear();
+    this.interfaceStack = [];
 }
 
 UIManager.prototype.checkCollisions = function(mouseX, mouseY, mouseRange) {

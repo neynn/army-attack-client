@@ -2,8 +2,8 @@ import { isRectangleRectangleIntersect } from "../../../math/math.js";
 import { UIElement } from "../../uiElement.js";
 import { Button } from "../button.js";
 
-export const ButtonSquare = function() {
-    Button.call(this, "BUTTON_SQUARE");
+export const ButtonSquare = function(id) {
+    Button.call(this, id, "BUTTON_SQUARE");
 }
 
 ButtonSquare.prototype = Object.create(Button.prototype);

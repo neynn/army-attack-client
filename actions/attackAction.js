@@ -53,7 +53,8 @@ AttackAction.prototype.onEnd = function(gameContext, request) {
     if(isDead) {
         if(!isReviveable || isFatal) {
             DeathSystem.playDeathAnimation(gameContext, target);
-            DeathSystem.destroyEntity(gameContext, entityID);
+            
+            gameContext.destroyEntity(entityID);
         }
     } else {
         MorphSystem.updateSprite(target, "idle");

@@ -1,8 +1,8 @@
 import { isRectangleRectangleIntersect } from "../../math/math.js";
 import { UIElement } from "../uiElement.js";
 
-export const Container = function() {
-    UIElement.call(this, "CONTAINER");
+export const Container = function(id) {
+    UIElement.call(this, id, "CONTAINER");
 } 
 
 Container.prototype = Object.create(UIElement.prototype);

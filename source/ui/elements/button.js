@@ -2,8 +2,8 @@ import { Highlight } from "../../graphics/applyable/highlight.js";
 import { Outline } from "../../graphics/applyable/outline.js";
 import { UIElement } from "../uiElement.js";
 
-export const Button = function(DEBUG_NAME) {
-    UIElement.call(this, DEBUG_NAME);
+export const Button = function(id, DEBUG_NAME) {
+    UIElement.call(this, id, DEBUG_NAME);
     this.highlight = new Highlight();
     this.outline = new Outline();
 

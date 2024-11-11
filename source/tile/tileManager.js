@@ -7,34 +7,26 @@ export const TileManager = function() {
     this.tileMeta = {};
 }
 
+TileManager.prototype.load = function(tileTypes, tileMeta) {
+    if(typeof tileTypes === "object") {
+        this.tileTypes = tileTypes;
+    } else {
+        Logger.log(false, "TileTypes cannot be undefined!", "TileManager.prototype.load", null);
+    }
+
+    if(typeof tileMeta === "object") {
+        this.tileMeta = tileMeta;
+        this.invertTileMeta();
+    } else {
+        Logger.log(false, "TileMeta cannot be undefined!", "TileManager.prototype.load", null);
+    }
+}
+
 TileManager.prototype.update = function(gameContext, realTime, deltaTime) {
     this.updateTileTypes(realTime);
 }
 
-TileManager.prototype.loadTileTypes = function(tileTypes) {
-    if(!tileTypes) {
-        Logger.log(false, "TileTypes cannot be undefined!", "TileManager.prototype.loadTileTypes", null);
-
-        return false;
-    }
-
-    this.tileTypes = tileTypes;
-
-    return true;
-}
-
-TileManager.prototype.loadTileMeta = function(tileMeta) {
-    if(!tileMeta) {
-        Logger.log(false, "TileMeta cannot be undefined!", "TileManager.prototype.loadTileMeta", null);
-
-        return false;
-    }
-
-    this.tileMeta = tileMeta;
-    this.invertTileMeta();
-
-    return true;
-}
+TileManager.prototype.end = function() {}
 
 TileManager.prototype.updateTileTypes = function(timestamp) {
     for(const key in this.tileTypes) {

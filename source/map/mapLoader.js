@@ -3,36 +3,26 @@ import { ResourceLoader } from "../resourceLoader.js";
 import { MapParser } from "./mapParser.js";
 
 export const MapLoader = function() {
-    this.config = {};
     this.mapCache = {};
+    this.config = {};
     this.mapTypes = {};
     this.loadedMaps = new Map();
     this.cachedMaps = new Map();
     this.activeMapID = null;
 }
 
-MapLoader.prototype.loadMapTypes = function(mapTypes) {
-    if(!mapTypes) {
-        Logger.log(false, "MapTypes cannot be undefined!", "MapLoader.prototype.loadMapTypes", null);
-
-        return false;
+MapLoader.prototype.load = function(mapTypes, config) {
+    if(typeof mapTypes === "object") {
+        this.mapTypes = mapTypes;
+    } else {
+        Logger.log(false, "MapTypes cannot be undefined!", "MapLoader.prototype.load", null);
     }
 
-    this.mapTypes = mapTypes;
-
-    return true;
-}
-
-MapLoader.prototype.loadConfig = function(config) {
-    if(!config) {
-        Logger.log(false, "Config cannot be undefined!", "MapLoader.prototype.MapLoader.prototype.loadConfig", null);
-
-        return false;
+    if(typeof config === "object") {
+        this.config = config;
+    } else {
+        Logger.log(false, "Config cannot be undefined!", "MapLoader.prototype.load", null);
     }
-
-    this.config = config;
-
-    return true;
 }
 
 MapLoader.prototype.setActiveMap = function(mapID) {

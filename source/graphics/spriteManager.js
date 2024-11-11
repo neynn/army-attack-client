@@ -27,6 +27,14 @@ SpriteManager.LAYER_BOTTOM = 0;
 SpriteManager.LAYER_MIDDLE = 1;
 SpriteManager.LAYER_TOP = 2;
 
+SpriteManager.prototype.load = function(spriteTypes) {
+    if(typeof spriteTypes === "object") {
+        this.spriteTypes = spriteTypes;
+    } else {
+        Logger.log(false, "SpriteTypes cannot be undefined!", "SpriteManager.prototype.load", null);
+    }
+}
+
 SpriteManager.prototype.update = function(gameContext, realTime, deltaTime) {
     this.timestamp = realTime;
     //TODO: Update random sprites! (like desert clouds, ect.)
@@ -68,17 +76,7 @@ SpriteManager.prototype.addSpriteReference = function(spriteID) {
     return response(true, "Sprite reference has been added!", "SpriteManager.prototype.addSpriteReference", null, {spriteID});
 }
 
-SpriteManager.prototype.loadSpriteTypes = function(spriteTypes) {
-    if(!spriteTypes) {
-        return response(false, "SpriteTypes cannot be undefined!", "SpriteManager.prototype.loadSpriteTypes", null, null);
-    }
-
-    this.spriteTypes = spriteTypes;
-
-    return response(true, "SpriteTypes have been loaded!", "SpriteManager.prototype.loadSpriteTypes", null, null);
-}
-
-SpriteManager.prototype.workEnd = function() {
+SpriteManager.prototype.end = function() {
     this.sprites.clear();
     this.IDgenerator.reset();
 

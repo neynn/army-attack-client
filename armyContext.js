@@ -9,10 +9,10 @@ import { PositionComponent } from "./components/position.js";
 import { ReviveComponent } from "./components/revive.js";
 import { SubTypeComponent } from "./components/subType.js";
 import { TeamComponent } from "./components/team.js";
-import { ACTION_TYPES, CONTEXT_STATES, CONTROLLER_STATES, GAME_EVENTS, SYSTEM_TYPES } from "./enums.js";
+import { ACTION_TYPES, CONTEXT_STATES, CONTROLLER_STATES, CONTROLLER_TYPES, ENTITY_ARCHETYPES, GAME_EVENTS, SYSTEM_TYPES } from "./enums.js";
 import { ArmyTile } from "./init/armyTile.js";
 import { componentSetup } from "./init/components.js";
-import { entityFactory } from "./init/entityFactory.js";
+import { buildDefense, buildUnit } from "./init/entities.js";
 import { ActionQueue } from "./source/action/actionQueue.js";
 import { tileToPosition_center } from "./source/camera/helpers.js";
 import { Cursor } from "./source/client/cursor.js";
@@ -34,15 +34,52 @@ import { StoryModePlayState } from "./states/context/story/storyModePlay.js";
 import { StoryModeIntroState } from "./states/context/story/storyModeIntro.js";
 import { MoveSystem } from "./systems/move.js";
 import { Renderer } from "./source/renderer.js";
+import { PlayerController } from "./init/playerController.js";
+import { SizeComponent } from "./components/size.js";
+import { SpriteComponent } from "./components/sprite.js";
 
 export const ArmyContext = function() {
-    GameContext.call(this);
+    GameContext.call(this, 60);
 }
 
 ArmyContext.prototype = Object.create(GameContext.prototype);
 ArmyContext.prototype.constructor = ArmyContext;
 
-ArmyContext.prototype.initializeSystems = function() {
+ArmyContext.prototype.load = function(resources) {
+    this.mapLoader.load(resources.maps, resources.settings.mapLoader);
+    this.spriteManager.load(resources.sprites);
+    this.tileManager.load(resources.tiles, resources.tileMeta);
+    this.uiManager.load(resources.uiConfig, resources.icons, resources.fonts);
+    this.entityManager.load(
+        resources.entities,
+        resources.traits,
+        {
+            "Health": HealthComponent,
+            "Construction": ConstructionComponent,
+            "Revive": ReviveComponent
+        },
+        {
+            "Health": HealthComponent,
+            "Attack": AttackComponent,
+            "Construction": ConstructionComponent,
+            "Move": MoveComponent,
+            "SubType": SubTypeComponent,
+            "Revive": ReviveComponent,
+            "Armor": ArmorComponent
+        }
+    );
+
+    this.config = resources.config;
+    this.settings = resources.settings;
+
+    this.client.musicPlayer.loadMusicTypes(resources.music);
+    this.client.soundPlayer.loadSoundTypes(resources.sounds);
+    this.client.socket.loadConfig(resources.settings.socket);
+
+    this.controllerManager.registerController(CONTROLLER_TYPES.PLAYER, PlayerController);
+    this.entityManager.registerArchetype(ENTITY_ARCHETYPES.Unit, buildUnit);
+    this.entityManager.registerArchetype(ENTITY_ARCHETYPES.Defense, buildDefense);
+
     this.systemManager.registerSystem(SYSTEM_TYPES.DOWN, DownSystem);
     this.systemManager.registerSystem(SYSTEM_TYPES.MOVE, MoveSystem);
 }
@@ -62,22 +99,6 @@ ArmyContext.prototype.initializeContext = function() {
     this.states.addSubstate(CONTEXT_STATES.VERSUS_MODE, CONTEXT_STATES.VERSUS_MODE_PLAY, new VersusModePlayState());
 
     this.client.soundPlayer.loadAllSounds();
-
-    this.entityManager.setSaveableComponents({
-        "Health": HealthComponent,
-        "Construction": ConstructionComponent,
-        "Revive": ReviveComponent
-    });
-
-    this.entityManager.setLoadableComponents({
-        "Health": HealthComponent,
-        "Attack": AttackComponent,
-        "Construction": ConstructionComponent,
-        "Move": MoveComponent,
-        "SubType": SubTypeComponent,
-        "Revive": ReviveComponent,
-        "Armor": ArmorComponent
-    });
 
     this.states.setNextState(CONTEXT_STATES.MAIN_MENU);
     this.config.tileConversions = this.getNewConversions();
@@ -112,6 +133,9 @@ ArmyContext.prototype.initializeActionQueue = function() {
     })
 }
 
+//TODO: this gets delegated to the init collection.
+//In here all the controller types are registered.
+//This will be fun...
 ArmyContext.prototype.initializeController = function(config) {
     const { controller } = this;
     const controllerSprite = this.spriteManager.createSprite("cursor_attack_1x1", SpriteManager.LAYER_TOP);
@@ -141,29 +165,31 @@ ArmyContext.prototype.initializeController = function(config) {
     controller.states.setNextState(CONTROLLER_STATES.IDLE);
 }
 
-ArmyContext.prototype.initializeEntity = function(entitySetup, externalID) {
-    const { type } = entitySetup;
-    const typeConfig = this.entityManager.getEntityType(type);
-
-    if(!typeConfig) {
-        console.warn(`EntityType ${type} does not exist! Returning null...`);
-        return null;
-    }
-    
-    const entity = entityFactory.buildEntity(this, typeConfig, entitySetup, externalID);
-
-    if(!entity) {
-        console.warn(`Entity creation failed! Returning null...`);
-        return null;
-    }
-
+ArmyContext.prototype.onEntityCreate = function(entity) {
     PlaceSystem.placeEntity(this, entity);
 
     const saveData = this.saveEntity(entity.id);
 
     console.log(saveData);
+}
 
-    return entity;
+ArmyContext.prototype.onEntityDestroy = function(entity) {
+    const entityID = entity.getID();
+    const activeMap = this.mapLoader.getActiveMap();
+
+    if(!activeMap) {
+        return false;
+    }
+    
+    const positionComponent = entity.getComponent(PositionComponent);
+    const sizeComponent = entity.getComponent(SizeComponent);
+    const spriteComponent = entity.getComponent(SpriteComponent);
+
+    const { tileX, tileY } = positionComponent;
+    const { sizeX, sizeY } = sizeComponent;
+
+    activeMap.removePointers(tileX, tileY, sizeX, sizeY, entityID);
+    this.spriteManager.removeSprite(spriteComponent.spriteID);
 }
 
 ArmyContext.prototype.initializeTilemap = function(mapID) {

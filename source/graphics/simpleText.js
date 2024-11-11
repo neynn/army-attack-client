@@ -2,7 +2,7 @@ import { Drawable } from "./drawable.js";
 import { TextStyle } from "./applyable/textStyle.js";
 
 export const SimpleText = function() {
-    Drawable.call(this, "SIMPLE_TEXT");
+    Drawable.call(this, null, "SIMPLE_TEXT");
 
     this.style = new TextStyle();
     this.text = "SAMPLE TEXT";

@@ -4,9 +4,9 @@ import { Rectangle } from "../math/rect.js";
 import { Vec2 } from "../math/vec2.js";
 import { Family } from "./family.js";
 
-export const Drawable = function(DEBUG_NAME) {
+export const Drawable = function(id = null, DEBUG_NAME = null) {
     this.DEBUG_NAME = DEBUG_NAME;
-    this.id = null;
+    this.id = id;
     this.family = null;
     this.opacity = 1;
     this.isVisible = true;
@@ -72,16 +72,6 @@ Drawable.prototype.draw = function(context, viewportX, viewportY, rootLocalX, ro
         const reference = child.getReference();
         reference.draw(context, viewportX, viewportY, localX, localY);
     }
-}
-
-Drawable.prototype.setID = function(id) {
-    if(id === undefined) {
-        return false;
-    }
-
-    this.id = id;
-
-    return true;
 }
 
 Drawable.prototype.getID = function() {
