@@ -21,16 +21,12 @@ MusicPlayer.prototype.clear = function() {
     this.tracks.clear();
 }
 
-MusicPlayer.prototype.loadMusicTypes = function(musicTypes) {
-    if(!musicTypes) {
-        Logger.log(false, "MusicTypes cannot be undefined!", "MusicPlayer.prototype.loadMusicTypes", null);
-
-        return false;
+MusicPlayer.prototype.load = function(musicTypes) {
+    if(typeof musicType === "object") {
+        this.musicTypes = musicTypes;
+    } else {
+        Logger.log(false, "MusicTypes cannot be undefined!", "MusicPlayer.prototype.load", null);
     }
-
-    this.musicTypes = musicTypes;
-
-    return true;
 }
 
 MusicPlayer.prototype.swapTrack = function(audioID, volume = this.volume) {

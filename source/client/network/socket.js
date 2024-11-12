@@ -16,14 +16,12 @@ Socket.EVENT_CONNECTED_TO_SERVER = 0;
 Socket.EVENT_DISCONNECTED_FROM_SERVER = 1;
 Socket.EVENT_MESSAGE_FROM_SERVER = 2;
 
-Socket.prototype.loadConfig = function(config) {
-    if(config === undefined) {
-        return false;
+Socket.prototype.load = function(config) {
+    if(typeof config === "object") {
+        this.config = config;
+    } else {
+        //TODO: Add Logger.
     }
-
-    this.config = config;
-
-    return true;
 }
 
 Socket.prototype.connect = async function() {

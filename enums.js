@@ -10,13 +10,13 @@ export const GAME_EVENTS = Object.freeze({
 });
 
 export const ENTITY_ARCHETYPES = Object.freeze({
-    "Unit": "Unit",
-    "Defense": "Defense",
-    "Deco": "Deco",
-    "Building": "Building",
-    "Construction": "Construction",
+    "UNIT": "Unit",
+    "DEFENSE": "Defense",
+    "DECO": "Deco",
+    "BUILDING": "Building",
+    "CONSTRUCTION": "Construction",
     "HFE": "HFE",
-    "Town": "Town"
+    "TOWN": "Town"
 });
 
 export const CONTROLLER_TYPES = Object.freeze({

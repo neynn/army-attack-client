@@ -11,7 +11,7 @@ StoryModePlayState.prototype.constructor = StoryModePlayState;
 
 StoryModePlayState.prototype.enter = async function(stateMachine) {
     const gameContext = stateMachine.getContext();
-    const { uiManager, spriteManager, controller, entityManager, mapLoader, actionQueue, renderer } = gameContext;
+    const { uiManager, spriteManager, controllerManager, entityManager, mapLoader, actionQueue, renderer } = gameContext;
     const MAP = "pvp_valleys";
 
     const map2D = await mapLoader.loadMap(MAP);

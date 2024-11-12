@@ -46,6 +46,9 @@ ArmyContext.prototype = Object.create(GameContext.prototype);
 ArmyContext.prototype.constructor = ArmyContext;
 
 ArmyContext.prototype.load = function(resources) {
+    this.client.musicPlayer.load(resources.music);
+    this.client.soundPlayer.load(resources.sounds);
+    this.client.socket.load(resources.settings.socket);
     this.mapLoader.load(resources.maps, resources.settings.mapLoader);
     this.spriteManager.load(resources.sprites);
     this.tileManager.load(resources.tiles, resources.tileMeta);
@@ -69,19 +72,17 @@ ArmyContext.prototype.load = function(resources) {
         }
     );
 
-    this.config = resources.config;
-    this.settings = resources.settings;
-
-    this.client.musicPlayer.loadMusicTypes(resources.music);
-    this.client.soundPlayer.loadSoundTypes(resources.sounds);
-    this.client.socket.loadConfig(resources.settings.socket);
-
     this.controllerManager.registerController(CONTROLLER_TYPES.PLAYER, PlayerController);
-    this.entityManager.registerArchetype(ENTITY_ARCHETYPES.Unit, buildUnit);
-    this.entityManager.registerArchetype(ENTITY_ARCHETYPES.Defense, buildDefense);
+
+    this.entityManager.registerArchetype(ENTITY_ARCHETYPES.UNIT, buildUnit);
+    this.entityManager.registerArchetype(ENTITY_ARCHETYPES.DEFENSE, buildDefense);
 
     this.systemManager.registerSystem(SYSTEM_TYPES.DOWN, DownSystem);
     this.systemManager.registerSystem(SYSTEM_TYPES.MOVE, MoveSystem);
+
+    this.settings = resources.settings;
+    this.config = resources.config;
+    this.config.tileConversions = this.parseConversions();
 }
 
 ArmyContext.prototype.initializeContext = function() {
@@ -101,7 +102,6 @@ ArmyContext.prototype.initializeContext = function() {
     this.client.soundPlayer.loadAllSounds();
 
     this.states.setNextState(CONTEXT_STATES.MAIN_MENU);
-    this.config.tileConversions = this.getNewConversions();
     this.renderer.createCamera("ARMY_CAMERA", Renderer.CAMERA_TYPE_2D, 0, 0, 500, 500);    
     this.renderer.resizeDisplay(window.innerWidth, window.innerHeight);
 }
@@ -253,7 +253,7 @@ ArmyContext.prototype.saveEntity = function(entityID) {
     }
 }
 
-ArmyContext.prototype.getNewConversions = function() {
+ArmyContext.prototype.parseConversions = function() {
     const { tileManager } = this;
     const conversions = this.getConfig("tileConversions");
     const newConversions = {};

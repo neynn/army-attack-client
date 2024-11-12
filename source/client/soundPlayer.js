@@ -9,17 +9,13 @@ export const SoundPlayer = function() {
     this.defaultVolume = 0.3;
 }
 
-SoundPlayer.prototype.loadSoundTypes = function(soundTypes) {
-    if(soundTypes === undefined) {
-        Logger.log(false, "SoundTypes cannot be undefined!", "SoundPlayer.prototype.loadSoundTypes", null);
-
-        return false;
+SoundPlayer.prototype.load = function(soundTypes) {
+    if(typeof soundTypes === "object") {
+        this.soundTypes = soundTypes; 
+    } else {
+        Logger.log(false, "SoundTypes cannot be undefined!", "SoundPlayer.prototype.load", null);
     }
-
-    this.soundTypes = soundTypes;
-
-    return true;
-} 
+}
 
 SoundPlayer.prototype.clear = function() {
     this.activeSounds.forEach((sound, key) => this.stopSound(key));
