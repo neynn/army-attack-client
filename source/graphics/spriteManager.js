@@ -5,7 +5,6 @@ import { ImageSheet } from "./imageSheet.js";
 import { Sprite } from "./sprite.js";
 
 export const SpriteManager = function() {
-    this.id = "SPRITE_MANAGER";
     this.timestamp = 0;
     this.spriteTypes = {};
     this.sprites = new Map();
@@ -94,8 +93,8 @@ SpriteManager.prototype.createSprite = function(typeID, layerID, animationID) {
     const sprite = new Sprite(spriteID, typeID);
     
     sprite.setLastCallTime(this.timestamp);
-    sprite.events.subscribe(Sprite.FINISHED, this.id, (sprite) => this.removeSprite(sprite.id));
-    sprite.events.subscribe(Sprite.REQUEST_FRAME, this.id, (sprite, onResponse) => {
+    sprite.events.subscribe(Sprite.FINISHED, "SPRITE_MANAGER", (sprite) => this.removeSprite(sprite.id));
+    sprite.events.subscribe(Sprite.REQUEST_FRAME, "SPRITE_MANAGER", (sprite, onResponse) => {
         const {typeID, animationID, currentFrame} = sprite;
         const spriteType = this.spriteTypes[typeID];
         const animationType = spriteType.getAnimation(animationID);

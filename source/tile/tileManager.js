@@ -2,7 +2,6 @@ import { ImageSheet } from "../graphics/imageSheet.js";
 import { Logger } from "../logger.js";
 
 export const TileManager = function() {
-    this.id = "TILE_MANAGER";
     this.tileTypes = {};
     this.tileMeta = {};
 }

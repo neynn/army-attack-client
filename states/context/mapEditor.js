@@ -277,6 +277,14 @@ const initializeMapEditor = function(mapEditor, gameContext) {
         }
     });
 
+    cursor.events.subscribe(Cursor.LEFT_MOUSE_DRAG, MAP_EDITOR_ID, (deltaX, deltaY) => {
+        const camera = gameContext.getCameraAtMouse();
+
+        if(camera) {
+            camera.dragViewport(deltaX, deltaY);
+        }
+    });
+
     uiManager.addClick(editorInterface.id, "BUTTON_TILESET_MODE", () => {
         mapEditor.scrollBrushMode(1);
         loadPageButtonsEvents();
@@ -424,11 +432,6 @@ MapEditorState.prototype.enter = function(stateMachine) {
     uiManager.unparseUI("FPS_COUNTER", gameContext);
 
     camera.unbindViewport();
-        
-    gameContext.createController({
-        "type": CONTROLLER_TYPES.PLAYER,
-        "id": "neyn"
-    });
 
     initializeMapEditor(mapEditor, gameContext);
 }

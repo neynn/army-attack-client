@@ -30,9 +30,7 @@ Entity.prototype.initializeEvents = function() {
     return true;
 }
 
-Entity.prototype.update = function(gameContext) {
-    this.states.update(gameContext);
-}
+Entity.prototype.update = function(gameContext) {}
 
 Entity.prototype.setConfig = function(config) {
     if(config === undefined) {

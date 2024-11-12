@@ -16,17 +16,16 @@ import { Renderer } from "./renderer.js";
 import { ControllerManager } from "./controller/controllerManager.js";
 
 export const GameContext = function(fps = 60) {
-    this.id = "GAME_CONTEXT";
     this.config = {};
     this.settings = {};
     this.client = new Client();
-    this.controllerManager = new ControllerManager();
     this.renderer = new Renderer();
+    this.timer = new Timer(fps);
+    this.mapLoader = new MapLoader();
+    this.controllerManager = new ControllerManager();
     this.tileManager = new TileManager();
     this.spriteManager = new SpriteManager();
     this.uiManager = new UIManager();
-    this.timer = new Timer(fps);
-    this.mapLoader = new MapLoader();
     this.systemManager = new SystemManager();
     this.entityManager = new EntityManager();
     this.actionQueue = new ActionQueue();
@@ -59,7 +58,7 @@ GameContext.prototype.initialize = function() {}
 GameContext.prototype.addUIClickEvent = function() {
     const { cursor } = this.client;
 
-    cursor.events.subscribe(Cursor.LEFT_MOUSE_CLICK, this.id, () => {
+    cursor.events.subscribe(Cursor.LEFT_MOUSE_CLICK, "CONTEXT", () => {
         const clickedElements = this.uiManager.checkCollisions(cursor.position.x, cursor.position.y, cursor.radius);
 
         for(const element of clickedElements) {

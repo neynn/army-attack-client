@@ -15,7 +15,7 @@ VersusModeState.prototype.enter = function(stateMachine) {
     const { mapLoader, actionQueue, client } = gameContext;
     const { socket } = client;
     
-    socket.events.subscribe(Socket.EVENT_MESSAGE_FROM_SERVER, gameContext.id, (type, payload) => {
+    socket.events.subscribe(Socket.EVENT_MESSAGE_FROM_SERVER, "VERSUS", (type, payload) => {
         console.log(type, payload, "FROM SERVER");
 
         switch(type) {

@@ -4,6 +4,8 @@ export const Controller = function(id) {
     Entity.call(this, id, "CONTROLLER");
 
     this.entities = new Set();
+    this.initializeEvents();
+    this.initializeStates();
 }
 
 Controller.prototype = Object.create(Entity.prototype);
@@ -23,6 +25,10 @@ Controller.prototype.addEntity = function(entityID) {
 
 Controller.prototype.hasEntity = function(entityID) {
     return this.entities.has(entityID);
+}
+
+Controller.prototype.update = function(gameContext) {
+    this.states.update(gameContext);
 }
 
 Controller.prototype.initialize = function(gameContext, payload) {}

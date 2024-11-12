@@ -2,7 +2,6 @@ import { EventEmitter } from "../events/eventEmitter.js";
 import { Vec2 } from "../math/vec2.js";
 
 export const Camera = function(positionX, positionY, width, height) {
-    this.id = "CAMERA";
     this.position = new Vec2(positionX, positionY);
     this.viewportX = 0;
     this.viewportY = 0;

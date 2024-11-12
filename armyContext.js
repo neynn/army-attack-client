@@ -30,6 +30,7 @@ import { Renderer } from "./source/renderer.js";
 import { PlayerController } from "./init/playerController.js";
 import { SizeComponent } from "./components/size.js";
 import { SpriteComponent } from "./components/sprite.js";
+import { Socket } from "./source/client/network/socket.js";
 
 export const ArmyContext = function() {
     GameContext.call(this, 60);
@@ -85,16 +86,16 @@ ArmyContext.prototype.initialize = function() {
     this.actionQueue.registerAction(ACTION_TYPES.MOVE, new MoveAction());
     this.actionQueue.registerAction(ACTION_TYPES.ATTACK, new AttackAction());
 
-    this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_PROCESS, this.id, (request) => {
+    this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_PROCESS, "CONTEXT", (request) => {
         console.log(request, "IS VALID");
     });
 
-    this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_INVALID, this.id, (request) => {
+    this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_INVALID, "CONTEXT", (request) => {
         this.client.soundPlayer.playSound("sound_error", 0.5);
         console.log(request, "IS INVALID");
     });
 
-    this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_VALID, this.id, (request) => {
+    this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_VALID, "CONTEXT", (request) => {
         if(this.client.isOnline()) {
             console.log("TO SERVER!");
             this.client.socket.messageRoom(GAME_EVENTS.ENTITY_ACTION, request);
@@ -103,7 +104,7 @@ ArmyContext.prototype.initialize = function() {
             this.actionQueue.queueAction(request);
         }
     });
-    
+
     this.states.addState(CONTEXT_STATES.MAIN_MENU, new MainMenuState());
     this.states.addState(CONTEXT_STATES.STORY_MODE, new StoryModeState());
     this.states.addState(CONTEXT_STATES.VERSUS_MODE, new VersusModeState());
@@ -118,6 +119,14 @@ ArmyContext.prototype.initialize = function() {
     this.states.addSubstate(CONTEXT_STATES.VERSUS_MODE, CONTEXT_STATES.VERSUS_MODE_PLAY, new VersusModePlayState());
 
     this.client.soundPlayer.loadAllSounds();
+    
+    this.client.socket.events.subscribe(Socket.EVENT_CONNECTED_TO_SERVER, "CONTEXT", (socketID) => {
+        console.log(`${socketID} is connected to the server!`);
+    });
+
+    this.client.socket.events.subscribe(Socket.EVENT_DISCONNECTED_FROM_SERVER, "CONTEXT", (reason) => {
+        console.log(`${reason} is disconnected from the server!`);
+    });
 
     this.states.setNextState(CONTEXT_STATES.MAIN_MENU);
     this.renderer.createCamera("ARMY_CAMERA", Renderer.CAMERA_TYPE_2D, 0, 0, 500, 500);    

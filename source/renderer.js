@@ -5,7 +5,6 @@ import { EventEmitter } from "./events/eventEmitter.js";
 import { isRectangleRectangleIntersect } from "./math/math.js";
 
 export const Renderer = function() {
-    this.id = "RENDERER";
     this.windowWidth = window.innerWidth;
     this.windowHeight = window.innerHeight;
 

@@ -10,9 +10,6 @@ import { componentSetup } from "./components.js";
 
 export const PlayerController = function(id) {
     Controller.call(this, id);
-
-    this.initializeEvents();
-    this.initializeStates();
 }
 
 PlayerController.prototype = Object.create(Controller.prototype);

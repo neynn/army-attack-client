@@ -42,7 +42,7 @@ EntityManager.prototype.load = function(entityTypes, traitTypes, saveComponentTy
 EntityManager.prototype.update = function(gameContext) {
     for(const entityID of this.activeEntities) {
         const entity = this.entities.get(entityID);
-        entity.update(gameContext);
+        entity.states.update(gameContext);
     }
 }
 
