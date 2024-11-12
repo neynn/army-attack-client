@@ -12,15 +12,15 @@ SelectSystem.isSelectable = function(entity) {
     return entity.hasComponent(MoveComponent) && healthComponent.health > 0;
 }
 
-SelectSystem.selectEntity = function(entity, gameContext) {
-    const { controller, client, spriteManager, tileManager } = gameContext;
+SelectSystem.selectEntity = function(gameContext, controller, entity) {
+    const { client, spriteManager, tileManager } = gameContext;
     const { soundPlayer } = client;
     const controllerComponent  = controller.getComponent(ControllerComponent);
     const nodeList = PathfinderSystem.generateNodeList(gameContext, entity);
 
     if(controllerComponent.selectedEntity !== null) {
         console.warn(`SelectSystem.selectEntity was called while an entity was already selected!`);
-        SelectSystem.deselectEntity(entity, gameContext);
+        SelectSystem.deselectEntity(gameContext, controller, entity);
     }
 
     const activeMap = gameContext.mapLoader.getActiveMap();
@@ -55,8 +55,8 @@ SelectSystem.selectEntity = function(entity, gameContext) {
     soundPlayer.playRandom(entity.config.sounds.select);
 }
 
-SelectSystem.deselectEntity = function(entity, gameContext) {
-    const { controller, spriteManager } = gameContext;
+SelectSystem.deselectEntity = function(gameContext, controller, entity) {
+    const { spriteManager } = gameContext;
     const controllerComponent  = controller.getComponent(ControllerComponent);
 
     if(controllerComponent.selectedEntity === null) {

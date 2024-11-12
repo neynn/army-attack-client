@@ -79,10 +79,6 @@ componentSetup.setupTeamComponent = function(setup) {
         teamComponent.teamID = setup.team;
     }
     
-    if(setup.master !== undefined) {
-        teamComponent.masterID = setup.master;
-    }
-
     return teamComponent;
 }
 

@@ -27,7 +27,7 @@ VersusModeState.prototype.enter = function(stateMachine) {
                 break;
             }
             case GAME_EVENTS.INSTANCE_CONTROLLER: {
-                gameContext.initializeController(payload);
+                gameContext.createController(payload);
                 break;
             }
             case GAME_EVENTS.INSTANCE_MAP: {
@@ -55,15 +55,17 @@ VersusModeState.prototype.enter = function(stateMachine) {
                 break;
             }
             case GAME_EVENTS.INSTANCE_ENTITY: {
-                const { id, setup } = payload;
-                gameContext.createEntity(setup, id);
+                const { id, master, setup } = payload;
+                gameContext.createEntity(setup, master, id);
                 break;
             }
             case GAME_EVENTS.INSTANCE_ENTITY_BATCH: {
                 const { batch } = payload;
                 
                 for(const setup of batch) {
-                    gameContext.createEntity(setup, setup.id);
+                    const { id, master } = setup;
+
+                    gameContext.createEntity(setup, master, id);
                 }
                 break;
             }

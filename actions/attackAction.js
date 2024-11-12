@@ -26,7 +26,6 @@ AttackAction.prototype.onStart = function(gameContext, request) {
     const { entityID, attackers, damage, remainingHealth, isFatal } = request;
     const target = entityManager.getEntity(entityID);
 
-    ControllerSystem.clearAttackers(gameContext);
     FireSystem.startAttack(gameContext, attackers, target);
     HealthSystem.setHealth(target, remainingHealth);
 

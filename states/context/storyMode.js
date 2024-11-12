@@ -14,7 +14,4 @@ StoryModeState.prototype.enter = function(stateMachine) {
 
 StoryModeState.prototype.exit = function(stateMachine) {
     const gameContext = stateMachine.getContext();
-    const { uiManager, controller } = gameContext;
-
-    controller.states.reset();
 }   

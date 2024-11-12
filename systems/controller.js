@@ -7,8 +7,8 @@ import { TeamSystem } from "./team.js";
 
 export const ControllerSystem = function() {}
 
-ControllerSystem.clearAttackers = function(gameContext) {
-    const { controller, entityManager, mapLoader } = gameContext;
+ControllerSystem.clearAttackers = function(gameContext, controller) {
+    const { entityManager, mapLoader } = gameContext;
     const settings = gameContext.getConfig("settings");
     const activeMap = mapLoader.getActiveMap();
     const controllerComponent = controller.getComponent(ControllerComponent);
@@ -28,8 +28,8 @@ ControllerSystem.clearAttackers = function(gameContext) {
     }
 }
 
-ControllerSystem.hightlightAttackers = function(gameContext, target, attackers) {
-    const { controller, entityManager, mapLoader, tileManager } = gameContext;
+ControllerSystem.hightlightAttackers = function(gameContext, controller, target, attackers) {
+    const { entityManager, mapLoader, tileManager } = gameContext;
     const settings = gameContext.getConfig("settings");
     const activeMap = mapLoader.getActiveMap();
     const controllerComponent = controller.getComponent(ControllerComponent);
@@ -52,12 +52,9 @@ ControllerSystem.hightlightAttackers = function(gameContext, target, attackers) 
     }
 }
 
-ControllerSystem.updateAttackers = function(gameContext) {
-    const { controller } = gameContext;
+ControllerSystem.updateAttackers = function(gameContext, controller) {
     const { x, y } = gameContext.getWorldTilePosition();
     const tileEntity = gameContext.getTileEntity(x, y);
-
-    ControllerSystem.clearAttackers(gameContext);
 
     if(!tileEntity) {
         return;
@@ -72,11 +69,11 @@ ControllerSystem.updateAttackers = function(gameContext) {
 
     const attackers = TargetSystem.getAttackers(gameContext, tileEntity);
     
-    ControllerSystem.hightlightAttackers(gameContext, tileEntity, attackers);
+    ControllerSystem.hightlightAttackers(gameContext, controller, tileEntity, attackers);
 }
 
-ControllerSystem.updateSelectedEntity = function(gameContext) {
-    const { entityManager, controller } = gameContext;
+ControllerSystem.updateSelectedEntity = function(gameContext, controller) {
+    const { entityManager } = gameContext;
     const controllerComponent = controller.getComponent(ControllerComponent);
     const selectedEntity = entityManager.getEntity(controllerComponent.selectedEntity);
 

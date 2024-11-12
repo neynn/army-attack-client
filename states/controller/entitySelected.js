@@ -38,11 +38,14 @@ ControllerEntitySelectedState.prototype.onEventEnter = function(stateMachine, ga
         actionQueue.addAction(createMoveRequest(selectedEntityID, x, y));
     }
 
-    SelectSystem.deselectEntity(selectedEntity, gameContext);
+    SelectSystem.deselectEntity(gameContext, controller, selectedEntity);
     stateMachine.setNextState(CONTROLLER_STATES.IDLE);
 }
 
 ControllerEntitySelectedState.prototype.update = function(stateMachine, gameContext) {
-    ControllerSystem.updateSelectedEntity(gameContext);
-    ControllerSystem.updateAttackers(gameContext);
+    const controller = stateMachine.getContext();
+
+    ControllerSystem.clearAttackers(gameContext, controller);
+    ControllerSystem.updateSelectedEntity(gameContext, controller);
+    ControllerSystem.updateAttackers(gameContext, controller);
 }

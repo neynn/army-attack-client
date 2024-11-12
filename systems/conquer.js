@@ -40,8 +40,9 @@ ConquerSystem.convertTileGraphics = function(gameContext, tileX, tileY, teamID) 
 }
 
 ConquerSystem.updateBorder = function(gameContext, tileX, tileY) {
-    const { mapLoader, tileManager, controller } = gameContext;
+    const { mapLoader, tileManager, controllerManager } = gameContext;
     const settings = gameContext.getConfig("settings");
+    const controller = controllerManager.getController("neyn"); //TODOOOOOO!!!
 
     if(!settings.drawBorder) {
         return false;

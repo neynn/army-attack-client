@@ -25,4 +25,4 @@ Controller.prototype.hasEntity = function(entityID) {
     return this.entities.has(entityID);
 }
 
-Controller.prototype.update = function(gameContext) {}
+Controller.prototype.initialize = function(gameContext, payload) {}

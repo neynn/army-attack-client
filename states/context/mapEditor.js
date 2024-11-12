@@ -6,6 +6,7 @@ import { State } from "../../source/state/state.js";
 import { UIElement } from "../../source/ui/uiElement.js";
 import { MapEditor } from "../../mapEditor.js";
 import { Renderer } from "../../source/renderer.js";
+import { CONTROLLER_TYPES } from "../../enums.js";
 
 export const MapEditorState = function() {
     State.call(this);
@@ -423,6 +424,11 @@ MapEditorState.prototype.enter = function(stateMachine) {
     uiManager.unparseUI("FPS_COUNTER", gameContext);
 
     camera.unbindViewport();
+        
+    gameContext.createController({
+        "type": CONTROLLER_TYPES.PLAYER,
+        "id": "neyn"
+    });
 
     initializeMapEditor(mapEditor, gameContext);
 }

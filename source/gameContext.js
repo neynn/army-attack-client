@@ -9,7 +9,6 @@ import { StateMachine } from "./state/stateMachine.js";
 import { Timer } from "./timer.js";
 import { ActionQueue } from "./action/actionQueue.js";
 import { UIElement } from "./ui/uiElement.js";
-import { Entity } from "./entity/entity.js";
 import { Logger } from "./logger.js";
 import { SystemManager } from "./system/systemManager.js";
 import { TileManager } from "./tile/tileManager.js";
@@ -21,7 +20,6 @@ export const GameContext = function(fps = 60) {
     this.config = {};
     this.settings = {};
     this.client = new Client();
-    this.controller = new Entity("CONTROLLER", "CONTROLLER"); //TODO: "Controllers!";
     this.controllerManager = new ControllerManager();
     this.renderer = new Renderer();
     this.tileManager = new TileManager();
@@ -40,7 +38,6 @@ export const GameContext = function(fps = 60) {
     }
 
     this.timer.updateFunction = (gameTime, fixedDeltaTime) => {
-        this.controller.update(this);
         this.controllerManager.update(this);
         this.actionQueue.update(this);
         this.systemManager.update(this);
@@ -53,42 +50,17 @@ export const GameContext = function(fps = 60) {
         this.uiManager.update(this);
         this.renderer.update(this);
     }
-
-    this.controller.initializeEvents();
-    this.controller.initializeStates();
 }
 
-GameContext.prototype.load = function(resources) {}
+GameContext.prototype.loadResources = function(resources) {}
 
-GameContext.prototype.initializeActionQueue = function() {}
+GameContext.prototype.initialize = function() {}
 
-GameContext.prototype.initializeController = function() {}
-
-GameContext.prototype.initializeContext = function() {}
-
-GameContext.prototype.initializeInput = function() {
+GameContext.prototype.addUIClickEvent = function() {
     const { cursor } = this.client;
 
-    cursor.events.subscribe(Cursor.LEFT_MOUSE_DRAG, this.id, (deltaX, deltaY) => {
-        const camera = this.getCameraAtMouse();
-
-        if(camera) {
-            camera.dragViewport(deltaX, deltaY);
-        }
-    });
-    
     cursor.events.subscribe(Cursor.LEFT_MOUSE_CLICK, this.id, () => {
         const clickedElements = this.uiManager.checkCollisions(cursor.position.x, cursor.position.y, cursor.radius);
-        const viewportTile = this.getWorldTile();
-
-        if(clickedElements.length === 0) {
-            if(!viewportTile) {
-                return;
-            }
-
-            this.controller.states.onEventEnter(this, viewportTile);
-            return;
-        }
 
         for(const element of clickedElements) {
             element.events.emit(UIElement.EVENT_CLICKED);
@@ -203,7 +175,20 @@ GameContext.prototype.getTileEntity = function(tileX, tileY) {
     return this.entityManager.getEntity(entityID);
 }
 
-GameContext.prototype.createEntity = function(setup, externalID) {
+GameContext.prototype.createController = function(payload) {
+    const { type, id } = payload;
+    const controller = this.controllerManager.createController(type, id);
+
+    if(!controller) {
+        return null;
+    }
+
+    controller.initialize(this, payload);
+
+    return controller;
+}
+
+GameContext.prototype.createEntity = function(setup, masterID, externalID) {
     if(typeof setup !== "object") {
         Logger.error(false, "Setup does not exist!", "GameContext.prototype.createEntity", null);
 
@@ -220,6 +205,10 @@ GameContext.prototype.createEntity = function(setup, externalID) {
     }
 
     const entity = this.entityManager.createEntity(type, externalID);
+    const entityID = entity.getID();
+
+    this.controllerManager.addEntity(masterID, entityID);
+
     const { archetype } = typeConfig;
     const archetypeBuilder = this.entityManager.getArchetype(archetype);
 
@@ -241,8 +230,8 @@ GameContext.prototype.destroyEntity = function(entityID) {
         return false;
     }
 
+    this.controllerManager.removeEntity(entityID);
     this.entityManager.destroyEntity(entityID);
-
     this.onEntityDestroy(entity);
 
     return true;

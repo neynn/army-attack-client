@@ -70,15 +70,3 @@ TeamSystem.isEntityFriendly = function(gameContext, entityA, entityB) {
 
     return TeamSystem.isAllied(gameContext, teamComponentA.teamID, teamComponentB.teamID);
 }
-
-TeamSystem.isControlled = function(entityA, entityB) {
-    const teamComponentA = entityA.getComponent(TeamComponent);
-    const teamComponentB = entityB.getComponent(TeamComponent);
-    
-    if(!teamComponentA || !teamComponentB) {
-        console.warn(`TeamComponent does not exist on entity A or B! Returning false...`);
-        return false;
-    }
-    
-    return teamComponentA.masterID === teamComponentB.masterID;
-}

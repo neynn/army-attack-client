@@ -22,7 +22,7 @@ MusicPlayer.prototype.clear = function() {
 }
 
 MusicPlayer.prototype.load = function(musicTypes) {
-    if(typeof musicType === "object") {
+    if(typeof musicTypes === "object") {
         this.musicTypes = musicTypes;
     } else {
         Logger.log(false, "MusicTypes cannot be undefined!", "MusicPlayer.prototype.load", null);

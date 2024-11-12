@@ -25,3 +25,9 @@
 //TODO: Remove "Goals" from UIElement.
 
 //decouple controller, the cancer, from the game. enjoy :)
+//Entity-Init: controller is given with the setup. The entity does NOT know who controls it.
+// => this also means that the entities lose masterID!!!
+
+//TeamSystem does not check for control...
+
+    //TODO: save a list of entities for the controllers. => armyContext.saveEntities();

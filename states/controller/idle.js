@@ -1,5 +1,5 @@
 import { createAttackRequest } from "../../actions/attackAction.js";
-import { CONTROLLER_EVENTS, CONTROLLER_STATES } from "../../enums.js";
+import { CONTROLLER_STATES } from "../../enums.js";
 import { State } from "../../source/state/state.js";
 import { ControllerSystem } from "../../systems/controller.js";
 import { SelectSystem } from "../../systems/select.js";
@@ -22,10 +22,10 @@ ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext,
     }
 
     const entityID = viewportTile.getFirstEntity();
+    const isControlled = controller.hasEntity(entityID);
     const entity = entityManager.getEntity(entityID);
     const isEnemy = TeamSystem.isEntityEnemy(gameContext, entity, controller);
     const isTargetable = TargetSystem.isTargetable(entity);
-    const isControlled = TeamSystem.isControlled(controller, entity);
 
     if(isEnemy && isTargetable) {        
         actionQueue.addAction(createAttackRequest(entityID));
@@ -40,7 +40,7 @@ ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext,
         const isSelectable = SelectSystem.isSelectable(entity);
 
         if(isSelectable) {
-            SelectSystem.selectEntity(entity, gameContext);
+            SelectSystem.selectEntity(gameContext, controller, entity);
             stateMachine.setNextState(CONTROLLER_STATES.ENTITY_SELECTED);
         }
 
@@ -50,10 +50,12 @@ ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext,
 
 ControllerIdleState.prototype.update = function(stateMachine, gameContext) {
     const { actionQueue } = gameContext;
+    const controller = stateMachine.getContext();
 
     if(actionQueue.isRunning()) {
         return;
     }
-
-    ControllerSystem.updateAttackers(gameContext);
+    
+    ControllerSystem.clearAttackers(gameContext, controller);
+    ControllerSystem.updateAttackers(gameContext, controller);
 }

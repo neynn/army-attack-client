@@ -78,3 +78,29 @@ ControllerManager.prototype.update = function(gameContext) {
         controller.update(gameContext);
     }
 }
+
+ControllerManager.prototype.removeEntity = function(entityID) {
+    for(const [controllerID, controller] of this.controllers) {
+        controller.removeEntity(entityID);
+    }
+}
+
+ControllerManager.prototype.addEntity = function(controllerID, entityID) {
+    if(!controllerID || !entityID) {
+        Logger.error(false, "Parameter is undefined!", "ControllerManager.prototype.addEntity", { controllerID, entityID });
+
+        return false;
+    }
+
+    const controller = this.controllers.get(controllerID);
+
+    if(!controller) {
+        Logger.error(false, "Controller does not exist!", "ControllerManager.prototype.addEntity", { controllerID, entityID });
+
+        return false;
+    }
+
+    controller.addEntity(entityID);
+
+    return true;
+}
