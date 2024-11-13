@@ -112,8 +112,6 @@ MapLoader.prototype.unloadMap = function(mapID) {
         this.clearActiveMap();
     }
 
-    loadedMap.clearTiles();
-
     this.loadedMaps.delete(mapID);
 
     return true;

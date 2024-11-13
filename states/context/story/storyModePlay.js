@@ -40,7 +40,7 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
         "type": "blue_guardtower",
         "tileX": 0,
         "tileY": 3,
-        "team": "1",
+        "team": 1,
         "master": "neyn"
     }, "neyn");
 
@@ -48,7 +48,7 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
         "type": "red_battletank",
         "tileX": 4,
         "tileY": 1,
-        "team": "0",
+        "team": 0,
         "master": null
     }, null);
 
@@ -56,7 +56,7 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
         "type": "blue_elite_battery",
         "tileX": 4,
         "tileY": 3,
-        "team": "0",
+        "team": 0,
         "master": null
     }, null);
 
@@ -64,7 +64,7 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
         "type": "blue_commando",
         "tileX": 1,
         "tileY": 3,
-        "team": "1",
+        "team": 1,
         "master": "neyn"
     }, "neyn");
 
@@ -72,7 +72,7 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
         "type": "blue_elite_infantry",
         "tileX": 6,
         "tileY": 5,
-        "team": "1",
+        "team": 1,
         "master": "neyn",
         "components": {
             "Move": {
@@ -85,7 +85,7 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
         "type": "blue_elite_battletank",
         "tileX": 0,
         "tileY": 1,
-        "team": "1",
+        "team": 1,
         "master": "neyn",
         "components": {
             "Move": {

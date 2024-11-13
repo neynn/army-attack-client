@@ -10,7 +10,6 @@ import { ReviveComponent } from "./components/revive.js";
 import { SubTypeComponent } from "./components/subType.js";
 import { TeamComponent } from "./components/team.js";
 import { ACTION_TYPES, CONTEXT_STATES, CONTROLLER_TYPES, ENTITY_ARCHETYPES, GAME_EVENTS, SYSTEM_TYPES } from "./enums.js";
-import { ArmyTile } from "./init/armyTile.js";
 import { buildDefense, buildUnit } from "./init/entities.js";
 import { ActionQueue } from "./source/action/actionQueue.js";
 import { GameContext } from "./source/gameContext.js";
@@ -28,7 +27,6 @@ import { StoryModeIntroState } from "./states/context/story/storyModeIntro.js";
 import { MoveSystem } from "./systems/move.js";
 import { Renderer } from "./source/renderer.js";
 import { PlayerController } from "./init/playerController.js";
-import { SizeComponent } from "./components/size.js";
 import { SpriteComponent } from "./components/sprite.js";
 import { Socket } from "./source/client/network/socket.js";
 
@@ -142,22 +140,11 @@ ArmyContext.prototype.onEntityCreate = function(entity) {
 }
 
 ArmyContext.prototype.onEntityDestroy = function(entity) {
-    const entityID = entity.getID();
-    const activeMap = this.mapLoader.getActiveMap();
-
-    if(!activeMap) {
-        return false;
-    }
-    
-    const positionComponent = entity.getComponent(PositionComponent);
-    const sizeComponent = entity.getComponent(SizeComponent);
     const spriteComponent = entity.getComponent(SpriteComponent);
 
-    const { tileX, tileY } = positionComponent;
-    const { sizeX, sizeY } = sizeComponent;
-
-    activeMap.removePointers(tileX, tileY, sizeX, sizeY, entityID);
     this.spriteManager.removeSprite(spriteComponent.spriteID);
+
+    PlaceSystem.removeEntity(this, entity);
 }
 
 ArmyContext.prototype.initializeTilemap = function(mapID) {
@@ -169,32 +156,27 @@ ArmyContext.prototype.initializeTilemap = function(mapID) {
 
     const settings = this.getConfig("settings");
     const tileTypes = this.getConfig("tileTypes");
+    const teamTypes = this.getConfig("teamTypes");
     const { teamLayerID, typeLayerID } = settings;
 
-    gameMap.loadTiles((map, tileX, tileY, index) => {
-        const tile = new ArmyTile();
-        const team = map.getLayerTile(teamLayerID, tileX, tileY);
-        const type = map.getLayerTile(typeLayerID, tileX, tileY);
-        const tileType = tileTypes[type];
-        
-        if(tileType) {
-            const { passability, autoCapture, hasBorder } = tileType;
+    gameMap.updateTiles((index, tileX, tileY) => {
+        const team = gameMap.getTile(teamLayerID, tileX, tileY);
+        const type = gameMap.getTile(typeLayerID, tileX, tileY);
 
-            tile.hasAutoCapture = autoCapture;
-            tile.hasBorder = hasBorder;
-            tile.passability = passability;
-        } else {
-            console.error(`TileType ${type} at [${tileX},${tileY}] does not exist!`);
+        if(tileTypes[type] === undefined) {
+            console.warn(`TileType ${type} does not exist!`);
+        } 
+
+        if(teamTypes[team] === undefined) {
+            console.warn(`TeamType ${team} does not exist!`);  
         }
-
-        tile.team = team;
-        
-        return tile;
     });
 
-    gameMap.updateTiles((tile, tileX, tileY, index) => {
+    gameMap.updateTiles((index, tileX, tileY) => {
+        const teamID = gameMap.getTile(teamLayerID, tileX, tileY);
+        
         ConquerSystem.updateBorder(this, tileX, tileY);
-        ConquerSystem.convertTileGraphics(this, tileX, tileY, tile.team);
+        ConquerSystem.convertTileGraphics(this, tileX, tileY, teamID);
     });
 
     return true;

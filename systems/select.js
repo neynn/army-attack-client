@@ -15,6 +15,7 @@ SelectSystem.isSelectable = function(entity) {
 SelectSystem.selectEntity = function(gameContext, controller, entity) {
     const { client, spriteManager, tileManager } = gameContext;
     const { soundPlayer } = client;
+    const settings = gameContext.getConfig("settings");
     const controllerComponent  = controller.getComponent(ControllerComponent);
     const nodeList = PathfinderSystem.generateNodeList(gameContext, entity);
 
@@ -39,35 +40,39 @@ SelectSystem.selectEntity = function(gameContext, controller, entity) {
         //flagging would be good.
         if(node.isValid) {
             if(PathfinderSystem.isEmpty(gameContext, positionX, positionY)) {
-                activeMap.placeTile(enableTileID, "overlay", positionX, positionY);
+                activeMap.placeTile(enableTileID, settings.overlayLayerID, positionX, positionY);
             }
         } else {
-            activeMap.placeTile(attackTileID, "overlay", positionX, positionY);
+            activeMap.placeTile(attackTileID, settings.overlayLayerID, positionX, positionY);
         }
 
         ConquerSystem.convertTileGraphics(gameContext, positionX, positionY, 0);
     }
 
     const entitySpriteID = entity.getComponent(SpriteComponent).spriteID;
+
     spriteManager.createChildSprite(entitySpriteID, "cursor_move_1x1", "MOVE_CURSOR");
+    soundPlayer.playRandom(entity.config.sounds.select);
+
     controllerComponent.nodeList = nodeList;
     controllerComponent.selectedEntity = entity.id;
-    soundPlayer.playRandom(entity.config.sounds.select);
 }
 
 SelectSystem.deselectEntity = function(gameContext, controller, entity) {
-    const { spriteManager } = gameContext;
+    const { spriteManager, mapLoader } = gameContext;
+    const settings = gameContext.getConfig("settings");
     const controllerComponent  = controller.getComponent(ControllerComponent);
 
     if(controllerComponent.selectedEntity === null) {
         return;
     }
 
-    const activeMap = gameContext.mapLoader.getActiveMap();
+    const activeMap = mapLoader.getActiveMap();
 
     for(const node of controllerComponent.nodeList) {
         const {positionX, positionY} = node;
-        activeMap.clearTile("overlay", positionX, positionY);
+
+        activeMap.clearTile(settings.overlayLayerID, positionX, positionY);
         ConquerSystem.convertTileGraphics(gameContext, positionX, positionY, 1);
     }
 

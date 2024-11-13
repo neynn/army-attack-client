@@ -31,7 +31,7 @@ TargetSystem.getUniqueEntitiesInRangeOfEntity = function(gameContext, entity, ra
 
     for(let i = startY; i < endY; i++) {
         for(let j = startX; j < endX; j++) {
-            const entityID = activeMap.getTileEntity(j, i);
+            const entityID = activeMap.getFirstEntity(j, i);
 
             if(entityID && !entities.has(entityID)) {
                 entities.add(entityID);
@@ -55,8 +55,7 @@ TargetSystem.getAttackers = function(gameContext, target) {
     }
 
     const settings = gameContext.getConfig("settings");
-    const maxRange = settings.maxAttackRange;
-    const possibleAttackerIDs = TargetSystem.getUniqueEntitiesInRangeOfEntity(gameContext, target, maxRange, true);
+    const possibleAttackerIDs = TargetSystem.getUniqueEntitiesInRangeOfEntity(gameContext, target, settings.maxAttackRange, true);
 
     for(const attackerID of possibleAttackerIDs) {
         const attacker = entityManager.getEntity(attackerID);

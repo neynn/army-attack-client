@@ -10,12 +10,8 @@ FloodFill.createNode = function(g, positionX, positionY, parent) {
     }
 }
 
-FloodFill.getNode = function(list, positionX, positionY, mapWidth, mapHeight) {
-    if(positionX >= mapWidth || positionX < 0 || positionY >= mapHeight || positionY < 0) {
-        return null;
-    }
-
-    return list[positionY * mapWidth + positionX];
+FloodFill.isNodeInBounds = function(positionX, positionY, mapWidth, mapHeight) {
+    return positionX < mapWidth && positionX >= 0 && positionY < mapHeight && positionY >= 0;
 }
 
 FloodFill.getPositionKey = function(positionX, positionY) {
@@ -26,7 +22,7 @@ FloodFill.getFirstEntry = function(map) {
     return map.entries().next().value;
 }
 
-FloodFill.search = function(startX, startY, gLimit, mapWidth, mapHeight, list, onCheck) {
+FloodFill.search = function(startX, startY, gLimit, mapWidth, mapHeight, onCheck) {
     const openNodes = new Map();
     const visitedNodes = new Set();
     const allNodes = [];
@@ -45,7 +41,6 @@ FloodFill.search = function(startX, startY, gLimit, mapWidth, mapHeight, list, o
             return allNodes;
         }
 
-        const matrixNode = FloodFill.getNode(list, positionX, positionY, mapWidth, mapHeight);
         const children = [
             FloodFill.createNode(g + 1, positionX, positionY - 1, node),
             FloodFill.createNode(g + 1, positionX + 1, positionY, node),
@@ -54,21 +49,17 @@ FloodFill.search = function(startX, startY, gLimit, mapWidth, mapHeight, list, o
         ];
 
         for(const childNode of children) {
-            const {positionX, positionY} = childNode;
+            const { positionX, positionY } = childNode;
+            const isChildInBounds = FloodFill.isNodeInBounds(positionX, positionY, mapWidth, mapHeight);
             const childKey = FloodFill.getPositionKey(positionX, positionY);
-            const childMatrixNode = FloodFill.getNode(list, positionX, positionY, mapWidth, mapHeight);
 
-            if(!childMatrixNode || visitedNodes.has(childKey)) {
-                continue;
-            }
-
-            if(openNodes.has(childKey)) {
+            if(!isChildInBounds || visitedNodes.has(childKey) || openNodes.has(childKey)) {
                 continue;
             }
 
             allNodes.push(childNode);
 
-            if(onCheck(childMatrixNode, matrixNode)) {
+            if(onCheck(childNode, node)) {
                 childNode.isValid = true;
                 openNodes.set(childKey, childNode);
             }

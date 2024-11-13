@@ -45,6 +45,7 @@ ControllerSystem.hightlightAttackers = function(gameContext, controller, target,
 
         const positionComponent = attacker.getComponent(PositionComponent);
         const tileID = tileManager.getTileID("overlay", "grid_attack_1x1");
+
         activeMap.placeTile(tileID, settings.overlayLayerID, positionComponent.tileX, positionComponent.tileY);
 
         DirectionSystem.lookAt(attacker, target);
@@ -53,23 +54,22 @@ ControllerSystem.hightlightAttackers = function(gameContext, controller, target,
 }
 
 ControllerSystem.updateAttackers = function(gameContext, controller) {
-    const { x, y } = gameContext.getWorldTilePosition();
-    const tileEntity = gameContext.getTileEntity(x, y);
+    const mouseEntity = gameContext.getMouseEntity();
 
-    if(!tileEntity) {
+    if(!mouseEntity) {
         return;
     }
 
-    const isEnemy = TeamSystem.isEntityEnemy(gameContext, tileEntity, controller);
-    const isTargetable = TargetSystem.isTargetable(tileEntity);
+    const isEnemy = TeamSystem.isEntityEnemy(gameContext, mouseEntity, controller);
+    const isTargetable = TargetSystem.isTargetable(mouseEntity);
 
     if(!isEnemy || !isTargetable) {
         return;
     }
 
-    const attackers = TargetSystem.getAttackers(gameContext, tileEntity);
+    const attackers = TargetSystem.getAttackers(gameContext, mouseEntity);
     
-    ControllerSystem.hightlightAttackers(gameContext, controller, tileEntity, attackers);
+    ControllerSystem.hightlightAttackers(gameContext, controller, mouseEntity, attackers);
 }
 
 ControllerSystem.updateSelectedEntity = function(gameContext, controller) {
@@ -81,9 +81,9 @@ ControllerSystem.updateSelectedEntity = function(gameContext, controller) {
         return;
     }
 
+    const { x, y } = gameContext.getMouseTile();
     const positionComponent = selectedEntity.getComponent(PositionComponent);
-    const { x, y } = gameContext.getWorldTilePosition();
-
+    
     if(x !== positionComponent.tileX) {
         DirectionSystem.lookHorizontal(selectedEntity, x < positionComponent.tileX);
         MorphSystem.morphHorizontal(selectedEntity);

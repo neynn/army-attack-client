@@ -1,8 +1,6 @@
 import { ArmorComponent } from "../components/armor.js";
 import { AttackComponent } from "../components/attack.js";
-import { PositionComponent } from "../components/position.js";
 import { SpriteComponent } from "../components/sprite.js";
-import { SpriteManager } from "../source/graphics/spriteManager.js";
 import { DirectionSystem } from "./direction.js";
 import { MorphSystem } from "./morph.js";
 
@@ -34,7 +32,6 @@ FireSystem.getDamage = function(gameContext, target, attackers) {
 }
 
 FireSystem.getFatal = function(gameContext, target, attackers) {
-    const { entityManager } = gameContext;
     return false;
 }
 
@@ -61,6 +58,7 @@ FireSystem.endAttack = function(gameContext, attackers) {
     
     for(const attackerID of attackers) {
         const attacker = entityManager.getEntity(attackerID);
+        
         MorphSystem.updateSprite(attacker, "idle");
     }
 }

@@ -34,7 +34,10 @@ SpriteManager.prototype.load = function(spriteTypes) {
     }
 }
 
-SpriteManager.prototype.update = function(gameContext, realTime, deltaTime) {
+SpriteManager.prototype.update = function(gameContext) {
+    const { timer } = gameContext;
+    const realTime = timer.getRealTime();
+    
     this.timestamp = realTime;
     //TODO: Update random sprites! (like desert clouds, ect.)
 }

@@ -12,11 +12,9 @@ TeamSystem.isAllied = function(gameContext, teamIDA, teamIDB) {
         return false;
     }
 
-    if(teamA.allies[teamB.id] || teamB.allies[teamA.id]) {
-        return true;
-    }
+    const isAllied = teamA.allies[teamB.id] || teamB.allies[teamA.id];
 
-    return false;
+    return isAllied;
 }
 
 TeamSystem.isEnemy = function(gameContext, teamIDA, teamIDB) {
@@ -29,14 +27,12 @@ TeamSystem.isEnemy = function(gameContext, teamIDA, teamIDB) {
         return false;
     }
 
-    if(teamA.enemies[teamB.id] || teamB.enemies[teamA.id]) {
-        return true;
-    }
+    const isEnemy = teamA.enemies[teamB.id] || teamB.enemies[teamA.id];
 
-    return false;
+    return isEnemy;
 }
 
-TeamSystem.isTileFriendly = function(gameContext, entity, tileTeamID) {
+TeamSystem.isTeamFriendly = function(gameContext, entity, teamID) {
     const teamComponent = entity.getComponent(TeamComponent);
 
     if(!teamComponent) {
@@ -44,7 +40,7 @@ TeamSystem.isTileFriendly = function(gameContext, entity, tileTeamID) {
         return false;
     }
 
-    return TeamSystem.isAllied(gameContext, teamComponent.teamID, tileTeamID);
+    return TeamSystem.isAllied(gameContext, teamComponent.teamID, teamID);
 }
 
 TeamSystem.isEntityEnemy = function(gameContext, entityA, entityB) {

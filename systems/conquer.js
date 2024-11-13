@@ -15,25 +15,20 @@ ConquerSystem.convertTileGraphics = function(gameContext, tileX, tileY, teamID) 
     const tileConversions = gameContext.getConfig("tileConversions");
 
     for(const layerID in settings.convertableLayers) {
-        const tileID = activeMap.getLayerTile(layerID, tileX, tileY);
-
-        if(tileID === null) {
-            continue;
-        }
-
+        const tileID = activeMap.getTile(layerID, tileX, tileY);
         const conversion = tileConversions[tileID];
 
         if(!conversion) {
             continue;
         }
 
-        const nextTileID = conversion[teamID];
+        const convertedTileID = conversion[teamID];
 
-        if(!tileManager.hasTileMeta(nextTileID)) {
+        if(!tileManager.hasTileMeta(convertedTileID)) {
             continue;
         }
 
-        activeMap.placeTile(nextTileID, layerID, tileX, tileY);
+        activeMap.placeTile(convertedTileID, layerID, tileX, tileY);
     }
 
     return true;
@@ -42,6 +37,7 @@ ConquerSystem.convertTileGraphics = function(gameContext, tileX, tileY, teamID) 
 ConquerSystem.updateBorder = function(gameContext, tileX, tileY) {
     const { mapLoader, tileManager, controllerManager } = gameContext;
     const settings = gameContext.getConfig("settings");
+    const tileTypes = gameContext.getConfig("tileTypes");
     const controller = controllerManager.getController("neyn"); //TODOOOOOO!!!
 
     if(!settings.drawBorder) {
@@ -54,25 +50,30 @@ ConquerSystem.updateBorder = function(gameContext, tileX, tileY) {
         return false;
     }
 
-    const centerTile = activeMap.getTile(tileX, tileY);
+    const centerTypeID = activeMap.getTile(settings.typeLayerID, tileX, tileY);
+    const centerTeamID = activeMap.getTile(settings.teamLayerID, tileX, tileY);
+    const centerType = tileTypes[centerTypeID];
 
-    if(!centerTile || !centerTile.hasBorder) {
+    if(!centerType || !centerType.hasBorder) {
         return false;
     }
 
-    if(!TeamSystem.isTileFriendly(gameContext, controller, centerTile.team)) {
+    if(!TeamSystem.isTeamFriendly(gameContext, controller, centerTeamID)) {
         return false;
     }
 
     const autoIndex = Autotiler.autotile8Bits(tileX, tileY, (center, neighbor) => {
-        const neighborTile = activeMap.getTile(neighbor.x, neighbor.y);
+        const neighborTeamID = activeMap.getTile(settings.teamLayerID, neighbor.x, neighbor.y);
 
-        if(!neighborTile || !neighborTile.hasBorder) {
+        if(neighborTeamID !== centerTeamID) {
             return 0;
         }
 
-        if(neighborTile.team !== centerTile.team) {
-            return 0;
+        const neighborTypeID = activeMap.getTile(settings.typeLayerID, neighbor.x, neighbor.y);
+        const neighborType = tileTypes[neighborTypeID];
+
+        if(!neighborType || !neighborType.hasBorder) {
+            return 0; 
         }
 
         return 1;

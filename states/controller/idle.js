@@ -16,13 +16,13 @@ ControllerIdleState.prototype.constructor = ControllerIdleState;
 ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext) {
     const controller = stateMachine.getContext();
     const { entityManager, actionQueue } = gameContext;
-    const mouseTile = gameContext.getWorldTile();
+    const mouseEntity = gameContext.getMouseEntity();
 
-    if(!mouseTile || !mouseTile.isOccupied()) {
+    if(!mouseEntity) {
         return;
     }
 
-    const entityID = mouseTile.getFirstEntity();
+    const entityID = mouseEntity.getID();
     const isControlled = controller.hasEntity(entityID);
     const entity = entityManager.getEntity(entityID);
     const isEnemy = TeamSystem.isEntityEnemy(gameContext, entity, controller);
@@ -42,6 +42,7 @@ ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext)
 
         if(isSelectable) {
             SelectSystem.selectEntity(gameContext, controller, entity);
+            
             stateMachine.setNextState(CONTROLLER_STATES.ENTITY_SELECTED);
         }
 

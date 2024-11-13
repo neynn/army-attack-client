@@ -46,7 +46,7 @@ PlayerController.prototype.addMoveEvent = function(gameContext, sprite) {
     const { cursor } = client;
 
     cursor.events.subscribe(Cursor.MOVE, this.id, (deltaX, deltaY) => {
-        const viewportTile = gameContext.getWorldTilePosition();
+        const viewportTile = gameContext.getMouseTile();
         const centerPosition = tileToPosition_center(viewportTile.x, viewportTile.y);
 
         sprite.setPosition(centerPosition.x, centerPosition.y);

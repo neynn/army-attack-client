@@ -13,13 +13,9 @@ PathfinderSystem.isEmpty = function(gameContext, targetX, targetY) {
         return false;
     }
 
-    const tile = activeMap.getTile(targetX, targetY);
+    const isEmpty = !activeMap.isTileOccupied(targetX, targetY);
 
-    if(!tile) {
-        return false;
-    }
-
-    return !tile.isOccupied();
+    return isEmpty;
 }
 
 PathfinderSystem.generateNodeList = function(gameContext, entity) {
@@ -36,29 +32,38 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
 
     const settings = gameContext.getConfig("settings");
     const teamTypes = gameContext.getConfig("teamTypes");
+    const tileTypes = gameContext.getConfig("tileTypes");
+    
     const entityAllies = teamTypes[teamComponent.teamID].allies;
     const entityEnemies = teamTypes[teamComponent.teamID].enemies;
 
-    const nodeList = FloodFill.search(positionComponent.tileX, positionComponent.tileY, moveComponent.range, activeMap.width, activeMap.height, activeMap.tiles, (next, previous) => {
-        if(!moveComponent.passability[next.passability]) {
+    const nodeList = FloodFill.search(positionComponent.tileX, positionComponent.tileY, moveComponent.range, activeMap.width, activeMap.height, (child, parent) => {
+        const childTypeID = activeMap.getTile(settings.typeLayerID, child.positionX, child.positionY);
+        const childTileType = tileTypes[childTypeID];
+
+        if(!moveComponent.passability[childTileType.passability]) {
             return false;
         }
         
-        if(!entityAllies[previous.team] && !moveComponent.isStealth || moveComponent.isCoward) {
+        const parentTeamID = activeMap.getTile(settings.teamLayerID, parent.positionX, parent.positionY);
+
+        if(!entityAllies[parentTeamID] && !moveComponent.isStealth || moveComponent.isCoward) {
             return false;
         }
 
-        if(next.isOccupied()) {
-            const occupyEntity = entityManager.getEntity(next.getFirstEntity());
+        const entityID = activeMap.getFirstEntity(child.positionX, child.positionY);
+
+        if(entityID) {
+            const occupyEntity = entityManager.getEntity(entityID);
             const occupyTeamComponent = occupyEntity.getComponent(TeamComponent);
-                
-            if(entityEnemies[occupyTeamComponent.teamID]) {
+            const isEnemy = entityEnemies[occupyTeamComponent.teamID];
+            const isAlly = entityAllies[occupyTeamComponent.teamID];
+
+            if(isEnemy) {
                 if(!moveComponent.isCloaked) {
                     return false;
                 }
-            }
-
-            if(entityAllies[occupyTeamComponent.teamID]) {
+            } else if(isAlly) {
                 if(!moveComponent.isAvian) {
                     const occupyMoveComponent = occupyEntity.getComponent(MoveComponent);
 
@@ -75,20 +80,12 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
     return nodeList;
 }
 
-/**
- * Creates a flat list out of the node tree.
- * Reverses that list and calculates (deltaX, deltaY).
- * Does not include the origin point.
- * 
- * @param {*} nodeList 
- * @param {*} index 
- * @returns 
- */
 PathfinderSystem.generateMovePath = function(nodeList, index) {
     const targetNode = nodeList[index];
     const flatTree = FloodFill.flatten(targetNode);
     const path = [];
 
+    // i > 0 to exclude the origin point!
     for(let i = flatTree.length - 1; i > 0; i--) {
         const direction = {
             "deltaX": flatTree[i - 1].positionX - flatTree[i].positionX,
@@ -103,7 +100,7 @@ PathfinderSystem.generateMovePath = function(nodeList, index) {
 
 PathfinderSystem.getTargetIndex = function(nodeList, targetX, targetY) {
     for(let i = 0; i < nodeList.length; i++) {
-        const {positionX, positionY, isValid} = nodeList[i];
+        const { positionX, positionY, isValid } = nodeList[i];
 
         if(targetX === positionX && targetY === positionY) {
             if(!isValid) {
@@ -122,6 +119,7 @@ PathfinderSystem.getPath = function(nodeList, targetX, targetY) {
 
     if(index !== null) {
         const path = PathfinderSystem.generateMovePath(nodeList, index);
+
         return path;
     }
 

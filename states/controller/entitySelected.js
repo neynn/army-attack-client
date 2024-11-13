@@ -15,35 +15,32 @@ ControllerEntitySelectedState.prototype = Object.create(State.prototype);
 ControllerEntitySelectedState.prototype.constructor = ControllerEntitySelectedState;
 
 ControllerEntitySelectedState.prototype.onEventEnter = function(stateMachine, gameContext) {
-    const controller = stateMachine.getContext();
     const { entityManager, client, actionQueue } = gameContext;
     const { soundPlayer } = client;
+
+    const controller = stateMachine.getContext();
     const controllerComponent = controller.getComponent(ControllerComponent);
     const selectedEntityID = controllerComponent.selectedEntity;
     const selectedEntity = entityManager.getEntity(selectedEntityID);
-    const mouseTile = gameContext.getWorldTile();
 
-    if(!mouseTile) {
-        return;
-    }
+    const { x, y } = gameContext.getMouseTile();
+    const mouseEntity = gameContext.getTileEntity(x, y);
 
-    if(mouseTile.isOccupied()) {
-        const tileEntityID = mouseTile.getFirstEntity();
-        const tileEntity = entityManager.getEntity(tileEntityID);
-        const isEnemy = TeamSystem.isEntityEnemy(gameContext, controller, tileEntity);
+    if(mouseEntity) {
+        const mouseEntityID = mouseEntity.getID();
+        const isEnemy = TeamSystem.isEntityEnemy(gameContext, controller, mouseEntity);
 
         if(isEnemy) {
-            actionQueue.addAction(createAttackRequest(tileEntityID));
+            actionQueue.addAction(createAttackRequest(mouseEntityID));
         } else {
             soundPlayer.playSound("sound_error", 0.5);
         }
     } else {
-        const { x, y } = gameContext.getWorldTilePosition();
-
         actionQueue.addAction(createMoveRequest(selectedEntityID, x, y));
     }
 
     SelectSystem.deselectEntity(gameContext, controller, selectedEntity);
+    
     stateMachine.setNextState(CONTROLLER_STATES.IDLE);
 }
 

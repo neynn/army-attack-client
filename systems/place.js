@@ -11,10 +11,11 @@ PlaceSystem.placeEntity = function(gameContext, entity) {
         return false;
     }
 
+    const entityID = entity.getID();
     const positionComponent = entity.getComponent(PositionComponent);
     const sizeComponent = entity.getComponent(SizeComponent);
 
-    activeMap.setPointers(positionComponent.tileX, positionComponent.tileY, sizeComponent.sizeX, sizeComponent.sizeY, entity.id);
+    activeMap.addEntity(positionComponent.tileX, positionComponent.tileY, sizeComponent.sizeX, sizeComponent.sizeY, entityID);
 
     return true;
 }
@@ -27,10 +28,11 @@ PlaceSystem.removeEntity = function(gameContext, entity) {
         return false;
     }
 
+    const entityID = entity.getID();
     const positionComponent = entity.getComponent(PositionComponent);
     const sizeComponent = entity.getComponent(SizeComponent);
 
-    activeMap.removePointers(positionComponent.tileX, positionComponent.tileY, sizeComponent.sizeX, sizeComponent.sizeY, entity.id);
+    activeMap.removeEntity(positionComponent.tileX, positionComponent.tileY, sizeComponent.sizeX, sizeComponent.sizeY, entityID);
 
     return true;
 }

@@ -9,9 +9,91 @@ export const Map2D = function(id) {
     this.backgroundLayers = [];
     this.foregroundLayers = [];
     this.metaLayers = [];
-    this.tiles = [];
     this.entities = [];
     this.flags = {};
+    this.entityTiles = new Map();
+}
+
+Map2D.prototype.getID = function() {
+    return this.id;
+}
+
+Map2D.prototype.setPointer = function(entityID, tileX, tileY) {
+    if(this.isTileOutOfBounds(tileX, tileY)) {
+        return false;
+    }
+
+    const index = tileY * this.width + tileX;
+    const entityList = this.entityTiles.get(index);
+    
+    if(!entityList) {
+        this.entityTiles.set(index, new Set([entityID]));
+    } else {
+        entityList.add(entityID);
+    }
+
+    return true;
+}
+
+Map2D.prototype.removePointer = function(entityID, tileX, tileY) {
+    if(this.isTileOutOfBounds(tileX, tileY)) {
+        return false;
+    }
+
+    const index = tileY * this.width + tileX;
+    const entityList = this.entityTiles.get(index);
+
+    if(!entityList) {
+        return false;
+    }
+
+    entityList.delete(entityID);
+
+    if(entityList.size === 0) {
+        this.entityTiles.delete(index);
+    }
+
+    return true;
+}
+
+Map2D.prototype.getEntityList = function(tileX, tileY) {
+    if(this.isTileOutOfBounds(tileX, tileY)) {
+        return null;
+    }
+
+    const index = tileY * this.width + tileX;
+    const entityList = this.entityTiles.get(index);
+
+    if(!entityList) {
+        return null;
+    }
+
+    return entityList;
+}
+
+Map2D.prototype.getFirstEntity = function(tileX, tileY) {
+    if(this.isTileOutOfBounds(tileX, tileY)) {
+        return null;
+    }
+
+    const index = tileY * this.width + tileX;
+    const entityList = this.entityTiles.get(index);
+
+    if(!entityList) {
+        return null;
+    }
+
+    const iterator = entityList.values();
+    const firstEntity = iterator.next().value;
+    
+    return firstEntity;
+}
+
+Map2D.prototype.isTileOccupied = function(tileX, tileY) {
+    const index = tileY * this.width + tileX;
+    const isOccupied = this.entityTiles.has(index) && this.entityTiles.get(index).size > 0;
+
+    return isOccupied;
 }
 
 Map2D.prototype.getAutoGeneratingLayers = function() {
@@ -83,36 +165,6 @@ Map2D.prototype.setLayerOpacity = function(layerID, opacity) {
 
     return false;
 } 
-
-Map2D.prototype.getSurroundingTiles = function(directions) {
-    const tiles = {};
-
-    for(const directionID in directions) {
-        const { x, y } = directions[directionID];
-        const tile = this.getTile(x, y);
-        
-        tiles[directionID] = tile;
-    }
-
-    return tiles;
-}
-
-Map2D.prototype.getSurroundingLayerTiles = function(layerID, directions) {
-    const tiles = {};
-
-    for(const directionID in directions) {
-        const { x, y } = directions[directionID];
-        const tile = this.getLayerTile(layerID, x, y);
-        
-        tiles[directionID] = tile;
-    }
-
-    return tiles;
-}
-
-Map2D.prototype.getID = function() {
-    return this.id;
-}
 
 Map2D.prototype.resizeLayer = function(layerID, width, height, fill) {
     const oldLayer = this.layers[layerID];
@@ -196,7 +248,7 @@ Map2D.prototype.isTileOutOfBounds = function(tileX, tileY) {
     return tileX < 0 || tileX >= this.width || tileY < 0 || tileY >= this.height;
 }
 
-Map2D.prototype.getLayerTile = function(layerID, tileX, tileY) {
+Map2D.prototype.getTile = function(layerID, tileX, tileY) {
     const layer = this.layers[layerID];
 
     if(!layer) {
@@ -214,105 +266,38 @@ Map2D.prototype.getLayerTile = function(layerID, tileX, tileY) {
     return layer[index];
 }
 
-Map2D.prototype.getTile = function(tileX, tileY) {
-    if(this.isTileOutOfBounds(tileX, tileY)) {
-        return null;
-    }
-
-    const index = tileY * this.width + tileX;
-
-    return this.tiles[index];
-}
-
-Map2D.prototype.getTileEntity = function(tileX, tileY) {
-    if(this.isTileOutOfBounds(tileX, tileY)) {
-        return null;
-    }
-
-    const index = tileY * this.width + tileX;
-    const tile = this.tiles[index];
-    
-    if(!tile) {
-        return null;
-    }
-    
-    return tile.getFirstEntity();
-}
-
-Map2D.prototype.removePointers = function(tileX, tileY, rangeX, rangeY, pointer) {
+Map2D.prototype.removeEntity = function(tileX, tileY, rangeX, rangeY, pointer) {
     for(let i = 0; i < rangeY; i++) {
         const locationY = tileY + i;
 
         for(let j = 0; j < rangeX; j++) {
             const locationX = tileX + j;
-            const tile = this.getTile(locationX, locationY);
-            
-            if(!tile) {
-                console.warn(`Tile [${locationY}][${locationX}] does not exist! Continuing...`);
-                continue;
-            }
 
-            tile.removeEntity(pointer);
+            this.removePointer(pointer, locationX, locationY);
         }
     }
 }
 
-Map2D.prototype.setPointers = function(tileX, tileY, rangeX, rangeY, pointer) {
+Map2D.prototype.addEntity = function(tileX, tileY, rangeX, rangeY, pointer) {
     for(let i = 0; i < rangeY; i++) {
         const locationY = tileY + i;
 
         for(let j = 0; j < rangeX; j++) {
             const locationX = tileX + j;
-            const tile = this.getTile(locationX, locationY);
-            
-            if(!tile) {
-                console.warn(`Tile [${locationY}][${locationX}] does not exist! Continuing...`);
-                continue;
-            }
 
-            tile.addEntity(pointer);
+            this.setPointer(pointer, locationX, locationY);
         }
     }
 }
 
 Map2D.prototype.updateTiles = function(onUpdate) {
-    if(this.tiles.length === 0) {
-        console.warn(`Tiles for map ${this.id} are not loaded!`);
-        return;
-    }
-
     for(let i = 0; i < this.height; i++) {
         const row = i * this.width;
 
         for(let j = 0; j < this.width; j++) {
             const index = row + j;
-            const tile = this.tiles[index];
 
-            onUpdate(tile, j, i, index);
+            onUpdate(index, j, i);
         }
     }
-}
-
-Map2D.prototype.loadTiles = function(onLoad) {
-    if(this.tiles.length !== 0) {
-        console.warn(`Tiles for map ${this.id} are already loaded!`);
-        return;
-    }
-
-    this.tiles = [];
-
-    for(let i = 0; i < this.height; i++) {
-        const row = i * this.width;
-
-        for(let j = 0; j < this.width; j++) {
-            const index = row + j;
-            const tile = onLoad(this, j, i, index);
-
-            this.tiles[index] = tile;
-        }
-    }
-}
-
-Map2D.prototype.clearTiles = function() {
-    this.tiles = [];
 }

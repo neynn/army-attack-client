@@ -175,7 +175,7 @@ MapEditor.prototype.setBrush = function(brush = null) {
 
 MapEditor.prototype.swapFlag = function(gameContext, mapID, layerID) {
     const { mapLoader } = gameContext;
-    const cursorTile = gameContext.getWorldTilePosition();
+    const cursorTile = gameContext.getMouseTile();
     const gameMap = mapLoader.getLoadedMap(mapID);
 
     if(!gameMap) {
@@ -189,7 +189,7 @@ MapEditor.prototype.swapFlag = function(gameContext, mapID, layerID) {
 
     for(let i = startY; i <= endY; i++) {
         for(let j = startX; j <= endX; j++) {
-            const flag = gameMap.getLayerTile(layerID, j, i);
+            const flag = gameMap.getTile(layerID, j, i);
             gameMap.placeTile(!flag, layerID, j, i);
         }
     }
@@ -199,7 +199,7 @@ MapEditor.prototype.swapFlag = function(gameContext, mapID, layerID) {
 
 MapEditor.prototype.paint = function(gameContext, mapID, layerID) {
     const { mapLoader } = gameContext;
-    const cursorTile = gameContext.getWorldTilePosition();
+    const cursorTile = gameContext.getMouseTile();
     const gameMap = mapLoader.getLoadedMap(mapID);
     const brush = this.getBrush();
 

@@ -147,11 +147,11 @@ const initializeMapEditor = function(mapEditor, gameContext) {
             return;
         }
 
-        const {x, y} = gameContext.getWorldTilePosition();
+        const {x, y} = gameContext.getMouseTile();
         const tileTypes = gameContext.getConfig("tileTypes");
 
         const tileTypesKeys = Object.keys(tileTypes);
-        const currentID = gameMap.getLayerTile("type", x, y);
+        const currentID = gameMap.getTile("type", x, y);
         const currentIndex = tileTypesKeys.indexOf(currentID);
         const nextIndex = loopValue(currentIndex + 1, tileTypesKeys.length - 1, 0);
         const nextID = tileTypesKeys[nextIndex];
@@ -181,7 +181,7 @@ const initializeMapEditor = function(mapEditor, gameContext) {
     }
 
     renderer.events.subscribe(Renderer.EVENT_CAMERA_FINISH, MAP_EDITOR_ID, (renderer, camera) => {
-        const cursorTile = gameContext.getWorldTilePosition();
+        const cursorTile = gameContext.getMouseTile();
         const brush = mapEditor.getBrush();
         const brushSize = mapEditor.getBrushSize();
 

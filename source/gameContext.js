@@ -46,8 +46,8 @@ export const GameContext = function(fps = 60) {
     }
 
     this.timer.renderFunction = (realTime, deltaTime) => {
-        this.spriteManager.update(this, realTime, deltaTime);
-        this.tileManager.update(this, realTime, deltaTime);
+        this.spriteManager.update(this);
+        this.tileManager.update(this);
         this.uiManager.update(this);
         this.renderer.update(this);
     }
@@ -130,7 +130,7 @@ GameContext.prototype.getCameraAtMouse = function() {
     return camera;
 }
 
-GameContext.prototype.getWorldTilePosition = function() {
+GameContext.prototype.getMouseTile = function() {
     const camera = this.getCameraAtMouse();
 
     if(!camera) {
@@ -140,22 +140,9 @@ GameContext.prototype.getWorldTilePosition = function() {
         }
     }
 
-    const worldTile = camera.screenToWorldTile(this.client.cursor.position.x, this.client.cursor.position.y);
+    const mouseTile = camera.screenToWorldTile(this.client.cursor.position.x, this.client.cursor.position.y);
 
-    return worldTile;
-}
-
-GameContext.prototype.getWorldTile = function() {
-    const gameMap = this.mapLoader.getActiveMap();
-
-    if(!gameMap) {
-        return null;
-    }
-
-    const { x, y } = this.getWorldTilePosition();
-    const viewportTile = gameMap.getTile(x, y);
-
-    return viewportTile;
+    return mouseTile;
 }
 
 GameContext.prototype.getTileEntity = function(tileX, tileY) {
@@ -165,15 +152,16 @@ GameContext.prototype.getTileEntity = function(tileX, tileY) {
         return null;
     }
 
-    const tile = activeMap.getTile(tileX, tileY);
-
-    if(!tile) {
-        return null;
-    }
-
-    const entityID = tile.getFirstEntity();
-
+    const entityID = activeMap.getFirstEntity(tileX, tileY);
+    
     return this.entityManager.getEntity(entityID);
+}
+
+GameContext.prototype.getMouseEntity = function() {
+    const { x, y } = this.getMouseTile();
+    const mouseEntity = this.getTileEntity(x, y);
+    
+    return mouseEntity;
 }
 
 GameContext.prototype.createController = function(payload) {

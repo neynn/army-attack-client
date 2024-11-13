@@ -21,7 +21,10 @@ TileManager.prototype.load = function(tileTypes, tileMeta) {
     }
 }
 
-TileManager.prototype.update = function(gameContext, realTime, deltaTime) {
+TileManager.prototype.update = function(gameContext) {
+    const { timer } = gameContext;
+    const realTime = timer.getRealTime();
+
     this.updateTileTypes(realTime);
 }
 
