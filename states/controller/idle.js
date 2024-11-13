@@ -13,15 +13,16 @@ export const ControllerIdleState = function() {
 ControllerIdleState.prototype = Object.create(State.prototype);
 ControllerIdleState.prototype.constructor = ControllerIdleState;
 
-ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext, viewportTile) {
+ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext) {
     const controller = stateMachine.getContext();
     const { entityManager, actionQueue } = gameContext;
+    const mouseTile = gameContext.getWorldTile();
 
-    if(!viewportTile.isOccupied()) {
+    if(!mouseTile || !mouseTile.isOccupied()) {
         return;
     }
 
-    const entityID = viewportTile.getFirstEntity();
+    const entityID = mouseTile.getFirstEntity();
     const isControlled = controller.hasEntity(entityID);
     const entity = entityManager.getEntity(entityID);
     const isEnemy = TeamSystem.isEntityEnemy(gameContext, entity, controller);

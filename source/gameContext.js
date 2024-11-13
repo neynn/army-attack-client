@@ -14,6 +14,7 @@ import { SystemManager } from "./system/systemManager.js";
 import { TileManager } from "./tile/tileManager.js";
 import { Renderer } from "./renderer.js";
 import { ControllerManager } from "./controller/controllerManager.js";
+import { QuestManager } from "./questManager.js";
 
 export const GameContext = function(fps = 60) {
     this.config = {};
@@ -22,6 +23,7 @@ export const GameContext = function(fps = 60) {
     this.renderer = new Renderer();
     this.timer = new Timer(fps);
     this.mapLoader = new MapLoader();
+    this.questManager = new QuestManager();
     this.controllerManager = new ControllerManager();
     this.tileManager = new TileManager();
     this.spriteManager = new SpriteManager();

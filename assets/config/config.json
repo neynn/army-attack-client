@@ -80,10 +80,62 @@
         "Shore": { "id": "Shore" }
     },
     "teamTypes": {
-        "0": {"id": 0, "name": "#CONFIG_TEAM_CRIMSON", "color": "#ff0000", "allies": {"0": true, "2": true}, "enemies": {"1": true, "3": true}, "sprites": {"statCard": "unit_stat_card_bad"}},
-        "1": {"id": 1, "name": "#CONFIG_TEAM_ALLIES", "color": "#0000ff", "allies": {"1": true, "2": true}, "enemies": {"0": true, "3": true}, "sprites": {"statCard": "unit_stat_card_good"}},
-        "2": {"id": 2, "name": "#CONFIG_TEAM_NEUTRAL", "color": "#00ff00", "allies": {}, "enemies": {}, "sprites": {}},
-        "3": {"id": 3, "name": "#CONFIG_TEAM_ANGRY", "color": "#000000", "allies": {}, "enemies": {"0": true, "1": true}, "sprites": {}}
+        "0": {"id": 0, "name": "#CONFIG_TEAM_CRIMSON", "allies": {"0": true, "2": true}, "enemies": {"1": true, "3": true}, "sprites": {"statCard": "unit_stat_card_bad"}},
+        "1": {"id": 1, "name": "#CONFIG_TEAM_ALLIES", "allies": {"1": true, "2": true}, "enemies": {"0": true, "3": true}, "sprites": {"statCard": "unit_stat_card_good"}},
+        "2": {"id": 2, "name": "#CONFIG_TEAM_NEUTRAL", "allies": {}, "enemies": {}, "sprites": {}},
+        "3": {"id": 3, "name": "#CONFIG_TEAM_ANGRY", "allies": {}, "enemies": {"0": true, "1": true}, "sprites": {}}
+    },
+    "ObjectiveType": {
+        "Select": { "ID":"Select", "Type":"Client" },
+        "Conquer": { "ID":"Conquer", "Type":"Counter" },
+        "Destroy": { "ID":"Destroy", "Type":"Counter" },
+        "Collect": { "ID":"Collect", "Type":"Counter" },
+        "Close": { "ID":"Close", "Type":"Client" },
+        "CollectIntel": { "ID":"CollectIntel", "Type":"Client" },
+        "Buy": { "ID":"Buy", "Type":"Counter" },
+        "Build": { "ID":"Build", "Type":"Counter" },
+        "Clear": { "ID":"Clear", "Type":"Counter" },
+        "Recapture": { "ID":"Recapture", "Type":"Counter" },
+        "Stockpile": { "ID":"Stockpile", "Type":"ResourcesConsume" },
+        "StartProducing": { "ID":"StartProducing", "Type":"Counter" },
+        "KillWith": { "ID":"KillWith", "Type":"Counter" },
+        "Scroll": { "ID":"Scroll", "Type":"Client" },
+        "Repair": { "ID":"Repair", "Type":"Counter" },
+        "Own": { "ID":"Own", "Type":"Resources" },
+        "CompleteBuilding": { "ID":"CompleteBuilding", "Type":"Counter" },
+        "Control": { "ID":"Control", "Type":"Control" },
+        "HelpNeighborClear": { "ID":"HelpNeighborClear", "Type":"Counter" },
+        "HelpNeighborCollect": { "ID":"HelpNeighborCollect", "Type":"Counter" },
+        "HelpNeighborUnwither": { "ID":"HelpNeighborUnwither", "Type":"Counter" },
+        "HelpNeighborSpeedUp": { "ID":"HelpNeighborSpeedUp", "Type":"Counter" },
+        "HelpNeighborSuppress": { "ID":"HelpNeighborSuppress", "Type":"Counter" },
+        "HelpNeighborTrain": { "ID":"HelpNeighborTrain", "Type":"Counter" },
+        "Visit": { "ID":"Visit", "Type":"Counter" },
+        "Neighbors": { "ID":"Neighbors", "Type":"Counter" },
+        "StockpileItems": { "ID":"StockpileItems", "Type":"ItemsConsume" },
+        "OwnItems": { "ID":"OwnItems", "Type":"Items" },
+        "DestroyTarget": { "ID":"DestroyTarget", "Type":"Client" },
+        "Intro": { "ID":"Intro", "Type":"Client" },
+        "ActivateRepair": { "ID":"ActivateRepair", "Type":"Client" },
+        "OpenShop": { "ID":"OpenShop", "Type":"Client" },
+        "OpenHFEShop": { "ID":"OpenHFEShop", "Type":"Client" },
+        "Zoom": { "ID":"Zoom", "Type":"Client" },
+        "DestroyWithMultiple": { "ID":"DestroyWithMultiple", "Type":"Counter" },
+        "Place": { "ID":"Place", "Type":"Counter" },
+        "FullScreen": { "ID":"FullScreen", "Type":"Client" },
+        "Milestone": { "ID":"Milestone", "Type":"Milestone" },
+        "OpenMap": { "ID":"OpenMap", "Type":"Client" },
+        "PvpTutorial": { "ID":"PvpTutorial", "Type":"Client" },
+        "PvPDestroy": { "ID":"PvPDestroy", "Type":"Client" },
+        "PvPPickUpPowerUp": { "ID":"PvPPickUpPowerUp", "Type":"Client" },
+        "PvPUseBoosters": { "ID":"PvPUseBoosters", "Type":"Counter" },
+        "PvPWinInXOrLessTurns": { "ID":"PvPWinInXOrLessTurns", "Type":"Client" },
+        "PvPWinWithXOrLessUnits": { "ID":"PvPWinWithXOrLessUnits", "Type":"Client" },
+        "PvPWinX": { "ID":"PvPWinX", "Type":"Counter" },
+        "PvPGainResources": { "ID":"PvPGainResources", "Type":"Counter" },
+        "OpenMission": { "ID":"OpenMission", "Type":"Client" },
+        "OpenItemTab": { "ID":"OpenItemTab", "Type":"Client" },
+        "OpenBuilding": { "ID":"OpenBuilding", "Type":"Client" }
     },
     "tileConversions": {
         "ground": {
@@ -193,7 +245,11 @@
             "Bg_RiverTile_05": {"0": ["river_bad", "Bg_BadRiverTile_05"], "1": ["river_good", "Bg_RiverTile_05"]}
         }
     },
-    "collections": {
+    "rewardTypes": {
+        "Resource": { "id": "Resource", "reference": "resourceTypes" },
+        "Item": { "id": "Item", "reference": "itemTypes" }
+    },
+    "collectionTypes": {
         "collection_scout": {
             "id": "collection_scout",
             "name": "#CONFIG_COLLECTION_SCOUT",
@@ -312,7 +368,7 @@
             "rewards": []
         }
     },
-    "items": {
+    "itemTypes": {
         "apc_ammo_shells": { "id": "apc_ammo_shells", "icon": "apc_ammo_shells", "collection": "collection_apc", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
         "apc_blueprints": { "id": "apc_blueprints", "icon": "apc_blueprints", "collection": "collection_apc", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
         "apc_duct_tape": { "id": "apc_duct_tape", "icon": "apc_duct_tape", "collection": "collection_apc", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
@@ -471,7 +527,7 @@
             ]
         }
     },
-    "shopItems": {
+    "shopItemTypes": {
         "blue_infantry": { "id": "blue_infantry", "type": "Entity", "icon": "icon_units_infantry", "buyResource": "Money", "buyValue": 1500, "sellResouce": "Money", "sellValue": 150 },
         "blue_elite_infantry": { "id": "blue_elite_infantry", "type": "Entity", "icon": "icon_units_premium_infantry", "buyResource": "Gold", "buyValue": 30, "sellResouce": "Money", "sellValue": 3000 },
         "blue_tank": { "id": "blue_tank", "type": "Entity", "icon": "icon_units_apc", "buyResource": "Money", "buyValue": 5000, "sellResouce": "Money", "sellValue": 500 },
@@ -483,7 +539,7 @@
         "blue_battery": { "id": "blue_battery", "type": "Entity", "icon": "icon_units_rocket_battery", "buyResource": "Money", "buyValue": 30000, "sellResouce": "Money", "sellValue": 3000 },
         "blue_elite_battery": { "id": "blue_elite_battery", "type": "Entity", "icon": "icon_units_premium_rocket_battery", "buyResource": "Gold", "buyValue": 200, "sellResouce": "Money", "sellValue": 20000 }
     },
-    "fireCalls": {
+    "fireCallTypes": {
         "mortar": { 
             "id": "mortar",
             "dimX": 1, "dimY": 1, "dimZ": 1,

@@ -14,16 +14,21 @@ export const ControllerEntitySelectedState = function() {
 ControllerEntitySelectedState.prototype = Object.create(State.prototype);
 ControllerEntitySelectedState.prototype.constructor = ControllerEntitySelectedState;
 
-ControllerEntitySelectedState.prototype.onEventEnter = function(stateMachine, gameContext, viewportTile) {
+ControllerEntitySelectedState.prototype.onEventEnter = function(stateMachine, gameContext) {
     const controller = stateMachine.getContext();
     const { entityManager, client, actionQueue } = gameContext;
     const { soundPlayer } = client;
     const controllerComponent = controller.getComponent(ControllerComponent);
     const selectedEntityID = controllerComponent.selectedEntity;
     const selectedEntity = entityManager.getEntity(selectedEntityID);
+    const mouseTile = gameContext.getWorldTile();
 
-    if(viewportTile.isOccupied()) {
-        const tileEntityID = viewportTile.getFirstEntity();
+    if(!mouseTile) {
+        return;
+    }
+
+    if(mouseTile.isOccupied()) {
+        const tileEntityID = mouseTile.getFirstEntity();
         const tileEntity = entityManager.getEntity(tileEntityID);
         const isEnemy = TeamSystem.isEntityEnemy(gameContext, controller, tileEntity);
 

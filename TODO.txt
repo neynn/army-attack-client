@@ -29,5 +29,4 @@
 // => this also means that the entities lose masterID!!!
 
 //TeamSystem does not check for control...
-
-    //TODO: save a list of entities for the controllers. => armyContext.saveEntities();
+//TODO: save a list of entities for the controllers. => armyContext.saveEntities();

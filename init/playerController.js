@@ -6,7 +6,7 @@ import { SpriteManager } from "../source/graphics/spriteManager.js";
 import { ControllerBuildState } from "../states/controller/build.js";
 import { ControllerEntitySelectedState } from "../states/controller/entitySelected.js";
 import { ControllerIdleState } from "../states/controller/idle.js";
-import { componentSetup } from "./components.js";
+import { componentSetup } from "./componentSetup.js";
 
 export const PlayerController = function(id) {
     Controller.call(this, id);
@@ -34,10 +34,9 @@ PlayerController.prototype.addClickEvent = function(gameContext) {
 
     cursor.events.subscribe(Cursor.LEFT_MOUSE_CLICK, this.id, () => {
         const clickedElements = uiManager.checkCollisions(cursor.position.x, cursor.position.y, cursor.radius);
-        const viewportTile = gameContext.getWorldTile();
 
-        if(clickedElements.length === 0 && viewportTile) {
-            this.states.onEventEnter(gameContext, viewportTile);
+        if(clickedElements.length === 0) {
+            this.states.onEventEnter(gameContext);
         }
     });
 }

@@ -4,7 +4,7 @@ import { TeamComponent } from "../components/team.js";
 import { ENTITY_EVENTS } from "../enums.js";
 import { SimpleText } from "../source/graphics/simpleText.js";
 import { TextStyle } from "../source/graphics/applyable/textStyle.js";
-import { componentSetup } from "./components.js";
+import { componentSetup } from "./componentSetup.js";
 import { PositionComponent } from "../components/position.js";
 import { SpriteComponent } from "../components/sprite.js";
 import { SpriteManager } from "../source/graphics/spriteManager.js";
