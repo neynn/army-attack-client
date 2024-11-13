@@ -9,6 +9,7 @@ TeamSystem.isAllied = function(gameContext, teamIDA, teamIDB) {
 
     if(!teamA || !teamB) {
         console.warn(`TeamType A or TeamType B do not exist! Returning false...`);
+
         return false;
     }
 
@@ -24,6 +25,7 @@ TeamSystem.isEnemy = function(gameContext, teamIDA, teamIDB) {
 
     if(!teamA || !teamB) {
         console.warn(`TeamType A or TeamType B do not exist! Returning false...`);
+        
         return false;
     }
 
@@ -37,6 +39,7 @@ TeamSystem.isTeamFriendly = function(gameContext, entity, teamID) {
 
     if(!teamComponent) {
         console.warn(`TeamComponent does not exist! Returning false...`);
+
         return false;
     }
 
@@ -49,6 +52,7 @@ TeamSystem.isEntityEnemy = function(gameContext, entityA, entityB) {
 
     if(!teamComponentA || !teamComponentB) {
         console.warn(`TeamComponent does not exist on entity A or B! Returning false...`);
+
         return false;
     }
 
@@ -61,6 +65,7 @@ TeamSystem.isEntityFriendly = function(gameContext, entityA, entityB) {
 
     if(!teamComponentA || !teamComponentB) {
         console.warn(`TeamComponent does not exist on entity A or B! Returning false...`);
+
         return false;
     }
 

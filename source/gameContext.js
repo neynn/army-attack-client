@@ -39,10 +39,10 @@ export const GameContext = function(fps = 60) {
     }
 
     this.timer.updateFunction = (gameTime, fixedDeltaTime) => {
-        this.controllerManager.update(this);
         this.actionQueue.update(this);
         this.systemManager.update(this);
         this.entityManager.update(this);
+        this.controllerManager.update(this);
     }
 
     this.timer.renderFunction = (realTime, deltaTime) => {

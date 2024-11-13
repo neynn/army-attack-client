@@ -28,7 +28,7 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
     gameContext.createController({
         "type": CONTROLLER_TYPES.PLAYER,
         "id": "neyn",
-        "team": "1"
+        "team": 1
     });
 
     gameContext.initializeMap(MAP);
@@ -63,6 +63,14 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
     const blueCommando = gameContext.createEntity({ 
         "type": "blue_commando",
         "tileX": 1,
+        "tileY": 3,
+        "team": 1,
+        "master": "neyn"
+    }, "neyn");
+
+    const redWarfly = gameContext.createEntity({ 
+        "type": "red_warfly",
+        "tileX": 2,
         "tileY": 3,
         "team": 1,
         "master": "neyn"

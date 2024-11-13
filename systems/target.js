@@ -13,10 +13,10 @@ TargetSystem.isTargetable = function(entity) {
     return isAlive;
 }
 
-TargetSystem.getUniqueEntitiesInRangeOfEntity = function(gameContext, entity, range, excludeSelf) {
+TargetSystem.getUniqueEntitiesInRangeOfEntity = function(gameContext, entity, range = 0, exclusionList = []) {
     const { mapLoader } = gameContext;
-    const entities = new Set();
     const activeMap = mapLoader.getActiveMap();
+    const entities = new Set();
 
     if(!activeMap) {
         return entities;
@@ -39,8 +39,8 @@ TargetSystem.getUniqueEntitiesInRangeOfEntity = function(gameContext, entity, ra
         }
     }
 
-    if(excludeSelf) {
-        entities.delete(entity.id);
+    for(const entityID of exclusionList) {
+        entities.delete(entityID);
     }
 
     return entities;
@@ -54,8 +54,9 @@ TargetSystem.getAttackers = function(gameContext, target) {
         return attackerIDs;
     }
 
+    const targetID = target.getID();
     const settings = gameContext.getConfig("settings");
-    const possibleAttackerIDs = TargetSystem.getUniqueEntitiesInRangeOfEntity(gameContext, target, settings.maxAttackRange, true);
+    const possibleAttackerIDs = TargetSystem.getUniqueEntitiesInRangeOfEntity(gameContext, target, settings.maxAttackRange, [targetID]);
 
     for(const attackerID of possibleAttackerIDs) {
         const attacker = entityManager.getEntity(attackerID);
@@ -97,13 +98,12 @@ TargetSystem.canAttackerTarget = function(gameContext, attacker, target) {
     const attackerSize = attacker.getComponent(SizeComponent);
     const targetPosition = target.getComponent(PositionComponent);
     const targetSize = target.getComponent(SizeComponent);
-    const attackerRange = attackComponent.range;
 
     const collision = isRectangleRectangleIntersect(
-        attackerPosition.tileX - attackerRange,
-        attackerPosition.tileY - attackerRange,
-        attackerSize.sizeX - 1 + attackerRange * 2,
-        attackerSize.sizeY - 1 + attackerRange * 2,
+        attackerPosition.tileX - attackComponent.range,
+        attackerPosition.tileY - attackComponent.range,
+        attackerSize.sizeX - 1 + attackComponent.range * 2,
+        attackerSize.sizeY - 1 + attackComponent.range * 2,
         targetPosition.tileX,
         targetPosition.tileY,
         targetSize.sizeX - 1,

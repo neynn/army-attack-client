@@ -5,7 +5,7 @@ import { FloodFill } from "../source/pathfinders/floodFill.js";
 
 export const PathfinderSystem = function() {}
 
-PathfinderSystem.isEmpty = function(gameContext, targetX, targetY) {
+PathfinderSystem.isTileFree = function(gameContext, targetX, targetY) {
     const { mapLoader } = gameContext;
     const activeMap = mapLoader.getActiveMap();
     
@@ -34,8 +34,8 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
     const teamTypes = gameContext.getConfig("teamTypes");
     const tileTypes = gameContext.getConfig("tileTypes");
     
-    const entityAllies = teamTypes[teamComponent.teamID].allies;
-    const entityEnemies = teamTypes[teamComponent.teamID].enemies;
+    const entityTeamAllies = teamTypes[teamComponent.teamID].allies;
+    const entityTeamEnemies = teamTypes[teamComponent.teamID].enemies;
 
     const nodeList = FloodFill.search(positionComponent.tileX, positionComponent.tileY, moveComponent.range, activeMap.width, activeMap.height, (child, parent) => {
         const childTypeID = activeMap.getTile(settings.typeLayerID, child.positionX, child.positionY);
@@ -47,17 +47,17 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
         
         const parentTeamID = activeMap.getTile(settings.teamLayerID, parent.positionX, parent.positionY);
 
-        if(!entityAllies[parentTeamID] && !moveComponent.isStealth || moveComponent.isCoward) {
+        if(!entityTeamAllies[parentTeamID] && !moveComponent.isStealth || moveComponent.isCoward) {
             return false;
         }
 
         const entityID = activeMap.getFirstEntity(child.positionX, child.positionY);
 
         if(entityID) {
-            const occupyEntity = entityManager.getEntity(entityID);
-            const occupyTeamComponent = occupyEntity.getComponent(TeamComponent);
-            const isEnemy = entityEnemies[occupyTeamComponent.teamID];
-            const isAlly = entityAllies[occupyTeamComponent.teamID];
+            const tileEntity = entityManager.getEntity(entityID);
+            const tileEntityTeamComponent = tileEntity.getComponent(TeamComponent);
+            const isEnemy = entityTeamEnemies[tileEntityTeamComponent.teamID];
+            const isAlly = entityTeamAllies[tileEntityTeamComponent.teamID];
 
             if(isEnemy) {
                 if(!moveComponent.isCloaked) {
@@ -65,9 +65,10 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
                 }
             } else if(isAlly) {
                 if(!moveComponent.isAvian) {
-                    const occupyMoveComponent = occupyEntity.getComponent(MoveComponent);
+                    const tileEntityMoveComponent = tileEntity.getComponent(MoveComponent);
+                    const isPassingAllowed = tileEntityMoveComponent && tileEntityMoveComponent.isAvian || settings.allowAllyPassing;
 
-                    if(!occupyMoveComponent || !occupyMoveComponent.isAvian || !settings.allowAllyPassing) {
+                    if(!isPassingAllowed) {
                         return false;
                     }
                 }

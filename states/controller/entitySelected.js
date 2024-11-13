@@ -1,7 +1,6 @@
 import { ControllerComponent } from "../../components/controller.js";
 import { CONTROLLER_STATES } from "../../enums.js";
 import { State } from "../../source/state/state.js";
-import { SelectSystem } from "../../systems/select.js";
 import { TeamSystem } from "../../systems/team.js";
 import { createMoveRequest } from "../../actions/moveAction.js";
 import { createAttackRequest } from "../../actions/attackAction.js";
@@ -39,7 +38,7 @@ ControllerEntitySelectedState.prototype.onEventEnter = function(stateMachine, ga
         actionQueue.addAction(createMoveRequest(selectedEntityID, x, y));
     }
 
-    SelectSystem.deselectEntity(gameContext, controller, selectedEntity);
+    ControllerSystem.deselectEntity(gameContext, controller, selectedEntity);
     
     stateMachine.setNextState(CONTROLLER_STATES.IDLE);
 }
@@ -47,7 +46,6 @@ ControllerEntitySelectedState.prototype.onEventEnter = function(stateMachine, ga
 ControllerEntitySelectedState.prototype.update = function(stateMachine, gameContext) {
     const controller = stateMachine.getContext();
 
-    ControllerSystem.clearAttackers(gameContext, controller);
     ControllerSystem.updateSelectedEntity(gameContext, controller);
     ControllerSystem.updateAttackers(gameContext, controller);
 }

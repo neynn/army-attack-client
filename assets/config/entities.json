@@ -1258,7 +1258,7 @@
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land", "Mountain"],
         "stats": {
-            "story": { "health": 2, "damage": 2, "attackRange": 1, "moveRange": 3, "traits": ["Infantry"] }, 
+            "story": { "health": 2, "damage": 2, "attackRange": 1, "moveRange": 3, "traits": ["Infantry", "Avian"] }, 
             "versus": { "health": 2, "damage": 2, "attackRange": 1, "moveRange": 3, "traits": ["Infantry"] }
         },
         "hitRewards": [

@@ -52,7 +52,7 @@ MoveAction.prototype.validate = function(gameContext, request) {
         return false;
     }
 
-    const validTarget = PathfinderSystem.isEmpty(gameContext, targetX, targetY);
+    const validTarget = PathfinderSystem.isTileFree(gameContext, targetX, targetY);
 
     if(!validTarget) {
         return false;

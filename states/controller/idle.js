@@ -2,7 +2,6 @@ import { createAttackRequest } from "../../actions/attackAction.js";
 import { CONTROLLER_STATES } from "../../enums.js";
 import { State } from "../../source/state/state.js";
 import { ControllerSystem } from "../../systems/controller.js";
-import { SelectSystem } from "../../systems/select.js";
 import { TargetSystem } from "../../systems/target.js";
 import { TeamSystem } from "../../systems/team.js";
 
@@ -23,12 +22,12 @@ ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext)
     }
 
     const entityID = mouseEntity.getID();
-    const isControlled = controller.hasEntity(entityID);
     const entity = entityManager.getEntity(entityID);
     const isEnemy = TeamSystem.isEntityEnemy(gameContext, entity, controller);
     const isTargetable = TargetSystem.isTargetable(entity);
+    const isSelectable = ControllerSystem.isSelectable(entity, controller);
 
-    if(isEnemy && isTargetable) {        
+    if(isEnemy && isTargetable) {     
         actionQueue.addAction(createAttackRequest(entityID));
         return;
     }
@@ -37,16 +36,10 @@ ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext)
         return;
     }
 
-    if(isControlled) {
-        const isSelectable = SelectSystem.isSelectable(entity);
-
-        if(isSelectable) {
-            SelectSystem.selectEntity(gameContext, controller, entity);
+    if(isSelectable) {
+        ControllerSystem.selectEntity(gameContext, controller, entity);
             
-            stateMachine.setNextState(CONTROLLER_STATES.ENTITY_SELECTED);
-        }
-
-        return;
+        stateMachine.setNextState(CONTROLLER_STATES.ENTITY_SELECTED);
     }
 }
 
@@ -55,9 +48,9 @@ ControllerIdleState.prototype.update = function(stateMachine, gameContext) {
     const controller = stateMachine.getContext();
 
     if(actionQueue.isRunning()) {
+        ControllerSystem.resetAttackerOverlay(gameContext, controller);
         return;
     }
-    
-    ControllerSystem.clearAttackers(gameContext, controller);
+
     ControllerSystem.updateAttackers(gameContext, controller);
 }
