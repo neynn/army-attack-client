@@ -32,8 +32,6 @@ UIManager.ELEMENT_TYPE_BUTTON_SQUARE = "BUTTON_SQUARE";
 UIManager.ELEMENT_TYPE_BUTTON_CIRCLE = "BUTTON_CIRCLE";
 UIManager.ELEMENT_TYPE_CONTAINER = "CONTAINER";
 UIManager.ELEMENT_TYPE_ICON = "ICON";
-UIManager.EFFECT_TYPE_FADE_IN = "FADE_IN";
-UIManager.EFFECT_TYPE_FADE_OUT = "FADE_OUT";
 
 UIManager.prototype.load = function(interfaceTypes, iconTypes, fontTypes) {
     if(typeof interfaceTypes === "object") {
@@ -203,7 +201,7 @@ UIManager.prototype.update = function(gameContext) {
     }
 
     this.effectManager.deleteCompletedEffects();
-    
+
     for(const [elementID, element] of this.elements) {
         if(element instanceof TextElement) {
             element.onUpdate(0, deltaTime);
@@ -303,23 +301,6 @@ UIManager.prototype.removeTextRequest = function(interfaceID, textID) {
     text.events.deafen(TextElement.EVENT_REQUEST_TEXT);
 
     return true;
-}
-
-UIManager.prototype.parseEffects = function(element, effects) {
-    if(!effects) {
-        return;
-    }
-
-    for(const effect of effects) {
-        const { type, value, threshold } = effect;
-        const effectType = this.effectTypes[type];
-
-        if(!effectType) {
-            continue;
-        }
-
-        this[effectType.function](element, value, threshold);
-    }
 }
 
 UIManager.prototype.createInterface = function(userInterfaceID) {
