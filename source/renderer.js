@@ -110,10 +110,11 @@ Renderer.prototype.drawUI = function(gameContext) {
     const { uiManager, timer } = gameContext;
     const realTime = timer.getRealTime();
     const deltaTime = timer.getDeltaTime();
+    const parentElements = uiManager.getParentElements();
 
-    for(const elementID of uiManager.drawableElements) {
+    for(const elementID of parentElements) {    
         const element = uiManager.getElementByID(elementID);
-        
+           
         element.update(realTime, deltaTime);
         element.draw(this.display.context, 0, 0, 0, 0);
 

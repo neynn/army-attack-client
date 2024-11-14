@@ -1,5 +1,18 @@
 export const Applyable = function() {
     this.color = new Uint8Array(4);
+    this.isActive = false;
+}
+
+Applyable.prototype.enable = function() {
+    this.isActive = true;
+}
+
+Applyable.prototype.disable = function() {
+    this.isActive = false;
+}
+
+Applyable.prototype.getActive = function() {
+    return this.isActive;
 }
 
 Applyable.prototype.setColor = function(r = 0, g = 0, b = 0, a = 0) {
@@ -35,4 +48,8 @@ Applyable.prototype.getRGBAString = function() {
     return rgbaString;
 }
 
-Applyable.prototype.apply = function(context) {}
+Applyable.prototype.apply = function(context) {
+    const fillStyle = this.getRGBAString();
+
+    context.fillStyle = fillStyle;
+}

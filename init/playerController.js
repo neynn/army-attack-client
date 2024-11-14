@@ -33,7 +33,7 @@ PlayerController.prototype.addClickEvent = function(gameContext) {
     const { cursor } = client;
 
     cursor.events.subscribe(Cursor.LEFT_MOUSE_CLICK, this.id, () => {
-        const clickedElements = uiManager.checkCollisions(cursor.position.x, cursor.position.y, cursor.radius);
+        const clickedElements = uiManager.getCollidedElements(cursor.position.x, cursor.position.y, cursor.radius);
 
         if(clickedElements.length === 0) {
             this.states.onEventEnter(gameContext);

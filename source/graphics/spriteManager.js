@@ -172,7 +172,9 @@ SpriteManager.prototype.addSpriteToDrawable = function(drawable, childName, type
         drawable.openFamily();
     }
 
-    return drawable.addChild(sprite, childName);
+    drawable.addChild(sprite, childName);
+
+    return sprite;
 }
 
 SpriteManager.prototype.addChildSprite = function(parentID, childID, childName = Symbol("AUTO")) {

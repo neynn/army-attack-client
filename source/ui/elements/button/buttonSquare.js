@@ -21,7 +21,9 @@ ButtonSquare.prototype.loadFromConfig = function(config) {
 
 ButtonSquare.prototype.isColliding = function(mouseX, mouseY, mouseRange) {
     const { w, h } = this.bounds;
-    return isRectangleRectangleIntersect(this.position.x, this.position.y, w, h, mouseX, mouseY, mouseRange, mouseRange);
+    const isIntersection = isRectangleRectangleIntersect(this.position.x, this.position.y, w, h, mouseX, mouseY, mouseRange, mouseRange);
+
+    return isIntersection;
 }
 
 ButtonSquare.prototype.onDebug = function(context, viewportX, viewportY, localX, localY) {
@@ -33,16 +35,19 @@ ButtonSquare.prototype.onDebug = function(context, viewportX, viewportY, localX,
 
 ButtonSquare.prototype.onDraw = function(context, viewportX, viewportY, localX, localY) {
     this.events.emit(UIElement.EVENT_DRAW, context, localX, localY);
-
+    
     if(this.highlight.getActive()) {
         const { w, h } = this.bounds;
 
         this.highlight.apply(context);
+        this.highlight.disable();
     
         context.fillRect(localX, localY, w, h);
     }
 
-    this.outline.apply(context);
+    if(this.outline.getActive()) {
+        this.outline.apply(context);
     
-    context.strokeRect(localX, localY, this.bounds.w, this.bounds.h);
+        context.strokeRect(localX, localY, this.bounds.w, this.bounds.h);
+    }
 }

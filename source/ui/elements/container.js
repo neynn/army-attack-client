@@ -20,7 +20,9 @@ Container.prototype.loadFromConfig = function(config) {
 
 Container.prototype.isColliding = function(mouseX, mouseY, mouseRange) {
     const { w, h } = this.bounds;
-    return isRectangleRectangleIntersect(this.position.x, this.position.y, w, h, mouseX, mouseY, mouseRange, mouseRange);
+    const isIntersection = isRectangleRectangleIntersect(this.position.x, this.position.y, w, h, mouseX, mouseY, mouseRange, mouseRange);
+    
+    return isIntersection;
 }
 
 Container.prototype.onDebug = function(context, viewportX, viewportY,localX, localY) {

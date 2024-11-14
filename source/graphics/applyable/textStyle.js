@@ -2,7 +2,7 @@ import { Applyable } from "../applyable.js";
 
 export const TextStyle = function() {
     Applyable.call(this);
-
+    
     this.fontSize = 10;
     this.fontType = "sans-serif";
     this.font = "10px sans-serif";

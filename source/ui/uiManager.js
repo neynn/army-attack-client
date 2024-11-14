@@ -22,7 +22,8 @@ export const UIManager = function() {
     };
     this.interfaceStack = [];
     this.elements = new Map();
-    this.drawableElements = new Set();
+    this.parentElements = new Set();
+    this.previousCollisions = new Set();
     this.effectManager = new EffectManager();
 }
 
@@ -174,6 +175,10 @@ UIManager.prototype.popInterface = function(userInterfaceID) {
         const { id } = this.interfaceStack[i];
 
         if(id === userInterfaceID) {
+            if(i === this.interfaceStack.length - 1) {
+                this.previousCollisions.clear();
+            }
+
             this.interfaceStack.splice(i, 1);
             
             return true;
@@ -201,28 +206,51 @@ UIManager.prototype.update = function(gameContext) {
     }
 
     this.effectManager.deleteCompletedEffects();
-
-    for(const [elementID, element] of this.elements) {
-        if(element instanceof TextElement) {
-            element.onUpdate(0, deltaTime);
-        }
-    }
-
-    const collidedElements = this.checkCollisions(cursor.position.x, cursor.position.y, cursor.radius);
-
-    for(const element of collidedElements) {
-        element.events.emit(UIElement.EVENT_COLLIDES);
-    }
+    this.updateElementCollisions(cursor.position.x, cursor.position.y, cursor.radius);
 }
 
 UIManager.prototype.end = function() {
     this.elements.clear();
-    this.elementsToUpdate.clear();
-    this.drawableElements.clear();
+    this.parentElements.clear();
     this.interfaceStack = [];
 }
 
-UIManager.prototype.checkCollisions = function(mouseX, mouseY, mouseRange) {
+UIManager.prototype.updateElementCollisions = function(mouseX, mouseY, mouseRange) {
+    const currentCollisions = new Set();
+    const collidedElements = this.getCollidedElements(mouseX, mouseY, mouseRange);
+
+    for(const element of collidedElements) {
+        const elementID = element.getID();
+
+        currentCollisions.add(elementID);
+    }
+
+    for(const elementID of currentCollisions) {
+        const element = this.getElementByID(elementID);
+
+        if(!this.previousCollisions.has(elementID)) {
+            element.events.emit(UIElement.EVENT_FIRST_COLLISION, mouseX, mouseY, mouseRange);
+        } else {
+            element.events.emit(UIElement.EVENT_COLLISION, mouseX, mouseY, mouseRange);
+        }
+    }
+    
+    for(const elementID of this.previousCollisions) {
+        if(!currentCollisions.has(elementID)) {
+            const element = this.getElementByID(elementID);
+            
+            element.events.emit(UIElement.EVENT_FINAL_COLLISION, mouseX, mouseY, mouseRange);
+        }
+    }
+
+    this.previousCollisions = currentCollisions;
+}
+
+UIManager.prototype.getParentElements = function() {
+    return this.parentElements;
+}
+
+UIManager.prototype.getCollidedElements = function(mouseX, mouseY, mouseRange) {
     const collidedElements = [];
     const currentInterface = this.getCurrentInterface();
 
@@ -230,7 +258,7 @@ UIManager.prototype.checkCollisions = function(mouseX, mouseY, mouseRange) {
         return collidedElements;
     }
 
-    for(const elementUID of this.drawableElements) {
+    for(const elementUID of this.parentElements) {
         if(!currentInterface.elementUIDs.has(elementUID)) {
             continue;
         }
@@ -390,7 +418,7 @@ UIManager.prototype.parseUI = function(userInterfaceID, gameContext) {
             });    
         }
 
-        this.drawableElements.add(elementID);
+        this.parentElements.add(elementID);
     }
 
     this.pushInterface(userInterfaceID);
@@ -413,8 +441,8 @@ UIManager.prototype.unparseUI = function(userInterfaceID, gameContext) {
 
         this.destroyElement(uniqueID);
 
-        if(this.drawableElements.has(uniqueID)) {
-            this.drawableElements.delete(uniqueID);
+        if(this.parentElements.has(uniqueID)) {
+            this.parentElements.delete(uniqueID);
 
             renderer.events.unsubscribe(Renderer.EVENT_SCREEN_RESIZE, uniqueID);
         }

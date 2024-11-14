@@ -61,7 +61,7 @@ GameContext.prototype.addUIClickEvent = function() {
     const { cursor } = this.client;
 
     cursor.events.subscribe(Cursor.LEFT_MOUSE_CLICK, "CONTEXT", () => {
-        const clickedElements = this.uiManager.checkCollisions(cursor.position.x, cursor.position.y, cursor.radius);
+        const clickedElements = this.uiManager.getCollidedElements(cursor.position.x, cursor.position.y, cursor.radius);
 
         for(const element of clickedElements) {
             element.events.emit(UIElement.EVENT_CLICKED);
