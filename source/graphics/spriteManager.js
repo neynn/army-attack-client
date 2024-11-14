@@ -9,7 +9,7 @@ export const SpriteManager = function() {
     this.spriteTypes = {};
     this.sprites = new Map();
     this.spriteReferences = new Map();
-    this.IDgenerator = new IDGenerator();
+    this.idGenerator = new IDGenerator();
     this.layers = {
         [SpriteManager.LAYER_BOTTOM]: [],
         [SpriteManager.LAYER_MIDDLE]: [],
@@ -80,7 +80,7 @@ SpriteManager.prototype.addSpriteReference = function(spriteID) {
 
 SpriteManager.prototype.end = function() {
     this.sprites.clear();
-    this.IDgenerator.reset();
+    this.idGenerator.reset();
 
     for(const layerID in this.layers) {
         this.layers[layerID] = [];
@@ -92,7 +92,7 @@ SpriteManager.prototype.createSprite = function(typeID, layerID, animationID) {
         return null;
     }
 
-    const spriteID = this.IDgenerator.getID();
+    const spriteID = this.idGenerator.getID();
     const sprite = new Sprite(spriteID, typeID);
     
     sprite.setLastCallTime(this.timestamp);

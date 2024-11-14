@@ -2,17 +2,13 @@ import { Drawable } from "../graphics/drawable.js";
 
 export const UIElement = function(id, DEBUG_NAME) {
     Drawable.call(this, id, DEBUG_NAME);
-
-    this.goals = new Map();
-    this.goalsReached = new Set();
-    
-    this.events.listen(UIElement.EVENT_CLICKED);
     this.events.listen(UIElement.EVENT_DRAW);
+    this.events.listen(UIElement.EVENT_CLICKED);
     this.events.listen(UIElement.EVENT_COLLIDES);
 }
 
-UIElement.EVENT_CLICKED = "EVENT_CLICKED";
-UIElement.EVENT_DRAW = "EVENT_DRAW";
+UIElement.EVENT_DRAW = "EVENT_DRAW"
+UIElement.EVENT_CLICKED = "EVENT_CLICKED";;
 UIElement.EVENT_COLLIDES = "EVENT_COLLIDES";
 
 UIElement.prototype = Object.create(Drawable.prototype);

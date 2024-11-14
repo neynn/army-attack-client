@@ -39,7 +39,7 @@ ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext)
     if(isSelectable) {
         ControllerSystem.selectEntity(gameContext, controller, entity);
             
-        stateMachine.setNextState(CONTROLLER_STATES.ENTITY_SELECTED);
+        stateMachine.setNextState(CONTROLLER_STATES.SELECTED);
     }
 }
 

@@ -36,7 +36,7 @@ export const ACTION_TYPES = Object.freeze({
 export const CONTROLLER_STATES = Object.freeze({
     "IDLE": "IDLE",
     "BUILD": "BUILD",
-    "ENTITY_SELECTED": "ENTITY_SELECTED"
+    "SELECTED": "SELECTED"
 });
 
 export const CONTEXT_STATES = Object.freeze({

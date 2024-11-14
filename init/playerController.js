@@ -4,7 +4,7 @@ import { Cursor } from "../source/client/cursor.js";
 import { Controller } from "../source/controller/controller.js";
 import { SpriteManager } from "../source/graphics/spriteManager.js";
 import { ControllerBuildState } from "../states/controller/build.js";
-import { ControllerEntitySelectedState } from "../states/controller/entitySelected.js";
+import { ControllerSelectedState } from "../states/controller/selected.js";
 import { ControllerIdleState } from "../states/controller/idle.js";
 import { componentSetup } from "./componentSetup.js";
 
@@ -74,7 +74,7 @@ PlayerController.prototype.initialize = function(gameContext, payload) {
 
     this.states.addState(CONTROLLER_STATES.IDLE, new ControllerIdleState());
     this.states.addState(CONTROLLER_STATES.BUILD, new ControllerBuildState());
-    this.states.addState(CONTROLLER_STATES.ENTITY_SELECTED, new ControllerEntitySelectedState());
+    this.states.addState(CONTROLLER_STATES.SELECTED, new ControllerSelectedState());
 
     this.states.setNextState(CONTROLLER_STATES.IDLE);
 }

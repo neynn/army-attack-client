@@ -6,14 +6,14 @@ import { createMoveRequest } from "../../actions/moveAction.js";
 import { createAttackRequest } from "../../actions/attackAction.js";
 import { ControllerSystem } from "../../systems/controller.js";
 
-export const ControllerEntitySelectedState = function() {
+export const ControllerSelectedState = function() {
     State.call(this);
 }
 
-ControllerEntitySelectedState.prototype = Object.create(State.prototype);
-ControllerEntitySelectedState.prototype.constructor = ControllerEntitySelectedState;
+ControllerSelectedState.prototype = Object.create(State.prototype);
+ControllerSelectedState.prototype.constructor = ControllerSelectedState;
 
-ControllerEntitySelectedState.prototype.onEventEnter = function(stateMachine, gameContext) {
+ControllerSelectedState.prototype.onEventEnter = function(stateMachine, gameContext) {
     const { entityManager, client, actionQueue } = gameContext;
     const { soundPlayer } = client;
 
@@ -43,7 +43,7 @@ ControllerEntitySelectedState.prototype.onEventEnter = function(stateMachine, ga
     stateMachine.setNextState(CONTROLLER_STATES.IDLE);
 }
 
-ControllerEntitySelectedState.prototype.update = function(stateMachine, gameContext) {
+ControllerSelectedState.prototype.update = function(stateMachine, gameContext) {
     const controller = stateMachine.getContext();
 
     ControllerSystem.updateSelectedEntity(gameContext, controller);

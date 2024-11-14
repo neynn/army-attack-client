@@ -1,3 +1,4 @@
+import { EffectManager } from "../effects/effectManager.js";
 import { Logger } from "../logger.js";
 import { Renderer } from "../renderer.js";
 import { Button } from "./elements/button.js";
@@ -19,14 +20,10 @@ export const UIManager = function() {
         [UIManager.ELEMENT_TYPE_ICON]: Icon,
         [UIManager.ELEMENT_TYPE_CONTAINER]: Container
     };
-    this.effectTypes = {
-        [UIManager.EFFECT_TYPE_FADE_IN]: { "function": "addFadeInEffect" },
-        [UIManager.EFFECT_TYPE_FADE_OUT]: { "function": "addFadeOutEffect" }
-    };
     this.interfaceStack = [];
     this.elements = new Map();
     this.drawableElements = new Set();
-    this.elementsToUpdate = new Set();
+    this.effectManager = new EffectManager();
 }
 
 UIManager.ELEMENT_TYPE_TEXT = "TEXT";
@@ -119,17 +116,14 @@ UIManager.prototype.getText = function(interfaceID, textID) {
     return text;
 }
 
-UIManager.prototype.createElement = function(uniqueID, config) {
-    const { type } = config;
-    const Type = this.elementTypes[type];
+UIManager.prototype.createElement = function(uniqueID, typeID) {
+    const Type = this.elementTypes[typeID];
 
     if(!Type) {
         return null;
     }
 
     const element = new Type(uniqueID);
-
-    element.loadFromConfig(config);
 
     this.elements.set(uniqueID, element);
 
@@ -195,34 +189,21 @@ UIManager.prototype.update = function(gameContext) {
     const { timer, client } = gameContext;
     const { cursor } = client;
     const deltaTime = timer.getDeltaTime();
+    const activeEffects = this.effectManager.getActiveEffects();
 
-    for(const elementUID of this.elementsToUpdate) {
-        const element = this.elements.get(elementUID);
+    for(const [effectID, { drawableID, onCall }] of activeEffects) {
+        const element = this.elements.get(drawableID);
 
         if(!element) {
+            this.effectManager.markEffectForDeletion(effectID);
             continue;
         }
-        
-        const completedGoals = [];
 
-        for(const [goalID, callback] of element.goals) {
-            callback(element, deltaTime);
-
-            if(element.goalsReached.has(goalID)) {
-                completedGoals.push(goalID);
-            }
-        }
-
-        for(const goalID of completedGoals) {
-            element.goalsReached.delete(goalID);
-            element.goals.delete(goalID);
-        }
-
-        if(element.goals.size === 0) {
-            this.elementsToUpdate.delete(elementUID);
-        }
+        onCall(element, deltaTime);
     }
 
+    this.effectManager.deleteCompletedEffects();
+    
     for(const [elementID, element] of this.elements) {
         if(element instanceof TextElement) {
             element.onUpdate(0, deltaTime);
@@ -268,7 +249,7 @@ UIManager.prototype.addClick = function(interfaceID, buttonID, callback) {
     const button = this.getButton(interfaceID, buttonID);
 
     if(!button) {
-        Logger.log(false, "Button does not exist!", "UIManager.prototype.addClick", {interfaceID, buttonID, uniqueID});
+        Logger.log(false, "Button does not exist!", "UIManager.prototype.addClick", { interfaceID, buttonID });
 
         return false;
     }
@@ -282,7 +263,7 @@ UIManager.prototype.setText = function(interfaceID, textID, message) {
     const text = this.getText(interfaceID, textID);
 
     if(!text) {
-        Logger.log(false, "Text does not exist!", "UIManager.prototype.setText", {interfaceID, textID, uniqueID});
+        Logger.log(false, "Text does not exist!", "UIManager.prototype.setText", { interfaceID, textID });
 
         return false;
     }
@@ -296,12 +277,13 @@ UIManager.prototype.addTextRequest = function(interfaceID, textID, callback) {
     const text = this.getText(interfaceID, textID);
 
     if(!text) {
-        Logger.log(false, "Text does not exist!", "UIManager.prototype.addTextRequest", {interfaceID, textID, uniqueID});
+        Logger.log(false, "Text does not exist!", "UIManager.prototype.addTextRequest", { interfaceID, textID });
 
         return false;
     }
 
     this.removeTextRequest(interfaceID, textID);
+
     text.setDynamic(true);
     text.events.subscribe(TextElement.EVENT_REQUEST_TEXT, "UI_MANAGER", (answer) => answer(callback()));
 
@@ -312,7 +294,7 @@ UIManager.prototype.removeTextRequest = function(interfaceID, textID) {
     const text = this.getText(interfaceID, textID);
 
     if(!text) {
-        Logger.log(false, "Text does not exist!", "UIManager.prototype.removeTextRequest", {interfaceID, textID, uniqueID});
+        Logger.log(false, "Text does not exist!", "UIManager.prototype.removeTextRequest", { interfaceID, textID });
 
         return false;
     }
@@ -345,7 +327,7 @@ UIManager.prototype.createInterface = function(userInterfaceID) {
     const elements = new Map();
 
     if(!userInterface) {
-        Logger.log(false, "Interface does not exist!", "UIManager.prototype.createInterface", {userInterfaceID});
+        Logger.log(false, "Interface does not exist!", "UIManager.prototype.createInterface", { userInterfaceID });
 
         return elements;
     }
@@ -353,14 +335,15 @@ UIManager.prototype.createInterface = function(userInterfaceID) {
     for(const configID in userInterface) {
         const config = userInterface[configID];
         const uniqueID = this.getUniqueID(userInterfaceID, configID);
-        const element = this.createElement(uniqueID, config);
+        const element = this.createElement(uniqueID, config.type);
 
         if(!element) {
-            Logger.log(false, "Element could not be created!", "UIManager.prototype.createInterface", {userInterfaceID, configID});
+            Logger.log(false, "Element could not be created!", "UIManager.prototype.createInterface", { userInterfaceID, configID });
 
             continue;
         }
 
+        element.loadFromConfig(config);
         elements.set(configID, element);
     }
     
@@ -368,7 +351,7 @@ UIManager.prototype.createInterface = function(userInterfaceID) {
         const config = userInterface[configID];
         const element = elements.get(configID);
 
-        if(!element || !config.children || typeof config.children !== "object") {
+        if(!element || !Array.isArray(config.children)) {
             continue;
         }
 
@@ -380,7 +363,7 @@ UIManager.prototype.createInterface = function(userInterfaceID) {
             const child = elements.get(childID);
 
             if(!child) {
-                Logger.log(false, "Child is not part of the interface!", "UIManager.prototype.createInterface", {configID, childID, userInterfaceID});
+                Logger.log(false, "Child is not part of the interface!", "UIManager.prototype.createInterface", { configID, childID, userInterfaceID });
 
                 continue;
             }
@@ -397,7 +380,7 @@ UIManager.prototype.parseUI = function(userInterfaceID, gameContext) {
     const userInterface = this.interfaceTypes[userInterfaceID];
 
     if(!userInterface) {
-        Logger.log(false, "Interface does not exist!", "UIManager.prototype.parseUI", {userInterfaceID});
+        Logger.log(false, "Interface does not exist!", "UIManager.prototype.parseUI", { userInterfaceID });
 
         return false;
     }
@@ -408,7 +391,7 @@ UIManager.prototype.parseUI = function(userInterfaceID, gameContext) {
         const config = userInterface[configID];
         const elementID = element.getID();
 
-        this.parseEffects(element, config.effects);
+        this.effectManager.addEffect(element, config.effects);
 
         if(element.hasParent()) {
             continue;
@@ -439,7 +422,7 @@ UIManager.prototype.unparseUI = function(userInterfaceID, gameContext) {
     const userInterface = this.interfaceTypes[userInterfaceID];
 
     if(!userInterface) {
-        Logger.log(false, "Interface does not exist!", "UIManager.prototype.unparseUI", {userInterfaceID});
+        Logger.log(false, "Interface does not exist!", "UIManager.prototype.unparseUI", { userInterfaceID });
 
         return false;
     }
@@ -459,40 +442,4 @@ UIManager.prototype.unparseUI = function(userInterfaceID, gameContext) {
     this.popInterface(userInterfaceID);
 
     return true;
-}
-
-UIManager.prototype.addFadeOutEffect = function(element, fadeDecrement, fadeThreshold) {
-    const effectID = Symbol("FadeEffect");
-    const elementID = element.getID();
-
-    const fadeFunction = (element, deltaTime) => {
-        const opacity = element.opacity - (fadeDecrement * deltaTime);
-
-        element.opacity = Math.max(opacity, fadeThreshold);
-        if(element.opacity <= fadeThreshold) {
-            element.goalsReached.add(effectID);
-        }
-    };
-
-    element.goals.set(effectID, fadeFunction);
-
-    this.elementsToUpdate.add(elementID);
-}
-
-UIManager.prototype.addFadeInEffect = function(element, fadeIncrement, fadeThreshold) {
-    const effectID = Symbol("FadeEffect");
-    const elementID = element.getID();
-
-    const fadeFunction = (element, deltaTime) => {
-        const opacity = element.opacity + (fadeIncrement * deltaTime);
-
-        element.opacity = Math.min(opacity, fadeThreshold);
-        if (element.opacity >= fadeThreshold) {
-            element.goalsReached.add(effectID);
-        }
-    };
-
-    element.goals.set(effectID, fadeFunction);
-
-    this.elementsToUpdate.add(elementID);
 }

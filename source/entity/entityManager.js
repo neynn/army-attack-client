@@ -8,7 +8,7 @@ export const EntityManager = function() {
     this.traitTypes = {};
     this.saveComponentTypes = {};
     this.loadComponentTypes = {};
-    this.IDGenerator = new IDGenerator();
+    this.idGenerator = new IDGenerator();
     this.entities = new Map();
     this.activeEntities = new Set();
 }
@@ -49,7 +49,7 @@ EntityManager.prototype.update = function(gameContext) {
 EntityManager.prototype.end = function() {
     this.entities.forEach(entity => this.destroyEntity(entity.id));
     this.activeEntities.clear();
-    this.IDGenerator.reset();
+    this.idGenerator.reset();
 }
 
 EntityManager.prototype.getArchetype = function(typeID) {
@@ -222,7 +222,7 @@ EntityManager.prototype.getEntity = function(entityID) {
 
 EntityManager.prototype.createEntity = function(entityTypeID, externalID) {    
     const config = this.entityTypes[entityTypeID];
-    const entityID = externalID || this.IDGenerator.getID();
+    const entityID = externalID || this.idGenerator.getID();
     const entity = new Entity(entityID, entityTypeID);
    
     if(typeof config === "object") {
