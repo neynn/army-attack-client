@@ -116,10 +116,10 @@ Renderer.prototype.drawUI = function(gameContext) {
         const element = uiManager.getElementByID(elementID);
            
         element.update(realTime, deltaTime);
-        element.draw(this.display.context, 0, 0, 0, 0);
+        element.draw(this.display.context, 0, 0);
 
         if((Renderer.DEBUG & Renderer.DEBUG_INTERFACE) !== 0) {
-            element.debug(this.display.context, 0, 0, 0, 0);
+            element.debug(this.display.context, 0, 0);
         }
     }
 }

@@ -30,47 +30,81 @@ Drawable.prototype.onDebug = function(context, viewportX, viewportY, localX, loc
 }
 
 Drawable.prototype.update = function(timeStamp, deltaTime) {
-    const children = this.getAllChildren();
+    const updateStack = [this];
 
-    this.onUpdate(timeStamp, deltaTime);
+    while(updateStack.length > 0) {
+        const drawable = updateStack.pop();
+        const children = drawable.getAllChildren();
 
-    for(const child of children) {
-        const reference = child.getReference();
-        reference.update(timeStamp, deltaTime);
+        for(const child of children) {
+            const reference = child.getReference();
+
+            updateStack.push(reference);
+        }
+
+        drawable.onUpdate(timeStamp, deltaTime);
     }
 }
 
-Drawable.prototype.debug = function(context, viewportX, viewportY, rootLocalX, rootLocalY) {
-    const children = this.getAllChildren();
-    const localX = rootLocalX + this.position.x;
-    const localY = rootLocalY + this.position.y;
+Drawable.prototype.debug = function(context, viewportX, viewportY) {
+    const debugStack = [{
+        "drawable": this,
+        "localX": this.position.x,
+        "localY": this.position.y
+    }];
 
-    context.save();
-    this.onDebug(context, viewportX, viewportY, localX, localY);
-    context.restore();
+    while(debugStack.length > 0) {
+        const { drawable, localX, localY } = debugStack.pop();
+        const children = drawable.getAllChildren();
 
-    for(const child of children) {
-        const reference = child.getReference();
-        reference.debug(context, viewportX, viewportY, localX, localY);
+        context.save();
+        drawable.onDebug(context, viewportX, viewportY, localX, localY);
+        context.restore();
+
+        for(const child of children) {
+            const reference = child.getReference();
+
+            debugStack.push({
+                "drawable": reference,
+                "localX": localX + reference.position.x,
+                "localY": localY + reference.position.y
+            });
+        }
     }
 }
 
-Drawable.prototype.draw = function(context, viewportX, viewportY, rootLocalX, rootLocalY) {
+Drawable.prototype.draw = function(context, viewportX, viewportY) {
     if(!this.isVisible) {
         return;
     }
 
-    const children = this.getAllChildren();
-    const localX = rootLocalX + this.position.x;
-    const localY = rootLocalY + this.position.y;
+    const drawStack = [{
+        "drawable": this,
+        "localX": this.position.x,
+        "localY": this.position.y
+    }];
 
-    context.save();
-    this.onDraw(context, viewportX, viewportY, localX, localY);
-    context.restore();
+    while(drawStack.length > 0) {
+        const { drawable, localX, localY } = drawStack.pop();
+        const children = drawable.getAllChildren();
 
-    for(const child of children) {
-        const reference = child.getReference();
-        reference.draw(context, viewportX, viewportY, localX, localY);
+        context.save();
+        drawable.onDraw(context, viewportX, viewportY, localX, localY);
+        context.restore();
+
+        for(const child of children) {
+            const reference = child.getReference();
+
+            if(!reference.isVisible) {
+                continue;
+            }
+
+            drawStack.push({
+                "drawable": reference,
+                "localX": localX + reference.position.x,
+                "localY": localY + reference.position.y
+            });
+        }
     }
 }
 

@@ -31,3 +31,4 @@
 //TeamSystem does not check for control...
 //TODO: save a list of entities for the controllers. => armyContext.saveEntities();
 //Tackly dynamic text updated => part of effect manager now.
+//Drawable -> getFamilyStack instead of recursively calling in spriteManager.

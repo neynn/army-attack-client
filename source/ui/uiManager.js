@@ -238,7 +238,7 @@ UIManager.prototype.updateElementCollisions = function(mouseX, mouseY, mouseRang
     for(const elementID of this.previousCollisions) {
         if(!currentCollisions.has(elementID)) {
             const element = this.getElementByID(elementID);
-            
+
             element.events.emit(UIElement.EVENT_FINAL_COLLISION, mouseX, mouseY, mouseRange);
         }
     }
@@ -251,11 +251,10 @@ UIManager.prototype.getParentElements = function() {
 }
 
 UIManager.prototype.getCollidedElements = function(mouseX, mouseY, mouseRange) {
-    const collidedElements = [];
     const currentInterface = this.getCurrentInterface();
 
     if(!currentInterface) {
-        return collidedElements;
+        return [];
     }
 
     for(const elementUID of this.parentElements) {
@@ -264,11 +263,14 @@ UIManager.prototype.getCollidedElements = function(mouseX, mouseY, mouseRange) {
         }
 
         const element = this.elements.get(elementUID);
+        const collisions = element.getCollisionStack(mouseX, mouseY, mouseRange);
 
-        element.getCollisions(mouseX, mouseY, mouseRange, collidedElements);
+        if(collisions.length > 0) {
+            return collisions;
+        }
     }
 
-    return collidedElements;
+    return [];
 }
 
 UIManager.prototype.addClick = function(interfaceID, buttonID, callback) {

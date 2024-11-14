@@ -23,20 +23,37 @@ UIElement.prototype.loadFromConfig = function(config) {}
 
 UIElement.prototype.isColliding = function(mouseX, mouseY, mouseRange) {}
 
-UIElement.prototype.getCollisions = function(mouseX, mouseY, mouseRange, collidedElements) {
-    if(!this.isColliding(mouseX, mouseY, mouseRange)) {
-        return;
-    } else {
-        collidedElements.push(this);
-    }
+UIElement.prototype.getCollisionStack = function(mouseX, mouseY, mouseRange) {
+    const collidedElements = [];
+    const collisionStack = [{
+        "element": this,
+        "localX": mouseX,
+        "localY": mouseY
+    }];
 
-    const localX = mouseX - this.position.x;
-    const localY = mouseY - this.position.y;
-    const references = this.getAllChildrenReferences();
+    while(collisionStack.length > 0) {
+        const { element, localX, localY } = collisionStack.pop();
 
-    for(const reference of references) {
-        if(reference instanceof UIElement) {
-            reference.getCollisions(localX, localY, mouseRange, collidedElements);
+        if(!element.isColliding(localX, localY, mouseRange)) {
+            continue;
+        }
+
+        collidedElements.push(element);
+
+        const references = element.getAllChildrenReferences();
+        const nextLocalX = localX - element.position.x;
+        const nextLocalY = localY - element.position.y;
+
+        for(const reference of references) {
+            if(reference instanceof UIElement) {
+                collisionStack.push({
+                    "element": reference,
+                    "localX": nextLocalX,
+                    "localY": nextLocalY
+                });
+            }
         }
     }
+
+    return collidedElements;
 }

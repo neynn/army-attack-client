@@ -163,13 +163,13 @@ Camera2D.prototype.drawSpriteLayer = function(gameContext, spriteLayer) {
     for(let i = 0; i < visibleSprites.length; i++) {
         const sprite = visibleSprites[i];
         sprite.update(realTime, deltaTime);
-        sprite.draw(context, x, y, 0, 0);
+        sprite.draw(context, x, y);
     }
 
     if((Renderer.DEBUG & Renderer.DEBUG_SPRITES) !== 0) {
         for(let i = 0; i < visibleSprites.length; i++) {
             const sprite = visibleSprites[i];
-            sprite.debug(context, x, y, 0, 0);
+            sprite.debug(context, x, y);
         }
     }
 }
