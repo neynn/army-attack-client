@@ -127,28 +127,37 @@ SpriteManager.prototype.createSprite = function(typeID, layerID, animationID) {
 
 SpriteManager.prototype.removeSprite = function(spriteID) {
     const sprite = this.sprites.get(spriteID);
+    const nonSpriteDrawables = [];
 
     if(!sprite) {
         Logger.log(false, "Sprite does not exist!", "SpriteManager.prototype.removeSprite", {spriteID});
 
-        return false;
+        return nonSpriteDrawables;
     }
     
-    const references = sprite.getAllChildrenReferences();
+    const familyStack = sprite.getFamilyStack();
 
-    for(const reference of references) {
-        this.removeSprite(reference.id);
+    for(let i = familyStack.length - 1; i >= 0; i--) {
+        const drawableID = familyStack[i];
+
+        if(!this.sprites.has(drawableID)) {
+            nonSpriteDrawables.push(drawableID);
+            continue;
+        }
+
+        const sprite = this.sprites.get(drawableID);
+        const layerID = sprite.getLayerID();
+
+        sprite.closeFamily();
+
+        if(layerID !== null) {
+            this.removeFromLayer(layerID, sprite);
+        }
+    
+        this.sprites.delete(drawableID);
     }
 
-    sprite.closeFamily();
-
-    if(sprite.layerID !== null) {
-        this.removeFromLayer(sprite.layerID, sprite);
-    }
-
-    this.sprites.delete(sprite.id);
-
-    return true;
+    return nonSpriteDrawables;
 }
 
 SpriteManager.prototype.getSprite = function(spriteID) {

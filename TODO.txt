@@ -9,20 +9,12 @@
 //TODO: Drop kill items. -> Use drop trait!
 //TODO: Drop hit items. -> Use drop trait!
 
-//added attackAction.js
-//added action_type.attack
-//registered attackAction
-//added targetSystem
-//added fireSystem
-//added healthSystem
-
 //default move time; (96 * moveComponent.path.length) / 480;
 //sprite manager gets add icon / add sprite functions.
 //Fire system becomes attack system! Damage calculations are also done in that system!
 
 //TODO: Add "Auto" mode to mapEditor.
 //TODO: Add "Debug-Menu"
-//TODO: Remove "Goals" from UIElement.
 
 //decouple controller, the cancer, from the game. enjoy :)
 //Entity-Init: controller is given with the setup. The entity does NOT know who controls it.
@@ -31,4 +23,7 @@
 //TeamSystem does not check for control...
 //TODO: save a list of entities for the controllers. => armyContext.saveEntities();
 //Tackly dynamic text updated => part of effect manager now.
-//Drawable -> getFamilyStack instead of recursively calling in spriteManager.
+
+//BUG: Animation does not progress when aiming at an entity.
+//REASON: 1. Attackers get reset 2. Attackers get set again.
+//FIX: Check if the target is still the same as last time.

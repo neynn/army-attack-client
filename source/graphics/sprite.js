@@ -73,6 +73,10 @@ Sprite.prototype.getAnimationID = function() {
     return this.animationID;
 }
 
+Sprite.prototype.getLayerID = function() {
+    return this.layerID;
+}
+
 Sprite.prototype.getBounds = function() {
     const { x, y, w, h } = this.bounds;
     const adjustedX = this.isFlipped ? -(x + w) : x;

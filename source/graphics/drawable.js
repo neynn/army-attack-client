@@ -112,6 +112,27 @@ Drawable.prototype.getID = function() {
     return this.id;
 }
 
+Drawable.prototype.getFamilyStack = function() {
+    const familyStack = [];
+    const stack = [this];
+
+    while(stack.length > 0) {
+        const drawable = stack.pop();
+        const drawableID = drawable.getID();
+        const children = drawable.getAllChildren();
+
+        for(const child of children) {
+            const reference = child.getReference();
+
+            stack.push(reference);
+        }
+
+        familyStack.push(drawableID);
+    }
+
+    return familyStack;
+}
+
 Drawable.prototype.getBounds = function() {
     const { x, y, w, h } = this.bounds;
     const boundsX = this.position.x + x;
