@@ -255,240 +255,42 @@
             "e": {"x":96,"y":48,"w":48,"h":48,"offset":{"x":0,"y":0}},
             "w": {"x":144,"y":48,"w":48,"h":48,"offset":{"x":0,"y":0}}
         },
-        "compositions": {
-            "c_c": [
-                {
-                    "id": "c"
-                },
-                {
-                    "id": "c",
-                    "offset": {
-                        "x": 48,
-                        "y": 0
-                    }
-                },
-                {
-                    "id": "c",
-                    "offset": {
-                        "x": 0,
-                        "y": 48
-                    }
-                },
-                {
-                    "id": "c",
-                    "offset": {
-                        "x": 48,
-                        "y": 48
-                    }
-                }
+        "patterns": {
+            "top_left": [
+                {"id": "nw"}, {"id": "n", "shiftX": 48},
+                {"id": "w", "shiftY": 48}, {"id": "c", "shiftX": 48, "shiftY": 48}
             ],
-            "c_nw": [
-                {
-                    "id": "nw"
-                },
-                {
-                    "id": "n",
-                    "offset": {
-                        "x": 48,
-                        "y": 0
-                    }
-                },
-                {
-                    "id": "w",
-                    "offset": {
-                        "x": 0,
-                        "y": 48
-                    }
-                },
-                {
-                    "id": "c",
-                    "offset": {
-                        "x": 48,
-                        "y": 48
-                    }
-                }
+            "top": [
+                {"id": "n"}, {"id": "n", "shiftX": 48},
+                {"id": "c", "shiftY": 48}, {"id": "c", "shiftX": 48, "shiftY": 48}
             ],
-            "c_ne": [
-                {
-                    "id": "n"
-                },
-                {
-                    "id": "ne",
-                    "offset": {
-                        "x": 48,
-                        "y": 0
-                    }
-                },
-                {
-                    "id": "c",
-                    "offset": {
-                        "x": 0,
-                        "y": 48
-                    }
-                },
-                {
-                    "id": "e",
-                    "offset": {
-                        "x": 48,
-                        "y": 48
-                    }
-                }
+            "top_right": [
+                {"id": "n"}, {"id": "ne", "shiftX": 48},
+                {"id": "c", "shiftY": 48}, {"id": "e", "shiftX": 48, "shiftY": 48}
             ],
-            "c_sw": [
-                {
-                    "id": "w"
-                },
-                {
-                    "id": "c",
-                    "offset": {
-                        "x": 48,
-                        "y": 0
-                    }
-                },
-                {
-                    "id": "sw",
-                    "offset": {
-                        "x": 0,
-                        "y": 48
-                    }
-                },
-                {
-                    "id": "s",
-                    "offset": {
-                        "x": 48,
-                        "y": 48
-                    }
-                }
+            "left": [
+                {"id": "w"}, {"id": "c", "shiftX": 48},
+                {"id": "w", "shiftY": 48}, {"id": "c", "shiftX": 48, "shiftY": 48}
             ],
-            "c_se": [
-                {
-                    "id": "c"
-                },
-                {
-                    "id": "e",
-                    "offset": {
-                        "x": 48,
-                        "y": 0
-                    }
-                },
-                {
-                    "id": "s",
-                    "offset": {
-                        "x": 0,
-                        "y": 48
-                    }
-                },
-                {
-                    "id": "se",
-                    "offset": {
-                        "x": 48,
-                        "y": 48
-                    }
-                }
+            "center": [
+                {"id": "c"}, {"id": "c", "shiftX": 48},
+                {"id": "c", "shiftY": 48}, {"id": "c", "shiftX": 48, "shiftY": 48}
             ],
-            "c_n": [
-                {
-                    "id": "n"
-                },
-                {
-                    "id": "n",
-                    "offset": {
-                        "x": 48,
-                        "y": 0
-                    }
-                },
-                {
-                    "id": "c",
-                    "offset": {
-                        "x": 0,
-                        "y": 48
-                    }
-                },
-                {
-                    "id": "c",
-                    "offset": {
-                        "x": 48,
-                        "y": 48
-                    }
-                }
+            "right": [
+                {"id": "c"}, {"id": "e", "shiftX": 48},
+                {"id": "c", "shiftY": 48}, {"id": "e", "shiftX": 48, "shiftY": 48}
             ],
-            "c_e": [
-                {
-                    "id": "c"
-                },
-                {
-                    "id": "e",
-                    "offset": {
-                        "x": 48,
-                        "y": 0
-                    }
-                },
-                {
-                    "id": "c",
-                    "offset": {
-                        "x": 0,
-                        "y": 48
-                    }
-                },
-                {
-                    "id": "e",
-                    "offset": {
-                        "x": 48,
-                        "y": 48
-                    }
-                }
+            "bottom_left": [
+                {"id": "w"}, {"id": "c", "shiftX": 48},
+                {"id": "sw", "shiftY": 48}, {"id": "s", "shiftX": 48, "shiftY": 48}
             ],
-            "c_s": [
-                {
-                    "id": "c"
-                },
-                {
-                    "id": "c",
-                    "offset": {
-                        "x": 48,
-                        "y": 0
-                    }
-                },
-                {
-                    "id": "s",
-                    "offset": {
-                        "x": 0,
-                        "y": 48
-                    }
-                },
-                {
-                    "id": "s",
-                    "offset": {
-                        "x": 48,
-                        "y": 48
-                    }
-                }
+            "bottom": [
+                {"id": "c"}, {"id": "c", "shiftX": 48},
+                {"id": "s", "shiftY": 48}, {"id": "s", "shiftX": 48, "shiftY": 48}
             ],
-            "c_w": [
-                {
-                    "id": "w"
-                },
-                {
-                    "id": "c",
-                    "offset": {
-                        "x": 48,
-                        "y": 0
-                    }
-                },
-                {
-                    "id": "w",
-                    "offset": {
-                        "x": 0,
-                        "y": 48
-                    }
-                },
-                {
-                    "id": "c",
-                    "offset": {
-                        "x": 48,
-                        "y": 48
-                    }
-                }
+            "bottom_right": [
+                {"id": "c"}, {"id":"e", "shiftX": 48},
+                {"id":"s", "shiftY": 48}, {"id": "se", "shiftX": 48, "shiftY": 48}
             ]
         }
     },

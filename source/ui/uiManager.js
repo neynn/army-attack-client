@@ -222,17 +222,13 @@ UIManager.prototype.updateElementCollisions = function(mouseX, mouseY, mouseRang
     for(const element of collidedElements) {
         const elementID = element.getID();
 
-        currentCollisions.add(elementID);
-    }
-
-    for(const elementID of currentCollisions) {
-        const element = this.getElementByID(elementID);
-
         if(!this.previousCollisions.has(elementID)) {
             element.events.emit(UIElement.EVENT_FIRST_COLLISION, mouseX, mouseY, mouseRange);
         } else {
             element.events.emit(UIElement.EVENT_COLLISION, mouseX, mouseY, mouseRange);
         }
+
+        currentCollisions.add(elementID);
     }
     
     for(const elementID of this.previousCollisions) {

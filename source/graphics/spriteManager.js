@@ -122,12 +122,11 @@ SpriteManager.prototype.drawSprite = function(sprite, context, viewportX, viewpo
     const animationType = spriteType.getAnimation(animationID);
     const animationFrame = animationType.getFrame(currentFrame);
 
-    const renderX = localX - viewportX;
-    const renderY = localY - viewportY;
-
     for(const component of animationFrame) {
-        const { id, offsetX, offsetY } = component;
+        const { id, shiftX, shiftY } = component;
         const { x, y, w, h, offset } = spriteType.getFrameByID(id);
+        const renderX = localX - viewportX + offset.x + shiftX;
+        const renderY = localY - viewportY + offset.y + shiftY;
 
         if(isFlipped) {
             const drawX = renderX - (spriteBounds.x + w);

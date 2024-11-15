@@ -166,13 +166,18 @@ ImageSheet.prototype.defineDefaultAnimation = function() {
 
 ImageSheet.prototype.createSingleFrame = function(frameID) {
     const frame = [];
-    
-    if(!this.frames[frameID]) {
+    const frameData = this.frames[frameID];
+
+    if(!frameData) {
         console.error(`Frame ${id} does not exist!`);
         return frame;
     }
 
-    const component = {"id": frameID, "offsetX": 0, "offsetY": 0};
+    const component = {
+        "id": frameID,
+        "shiftX": 0,
+        "shiftY": 0
+    };
     
     frame.push(component);
 
@@ -180,32 +185,40 @@ ImageSheet.prototype.createSingleFrame = function(frameID) {
 }
 
 ImageSheet.prototype.createPatternFrame = function(patternID) {
-    const compositeFrame = [];
+    const frame = [];
     const pattern = this.patterns[patternID];
 
     if(!pattern || pattern.length === 0) {
         console.error(`Pattern ${patternID} does not exist or is empty!`);
-        return compositeFrame;
+        return frame;
     }
 
-    for(const config of pattern) {
-        const { id, offset } = config;
-        const component = { "id": id, "offsetX": 0, "offsetY": 0 }
+    for(const setup of pattern) {
+        const { id, shiftX, shiftY } = setup;
+        const frameData = this.frames[id];
+        const component = {
+            "id": id,
+            "shiftX": 0,
+            "shiftY": 0
+        };
 
-        if(!this.frames[id]) {
+        if(!frameData) {
             console.error(`Frame ${id} does not exist!`);
             continue;
         }
 
-        if(offset) {
-            component.offsetX = offset.x;
-            component.offsetY = offset.y;
+        if(shiftX) {
+            component.shiftX = shiftX;
         }
 
-        compositeFrame.push(component);
+        if(shiftY) {
+            component.shiftY = shiftY;
+        }
+
+        frame.push(component);
     }
 
-    return compositeFrame;
+    return frame;
 }
 
 ImageSheet.prototype.defineAnimations = function() {

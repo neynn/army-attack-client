@@ -54,10 +54,10 @@ TileManager.prototype.drawTileGraphics = function(tileID, context, renderX, rend
     const currentFrame = tileAnimation.getCurrentFrame();
 
     for(const component of currentFrame) {
-        const { id, offsetX, offsetY } = component;
+        const { id, shiftX, shiftY } = component;
         const { width, height, offset, bitmap } = tileSet.getBuffersByID(id)[ImageSheet.BUFFER_NOT_FLIPPED];
-        const drawX = renderX + offset.x + offsetX;
-        const drawY = renderY + offset.y + offsetY;
+        const drawX = renderX + offset.x + shiftX;
+        const drawY = renderY + offset.y + shiftY;
         const drawWidth = width * scaleX;
         const drawHeight = height * scaleY;
 
