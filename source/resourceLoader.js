@@ -1,4 +1,4 @@
-import { ArmyResouceManager } from "../armyResourceManager.js";
+import { GlobalResourceManager } from "./resourceManager.js";
 
 export const ResourceLoader = {
     SIZE_MB: 1048576,
@@ -14,8 +14,8 @@ ResourceLoader.loadImages = function(images, onLoad) {
     for(const key in images) {
         const imageConfig = images[key];
         const { directory, source } = imageConfig;
-        const imagePath = ArmyResouceManager.getPath(directory, source ? source : `${key}${ResourceLoader.DEFAULT_IMAGE_TYPE}`);
-        const imagePromise = ArmyResouceManager.promiseHTMLImage(imagePath)
+        const imagePath = GlobalResourceManager.getPath(directory, source ? source : `${key}${ResourceLoader.DEFAULT_IMAGE_TYPE}`);
+        const imagePromise = GlobalResourceManager.promiseHTMLImage(imagePath)
         .then(image => onLoad(key, image, imageConfig))
         .catch(error => console.error({key, error}));
 

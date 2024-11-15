@@ -1,11 +1,13 @@
 import { ResourceLoader } from "./source/resourceLoader.js";
 import { ImageSheet } from "./source/graphics/imageSheet.js";
 import { ArmyContext } from "./armyContext.js";
-import { ArmyResouceManager } from "./armyResourceManager.js";
+import { GlobalResourceManager } from "./source/resourceManager.js";
 
 const gameContext = new ArmyContext();
 
-ArmyResouceManager.loadMain("assets", "files.json").then(async files => {
+GlobalResourceManager.setServerAddress("https://neynn.github.io/army-attack-client");
+
+GlobalResourceManager.loadMain("assets", "files.json").then(async files => {
   const usedMB = [];
   const usedMBLarge = [];
 
@@ -45,13 +47,13 @@ ArmyResouceManager.loadMain("assets", "files.json").then(async files => {
 
   for(const fontID in files.fonts) {
     const fontMeta = files.fonts[fontID];
-    const fontPromise = ArmyResouceManager.loadCSSFont(fontMeta);
+    const fontPromise = GlobalResourceManager.loadCSSFont(fontMeta);
 
     fontPromises.push(fontPromise);
   }
 
   await Promise.allSettled(fontPromises);
-  console.log(ArmyResouceManager)
+  console.log(GlobalResourceManager)
   return files;
 }).then(resources => {
   gameContext.loadResources(resources);

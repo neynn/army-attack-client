@@ -19,12 +19,10 @@ export const Sprite = function(id, DEBUG_NAME) {
 
     this.events.listen(Sprite.TERMINATE);
     this.events.listen(Sprite.LOOP_COMPLETE);
-    this.events.listen(Sprite.REQUEST_FRAME);
 }
 
 Sprite.TERMINATE = "TERMINATE";
 Sprite.LOOP_COMPLETE = "LOOP_COMPLETE";
-Sprite.REQUEST_FRAME = "REQUEST_FRAME";
 
 Sprite.prototype = Object.create(Drawable.prototype);
 Sprite.prototype.constructor = Sprite;
@@ -40,21 +38,6 @@ Sprite.prototype.initialize = function(typeID, animationID, animationFrameCount,
     this.loopLimit = 0;
     this.isStatic = false;
     this.bounds.clear();
-}
-
-Sprite.prototype.initializeBounds = function() {
-    if(!this.bounds.isZero()) {
-        return false;
-    }
-
-    this.events.emit(Sprite.REQUEST_FRAME, this, (response) => {
-        const { frame, offset } = response;
-        const { w, h } = frame;
-    
-        this.bounds.set(offset.x, offset.y, w, h);
-    });
-
-    return true;
 }
 
 Sprite.prototype.setLastCallTime = function(lastCallTime) {
@@ -116,31 +99,6 @@ Sprite.prototype.onDebug = function(context, viewportX, viewportY, localX, local
         context.lineWidth = 3;
         context.strokeRect(drawX, drawY, w, h);
     }
-}
-
-Sprite.prototype.onDraw = function(context, viewportX, viewportY, localX, localY) {
-    this.events.emit(Sprite.REQUEST_FRAME, this, (response) => {
-        const { frame, offset, image } = response;
-        const { x, y, w, h } = frame;
-        const renderX = localX - viewportX;
-        const renderY = localY - viewportY;
-
-        this.bounds.set(offset.x, offset.y, w, h);
-
-        if(this.isFlipped) {
-            const drawX = renderX - (offset.x + w);
-            const drawY = renderY + offset.y;
-
-            context.translate(drawX + w, 0);
-            context.scale(-1, 1);
-            context.drawImage(image, x, y, w, h, 0, drawY, w, h);
-        } else {
-            const drawX = renderX + offset.x;
-            const drawY = renderY + offset.y;
-
-            context.drawImage(image, x, y, w, h, drawX, drawY, w, h);
-        }
-    });
 }
 
 Sprite.prototype.setLoopLimit = function(loopLimit = 0) {

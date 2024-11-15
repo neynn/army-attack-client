@@ -1,9 +1,10 @@
-export const ResourceManager = function(serverAddress) {
-    this.serverAddress = serverAddress;
+const ResourceManager = function() {
+    this.serverAddress = null;
     this.audioContext = new AudioContext();
     this.audioBuffers = new Map();
 
-    this.images = new Map();
+    this.sprites = new Map();
+    this.tiles = new Map();
     this.fonts = new Map();
 }
 
@@ -123,6 +124,15 @@ ResourceManager.prototype.getAudioSource = async function(meta, volume) {
     return sourceNode;
 }
 
+ResourceManager.prototype.getSpriteBuffer = function(meta) {
+
+}
+
+ResourceManager.prototype.setServerAddress = function(address) {
+    this.serverAddress = address;
+}
+
+export const GlobalResourceManager = new ResourceManager();
 
 //Loads and keeps track of all resouces.
 //This is long, LONG overdue!

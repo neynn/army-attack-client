@@ -1,5 +1,5 @@
-import { ArmyResouceManager } from "../../armyResourceManager.js";
 import { Logger } from "../logger.js";
+import { GlobalResourceManager } from "../resourceManager.js";
 
 export const SoundPlayer = function() {
     this.activeSounds = new Map();
@@ -68,7 +68,7 @@ SoundPlayer.prototype.playSound = function(audioID, volume = this.defaultVolume)
 
     this.activeSounds.set(audioID, null);
 
-    ArmyResouceManager.getAudioSource(soundType, volume).then(source => {
+    GlobalResourceManager.getAudioSource(soundType, volume).then(source => {
         this.activeSounds.set(audioID, source);
 
         source.onended = () => this.activeSounds.delete(audioID);
@@ -105,7 +105,7 @@ SoundPlayer.prototype.loadSound = async function(audioID) {
         return null;
     }
 
-    return ArmyResouceManager.bufferAudio(soundType);
+    return GlobalResourceManager.bufferAudio(soundType);
 }
 
 SoundPlayer.prototype.loadAllSounds = function() {

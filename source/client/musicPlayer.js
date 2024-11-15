@@ -1,6 +1,6 @@
-import { ArmyResouceManager } from "../../armyResourceManager.js";
 import { Logger } from "../logger.js";
 import { clampValue } from "../math/math.js";
+import { GlobalResourceManager } from "../resourceManager.js";
 
 export const MusicPlayer = function() {
     this.tracks = new Map();
@@ -63,7 +63,7 @@ MusicPlayer.prototype.loadTrack = function(audioID) {
         return false;
     }
 
-    const audio = ArmyResouceManager.loadHTMLAudio(musicType);
+    const audio = GlobalResourceManager.loadHTMLAudio(musicType);
     this.tracks.set(audioID, audio);
 
     return true;
