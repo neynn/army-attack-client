@@ -53,12 +53,15 @@ GlobalResourceManager.loadMain("assets", "files.json").then(async files => {
   }
 
   await Promise.allSettled(fontPromises);
-  console.log(GlobalResourceManager)
+
   return files;
 }).then(resources => {
   gameContext.loadResources(resources);
   gameContext.addUIClickEvent();
   gameContext.initialize();
   gameContext.timer.start();
-  console.log(gameContext, resources);
+  console.log(resources);
 });
+
+console.log(gameContext);
+console.log(GlobalResourceManager);

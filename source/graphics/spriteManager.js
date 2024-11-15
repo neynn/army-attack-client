@@ -118,31 +118,30 @@ SpriteManager.prototype.drawSprite = function(sprite, context, viewportX, viewpo
     const { typeID, animationID, currentFrame, isFlipped, bounds } = sprite;
 
     const spriteType = this.spriteTypes[typeID];
+    const spriteBounds = spriteType.getBounds();
     const animationType = spriteType.getAnimation(animationID);
     const animationFrame = animationType.getFrame(currentFrame);
 
-    const { id, offsetX, offsetY } = animationFrame[0]; //HÄCK -> TODO: Draw sprites as composites!
-    const frame = spriteType.getFrameByID(id);
-    const offset = frame.offset ?? spriteType.offset;
-
-    const { x, y, w, h } = frame;
     const renderX = localX - viewportX;
     const renderY = localY - viewportY;
 
-    bounds.set(offset.x, offset.y, w, h);
+    for(const component of animationFrame) {
+        const { id, offsetX, offsetY } = component;
+        const { x, y, w, h, offset } = spriteType.getFrameByID(id);
 
-    if(isFlipped) {
-        const drawX = renderX - (offset.x + w);
-        const drawY = renderY + offset.y;
-
-        context.translate(drawX + w, 0);
-        context.scale(-1, 1);
-        context.drawImage(spriteType.image, x, y, w, h, 0, drawY, w, h);
-    } else {
-        const drawX = renderX + offset.x;
-        const drawY = renderY + offset.y;
-
-        context.drawImage(spriteType.image, x, y, w, h, drawX, drawY, w, h);
+        if(isFlipped) {
+            const drawX = renderX - (spriteBounds.x + w);
+            const drawY = renderY + spriteBounds.y;
+    
+            context.translate(drawX + w, 0);
+            context.scale(-1, 1);
+            context.drawImage(spriteType.image, x, y, w, h, 0, drawY, w, h);
+        } else {
+            const drawX = renderX + spriteBounds.x;
+            const drawY = renderY + spriteBounds.y;
+    
+            context.drawImage(spriteType.image, x, y, w, h, drawX, drawY, w, h);
+        }
     }
 }
 
@@ -323,30 +322,32 @@ SpriteManager.prototype.updateSprite = function(spriteID, typeID, animationID = 
     const spriteAnimationID = sprite.getAnimationID();
 
     if(spriteTypeID !== typeID || spriteAnimationID !== animationID) {
-        sprite.initialize(typeID, animationID, animationType.frameCount, animationType.frameTime);
+        const config = {
+            "type": typeID,
+            "animation": animationID,
+            "frameCount": animationType.frameCount,
+            "frameTime": animationType.frameTime
+        };
 
-        this.initializeSpriteBounds(sprite);
-        //this.removeSpriteReference(spriteTypeID);
+        sprite.initialize(config);
+
+        this.initializeBounds(sprite);
         this.addSpriteReference(typeID);
+        //this.removeSpriteReference(spriteTypeID);
     }
 
     return true;
 }
 
-SpriteManager.prototype.initializeSpriteBounds = function(sprite) {
-    const { typeID, animationID, currentFrame, bounds } = sprite;
+SpriteManager.prototype.initializeBounds = function(sprite) {
+    const { typeID, bounds } = sprite;
 
     if(!bounds.isZero()) {
         return false;
     }
 
     const spriteType = this.spriteTypes[typeID];
-    const animationType = spriteType.getAnimation(animationID);
-    const animationFrame = animationType.getFrame(currentFrame);
-    const { id, offsetX, offsetY } = animationFrame[0]; //HÄCK -> TODO: Draw sprites as composites!
-    const frame = spriteType.getFrameByID(id);
-    const { x, y } = frame.offset ?? spriteType.offset;
-    const { w, h } = frame;
+    const { x, y, w, h } = spriteType.getBounds();
 
     bounds.set(x, y, w, h);
 }

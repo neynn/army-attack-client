@@ -7,7 +7,7 @@ export const ImageSheet = function(image, config) {
     this.frames = {};
     this.animations = {};
     this.patterns = {};
-    this.offset = {"x": 0, "y": 0};
+    this.bounds = {"x":0,"y": 0,"w":0,"h":0};
     this.frameTime = 1;
     this.allowFlip = false;
     this.buffers = new Map();
@@ -21,6 +21,10 @@ ImageSheet.USE_IMAGE_DATA = false;
 ImageSheet.BUFFER_NOT_FLIPPED = 0;
 ImageSheet.BUFFER_FLIPPED = 1;
 ImageSheet.DEFAULT_ANIMATION_ID = "default";
+
+ImageSheet.prototype.getBounds = function() {
+    return this.bounds;
+}
 
 ImageSheet.prototype.toBuffer = function() {
     const canvas = document.createElement("canvas");
@@ -54,7 +58,7 @@ ImageSheet.prototype.getAnimations = function() {
 }
 
 ImageSheet.prototype.loadFromConfig = function(config) {
-    const { id, directory, source, offset, frameTime, frames, allowFlip, animations, patterns } = config;
+    const { id, directory, source, bounds, frameTime, frames, allowFlip, animations, patterns } = config;
 
     this.id = id;
     this.directory = directory;
@@ -67,9 +71,11 @@ ImageSheet.prototype.loadFromConfig = function(config) {
     if(frames) this.frames = frames;
     if(animations) this.animations = animations;
     if(patterns) this.patterns = patterns;
-    if(offset) {
-        this.offset.x = offset.x;
-        this.offset.y = offset.y;
+    if(bounds) {
+        this.bounds.x = bounds.x;
+        this.bounds.y = bounds.y;
+        this.bounds.w = bounds.w;
+        this.bounds.h = bounds.h;
     }
 }
 
@@ -96,7 +102,7 @@ ImageSheet.prototype.defineFrame = function(frameID) {
     const flipBuffers = this.allowFlip ? [false, true] : [false];
 
     const buffers = flipBuffers.map(isFlipped => {
-        const buffer = {"width": w, "height": h, "offset": { "x": this.offset.x, "y": this.offset.y }, "bitmap": null, "context": null, "imageData": null};
+        const buffer = {"width": w, "height": h, "offset": { "x": this.bounds.x, "y": this.bounds.y }, "bitmap": null, "context": null, "imageData": null};
         const bitmap = document.createElement("canvas");
         const context = bitmap.getContext("2d");
     

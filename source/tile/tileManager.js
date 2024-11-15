@@ -4,11 +4,13 @@ import { Logger } from "../logger.js";
 export const TileManager = function() {
     this.tileTypes = {};
     this.tileMeta = {};
+    this.dynamicTileTypes = {};
 }
 
 TileManager.prototype.load = function(tileTypes, tileMeta) {
     if(typeof tileTypes === "object") {
         this.tileTypes = tileTypes;
+        this.loadDynamicTileTypes();
     } else {
         Logger.log(false, "TileTypes cannot be undefined!", "TileManager.prototype.load", null);
     }
@@ -25,23 +27,22 @@ TileManager.prototype.update = function(gameContext) {
     const { timer } = gameContext;
     const realTime = timer.getRealTime();
 
-    this.updateTileTypes(realTime);
+    this.updateDynamicTileTypes(realTime);
 }
 
 TileManager.prototype.end = function() {}
 
-TileManager.prototype.updateTileTypes = function(timestamp) {
-    for(const key in this.tileTypes) {
-        const tileSet = this.tileTypes[key];
-        const animations = tileSet.getAnimations();
+TileManager.prototype.updateDynamicTileTypes = function(timestamp) {
+    for(const typeID in this.dynamicTileTypes) {
+        const dynamicTileType = this.tileTypes[typeID];
+        const dynamicAnimationList = this.dynamicTileTypes[typeID];
 
-        for(const [animationID, animation] of animations) {
-            if(animation.frameCount > 1) {
-                const currentFrameTime = timestamp % animation.frameTimeTotal;
-                const frameIndex = Math.floor(currentFrameTime / animation.frameTime);
+        for(const animationID of dynamicAnimationList) {
+            const animation = dynamicTileType.getAnimation(animationID);
+            const currentFrameTime = timestamp % animation.frameTimeTotal;
+            const frameIndex = Math.floor(currentFrameTime / animation.frameTime);
 
-                animation.setFrameIndex(frameIndex);
-            }
+            animation.setFrameIndex(frameIndex);
         }
     }
 }
@@ -77,6 +78,23 @@ TileManager.prototype.invertTileMeta = function() {
         }
 
         this.tileMeta.inversion[set][animation] = id;
+    }
+}
+
+TileManager.prototype.loadDynamicTileTypes = function() {
+    for(const typeID in this.tileTypes) {
+        const tileSet = this.tileTypes[typeID];
+        const animations = tileSet.getAnimations();
+
+        for(const [animationID, animation] of animations) {
+            if(animation.frameCount > 1) {
+                if(this.dynamicTileTypes[typeID] === undefined) {
+                    this.dynamicTileTypes[typeID] = [];
+                }
+
+                this.dynamicTileTypes[typeID].push(animationID);
+            }
+        }
     }
 }
 

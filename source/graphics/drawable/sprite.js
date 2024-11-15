@@ -27,11 +27,13 @@ Sprite.LOOP_COMPLETE = "LOOP_COMPLETE";
 Sprite.prototype = Object.create(Drawable.prototype);
 Sprite.prototype.constructor = Sprite;
 
-Sprite.prototype.initialize = function(typeID, animationID, animationFrameCount, animationFrameTime) {
-    this.typeID = typeID;
-    this.animationID = animationID;
-    this.frameCount = animationFrameCount;
-    this.frameTime = animationFrameTime;
+Sprite.prototype.initialize = function(config) {
+    const { type, animation, frameCount, frameTime } = config;
+
+    this.typeID = type;
+    this.animationID = animation;
+    this.frameCount = frameCount;
+    this.frameTime = frameTime;
     this.floatFrame = 0;
     this.currentFrame = 0;
     this.loopCount = 0;

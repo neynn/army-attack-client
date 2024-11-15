@@ -155,3 +155,44 @@ export const dirtySave = function(map2D) {
       flags
   });
 }
+
+export const saveSprites = function(spriteTypes) {
+    const formatFrames = (frames) => {
+        const formattedFrames = [];
+
+        for(const key in frames) {
+            const frame = frames[key];
+            const format = `"${key}": {"x":${frame.x},"y":${frame.y},"w":${frame.w},"h":${frame.h},"offset":{"x":0,"y":0}}`;
+
+            formattedFrames.push(format);
+        }
+
+        return formattedFrames;
+    }
+
+    const output = [];
+
+    for(const typeID in spriteTypes) {
+        const type = spriteTypes[typeID];
+        const typeString =
+`"${typeID}": {
+        "id": "${typeID}",
+        "directory": "${type.directory}",
+        "source": "${type.source}",
+        "bounds": {"x":${type.offset.x},"y":${type.offset.y},"w":${type.frames["1"].w},"h":${type.frames["1"].h}},
+        "frameTime": ${type.frameTime},
+        "allowFlip": ${type.allowFlip},
+        "frames": {
+            ${formatFrames(type.frames).join(",\n            ")}
+        }
+    }`;
+        output.push(typeString);
+    }
+
+    const downloadableString =
+`{
+    ${output.join(`,\n    `)}
+}`;
+
+    saveTemplateAsFile("sprites.json", downloadableString);
+}

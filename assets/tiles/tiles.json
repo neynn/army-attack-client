@@ -3,7 +3,7 @@
         "id": "ground",
         "directory": "assets/tiles",
         "source": "ground.png",
-        "offset": { "x": 0, "y": 0 },
+        "bounds": {"x":0,"y":0,"w":0,"h":0},
         "frameTime": 0.03,
         "allowFlip": false,
         "frames": {
@@ -36,7 +36,7 @@
         "id": "coast",
         "directory": "assets/tiles",
         "source": "coast.png",
-        "offset": { "x": 0, "y": 0 },
+        "bounds": {"x":0,"y":0,"w":0,"h":0},
         "frameTime": 0.03,
         "allowFlip": false,
         "frames": {
@@ -71,7 +71,7 @@
         "id": "deco_bad",
         "directory": "assets/tiles",
         "source": "deco_bad.png",
-        "offset": { "x": 0, "y": 0 },
+        "bounds": {"x":0,"y":0,"w":0,"h":0},
         "frameTime": 0.03,
         "allowFlip": false,
         "frames": {
@@ -118,7 +118,7 @@
         "id": "deco_good",
         "directory": "assets/tiles",
         "source": "deco_good.png",
-        "offset": { "x": 0, "y": 0 },
+        "bounds": {"x":0,"y":0,"w":0,"h":0},
         "frameTime": 0.03,
         "allowFlip": false,
         "frames": {
@@ -155,7 +155,7 @@
         "id": "river_bad",
         "directory": "assets/tiles",
         "source": "river_bad.png",
-        "offset": { "x": 0, "y": 0 },
+        "bounds": {"x":0,"y":0,"w":0,"h":0},
         "frameTime": 0.03,
         "allowFlip": false,
         "frames": {
@@ -170,7 +170,7 @@
         "id": "river_good",
         "directory": "assets/tiles",
         "source": "river_good.png",
-        "offset": { "x": 0, "y": 0 },
+        "bounds": {"x":0,"y":0,"w":0,"h":0},
         "frameTime": 0.03,
         "allowFlip": false,
         "frames": {
@@ -185,7 +185,7 @@
         "id": "mountain",
         "directory": "assets/tiles",
         "source": "mountain.png",
-        "offset": { "x": 0, "y": 0 },
+        "bounds": {"x":0,"y":0,"w":0,"h":0},
         "frameTime": 0.03,
         "allowFlip": false,
         "frames": {
@@ -203,7 +203,7 @@
         "id": "clouds",
         "directory": "assets/tiles",
         "source": "clouds.png",
-        "offset": { "x": 0, "y": 0 },
+        "bounds": {"x":0,"y":0,"w":0,"h":0},
         "frameTime": 0.03,
         "allowFlip": false,
         "frames": {
@@ -226,7 +226,7 @@
         "id": "overlay",
         "directory": "assets/tiles",
         "source": "overlay.png",
-        "offset": { "x": 0, "y": 0 },
+        "bounds": {"x":0,"y":0,"w":0,"h":0},
         "frameTime": 0.03,
         "allowFlip": false,
         "frames": {
@@ -241,7 +241,7 @@
         "id": "range",
         "directory": "assets/tiles",
         "source": "range.png",
-        "offset": { "x": 0, "y": 0 },
+        "bounds": {"x":0,"y":0,"w":0,"h":0},
         "frameTime": 0.03,
         "allowFlip": false,
         "frames": {
@@ -496,7 +496,7 @@
         "id": "border",
         "directory": "assets/tiles",
         "source": "border.png",
-        "offset": { "x": 0, "y": 0 },
+        "bounds": {"x":0,"y":0,"w":0,"h":0},
         "frameTime": 0.03,
         "allowFlip": false,
         "frames": {
