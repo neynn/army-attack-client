@@ -44,7 +44,6 @@ ButtonCircle.prototype.onDraw = function(context, viewportX, viewportY, localX, 
 
     if(this.highlight.getActive()) {
         this.highlight.apply(context);
-        this.highlight.disable();
 
         context.arc(localX, localY, this.radius, 0, 2 * Math.PI);
         context.fill();

@@ -73,7 +73,7 @@ SpriteManager.prototype.addSpriteReference = function(spriteID) {
 
     if(count === undefined) {
         this.spriteReferences.set(spriteID, 1);
-        //LOAD THE SPRITE
+        this.spriteTypes[spriteID].toBuffer();
     } else {
         this.spriteReferences.set(spriteID, count + 1);
     }
@@ -307,6 +307,9 @@ SpriteManager.prototype.updateSprite = function(spriteID, typeID, animationID = 
     if(spriteTypeID !== typeID || spriteAnimationID !== animationID) {
         sprite.initialize(typeID, animationID, animationType.frameCount, animationType.frameTime);
         sprite.initializeBounds();
+
+        //this.removeSpriteReference(spriteTypeID);
+        this.addSpriteReference(typeID);
     }
 
     return true;

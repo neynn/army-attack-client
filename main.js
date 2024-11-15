@@ -1,10 +1,11 @@
 import { ResourceLoader } from "./source/resourceLoader.js";
 import { ImageSheet } from "./source/graphics/imageSheet.js";
 import { ArmyContext } from "./armyContext.js";
+import { ArmyResouceManager } from "./armyResourceManager.js";
 
 const gameContext = new ArmyContext();
 
-ResourceLoader.loadConfigFiles("assets", "files.json").then(async files => {
+ArmyResouceManager.loadMain("assets", "files.json").then(async files => {
   const usedMB = [];
   const usedMBLarge = [];
 
@@ -40,10 +41,19 @@ ResourceLoader.loadConfigFiles("assets", "files.json").then(async files => {
     files.tiles[key] = imageSheet;
   }));
 
-  await ResourceLoader.loadFonts(files.fonts, (fontID, font) => document.fonts.add(font));
+  const fontPromises = [];
 
+  for(const fontID in files.fonts) {
+    const fontMeta = files.fonts[fontID];
+    const fontPromise = ArmyResouceManager.loadCSSFont(fontMeta);
+
+    fontPromises.push(fontPromise);
+  }
+
+  await Promise.allSettled(fontPromises);
+  console.log(ArmyResouceManager)
   return files;
-}).then(async resources => {
+}).then(resources => {
   gameContext.loadResources(resources);
   gameContext.addUIClickEvent();
   gameContext.initialize();

@@ -40,7 +40,6 @@ ButtonSquare.prototype.onDraw = function(context, viewportX, viewportY, localX, 
         const { w, h } = this.bounds;
 
         this.highlight.apply(context);
-        this.highlight.disable();
     
         context.fillRect(localX, localY, w, h);
     }

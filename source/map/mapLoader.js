@@ -1,5 +1,5 @@
+import { ArmyResouceManager } from "../../armyResourceManager.js";
 import { Logger } from "../logger.js";
-import { ResourceLoader } from "../resourceLoader.js";
 import { MapParser } from "./mapParser.js";
 
 export const MapLoader = function() {
@@ -66,9 +66,9 @@ MapLoader.prototype.loadMapData = function(mapID) {
         return Promise.resolve(cachedData);
     }
 
-    const mapPath = ResourceLoader.getPath(mapType.directory, mapType.source);
+    const mapPath = ArmyResouceManager.getPath(mapType.directory, mapType.source);
     
-    return ResourceLoader.loadJSON(mapPath).then(mapData => {
+    return ArmyResouceManager.promiseJSON(mapPath).then(mapData => {
         if(!mapData) {
             return null;
         }

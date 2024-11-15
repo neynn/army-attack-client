@@ -1,9 +1,7 @@
+import { ArmyResouceManager } from "../../armyResourceManager.js";
 import { Logger } from "../logger.js";
-import { ResourceLoader } from "../resourceLoader.js";
 
 export const SoundPlayer = function() {
-    this.context = new AudioContext();
-    this.buffers = new Map();
     this.activeSounds = new Map();
     this.soundTypes = {};
     this.defaultVolume = 0.3;
@@ -18,8 +16,7 @@ SoundPlayer.prototype.load = function(soundTypes) {
 }
 
 SoundPlayer.prototype.clear = function() {
-    this.activeSounds.forEach((sound, key) => this.stopSound(key));
-    this.buffers.clear();
+    this.activeSounds.forEach((sound, audioID) => this.stopSound(audioID));
 }
 
 SoundPlayer.prototype.isPlaying = function(audioID) {
@@ -54,7 +51,7 @@ SoundPlayer.prototype.playRandom = function(soundList, volume) {
     return true;
 }
 
-SoundPlayer.prototype.playSound = async function(audioID, volume = this.defaultVolume) {
+SoundPlayer.prototype.playSound = function(audioID, volume = this.defaultVolume) {
     const soundType = this.soundTypes[audioID];
 
     if(!soundType) {
@@ -63,43 +60,36 @@ SoundPlayer.prototype.playSound = async function(audioID, volume = this.defaultV
         return false;
     }
 
-    if(!this.buffers.has(audioID)) {
-        await this.loadSound(audioID);
-    }
-
-    const buffer = this.buffers.get(audioID);
-
     if(this.isPlaying(audioID) && !soundType.allowStacking) {
         Logger.log(false, "Sound is already playing!", "SoundPlayer.prototype.playSound", {audioID});
 
         return false;
     }
 
-    const gainNode = this.context.createGain();
-    const source = this.context.createBufferSource();
+    this.activeSounds.set(audioID, null);
 
-    source.connect(gainNode);
-    gainNode.connect(this.context.destination);
-    gainNode.gain.setValueAtTime(volume, this.context.currentTime);
-    source.buffer = buffer;
-    source.start(0);
-    source.onended = () => this.activeSounds.delete(audioID);
+    ArmyResouceManager.getAudioSource(soundType, volume).then(source => {
+        this.activeSounds.set(audioID, source);
 
-    this.activeSounds.set(audioID, source);
+        source.onended = () => this.activeSounds.delete(audioID);
+        source.start(0);
+    });
 
     return true;
 }
 
 SoundPlayer.prototype.stopSound = function(audioID) {
-    const sound = this.activeSounds.get(audioID);
-
-    if(!sound) {
+    if(!this.activeSounds.has(audioID)) {
         Logger.log(false, "Sound is not active!", "SoundPlayer.prototype.stopSound", {audioID});
 
         return false;
     }
 
-    sound.stop();
+    const sound = this.activeSounds.get(audioID);
+
+    if(sound) {
+        sound.stop();
+    }
 
     this.activeSounds.delete(audioID);
 
@@ -115,19 +105,11 @@ SoundPlayer.prototype.loadSound = async function(audioID) {
         return null;
     }
 
-    const promise = ResourceLoader.loadSoundBuffer(soundType, this.context)
-    .then(decodedBuffer => this.buffers.set(audioID, decodedBuffer));
-
-    return promise;
+    return ArmyResouceManager.bufferAudio(soundType);
 }
 
-SoundPlayer.prototype.loadAllSounds = async function() {
-    const promises = [];
-
+SoundPlayer.prototype.loadAllSounds = function() {
     for(const soundID in this.soundTypes) {
-        const promise = this.loadSound(soundID);
-        promises.push(promise);
+        this.loadSound(soundID);
     }
-
-    await Promise.allSettled(promises);
 }

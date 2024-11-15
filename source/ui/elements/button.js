@@ -10,9 +10,8 @@ export const Button = function(id, DEBUG_NAME) {
     this.highlight.setColor(200, 200, 200, 50);
     this.outline.setColor(255, 255, 255, 255);
 
-    this.events.subscribe(UIElement.EVENT_COLLISION, DEBUG_NAME, () => {
-        this.highlight.enable();
-    });
+    this.events.subscribe(UIElement.EVENT_FIRST_COLLISION, DEBUG_NAME, () => this.highlight.enable());
+    this.events.subscribe(UIElement.EVENT_FINAL_COLLISION, DEBUG_NAME, () => this.highlight.disable());
 
     this.outline.enable();
 }
