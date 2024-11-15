@@ -3,15 +3,13 @@ import { IDGenerator } from "../idGenerator.js";
 import { clampValue } from "../math/math.js";
 
 export const EffectManager = function() {
-    this.idGenerator = new IDGenerator();
+    this.idGenerator = new IDGenerator("@EFFECT");
     this.activeEffects = new Map();
     this.effectsToDelete = [];
     this.effectTypes = {
         [EffectManager.EFFECT_TYPE_FADE_IN]: "addFadeIn",
         [EffectManager.EFFECT_TYPE_FADE_OUT]: "addFadeOut"
     };
-
-    this.idGenerator.startGenerator();
 }
 
 EffectManager.EFFECT_TYPE_FADE_IN = "FADE_IN";

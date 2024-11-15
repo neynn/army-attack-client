@@ -27,7 +27,7 @@ Drawable.prototype.onDraw = function(context, viewportX, viewportY, localX, loca
 
 Drawable.prototype.onDebug = function(context, viewportX, viewportY, localX, localY) {}
 
-Drawable.prototype.update = function(timeStamp, deltaTime) {
+Drawable.prototype.update = function(timestamp, deltaTime) {
     const updateStack = [this];
 
     while(updateStack.length > 0) {
@@ -40,7 +40,7 @@ Drawable.prototype.update = function(timeStamp, deltaTime) {
             updateStack.push(reference);
         }
 
-        drawable.onUpdate(timeStamp, deltaTime);
+        drawable.onUpdate(timestamp, deltaTime);
     }
 }
 

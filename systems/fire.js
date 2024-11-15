@@ -49,7 +49,7 @@ FireSystem.startAttack = function(gameContext, attackers, target) {
         
         spriteManager
         .createChildSprite(spriteComponent.spriteID, attacker.config.sprites.weapon)
-        .setLooping(false);
+        .expire();
     }
 }
 

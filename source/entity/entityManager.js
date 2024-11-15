@@ -8,7 +8,7 @@ export const EntityManager = function() {
     this.traitTypes = {};
     this.saveComponentTypes = {};
     this.loadComponentTypes = {};
-    this.idGenerator = new IDGenerator();
+    this.idGenerator = new IDGenerator("@ENTITY");
     this.entities = new Map();
     this.activeEntities = new Set();
 }

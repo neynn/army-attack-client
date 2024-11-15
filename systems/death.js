@@ -9,7 +9,7 @@ DeathSystem.playDeathAnimation = function(gameContext, entity) {
     const positionComponent = entity.getComponent(PositionComponent);
     const deathAnimation = spriteManager.createSprite(entity.config.sprites.death, SpriteManager.LAYER_MIDDLE);
 
-    deathAnimation.setLooping(false);
+    deathAnimation.expire();
     deathAnimation.setPosition(positionComponent.positionX, positionComponent.positionY);
 
     soundPlayer.playRandom(entity.config.sounds.death);

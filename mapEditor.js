@@ -1,5 +1,5 @@
+import { Logger } from "./source/logger.js";
 import { clampValue, loopValue } from "./source/math/math.js";
-import { response } from "./source/response.js";
 
 export const MapEditor = function() {
     this.config = {};
@@ -135,12 +135,14 @@ MapEditor.prototype.reloadAll = function() {
 
 MapEditor.prototype.loadConfig = function(config) {
     if(config === undefined) {
-        return response(false, "Config cannot be undefined!", "MapEditor.prototype.loadConfig", null, null);
+        Logger.log(false, "Config cannot be undefined!", "MapEditor.prototype.loadConfig", null);
+
+        return false;
     }
 
     this.config = config;
 
-    return response(true, "Config has been loaded!", "MapEditor.prototype.loadConfig", null, null);
+    return true;
 }
 
 MapEditor.prototype.loadBrushSets = function(tileMeta) {

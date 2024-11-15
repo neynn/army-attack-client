@@ -46,37 +46,37 @@ const createStatCard = function(gameContext, entity, sprite) {
     });
 }
 
-const createUnit = function(gameContext, entity, entitySprite, entitySetup, typeConfig) {
-    const attackComponent = componentSetup.setupAttackComponent(typeConfig, typeConfig.stats[MODE_STAT_TYPE_ID]);
-    const moveComponent = componentSetup.setupMoveComponent(typeConfig, typeConfig.stats[MODE_STAT_TYPE_ID]);
+const createUnit = function(gameContext, entity, sprite, type, setup) {
+    const attackComponent = componentSetup.setupAttackComponent(type, type.stats[MODE_STAT_TYPE_ID]);
+    const moveComponent = componentSetup.setupMoveComponent(type, type.stats[MODE_STAT_TYPE_ID]);
 
     entity.addComponent(attackComponent);
     entity.addComponent(moveComponent);
     
-    createStatCard(gameContext, entity, entitySprite);
+    createStatCard(gameContext, entity, sprite);
 }
 
-const createDefense = function(gameContext, entity, entitySprite, entitySetup, typeConfig) {
-    const attackComponent = componentSetup.setupAttackComponent(typeConfig, typeConfig.stats[MODE_STAT_TYPE_ID]);
+const createDefense = function(gameContext, entity, sprite, type, setup) {
+    const attackComponent = componentSetup.setupAttackComponent(type, type.stats[MODE_STAT_TYPE_ID]);
 
     entity.addComponent(attackComponent);
 
-    createStatCard(gameContext, entity, entitySprite);
+    createStatCard(gameContext, entity, sprite);
 }
 
-const createDeco = function(gameContext, entity, entitySprite, entitySetup, typeConfig) {}
+const createDeco = function(gameContext, entity, sprite, type, setup) {}
 
-const createBuilding = function(gameContext, entity, entitySprite, entitySetup, typeConfig) {}
+const createBuilding = function(gameContext, entity, sprite, type, setup) {}
 
-const createHFE = function(gameContext, entity, entitySprite, entitySetup, typeConfig) {}
+const createHFE = function(gameContext, entity, sprite, type, setup) {}
 
-const createTown = function(gameContext, entity, entitySprite, entitySetup, typeConfig) {}
+const createTown = function(gameContext, entity, sprite, type, setup) {}
 
-const createConstruction = function(gameContext, entity, entitySprite, entitySetup, typeConfig) {
-    const constructionComponent = componentSetup.setupConstructionComponent(entitySetup, typeConfig);
+const createConstruction = function(gameContext, entity, sprite, type, setup) {
+    const constructionComponent = componentSetup.setupConstructionComponent(setup, type);
 
-    entitySprite.setStatic(true);
-    entitySprite.setFrame(2);
+    sprite.freeze();
+    sprite.setFrame(2);
 
     entity.addComponent(constructionComponent);
 }
@@ -148,7 +148,7 @@ export const buildUnit = function(gameContext, entity, type, setup) {
     const sprite = spriteManager.createSprite(type.sprites.idle, SpriteManager.LAYER_MIDDLE);
 
     createBaseEntity(gameContext, entity, sprite, type, setup);
-    createUnit(gameContext, entity, sprite, setup, type);
+    createUnit(gameContext, entity, sprite, type, setup);
     finalizeEntity(gameContext, entity, type, setup);
 }
 
@@ -157,6 +157,6 @@ export const buildDefense = function(gameContext, entity, type, setup) {
     const sprite = spriteManager.createSprite(type.sprites.idle, SpriteManager.LAYER_MIDDLE);
 
     createBaseEntity(gameContext, entity, sprite, type, setup);
-    createDefense(gameContext, entity, sprite, setup, type);
+    createDefense(gameContext, entity, sprite, type, setup);
     finalizeEntity(gameContext, entity, type, setup);
 }

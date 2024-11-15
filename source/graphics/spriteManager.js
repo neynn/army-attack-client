@@ -1,6 +1,5 @@
 import { IDGenerator } from "../idGenerator.js";
 import { Logger } from "../logger.js";
-import { response } from "../response.js";
 import { ImageSheet } from "./imageSheet.js";
 import { Sprite } from "./drawable/sprite.js";
 
@@ -9,7 +8,7 @@ export const SpriteManager = function() {
     this.spriteTypes = {};
     this.sprites = new Map();
     this.spriteReferences = new Map();
-    this.idGenerator = new IDGenerator();
+    this.idGenerator = new IDGenerator("@SPRITE");
     this.layers = {
         [SpriteManager.LAYER_BOTTOM]: [],
         [SpriteManager.LAYER_MIDDLE]: [],
@@ -44,7 +43,9 @@ SpriteManager.prototype.update = function(gameContext) {
 
 SpriteManager.prototype.removeSpriteReference = function(spriteID) {
     if(!this.spriteTypes[spriteID]) {
-        return response(false, "SpriteType does not exist!", "SpriteManager.prototype.removeSpriteReference", null, {spriteID});
+        Logger.log(false, "SpriteType does not exist!", "SpriteManager.prototype.removeSpriteReference", { spriteID });
+
+        return false;
     }
 
     const count = this.spriteReferences.get(spriteID);
@@ -58,12 +59,14 @@ SpriteManager.prototype.removeSpriteReference = function(spriteID) {
         }
     }
 
-    return response(true, "Sprite reference has been removed!", "SpriteManager.prototype.removeSpriteReference", null, {spriteID});
+    return true;
 }
 
 SpriteManager.prototype.addSpriteReference = function(spriteID) {
     if(!this.spriteTypes[spriteID]) {
-        return response(false, "SpriteType does not exist!", "SpriteManager.prototype.addSpriteReference", null, {spriteID});
+        Logger.log(false, "SpriteType does not exist!", "SpriteManager.prototype.addSpriteReference", { spriteID });
+
+        return false;
     }
 
     const count = this.spriteReferences.get(spriteID);
@@ -75,7 +78,7 @@ SpriteManager.prototype.addSpriteReference = function(spriteID) {
         this.spriteReferences.set(spriteID, count + 1);
     }
 
-    return response(true, "Sprite reference has been added!", "SpriteManager.prototype.addSpriteReference", null, {spriteID});
+    return true;
 }
 
 SpriteManager.prototype.end = function() {
@@ -96,7 +99,7 @@ SpriteManager.prototype.createSprite = function(typeID, layerID, animationID) {
     const sprite = new Sprite(spriteID, typeID);
     
     sprite.setLastCallTime(this.timestamp);
-    sprite.events.subscribe(Sprite.FINISHED, "SPRITE_MANAGER", (sprite) => this.destroySprite(sprite.id));
+    sprite.events.subscribe(Sprite.TERMINATE, "SPRITE_MANAGER", (sprite) => this.destroySprite(sprite.id));
     sprite.events.subscribe(Sprite.REQUEST_FRAME, "SPRITE_MANAGER", (sprite, onResponse) => {
         const {typeID, animationID, currentFrame} = sprite;
         const spriteType = this.spriteTypes[typeID];
@@ -130,7 +133,7 @@ SpriteManager.prototype.destroySprite = function(spriteID) {
     const nonSpriteDrawables = [];
 
     if(!sprite) {
-        Logger.log(false, "Sprite does not exist!", "SpriteManager.prototype.destroySprite", {spriteID});
+        Logger.log(false, "Sprite does not exist!", "SpriteManager.prototype.destroySprite", { spriteID });
 
         return nonSpriteDrawables;
     }
@@ -231,63 +234,80 @@ SpriteManager.prototype.destroyChildSprite = function(parentID, childName) {
 
 SpriteManager.prototype.addToLayer = function(layerID, sprite) {
     if(this.layers[layerID] === undefined) {
-        return response(false, "Layer does not exist!", "SpriteManager.prototype.addToLayer", null, {layerID});
+        Logger.log(false, "Layer does not exist!", "SpriteManager.prototype.addToLayer", { layerID });
+
+        return false;
     }
 
     const layer = this.layers[layerID];
     const index = layer.findIndex(member => member.id === sprite.id);
 
     if(index !== -1) {
-        return response(false, "Sprite already exists on layer!", "SpriteManager.prototype.addToLayer", null, {layerID});
+        Logger.log(false, "Sprite already exists on layer!", "SpriteManager.prototype.addToLayer", { layerID });
+
+        return false;
     }
 
     layer.push(sprite);
     sprite.setLayerID(layerID);
 
-    return response(true, "Sprite has been added to layer!", "SpriteManager.prototype.addToLayer", null, {layerID});
+    return true;
 } 
 
 SpriteManager.prototype.removeFromLayer = function(layerID, sprite) {
     if(this.layers[layerID] === undefined) {
-        return response(false, "Layer does not exist!", "SpriteManager.prototype.removeFromLayer", null, {layerID});
+        Logger.log(false, "Layer does not exist!", "SpriteManager.prototype.removeFromLayer", { layerID });
+
+        return false;
     }
 
     const layer = this.layers[layerID];
     const index = layer.findIndex(member => member.id === sprite.id);
 
     if(index === -1) {
-        return response(false, "Sprite does not exist on layer!", "SpriteManager.prototype.removeFromLayer", null, {layerID});
+        Logger.log(false, "Sprite does not exist on layer!", "SpriteManager.prototype.removeFromLayer", { layerID });
+
+        return false;
     }
 
     layer.splice(index, 1);
     sprite.setLayerID(null);
 
-    return response(true, "Sprite has removed from layer!", "SpriteManager.prototype.removeFromLayer", null, {layerID});
+    return true;
 }
 
 SpriteManager.prototype.updateSprite = function(spriteID, typeID, animationID = ImageSheet.DEFAULT_ANIMATION_ID) {
     const sprite = this.sprites.get(spriteID);
     
     if(!sprite) {
-        return response(false, "Sprite does not exist!", "SpriteManager.prototype.updateSprite", null, {spriteID});
+        Logger.log(false, "Sprite does not exist!", "SpriteManager.prototype.updateSprite", { spriteID });
+
+        return false;
     }
 
     const spriteType = this.spriteTypes[typeID];
 
     if(!spriteType) {
-        return response(false, "SpriteType does not exist!", "SpriteManager.prototype.updateSprite", null, {spriteID, typeID});
+        Logger.log(false, "SpriteType does not exist!", "SpriteManager.prototype.updateSprite", { spriteID, typeID });
+
+        return false;
     }
 
     const animationType = spriteType.getAnimation(animationID);
 
     if(!animationType) {
-        return response(false, "Parameter is undefined!", "SpriteManager.prototype.updateSprite", null, {spriteID, typeID, animationID});
+        Logger.log(false, "AnimationType does not exist!", "SpriteManager.prototype.updateSprite", { spriteID, typeID, animationID });
+
+        return false;
     }
 
-    if(sprite.typeID !== typeID || sprite.animationID !== animationID) {
+    const spriteTypeID = sprite.getTypeID();
+    const spriteAnimationID = sprite.getAnimationID();
+
+    if(spriteTypeID !== typeID || spriteAnimationID !== animationID) {
         sprite.initialize(typeID, animationID, animationType.frameCount, animationType.frameTime);
         sprite.initializeBounds();
     }
 
-    return response(true, "Sprite has been updated!", "SpriteManager.prototype.updateSprite", null, {spriteID, typeID, animationID});
+    return true;
 }

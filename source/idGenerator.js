@@ -1,13 +1,14 @@
-export const IDGenerator = function() {
+export const IDGenerator = function(prefix) {
   this.currentID = 0;
   this.generator = this.startGenerator();
+  this.prefix = prefix;
 }
 
 IDGenerator.prototype.startGenerator = function*() {
-  while (true) {
+  while(true) {
     this.currentID ++;
     const timestamp = Date.now();
-    yield `id_${timestamp}_${this.currentID}`;
+    yield `${this.prefix}-${timestamp}-${this.currentID}`;
   }
 }
 

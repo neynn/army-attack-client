@@ -13,18 +13,18 @@ export const Sprite = function(id, DEBUG_NAME) {
     this.currentFrame = 0;
     this.loopCount = 0;
     this.loopLimit = 0;
-    this.isLooping = true;
+    this.isRepeating = true;
     this.isStatic = false;
     this.isFlipped = false;
 
-    this.events.listen(Sprite.FINISHED);
+    this.events.listen(Sprite.TERMINATE);
     this.events.listen(Sprite.LOOP_COMPLETE);
     this.events.listen(Sprite.REQUEST_FRAME);
 }
 
-Sprite.FINISHED = "Sprite.FINISHED";
-Sprite.LOOP_COMPLETE = "Sprite.LOOP_COMPLETE";
-Sprite.REQUEST_FRAME = "Sprite.REQUEST_FRAME";
+Sprite.TERMINATE = "TERMINATE";
+Sprite.LOOP_COMPLETE = "LOOP_COMPLETE";
+Sprite.REQUEST_FRAME = "REQUEST_FRAME";
 
 Sprite.prototype = Object.create(Drawable.prototype);
 Sprite.prototype.constructor = Sprite;
@@ -86,11 +86,11 @@ Sprite.prototype.getBounds = function() {
     return { "x": boundsX, "y": boundsY, "w": w,  "h": h }
 }
 
-Sprite.prototype.onUpdate = function(timeStamp, deltaTime) {
-    const passedTime = timeStamp - this.lastCallTime;
+Sprite.prototype.onUpdate = function(timestamp, deltaTime) {
+    const passedTime = timestamp - this.lastCallTime;
     const passedFrames = passedTime / this.frameTime;
 
-    this.lastCallTime = timeStamp;
+    this.lastCallTime = timestamp;
     this.updateFrame(passedFrames);
 }
 
@@ -143,27 +143,15 @@ Sprite.prototype.onDraw = function(context, viewportX, viewportY, localX, localY
     });
 }
 
-Sprite.prototype.setLooping = function(isLooping = false) {
-    this.isLooping = isLooping;
-}
-
 Sprite.prototype.setLoopLimit = function(loopLimit = 0) {
     this.loopLimit = loopLimit;
-}
-
-Sprite.prototype.setStatic = function(isStatic = false) {
-    this.isStatic = isStatic;
 }
 
 Sprite.prototype.setLayerID = function(layerID) {
     this.layerID = layerID;
 }
 
-Sprite.prototype.setFrame = function(frameIndex) {
-    if(frameIndex === undefined) {
-        frameIndex = this.currentFrame;
-    }
-
+Sprite.prototype.setFrame = function(frameIndex = this.currentFrame) {
     if(frameIndex >= this.frameCount || frameIndex < 0) {
         return;
     }
@@ -172,23 +160,41 @@ Sprite.prototype.setFrame = function(frameIndex) {
     this.currentFrame = frameIndex;
 }
 
-Sprite.prototype.flip = function(isFlipped) {
-    if(isFlipped === undefined) {
-        isFlipped = !this.isFlipped;
-    }
+Sprite.prototype.terminate = function() {
+    this.hide();
+    this.freeze();
+    this.events.emit(Sprite.TERMINATE, this);
+}
 
+Sprite.prototype.repeat = function() {
+    this.isRepeating = true;
+}
+
+Sprite.prototype.expire = function() {
+    this.isRepeating = false;
+}
+
+Sprite.prototype.freeze = function() {
+    this.isStatic = true;
+}
+
+Sprite.prototype.thaw = function() {
+    this.isStatic = false;
+}
+
+Sprite.prototype.flip = function(isFlipped = !this.isFlipped) {
     this.isFlipped = isFlipped;
 }
 
-Sprite.prototype.updateFrame = function(passedFloatFrames = 0) {
+Sprite.prototype.updateFrame = function(floatFrames = 0) {
     if(this.isStatic) {
         return;
     }
 
-    this.floatFrame += passedFloatFrames;
+    this.floatFrame += floatFrames;
     this.currentFrame = Math.floor(this.floatFrame % this.frameCount);
 
-    if(passedFloatFrames === 0) {
+    if(floatFrames === 0) {
         return;
     }
 
@@ -199,9 +205,7 @@ Sprite.prototype.updateFrame = function(passedFloatFrames = 0) {
         this.events.emit(Sprite.LOOP_COMPLETE, this, skippedLoops);
     }
 
-    if(this.loopCount > this.loopLimit && !this.isLooping) {
-        this.hide();
-        this.setStatic(true);
-        this.events.emit(Sprite.FINISHED, this);
+    if(this.loopCount > this.loopLimit && !this.isRepeating) {
+        this.terminate();
     }
 }

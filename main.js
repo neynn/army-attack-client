@@ -5,8 +5,8 @@ import { ArmyContext } from "./armyContext.js";
 const gameContext = new ArmyContext();
 
 ResourceLoader.loadConfigFiles("assets", "files.json").then(async files => {
-  let totalMegabytes = 0;
-  let totalMegabytesLargeFiles = 0;
+  const usedMB = [];
+  const usedMBLarge = [];
 
   await ResourceLoader.loadImages(files.sprites, ((key, image, config) => {
     const imageSheet = new ImageSheet(image, config);
@@ -16,16 +16,21 @@ ResourceLoader.loadConfigFiles("assets", "files.json").then(async files => {
     const imageSizeMB = imageSize / ResourceLoader.SIZE_MB;
 
     if(imageSize >= ResourceLoader.BIG_IMAGE) {
-      totalMegabytesLargeFiles += imageSizeMB;
-      console.log(key, imageSizeMB);
+      usedMBLarge.push({
+        "imageID": key,
+        "imageSizeMB": imageSizeMB
+      });
     }
 
-    totalMegabytes += imageSizeMB;
+    usedMB.push({
+      "imageID": key,
+      "imageSizeMB": imageSizeMB
+    });
 
     files.sprites[key] = imageSheet;
   }));
 
-  console.log(totalMegabytes, totalMegabytesLargeFiles);
+  console.log(usedMB, usedMBLarge);
 
   await ResourceLoader.loadImages(files.tiles, ((key, image, config) => {
     const imageSheet = new ImageSheet(image, config);
