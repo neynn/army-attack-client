@@ -1,4 +1,4 @@
-import { Drawable } from "./drawable.js";
+import { Drawable } from "../drawable.js";
 
 export const Sprite = function(id, DEBUG_NAME) {
     Drawable.call(this, id, DEBUG_NAME);
@@ -200,7 +200,7 @@ Sprite.prototype.updateFrame = function(passedFloatFrames = 0) {
     }
 
     if(this.loopCount > this.loopLimit && !this.isLooping) {
-        this.setVisible(false);
+        this.hide();
         this.setStatic(true);
         this.events.emit(Sprite.FINISHED, this);
     }

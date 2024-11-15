@@ -1,4 +1,4 @@
-import { Drawable } from "./drawable.js";
+import { Drawable } from "../drawable.js";
 
 export const SimpleImage = function() {
     Drawable.call(this, null, "SIMPLE_IMAGE");

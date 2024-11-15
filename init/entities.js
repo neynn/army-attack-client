@@ -2,7 +2,7 @@ import { AttackComponent } from "../components/attack.js";
 import { HealthComponent } from "../components/health.js";
 import { TeamComponent } from "../components/team.js";
 import { ENTITY_EVENTS } from "../enums.js";
-import { SimpleText } from "../source/graphics/simpleText.js";
+import { SimpleText } from "../source/graphics/drawable/simpleText.js";
 import { TextStyle } from "../source/graphics/applyable/textStyle.js";
 import { componentSetup } from "./componentSetup.js";
 import { PositionComponent } from "../components/position.js";

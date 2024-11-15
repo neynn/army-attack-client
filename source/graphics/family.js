@@ -1,19 +1,9 @@
-export const Family = function(reference, DEBUG_NAME = "") {
+export const Family = function(reference, name, DEBUG_NAME = "AUTO") {
     this.id = Symbol(DEBUG_NAME);
     this.reference = reference;
-    this.name = null;
+    this.name = name;
     this.parent = null;
     this.children = [];
-}
-
-Family.prototype.setName = function(name) {
-    if(name === undefined) {
-        return false;
-    }
-
-    this.name = name;
-
-    return true;
 }
 
 Family.prototype.setParent = function(parent) {
@@ -69,8 +59,6 @@ Family.prototype.onRemove = function() {
 
     this.children = [];
     this.parent = null;
-
-    return true;
 }
 
 Family.prototype.hasChild = function(id, name) {
@@ -93,21 +81,11 @@ Family.prototype.getChildByName = function(name) {
     return null;
 }
 
-Family.prototype.getChildByID = function(id) {
-    for(const child of this.children) {
-        if(child.id === id) {
-            return child;
-        }
-    }
-
-    return null;
-}
-
 Family.prototype.getParent = function() {
     return this.parent;
 }
 
-Family.prototype.getAllChildren = function() {
+Family.prototype.getChildren = function() {
     return this.children;
 }
 

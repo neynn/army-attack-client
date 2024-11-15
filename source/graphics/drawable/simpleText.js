@@ -1,5 +1,5 @@
-import { Drawable } from "./drawable.js";
-import { TextStyle } from "./applyable/textStyle.js";
+import { Drawable } from "../drawable.js";
+import { TextStyle } from "../applyable/textStyle.js";
 
 export const SimpleText = function() {
     Drawable.call(this, null, "SIMPLE_TEXT");

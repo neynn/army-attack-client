@@ -183,7 +183,7 @@ ControllerSystem.deselectEntity = function(gameContext, controller, entity) {
     }
 
     const entitySpriteID = entity.getComponent(SpriteComponent).spriteID;
-    spriteManager.removeChildSprite(entitySpriteID, "MOVE_CURSOR");
+    spriteManager.destroyChildSprite(entitySpriteID, "MOVE_CURSOR");
     controllerComponent.selectedEntity = null;
     controllerComponent.nodeList = [];
 }

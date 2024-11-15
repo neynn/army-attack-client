@@ -13,21 +13,19 @@ export const Drawable = function(id = null, DEBUG_NAME = null) {
     this.position = new Vec2(0, 0);
     this.bounds = new Rectangle(0, 0, 0, 0);
     this.events = new EventEmitter();
+
+    if(id === null) {
+        console.warn(`Drawable (${DEBUG_NAME}) has no id!`);
+    }
 }
 
-Drawable.DEFAULT_FAMILY_NAME = "default";
+Drawable.DEFAULT_FAMILY_NAME = "AUTO";
 
-Drawable.prototype.onUpdate = function(timestamp, deltaTime) {
+Drawable.prototype.onUpdate = function(timestamp, deltaTime) {}
 
-}
+Drawable.prototype.onDraw = function(context, viewportX, viewportY, localX, localY) {}
 
-Drawable.prototype.onDraw = function(context, viewportX, viewportY, localX, localY) {
-
-}
-
-Drawable.prototype.onDebug = function(context, viewportX, viewportY, localX, localY) {
-
-}
+Drawable.prototype.onDebug = function(context, viewportX, viewportY, localX, localY) {}
 
 Drawable.prototype.update = function(timeStamp, deltaTime) {
     const updateStack = [this];
@@ -61,7 +59,8 @@ Drawable.prototype.debug = function(context, viewportX, viewportY) {
         drawable.onDebug(context, viewportX, viewportY, localX, localY);
         context.restore();
 
-        for(const child of children) {
+        for(let i = children.length - 1; i >= 0; i--) {
+            const child = children[i];
             const reference = child.getReference();
 
             debugStack.push({
@@ -92,24 +91,19 @@ Drawable.prototype.draw = function(context, viewportX, viewportY) {
         drawable.onDraw(context, viewportX, viewportY, localX, localY);
         context.restore();
 
-        for(const child of children) {
+        for(let i = children.length - 1; i >= 0; i--) {
+            const child = children[i];
             const reference = child.getReference();
 
-            if(!reference.isVisible) {
-                continue;
+            if(reference.isVisible) {
+                drawStack.push({
+                    "drawable": reference,
+                    "localX": localX + reference.position.x,
+                    "localY": localY + reference.position.y
+                });
             }
-
-            drawStack.push({
-                "drawable": reference,
-                "localX": localX + reference.position.x,
-                "localY": localY + reference.position.y
-            });
         }
     }
-}
-
-Drawable.prototype.getID = function() {
-    return this.id;
 }
 
 Drawable.prototype.getFamilyStack = function() {
@@ -121,9 +115,10 @@ Drawable.prototype.getFamilyStack = function() {
         const drawableID = drawable.getID();
         const children = drawable.getAllChildren();
 
-        for(const child of children) {
+        for(let i = children.length - 1; i >= 0; i--) {
+            const child = children[i];
             const reference = child.getReference();
-
+            
             stack.push(reference);
         }
 
@@ -131,6 +126,10 @@ Drawable.prototype.getFamilyStack = function() {
     }
 
     return familyStack;
+}
+
+Drawable.prototype.getID = function() {
+    return this.id;
 }
 
 Drawable.prototype.getBounds = function() {
@@ -142,12 +141,31 @@ Drawable.prototype.getBounds = function() {
 }
 
 Drawable.prototype.setPosition = function(positionX, positionY) {
-    if(positionX === undefined || positionY === undefined) {
+    if(positionX !== undefined) {
+        this.position.x = positionX;
+    }
+
+    if(positionY !== undefined) {
+        this.position.y = positionY;
+    }
+}
+
+Drawable.prototype.hide = function() {
+    this.isVisible = false;
+}
+
+Drawable.prototype.show = function() {
+    this.isVisible = true;
+}
+
+Drawable.prototype.setOpacity = function(opacity) {
+    if(opacity === undefined) {
         return false;
     }
 
-    this.position.x = positionX;
-    this.position.y = positionY;
+    opacity = clampValue(opacity, 1, 0);
+
+    this.opacity = opacity;
 
     return true;
 }
@@ -176,23 +194,12 @@ Drawable.prototype.getChild = function(name) {
     return this.family.getChildByName(name);
 }
 
-Drawable.prototype.getAllChildrenReferences = function() {
-    if(!this.family) {
-        return [];
-    }
-
-    const children = this.family.getAllChildren();
-    const references = children.map(child => child.getReference());
-
-    return references;
-}
-
 Drawable.prototype.getAllChildren = function() {
     if(!this.family) {
         return [];
     }
 
-    return this.family.getAllChildren();
+    return this.family.getChildren();
 }
 
 Drawable.prototype.hasFamily = function() {
@@ -204,8 +211,7 @@ Drawable.prototype.openFamily = function(name = Drawable.DEFAULT_FAMILY_NAME) {
         return false;
     }
 
-    this.family = new Family(this, this.DEBUG_NAME);
-    this.family.setName(name);
+    this.family = new Family(this, name, this.DEBUG_NAME);
 
     return true;
 }
@@ -221,35 +227,13 @@ Drawable.prototype.closeFamily = function() {
     return true;
 }
 
-Drawable.prototype.setVisible = function(isVisible) {
-    if(isVisible === undefined) {
-        return false;
-    }
-
-    this.isVisible = isVisible;
-
-    return true;
-}
-
-Drawable.prototype.setOpacity = function(opacity) {
-    if(opacity === undefined) {
-        return false;
-    }
-
-    opacity = clampValue(opacity, 1, 0);
-
-    this.opacity = opacity;
-
-    return true;
-}
-
 Drawable.prototype.addChild = function(drawable, childName) {
-    if(!this.family) {
-        return false;
-    }
-
     if(childName === undefined) {
         return false;
+    }
+    
+    if(!this.family) {
+        this.openFamily();
     }
 
     if(this.family.getChildByName(childName)) {

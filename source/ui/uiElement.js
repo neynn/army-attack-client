@@ -40,11 +40,13 @@ UIElement.prototype.getCollisionStack = function(mouseX, mouseY, mouseRange) {
 
         collidedElements.push(element);
 
-        const references = element.getAllChildrenReferences();
+        const children = element.getAllChildren();
         const nextLocalX = localX - element.position.x;
         const nextLocalY = localY - element.position.y;
 
-        for(const reference of references) {
+        for(const child of children) {
+            const reference = child.getReference();
+            
             if(reference instanceof UIElement) {
                 collisionStack.push({
                     "element": reference,

@@ -87,7 +87,7 @@ FloodFill.flatten = function(mainNode) {
 FloodFill.reverse = function(flatTree) {
     const list = [];
 
-    for(let i = flatTree.length - 1; i > - 1; i--) {
+    for(let i = flatTree.length - 1; i >= 0; i--) {
         list.push(flatTree[i]);
     }
 

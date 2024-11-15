@@ -229,7 +229,7 @@ Renderer.prototype.getAnchor = function(type, originX, originY, width, height) {
 }
 
 Renderer.prototype.getCollidedCamera = function(mouseX, mouseY, mouseRange) {
-    for(let i = this.cameraStack.length - 1; i > - 1; i--) {
+    for(let i = this.cameraStack.length - 1; i >= 0; i--) {
         const cameraID = this.cameraStack[i];
         const camera = this.getCamera(cameraID);
         const { x, y, w, h } = camera.getBounds();

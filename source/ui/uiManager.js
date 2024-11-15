@@ -366,10 +366,6 @@ UIManager.prototype.createInterface = function(userInterfaceID) {
             continue;
         }
 
-        if(!element.hasFamily()) {
-            element.openFamily();
-        }
-
         for(const childID of config.children) {
             const child = elements.get(childID);
 
@@ -379,7 +375,9 @@ UIManager.prototype.createInterface = function(userInterfaceID) {
                 continue;
             }
 
-            element.addChild(child, child.getID());
+            const uniqueID = child.getID();
+
+            element.addChild(child, uniqueID);
         }
     }
 

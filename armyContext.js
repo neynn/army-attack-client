@@ -142,7 +142,7 @@ ArmyContext.prototype.onEntityCreate = function(entity) {
 ArmyContext.prototype.onEntityDestroy = function(entity) {
     const spriteComponent = entity.getComponent(SpriteComponent);
 
-    this.spriteManager.removeSprite(spriteComponent.spriteID);
+    this.spriteManager.destroySprite(spriteComponent.spriteID);
 
     PlaceSystem.removeEntity(this, entity);
 }
