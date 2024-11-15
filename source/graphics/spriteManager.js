@@ -115,9 +115,10 @@ SpriteManager.prototype.createSprite = function(typeID, layerID, animationID) {
 }
 
 SpriteManager.prototype.drawSprite = function(sprite, context, viewportX, viewportY, localX, localY) {
-    const { typeID, animationID, currentFrame, isFlipped, bounds } = sprite;
+    const { typeID, animationID, currentFrame, isFlipped } = sprite;
 
     const spriteType = this.spriteTypes[typeID];
+    const spriteBuffer = spriteType.getImage();
     const spriteBounds = spriteType.getBounds();
     const animationType = spriteType.getAnimation(animationID);
     const animationFrame = animationType.getFrame(currentFrame);
@@ -134,12 +135,12 @@ SpriteManager.prototype.drawSprite = function(sprite, context, viewportX, viewpo
     
             context.translate(drawX + w, 0);
             context.scale(-1, 1);
-            context.drawImage(spriteType.image, x, y, w, h, 0, drawY, w, h);
+            context.drawImage(spriteBuffer, x, y, w, h, 0, drawY, w, h);
         } else {
             const drawX = renderX + spriteBounds.x;
             const drawY = renderY + spriteBounds.y;
     
-            context.drawImage(spriteType.image, x, y, w, h, drawX, drawY, w, h);
+            context.drawImage(spriteBuffer, x, y, w, h, drawX, drawY, w, h);
         }
     }
 }

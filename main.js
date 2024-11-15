@@ -37,7 +37,6 @@ GlobalResourceManager.loadMain("assets", "files.json").then(async files => {
 
   await ResourceLoader.loadImages(files.tiles, ((key, image, config) => {
     const imageSheet = new ImageSheet(image, config);
-    imageSheet.defineFrames();
     imageSheet.defineAnimations();
     imageSheet.defineDefaultAnimation();
     files.tiles[key] = imageSheet;

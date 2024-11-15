@@ -49,21 +49,23 @@ TileManager.prototype.updateDynamicTileTypes = function(timestamp) {
 
 TileManager.prototype.drawTileGraphics = function(tileID, context, renderX, renderY, scaleX = 1, scaleY = 1) {
     const { set, animation } = this.getTileMeta(tileID);
-    const tileSet = this.tileTypes[set];
-    const tileAnimation = tileSet.getAnimation(animation);
+    
+    const tileType = this.tileTypes[set];
+    const tileBuffer = tileType.getImage();
+    const tileAnimation = tileType.getAnimation(animation);
     const currentFrame = tileAnimation.getCurrentFrame();
 
     for(const component of currentFrame) {
         const { id, shiftX, shiftY } = component;
-        const { width, height, offset, bitmap } = tileSet.getBuffersByID(id)[ImageSheet.BUFFER_NOT_FLIPPED];
+        const { x, y, w, h, offset } = tileType.getFrameByID(id);
         const drawX = renderX + offset.x + shiftX;
         const drawY = renderY + offset.y + shiftY;
-        const drawWidth = width * scaleX;
-        const drawHeight = height * scaleY;
+        const drawWidth = w * scaleX;
+        const drawHeight = h * scaleY;
 
         context.drawImage(
-            bitmap,
-            0, 0, width, height,
+            tileBuffer,
+            x, y, w, h,
             drawX, drawY, drawWidth, drawHeight
         );
     }

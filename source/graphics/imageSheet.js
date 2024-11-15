@@ -10,23 +10,32 @@ export const ImageSheet = function(image, config) {
     this.bounds = {"x":0,"y": 0,"w":0,"h":0};
     this.frameTime = 1;
     this.allowFlip = false;
-    this.buffers = new Map();
     this.loadedAnimations = new Map();
     this.image = image;
+    this.buffer = null;
     
     this.loadFromConfig(config);
 }
 
-ImageSheet.USE_IMAGE_DATA = false;
-ImageSheet.BUFFER_NOT_FLIPPED = 0;
-ImageSheet.BUFFER_FLIPPED = 1;
 ImageSheet.DEFAULT_ANIMATION_ID = "default";
 
 ImageSheet.prototype.getBounds = function() {
     return this.bounds;
 }
 
+ImageSheet.prototype.getImage = function() {
+    if(this.buffer) {
+        return this.buffer;
+    }
+
+    return this.image;
+}
+
 ImageSheet.prototype.toBuffer = function() {
+    if(this.buffer) {
+        return;
+    }
+
     const canvas = document.createElement("canvas");
 
     canvas.width = this.image.width;
@@ -42,7 +51,7 @@ ImageSheet.prototype.toBuffer = function() {
         0, 0, canvas.width, canvas.height
     );
 
-    this.image = canvas;
+    this.buffer = canvas;
 }
 
 ImageSheet.prototype.hasAnimation = function(animationID) {
@@ -83,72 +92,6 @@ ImageSheet.prototype.getFrameByID = function(frameID) {
     const frame = this.frames[frameID];
 
     return frame;
-}
-
-ImageSheet.prototype.getBuffersByID = function(frameID) {
-    const { bufferKey } = this.frames[frameID];
-    const buffers = this.buffers.get(bufferKey);
-
-    return buffers;
-}
-
-ImageSheet.prototype.defineFrame = function(frameID) {
-    const {x, y, w, h, offset, bufferKey} = this.frames[frameID];
-
-    if(this.buffers.has(bufferKey) || bufferKey === undefined) {
-        return false;
-    }
-
-    const flipBuffers = this.allowFlip ? [false, true] : [false];
-
-    const buffers = flipBuffers.map(isFlipped => {
-        const buffer = {"width": w, "height": h, "offset": { "x": this.bounds.x, "y": this.bounds.y }, "bitmap": null, "context": null, "imageData": null};
-        const bitmap = document.createElement("canvas");
-        const context = bitmap.getContext("2d");
-    
-        bitmap.width = buffer.width;
-        bitmap.height = buffer.height;
-
-        if(offset) {
-            buffer.offset.x = offset.x;
-            buffer.offset.y = offset.y;
-        }
-
-        if(isFlipped) {
-            context.scale(-1, 1);
-            context.translate(-buffer.width, 0);
-            buffer.offset.x = 0 - buffer.offset.x - buffer.width;
-        } 
-    
-        context.drawImage(this.image, x, y, w, h, 0, 0, w, h);
-        buffer.context = context;
-        buffer.bitmap = bitmap;
-
-        if(ImageSheet.USE_IMAGE_DATA) {
-            buffer.imageData = context.getImageData(0, 0, w, h);
-        }
-
-        return buffer;
-    });
-
-    this.buffers.set(bufferKey, buffers);
-
-    return true;
-}
-
-ImageSheet.prototype.defineFrames = function() {
-    for(const key in this.frames) {
-        const frameData = this.frames[key];
-
-        if(!frameData.bufferKey) {
-            const {x, y, w, h} = frameData;
-            frameData.bufferKey = `${x}-${y}-${w}-${h}`;
-        }
-
-        this.defineFrame(key);
-    }
-
-    return true;
 }
 
 ImageSheet.prototype.defineDefaultAnimation = function() {
