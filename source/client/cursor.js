@@ -34,7 +34,7 @@ export const Cursor = function() {
     this.events.listen(Cursor.RIGHT_MOUSE_HELD);
 }
 
-Cursor.DRAG_DISTANCE_THRESHOLD = 6;
+Cursor.DRAG_DISTANCE_THRESHOLD = 6 ** 2;
 Cursor.DRAG_DELAY_MILLISECONDS = 120;
 
 Cursor.LEFT_MOUSE_CLICK = 0;
@@ -62,18 +62,28 @@ Cursor.prototype.addEventHandler = function(eventType, callback) {
 }
 
 Cursor.prototype.eventMouseMove = function(event) {
-    const { pageX, pageY } = event;
-    const deltaX = this.isLocked ? -event.movementX : this.position.x - pageX;
-    const deltaY = this.isLocked ? -event.movementY : this.position.y - pageY;
+    const { pageX, pageY, movementX, movementY } = event;
+    const deltaX = this.isLocked ? - movementX : this.position.x - pageX;
+    const deltaY = this.isLocked ? - movementY : this.position.y - pageY;
 
     if(this.isLeftMouseDown) {
         const elapsedTime = Date.now() - this.leftMouseDownTime;
-        this.handleDrag(deltaX, deltaY, elapsedTime, Cursor.LEFT_MOUSE_DRAG);
+        const hasDragged = this.hasDragged(deltaX, deltaY, elapsedTime);
+
+        if(hasDragged) {
+            this.leftDragHappened = true;
+            this.events.emit(Cursor.LEFT_MOUSE_DRAG, deltaX, deltaY);
+        }
     }
 
     if(this.isRightMouseDown) {
         const elapsedTime = Date.now() - this.rightMouseDownTime;
-        this.handleDrag(deltaX, deltaY, elapsedTime, Cursor.RIGHT_MOUSE_DRAG);
+        const hasDragged = this.hasDragged(deltaX, deltaY, elapsedTime);
+
+        if(hasDragged) {
+            this.rightDragHappened = true;
+            this.events.emit(Cursor.RIGHT_MOUSE_DRAG, deltaX, deltaY);
+        }
     }
 
     this.position.x = pageX;
@@ -121,18 +131,14 @@ Cursor.prototype.eventMouseUp = function(event) {
     }
 }
 
-Cursor.prototype.handleDrag = function(deltaX, deltaY, elapsedTime, dragEvent) {
-    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
-    if(elapsedTime >= Cursor.DRAG_DELAY_MILLISECONDS || distance >= Cursor.DRAG_DISTANCE_THRESHOLD) {
-        if(dragEvent === Cursor.LEFT_MOUSE_DRAG) {
-            this.leftDragHappened = true;
-            this.events.emit(Cursor.LEFT_MOUSE_DRAG, deltaX, deltaY);
-        } else if(dragEvent === Cursor.RIGHT_MOUSE_DRAG) {
-            this.rightDragHappened = true;
-            this.events.emit(Cursor.RIGHT_MOUSE_DRAG, deltaX, deltaY);
-        }
+Cursor.prototype.hasDragged = function(deltaX, deltaY, elapsedTime) {
+    if(elapsedTime >= Cursor.DRAG_DELAY_MILLISECONDS) {
+        return true;
     }
+    
+    const distance = deltaX * deltaX + deltaY * deltaY;
+
+    return distance >= Cursor.DRAG_DISTANCE_THRESHOLD;
 }
 
 Cursor.prototype.eventMouseScroll = function(event) {

@@ -4,8 +4,8 @@ export const Keyboard = function() {
     this.keys = new Set();
     this.activeKeys = new Set();
 
-    this.addEventHandler("keydown", (event) => this.eventKeyPress(event));
-    this.addEventHandler("keyup", (event) => this.eventKeyRelease(event));
+    this.addEventHandler("keydown", (event) => this.eventKeyPress(event.key));
+    this.addEventHandler("keyup", (event) => this.eventKeyRelease(event.key));
 
     this.events = new EventEmitter();
     this.events.listen(Keyboard.KEY_PRESSED);
@@ -26,45 +26,43 @@ Keyboard.KEY_PRESSED = 0;
 Keyboard.KEY_RELEASED = 1;
 Keyboard.KEY_DOWN = 2;
 
-Keyboard.prototype.eventKeyPress = function(event) {
-    const { key } = event;
-
+Keyboard.prototype.eventKeyPress = function(key) {
     if(!this.activeKeys.has(key)) {
         this.activeKeys.add(key);
         this.events.emit(Keyboard.KEY_PRESSED, key, this);
     }
 }
 
-Keyboard.prototype.eventKeyRelease = function(event) {
-    const { key } = event;
-    
+Keyboard.prototype.eventKeyRelease = function(key) {
     if(this.activeKeys.has(key)) {
         this.activeKeys.delete(key);
         this.events.emit(Keyboard.KEY_RELEASED, key, this);
     }
 }
 
-Keyboard.prototype.addEventHandler = function(eventType, callback) {
-    document.addEventListener(eventType, (event) => {
+Keyboard.prototype.addEventHandler = function(type, onEvent) {
+    document.addEventListener(type, (event) => {
         if(this.keys.has(event.key)) {
             event.preventDefault();
-            callback(event);
+            onEvent(event);
         }
     });
 }
 
-Keyboard.prototype.subscribe = function(keyEvent, key, callback) {
-    if(!this.keys.has(key)) {
+Keyboard.prototype.addEvent = function(eventID, keyID, onCall) {
+    if(!this.keys.has(keyID)) {
         return;
     }
 
-    this.events.subscribe(keyEvent, key, (keyCode, keyboard) => {
-        if(keyCode === key) {
-            callback(keyCode, keyboard);
+    this.events.subscribe(eventID, keyID, (key, keyboard) => {
+        if(key === keyID) {
+            onCall(key, keyboard);
         }
     });
 }
 
 Keyboard.prototype.update = function() {
-    this.activeKeys.forEach(key => this.events.emit(Keyboard.KEY_DOWN, key, this));
+    for(const key of this.activeKeys) {
+        this.events.emit(Keyboard.KEY_DOWN, key, this);
+    }
 }
