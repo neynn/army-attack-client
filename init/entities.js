@@ -8,6 +8,7 @@ import { componentSetup } from "./componentSetup.js";
 import { PositionComponent } from "../components/position.js";
 import { SpriteComponent } from "../components/sprite.js";
 import { SpriteManager } from "../source/graphics/spriteManager.js";
+import { Archetype } from "../source/entity/archetype.js";
 
 const EXAMPLE_SETUP = {"tileX": 0, "tileY": 0, "type": null, "team": null, "master": null, "components": {"Health": {"health": 5, "maxHealth": 20}}};
 const MODE_STAT_TYPE_ID = "story";
@@ -16,7 +17,8 @@ const createStatCard = function(gameContext, entity, sprite) {
     const { spriteManager } = gameContext;
 
     const teamTypes = gameContext.getConfig("teamTypes");
-    const starCardType = teamTypes[entity.getComponent(TeamComponent).teamID].sprites.statCard;
+    const teamComponent = entity.getComponent(TeamComponent);
+    const starCardType = teamTypes[teamComponent.teamID].sprites.stat_card;
     const statCard = spriteManager.createChildSprite(sprite.id, starCardType, "STATS");
     const healthText = new SimpleText();
     const damageText = new SimpleText();
@@ -44,41 +46,6 @@ const createStatCard = function(gameContext, entity, sprite) {
         healthText.setText(`${healthComponent.health}/${healthComponent.maxHealth}`);
         damageText.setText(`${attackComponent.damage}`);
     });
-}
-
-const createUnit = function(gameContext, entity, sprite, type, setup) {
-    const attackComponent = componentSetup.setupAttackComponent(type, type.stats[MODE_STAT_TYPE_ID]);
-    const moveComponent = componentSetup.setupMoveComponent(type, type.stats[MODE_STAT_TYPE_ID]);
-
-    entity.addComponent(attackComponent);
-    entity.addComponent(moveComponent);
-    
-    createStatCard(gameContext, entity, sprite);
-}
-
-const createDefense = function(gameContext, entity, sprite, type, setup) {
-    const attackComponent = componentSetup.setupAttackComponent(type, type.stats[MODE_STAT_TYPE_ID]);
-
-    entity.addComponent(attackComponent);
-
-    createStatCard(gameContext, entity, sprite);
-}
-
-const createDeco = function(gameContext, entity, sprite, type, setup) {}
-
-const createBuilding = function(gameContext, entity, sprite, type, setup) {}
-
-const createHFE = function(gameContext, entity, sprite, type, setup) {}
-
-const createTown = function(gameContext, entity, sprite, type, setup) {}
-
-const createConstruction = function(gameContext, entity, sprite, type, setup) {
-    const constructionComponent = componentSetup.setupConstructionComponent(setup, type);
-
-    sprite.freeze();
-    sprite.setFrame(2);
-
-    entity.addComponent(constructionComponent);
 }
 
 const createBaseEntity = function(gameContext, entity, sprite, type, setup) {
@@ -143,20 +110,112 @@ const finalizeEntity = function(gameContext, entity, type, setup) {
     entity.events.emit(ENTITY_EVENTS.STAT_UPDATE);
 }
 
-export const buildUnit = function(gameContext, entity, type, setup) {
+export const ConstructionArchetype = function() {
+    Archetype.call(this);
+}
+
+ConstructionArchetype.prototype = Object.create(Archetype.prototype);
+ConstructionArchetype.prototype.constructor = ConstructionArchetype;
+
+ConstructionArchetype.prototype.onBuild = function(gameContext, entity, type, setup) {
     const { spriteManager } = gameContext;
     const sprite = spriteManager.createSprite(type.sprites.idle, SpriteManager.LAYER_MIDDLE);
 
     createBaseEntity(gameContext, entity, sprite, type, setup);
-    createUnit(gameContext, entity, sprite, type, setup);
+
+    const constructionComponent = componentSetup.setupConstructionComponent(setup, type);
+    sprite.freeze();
+    sprite.setFrame(2);
+    entity.addComponent(constructionComponent);
+
     finalizeEntity(gameContext, entity, type, setup);
 }
 
-export const buildDefense = function(gameContext, entity, type, setup) {
+export const TownArchetype = function() {
+    Archetype.call(this);
+}
+
+TownArchetype.prototype = Object.create(Archetype.prototype);
+TownArchetype.prototype.constructor = TownArchetype;
+
+TownArchetype.prototype.onBuild = function(gameContext, entity, type, setup) {
+
+}
+
+export const HFEArchetype = function() {
+    Archetype.call(this);
+}
+
+HFEArchetype.prototype = Object.create(Archetype.prototype);
+HFEArchetype.prototype.constructor = HFEArchetype;
+
+HFEArchetype.prototype.onBuild = function(gameContext, entity, type, setup) {
+
+}
+
+export const BuildingArchetype = function() {
+    Archetype.call(this);
+}
+
+BuildingArchetype.prototype = Object.create(Archetype.prototype);
+BuildingArchetype.prototype.constructor = BuildingArchetype;
+
+BuildingArchetype.prototype.onBuild = function(gameContext, entity, type, setup) {
+
+}
+
+export const DecoArchetype = function() {
+    Archetype.call(this);
+}
+
+DecoArchetype.prototype = Object.create(Archetype.prototype);
+DecoArchetype.prototype.constructor = DecoArchetype;
+
+DecoArchetype.prototype.onBuild = function(gameContext, entity, type, setup) {
+
+}
+
+export const DefenseArchetype = function() {
+    Archetype.call(this);
+}
+
+DefenseArchetype.prototype = Object.create(Archetype.prototype);
+DefenseArchetype.prototype.constructor = DefenseArchetype;
+
+DefenseArchetype.prototype.onBuild = function(gameContext, entity, type, setup) {
     const { spriteManager } = gameContext;
     const sprite = spriteManager.createSprite(type.sprites.idle, SpriteManager.LAYER_MIDDLE);
 
     createBaseEntity(gameContext, entity, sprite, type, setup);
-    createDefense(gameContext, entity, sprite, type, setup);
+
+    const attackComponent = componentSetup.setupAttackComponent(type, type.stats[MODE_STAT_TYPE_ID]);
+    entity.addComponent(attackComponent);
+    createStatCard(gameContext, entity, sprite);
+
     finalizeEntity(gameContext, entity, type, setup);
 }
+
+export const UnitArchetype = function() {
+    Archetype.call(this);
+}
+
+UnitArchetype.prototype = Object.create(Archetype.prototype);
+UnitArchetype.prototype.constructor = UnitArchetype;
+
+UnitArchetype.prototype.onBuild = function(gameContext, entity, type, setup) {
+    const { spriteManager } = gameContext;
+    const sprite = spriteManager.createSprite(type.sprites.idle, SpriteManager.LAYER_MIDDLE);
+
+    createBaseEntity(gameContext, entity, sprite, type, setup);
+
+    const attackComponent = componentSetup.setupAttackComponent(type, type.stats[MODE_STAT_TYPE_ID]);
+    const moveComponent = componentSetup.setupMoveComponent(type, type.stats[MODE_STAT_TYPE_ID]);
+
+    entity.addComponent(attackComponent);
+    entity.addComponent(moveComponent);
+    
+    createStatCard(gameContext, entity, sprite);
+
+    finalizeEntity(gameContext, entity, type, setup);
+}
+

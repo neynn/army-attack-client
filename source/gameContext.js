@@ -185,28 +185,11 @@ GameContext.prototype.createEntity = function(setup, masterID, externalID) {
     }
 
     const { type } = setup;
-    const typeConfig = this.entityManager.getEntityType(type);
-
-    if(typeof typeConfig !== "object") {
-        Logger.error(false, "TypeConfig does not exist!", "GameContext.prototype.createEntity", {type});
-
-        return null; 
-    }
-
     const entity = this.entityManager.createEntity(type, externalID);
     const entityID = entity.getID();
 
     this.controllerManager.addEntity(masterID, entityID);
-
-    const { archetype } = typeConfig;
-    const archetypeBuilder = this.entityManager.getArchetype(archetype);
-
-    if(typeof archetypeBuilder === "function") {
-        archetypeBuilder(this, entity, typeConfig, setup);
-    } else {
-        Logger.error(false, "Archetype does not exist!", "GameContext.prototype.createEntity", {archetype});
-    }
-
+    this.entityManager.buildEntity(this, entity, type, setup);
     this.onEntityCreate(entity);
 
     return entity;

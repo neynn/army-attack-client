@@ -11,10 +11,14 @@ ConquerSystem.convertTileGraphics = function(gameContext, tileX, tileY, teamID) 
         return false;
     }
 
-    const settings = gameContext.getConfig("settings");
+    const layerTypes = gameContext.getConfig("layerTypes");
+    const convertableLayerTypes = gameContext.getConfig("convertableLayerTypes");
     const tileConversions = gameContext.getConfig("tileConversions");
 
-    for(const layerID in settings.convertableLayers) {
+    for(const convertableTypeID in convertableLayerTypes) {
+        const { layerType } = convertableLayerTypes[convertableTypeID];
+        const { layerID } = layerTypes[layerType];
+        
         const tileID = activeMap.getTile(layerID, tileX, tileY);
         const conversion = tileConversions[tileID];
 
@@ -50,8 +54,11 @@ ConquerSystem.updateBorder = function(gameContext, tileX, tileY) {
         return false;
     }
 
-    const centerTypeID = activeMap.getTile(settings.typeLayerID, tileX, tileY);
-    const centerTeamID = activeMap.getTile(settings.teamLayerID, tileX, tileY);
+    const layerTypes = gameContext.getConfig("layerTypes");
+    const teamLayerID = layerTypes.team.layerID;
+    const typeLayerID = layerTypes.type.layerID;
+    const centerTypeID = activeMap.getTile(typeLayerID, tileX, tileY);
+    const centerTeamID = activeMap.getTile(teamLayerID, tileX, tileY);
     const centerType = tileTypes[centerTypeID];
 
     if(!centerType || !centerType.hasBorder) {
@@ -63,13 +70,13 @@ ConquerSystem.updateBorder = function(gameContext, tileX, tileY) {
     }
 
     const autoIndex = Autotiler.autotile8Bits(tileX, tileY, (center, neighbor) => {
-        const neighborTeamID = activeMap.getTile(settings.teamLayerID, neighbor.x, neighbor.y);
+        const neighborTeamID = activeMap.getTile(teamLayerID, neighbor.x, neighbor.y);
 
         if(neighborTeamID !== centerTeamID) {
             return 0;
         }
 
-        const neighborTypeID = activeMap.getTile(settings.typeLayerID, neighbor.x, neighbor.y);
+        const neighborTypeID = activeMap.getTile(typeLayerID, neighbor.x, neighbor.y);
         const neighborType = tileTypes[neighborTypeID];
 
         if(!neighborType || !neighborType.hasBorder) {

@@ -10,7 +10,6 @@ import { ReviveComponent } from "./components/revive.js";
 import { SubTypeComponent } from "./components/subType.js";
 import { TeamComponent } from "./components/team.js";
 import { ACTION_TYPES, CONTEXT_STATES, CONTROLLER_TYPES, ENTITY_ARCHETYPES, GAME_EVENTS, SYSTEM_TYPES } from "./enums.js";
-import { buildDefense, buildUnit } from "./init/entities.js";
 import { ActionQueue } from "./source/action/actionQueue.js";
 import { GameContext } from "./source/gameContext.js";
 import { MainMenuState } from "./states/context/mainMenu.js";
@@ -29,6 +28,7 @@ import { Renderer } from "./source/renderer.js";
 import { PlayerController } from "./init/playerController.js";
 import { SpriteComponent } from "./components/sprite.js";
 import { Socket } from "./source/client/network/socket.js";
+import { BuildingArchetype, ConstructionArchetype, DecoArchetype, DefenseArchetype, HFEArchetype, TownArchetype, UnitArchetype } from "./init/entities.js";
 
 export const ArmyContext = function() {
     GameContext.call(this, 60);
@@ -66,8 +66,13 @@ ArmyContext.prototype.loadResources = function(resources) {
 
     this.controllerManager.registerController(CONTROLLER_TYPES.PLAYER, PlayerController);
 
-    this.entityManager.registerArchetype(ENTITY_ARCHETYPES.UNIT, buildUnit);
-    this.entityManager.registerArchetype(ENTITY_ARCHETYPES.DEFENSE, buildDefense);
+    this.entityManager.registerArchetype(ENTITY_ARCHETYPES.UNIT, new UnitArchetype());
+    this.entityManager.registerArchetype(ENTITY_ARCHETYPES.DEFENSE, new DefenseArchetype());
+    this.entityManager.registerArchetype(ENTITY_ARCHETYPES.DECO, new DecoArchetype());
+    this.entityManager.registerArchetype(ENTITY_ARCHETYPES.BUILDING, new BuildingArchetype());
+    this.entityManager.registerArchetype(ENTITY_ARCHETYPES.HFE, new HFEArchetype());
+    this.entityManager.registerArchetype(ENTITY_ARCHETYPES.TOWN, new TownArchetype());
+    this.entityManager.registerArchetype(ENTITY_ARCHETYPES.CONSTRUCTION, new ConstructionArchetype());
 
     this.systemManager.registerSystem(SYSTEM_TYPES.DOWN, DownSystem);
     this.systemManager.registerSystem(SYSTEM_TYPES.MOVE, MoveSystem);
@@ -154,10 +159,11 @@ ArmyContext.prototype.initializeTilemap = function(mapID) {
         return false;
     }
 
-    const settings = this.getConfig("settings");
+    const layerTypes = this.getConfig("layerTypes");
     const tileTypes = this.getConfig("tileTypes");
     const teamTypes = this.getConfig("teamTypes");
-    const { teamLayerID, typeLayerID } = settings;
+    const teamLayerID = layerTypes.team.layerID;
+    const typeLayerID = layerTypes.type.layerID;
 
     gameMap.updateTiles((index, tileX, tileY) => {
         const team = gameMap.getTile(teamLayerID, tileX, tileY);

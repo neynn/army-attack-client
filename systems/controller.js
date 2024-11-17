@@ -29,7 +29,7 @@ ControllerSystem.resetAttackerSprites = function(gameContext, controller) {
 
 ControllerSystem.resetAttackerOverlay = function(gameContext, controller) {
     const { entityManager, mapLoader } = gameContext;
-    const settings = gameContext.getConfig("settings");
+    const layerTypes = gameContext.getConfig("layerTypes");
     const activeMap = mapLoader.getActiveMap();
     const controllerComponent = controller.getComponent(ControllerComponent);
 
@@ -42,13 +42,13 @@ ControllerSystem.resetAttackerOverlay = function(gameContext, controller) {
 
         const positionComponent = attacker.getComponent(PositionComponent);
 
-        activeMap.clearTile(settings.overlayLayerID, positionComponent.tileX, positionComponent.tileY);
+        activeMap.clearTile(layerTypes.overlay.layerID, positionComponent.tileX, positionComponent.tileY);
     }
 }
 
 ControllerSystem.hightlightAttackers = function(gameContext, target, attackers) {
     const { entityManager, mapLoader, tileManager } = gameContext;
-    const settings = gameContext.getConfig("settings");
+    const layerTypes = gameContext.getConfig("layerTypes");
     const activeMap = mapLoader.getActiveMap();
 
     for(const attackerID of attackers) {
@@ -61,7 +61,7 @@ ControllerSystem.hightlightAttackers = function(gameContext, target, attackers) 
         const positionComponent = attacker.getComponent(PositionComponent);
         const tileID = tileManager.getTileID("overlay", "grid_attack_1x1");
 
-        activeMap.placeTile(tileID, settings.overlayLayerID, positionComponent.tileX, positionComponent.tileY);
+        activeMap.placeTile(tileID, layerTypes.overlay.layerID, positionComponent.tileX, positionComponent.tileY);
 
         DirectionSystem.lookAt(attacker, target);
         MorphSystem.morphDirectional(attacker, "aim", "aim_ne");
@@ -126,7 +126,7 @@ ControllerSystem.selectEntity = function(gameContext, controller, entity) {
 
     const activeMap = mapLoader.getActiveMap();
     const nodeList = PathfinderSystem.generateNodeList(gameContext, entity);
-    const settings = gameContext.getConfig("settings");
+    const layerTypes = gameContext.getConfig("layerTypes");
     const enableTileID = tileManager.getTileID("overlay", "grid_enabled_1x1");
     const attackTileID = tileManager.getTileID("overlay", "grid_attack_1x1");
 
@@ -134,14 +134,14 @@ ControllerSystem.selectEntity = function(gameContext, controller, entity) {
         const { positionX, positionY, isValid } = node;
 
         if(!isValid) {
-            activeMap.placeTile(attackTileID, settings.overlayLayerID, positionX, positionY);
+            activeMap.placeTile(attackTileID, layerTypes.overlay.layerID, positionX, positionY);
             continue;
         } 
 
         const isEmpty = !activeMap.isTileOccupied(positionX, positionY);
 
         if(isEmpty) {
-            activeMap.placeTile(enableTileID, settings.overlayLayerID, positionX, positionY);
+            activeMap.placeTile(enableTileID, layerTypes.overlay.layerID, positionX, positionY);
             continue;
         }
 
@@ -166,7 +166,7 @@ ControllerSystem.selectEntity = function(gameContext, controller, entity) {
 
 ControllerSystem.deselectEntity = function(gameContext, controller, entity) {
     const { spriteManager, mapLoader } = gameContext;
-    const settings = gameContext.getConfig("settings");
+    const layerTypes = gameContext.getConfig("layerTypes");
     const controllerComponent  = controller.getComponent(ControllerComponent);
 
     if(controllerComponent.selectedEntity === null) {
@@ -178,7 +178,7 @@ ControllerSystem.deselectEntity = function(gameContext, controller, entity) {
     for(const node of controllerComponent.nodeList) {
         const {positionX, positionY} = node;
 
-        activeMap.clearTile(settings.overlayLayerID, positionX, positionY);
+        activeMap.clearTile(layerTypes.overlay.layerID, positionX, positionY);
         ConquerSystem.convertTileGraphics(gameContext, positionX, positionY, 1);
     }
 

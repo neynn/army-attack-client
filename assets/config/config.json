@@ -8,18 +8,23 @@
         "hitDuration": 1,
         "iconDuration": 1.8,
         "downDuration": 10,
-        "groundLayerID": "ground",
-        "decorationLayerID": "decoration",
-        "borderLayerID": "border",
-        "overlayLayerID": "overlay",
-        "cloudLayerID": "cloud",
-        "typeLayerID": "type",
-        "teamLayerID": "team",
-        "convertableLayers": { "ground": { "id": "ground" }, "decoration": { "id": "decoration" } },
         "languages": { 
             "german": { "id": "german", "directory": "assets/config/language", "source": "de.json" },
             "english": { "id": "english", "directory": "assets/config/language", "source": "en.json" }
         }
+    },
+    "layerTypes": {
+        "ground": { "id": "ground", "layerID": "ground" },
+        "decoration": { "id": "decoration", "layerID": "decoration" },
+        "border": { "id": "border", "layerID": "border" },
+        "overlay": { "id": "overlay", "layerID": "overlay" },
+        "cloud": { "id": "cloud", "layerID": "cloud" },
+        "type": { "id": "type", "layerID": "type" },
+        "team": { "id": "team", "layerID": "team" }
+    },
+    "convertableLayerTypes": {
+        "ground": { "id": "ground", "layerType": "ground" },
+        "decoration": { "id": "decoration", "layerType": "decoration" }
     },
     "versus": {
         "selectableEntities": {
@@ -80,10 +85,33 @@
         "Shore": { "id": "Shore" }
     },
     "teamTypes": {
-        "0": {"id": 0, "name": "#CONFIG_TEAM_CRIMSON", "allies": {"0": true, "2": true}, "enemies": {"1": true, "3": true}, "sprites": {"statCard": "unit_stat_card_bad"}},
-        "1": {"id": 1, "name": "#CONFIG_TEAM_ALLIES", "allies": {"1": true, "2": true}, "enemies": {"0": true, "3": true}, "sprites": {"statCard": "unit_stat_card_good"}},
-        "2": {"id": 2, "name": "#CONFIG_TEAM_NEUTRAL", "allies": {}, "enemies": {}, "sprites": {}},
-        "3": {"id": 3, "name": "#CONFIG_TEAM_ANGRY", "allies": {}, "enemies": {"0": true, "1": true}, "sprites": {}}
+        "0": {
+            "id": 0,
+            "name": "#CONFIG_TEAM_CRIMSON",
+            "allies": { "0": true, "2": true },
+            "enemies": { "1": true, "3": true },
+            "sprites": { "stat_card": "unit_stat_card_bad" }
+        },
+        "1": {
+            "id": 1,
+            "name": "#CONFIG_TEAM_ALLIES",
+            "allies": { "1": true, "2": true },
+            "enemies": { "0": true, "3": true },
+            "sprites": { "stat_card": "unit_stat_card_good" }
+        },
+        "2": {
+            "id": 2,
+            "name": "#CONFIG_TEAM_NEUTRAL",
+            "allies": {},
+            "enemies": {},
+            "sprites": {}
+        },
+        "3": {
+            "id": 3,
+            "name": "#CONFIG_TEAM_ANGRY", 
+            "allies": {},
+            "enemies": { "0": true, "1": true },
+            "sprites": {} }
     },
     "ObjectiveType": {
         "Select": { "ID":"Select", "Type":"Client" },

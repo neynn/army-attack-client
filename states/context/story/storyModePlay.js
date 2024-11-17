@@ -40,40 +40,35 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
         "type": "blue_guardtower",
         "tileX": 0,
         "tileY": 3,
-        "team": 1,
-        "master": "neyn"
+        "team": 1
     }, "neyn");
 
     const redBattletank = gameContext.createEntity({ 
         "type": "red_battletank",
         "tileX": 4,
         "tileY": 1,
-        "team": 0,
-        "master": null
+        "team": 0
     }, null);
 
     const blue_elite_battery = gameContext.createEntity({ 
         "type": "blue_elite_battery",
         "tileX": 4,
         "tileY": 3,
-        "team": 0,
-        "master": null
+        "team": 0
     }, null);
 
     const blueCommando = gameContext.createEntity({ 
         "type": "blue_commando",
         "tileX": 1,
         "tileY": 3,
-        "team": 1,
-        "master": "neyn"
+        "team": 1
     }, "neyn");
 
     const redWarfly = gameContext.createEntity({ 
         "type": "red_warfly",
         "tileX": 2,
         "tileY": 3,
-        "team": 1,
-        "master": "neyn"
+        "team": 1
     }, "neyn");
 
     const blueEliteInfantry = gameContext.createEntity({ 
@@ -81,7 +76,6 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
         "tileX": 6,
         "tileY": 5,
         "team": 1,
-        "master": "neyn",
         "components": {
             "Move": {
                 "range": 15
@@ -94,7 +88,6 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
         "tileX": 0,
         "tileY": 1,
         "team": 1,
-        "master": "neyn",
         "components": {
             "Move": {
                 range: 10

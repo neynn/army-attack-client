@@ -31,21 +31,25 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
     const teamComponent = entity.getComponent(TeamComponent);
 
     const settings = gameContext.getConfig("settings");
+    const layerTypes = gameContext.getConfig("layerTypes");
     const teamTypes = gameContext.getConfig("teamTypes");
     const tileTypes = gameContext.getConfig("tileTypes");
+
+    const teamLayerID = layerTypes.team.layerID;
+    const typeLayerID = layerTypes.type.layerID;
     
     const entityTeamAllies = teamTypes[teamComponent.teamID].allies;
     const entityTeamEnemies = teamTypes[teamComponent.teamID].enemies;
 
     const nodeList = FloodFill.search(positionComponent.tileX, positionComponent.tileY, moveComponent.range, activeMap.width, activeMap.height, (child, parent) => {
-        const childTypeID = activeMap.getTile(settings.typeLayerID, child.positionX, child.positionY);
+        const childTypeID = activeMap.getTile(typeLayerID, child.positionX, child.positionY);
         const childTileType = tileTypes[childTypeID];
 
         if(!moveComponent.passability[childTileType.passability]) {
             return false;
         }
         
-        const parentTeamID = activeMap.getTile(settings.teamLayerID, parent.positionX, parent.positionY);
+        const parentTeamID = activeMap.getTile(teamLayerID, parent.positionX, parent.positionY);
 
         if(!entityTeamAllies[parentTeamID] && !moveComponent.isStealth || moveComponent.isCoward) {
             return false;

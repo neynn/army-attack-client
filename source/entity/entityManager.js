@@ -52,17 +52,6 @@ EntityManager.prototype.end = function() {
     this.idGenerator.reset();
 }
 
-EntityManager.prototype.getArchetype = function(typeID) {
-    const archetype = this.archetypes.get(typeID);
-
-    if(!archetype) {
-        
-        return null;
-    }
-
-    return archetype;
-}
-
 EntityManager.prototype.registerArchetype = function(typeID, type) {
     if(!typeID || !type) {
         Logger.log(false, "Parameter is undefined!", "EntityManager.prototype.registerArchetype", {typeID, type});
@@ -237,6 +226,29 @@ EntityManager.prototype.createEntity = function(entityTypeID, externalID) {
     return entity;
 }
 
+EntityManager.prototype.buildEntity = function(gameContext, entity, typeID, setup) {
+    const entityType = this.entityTypes[typeID];
+
+    if(!entityType) {
+        Logger.error(false, "EntityType does not exist!", "EntityManager.prototype.buildEntity", { typeID });
+
+        return false;
+    }
+
+    const archetypeID = entityType.archetype;
+    const archetype = this.archetypes.get(archetypeID);
+
+    if(!archetype) {
+        Logger.error(false, "Archetype does not exist!", "EntityManager.prototype.buildEntity", { archetypeID, typeID });
+
+        return false;
+    }
+
+    archetype.build(gameContext, entity, entityType, setup);
+
+    return true;
+} 
+
 EntityManager.prototype.destroyEntity = function(entityID) {
     if(!this.entities.has(entityID)) {
         Logger.log(false, "Entity does not exist!", "EntityManager.prototype.destroyEntity", {entityID});
@@ -251,14 +263,4 @@ EntityManager.prototype.destroyEntity = function(entityID) {
     this.entities.delete(entityID);
 
     return true;
-}
-
-EntityManager.prototype.getEntityType = function(entityTypeID) {
-    if(this.entityTypes[entityTypeID] === undefined) {
-        Logger.log(false, "EntityType does not exist!", "EntityManager.prototype.getEntityType", {entityTypeID});
-
-        return null;
-    }
-
-    return this.entityTypes[entityTypeID];
 }
