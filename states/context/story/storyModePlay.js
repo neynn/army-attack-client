@@ -12,10 +12,10 @@ StoryModePlayState.prototype.constructor = StoryModePlayState;
 
 StoryModePlayState.prototype.enter = async function(stateMachine) {
     const gameContext = stateMachine.getContext();
-    const { uiManager, mapLoader, actionQueue, renderer } = gameContext;
+    const { uiManager, actionQueue, renderer } = gameContext;
     const MAP = "pvp_valleys";
 
-    const map2D = await mapLoader.loadMap(MAP);
+    const map2D = await gameContext.loadMap(MAP);
     const camera = renderer.getCamera("ARMY_CAMERA");
 
     if(!map2D) {
@@ -27,11 +27,9 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
     
     gameContext.createController({
         "type": CONTROLLER_TYPES.PLAYER,
-        "id": "neyn",
         "team": 1
-    });
+    }, "neyn");
 
-    gameContext.initializeMap(MAP);
     gameContext.initializeTilemap(MAP);
     camera.centerOnMap();
     camera.bindViewport();

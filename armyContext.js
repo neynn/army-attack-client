@@ -142,6 +142,18 @@ ArmyContext.prototype.initialize = function() {
     this.renderer.resizeDisplay(window.innerWidth, window.innerHeight);
 }
 
+ArmyContext.prototype.onMapLoad = function(map) {
+    const { width, height, music } = map;
+
+    this.actionQueue.workStart();
+    this.renderer.getCamera("ARMY_CAMERA").loadViewport(width, height);
+
+    if(music) {
+        this.client.musicPlayer.loadTrack(music);
+        this.client.musicPlayer.swapTrack(music);
+    }
+}
+
 ArmyContext.prototype.onEntityCreate = function(entity) {
     PlaceSystem.placeEntity(this, entity);
 

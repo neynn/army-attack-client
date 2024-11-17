@@ -60,49 +60,13 @@ GameContext.prototype.initialize = function() {}
 GameContext.prototype.addUIClickEvent = function() {
     const { cursor } = this.client;
 
-    cursor.events.subscribe(Cursor.LEFT_MOUSE_CLICK, "CONTEXT", () => {
+    cursor.events.subscribe(Cursor.LEFT_MOUSE_CLICK, EventEmitter.SUPER_SUBSCRIBER_ID, () => {
         const clickedElements = this.uiManager.getCollidedElements(cursor.position.x, cursor.position.y, cursor.radius);
 
         for(const element of clickedElements) {
             element.events.emit(UIElement.EVENT_CLICKED);
         }
     });
-}
-
-GameContext.prototype.initializeMap = function(mapID) {
-    const nextMap = this.mapLoader.getLoadedMap(mapID);
-    const activeMapID = this.mapLoader.getActiveMapID();
-
-    if(!nextMap) {
-        Logger.log(false, "Map could not be loaded!", "GameContext.prototype.loadMap", {mapID});
-
-        return null;
-    }
-
-    if(activeMapID) {
-        if(activeMapID === mapID) {
-            Logger.log(false, "Map is already loaded!", "GameContext.prototype.loadMap", {mapID});
-
-            return null;
-        }
-        
-        this.mapLoader.unloadMap(activeMapID);
-    }
-
-    this.renderer.getCamera("ARMY_CAMERA").loadViewport(nextMap.width, nextMap.height); //HÄCK
-    this.mapLoader.setActiveMap(mapID);
-    this.actionQueue.workStart();
-
-    if(nextMap.music) {
-        this.client.musicPlayer.loadTrack(nextMap.music);
-        this.client.musicPlayer.swapTrack(nextMap.music);
-    }
-    
-    if(!this.mapLoader.mapCache[mapID]) {
-        this.mapLoader.mapCache[mapID] = 1;
-    }
-    
-    return nextMap;
 }
 
 GameContext.prototype.exitGame = function() {
@@ -129,6 +93,7 @@ GameContext.prototype.getConfig = function(elementID) {
 
 GameContext.prototype.getCameraAtMouse = function() {
     const camera = this.renderer.getCollidedCamera(this.client.cursor.position.x, this.client.cursor.position.y, this.client.cursor.radius);
+
     return camera;
 }
 
@@ -188,18 +153,26 @@ GameContext.prototype.addLockEvent = function() {
     });
 }
 
-GameContext.prototype.createController = function(payload) {
-    const { type, id } = payload;
-    const controller = this.controllerManager.createController(type, id);
+GameContext.prototype.createController = function(setup, controllerID) {
+    if(typeof setup !== "object") {
+        Logger.error(false, "Setup does not exist!", "GameContext.prototype.createController", null);
+
+        return null;
+    }
+
+    const { type } = setup;
+    const controller = this.controllerManager.createController(type, controllerID);
 
     if(!controller) {
         return null;
     }
 
-    controller.initialize(this, payload);
+    controller.initialize(this, setup);
 
     return controller;
 }
+
+GameContext.prototype.onEntityCreate = function(entity) {}
 
 GameContext.prototype.createEntity = function(setup, masterID, externalID) {
     if(typeof setup !== "object") {
@@ -219,6 +192,8 @@ GameContext.prototype.createEntity = function(setup, masterID, externalID) {
     return entity;
 }
 
+GameContext.prototype.onEntityDestroy = function(entity) {}
+
 GameContext.prototype.destroyEntity = function(entityID) {
     const entity = this.entityManager.getEntity(entityID);
 
@@ -233,6 +208,36 @@ GameContext.prototype.destroyEntity = function(entityID) {
     return true;
 }
 
-GameContext.prototype.onEntityCreate = function(entity) {}
+GameContext.prototype.onMapLoad = function(map) {}
 
-GameContext.prototype.onEntityDestroy = function(entity) {}
+GameContext.prototype.loadMap = async function(mapID) {
+    const nextMap = await this.mapLoader.loadMap(mapID);
+
+    if(!nextMap) {
+        Logger.log(false, "Map could not be loaded!", "GameContext.prototype.loadMap", {mapID});
+
+        return null;
+    }
+
+    const activeMapID = this.mapLoader.getActiveMapID();
+    
+    if(activeMapID) {
+        if(activeMapID === mapID) {
+            Logger.log(false, "Map is already loaded!", "GameContext.prototype.loadMap", {mapID});
+
+            return null;
+        }
+        
+        this.mapLoader.unloadMap(activeMapID);
+    }
+
+    this.mapLoader.setActiveMap(mapID);
+
+    if(!this.mapLoader.mapCache[mapID]) {
+        this.mapLoader.mapCache[mapID] = 1;
+    }
+
+    this.onMapLoad(nextMap);
+    
+    return nextMap;
+}

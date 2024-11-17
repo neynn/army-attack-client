@@ -324,7 +324,7 @@ UIManager.prototype.removeTextRequest = function(interfaceID, textID) {
     }
 
     text.setDynamic(false);
-    text.events.deafen(TextElement.EVENT_REQUEST_TEXT);
+    text.events.mute(TextElement.EVENT_REQUEST_TEXT);
 
     return true;
 }

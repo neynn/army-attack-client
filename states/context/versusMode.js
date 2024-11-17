@@ -27,35 +27,38 @@ VersusModeState.prototype.enter = function(stateMachine) {
                 break;
             }
             case GAME_EVENTS.INSTANCE_CONTROLLER: {
-                gameContext.createController(payload);
+                const { id, setup } = payload;
+
+                gameContext.createController(setup, id);
                 break;
             }
             case GAME_EVENTS.INSTANCE_MAP: {
                 const { id } = payload;
 
-                mapLoader.loadMap(id).then(map2D => {
-                    if(!map2D) {
+                gameContext.loadMap(id).then(result => {
+                    if(!result) {
                         socket.messageRoom(GAME_EVENTS.INSTANCE_MAP, { "success": false, "error": "NO_MAP_FILE" });
                     } else {
-                        gameContext.initializeMap(id);
                         gameContext.initializeTilemap(id);
                         socket.messageRoom(GAME_EVENTS.INSTANCE_MAP, { "success": true, "error": null });
                     }
-                })
+                });
                 break;
             }
             case GAME_EVENTS.INSTANCE_MAP_FROM_DATA: {
                 const { id, data } = payload;
 
                 mapLoader.createMapFromData(id, data);
-                gameContext.initializeMap(id);
-                gameContext.initializeTilemap(id);
 
-                socket.messageRoom(GAME_EVENTS.INSTANCE_MAP, { "success": true, "error": null });
+                gameContext.loadMap(id).then(result => {
+                    gameContext.initializeTilemap(id);
+                    socket.messageRoom(GAME_EVENTS.INSTANCE_MAP, { "success": true, "error": null });
+                });
                 break;
             }
             case GAME_EVENTS.INSTANCE_ENTITY: {
                 const { id, master, setup } = payload;
+
                 gameContext.createEntity(setup, master, id);
                 break;
             }

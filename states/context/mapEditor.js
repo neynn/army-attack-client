@@ -348,9 +348,7 @@ const initializeMapEditor = function(mapEditor, gameContext) {
         if(EDITOR_MAP_ID === null) {
             EDITOR_MAP_ID = MAP_ID;
 
-            mapLoader.loadMap(EDITOR_MAP_ID).then(map2D => {
-                gameContext.initializeMap(EDITOR_MAP_ID);
-            });
+            gameContext.loadMap(EDITOR_MAP_ID);
         }
     });
 
@@ -363,9 +361,7 @@ const initializeMapEditor = function(mapEditor, gameContext) {
             EDITOR_MAP_ID = mapID;
         }
 
-        mapLoader.loadMap(EDITOR_MAP_ID).then(map2D => {
-            gameContext.initializeMap(EDITOR_MAP_ID);
-        });
+        gameContext.loadMap(EDITOR_MAP_ID);
     });
 
     uiManager.addClick(editorInterface.id, "BUTTON_RESIZE", () => {
