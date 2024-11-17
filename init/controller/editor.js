@@ -147,24 +147,17 @@ EditorController.prototype.loadButtonEvents = function(gameContext) {
         const { tileName, tileID } = brushData;
 
         button.events.subscribe(UIElement.EVENT_CLICKED, this.id, () => this.mapEditor.setBrush(brushData));
-        
-        if(tileID === 0) {
-            button.events.subscribe(UIElement.EVENT_DRAW, this.id, (context, localX, localY) => {
-                context.fillStyle = "#701867";
-                context.fillRect(localX, localY, 25, 25);
-                context.fillRect(localX + 25, localY + 25, 25, 25);
-                context.fillStyle = "#000000";
-                context.fillRect(localX + 25, localY, 25, 25);
-                context.fillRect(localX, localY + 25, 25, 25);
-            });
-        } else {
-            button.events.subscribe(UIElement.EVENT_DRAW, this.id, (context, localX, localY) => {
+
+        button.events.subscribe(UIElement.EVENT_DRAW, this.id, (context, localX, localY) => {
+            if(tileID === 0) {
+                tileManager.drawEmptyTile(context, localX, localY, 25, 25);
+            } else {
                 tileManager.drawTileGraphics(tileID, context, localX, localY, EditorController.GRAPHICS_BUTTON_SCALE, EditorController.GRAPHICS_BUTTON_SCALE);
                 context.fillStyle = "#eeeeee";
                 context.textAlign = "center";
                 context.fillText(tileName, localX + 25, localY + 25);
-            });
-        }
+            }
+        });
     }
 } 
 
@@ -198,9 +191,9 @@ EditorController.prototype.updateButtonText = function(gameContext) {
 
 EditorController.prototype.initializeRenderEvents = function(gameContext) {
     const { renderer, tileManager } = gameContext;
-
+    const { layerButtons } = this.mapEditor.config.interface;
+    
     renderer.events.subscribe(Renderer.EVENT_CAMERA_FINISH, this.id, (renderer, camera) => {
-        const { layerButtons } = this.mapEditor.config.interface;
         const cursorTile = gameContext.getMouseTile();
         const brush = this.mapEditor.getBrush();
         const brushSize = this.mapEditor.getBrushSize();
@@ -238,18 +231,13 @@ EditorController.prototype.initializeRenderEvents = function(gameContext) {
                 const renderX = j * tileWidth - x * camera.scale;
 
                 if(tileID === 0) {
-                    context.fillStyle = "#701867";
-                    context.fillRect(renderX, renderY, halfTileWidth, halfTileHeight);
-                    context.fillRect(renderX + halfTileWidth, renderY + halfTileHeight, halfTileWidth, halfTileHeight);
-                    context.fillStyle = "#000000";
-                    context.fillRect(renderX + halfTileWidth, renderY, halfTileWidth, halfTileHeight);
-                    context.fillRect(renderX, renderY + halfTileHeight, halfTileWidth, halfTileHeight);
+                    tileManager.drawEmptyTile(context, renderX, renderY, halfTileWidth, halfTileHeight);
                 } else {
                     tileManager.drawTileGraphics(tileID, context, renderX, renderY);
                     context.fillStyle = "#eeeeee";
                     context.textAlign = "center";
-                    context.fillText(tileName, renderX + halfTileWidth, renderY);   
-                }
+                    context.fillText(tileName, renderX + halfTileWidth, renderY);  
+                } 
             }
         }
 

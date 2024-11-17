@@ -70,7 +70,8 @@
         },
         "hiddenSets": {
             "overlay": 1,
-            "border": 1
+            "border": 0,
+            "range": 0
         }
     },
     "socket": {

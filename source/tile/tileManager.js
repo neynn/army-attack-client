@@ -1,4 +1,3 @@
-import { ImageSheet } from "../graphics/imageSheet.js";
 import { Logger } from "../logger.js";
 
 export const TileManager = function() {
@@ -58,8 +57,8 @@ TileManager.prototype.drawTileGraphics = function(tileID, context, renderX, rend
     for(const component of currentFrame) {
         const { id, shiftX, shiftY } = component;
         const { x, y, w, h, offset } = tileType.getFrameByID(id);
-        const drawX = renderX + offset.x + shiftX;
-        const drawY = renderY + offset.y + shiftY;
+        const drawX = renderX + (offset.x + shiftX) * scaleX;
+        const drawY = renderY + (offset.y + shiftY) * scaleY;
         const drawWidth = w * scaleX;
         const drawHeight = h * scaleY;
 
@@ -69,6 +68,15 @@ TileManager.prototype.drawTileGraphics = function(tileID, context, renderX, rend
             drawX, drawY, drawWidth, drawHeight
         );
     }
+}
+
+TileManager.prototype.drawEmptyTile = function(context, renderX, renderY, width, height) {
+    context.fillStyle = "#701867";
+    context.fillRect(renderX, renderY, width, height);
+    context.fillRect(renderX + width, renderY + height, width, height);
+    context.fillStyle = "#000000";
+    context.fillRect(renderX + width, renderY, width, height);
+    context.fillRect(renderX, renderY + height, width, height);
 }
 
 TileManager.prototype.invertTileMeta = function() {
