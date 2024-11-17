@@ -100,7 +100,7 @@ Camera2D.prototype.drawTypeLayer = function(gameContext, gameMap, startX, startY
     const tileTypes = gameContext.getConfig("tileTypes");
     const opacity = gameMap.metaLayers[1].opacity; //HäCK aus der Hölle.
 
-    if(!opacity || !tileTypes) {
+    if(!opacity) {
         return;
     }
 

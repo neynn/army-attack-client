@@ -1,12 +1,12 @@
-import { CONTROLLER_STATES } from "../enums.js";
-import { tileToPosition_center } from "../source/camera/helpers.js";
-import { Cursor } from "../source/client/cursor.js";
-import { Controller } from "../source/controller/controller.js";
-import { SpriteManager } from "../source/graphics/spriteManager.js";
-import { ControllerBuildState } from "../states/controller/build.js";
-import { ControllerSelectedState } from "../states/controller/selected.js";
-import { ControllerIdleState } from "../states/controller/idle.js";
-import { componentSetup } from "./componentSetup.js";
+import { CONTROLLER_STATES } from "../../enums.js";
+import { tileToPosition_center } from "../../source/camera/helpers.js";
+import { Cursor } from "../../source/client/cursor.js";
+import { Controller } from "../../source/controller/controller.js";
+import { SpriteManager } from "../../source/graphics/spriteManager.js";
+import { ControllerBuildState } from "../../states/controller/build.js";
+import { ControllerSelectedState } from "../../states/controller/selected.js";
+import { ControllerIdleState } from "../../states/controller/idle.js";
+import { componentSetup } from "../componentSetup.js";
 
 export const PlayerController = function(id) {
     Controller.call(this, id);

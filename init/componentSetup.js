@@ -62,13 +62,12 @@ componentSetup.setupSpriteComponent = function(sprite) {
     return spriteComponent;
 }
 
-componentSetup.setupConstructionComponent = function(entitySetup, typeConfig) {
+componentSetup.setupConstructionComponent = function(type) {
     const constructionComponent = new ConstructionComponent();
 
-    constructionComponent.stepsRequired = typeConfig["constructionSteps"];
-    constructionComponent.stepsCompleted = 0; //TODO add saving/reloading method that handles components!
-    //get stepsCompleted from entitySetup!
-
+    constructionComponent.stepsRequired = type.constructionSteps;
+    constructionComponent.stepsCompleted = 0;
+    
     return constructionComponent;
 }
 

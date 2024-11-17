@@ -113,16 +113,18 @@ GameContext.prototype.exitGame = function() {
     this.uiManager.end();
 }
 
-GameContext.prototype.getConfig = function(key) {
-    if(!key) {
+GameContext.prototype.getConfig = function(elementID) {
+    if(!elementID) {
         return this.config;
     }
 
-    if(this.config[key] === undefined) {
-        return null;
+    if(this.config[elementID]) {
+        return this.config[elementID];
     }
 
-    return this.config[key];
+    Logger.error(false, "Element does not exist!", "GameContext.prototype.getConfig", { elementID });
+
+    return {};
 }
 
 GameContext.prototype.getCameraAtMouse = function() {
@@ -162,6 +164,28 @@ GameContext.prototype.getMouseEntity = function() {
     const mouseEntity = this.getTileEntity(x, y);
     
     return mouseEntity;
+}
+
+GameContext.prototype.lockPointer = function() {
+    if(!this.client.cursor.isLocked) {
+        this.renderer.display.canvas.requestPointerLock();
+    }
+}
+
+GameContext.prototype.unlockPointer = function() {
+    if(this.client.cursor.isLocked) {      
+        document.exitPointerLock();
+    }
+}
+
+GameContext.prototype.addLockEvent = function() {
+    document.addEventListener("pointerlockchange", () => {
+        if(document.pointerLockElement === this.renderer.display.canvas) {
+            this.client.cursor.lock();
+        } else {
+            this.client.cursor.unlock();
+        }
+    });
 }
 
 GameContext.prototype.createController = function(payload) {

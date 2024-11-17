@@ -25,10 +25,16 @@ import { StoryModePlayState } from "./states/context/story/storyModePlay.js";
 import { StoryModeIntroState } from "./states/context/story/storyModeIntro.js";
 import { MoveSystem } from "./systems/move.js";
 import { Renderer } from "./source/renderer.js";
-import { PlayerController } from "./init/playerController.js";
 import { SpriteComponent } from "./components/sprite.js";
 import { Socket } from "./source/client/network/socket.js";
-import { BuildingArchetype, ConstructionArchetype, DecoArchetype, DefenseArchetype, HFEArchetype, TownArchetype, UnitArchetype } from "./init/entities.js";
+import { DefenseArchetype } from "./init/archetype/defense.js";
+import { DecoArchetype } from "./init/archetype/deco.js";
+import { BuildingArchetype } from "./init/archetype/building.js";
+import { HFEArchetype } from "./init/archetype/hfe.js";
+import { TownArchetype } from "./init/archetype/town.js";
+import { ConstructionArchetype } from "./init/archetype/construction.js";
+import { PlayerController } from "./init/controller/player.js";
+import { UnitArchetype } from "./init/archetype/unit.js";
 
 export const ArmyContext = function() {
     GameContext.call(this, 60);

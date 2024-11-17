@@ -6,8 +6,8 @@ export const Cursor = function() {
     this.radius = 0;
     this.isLocked = false;
 
-    this.leftDragHappened = false;
     this.rightDragHappened = false;
+    this.leftDragHappened = false;
     this.isRightMouseDown = false;
     this.isLeftMouseDown = false;
     this.rightMouseDownTime = 0;
@@ -34,7 +34,7 @@ export const Cursor = function() {
     this.events.listen(Cursor.RIGHT_MOUSE_HELD);
 }
 
-Cursor.DRAG_DISTANCE_THRESHOLD = 6 ** 2;
+Cursor.DRAG_DISTANCE_THRESHOLD_SQUARED = 36;
 Cursor.DRAG_DELAY_MILLISECONDS = 120;
 
 Cursor.LEFT_MOUSE_CLICK = 0;
@@ -54,10 +54,10 @@ Cursor.RIGHT_MOUSE_HELD = 12;
 Cursor.BUTTON_LEFT = 0;
 Cursor.BUTTON_RIGHT = 2;
 
-Cursor.prototype.addEventHandler = function(eventType, callback) {
-    document.addEventListener(eventType, (event) => {
+Cursor.prototype.addEventHandler = function(type, onEvent) {
+    document.addEventListener(type, (event) => {
         event.preventDefault();
-        callback(event);
+        onEvent(event);
     });
 }
 
@@ -138,7 +138,7 @@ Cursor.prototype.hasDragged = function(deltaX, deltaY, elapsedTime) {
     
     const distance = deltaX * deltaX + deltaY * deltaY;
 
-    return distance >= Cursor.DRAG_DISTANCE_THRESHOLD;
+    return distance >= Cursor.DRAG_DISTANCE_THRESHOLD_SQUARED;
 }
 
 Cursor.prototype.eventMouseScroll = function(event) {
@@ -149,6 +149,14 @@ Cursor.prototype.eventMouseScroll = function(event) {
     } else {
         this.events.emit(Cursor.DOWN_MOUSE_SCROLL, deltaY);
     }
+}
+
+Cursor.prototype.lock = function() {
+    this.isLocked = true;
+}
+
+Cursor.prototype.unlock = function() {
+    this.isLocked = false;
 }
 
 Cursor.prototype.update = function() {
