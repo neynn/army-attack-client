@@ -48,6 +48,29 @@ EventEmitter.prototype.subscribe = function(eventType, subscriberID, onCall) {
     return true;
 }
 
+EventEmitter.prototype.unsubscribeAll = function(subscriberID) {
+    if(subscriberID === EventEmitter.SUPER_SUBSCRIBER_ID) {
+        return false;
+    }
+
+    for(const [listenerID, listener] of this.listeners) {
+        const { observers } = listener;
+        const remainingObservers = [];
+
+        for(const observer of observers) {
+            const { subscriber } = observer;
+
+            if(subscriber !== subscriberID) {
+                remainingObservers.push(observer);
+            }
+        }
+
+        listener.observers = remainingObservers;
+    }
+
+    return true;
+}
+
 EventEmitter.prototype.unsubscribe = function(eventType, subscriberID) {
     if(!this.listeners.has(eventType)) {
         return false;
@@ -82,6 +105,25 @@ EventEmitter.prototype.emit = function(eventType, ...args) {
 
     for(const { onCall } of listener.observers) {
         onCall(...args);
+    }
+
+    return true;
+}
+
+EventEmitter.prototype.muteAll = function() {
+    for(const [listenerID, listener] of this.listeners) {
+        const { observers } = listener;
+        const remainingObservers = [];
+
+        for(const observer of observers) {
+            const { subscriber } = observer;
+
+            if(subscriber === EventEmitter.SUPER_SUBSCRIBER_ID) {
+                remainingObservers.push(observer);
+            }
+        }
+
+        listener.observers = remainingObservers;
     }
 
     return true;

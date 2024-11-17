@@ -20,7 +20,8 @@ export const ENTITY_ARCHETYPES = Object.freeze({
 });
 
 export const CONTROLLER_TYPES = Object.freeze({
-    "PLAYER": "PLAYER"
+    "PLAYER": "PLAYER",
+    "EDITOR": "EDITOR"
 });
 
 export const SYSTEM_TYPES = Object.freeze({

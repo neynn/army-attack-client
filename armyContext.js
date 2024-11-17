@@ -35,6 +35,7 @@ import { TownArchetype } from "./init/archetype/town.js";
 import { ConstructionArchetype } from "./init/archetype/construction.js";
 import { PlayerController } from "./init/controller/player.js";
 import { UnitArchetype } from "./init/archetype/unit.js";
+import { EditorController } from "./init/controller/editor.js";
 
 export const ArmyContext = function() {
     GameContext.call(this, 60);
@@ -71,7 +72,8 @@ ArmyContext.prototype.loadResources = function(resources) {
     );
 
     this.controllerManager.registerController(CONTROLLER_TYPES.PLAYER, PlayerController);
-
+    this.controllerManager.registerController(CONTROLLER_TYPES.EDITOR, EditorController);
+    
     this.entityManager.registerArchetype(ENTITY_ARCHETYPES.UNIT, new UnitArchetype());
     this.entityManager.registerArchetype(ENTITY_ARCHETYPES.DEFENSE, new DefenseArchetype());
     this.entityManager.registerArchetype(ENTITY_ARCHETYPES.DECO, new DecoArchetype());
