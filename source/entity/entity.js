@@ -49,18 +49,22 @@ Entity.prototype.getID = function() {
     return this.id;
 }
 
-Entity.prototype.hasComponent = function(componentConstructor) {
-    return this.components.has(componentConstructor);
+Entity.prototype.hasComponent = function(componentID) {
+    return this.components.has(componentID);
 }
 
 Entity.prototype.addComponent = function(component) {
-    this.components.set(component.constructor, component);
+    if(!this.components.has(component.constructor)) {
+        this.components.set(component.constructor, component);
+    }
 }
 
-Entity.prototype.getComponent = function(componentConstructor) {
-    return this.components.get(componentConstructor);
+Entity.prototype.getComponent = function(componentID) {
+    return this.components.get(componentID);
 }
 
-Entity.prototype.removeComponent = function(componentConstructor) {
-    this.components.delete(componentConstructor);
+Entity.prototype.removeComponent = function(componentID) {
+    if(this.components.has(componentID)) {
+        this.components.delete(componentID);
+    }
 }

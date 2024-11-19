@@ -1,4 +1,4 @@
-import { MapEditor } from "../../mapEditor.js";
+import { MapEditor } from "../../source/map/mapEditor.js";
 import { Camera } from "../../source/camera/camera.js";
 import { Cursor } from "../../source/client/cursor.js";
 import { Controller } from "../../source/controller/controller.js";
@@ -162,7 +162,7 @@ EditorController.prototype.loadButtonEvents = function(gameContext) {
 } 
 
 EditorController.prototype.getPageText = function() {
-    const fMaxPagesNeeded = this.mapEditor.allPageElements.length / this.mapEditor.config.interface.slots.length;
+    const fMaxPagesNeeded = this.mapEditor.allSetElements.length / this.mapEditor.config.interface.slots.length;
     const maxPagesNeeded = Math.ceil(fMaxPagesNeeded);
     const showMaxPagesNeeded = maxPagesNeeded === 0 ? 1 : maxPagesNeeded;
     const showCurrentPage = this.mapEditor.pageIndex + 1;

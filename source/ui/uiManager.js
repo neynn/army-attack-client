@@ -155,9 +155,8 @@ UIManager.prototype.pushInterface = function(userInterfaceID) {
 
     const uniqueElementIDs = new Set();
 
-    for(const key in userInterface) {
-        const element = userInterface[key];
-        const uniqueID = this.getUniqueID(userInterfaceID, element.id);
+    for(const elementID in userInterface) {
+        const uniqueID = this.getUniqueID(userInterfaceID, elementID);
 
         uniqueElementIDs.add(uniqueID);
     }
@@ -259,7 +258,7 @@ UIManager.prototype.getCollidedElements = function(mouseX, mouseY, mouseRange) {
         }
 
         const element = this.elements.get(elementUID);
-        const collisions = element.getCollisionStack(mouseX, mouseY, mouseRange);
+        const collisions = element.getCollisions(mouseX, mouseY, mouseRange);
 
         if(collisions.length > 0) {
             return collisions;

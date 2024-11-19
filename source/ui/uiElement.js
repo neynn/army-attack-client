@@ -23,7 +23,7 @@ UIElement.prototype.loadFromConfig = function(config) {}
 
 UIElement.prototype.isColliding = function(mouseX, mouseY, mouseRange) {}
 
-UIElement.prototype.getCollisionStack = function(mouseX, mouseY, mouseRange) {
+UIElement.prototype.getCollisions = function(mouseX, mouseY, mouseRange) {
     const collidedElements = [];
     const collisionStack = [{
         "element": this,

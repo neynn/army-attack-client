@@ -229,14 +229,22 @@ Map2D.prototype.placeTile = function(data, layerID, tileX, tileY) {
 
     if(!layer) {
         console.warn(`Layer ${layerID} does not exist! Returning...`);
+
         return false;
     }
 
     if(this.isTileOutOfBounds(tileX, tileY)) {
         console.warn(`Tile ${tileY},${tileX} does not exist! Returning...`);
+
         return false;
     }
     
+    if(typeof data !== "number") {
+        console.warn(`Data ${data} is not a number! Returning...`);
+
+        return false;
+    }
+
     const index = tileY * this.width + tileX;
 
     layer[index] = data;
@@ -253,11 +261,13 @@ Map2D.prototype.getTile = function(layerID, tileX, tileY) {
 
     if(!layer) {
         console.warn(`Layer ${layerID} does not exist! Returning null...`);
+
         return null;
     }
 
     if(this.isTileOutOfBounds(tileX, tileY)) {
         console.warn(`Tile ${tileY},${tileX} of layer ${layerID} does not exist! Returning null...`);
+
         return null;
     }
 
