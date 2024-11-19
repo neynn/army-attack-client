@@ -41,7 +41,6 @@ ConquerSystem.convertTileGraphics = function(gameContext, tileX, tileY, teamID) 
 ConquerSystem.updateBorder = function(gameContext, tileX, tileY) {
     const { mapLoader, tileManager, controllerManager } = gameContext;
     const settings = gameContext.getConfig("settings");
-    const tileTypes = gameContext.getConfig("tileTypes");
     const controller = controllerManager.getController("neyn"); //TODOOOOOO!!!
 
     if(!settings.drawBorder) {
@@ -54,9 +53,11 @@ ConquerSystem.updateBorder = function(gameContext, tileX, tileY) {
         return false;
     }
 
+    const tileTypes = gameContext.getConfig("tileTypes");
     const layerTypes = gameContext.getConfig("layerTypes");
     const teamLayerID = layerTypes.team.layerID;
     const typeLayerID = layerTypes.type.layerID;
+    const borderLayerID = layerTypes.border.layerID;
     const centerTypeID = activeMap.getTile(typeLayerID, tileX, tileY);
     const centerTeamID = activeMap.getTile(teamLayerID, tileX, tileY);
     const centerType = tileTypes[centerTypeID];
@@ -86,14 +87,9 @@ ConquerSystem.updateBorder = function(gameContext, tileX, tileY) {
         return 1;
     });
 
-    //HÄCK
-    const borderAutoTiler = tileManager.tileMeta.autotilers["border"];
-    const borderConfig = borderAutoTiler.values[autoIndex];
-    
-    if(borderConfig) {
-        const { set, animation } = borderConfig;
-        const tileID = tileManager.getTileID(set, animation);
+    const autotilerTypes = gameContext.getConfig("autotilerTypes");
+    const borderAutotilerID = autotilerTypes.border.autotilerID;
+    const tileID = tileManager.getAutotilerID(borderAutotilerID, autoIndex);
 
-        activeMap.placeTile(tileID, "border", tileX, tileY);
-    }
+    activeMap.placeTile(tileID, borderLayerID, tileX, tileY);
 }

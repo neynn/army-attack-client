@@ -13,6 +13,11 @@
             "english": { "id": "english", "directory": "assets/config/language", "source": "en.json" }
         }
     },
+    "autotilerTypes": {
+        "border": { "id": "border", "autotilerID": "border" },
+        "cloud": { "id": "cloud", "autotilerID": "cloud" },
+        "range": { "id": "range", "autotilerID": "range" }
+    },
     "layerTypes": {
         "ground": { "id": "ground", "layerID": "ground" },
         "decoration": { "id": "decoration", "layerID": "decoration" },

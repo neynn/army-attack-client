@@ -7,7 +7,7 @@ export const SimpleText = function() {
     this.style = new TextStyle();
     this.text = "SAMPLE TEXT";
 
-    this.style.setColor(238, 238, 238, 255);
+    this.style.setColor(238, 238, 238, 1);
 }
 
 SimpleText.prototype = Object.create(Drawable.prototype);

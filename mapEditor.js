@@ -192,7 +192,9 @@ MapEditor.prototype.swapFlag = function(gameContext, mapID, layerID) {
     for(let i = startY; i <= endY; i++) {
         for(let j = startX; j <= endX; j++) {
             const flag = gameMap.getTile(layerID, j, i);
-            gameMap.placeTile(!flag, layerID, j, i);
+            const nextFlag = flag === 0 ? 1 : 0;
+            
+            gameMap.placeTile(nextFlag, layerID, j, i);
         }
     }
 

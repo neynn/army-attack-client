@@ -137,3 +137,21 @@ TileManager.prototype.getTileID = function(setID, animationID) {
 TileManager.prototype.hasTileMeta = function(tileID) {
     return this.tileMeta.values[tileID] !== undefined;
 }
+
+TileManager.prototype.getAutotilerID = function(autotilerID, autoIndex) {
+    const autotiler = this.tileMeta.autotilers[autotilerID];
+
+    if(!autotiler) {
+        return 0;
+    }
+
+    const meta = autotiler.values[autoIndex];
+
+    if(!meta) {
+        return 0;
+    }
+
+    const { set, animation } = meta;
+
+    return this.getTileID(set, animation);;
+}
