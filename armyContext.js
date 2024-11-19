@@ -9,7 +9,7 @@ import { PositionComponent } from "./components/position.js";
 import { ReviveComponent } from "./components/revive.js";
 import { SubTypeComponent } from "./components/subType.js";
 import { TeamComponent } from "./components/team.js";
-import { ACTION_TYPES, CONTEXT_STATES, CONTROLLER_TYPES, ENTITY_ARCHETYPES, GAME_EVENTS, SYSTEM_TYPES } from "./enums.js";
+import { ACTION_TYPES, CAMERAS, CONTEXT_STATES, CONTROLLER_TYPES, ENTITY_ARCHETYPES, GAME_EVENTS, SYSTEM_TYPES } from "./enums.js";
 import { ActionQueue } from "./source/action/actionQueue.js";
 import { GameContext } from "./source/gameContext.js";
 import { MainMenuState } from "./states/context/mainMenu.js";
@@ -97,25 +97,6 @@ ArmyContext.prototype.initialize = function() {
     this.actionQueue.registerAction(ACTION_TYPES.MOVE, new MoveAction());
     this.actionQueue.registerAction(ACTION_TYPES.ATTACK, new AttackAction());
 
-    this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_PROCESS, "CONTEXT", (request) => {
-        console.log(request, "IS VALID");
-    });
-
-    this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_INVALID, "CONTEXT", (request) => {
-        this.client.soundPlayer.playSound("sound_error", 0.5);
-        console.log(request, "IS INVALID");
-    });
-
-    this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_VALID, "CONTEXT", (request) => {
-        if(this.client.isOnline()) {
-            console.log("TO SERVER!");
-            this.client.socket.messageRoom(GAME_EVENTS.ENTITY_ACTION, request);
-        } else {
-            console.log("TO CLIENT!");
-            this.actionQueue.queueAction(request);
-        }
-    });
-
     this.states.addState(CONTEXT_STATES.MAIN_MENU, new MainMenuState());
     this.states.addState(CONTEXT_STATES.STORY_MODE, new StoryModeState());
     this.states.addState(CONTEXT_STATES.VERSUS_MODE, new VersusModeState());
@@ -131,24 +112,34 @@ ArmyContext.prototype.initialize = function() {
 
     this.client.soundPlayer.loadAllSounds();
     
-    this.client.socket.events.subscribe(Socket.EVENT_CONNECTED_TO_SERVER, "CONTEXT", (socketID) => {
+    this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_PROCESS, "DEBUG", (request) => {
+        console.log(request, "IS PROCESSING");
+    });
+
+    this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_INVALID, "DEBUG", (request) => {
+        this.client.soundPlayer.playSound("sound_error", 0.5);
+        console.log(request, "IS INVALID");
+    });
+
+    this.client.socket.events.subscribe(Socket.EVENT_CONNECTED_TO_SERVER, "DEBUG", (socketID) => {
         console.log(`${socketID} is connected to the server!`);
     });
 
-    this.client.socket.events.subscribe(Socket.EVENT_DISCONNECTED_FROM_SERVER, "CONTEXT", (reason) => {
+    this.client.socket.events.subscribe(Socket.EVENT_DISCONNECTED_FROM_SERVER, "DEBUG", (reason) => {
         console.log(`${reason} is disconnected from the server!`);
     });
 
-    this.states.setNextState(CONTEXT_STATES.MAIN_MENU);
-    this.renderer.createCamera("ARMY_CAMERA", Renderer.CAMERA_TYPE_2D, 0, 0, 500, 500);    
+    this.renderer.createCamera(CAMERAS.ARMY_CAMERA, Renderer.CAMERA_TYPE_2D, 0, 0, 500, 500);    
     this.renderer.resizeDisplay(window.innerWidth, window.innerHeight);
+    
+    this.switchState(CONTEXT_STATES.MAIN_MENU);
 }
 
 ArmyContext.prototype.onMapLoad = function(map) {
     const { width, height, music } = map;
 
     this.actionQueue.workStart();
-    this.renderer.getCamera("ARMY_CAMERA").loadViewport(width, height);
+    this.renderer.getCamera(CAMERAS.ARMY_CAMERA).loadViewport(width, height);
 
     if(music) {
         this.client.musicPlayer.loadTrack(music);

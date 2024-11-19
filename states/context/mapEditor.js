@@ -1,5 +1,5 @@
 import { State } from "../../source/state/state.js";
-import { CONTROLLER_TYPES } from "../../enums.js";
+import { CAMERAS, CONTROLLER_TYPES } from "../../enums.js";
 
 export const MapEditorState = function() {
     State.call(this);
@@ -11,7 +11,7 @@ MapEditorState.prototype.constructor = MapEditorState;
 MapEditorState.prototype.enter = function(stateMachine) {
     const gameContext = stateMachine.getContext();
     const { uiManager, renderer } = gameContext;
-    const camera = renderer.getCamera("ARMY_CAMERA");
+    const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
 
     uiManager.parseUI("MAP_EDITOR", gameContext);
     uiManager.unparseUI("FPS_COUNTER", gameContext);
@@ -23,9 +23,7 @@ MapEditorState.prototype.enter = function(stateMachine) {
 
 MapEditorState.prototype.exit = function(stateMachine) {
     const gameContext = stateMachine.getContext();
-    const { mapLoader, controllerManager } = gameContext;
-    const controller = controllerManager.getController("MAP_EDITOR");
+    const { mapLoader } = gameContext;
 
-    controller.removeEvents(gameContext);
     mapLoader.unparseUI("MAP_EDITOR", gameContext);
 }

@@ -17,6 +17,7 @@ import { ControllerManager } from "./controller/controllerManager.js";
 import { QuestManager } from "./questManager.js";
 
 export const GameContext = function(fps = 60) {
+    this.id = "GAME_CONTEXT";
     this.config = {};
     this.settings = {};
     this.client = new Client();
@@ -240,4 +241,26 @@ GameContext.prototype.loadMap = async function(mapID) {
     this.onMapLoad(nextMap);
     
     return nextMap;
+}
+
+GameContext.prototype.clearEvents = function() {
+    this.client.cursor.events.unsubscribeAll(this.id);
+    this.client.keyboard.events.unsubscribeAll(this.id);
+    this.client.socket.events.unsubscribeAll(this.id);
+    this.renderer.events.unsubscribeAll(this.id);
+    this.questManager.events.unsubscribeAll(this.id);
+    this.actionQueue.events.unsubscribeAll(this.id);
+}
+
+GameContext.prototype.getID = function() {
+    return this.id;
+}
+
+GameContext.prototype.switchState = function(stateID) {
+    if(!this.states.hasState(stateID)) {
+        return false;
+    }
+
+    this.clearEvents();
+    this.states.setNextState(stateID);
 }

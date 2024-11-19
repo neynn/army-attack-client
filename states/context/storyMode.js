@@ -1,4 +1,5 @@
 import { CONTEXT_STATES } from "../../enums.js";
+import { ActionQueue } from "../../source/action/actionQueue.js";
 import { State } from "../../source/state/state.js";
 
 export const StoryModeState = function() {
@@ -9,9 +10,13 @@ StoryModeState.prototype = Object.create(State.prototype);
 StoryModeState.prototype.constructor = StoryModeState;
 
 StoryModeState.prototype.enter = function(stateMachine) {
+    const gameContext = stateMachine.getContext();
+    const contextID = gameContext.getID();
+    const { actionQueue } = gameContext;
+
+    actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_VALID, contextID, (request) => {
+        actionQueue.queueAction(request);
+    });
+
     this.states.setNextState(CONTEXT_STATES.STORY_MODE_PLAY);
 }
-
-StoryModeState.prototype.exit = function(stateMachine) {
-    const gameContext = stateMachine.getContext();
-}   

@@ -1,6 +1,7 @@
 import { Camera } from "../camera.js";
 import { clampValue, lerpValue } from "../../math/math.js";
 import { Renderer } from "../../renderer.js";
+import { EventEmitter } from "../../events/eventEmitter.js";
 
 export const Camera2D = function(positionX, positionY, width, height) {
     Camera.call(this, positionX, positionY, width, height);
@@ -18,7 +19,7 @@ export const Camera2D = function(positionX, positionY, width, height) {
 
     this.targets = [];
 
-    this.events.subscribe(Camera.EVENT_VIEWPORT_RESIZE, "CAMERA2D", (width, height) => this.loadViewport(this.mapWidth, this.mapHeight));
+    this.events.subscribe(Camera.EVENT_VIEWPORT_RESIZE, EventEmitter.SUPER_SUBSCRIBER_ID, (width, height) => this.loadViewport(this.mapWidth, this.mapHeight));
 }
 
 Camera2D.MAP_OUTLINE_COLOR = "#dddddd";

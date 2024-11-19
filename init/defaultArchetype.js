@@ -94,26 +94,28 @@ DefaultArchetype.prototype.initializeEntity = function(gameContext, entity, spri
     entity.events.listen(ENTITY_EVENTS.SPRITE_UPDATE);
     entity.events.listen(ENTITY_EVENTS.STAT_UPDATE);
 
-    entity.events.subscribe(ENTITY_EVENTS.POSITION_UPDATE, "BUILDER", () => {
-        const positionComponent = entity.getComponent(PositionComponent);
+    entity.events.subscribe(ENTITY_EVENTS.POSITION_UPDATE, "BUILDER", (positionX, positionY) => {
         const spriteComponent = entity.getComponent(SpriteComponent);
         const { spriteID } = spriteComponent;
         const sprite = spriteManager.getSprite(spriteID);
 
-        sprite.setPosition(positionComponent.positionX, positionComponent.positionY);
+        sprite.setPosition(positionX, positionY);
     });
 
     entity.events.subscribe(ENTITY_EVENTS.DIRECTION_UPDATE, "BUILDER", () => {
 
     });
 
-    entity.events.subscribe(ENTITY_EVENTS.SPRITE_UPDATE, "BUILDER", () => {
+    entity.events.subscribe(ENTITY_EVENTS.SPRITE_UPDATE, "BUILDER", (spriteType, animationType) => {
         const spriteComponent = entity.getComponent(SpriteComponent);
-        const { spriteID, spriteType, animationType, isFlipped } = spriteComponent;
+        const { spriteID, isFlipped } = spriteComponent;
         const sprite = spriteManager.getSprite(spriteID);
         
         sprite.flip(isFlipped);
-        spriteManager.updateSprite(spriteID, spriteType, animationType);
+
+        if(spriteType !== undefined) {
+            spriteManager.updateSprite(spriteID, spriteType, animationType);
+        }
     });
 
     sprite.setPosition(positionComponent.positionX, positionComponent.positionY);

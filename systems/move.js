@@ -1,6 +1,7 @@
 import { MoveComponent } from "../components/move.js";
 import { PositionComponent } from "../components/position.js";
 import { ENTITY_EVENTS, SYSTEM_TYPES } from "../enums.js";
+import { Camera } from "../source/camera/camera.js";
 import { tileToPosition_center } from "../source/camera/helpers.js";
 
 export const MoveSystem = function() {}
@@ -21,7 +22,7 @@ MoveSystem.update = function(gameContext, entity) {
 
         moveComponent.distance += moveSpeed;
 
-        while(moveComponent.distance >= moveComponent.maxDistance && moveComponent.path.length !== 0) {
+        while(moveComponent.distance >= Camera.TILE_WIDTH && moveComponent.path.length !== 0) {
             const {deltaX, deltaY} = moveComponent.path[0];
             const tileX = positionComponent.tileX + deltaX;
             const tileY = positionComponent.tileY + deltaY;
@@ -32,12 +33,12 @@ MoveSystem.update = function(gameContext, entity) {
             positionComponent.tileX = tileX;
             positionComponent.tileY = tileY;
 
-            moveComponent.distance -= moveComponent.maxDistance;
+            moveComponent.distance -= Camera.TILE_WIDTH;
             moveComponent.path.shift();
         }
     }
 
-    entity.events.emit(ENTITY_EVENTS.POSITION_UPDATE);
+    entity.events.emit(ENTITY_EVENTS.POSITION_UPDATE, positionComponent.positionX, positionComponent.positionY);
 }
 
 MoveSystem.isPathFinished = function(entity) {
@@ -69,6 +70,6 @@ MoveSystem.endMove = function(gameContext, entity, targetX, targetY) {
     moveComponent.distance = 0;
     moveComponent.path = [];
 
-    entity.events.emit(ENTITY_EVENTS.POSITION_UPDATE);
+    entity.events.emit(ENTITY_EVENTS.POSITION_UPDATE, positionComponent.positionX, positionComponent.positionY);
     systemManager.removeEntity(SYSTEM_TYPES.MOVE, entity.id);
 }

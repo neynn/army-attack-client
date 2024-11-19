@@ -2,6 +2,7 @@ import { IDGenerator } from "../idGenerator.js";
 import { Logger } from "../logger.js";
 import { ImageSheet } from "./imageSheet.js";
 import { Sprite } from "./drawable/sprite.js";
+import { EventEmitter } from "../events/eventEmitter.js";
 
 export const SpriteManager = function() {
     this.timestamp = 0;
@@ -100,7 +101,7 @@ SpriteManager.prototype.createSprite = function(typeID, layerID, animationID) {
     
     sprite.onDraw = (context, viewportX, viewportY, localX, localY) => this.drawSprite(sprite, context, viewportX, viewportY, localX, localY);
     sprite.setLastCallTime(this.timestamp);
-    sprite.events.subscribe(Sprite.TERMINATE, "SPRITE_MANAGER", (sprite) => this.destroySprite(sprite.id));
+    sprite.events.subscribe(Sprite.TERMINATE, EventEmitter.SUPER_SUBSCRIBER_ID, (sprite) => this.destroySprite(sprite.id));
 
     this.sprites.set(sprite.id, sprite);
 

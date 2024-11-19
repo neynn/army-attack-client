@@ -18,9 +18,9 @@ MainMenuState.prototype.enter = function(stateMachine) {
 
     uiManager.addTextRequest("FPS_COUNTER", "TEXT_FPS", () => `FPS: ${Math.floor(renderer.fpsCounter.getSmoothFPS())}`);
 
-    uiManager.addClick("MAIN_MENU", "BUTTON_PLAY", () => stateMachine.setNextState(CONTEXT_STATES.STORY_MODE));
-    uiManager.addClick("MAIN_MENU", "BUTTON_EDIT", () => stateMachine.setNextState(CONTEXT_STATES.EDIT_MODE));
-    uiManager.addClick("MAIN_MENU", "BUTTON_VERSUS", () => stateMachine.setNextState(CONTEXT_STATES.VERSUS_MODE));
+    uiManager.addClick("MAIN_MENU", "BUTTON_PLAY", () => gameContext.switchState(CONTEXT_STATES.STORY_MODE));
+    uiManager.addClick("MAIN_MENU", "BUTTON_EDIT", () => gameContext.switchState(CONTEXT_STATES.EDIT_MODE));
+    uiManager.addClick("MAIN_MENU", "BUTTON_VERSUS", () => gameContext.switchState(CONTEXT_STATES.VERSUS_MODE));
 
     const buttonPlay = uiManager.getButton("MAIN_MENU", "BUTTON_PLAY");
     const buttonVersus = uiManager.getButton("MAIN_MENU", "BUTTON_VERSUS");

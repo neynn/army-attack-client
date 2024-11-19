@@ -56,8 +56,7 @@ componentSetup.setupSpriteComponent = function(sprite) {
     const spriteComponent = new SpriteComponent();
 
     spriteComponent.spriteID = sprite.id;
-    spriteComponent.spriteType = sprite.typeID;
-    spriteComponent.animationType = ImageSheet.DEFAULT_ANIMATION_ID;
+    spriteComponent.isFlipped = false;
     
     return spriteComponent;
 }

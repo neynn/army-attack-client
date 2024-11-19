@@ -9,16 +9,9 @@ MorphSystem.updateSprite = function(entity, spriteTypeID) {
         return false;
     }
 
-    const spriteComponent = entity.getComponent(SpriteComponent);
     const spriteType = entity.config.sprites[spriteTypeID];
 
-    if(spriteType === spriteComponent.spriteType) {
-        return false;
-    }
-
-    spriteComponent.spriteType = spriteType;
-
-    entity.events.emit(ENTITY_EVENTS.SPRITE_UPDATE);
+    entity.events.emit(ENTITY_EVENTS.SPRITE_UPDATE, spriteType);
 }
 
 MorphSystem.morphHorizontal = function(entity) {
@@ -49,18 +42,22 @@ MorphSystem.morphDirectional = function(entity, southTypeID, northTypeID) {
     }
 
     if(directionComponent.directionY === DirectionComponent.DIRECTION_NORTH) {
-        if(!entity.config.sprites[northTypeID]) {
+        const northSpriteType = entity.config.sprites[northTypeID];
+
+        if(!northSpriteType) {
             return false;
         }
 
-        spriteComponent.spriteType = entity.config.sprites[northTypeID];
+        entity.events.emit(ENTITY_EVENTS.SPRITE_UPDATE, northSpriteType);
     } else {
-        if(!entity.config.sprites[southTypeID]) {
+        const southSpriteType = entity.config.sprites[southTypeID];
+
+        if(!southSpriteType) {
             return false;
         }
 
-        spriteComponent.spriteType = entity.config.sprites[southTypeID];
+        entity.events.emit(ENTITY_EVENTS.SPRITE_UPDATE, southSpriteType);
     }
 
-    entity.events.emit(ENTITY_EVENTS.SPRITE_UPDATE);
+    return true;
 }

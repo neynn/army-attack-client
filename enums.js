@@ -51,16 +51,20 @@ export const CONTEXT_STATES = Object.freeze({
     "EDIT_MODE": "EDIT_MODE"
 });
 
-
 export const ENTITY_EVENTS = Object.freeze({
-    "POSITION_UPDATE": Symbol("POSITION_UPDATE"),
-    "DIRECTION_UPDATE": Symbol("DIRECTION_UPDATE"),
-    "SPRITE_UPDATE": Symbol("SPRITE_UPDATE"),
-    "STAT_UPDATE": Symbol("STAT_UPDATE")
+    "POSITION_UPDATE": "POSITION_UPDATE",
+    "DIRECTION_UPDATE": "DIRECTION_UPDATE",
+    "SPRITE_UPDATE": "SPRITE_UPDATE",
+    "STAT_UPDATE": "STAT_UPDATE",
+    "DAMAGE_TAKEN": "DAMAGE_TAKEN",
+    "DEATH": "DEATH"
 });
 
 export const CONTROLLER_EVENTS = Object.freeze({
-    "CLICK": Symbol("CLICK"),
-    "SELECT": Symbol("SELECT"),
-    "POSITION_UPDATE": Symbol("POSITION_UPDATE")
+    "CLICK": "CLICK",
+    "SELECT": "SELECT"
+});
+
+export const CAMERAS = Object.freeze({
+    "ARMY_CAMERA": "ARMY_CAMERA"
 });

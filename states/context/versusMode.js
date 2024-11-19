@@ -1,4 +1,5 @@
 import { CONTEXT_STATES, GAME_EVENTS } from "../../enums.js";
+import { ActionQueue } from "../../source/action/actionQueue.js";
 import { ROOM_EVENTS } from "../../source/client/network/events.js";
 import { Socket } from "../../source/client/network/socket.js";
 import { State } from "../../source/state/state.js";
@@ -12,10 +13,15 @@ VersusModeState.prototype.constructor = VersusModeState;
 
 VersusModeState.prototype.enter = function(stateMachine) {
     const gameContext = stateMachine.getContext();
+    const contextID = gameContext.getID();
     const { mapLoader, actionQueue, client } = gameContext;
     const { socket } = client;
     
-    socket.events.subscribe(Socket.EVENT_MESSAGE_FROM_SERVER, "VERSUS", (type, payload) => {
+    actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_VALID, contextID, (request) => {
+        socket.messageRoom(GAME_EVENTS.ENTITY_ACTION, request);
+    });
+
+    socket.events.subscribe(Socket.EVENT_MESSAGE_FROM_SERVER, contextID, (type, payload) => {
         console.log(type, payload, "FROM SERVER");
 
         switch(type) {
@@ -94,10 +100,4 @@ VersusModeState.prototype.enter = function(stateMachine) {
     client.socket.connect();
 
     this.states.setNextState(CONTEXT_STATES.VERSUS_MODE_LOBBY);
-}
-
-VersusModeState.prototype.exit = function(stateMachine) {
-    const gameContext = stateMachine.getContext();
-    const { uiManager, client } = gameContext;
-    const { musicPlayer } = client;
 }
