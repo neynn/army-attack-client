@@ -54,12 +54,18 @@ EditorController.prototype.incrementTypeIndex = function(gameContext) {
 
     const { x, y } = gameContext.getMouseTile();
     const tileTypes = gameContext.getConfig("tileTypes");
+    const tileTypeIDs = [];
 
-    const tileTypesKeys = Object.keys(tileTypes);
+    for(const typeID of Object.keys(tileTypes)) {
+        const type = tileTypes[typeID];
+
+        tileTypeIDs.push(type.id);
+    }
+
     const currentID = gameMap.getTile("type", x, y);
-    const currentIndex = tileTypesKeys.indexOf(currentID);
-    const nextIndex = loopValue(currentIndex + 1, tileTypesKeys.length - 1, 0);
-    const nextID = tileTypesKeys[nextIndex];
+    const currentIndex = tileTypeIDs.indexOf(currentID);
+    const nextIndex = loopValue(currentIndex + 1, tileTypeIDs.length - 1, 0);
+    const nextID = tileTypeIDs[nextIndex];
 
     gameMap.placeTile(nextID, "type", x, y);
 }
@@ -214,12 +220,8 @@ EditorController.prototype.initializeRenderEvents = function(gameContext) {
         }
     
         const { tileName, tileID } = brush;
-        const context = renderer.getContext();
         const { x, y } = camera.getViewportPosition();
-        const tileWidth = Camera.TILE_WIDTH * camera.scale;
-        const tileHeight = Camera.TILE_HEIGHT * camera.scale;
-        const halfTileWidth = tileWidth / 2;
-        const halfTileHeight = tileHeight / 2;
+        const context = renderer.getContext();
         const startX = cursorTile.x - brushSize;
         const startY = cursorTile.y - brushSize;
         const endX = cursorTile.x + brushSize;
@@ -228,18 +230,18 @@ EditorController.prototype.initializeRenderEvents = function(gameContext) {
         context.globalAlpha = this.mapEditor.config.overlayOpacity;
 
         for(let i = startY; i <= endY; i++) {
-            const renderY = i * tileHeight - y * camera.scale;
+            const renderY = i * Camera.TILE_HEIGHT - y;
 
             for(let j = startX; j <= endX; j++) {   
-                const renderX = j * tileWidth - x * camera.scale;
+                const renderX = j * Camera.TILE_WIDTH - x;
 
                 if(tileID === 0) {
-                    tileManager.drawEmptyTile(context, renderX, renderY, halfTileWidth, halfTileHeight);
+                    tileManager.drawEmptyTile(context, renderX, renderY, Camera.TILE_WIDTH_HALF, Camera.TILE_HEIGHT_HALF);
                 } else {
                     tileManager.drawTileGraphics(tileID, context, renderX, renderY);
                     context.fillStyle = "#eeeeee";
                     context.textAlign = "center";
-                    context.fillText(tileName, renderX + halfTileWidth, renderY);  
+                    context.fillText(tileName, renderX + Camera.TILE_WIDTH_HALF, renderY);  
                 } 
             }
         }

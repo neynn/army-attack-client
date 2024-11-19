@@ -18,7 +18,7 @@ export const Camera2D = function(positionX, positionY, width, height) {
     this.isDragging = true;
 
     this.targets = [];
-
+    this.scale = 0.5;
     this.events.subscribe(Camera.EVENT_VIEWPORT_RESIZE, EventEmitter.SUPER_SUBSCRIBER_ID, (width, height) => this.loadViewport(this.mapWidth, this.mapHeight));
 }
 
@@ -47,13 +47,13 @@ Camera2D.prototype.getViewportBounds = function() {
     }
 }
 
-Camera2D.prototype.clampViewportBounds = function(viewportBounds, mapWidth, mapHeight) {
+Camera2D.prototype.clampViewportBounds = function(viewportBounds) {
     const { startX, startY, endX, endY } = viewportBounds;
 
-    const clampedStartX = clampValue(startX, mapWidth - 1, 0);
-    const clampedStartY = clampValue(startY, mapHeight - 1, 0);
-    const clampedEndX = clampValue(endX, mapWidth - 1, 0);
-    const clampedEndY = clampValue(endY, mapHeight - 1, 0);
+    const clampedStartX = clampValue(startX, this.mapWidth - 1, 0);
+    const clampedStartY = clampValue(startY, this.mapHeight - 1, 0);
+    const clampedEndX = clampValue(endX, this.mapWidth - 1, 0);
+    const clampedEndY = clampValue(endY, this.mapHeight - 1, 0);
 
     return {
         "startX": clampedStartX,
@@ -66,14 +66,14 @@ Camera2D.prototype.clampViewportBounds = function(viewportBounds, mapWidth, mapH
 Camera2D.prototype.drawMap = function(gameContext) {
     const { mapLoader, spriteManager, renderer } = gameContext;
     const activeMap = mapLoader.getActiveMap();
-    const context = renderer.getContext();
 
     if(!activeMap) {
         return;
     }
 
+    const context = renderer.getContext();
     const viewportBounds = this.getViewportBounds();
-    const { startX, startY, endX, endY } = this.clampViewportBounds(viewportBounds, activeMap.width, activeMap.height);
+    const { startX, startY, endX, endY } = this.clampViewportBounds(viewportBounds);
 
     context.scale(this.scale, this.scale);
 
@@ -91,23 +91,25 @@ Camera2D.prototype.drawMap = function(gameContext) {
     }
 
     if((Renderer.DEBUG & Renderer.DEBUG_MAP) !== 0) {
-        this.drawTypeLayer(gameContext, activeMap, startX, startY, endX, endY);
+        for(const layerConfig of activeMap.metaLayers) {
+            this.drawMetaLayer(gameContext, activeMap, layerConfig, startX, startY, endX, endY);
+        }
+
         this.drawMapOutlines(gameContext, activeMap.width, activeMap.height);
     }
 }
 
-Camera2D.prototype.drawTypeLayer = function(gameContext, gameMap, startX, startY, endX, endY) {
-    const { renderer } = gameContext;
-    const tileTypes = gameContext.getConfig("tileTypes");
-    const opacity = gameMap.metaLayers[1].opacity; //HäCK aus der Hölle.
+Camera2D.prototype.drawMetaLayer = function(gameContext, map2D, layerConfig, startX, startY, endX, endY) {
+    const { id, opacity } = layerConfig;
 
     if(!opacity) {
         return;
     }
 
-    const context = renderer.getContext();
-    const layer = gameMap.layers["type"];
+    const { renderer } = gameContext;
     const { x, y } = this.getViewportPosition();
+    const context = renderer.getContext();
+    const layer = map2D.layers[id];
 
     context.globalAlpha = opacity;
     context.font = "16px Arial";
@@ -115,25 +117,20 @@ Camera2D.prototype.drawTypeLayer = function(gameContext, gameMap, startX, startY
     context.textAlign = "center";
 
     for(let i = startY; i <= endY; i++) {
-        const row = i * gameMap.width;
-        const renderY = i * Camera.TILE_HEIGHT - y + Camera.TILE_HEIGHT / 2;
+        const renderY = i * Camera.TILE_HEIGHT - y + Camera.TILE_HEIGHT_HALF;
+        const row = i * map2D.width;
 
         for(let j = startX; j <= endX; j++) {
+            const renderX = j * Camera.TILE_WIDTH - x + Camera.TILE_WIDTH_HALF;
             const index = row + j;
             const tileID = layer[index];
-            const tileType = tileTypes[tileID];
 
-            if(!tileType) {
-                continue;
-            }
-
-            const { color, name } = tileType;
-            const renderX = j * Camera.TILE_WIDTH - x + Camera.TILE_WIDTH / 2;
-
-            context.fillStyle = color;
-            context.fillText(name, renderX, renderY);
+            context.fillStyle = "#ff0000";
+            context.fillText(tileID, renderX, renderY);
         }
     }
+
+    context.globalAlpha = 1;
 }
 
 Camera2D.prototype.drawSpriteLayer = function(gameContext, spriteLayer) {

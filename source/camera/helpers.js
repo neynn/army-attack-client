@@ -1,11 +1,8 @@
 import { Camera } from "./camera.js";
 
 export const tileToPosition_center = function(tileX, tileY) {
-	const renderWidth = Camera.TILE_WIDTH;
-	const renderHeight = Camera.TILE_HEIGHT;
-
-	const positionX = tileX * renderWidth + renderWidth / 2;
-	const positionY = tileY * renderHeight + renderHeight / 2;
+	const positionX = tileX * Camera.TILE_WIDTH + Camera.TILE_WIDTH_HALF;
+	const positionY = tileY * Camera.TILE_HEIGHT + Camera.TILE_HEIGHT_HALF;
 
 	return {
 		"x": positionX,

@@ -240,7 +240,7 @@ Map2D.prototype.placeTile = function(data, layerID, tileX, tileY) {
     }
     
     if(typeof data !== "number") {
-        console.warn(`Data ${data} is not a number! Returning...`);
+        console.warn(`Data ${data} is not a number! It is ${typeof data}! Returning...`);
 
         return false;
     }
