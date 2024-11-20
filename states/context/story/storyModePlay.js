@@ -1,6 +1,7 @@
 import { createAttackRequest } from "../../../actions/attackAction.js";
 import { createMoveRequest } from "../../../actions/moveAction.js";
 import { CAMERAS, CONTROLLER_TYPES } from "../../../enums.js";
+import { MapParser } from "../../../source/map/mapParser.js";
 import { State } from "../../../source/state/state.js";
 
 export const StoryModePlayState = function() {
@@ -13,12 +14,11 @@ StoryModePlayState.prototype.constructor = StoryModePlayState;
 StoryModePlayState.prototype.enter = async function(stateMachine) {
     const gameContext = stateMachine.getContext();
     const { uiManager, actionQueue, renderer } = gameContext;
-    const MAP = "pvp_valleys";
-
-    const map2D = await gameContext.loadMap(MAP);
     const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
+    const MAP = "pvp_valleys";
+    const success = await gameContext.parseMap(MAP, (id, data, meta) => MapParser.parseMap2D(id, data, meta, true));
 
-    if(!map2D) {
+    if(!success) {
         console.error("Error loading map!");
         return;
     }

@@ -1,33 +1,31 @@
 import { clampValue } from "../math/math.js";
 
-export const Map2D = function(id) {
+export const GameMap = function(id) {
     this.id = id;
-    this.music = null;
     this.width = 0;
     this.height = 0;
+    this.meta = {};
     this.layers = {};
     this.backgroundLayers = [];
     this.foregroundLayers = [];
     this.metaLayers = [];
-    this.entities = [];
-    this.flags = {};
-    this.entityTiles = new Map();
+    this.usedTiles = new Map();
 }
 
-Map2D.prototype.getID = function() {
+GameMap.prototype.getID = function() {
     return this.id;
 }
 
-Map2D.prototype.setPointer = function(entityID, tileX, tileY) {
+GameMap.prototype.setPointer = function(entityID, tileX, tileY) {
     if(this.isTileOutOfBounds(tileX, tileY)) {
         return false;
     }
 
     const index = tileY * this.width + tileX;
-    const entityList = this.entityTiles.get(index);
+    const entityList = this.usedTiles.get(index);
     
     if(!entityList) {
-        this.entityTiles.set(index, new Set([entityID]));
+        this.usedTiles.set(index, new Set([entityID]));
     } else {
         entityList.add(entityID);
     }
@@ -35,13 +33,13 @@ Map2D.prototype.setPointer = function(entityID, tileX, tileY) {
     return true;
 }
 
-Map2D.prototype.removePointer = function(entityID, tileX, tileY) {
+GameMap.prototype.removePointer = function(entityID, tileX, tileY) {
     if(this.isTileOutOfBounds(tileX, tileY)) {
         return false;
     }
 
     const index = tileY * this.width + tileX;
-    const entityList = this.entityTiles.get(index);
+    const entityList = this.usedTiles.get(index);
 
     if(!entityList) {
         return false;
@@ -50,19 +48,19 @@ Map2D.prototype.removePointer = function(entityID, tileX, tileY) {
     entityList.delete(entityID);
 
     if(entityList.size === 0) {
-        this.entityTiles.delete(index);
+        this.usedTiles.delete(index);
     }
 
     return true;
 }
 
-Map2D.prototype.getEntityList = function(tileX, tileY) {
+GameMap.prototype.getEntityList = function(tileX, tileY) {
     if(this.isTileOutOfBounds(tileX, tileY)) {
         return null;
     }
 
     const index = tileY * this.width + tileX;
-    const entityList = this.entityTiles.get(index);
+    const entityList = this.usedTiles.get(index);
 
     if(!entityList) {
         return null;
@@ -71,13 +69,13 @@ Map2D.prototype.getEntityList = function(tileX, tileY) {
     return entityList;
 }
 
-Map2D.prototype.getFirstEntity = function(tileX, tileY) {
+GameMap.prototype.getFirstEntity = function(tileX, tileY) {
     if(this.isTileOutOfBounds(tileX, tileY)) {
         return null;
     }
 
     const index = tileY * this.width + tileX;
-    const entityList = this.entityTiles.get(index);
+    const entityList = this.usedTiles.get(index);
 
     if(!entityList) {
         return null;
@@ -89,14 +87,14 @@ Map2D.prototype.getFirstEntity = function(tileX, tileY) {
     return firstEntity;
 }
 
-Map2D.prototype.isTileOccupied = function(tileX, tileY) {
+GameMap.prototype.isTileOccupied = function(tileX, tileY) {
     const index = tileY * this.width + tileX;
-    const isOccupied = this.entityTiles.has(index) && this.entityTiles.get(index).size > 0;
+    const isOccupied = this.usedTiles.has(index) && this.usedTiles.get(index).size > 0;
 
     return isOccupied;
 }
 
-Map2D.prototype.getAutoGeneratingLayers = function() {
+GameMap.prototype.getAutoGeneratingLayers = function() {
     const layerIDs = new Set();
 
     for(const layerConfig of this.backgroundLayers) {
@@ -126,7 +124,7 @@ Map2D.prototype.getAutoGeneratingLayers = function() {
     return layerIDs;
 }
 
-Map2D.prototype.setLayerOpacity = function(layerID, opacity) {
+GameMap.prototype.setLayerOpacity = function(layerID, opacity) {
     if(this.layers[layerID] === undefined || opacity === undefined) {
         return false;
     }
@@ -166,7 +164,16 @@ Map2D.prototype.setLayerOpacity = function(layerID, opacity) {
     return false;
 } 
 
-Map2D.prototype.resizeLayer = function(layerID, width, height, fill) {
+GameMap.prototype.resize = function(width, height) {
+    for(const layerID in this.layers) {
+        this.resizeLayer(layerID, width, height, 0);
+    }
+
+    this.width = width;
+    this.height = height;
+}
+
+GameMap.prototype.resizeLayer = function(layerID, width, height, fill = 0) {
     const oldLayer = this.layers[layerID];
 
     if(!oldLayer) {
@@ -204,7 +211,7 @@ Map2D.prototype.resizeLayer = function(layerID, width, height, fill) {
     this.layers[layerID] = newLayer;
 }
 
-Map2D.prototype.clearTile = function(layerID, tileX, tileY) {
+GameMap.prototype.clearTile = function(layerID, tileX, tileY) {
     const layer = this.layers[layerID];
 
     if(!layer) {
@@ -224,7 +231,7 @@ Map2D.prototype.clearTile = function(layerID, tileX, tileY) {
     return true;
 }
 
-Map2D.prototype.placeTile = function(data, layerID, tileX, tileY) {
+GameMap.prototype.placeTile = function(data, layerID, tileX, tileY) {
     const layer = this.layers[layerID];
 
     if(!layer) {
@@ -252,11 +259,11 @@ Map2D.prototype.placeTile = function(data, layerID, tileX, tileY) {
     return true;
 }
 
-Map2D.prototype.isTileOutOfBounds = function(tileX, tileY) {
+GameMap.prototype.isTileOutOfBounds = function(tileX, tileY) {
     return tileX < 0 || tileX >= this.width || tileY < 0 || tileY >= this.height;
 }
 
-Map2D.prototype.getTile = function(layerID, tileX, tileY) {
+GameMap.prototype.getTile = function(layerID, tileX, tileY) {
     const layer = this.layers[layerID];
 
     if(!layer) {
@@ -276,7 +283,7 @@ Map2D.prototype.getTile = function(layerID, tileX, tileY) {
     return layer[index];
 }
 
-Map2D.prototype.removeEntity = function(tileX, tileY, rangeX, rangeY, pointer) {
+GameMap.prototype.removeEntity = function(tileX, tileY, rangeX, rangeY, pointer) {
     for(let i = 0; i < rangeY; i++) {
         const locationY = tileY + i;
 
@@ -288,7 +295,7 @@ Map2D.prototype.removeEntity = function(tileX, tileY, rangeX, rangeY, pointer) {
     }
 }
 
-Map2D.prototype.addEntity = function(tileX, tileY, rangeX, rangeY, pointer) {
+GameMap.prototype.addEntity = function(tileX, tileY, rangeX, rangeY, pointer) {
     for(let i = 0; i < rangeY; i++) {
         const locationY = tileY + i;
 
@@ -300,7 +307,7 @@ Map2D.prototype.addEntity = function(tileX, tileY, rangeX, rangeY, pointer) {
     }
 }
 
-Map2D.prototype.updateTiles = function(onUpdate) {
+GameMap.prototype.updateTiles = function(onUpdate) {
     for(let i = 0; i < this.height; i++) {
         const row = i * this.width;
 

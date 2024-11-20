@@ -36,6 +36,7 @@ import { ConstructionArchetype } from "./init/archetype/construction.js";
 import { PlayerController } from "./init/controller/player.js";
 import { UnitArchetype } from "./init/archetype/unit.js";
 import { EditorController } from "./init/controller/editor.js";
+import { MapParser } from "./source/map/mapParser.js";
 
 export const ArmyContext = function() {
     GameContext.call(this, 60);
@@ -135,10 +136,10 @@ ArmyContext.prototype.initialize = function() {
     this.switchState(CONTEXT_STATES.MAIN_MENU);
 }
 
-ArmyContext.prototype.onMapLoad = function(map) {
-    const { width, height, music } = map;
+ArmyContext.prototype.onMapLoad = function(gameMap) {
+    const { width, height, meta } = gameMap;
+    const { music } = meta;
 
-    this.actionQueue.workStart();
     this.renderer.getCamera(CAMERAS.ARMY_CAMERA).loadViewport(width, height);
 
     if(music) {

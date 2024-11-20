@@ -4,8 +4,10 @@
         "mapCacheEnabled": false,
         "maxMapWidth": 255,
         "maxMapHeight": 255,
-        "mapSetup": {
-            "music": "music_remastered",
+        "defaultMapMeta": {
+            "music": "music_remastered"
+        },
+        "defaultMapSetup": {
             "width": 20,
             "height": 20,
             "layers": {

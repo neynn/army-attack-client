@@ -2,6 +2,7 @@ import { CONTEXT_STATES, GAME_EVENTS } from "../../enums.js";
 import { ActionQueue } from "../../source/action/actionQueue.js";
 import { ROOM_EVENTS } from "../../source/client/network/events.js";
 import { Socket } from "../../source/client/network/socket.js";
+import { MapParser } from "../../source/map/mapParser.js";
 import { State } from "../../source/state/state.js";
 
 export const VersusModeState = function() {
@@ -41,25 +42,28 @@ VersusModeState.prototype.enter = function(stateMachine) {
             case GAME_EVENTS.INSTANCE_MAP: {
                 const { id } = payload;
 
-                gameContext.loadMap(id).then(result => {
-                    if(!result) {
+                gameContext
+                .parseMap(id, (id, data, meta) => MapParser.parseMap2D(id, data, meta, true))
+                .then(success => {
+                    if(!success) {
                         socket.messageRoom(GAME_EVENTS.INSTANCE_MAP, { "success": false, "error": "NO_MAP_FILE" });
-                    } else {
-                        gameContext.initializeTilemap(id);
-                        socket.messageRoom(GAME_EVENTS.INSTANCE_MAP, { "success": true, "error": null });
+                        return;
                     }
-                });
-                break;
-            }
-            case GAME_EVENTS.INSTANCE_MAP_FROM_DATA: {
-                const { id, data } = payload;
 
-                mapLoader.createMapFromData(id, data);
-
-                gameContext.loadMap(id).then(result => {
                     gameContext.initializeTilemap(id);
                     socket.messageRoom(GAME_EVENTS.INSTANCE_MAP, { "success": true, "error": null });
                 });
+
+                break;
+            }
+            case GAME_EVENTS.INSTANCE_MAP_FROM_DATA: {
+                const { id, data, meta } = payload;
+                const gameMap = MapParser.parseMap2D(id, data, meta, true);
+
+                gameContext.loadMap(id, gameMap);
+                gameContext.initializeTilemap(id);
+                socket.messageRoom(GAME_EVENTS.INSTANCE_MAP, { "success": true, "error": null });
+
                 break;
             }
             case GAME_EVENTS.INSTANCE_ENTITY: {

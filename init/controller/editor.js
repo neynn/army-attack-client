@@ -7,12 +7,12 @@ import { loopValue } from "../../source/math/math.js";
 import { Renderer } from "../../source/renderer.js";
 import { UIElement } from "../../source/ui/uiElement.js";
 import { CAMERAS } from "../../enums.js";
+import { MapParser } from "../../source/map/mapParser.js";
 
 export const EditorController = function(id) {
     Controller.call(this, id);
 
     this.mapEditor = new MapEditor();
-    this.temporaryMapID = `${Date.now()}`;;
     this.currentLayer = null;
     this.currentLayerButtonID = null;
     this.currentMapID = null;
@@ -368,27 +368,29 @@ EditorController.prototype.initializeUIEvents = function(gameContext) {
     });
 
     uiManager.addClick(id, "BUTTON_CREATE", () => {
-        mapLoader.createEmptyMap(this.temporaryMapID);
+        const createNew = confirm("This will create and load a brand new map! Proceed?");
 
-        if(this.currentMapID === null) {
-            this.currentMapID = this.temporaryMapID;
-
-            gameContext.loadMap(this.currentMapID);
+        if(!createNew) {
+            return;
         }
+
+        const mapID = `${Date.now()}`;
+        const { data, meta } = mapLoader.getDefaultMapData();
+        const defaultMap = MapParser.parseMap2DEmpty(mapID, data, meta, true);
+
+        gameContext.loadMap(mapID, defaultMap);
+        
+        this.currentMapID = mapID;
     });
 
     uiManager.addClick(id, "BUTTON_LOAD", () => {
         const mapID = prompt("MAP-ID?");
 
-        if(mapID.length === 0) {
-            this.currentMapID = this.temporaryMapID;
-        } else {
-            this.currentMapID = mapID;
-        }
-
-        gameContext.loadMap(this.currentMapID).then(result => {
-            if(!result) {
-                //TODO
+        gameContext
+        .parseMap(mapID, (id, data, meta) => MapParser.parseMap2D(id, data, meta, true))
+        .then(success => {
+            if(success) {
+                this.currentMapID = mapID;
             }
         });
     });

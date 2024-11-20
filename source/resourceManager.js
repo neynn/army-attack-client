@@ -6,12 +6,39 @@ const ResourceManager = function() {
     this.sprites = new Map();
     this.tiles = new Map();
     this.fonts = new Map();
+    this.maps = new Map();
 }
 
+ResourceManager.MAP_CACHE_ENABLED = true;
 ResourceManager.SIZE_MB = 1048576;
 ResourceManager.SIZE_BIG_IMAGE = 2048 * 2048 * 4;
 ResourceManager.DEFAULT_IMAGE_TYPE = ".png";
 ResourceManager.DEFAULT_AUDIO_TYPE = ".mp3";
+
+ResourceManager.prototype.loadMapData = async function(meta) {
+    const { id, directory, source } = meta;
+
+    if(ResourceManager.MAP_CACHE_ENABLED) {
+        const cachedMap = this.maps.get(id);
+
+        if(cachedMap) {
+            return cachedMap;
+        }
+    }
+
+    const mapPath = this.getPath(directory, source);
+    const mapData = await this.promiseJSON(mapPath);
+
+    if(!mapData) {
+        return null;
+    }
+
+    if(ResourceManager.MAP_CACHE_ENABLED) {
+        this.maps.set(id, mapData);
+    }
+
+    return mapData;
+}
 
 ResourceManager.prototype.getPath = function(directory, source) {
     const path = `${directory}/${source}`;
@@ -32,7 +59,7 @@ ResourceManager.prototype.promiseHTMLImage = function(path) {
 }
 
 ResourceManager.prototype.promiseJSON = function(path) {
-    return fetch(path).then(response => response.json());
+    return fetch(path).then(response => response.json()).catch(error => null);
 }
 
 ResourceManager.prototype.promiseAudioBuffer = function(path) {

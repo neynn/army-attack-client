@@ -1,4 +1,4 @@
-import { Map2D } from "./map2D.js";
+import { GameMap } from "./gameMap.js";
 
 export const MapParser = function() {}
 
@@ -70,20 +70,17 @@ MapParser.createUint8LayerEmpty = function(fill = 0, width, height) {
     return layerBuffer;
 }
 
-MapParser.parseMap2D = function(mapID, config, loadGraphics) {
-    const map2D = new Map2D(mapID);
+MapParser.parseMap2D = function(mapID, config, meta, loadGraphics) {
+    const map2D = new GameMap(mapID);
     const parsedLayers = {};
 
     const { 
-        music = null,
         width = 0,
         height = 0,
         layers = {},
         backgroundLayers = [],
         foregroundLayers = [],
-        metaLayers = [],
-        entities = [],
-        flags = {},
+        metaLayers = []
     } = config;
 
     if(loadGraphics) {
@@ -109,31 +106,28 @@ MapParser.parseMap2D = function(mapID, config, loadGraphics) {
         parsedLayers[id] = parsedLayerData;
     }
 
-    map2D.music = music;
     map2D.width = width;
     map2D.height = height;
     map2D.layers = parsedLayers;
     map2D.backgroundLayers = JSON.parse(JSON.stringify(backgroundLayers));
     map2D.foregroundLayers = JSON.parse(JSON.stringify(foregroundLayers));
     map2D.metaLayers = JSON.parse(JSON.stringify(metaLayers));
-
+    map2D.meta = JSON.parse(JSON.stringify(meta));
+    
     return map2D;
 }
 
-MapParser.parseMap2DEmpty = function(mapID, config, loadGraphics) {
-    const map2D = new Map2D(mapID);
+MapParser.parseMap2DEmpty = function(mapID, config, meta, loadGraphics) {
+    const map2D = new GameMap(mapID);
     const parsedLayers = {};
 
     const { 
-        music = null,
         width = 0,
         height = 0,
         layers = {},
         backgroundLayers = [],
         foregroundLayers = [],
-        metaLayers = [],
-        entities = [],
-        flags = {},
+        metaLayers = []
     } = config;
 
     if(loadGraphics) {
@@ -159,13 +153,13 @@ MapParser.parseMap2DEmpty = function(mapID, config, loadGraphics) {
         parsedLayers[id] = parsedLayerData;
     }
 
-    map2D.music = music;
     map2D.width = width;
     map2D.height = height;
     map2D.layers = parsedLayers;
     map2D.backgroundLayers = JSON.parse(JSON.stringify(backgroundLayers));
     map2D.foregroundLayers = JSON.parse(JSON.stringify(foregroundLayers));
     map2D.metaLayers = JSON.parse(JSON.stringify(metaLayers));
+    map2D.meta = JSON.parse(JSON.stringify(meta));
 
     return map2D;
 }

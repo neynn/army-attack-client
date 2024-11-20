@@ -1,3 +1,11 @@
 {
-    "pvp_valleys": { "id": "pvp_valleys", "directory": "assets/maps/pvp", "source": "valleys.json" }
+    "pvp_valleys": { 
+        "id": "pvp_valleys",
+        "directory": "assets/maps/pvp",
+        "source": "valleys.json",
+        "music": "music_desertscorpion",
+        "type": "PVP",
+        "entities": [],
+        "flags": {}
+    }
 }

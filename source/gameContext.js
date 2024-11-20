@@ -209,38 +209,42 @@ GameContext.prototype.destroyEntity = function(entityID) {
     return true;
 }
 
-GameContext.prototype.onMapLoad = function(map) {}
+GameContext.prototype.onMapLoad = function(gameMap) {}
 
-GameContext.prototype.loadMap = async function(mapID) {
-    const nextMap = await this.mapLoader.loadMap(mapID);
+GameContext.prototype.parseMap = async function(mapID, onParse) {
+    if(!onParse) {
+        Logger.log(false, "No parser given!", "GameContext.prototype.parseMap", { mapID, code });
 
-    if(!nextMap) {
-        Logger.log(false, "Map could not be loaded!", "GameContext.prototype.loadMap", {mapID});
-
-        return null;
+        return false;
     }
 
-    const activeMapID = this.mapLoader.getActiveMapID();
+    const mapData = await this.mapLoader.getMapData(mapID);
+    const { data, meta, success, code } = mapData;
+
+    if(!success) {
+        Logger.log(false, "Map could not be loaded!", "GameContext.prototype.parseMap", { mapID, code });
+
+        return false;
+    }
+
+    const parsedMap = onParse(mapID, data, meta);
+
+    this.loadMap(mapID, parsedMap);
+
+    return true;
+}
+
+GameContext.prototype.loadMap = function(mapID, gameMap) {
+    if(!gameMap) {
+        return false;
+    }
     
-    if(activeMapID) {
-        if(activeMapID === mapID) {
-            Logger.log(false, "Map is already loaded!", "GameContext.prototype.loadMap", {mapID});
+    this.mapLoader.addMap(mapID, gameMap);
+    this.mapLoader.updateActiveMap(mapID);
+    this.actionQueue.workStart();
+    this.onMapLoad(gameMap);
 
-            return null;
-        }
-        
-        this.mapLoader.unloadMap(activeMapID);
-    }
-
-    this.mapLoader.setActiveMap(mapID);
-
-    if(!this.mapLoader.mapCache[mapID]) {
-        this.mapLoader.mapCache[mapID] = 1;
-    }
-
-    this.onMapLoad(nextMap);
-    
-    return nextMap;
+    return true;
 }
 
 GameContext.prototype.clearEvents = function() {

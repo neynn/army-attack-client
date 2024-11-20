@@ -1,15 +1,17 @@
 import { Logger } from "../logger.js";
 import { GlobalResourceManager } from "../resourceManager.js";
-import { MapParser } from "./mapParser.js";
 
 export const MapLoader = function() {
-    this.mapCache = {};
     this.config = {};
     this.mapTypes = {};
     this.loadedMaps = new Map();
-    this.cachedMaps = new Map();
     this.activeMapID = null;
 }
+
+MapLoader.SUCCESS_TYPE_LOAD = "LOAD";
+MapLoader.SUCCESS_TYPE_DEFAULT = "DEFAULT";
+MapLoader.ERROR_TYPE_MISSING_TYPE = "MISSING_TYPE";
+MapLoader.ERROR_TYPE_MISSING_FILE = "MISSING_FILE";
 
 MapLoader.prototype.load = function(mapTypes, config) {
     if(typeof mapTypes === "object") {
@@ -27,7 +29,7 @@ MapLoader.prototype.load = function(mapTypes, config) {
 
 MapLoader.prototype.setActiveMap = function(mapID) {
     if(!this.loadedMaps.has(mapID)) {
-        Logger.log(false, "Map is not loaded!", "MapLoader.prototype.MapLoader.prototype.setActiveMap", {mapID});
+        Logger.log(false, "Map is not loaded!", "MapLoader.prototype.setActiveMap", { mapID });
 
         return false;
     }
@@ -51,59 +53,73 @@ MapLoader.prototype.getActiveMapID = function() {
     return this.activeMapID;
 }
 
-MapLoader.prototype.loadMapData = function(mapID) {
+MapLoader.prototype.updateActiveMap = function(mapID) {
+    const activeMapID = this.getActiveMapID();
+    
+    if(activeMapID) {
+        if(activeMapID === mapID) {
+            Logger.log(false, "Map is already active!", "MapLoader.prototype.updateActiveMap", { mapID });
+
+            return false;
+        }
+        
+        this.removeMap(activeMapID);
+    }
+
+    this.setActiveMap(mapID);
+
+    return true;
+}
+
+MapLoader.prototype.getMapData = async function(mapID) {
+    const mapType = this.getMapType(mapID);
+
+    if(!mapType) {
+        Logger.log(false, "MapType does not exist!", "MapLoader.prototype.loadMap", { mapID });
+        return {
+            "data": null,
+            "meta": null,
+            "success": false,
+            "code": MapLoader.ERROR_TYPE_MISSING_TYPE
+        }
+    }
+
+    const mapData = await GlobalResourceManager.loadMapData(mapType);
+
+    if(!mapData) {
+        return {
+            "data": null,
+            "meta": mapType,
+            "success": false,
+            "code": MapLoader.ERROR_TYPE_MISSING_FILE
+        }
+    }
+
+    return {
+        "data": mapData,
+        "meta": mapType,
+        "success": true,
+        "code": MapLoader.SUCCESS_TYPE_LOAD
+    }
+}
+
+MapLoader.prototype.getMapType = function(mapID) {
     const mapType = this.mapTypes[mapID];
 
     if(!mapType) {
-        Logger.log(false, "MapType does not exist!", "loadMapData", {mapID});
+        Logger.log(false, "MapType does not exist!", "MapLoader.prototype.getMapType", { mapID });
 
-        return Promise.resolve(null);
+        return null;
     }
 
-    const cachedData = this.cachedMaps.get(mapID);
-
-    if(cachedData) {
-        return Promise.resolve(cachedData);
-    }
-
-    const mapPath = GlobalResourceManager.getPath(mapType.directory, mapType.source);
-    
-    return GlobalResourceManager.promiseJSON(mapPath).then(mapData => {
-        if(!mapData) {
-            return null;
-        }
-
-        if(this.config.mapCacheEnabled) {
-            this.cachedMaps.set(mapID, mapData);
-        }
-
-        return mapData;
-    });
+    return mapType;
 }
 
-MapLoader.prototype.loadMap = function(mapID) {
-    const loadedMap = this.loadedMaps.get(mapID);
-
-    if(loadedMap) {
-        return Promise.resolve(loadedMap);
-    }
-
-    return this.loadMapData(mapID).then(mapData => {
-        if(!mapData) {
-            Logger.log(false, "MapData could not be loaded!", "loadMap", {mapID});
-
-            return null;
-        }
-
-        return this.createMapFromData(mapID, mapData);
-    });
-}
-
-MapLoader.prototype.unloadMap = function(mapID) {
+MapLoader.prototype.removeMap = function(mapID) {
     const loadedMap = this.loadedMaps.get(mapID);
 
     if(!loadedMap) {
-        Logger.log(false, "Map is not loaded!", "unloadMap", {mapID});
+        Logger.log(false, "Map is not loaded!", "MapLoader.prototype.removeMap", {mapID});
 
         return false;
     }
@@ -127,24 +143,9 @@ MapLoader.prototype.getLoadedMap = function(mapID) {
     return loadedMap;
 }
 
-MapLoader.prototype.getCachedMap = function(mapID) {
-    const cachedMap = this.cachedMaps.get(mapID);
-
-    if(!cachedMap) {
-        return null;
-    }
-
-    return cachedMap;
-}
-
 MapLoader.prototype.clearAll = function() {
     this.clearLoadedMaps();
-    this.clearCache();
     this.clearActiveMap();
-}
-
-MapLoader.prototype.clearCache = function() {
-    this.cachedMaps.clear();
 }
 
 MapLoader.prototype.clearLoadedMaps = function() {
@@ -159,46 +160,49 @@ MapLoader.prototype.hasLoadedMap = function(mapID) {
     return this.loadedMaps.has(mapID);
 }
 
-MapLoader.prototype.hasCachedMap = function(mapID) {
-    return this.cachedMaps.has(mapID);
+MapLoader.prototype.getDefaultMapData = function() {
+    return {
+        "data": this.config.defaultMapSetup,
+        "meta": this.config.defaultMapMeta,
+        "success": true,
+        "code": MapLoader.SUCCESS_TYPE_DEFAULT
+    }
 }
 
-MapLoader.prototype.createMapFromData = function(mapID, mapData) {
-    const map2D = MapParser.parseMap2D(mapID, mapData, this.config.loadGraphics);
+MapLoader.prototype.addMap = function(mapID, gameMap) {
+    if(this.loadedMaps.has(mapID)) {
+        Logger.log(false, "Map already exists!", "MapLoader.prototype.addMap", { mapID });
+        
+        return false;
+    }
 
-    this.loadedMaps.set(mapID, map2D);
+    this.loadedMaps.set(mapID, gameMap);
 
-    return map2D;
-}
-
-MapLoader.prototype.createEmptyMap = function(mapID) {
-    const map2D = MapParser.parseMap2DEmpty(mapID, this.config.mapSetup, this.config.loadGraphics);
-
-    this.loadedMaps.set(mapID, map2D);
-
-    return map2D;
+    return true;
 }
 
 MapLoader.prototype.resizeMap = function(mapID, width, height) {
     const loadedMap = this.loadedMaps.get(mapID);
 
     if(!loadedMap) {
-        Logger.log(false, "Map is not loaded!", "MapLoader.prototype.resizeMap", {mapID, width, height});
+        Logger.log(false, "Map is not loaded!", "MapLoader.prototype.resizeMap", { mapID, width, height });
 
         return false;
     }
 
-    for(const layerID in loadedMap.layers) {
-        const layerSetup = this.config.mapSetup.layers[layerID];
+    const defaultSetup = this.config.defaultMapSetup;
+    const { layers } = defaultSetup;
 
-        if(!layerSetup) {
-            loadedMap.resizeLayer(layerID, width, height, null);
+    for(const layerID in loadedMap.layers) {
+        const layerSetup = layers[layerID];
+
+        if(layerSetup) {
+            const { fill } = layerSetup;
+            loadedMap.resizeLayer(layerID, width, height, fill);
             continue;
         }
 
-        const { fill } = layerSetup;
-
-        loadedMap.resizeLayer(layerID, width, height, fill);
+        loadedMap.resizeLayer(layerID, width, height, 0);
     }
 
     loadedMap.width = width;

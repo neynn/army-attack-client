@@ -1,5 +1,4 @@
 {
-    "music": "music_polarbear",
     "width": 11,
     "height": 11,
     "backgroundLayers": [
@@ -81,11 +80,5 @@
             1,1,1,1,1,1,1,1,1,1,1,
             1,1,1,1,1,1,1,1,1,1,1
         ]
-    },
-    "entities" : [
-        
-    ],
-    "flags" : {
-      
     }
 }

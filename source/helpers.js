@@ -73,12 +73,6 @@ export const saveMap = function(map2D) {
         return result;
     }
 
-    const formattedEntities = [];
-
-    for(const entity of map2D.entities) {
-        formattedEntities.push(`{ "type": "${entity.type}", "tileX": ${entity.tileX}, "tileY": ${entity.tileY} }`);
-    }
-
     const formattedBackground = [];
 
     for(const layerConfig of map2D.backgroundLayers) {
@@ -110,7 +104,6 @@ export const saveMap = function(map2D) {
       
     const downloadableString = 
 `{
-    "music": "${map2D.music}",
     "width": ${map2D.width},
     "height": ${map2D.height},
     "backgroundLayers": [
@@ -124,12 +117,6 @@ export const saveMap = function(map2D) {
     ],
     "layers": {
         ${formattedLayers.join(",\n        ")}
-    },
-    "entities" : [
-        ${formattedEntities.join(",\n        ")}
-    ],
-    "flags" : {
-      
     }
 }`;
 
@@ -141,18 +128,15 @@ export const dirtySave = function(map2D) {
       return `{ "ERROR": "MAP NOT LOADED! USE CREATE OR LOAD!" }`;
   }
 
-  const { music, width, height, backgroundLayers, foregroundLayers, metaLayers, layers, entities, flags } = map2D;
+  const { width, height, backgroundLayers, foregroundLayers, metaLayers, layers } = map2D;
 
   return JSON.stringify({
-      music,
       width,
       height,
       backgroundLayers,
       foregroundLayers,
       metaLayers,
-      layers,
-      entities,
-      flags
+      layers
   });
 }
 
