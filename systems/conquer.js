@@ -41,7 +41,7 @@ ConquerSystem.convertTileGraphics = function(gameContext, tileX, tileY, teamID) 
 ConquerSystem.updateBorder = function(gameContext, tileX, tileY) {
     const { mapLoader, tileManager, controllerManager } = gameContext;
     const settings = gameContext.getConfig("settings");
-    const controller = controllerManager.getController("neyn"); //TODOOOOOO!!!
+    const controller = controllerManager.getController("neyn"); //TODO <-- Set player controller as main?
 
     if(!settings.drawBorder) {
         return false;

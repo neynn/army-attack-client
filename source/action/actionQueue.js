@@ -134,14 +134,15 @@ ActionQueue.prototype.update = function(gameContext) {
         const isFinished = actionType.onUpdate(gameContext, request);
     
         if(this.isSkipping) {
+            actionType.onClear();
             this.isSkipping = false;
             this.state = ActionQueue.IDLE;
-            this.currentAction = null; // <-- Causes processRequests to immediately process a new action!
+            this.currentAction = null; //<-- Causes processRequests to immediately process a new action!
         } else if(isFinished) {
             actionType.onEnd(gameContext, request);
             actionType.onClear();
             this.state = ActionQueue.IDLE;
-            this.currentAction = null; // <-- Causes processRequests to immediately process a new action!
+            this.currentAction = null; //<-- Causes processRequests to immediately process a new action!
         }
     }
 }

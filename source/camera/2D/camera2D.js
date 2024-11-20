@@ -18,7 +18,6 @@ export const Camera2D = function(positionX, positionY, width, height) {
     this.isDragging = true;
 
     this.targets = [];
-    this.scale = 0.5;
     this.events.subscribe(Camera.EVENT_VIEWPORT_RESIZE, EventEmitter.SUPER_SUBSCRIBER_ID, (width, height) => this.loadViewport(this.mapWidth, this.mapHeight));
 }
 
@@ -81,7 +80,7 @@ Camera2D.prototype.drawMap = function(gameContext) {
         this.drawTileLayer(gameContext, activeMap, layerConfig, startX, startY, endX, endY);
     }
     
-    for(const layerID of spriteManager.drawOrder) {
+    for(const layerID of spriteManager.layerStack) {
         const layer = spriteManager.layers[layerID];
         this.drawSpriteLayer(gameContext, layer);
     }

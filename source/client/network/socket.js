@@ -20,7 +20,7 @@ Socket.prototype.load = function(config) {
     if(typeof config === "object") {
         this.config = config;
     } else {
-        //TODO: Add Logger.
+        //TODO
     }
 }
 

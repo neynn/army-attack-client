@@ -89,9 +89,8 @@ Camera.prototype.onWindowResize = function(width, height) {
         this.viewportWidth = width;
         this.viewportHeight = height;
     } else if(this.mode === Camera.MODE_FIXED) {
-        //keep anchor of camera
         //TODO
     }
 
-    this.events.emit(Camera.EVENT_VIEWPORT_RESIZE);
+    this.events.emit(Camera.EVENT_VIEWPORT_RESIZE, this.viewportWidth, this.viewportHeight);
 }

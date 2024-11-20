@@ -15,7 +15,7 @@ export const SpriteManager = function() {
         [SpriteManager.LAYER_MIDDLE]: [],
         [SpriteManager.LAYER_TOP]: []
     };
-    this.drawOrder = [
+    this.layerStack = [
         SpriteManager.LAYER_BOTTOM,
         SpriteManager.LAYER_MIDDLE,
         SpriteManager.LAYER_TOP
@@ -39,7 +39,6 @@ SpriteManager.prototype.update = function(gameContext) {
     const realTime = timer.getRealTime();
     
     this.timestamp = realTime;
-    //TODO: Update random sprites! (like desert clouds, ect.)
 }
 
 SpriteManager.prototype.removeSpriteReference = function(spriteID) {

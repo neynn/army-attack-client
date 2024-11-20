@@ -1,7 +1,6 @@
 //Player can only MOVE and click on entities they have control over.
 //When attacking, check if the target is an ENEMY, then perform attack.
 //packerToJSON("clouds", await ResourceLoader.loadJSON("./clouds.json"));
-//TODO: sprites do not get unparsed after their parent is deleted!
 
 //BUG: (sort of) clients could start attack actions agains themselves. or worse: force other player units to move.
 //the same goes for moving entities. FIX ON SERVER: check if the target is an enemy of the messengerids team!
@@ -9,16 +8,11 @@
 //TODO: Drop kill items. -> Use drop trait!
 //TODO: Drop hit items. -> Use drop trait!
 
-//default move time; (96 * moveComponent.path.length) / 480;
 //sprite manager gets add icon / add sprite functions.
 //Fire system becomes attack system! Damage calculations are also done in that system!
 
 //TODO: Add "Auto" mode to mapEditor.
 //TODO: Add "Debug-Menu"
-
-//decouple controller, the cancer, from the game. enjoy :)
-//Entity-Init: controller is given with the setup. The entity does NOT know who controls it.
-// => this also means that the entities lose masterID!!!
 
 //TeamSystem does not check for control...
 //TODO: save a list of entities for the controllers. => armyContext.saveEntities();

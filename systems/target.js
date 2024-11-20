@@ -9,7 +9,7 @@ export const TargetSystem = function() {}
 
 TargetSystem.isTargetable = function(entity) {
     const isAlive = HealthSystem.isAlive(entity);
-    //TODO add methods for hiding targetability.
+
     return isAlive;
 }
 

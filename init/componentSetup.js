@@ -3,7 +3,6 @@ import { HealthComponent } from "../components/health.js";
 import { MoveComponent } from "../components/move.js";
 import { SpriteComponent } from "../components/sprite.js";
 import { TeamComponent } from "../components/team.js";
-import { ImageSheet } from "../source/graphics/imageSheet.js";
 import { clampValue } from "../source/math/math.js";
 import { ConstructionComponent } from "../components/construction.js";
 import { PositionComponent } from "../components/position.js";
@@ -13,9 +12,6 @@ import { SizeComponent } from "../components/size.js";
 import { ControllerComponent } from "../components/controller.js";
 
 export const componentSetup = {};
-
-//TODO: stats has to be determined by the game context. in the gameConfig, make a stats setting based on game mode
-//"stats": -> { versus, story } whatever game mode is played, the stats will be used.
 
 componentSetup.setupControllerComponent = function() {
     const controllerComponent = new ControllerComponent();
@@ -109,7 +105,7 @@ componentSetup.setupHealthComponent = function(type, stats) {
     healthComponent.health = stats.health;
     healthComponent.maxHealth = stats.health;
 
-    healthComponent.health = clampValue(healthComponent.health, healthComponent.maxHealth, 1); //prevents spawning with 0 health
+    healthComponent.health = clampValue(healthComponent.health, healthComponent.maxHealth, 1);
     
     return healthComponent;
 }

@@ -133,14 +133,3 @@ ResourceManager.prototype.setServerAddress = function(address) {
 }
 
 export const GlobalResourceManager = new ResourceManager();
-
-//Loads and keeps track of all resouces.
-//This is long, LONG overdue!
-
-/*
-    ArmyContext: 
-        onEntityCreate: -> load the required assets in. SpriteManager
-*/
-
-//ResourceManager holds the image data in BIG sets of data.
-//SpriteManager has no access to the ImageSheets. Why should it? All it needs to know is the metadata!!!

@@ -88,7 +88,7 @@ VersusModeState.prototype.enter = function(stateMachine) {
                 break;
             }
             case GAME_EVENTS.DROP_ITEM: {
-                //handles the drop of an item.
+                //Handles the drop of an item.
                 break;
             }
             default: {

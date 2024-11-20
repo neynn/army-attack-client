@@ -52,6 +52,6 @@ ButtonCircle.prototype.onDraw = function(context, viewportX, viewportY, localX, 
     if(this.outline.getActive()) {
         this.outline.apply(context);
     
-        //TODO!!!
+        //TODO
     }
 }

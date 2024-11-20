@@ -18,5 +18,3 @@ QuestManager.prototype.load = function() {
 QuestManager.prototype.registerQuest = function(typeID, type) {
 
 }
-
-//This works independently

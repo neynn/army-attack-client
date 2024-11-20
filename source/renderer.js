@@ -75,7 +75,7 @@ Renderer.prototype.createCamera = function(cameraID, type, x, y, w, h) {
         return null;
     }
 
-    if(typeof cameraID !== "string" || this.cameras.has(cameraID)) {
+    if(this.cameras.has(cameraID)) {
         return null;
     }
 

@@ -5,8 +5,6 @@ export const Icon = function(id) {
     this.image = null;
 }
 
-//TODO: Icon should request an image!
-
 Icon.prototype = Object.create(UIElement.prototype);
 Icon.prototype.constructor = Icon;
 
