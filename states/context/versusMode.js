@@ -15,10 +15,10 @@ VersusModeState.prototype.constructor = VersusModeState;
 VersusModeState.prototype.enter = function(stateMachine) {
     const gameContext = stateMachine.getContext();
     const contextID = gameContext.getID();
-    const { mapLoader, actionQueue, client } = gameContext;
+    const { actionQueue, client } = gameContext;
     const { socket } = client;
     
-    actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_VALID, contextID, (request) => {
+    actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_VALID, contextID, (request, messengerID, priority) => {
         socket.messageRoom(GAME_EVENTS.ENTITY_ACTION, request);
     });
 

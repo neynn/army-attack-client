@@ -5,150 +5,96 @@ export const ActionQueue = function() {
     this.actionTypes = {};
     this.requests = [];
     this.queuedActions = [];
-    this.currentAction = null;
     this.isSkipping = false;
+    this.currentAction = null;
+    this.state = null;
     this.maxSize = 0;
     this.maxRequests = 0;
-    this.state = null;
 
     this.events = new EventEmitter();
     this.events.listen(ActionQueue.EVENT_ACTION_VALID);
     this.events.listen(ActionQueue.EVENT_ACTION_INVALID);
-    this.events.listen(ActionQueue.EVENT_ACTION_PROCESS);
+    this.events.listen(ActionQueue.EVENT_ACTION_RUN);
 }
 
 ActionQueue.IDLE = 0;
 ActionQueue.PROCESSING = 1;
 ActionQueue.EVENT_ACTION_VALID = 0;
 ActionQueue.EVENT_ACTION_INVALID = 1;
-ActionQueue.EVENT_ACTION_PROCESS = 2;
+ActionQueue.EVENT_ACTION_RUN = 2;
+ActionQueue.PRIORITY_NORMAL = 0;
+ActionQueue.PRIORITY_SUPER = 1;
 
-ActionQueue.prototype.addAction = function(request) {
+ActionQueue.prototype.update = function(gameContext) {}
+
+ActionQueue.prototype.addRequest = function(request, messengerID = null) {
     const actionType = this.actionTypes[request.type];
 
-    if(!actionType || this.requests.length > this.maxRequests) {
+    if(!actionType || this.requests.length >= this.maxRequests) {
         return false;
     }
 
-    this.requests.push(request);
-
+    this.requests.push({
+        "request": request,
+        "messengerID": messengerID
+    });
     return true;
 }
 
-ActionQueue.prototype.addPriorityAction = function(gameContext, request) {
+ActionQueue.prototype.addPriorityRequest = function(gameContext, request, messengerID) {
     const actionType = this.actionTypes[request.type];
 
-    if(!actionType || this.requests.length > this.maxRequests) {
+    if(!actionType || this.requests.length >= this.maxRequests) {
         return false;
     }
 
-    const isValid = actionType.validate(gameContext, request);
+    this.validateRequest(gameContext, request, messengerID, ActionQueue.PRIORITY_SUPER);
+    return true;
+}
+
+ActionQueue.prototype.validateRequest = function(gameContext, request, messengerID, priority) {
+    const { type } = request;
+    const actionType = this.actionTypes[type];
+
+    if(!actionType) {
+        return false;
+    }
+
+    const isValid = actionType.isValid(gameContext, request, messengerID);
 
     if(!isValid) {
-        this.events.emit(ActionQueue.EVENT_ACTION_INVALID, request);
+        this.events.emit(ActionQueue.EVENT_ACTION_INVALID, request, messengerID, priority);
         return false;
     }
 
-    this.queuePriorityAction(request);
-    this.events.emit(ActionQueue.EVENT_ACTION_VALID, request);
-
+    this.events.emit(ActionQueue.EVENT_ACTION_VALID, request, messengerID, priority);
     return true;
 }
 
 ActionQueue.prototype.registerAction = function(actionID, action) {
     if(this.actionTypes[actionID] !== undefined || !action) {
         Logger.log(false, "ActionType is already registered!", "ActionQueue.prototype.registerAction", {actionID});
-
         return false;
     }
 
     this.actionTypes[actionID] = action;
-
     return true;
 }
 
-ActionQueue.prototype.workStart = function() {
+ActionQueue.prototype.start = function() {
     this.state = ActionQueue.IDLE;
 }
 
-ActionQueue.prototype.workEnd = function() {
-    this.state = null;
+ActionQueue.prototype.end = function() {
+    this.requests.length = 0;
     this.queuedActions.length = 0;
+    this.isSkipping = false;
     this.currentAction = null;
-}
-
-ActionQueue.prototype.processRequests = function(gameContext) {
-    if(this.isRunning()) {
-        return false;
-    }
-
-    const deletableActions = [];
-
-    for(let i = 0; i < this.requests.length; i++) {
-        const request = this.requests[i];
-        const actionType = this.actionTypes[request.type];
-
-        deletableActions.push(i);
-
-        if(!actionType) {
-            continue;
-        }
-
-        const isValid = actionType.validate(gameContext, request);
-
-        if(!isValid) {
-            this.events.emit(ActionQueue.EVENT_ACTION_INVALID, request);
-            continue;
-        }
-
-        this.events.emit(ActionQueue.EVENT_ACTION_VALID, request);
-        break;
-    }
-
-    for(let i = deletableActions.length - 1; i >= 0; i--) {
-        const actionIndex = deletableActions[i];
-        this.requests.splice(actionIndex, 1);
-    }
-
-    return true;
-}
-
-ActionQueue.prototype.update = function(gameContext) {
-    if(this.state === ActionQueue.IDLE) {
-        this.processRequests(gameContext);
-        const request = this.next();
-
-        if(request) {
-            const { type } = request;
-            const actionType = this.actionTypes[type];
-
-            this.state = ActionQueue.PROCESSING;
-            this.events.emit(ActionQueue.EVENT_ACTION_PROCESS, request);
-            
-            actionType.onStart(gameContext, request);
-        }
-    } else if(this.state === ActionQueue.PROCESSING) {
-        const request = this.getCurrentAction();
-        const { type } = request;
-        const actionType = this.actionTypes[type];
-        const isFinished = actionType.onUpdate(gameContext, request);
-    
-        if(this.isSkipping) {
-            actionType.onClear();
-            this.isSkipping = false;
-            this.state = ActionQueue.IDLE;
-            this.currentAction = null; //<-- Causes processRequests to immediately process a new action!
-        } else if(isFinished) {
-            actionType.onEnd(gameContext, request);
-            actionType.onClear();
-            this.state = ActionQueue.IDLE;
-            this.currentAction = null; //<-- Causes processRequests to immediately process a new action!
-        }
-    }
+    this.state = null;
 }
 
 ActionQueue.prototype.queueAction = function(request) {
-    if(this.queuedActions.length > this.maxSize) {
+    if(this.queuedActions.length >= this.maxSize) {
         return false;
     }
 
@@ -162,7 +108,7 @@ ActionQueue.prototype.queueAction = function(request) {
 }
 
 ActionQueue.prototype.queuePriorityAction = function(request) {
-    if(this.queuedActions.length > this.maxSize) {
+    if(this.queuedActions.length >= this.maxSize) {
         return false;
     }
 
@@ -219,7 +165,6 @@ ActionQueue.prototype.next = function() {
 
 ActionQueue.prototype.skipAction = function() {
     if(this.isRunning()) {
-        this.state = ActionQueue.IDLE;
         this.isSkipping = true;
     }
 }

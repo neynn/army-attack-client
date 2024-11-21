@@ -30,12 +30,12 @@ ControllerSelectedState.prototype.onEventEnter = function(stateMachine, gameCont
         const isEnemy = TeamSystem.isEntityEnemy(gameContext, controller, mouseEntity);
 
         if(isEnemy) {
-            actionQueue.addAction(createAttackRequest(mouseEntityID));
+            actionQueue.addRequest(createAttackRequest(mouseEntityID));
         } else {
             soundPlayer.playSound("sound_error", 0.5);
         }
     } else {
-        actionQueue.addAction(createMoveRequest(selectedEntityID, x, y));
+        actionQueue.addRequest(createMoveRequest(selectedEntityID, x, y));
     }
 
     ControllerSystem.deselectEntity(gameContext, controller, selectedEntity);

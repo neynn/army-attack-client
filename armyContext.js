@@ -113,13 +113,13 @@ ArmyContext.prototype.initialize = function() {
 
     this.client.soundPlayer.loadAllSounds();
     
-    this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_PROCESS, "DEBUG", (request) => {
+    this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_RUN, "DEBUG", (request) => {
         console.log(request, "IS PROCESSING");
     });
 
-    this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_INVALID, "DEBUG", (request) => {
+    this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_INVALID, "DEBUG", (request, messengerID, priority) => {
         this.client.soundPlayer.playSound("sound_error", 0.5);
-        console.log(request, "IS INVALID");
+        console.log(request, "IS INVALID", messengerID, priority);
     });
 
     this.client.socket.events.subscribe(Socket.EVENT_CONNECTED_TO_SERVER, "DEBUG", (socketID) => {

@@ -35,15 +35,16 @@ MoveAction.prototype.onEnd = function(gameContext, request) {
     PlaceSystem.placeEntity(gameContext, entity);
 }
 
-MoveAction.prototype.onUpdate = function(gameContext, request) {
+MoveAction.prototype.isFinished = function(gameContext, request) {
     const { entityID } = request;
     const { entityManager } = gameContext;
     const entity = entityManager.getEntity(entityID);
+    const isFinished = MoveSystem.isPathFinished(entity);
 
-    return MoveSystem.isPathFinished(entity);
+    return isFinished;
 }
 
-MoveAction.prototype.validate = function(gameContext, request) {
+MoveAction.prototype.isValid = function(gameContext, request) {
     const { entityID, targetX, targetY } = request;
     const { entityManager } = gameContext; 
     const targetEntity = entityManager.getEntity(entityID);

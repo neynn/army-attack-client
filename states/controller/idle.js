@@ -28,7 +28,7 @@ ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext)
     const isSelectable = ControllerSystem.isSelectable(entity, controller);
 
     if(isEnemy && isTargetable) {     
-        actionQueue.addAction(createAttackRequest(entityID));
+        actionQueue.addRequest(createAttackRequest(entityID));
         return;
     }
 

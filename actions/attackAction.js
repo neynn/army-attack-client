@@ -61,16 +61,19 @@ AttackAction.prototype.onEnd = function(gameContext, request) {
 
 AttackAction.prototype.onUpdate = function(gameContext, request) {
     const { timer } = gameContext;
-    const settings = gameContext.getConfig("settings");
-    const timeRequired = settings.hitDuration;
     const deltaTime = timer.getFixedDeltaTime();
 
     this.timePassed += deltaTime;
+}
+
+AttackAction.prototype.isFinished = function(gameContext, request) {
+    const settings = gameContext.getConfig("settings");
+    const timeRequired = settings.hitDuration;
 
     return this.timePassed >= timeRequired;
 }
 
-AttackAction.prototype.validate = function(gameContext, request) {
+AttackAction.prototype.isValid = function(gameContext, request) {
     const { entityID } = request;
     const { entityManager } = gameContext; 
     const targetEntity = entityManager.getEntity(entityID);

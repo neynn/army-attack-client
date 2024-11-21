@@ -7,7 +7,6 @@ import { UIManager } from "./ui/uiManager.js";
 import { MapLoader } from "./map/mapLoader.js";
 import { StateMachine } from "./state/stateMachine.js";
 import { Timer } from "./timer.js";
-import { ActionQueue } from "./action/actionQueue.js";
 import { UIElement } from "./ui/uiElement.js";
 import { Logger } from "./logger.js";
 import { SystemManager } from "./system/systemManager.js";
@@ -15,6 +14,7 @@ import { TileManager } from "./tile/tileManager.js";
 import { Renderer } from "./renderer.js";
 import { ControllerManager } from "./controller/controllerManager.js";
 import { QuestManager } from "./questManager.js";
+import { ClientQueue } from "./action/clientQueue.js";
 
 export const GameContext = function(fps = 60) {
     this.id = "GAME_CONTEXT";
@@ -31,7 +31,7 @@ export const GameContext = function(fps = 60) {
     this.uiManager = new UIManager();
     this.systemManager = new SystemManager();
     this.entityManager = new EntityManager();
-    this.actionQueue = new ActionQueue();
+    this.actionQueue = new ClientQueue();
     this.events = new EventEmitter();
     this.states = new StateMachine(this);
 
@@ -241,7 +241,7 @@ GameContext.prototype.loadMap = function(mapID, gameMap) {
     
     this.mapLoader.addMap(mapID, gameMap);
     this.mapLoader.updateActiveMap(mapID);
-    this.actionQueue.workStart();
+    this.actionQueue.start();
     this.onMapLoad(gameMap);
 
     return true;
