@@ -38,7 +38,10 @@ Socket.prototype.connect = async function() {
         this.socket = socket;
         this.socket.emit(NETWORK_EVENTS.REGISTER_CLIENT_REQUEST, {
             "user-id": this.config.userID
+        }, (response) => {
+            console.log(response);
         });
+
         this.events.emit(Socket.EVENT_CONNECTED_TO_SERVER, socket.id);
     });
 
@@ -77,12 +80,12 @@ Socket.prototype.messageRoom = function(type, payload) {
     });
 }
 
-Socket.prototype.createRoom = function() {
+Socket.prototype.createRoom = function(roomType) {
     if(!this.socket || !this.isConnected) {
         return false;
     }
 
-    this.socket.emit(NETWORK_EVENTS.CREATE_ROOM_REQUEST, (response) => {
+    this.socket.emit(NETWORK_EVENTS.CREATE_ROOM_REQUEST, roomType, (response) => {
         console.log(response);
     });
 }

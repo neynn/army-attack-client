@@ -15,7 +15,7 @@ VersusModeLobbyState.prototype.enter = function(stateMachine) {
     uiManager.parseUI("VERSUS_MODE_HUB", gameContext);
 
     uiManager.addClick("VERSUS_MODE_HUB", "BUTTON_CREATE_ROOM", () => {
-        client.socket.createRoom();
+        client.socket.createRoom("VERSUS"); //TODO
     });
 
     uiManager.addClick("VERSUS_MODE_HUB", "BUTTON_JOIN_ROOM", () => {

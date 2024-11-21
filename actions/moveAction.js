@@ -44,7 +44,7 @@ MoveAction.prototype.isFinished = function(gameContext, request) {
     return isFinished;
 }
 
-MoveAction.prototype.isValid = function(gameContext, request) {
+MoveAction.prototype.isValid = function(gameContext, request, messengerID) {
     const { entityID, targetX, targetY } = request;
     const { entityManager } = gameContext; 
     const entity = entityManager.getEntity(entityID);

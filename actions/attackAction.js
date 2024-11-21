@@ -63,7 +63,7 @@ AttackAction.prototype.isFinished = function(gameContext, request) {
     return this.timePassed >= timeRequired;
 }
 
-AttackAction.prototype.isValid = function(gameContext, request) {
+AttackAction.prototype.isValid = function(gameContext, request, messengerID) {
     const { entityID } = request;
     const { entityManager } = gameContext; 
     const targetEntity = entityManager.getEntity(entityID);
