@@ -2,28 +2,20 @@ import { Logger } from "../logger.js";
 import { GlobalResourceManager } from "../resourceManager.js";
 
 export const MapLoader = function() {
-    this.config = {};
     this.mapTypes = {};
     this.loadedMaps = new Map();
     this.activeMapID = null;
 }
 
 MapLoader.SUCCESS_TYPE_LOAD = "LOAD";
-MapLoader.SUCCESS_TYPE_DEFAULT = "DEFAULT";
 MapLoader.ERROR_TYPE_MISSING_TYPE = "MISSING_TYPE";
 MapLoader.ERROR_TYPE_MISSING_FILE = "MISSING_FILE";
 
-MapLoader.prototype.load = function(mapTypes, config) {
+MapLoader.prototype.load = function(mapTypes) {
     if(typeof mapTypes === "object") {
         this.mapTypes = mapTypes;
     } else {
         Logger.log(false, "MapTypes cannot be undefined!", "MapLoader.prototype.load", null);
-    }
-
-    if(typeof config === "object") {
-        this.config = config;
-    } else {
-        Logger.log(false, "Config cannot be undefined!", "MapLoader.prototype.load", null);
     }
 }
 
@@ -160,15 +152,6 @@ MapLoader.prototype.hasLoadedMap = function(mapID) {
     return this.loadedMaps.has(mapID);
 }
 
-MapLoader.prototype.getDefaultMapData = function() {
-    return {
-        "data": this.config.defaultMapSetup,
-        "meta": this.config.defaultMapMeta,
-        "success": true,
-        "code": MapLoader.SUCCESS_TYPE_DEFAULT
-    }
-}
-
 MapLoader.prototype.addMap = function(mapID, gameMap) {
     if(this.loadedMaps.has(mapID)) {
         Logger.log(false, "Map already exists!", "MapLoader.prototype.addMap", { mapID });
@@ -177,36 +160,6 @@ MapLoader.prototype.addMap = function(mapID, gameMap) {
     }
 
     this.loadedMaps.set(mapID, gameMap);
-
-    return true;
-}
-
-MapLoader.prototype.resizeMap = function(mapID, width, height) {
-    const loadedMap = this.loadedMaps.get(mapID);
-
-    if(!loadedMap) {
-        Logger.log(false, "Map is not loaded!", "MapLoader.prototype.resizeMap", { mapID, width, height });
-
-        return false;
-    }
-
-    const defaultSetup = this.config.defaultMapSetup;
-    const { layers } = defaultSetup;
-
-    for(const layerID in loadedMap.layers) {
-        const layerSetup = layers[layerID];
-
-        if(layerSetup) {
-            const { fill } = layerSetup;
-            loadedMap.resizeLayer(layerID, width, height, fill);
-            continue;
-        }
-
-        loadedMap.resizeLayer(layerID, width, height, 0);
-    }
-
-    loadedMap.width = width;
-    loadedMap.height = height;
 
     return true;
 }

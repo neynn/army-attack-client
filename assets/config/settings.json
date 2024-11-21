@@ -1,41 +1,8 @@
 {
-    "mapLoader": {
-        "loadGraphics": true,
-        "mapCacheEnabled": false,
-        "maxMapWidth": 255,
-        "maxMapHeight": 255,
-        "defaultMapMeta": {
-            "music": "music_remastered"
-        },
-        "defaultMapSetup": {
-            "width": 20,
-            "height": 20,
-            "layers": {
-                "ground": { "id": "ground", "fill": 1 },
-                "border": { "id": "border", "fill": 0 },
-                "decoration": { "id": "decoration", "fill": 0 },
-                "overlay": { "id": "overlay", "fill": 0 },
-                "cloud": { "id": "cloud", "fill": 0 },
-                "type": { "id": "type", "fill": 0 },
-                "team": { "id": "team", "fill": 0 }
-            },
-            "backgroundLayers": [
-                { "id": "ground", "opacity": 1, "autoGenerate": false },
-                { "id": "border", "opacity": 1, "autoGenerate": true },
-                { "id": "decoration", "opacity": 1, "autoGenerate": false },
-                { "id": "overlay", "opacity": 1, "autoGenerate": true }
-            ],
-            "foregroundLayers": [
-                { "id":"cloud", "opacity": 1, "autoGenerate": false }
-            ],
-            "metaLayers": [
-                { "id": "type", "opacity": 1, "autoGenerate": false }, 
-                { "id": "team", "opacity": 1, "autoGenerate": false } 
-            ]
-        }
-    },
     "mapEditor": {
         "id": "MAP_EDITOR",
+        "maxMapWidth": 255,
+        "maxMapHeight": 255,
         "overlayOpacity": 0.75,
         "brushSizes": [0, 1, 2, 3, 4],
         "brushModes": ["DRAW", "ERASE"],
@@ -69,6 +36,35 @@
                 "BUTTON_8": { "id": "BUTTON_8" }
             },
             "slots": ["BUTTON_0", "BUTTON_1", "BUTTON_2", "BUTTON_3", "BUTTON_4", "BUTTON_5", "BUTTON_6", "BUTTON_7", "BUTTON_8"]
+        },
+        "defaultMapMeta": {
+            "music": "music_remastered"
+        },
+        "defaultMapSetup": {
+            "width": 20,
+            "height": 20,
+            "layers": {
+                "ground": { "id": "ground", "fill": 1 },
+                "border": { "id": "border", "fill": 0 },
+                "decoration": { "id": "decoration", "fill": 0 },
+                "overlay": { "id": "overlay", "fill": 0 },
+                "cloud": { "id": "cloud", "fill": 0 },
+                "type": { "id": "type", "fill": 0 },
+                "team": { "id": "team", "fill": 0 }
+            },
+            "backgroundLayers": [
+                { "id": "ground", "opacity": 1, "autoGenerate": false },
+                { "id": "border", "opacity": 1, "autoGenerate": true },
+                { "id": "decoration", "opacity": 1, "autoGenerate": false },
+                { "id": "overlay", "opacity": 1, "autoGenerate": true }
+            ],
+            "foregroundLayers": [
+                { "id":"cloud", "opacity": 1, "autoGenerate": false }
+            ],
+            "metaLayers": [
+                { "id": "type", "opacity": 1, "autoGenerate": false }, 
+                { "id": "team", "opacity": 1, "autoGenerate": false } 
+            ]
         },
         "hiddenSets": {
             "overlay": 1,

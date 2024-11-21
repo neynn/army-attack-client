@@ -276,3 +276,34 @@ MapEditor.prototype.paint = function(gameContext, mapID, layerID) {
         });
     }
 }
+
+MapEditor.prototype.resizeMap = function(gameMap, width, height) {
+    const defaultSetup = this.config.defaultMapSetup;
+    const { layers } = defaultSetup;
+
+    for(const layerID in gameMap.layers) {
+        const layerSetup = layers[layerID];
+
+        if(layerSetup) {
+            const { fill } = layerSetup;
+            gameMap.resizeLayer(layerID, width, height, fill);
+            continue;
+        }
+
+        gameMap.resizeLayer(layerID, width, height, 0);
+    }
+
+    gameMap.width = width;
+    gameMap.height = height;
+
+    return true;
+}
+
+MapEditor.prototype.getDefaultMapData = function() {
+    return {
+        "data": this.config.defaultMapSetup,
+        "meta": this.config.defaultMapMeta,
+        "success": true,
+        "code": "DEFAULT"
+    }
+}

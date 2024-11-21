@@ -375,7 +375,7 @@ EditorController.prototype.initializeUIEvents = function(gameContext) {
         }
 
         const mapID = `${Date.now()}`;
-        const { data, meta } = mapLoader.getDefaultMapData();
+        const { data, meta } = this.mapEditor.getDefaultMapData();
         const defaultMap = MapParser.parseMap2DEmpty(mapID, data, meta, true);
 
         gameContext.loadMap(mapID, defaultMap);
@@ -413,7 +413,7 @@ EditorController.prototype.initializeUIEvents = function(gameContext) {
             return;
         }
 
-        const { maxMapWidth, maxMapHeight } = mapLoader.config;
+        const { maxMapWidth, maxMapHeight } = this.mapEditor.config;
     
         if(newWidth > maxMapWidth || newHeight > maxMapHeight) {
             console.warn({maxMapWidth, maxMapHeight});
@@ -421,7 +421,7 @@ EditorController.prototype.initializeUIEvents = function(gameContext) {
             return;
         }
 
-        mapLoader.resizeMap(this.currentMapID, newWidth, newHeight);
+        this.mapEditor.resizeMap(gameMap, newWidth, newHeight);
 
         camera.loadViewport(newWidth, newHeight);
     }); 
