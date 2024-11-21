@@ -1,7 +1,7 @@
 import { CONTEXT_STATES, GAME_EVENTS } from "../../enums.js";
 import { ActionQueue } from "../../source/action/actionQueue.js";
-import { ROOM_EVENTS } from "../../source/client/network/events.js";
-import { Socket } from "../../source/client/network/socket.js";
+import { ROOM_EVENTS } from "../../source/network/events.js";
+import { Socket } from "../../source/network/socket.js";
 import { MapParser } from "../../source/map/mapParser.js";
 import { State } from "../../source/state/state.js";
 
@@ -19,7 +19,9 @@ VersusModeState.prototype.enter = function(stateMachine) {
     const { socket } = client;
     
     actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_VALID, contextID, (request, messengerID, priority) => {
-        socket.messageRoom(GAME_EVENTS.ENTITY_ACTION, request);
+        if(priority === ActionQueue.PRIORITY_NORMAL) {
+            socket.messageRoom(GAME_EVENTS.ENTITY_ACTION, request);
+        }
     });
 
     socket.events.subscribe(Socket.EVENT_MESSAGE_FROM_SERVER, contextID, (type, payload) => {

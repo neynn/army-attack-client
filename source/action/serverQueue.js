@@ -27,14 +27,14 @@ ServerQueue.prototype.update = function(gameContext) {
 
     this.state = ActionQueue.PROCESSING;
 
-    const request = this.next();
+    const next = this.next();
 
-    if(request) {
+    if(next) {
+        const { request, priority } = next;
         const { type } = request;
         const actionType = this.actionTypes[type];
 
-        this.events.emit(ActionQueue.EVENT_ACTION_RUN, request);
-
+        this.events.emit(ActionQueue.EVENT_ACTION_RUN, request, priority);
         this.currentAction = null;
         
         actionType.onStart(gameContext, request);

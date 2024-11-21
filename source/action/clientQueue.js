@@ -11,16 +11,13 @@ export const ClientQueue = function() {
 ClientQueue.prototype = Object.create(ActionQueue.prototype);
 ClientQueue.prototype.constructor = ClientQueue;
 
-ClientQueue.prototype.processRequests = function(gameContext) {
+ClientQueue.prototype.updateRequests = function(gameContext, priority) {
+    const requests = this.requests[priority];
     const processedRequests = [];
 
-    if(this.isRunning()) {
-        return processedRequests;
-    }
-
-    for(let i = 0; i < this.requests.length; i++) {
-        const { request, messengerID } = this.requests[i];
-        const isValid = this.validateRequest(gameContext, request, messengerID, ActionQueue.PRIORITY_NORMAL);
+    for(let i = 0; i < requests.length; i++) {
+        const { request, messengerID, priority } = requests[i];
+        const isValid = this.validateRequest(gameContext, request, messengerID, priority);
 
         processedRequests.push(i);
 
@@ -30,32 +27,45 @@ ClientQueue.prototype.processRequests = function(gameContext) {
     }
 
     for(let i = processedRequests.length - 1; i >= 0; i--) {
-        const actionIndex = processedRequests[i];
-        this.requests.splice(actionIndex, 1);
+        const requestIndex = processedRequests[i];
+        requests.splice(requestIndex, 1);
+    }
+}
+
+ClientQueue.prototype.processRequests = function(gameContext) {
+    const current = this.getCurrentAction();
+
+    if(!current || current.priority !== ActionQueue.PRIORITY_SUPER) {
+        this.updateRequests(gameContext, ActionQueue.PRIORITY_SUPER);
     }
 
-    return processedRequests;
+    if(!current && this.isEmpty()) {
+        this.updateRequests(gameContext, ActionQueue.PRIORITY_NORMAL);
+    }
 }
 
 ClientQueue.prototype.update = function(gameContext) {
     if(this.state === ActionQueue.IDLE) {
-        this.processRequests(gameContext);
-        const request = this.next();
+        const next = this.next();
 
-        if(request) {
+        if(next) {
+            const { request, priority } = next;
             const { type } = request;
             const actionType = this.actionTypes[type];
 
             this.state = ActionQueue.PROCESSING;
-            this.events.emit(ActionQueue.EVENT_ACTION_RUN, request);
+            this.events.emit(ActionQueue.EVENT_ACTION_RUN, request, priority);
             
             actionType.onStart(gameContext, request);
         }
     } else if(this.state === ActionQueue.PROCESSING) {
-        const request = this.getCurrentAction();
+        const current = this.getCurrentAction();
+        const { request, priority } = current;
         const { type } = request;
         const actionType = this.actionTypes[type];
+
         actionType.onUpdate(gameContext, request);
+
         const isFinished = actionType.isFinished(gameContext, request);
 
         if(this.isSkipping) {
@@ -70,4 +80,6 @@ ClientQueue.prototype.update = function(gameContext) {
             this.currentAction = null;
         }
     }
+
+    this.processRequests(gameContext);
 }

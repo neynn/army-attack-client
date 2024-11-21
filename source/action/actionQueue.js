@@ -3,7 +3,10 @@ import { Logger } from "../logger.js";
 
 export const ActionQueue = function() {
     this.actionTypes = {};
-    this.requests = [];
+    this.requests = {
+        [ActionQueue.PRIORITY_NORMAL]: [],
+        [ActionQueue.PRIORITY_SUPER]: []
+    };
     this.queuedActions = [];
     this.isSkipping = false;
     this.currentAction = null;
@@ -30,25 +33,32 @@ ActionQueue.prototype.update = function(gameContext) {}
 ActionQueue.prototype.addRequest = function(request, messengerID = null) {
     const actionType = this.actionTypes[request.type];
 
-    if(!actionType || this.requests.length >= this.maxRequests) {
+    if(!actionType || this.requests[ActionQueue.PRIORITY_NORMAL].length >= this.maxRequests) {
         return false;
     }
 
-    this.requests.push({
+    this.requests[ActionQueue.PRIORITY_NORMAL].push({
         "request": request,
-        "messengerID": messengerID
+        "messengerID": messengerID,
+        "priority": ActionQueue.PRIORITY_NORMAL
     });
+
     return true;
 }
 
-ActionQueue.prototype.addPriorityRequest = function(gameContext, request, messengerID) {
+ActionQueue.prototype.addPriorityRequest = function(request, messengerID = null) {
     const actionType = this.actionTypes[request.type];
 
-    if(!actionType || this.requests.length >= this.maxRequests) {
+    if(!actionType) {
         return false;
     }
 
-    this.validateRequest(gameContext, request, messengerID, ActionQueue.PRIORITY_SUPER);
+    this.requests[ActionQueue.PRIORITY_SUPER].push({
+        "request": request,
+        "messengerID": messengerID,
+        "priority": ActionQueue.PRIORITY_SUPER
+    });
+
     return true;
 }
 
@@ -86,7 +96,8 @@ ActionQueue.prototype.start = function() {
 }
 
 ActionQueue.prototype.end = function() {
-    this.requests.length = 0;
+    this.requests[ActionQueue.PRIORITY_NORMAL].length = 0;
+    this.requests[ActionQueue.PRIORITY_SUPER].length = 0;
     this.queuedActions.length = 0;
     this.isSkipping = false;
     this.currentAction = null;
@@ -102,7 +113,10 @@ ActionQueue.prototype.queueAction = function(request) {
         return false;
     }
 
-    this.queuedActions.push(request);
+    this.queuedActions.push({
+        "request": request,
+        "priority": ActionQueue.PRIORITY_NORMAL
+    });
 
     return true;
 }
@@ -116,7 +130,10 @@ ActionQueue.prototype.queuePriorityAction = function(request) {
         return false;
     }
 
-    this.queuedActions.unshift(request);
+    this.queuedActions.unshift({
+        "request": request,
+        "priority": ActionQueue.PRIORITY_SUPER
+    });
 
     return true;
 }

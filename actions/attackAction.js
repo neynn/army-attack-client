@@ -9,7 +9,6 @@ import { TargetSystem } from "../systems/target.js";
 
 export const AttackAction = function() {
     Action.call(this);
-    this.id = ACTION_TYPES.ATTACK;
     this.timePassed = 0;
 }
 
@@ -39,7 +38,7 @@ AttackAction.prototype.onStart = function(gameContext, request) {
 }
 
 AttackAction.prototype.onEnd = function(gameContext, request) {
-    const { entityManager } = gameContext;
+    const { entityManager, actionQueue } = gameContext;
     const { entityID, attackers, damage, remainingHealth, isFatal } = request;
     const target = entityManager.getEntity(entityID);
 

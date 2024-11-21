@@ -1,4 +1,4 @@
-import { ROOM_EVENTS } from "../../../source/client/network/events.js";
+import { ROOM_EVENTS } from "../../../source/network/events.js";
 import { State } from "../../../source/state/state.js";
 
 export const VersusModeLobbyState = function() {

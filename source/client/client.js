@@ -1,7 +1,7 @@
 import { Cursor } from "./cursor.js";
 import { Keyboard } from "./keyboard.js";
 import { MusicPlayer } from "./musicPlayer.js";
-import { Socket } from "./network/socket.js";
+import { Socket } from "../network/socket.js";
 import { SoundPlayer } from "./soundPlayer.js";
 
 export const Client = function() {

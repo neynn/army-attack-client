@@ -5,10 +5,10 @@ import { PathfinderSystem } from "../systems/pathfinder.js";
 import { ACTION_TYPES } from "../enums.js";
 import { MorphSystem } from "../systems/morph.js";
 import { PlaceSystem } from "../systems/place.js";
+import { HealthSystem } from "../systems/health.js";
 
 export const MoveAction = function() {
     Action.call(this);
-    this.id = ACTION_TYPES.MOVE;
 }
 
 MoveAction.prototype = Object.create(Action.prototype);
@@ -27,7 +27,7 @@ MoveAction.prototype.onStart = function(gameContext, request) {
 
 MoveAction.prototype.onEnd = function(gameContext, request) {
     const { targetX, targetY, entityID } = request;
-    const { entityManager } = gameContext;
+    const { entityManager, actionQueue } = gameContext;
     const entity = entityManager.getEntity(entityID);
 
     MoveSystem.endMove(gameContext, entity, targetX, targetY);
@@ -47,19 +47,20 @@ MoveAction.prototype.isFinished = function(gameContext, request) {
 MoveAction.prototype.isValid = function(gameContext, request) {
     const { entityID, targetX, targetY } = request;
     const { entityManager } = gameContext; 
-    const targetEntity = entityManager.getEntity(entityID);
+    const entity = entityManager.getEntity(entityID);
 
-    if(!targetEntity) {
+    if(!entity) {
+        return false;
+    }
+    
+    const isAlive = HealthSystem.isAlive(entity);
+    const freeTile = PathfinderSystem.isTileFree(gameContext, targetX, targetY);
+
+    if(!isAlive || !freeTile) {
         return false;
     }
 
-    const validTarget = PathfinderSystem.isTileFree(gameContext, targetX, targetY);
-
-    if(!validTarget) {
-        return false;
-    }
-
-    const nodeList = PathfinderSystem.generateNodeList(gameContext, targetEntity);
+    const nodeList = PathfinderSystem.generateNodeList(gameContext, entity);
     const path = PathfinderSystem.getPath(nodeList, targetX, targetY);
 
     if(!path) {

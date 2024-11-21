@@ -1,4 +1,4 @@
-import { EventEmitter } from "../../events/eventEmitter.js";
+import { EventEmitter } from "../events/eventEmitter.js";
 import { NETWORK_EVENTS } from "./events.js";
 
 export const Socket = function() {

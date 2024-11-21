@@ -26,7 +26,7 @@ import { StoryModeIntroState } from "./states/context/story/storyModeIntro.js";
 import { MoveSystem } from "./systems/move.js";
 import { Renderer } from "./source/renderer.js";
 import { SpriteComponent } from "./components/sprite.js";
-import { Socket } from "./source/client/network/socket.js";
+import { Socket } from "./source/network/socket.js";
 import { DefenseArchetype } from "./init/archetype/defense.js";
 import { DecoArchetype } from "./init/archetype/deco.js";
 import { BuildingArchetype } from "./init/archetype/building.js";
@@ -113,8 +113,8 @@ ArmyContext.prototype.initialize = function() {
 
     this.client.soundPlayer.loadAllSounds();
     
-    this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_RUN, "DEBUG", (request) => {
-        console.log(request, "IS PROCESSING");
+    this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_RUN, "DEBUG", (request, priority) => {
+        console.log(request, "IS PROCESSING", priority);
     });
 
     this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_INVALID, "DEBUG", (request, messengerID, priority) => {
