@@ -1,4 +1,4 @@
-import { ACTION_TYPES } from "../enums.js";
+import { ACTION_TYPES, ENTITY_STATES } from "../enums.js";
 import { Action } from "../source/action/action.js";
 import { DeathSystem } from "../systems/death.js";
 import { FireSystem } from "../systems/fire.js";
@@ -21,16 +21,13 @@ AttackAction.prototype.onClear = function() {
 
 AttackAction.prototype.onStart = function(gameContext, request) {
     const { entityManager } = gameContext;
-    const { entityID, attackers, damage, remainingHealth, isFatal } = request;
+    const { entityID, attackers, damage, state } = request;
     const target = entityManager.getEntity(entityID);
 
     FireSystem.startAttack(gameContext, attackers, target);
-    HealthSystem.setHealth(target, remainingHealth);
+    HealthSystem.reduceHealth(target, damage);
 
-    const isDead = !HealthSystem.isAlive(target);
-    const isReviveable = ReviveSystem.isReviveable(target);
-
-    if(isDead && isReviveable && !isFatal) {
+    if(state === ENTITY_STATES.DOWN) {
         ReviveSystem.downEntity(gameContext, target);
     } else {
         MorphSystem.updateSprite(target, "hit");
@@ -38,22 +35,16 @@ AttackAction.prototype.onStart = function(gameContext, request) {
 }
 
 AttackAction.prototype.onEnd = function(gameContext, request) {
-    const { entityManager, actionQueue } = gameContext;
-    const { entityID, attackers, damage, remainingHealth, isFatal } = request;
+    const { entityManager } = gameContext;
+    const { entityID, attackers, damage, state } = request;
     const target = entityManager.getEntity(entityID);
 
     FireSystem.endAttack(gameContext, attackers);
 
-    const isDead = !HealthSystem.isAlive(target);
-    const isReviveable = ReviveSystem.isReviveable(target);
-
-    if(isDead) {
-        if(!isReviveable || isFatal) {
-            DeathSystem.playDeathAnimation(gameContext, target);
-            
-            gameContext.destroyEntity(entityID);
-        }
-    } else {
+    if(state === ENTITY_STATES.DEAD) {
+        DeathSystem.playDeathAnimation(gameContext, target);
+        gameContext.destroyEntity(entityID);
+    } else if(state === ENTITY_STATES.IDLE) {
         MorphSystem.updateSprite(target, "idle");
     }
 }
@@ -88,18 +79,23 @@ AttackAction.prototype.isValid = function(gameContext, request) {
     }
 
     const damage = FireSystem.getDamage(gameContext, targetEntity, attackers);
-
-    if(damage === 0) {
-        return false;
-    }
-
-    const isFatal = FireSystem.getFatal(gameContext, targetEntity, attackers);
-    const remainingHealth = HealthSystem.getRemainingHealth(targetEntity, damage);
+    const health = HealthSystem.getRemainingHealth(targetEntity, damage);
 
     request.attackers = attackers;
-    request.remainingHealth = remainingHealth;
     request.damage = damage;
-    request.isFatal = isFatal;
+
+    if(health === 0) {
+        const isFatal = FireSystem.getFatalHit(gameContext, targetEntity, attackers);
+        const isReviveable = ReviveSystem.isReviveable(targetEntity);
+
+        if(isReviveable && !isFatal) {
+            request.state = ENTITY_STATES.DOWN;
+        } else {
+            request.state = ENTITY_STATES.DEAD;
+        }
+    } else {
+        request.state = ENTITY_STATES.IDLE;
+    }
 
     return true;
 }
@@ -109,8 +105,7 @@ export const createAttackRequest = function(entityID) {
         "type": ACTION_TYPES.ATTACK,
         "entityID": entityID,
         "attackers": [],
-        "remainingHealth": 0,
         "damage": 0,
-        "isFatal": false
+        "state": ENTITY_STATES.IDLE
     }
 }

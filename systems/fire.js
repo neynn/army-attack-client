@@ -31,7 +31,8 @@ FireSystem.getDamage = function(gameContext, target, attackers) {
     return totalDamage;
 }
 
-FireSystem.getFatal = function(gameContext, target, attackers) {
+FireSystem.getFatalHit = function(gameContext, target, attackers) {
+
     return false;
 }
 
