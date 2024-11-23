@@ -4,9 +4,7 @@ import { ENTITY_EVENTS, SYSTEM_TYPES } from "../enums.js";
 import { Camera } from "../source/camera/camera.js";
 import { tileToPosition_center } from "../source/camera/helpers.js";
 
-export const MoveSystem = function() {}
-
-MoveSystem.update = function(gameContext, entity) {
+export const MoveSystem = function(gameContext, entity) {
     const { timer } = gameContext;
     const deltaTime = timer.getFixedDeltaTime();
 

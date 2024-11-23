@@ -1,53 +1,32 @@
 import { Logger } from "../logger.js";
+import { System } from "./system.js";
 
 export const SystemManager = function() {
     this.config = {};
     this.systems = new Map();
 }
 
-SystemManager.prototype.update = function(gameContext) {
-    const { entityManager } = gameContext;
-    
+SystemManager.prototype.update = function(gameContext) {    
     for(const [systemID, system] of this.systems) {
-        const { entities, reference } = system;
-        const invalidIDs = [];
-
-        for(const entityID of entities) {
-            const entity = entityManager.getEntity(entityID);
-
-            if(!entity) {
-                invalidIDs.push(entityID);
-                continue;
-            }
-
-            reference.update(gameContext, entity);
-        }
-
-        for(const entityID of invalidIDs) {
-            Logger.log(false, "Entity no longer exists!", "SystemManager.prototype.update", {entityID});
-
-            entities.delete(entityID);
-        }
+        system.update(gameContext);
     }
 }
 
-SystemManager.prototype.registerSystem = function(systemID, system) {
+SystemManager.prototype.registerSystem = function(systemID, reference) {
     if(this.systems.has(systemID)) {
         Logger.log(false, "System already exists!", "SystemManager.prototype.registerSystem", {systemID});
 
         return false;
     }
 
-    if(typeof system !== "function" || !system.hasOwnProperty("update")) {
+    if(typeof reference !== "function") {
         Logger.log(false, "System is invalid!", "SystemManager.prototype.registerSystem", {systemID});
 
         return false;
     }
 
-    this.systems.set(systemID, {
-        "reference": system,
-        "entities": new Set()
-    });
+    const system = new System(systemID, reference);
+    this.systems.set(systemID, system);
 
     return true;
 }
@@ -61,7 +40,7 @@ SystemManager.prototype.addEntity = function(systemID, entityID) {
         return false;
     }
 
-    system.entities.add(entityID);
+    system.addEntity(entityID);
 
     return true;
 }
@@ -75,7 +54,7 @@ SystemManager.prototype.removeEntity = function(systemID, entityID) {
         return false;
     }
 
-    system.entities.delete(entityID);
+    system.removeEntity(entityID);
 
     return true;
 }
