@@ -8,7 +8,6 @@ import { ConstructionComponent } from "../components/construction.js";
 import { PositionComponent } from "../components/position.js";
 import { tileToPosition_center } from "../source/camera/helpers.js";
 import { DirectionComponent } from "../components/direction.js";
-import { SizeComponent } from "../components/size.js";
 import { ControllerComponent } from "../components/controller.js";
 
 export const componentSetup = {};
@@ -23,16 +22,6 @@ componentSetup.setupDirectionComponent = function() {
     const directionComponent = new DirectionComponent();
 
     return directionComponent;
-}
-
-componentSetup.setupSizeComponent = function(type) {
-    const sizeComponent = new SizeComponent();
-    const { dimX, dimY } = type;
-
-    sizeComponent.sizeX = dimX;
-    sizeComponent.sizeY = dimY;
-
-    return sizeComponent;
 }
 
 componentSetup.setupPositionComponent = function(setup) {

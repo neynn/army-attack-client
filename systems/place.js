@@ -1,5 +1,4 @@
 import { PositionComponent } from "../components/position.js";
-import { SizeComponent } from "../components/size.js";
 
 export const PlaceSystem = function() {}
 
@@ -13,9 +12,8 @@ PlaceSystem.placeEntity = function(gameContext, entity) {
 
     const entityID = entity.getID();
     const positionComponent = entity.getComponent(PositionComponent);
-    const sizeComponent = entity.getComponent(SizeComponent);
 
-    activeMap.addEntity(positionComponent.tileX, positionComponent.tileY, sizeComponent.sizeX, sizeComponent.sizeY, entityID);
+    activeMap.addEntity(positionComponent.tileX, positionComponent.tileY, entity.config.dimX, entity.config.dimY, entityID);
 
     return true;
 }
@@ -30,9 +28,8 @@ PlaceSystem.removeEntity = function(gameContext, entity) {
 
     const entityID = entity.getID();
     const positionComponent = entity.getComponent(PositionComponent);
-    const sizeComponent = entity.getComponent(SizeComponent);
 
-    activeMap.removeEntity(positionComponent.tileX, positionComponent.tileY, sizeComponent.sizeX, sizeComponent.sizeY, entityID);
+    activeMap.removeEntity(positionComponent.tileX, positionComponent.tileY, entity.config.dimX, entity.config.dimY, entityID);
 
     return true;
 }

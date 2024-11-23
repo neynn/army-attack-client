@@ -12,28 +12,28 @@ import { MoveComponent } from "../components/move.js";
 
 export const ControllerSystem = function() {}
 
-ControllerSystem.resetAttackerSprites = function(gameContext, controller) {
-    const { entityManager } = gameContext;
-    const controllerComponent = controller.getComponent(ControllerComponent);
+ControllerSystem.MOVE_CURSOR_ID = "MOVE_CURSOR";
 
-    for(const attackerID of controllerComponent.attackers) {
+ControllerSystem.resetAttackerSprites = function(gameContext, attackers) {
+    const { entityManager } = gameContext;
+
+    for(const attackerID of attackers) {
         const attacker = entityManager.getEntity(attackerID);
 
         if(!attacker) {
             continue;
         }
 
-        MorphSystem.updateSprite(attacker, "idle");
+        MorphSystem.toIdle(attacker);
     }
 }
 
-ControllerSystem.resetAttackerOverlay = function(gameContext, controller) {
+ControllerSystem.resetAttackerOverlays = function(gameContext, attackers) {
     const { entityManager, mapLoader } = gameContext;
     const layerTypes = gameContext.getConfig("layerTypes");
     const activeMap = mapLoader.getActiveMap();
-    const controllerComponent = controller.getComponent(ControllerComponent);
 
-    for(const attackerID of controllerComponent.attackers) {
+    for(const attackerID of attackers) {
         const attacker = entityManager.getEntity(attackerID);
 
         if(!attacker) {
@@ -46,37 +46,50 @@ ControllerSystem.resetAttackerOverlay = function(gameContext, controller) {
     }
 }
 
-ControllerSystem.hightlightAttackers = function(gameContext, target, attackers) {
-    const { entityManager, mapLoader, tileManager } = gameContext;
+ControllerSystem.resetAttacker = function(gameContext, attackerID) {
+    const { entityManager, mapLoader } = gameContext;
+    const attacker = entityManager.getEntity(attackerID);
+
+    if(!attacker) {
+        return;
+    }
+
     const layerTypes = gameContext.getConfig("layerTypes");
     const activeMap = mapLoader.getActiveMap();
+    const positionComponent = attacker.getComponent(PositionComponent);
 
-    for(const attackerID of attackers) {
-        const attacker = entityManager.getEntity(attackerID);
+    activeMap.clearTile(layerTypes.overlay.layerID, positionComponent.tileX, positionComponent.tileY);
+    MorphSystem.toIdle(attacker);
+}
 
-        if(!attacker) {
-            continue;
-        }
+ControllerSystem.hightlightAttacker = function(gameContext, target, attackerID) {
+    const { entityManager, mapLoader, tileManager } = gameContext;
+    const attacker = entityManager.getEntity(attackerID);
 
-        const positionComponent = attacker.getComponent(PositionComponent);
-        const tileID = tileManager.getTileID("overlay", "grid_attack_1x1");
-
-        activeMap.placeTile(tileID, layerTypes.overlay.layerID, positionComponent.tileX, positionComponent.tileY);
-
-        DirectionSystem.lookAt(attacker, target);
-        MorphSystem.morphDirectional(attacker, "aim", "aim_ne");
+    if(!attacker) {
+        return;
     }
+
+    const layerTypes = gameContext.getConfig("layerTypes");
+    const activeMap = mapLoader.getActiveMap();
+    const positionComponent = attacker.getComponent(PositionComponent);
+    const tileID = tileManager.getTileID("overlay", "grid_attack_1x1");
+
+    activeMap.placeTile(tileID, layerTypes.overlay.layerID, positionComponent.tileX, positionComponent.tileY);
+
+    DirectionSystem.lookAt(attacker, target);
+    MorphSystem.toAim(attacker);
 }
 
 ControllerSystem.updateAttackers = function(gameContext, controller) {
     const mouseEntity = gameContext.getMouseEntity();
     const controllerComponent = controller.getComponent(ControllerComponent);
+    const oldAttackers = controllerComponent.attackers;
 
-    ControllerSystem.resetAttackerOverlay(gameContext, controller);
-    ControllerSystem.resetAttackerSprites(gameContext, controller);
-    
     if(!mouseEntity) {
-        controllerComponent.attackers = [];
+        ControllerSystem.resetAttackerOverlays(gameContext, oldAttackers);
+        ControllerSystem.resetAttackerSprites(gameContext, oldAttackers);
+        controllerComponent.attackers.clear();
         return;
     }
 
@@ -84,15 +97,28 @@ ControllerSystem.updateAttackers = function(gameContext, controller) {
     const isTargetable = TargetSystem.isTargetable(mouseEntity);
 
     if(!isEnemy || !isTargetable) {
-        controllerComponent.attackers = [];
+        ControllerSystem.resetAttackerOverlays(gameContext, oldAttackers);
+        ControllerSystem.resetAttackerSprites(gameContext, oldAttackers);
+        controllerComponent.attackers.clear();
         return;
     }
 
-    const attackers = TargetSystem.getAttackers(gameContext, mouseEntity);
+    const updatedList = new Set();
+    const newAttackers = TargetSystem.getAttackers(gameContext, mouseEntity);
 
-    ControllerSystem.hightlightAttackers(gameContext, mouseEntity, attackers);
+    for(const attackerID of newAttackers) {
+        ControllerSystem.hightlightAttacker(gameContext, mouseEntity, attackerID);
+        updatedList.add(attackerID);
+    }
 
-    controllerComponent.attackers = attackers;
+    for(const attackerID of oldAttackers) {
+        if(!updatedList.has(attackerID)) {
+            ControllerSystem.resetAttacker(gameContext, attackerID);
+        }
+    }
+
+    controllerComponent.attackers.clear();
+    controllerComponent.attackers = updatedList;
 }
 
 ControllerSystem.updateSelectedEntity = function(gameContext, controller) {
@@ -116,14 +142,6 @@ ControllerSystem.updateSelectedEntity = function(gameContext, controller) {
 ControllerSystem.selectEntity = function(gameContext, controller, entity) {
     const { client, spriteManager, tileManager, mapLoader, entityManager } = gameContext;
     const { soundPlayer } = client;
-    const controllerComponent  = controller.getComponent(ControllerComponent);
-
-    if(controllerComponent.selectedEntity !== null) {
-        console.log(`ControllerSystem.selectEntity was called while an entity was already selected!`);
-
-        ControllerSystem.deselectEntity(gameContext, controller, entity);
-    }
-
     const activeMap = mapLoader.getActiveMap();
     const nodeList = PathfinderSystem.generateNodeList(gameContext, entity);
     const layerTypes = gameContext.getConfig("layerTypes");
@@ -155,9 +173,10 @@ ControllerSystem.selectEntity = function(gameContext, controller, entity) {
         }
     }
 
-    const entitySpriteID = entity.getComponent(SpriteComponent).spriteID;
+    const controllerComponent = controller.getComponent(ControllerComponent);
+    const spriteComponent = entity.getComponent(SpriteComponent);
 
-    spriteManager.createChildSprite(entitySpriteID, "cursor_move_1x1", "MOVE_CURSOR");
+    spriteManager.createChildSprite(spriteComponent.spriteID, "cursor_move_1x1", ControllerSystem.MOVE_CURSOR_ID);
     soundPlayer.playRandom(entity.config.sounds.select);
 
     controllerComponent.nodeList = nodeList;
@@ -166,13 +185,8 @@ ControllerSystem.selectEntity = function(gameContext, controller, entity) {
 
 ControllerSystem.deselectEntity = function(gameContext, controller, entity) {
     const { spriteManager, mapLoader } = gameContext;
-    const layerTypes = gameContext.getConfig("layerTypes");
     const controllerComponent  = controller.getComponent(ControllerComponent);
-
-    if(controllerComponent.selectedEntity === null) {
-        return;
-    }
-
+    const layerTypes = gameContext.getConfig("layerTypes");
     const activeMap = mapLoader.getActiveMap();
 
     for(const node of controllerComponent.nodeList) {
@@ -182,8 +196,10 @@ ControllerSystem.deselectEntity = function(gameContext, controller, entity) {
         ConquerSystem.convertTileGraphics(gameContext, positionX, positionY, 1);
     }
 
-    const entitySpriteID = entity.getComponent(SpriteComponent).spriteID;
-    spriteManager.destroyChildSprite(entitySpriteID, "MOVE_CURSOR");
+    const spriteComponent = entity.getComponent(SpriteComponent);
+
+    spriteManager.destroyChildSprite(spriteComponent.spriteID, ControllerSystem.MOVE_CURSOR_ID);
+
     controllerComponent.selectedEntity = null;
     controllerComponent.nodeList = [];
 }
@@ -193,6 +209,7 @@ ControllerSystem.isSelectable = function(entity, controller) {
     const isControlled = controller.hasEntity(entityID);
     const healthComponent = entity.getComponent(HealthComponent);
     const isSelectable = entity.hasComponent(MoveComponent) && healthComponent.health > 0;
+    const controllerComponent = controller.getComponent(ControllerComponent);
 
-    return isSelectable && isControlled;
+    return isSelectable && isControlled && controllerComponent.selectedEntity === null;
 }

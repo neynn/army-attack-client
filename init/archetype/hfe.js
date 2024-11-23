@@ -1,4 +1,4 @@
-import { DefaultArchetype } from "../defaultArchetype.js";
+import { DefaultArchetype } from "./default.js";
 
 export const HFEArchetype = function() {
     DefaultArchetype.call(this);

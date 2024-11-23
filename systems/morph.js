@@ -4,14 +4,14 @@ import { ENTITY_EVENTS } from "../enums.js";
 
 export const MorphSystem = function() {}
 
-MorphSystem.updateSprite = function(entity, spriteTypeID) {
-    if(!entity.config.sprites[spriteTypeID]) {
+MorphSystem.updateSprite = function(entity, spriteKey) {
+    const spriteID = entity.config.sprites[spriteKey];
+
+    if(!spriteID) {
         return false;
     }
 
-    const spriteType = entity.config.sprites[spriteTypeID];
-
-    entity.events.emit(ENTITY_EVENTS.SPRITE_UPDATE, spriteType);
+    entity.events.emit(ENTITY_EVENTS.SPRITE_UPDATE, spriteID);
 }
 
 MorphSystem.morphHorizontal = function(entity) {
@@ -42,22 +42,34 @@ MorphSystem.morphDirectional = function(entity, southTypeID, northTypeID) {
     }
 
     if(directionComponent.directionY === DirectionComponent.DIRECTION_NORTH) {
-        const northSpriteType = entity.config.sprites[northTypeID];
-
-        if(!northSpriteType) {
-            return false;
-        }
-
-        entity.events.emit(ENTITY_EVENTS.SPRITE_UPDATE, northSpriteType);
+        MorphSystem.updateSprite(entity, northTypeID);
     } else {
-        const southSpriteType = entity.config.sprites[southTypeID];
-
-        if(!southSpriteType) {
-            return false;
-        }
-
-        entity.events.emit(ENTITY_EVENTS.SPRITE_UPDATE, southSpriteType);
+        MorphSystem.updateSprite(entity, southTypeID);
     }
 
     return true;
+}
+
+MorphSystem.toAim = function(entity) {
+    MorphSystem.morphDirectional(entity, "aim", "aim_ne");
+}
+
+MorphSystem.toIdle = function(entity) {
+    MorphSystem.updateSprite(entity, "idle");
+}
+
+MorphSystem.toFire = function(entity) {
+    MorphSystem.morphDirectional(entity, "fire", "fire_ne");
+}
+
+MorphSystem.toMove = function(entity) {
+    MorphSystem.morphDirectional(entity, "move", "move_ne");
+}
+
+MorphSystem.toHit = function(entity) {
+    MorphSystem.updateSprite(entity, "hit");
+}
+
+MorphSystem.toDown = function(entity) {
+    MorphSystem.updateSprite(entity, "downed");
 }

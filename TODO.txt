@@ -17,7 +17,3 @@
 //TeamSystem does not check for control...
 //TODO: save a list of entities for the controllers. => armyContext.saveEntities();
 //Tackly dynamic text updated => part of effect manager now.
-
-//BUG: Animation does not progress when aiming at an entity.
-//REASON: 1. Attackers get reset 2. Attackers get set again.
-//FIX: Check if the target is still the same as last time.

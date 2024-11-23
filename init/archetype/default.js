@@ -1,13 +1,13 @@
-import { AttackComponent } from "../components/attack.js";
-import { HealthComponent } from "../components/health.js";
-import { TeamComponent } from "../components/team.js";
-import { ENTITY_EVENTS } from "../enums.js";
-import { SimpleText } from "../source/graphics/drawable/simpleText.js";
-import { TextStyle } from "../source/graphics/applyable/textStyle.js";
-import { componentSetup } from "./componentSetup.js";
-import { SpriteComponent } from "../components/sprite.js";
-import { SpriteManager } from "../source/graphics/spriteManager.js";
-import { Archetype } from "../source/entity/archetype.js";
+import { AttackComponent } from "../../components/attack.js";
+import { HealthComponent } from "../../components/health.js";
+import { TeamComponent } from "../../components/team.js";
+import { ENTITY_EVENTS } from "../../enums.js";
+import { SimpleText } from "../../source/graphics/drawable/simpleText.js";
+import { TextStyle } from "../../source/graphics/applyable/textStyle.js";
+import { componentSetup } from "../componentSetup.js";
+import { SpriteComponent } from "../../components/sprite.js";
+import { SpriteManager } from "../../source/graphics/spriteManager.js";
+import { Archetype } from "../../source/entity/archetype.js";
 
 const MODE_STAT_TYPE_ID = "story";
 
@@ -72,15 +72,13 @@ DefaultArchetype.prototype.initializeEntity = function(gameContext, entity, spri
     const positionComponent = componentSetup.setupPositionComponent(setup);
     const teamComponent = componentSetup.setupTeamComponent(setup);
     const spriteComponent = componentSetup.setupSpriteComponent(sprite);
-    const sizeComponent = componentSetup.setupSizeComponent(type);
     const healthComponent = componentSetup.setupHealthComponent(type, usedStats);
 
-    entity.initializeEvents();
+    entity.useEvents();
 
     entity.addComponent(positionComponent);
     entity.addComponent(spriteComponent);
     entity.addComponent(directionComponent);
-    entity.addComponent(sizeComponent);
     entity.addComponent(healthComponent);
     entity.addComponent(teamComponent);
 

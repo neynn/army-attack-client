@@ -1,5 +1,5 @@
 import { componentSetup } from "../componentSetup.js";
-import { DefaultArchetype } from "../defaultArchetype.js";
+import { DefaultArchetype } from "./default.js";
 
 export const ConstructionArchetype = function() {
     DefaultArchetype.call(this);

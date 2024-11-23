@@ -21,7 +21,7 @@ MoveAction.prototype.onStart = function(gameContext, request) {
 
     DirectionSystem.lookAtTile(entity, targetX, targetY);    
     MoveSystem.beginMove(gameContext, entity, path);
-    MorphSystem.morphDirectional(entity, "move", "move_ne");
+    MorphSystem.toMove(entity);
     PlaceSystem.removeEntity(gameContext, entity);
 }
 
@@ -31,7 +31,7 @@ MoveAction.prototype.onEnd = function(gameContext, request) {
     const entity = entityManager.getEntity(entityID);
 
     MoveSystem.endMove(gameContext, entity, targetX, targetY);
-    MorphSystem.updateSprite(entity, "idle");
+    MorphSystem.toIdle(entity);
     PlaceSystem.placeEntity(gameContext, entity);
 }
 

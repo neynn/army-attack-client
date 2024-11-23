@@ -18,7 +18,7 @@ ReviveSystem.downEntity = function(gameContext, entity) {
     const { client, systemManager } = gameContext;
     const { soundPlayer } = client;
 
-    MorphSystem.updateSprite(entity, "downed");
+    MorphSystem.toDown(entity);
     soundPlayer.playRandom(entity.config.sounds.death);
     systemManager.addEntity(SYSTEM_TYPES.DOWN, entity.id);
 }

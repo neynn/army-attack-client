@@ -4,8 +4,8 @@ export const Controller = function(id) {
     Entity.call(this, id, "CONTROLLER");
 
     this.entities = new Set();
-    this.initializeEvents();
-    this.initializeStates();
+    this.useEvents();
+    this.useStates();
 }
 
 Controller.prototype = Object.create(Entity.prototype);

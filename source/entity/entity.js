@@ -10,24 +10,20 @@ export const Entity = function(id = null, DEBUG_NAME = null) {
     this.events = null;
 }
 
-Entity.prototype.initializeStates = function() {
+Entity.prototype.useStates = function() {
     if(this.states) {
-        return false;
+        return;
     }
 
     this.states = new StateMachine(this);
-
-    return true;
 }
 
-Entity.prototype.initializeEvents = function() {
+Entity.prototype.useEvents = function() {
     if(this.events) {
-        return false;
+        return;
     }
 
     this.events = new EventEmitter();
-
-    return true;
 }
 
 Entity.prototype.update = function(gameContext) {}

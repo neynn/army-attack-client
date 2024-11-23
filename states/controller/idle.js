@@ -1,4 +1,5 @@
 import { createAttackRequest } from "../../actions/attackAction.js";
+import { ControllerComponent } from "../../components/controller.js";
 import { CONTROLLER_STATES } from "../../enums.js";
 import { State } from "../../source/state/state.js";
 import { ControllerSystem } from "../../systems/controller.js";
@@ -13,21 +14,19 @@ ControllerIdleState.prototype = Object.create(State.prototype);
 ControllerIdleState.prototype.constructor = ControllerIdleState;
 
 ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext) {
+    const { actionQueue } = gameContext;
     const controller = stateMachine.getContext();
-    const { entityManager, actionQueue } = gameContext;
     const mouseEntity = gameContext.getMouseEntity();
 
     if(!mouseEntity) {
         return;
     }
 
-    const entityID = mouseEntity.getID();
-    const entity = entityManager.getEntity(entityID);
-    const isEnemy = TeamSystem.isEntityEnemy(gameContext, entity, controller);
-    const isTargetable = TargetSystem.isTargetable(entity);
-    const isSelectable = ControllerSystem.isSelectable(entity, controller);
+    const isEnemy = TeamSystem.isEntityEnemy(gameContext, mouseEntity, controller);
+    const isTargetable = TargetSystem.isTargetable(mouseEntity);
 
     if(isEnemy && isTargetable) {     
+        const entityID = mouseEntity.getID();
         actionQueue.addRequest(createAttackRequest(entityID));
         return;
     }
@@ -36,8 +35,10 @@ ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext)
         return;
     }
 
+    const isSelectable = ControllerSystem.isSelectable(mouseEntity, controller);
+
     if(isSelectable) {
-        ControllerSystem.selectEntity(gameContext, controller, entity);
+        ControllerSystem.selectEntity(gameContext, controller, mouseEntity);
             
         stateMachine.setNextState(CONTROLLER_STATES.SELECTED);
     }
@@ -48,7 +49,8 @@ ControllerIdleState.prototype.update = function(stateMachine, gameContext) {
     const controller = stateMachine.getContext();
 
     if(actionQueue.isRunning()) {
-        ControllerSystem.resetAttackerOverlay(gameContext, controller);
+        const controllerComponent = controller.getComponent(ControllerComponent);
+        ControllerSystem.resetAttackerOverlays(gameContext, controllerComponent.attackers);
         return;
     }
 

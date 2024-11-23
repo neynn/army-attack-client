@@ -1,5 +1,5 @@
 import { componentSetup } from "../componentSetup.js";
-import { DefaultArchetype } from "../defaultArchetype.js";
+import { DefaultArchetype } from "./default.js";
 
 const MODE_STAT_TYPE_ID = "story";
 

@@ -45,7 +45,7 @@ FireSystem.startAttack = function(gameContext, attackers, target) {
         const attacker = entityManager.getEntity(attackerID);
         
         DirectionSystem.lookAt(attacker, target);
-        MorphSystem.morphDirectional(attacker, "fire", "fire_ne");
+        MorphSystem.toFire(attacker);
         soundPlayer.playRandom(attacker.config.sounds.fire);
         
         spriteManager
@@ -60,6 +60,6 @@ FireSystem.endAttack = function(gameContext, attackers) {
     for(const attackerID of attackers) {
         const attacker = entityManager.getEntity(attackerID);
         
-        MorphSystem.updateSprite(attacker, "idle");
+        MorphSystem.toIdle(attacker);
     }
 }

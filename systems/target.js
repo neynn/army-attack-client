@@ -1,6 +1,5 @@
 import { AttackComponent } from "../components/attack.js";
 import { PositionComponent } from "../components/position.js";
-import { SizeComponent } from "../components/size.js";
 import { isRectangleRectangleIntersect } from "../source/math/math.js";
 import { HealthSystem } from "./health.js";
 import { TeamSystem } from "./team.js";
@@ -23,11 +22,11 @@ TargetSystem.getUniqueEntitiesInRangeOfEntity = function(gameContext, entity, ra
     }
 
     const positionComponent = entity.getComponent(PositionComponent);
-    const sizeComponent = entity.getComponent(SizeComponent);
+
     const startX = positionComponent.tileX - range;
     const startY = positionComponent.tileY - range;
-    const endX = positionComponent.tileX + sizeComponent.sizeX + range;
-    const endY = positionComponent.tileY + sizeComponent.sizeY + range;
+    const endX = positionComponent.tileX + entity.config.dimX + range;
+    const endY = positionComponent.tileY + entity.config.dimY + range;
 
     for(let i = startY; i < endY; i++) {
         for(let j = startX; j < endX; j++) {
@@ -95,19 +94,17 @@ TargetSystem.canAttackerTarget = function(gameContext, attacker, target) {
     }
 
     const attackerPosition = attacker.getComponent(PositionComponent);
-    const attackerSize = attacker.getComponent(SizeComponent);
     const targetPosition = target.getComponent(PositionComponent);
-    const targetSize = target.getComponent(SizeComponent);
 
     const collision = isRectangleRectangleIntersect(
         attackerPosition.tileX - attackComponent.range,
         attackerPosition.tileY - attackComponent.range,
-        attackerSize.sizeX - 1 + attackComponent.range * 2,
-        attackerSize.sizeY - 1 + attackComponent.range * 2,
+        attacker.config.dimX - 1 + attackComponent.range * 2,
+        attacker.config.dimY - 1 + attackComponent.range * 2,
         targetPosition.tileX,
         targetPosition.tileY,
-        targetSize.sizeX - 1,
-        targetSize.sizeY - 1
+        target.config.dimX - 1,
+        target.config.dimY - 1
     );
 
     return collision;
