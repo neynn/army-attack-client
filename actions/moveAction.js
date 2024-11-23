@@ -61,9 +61,9 @@ MoveAction.prototype.isValid = function(gameContext, request, messengerID) {
     }
 
     const nodeList = PathfinderSystem.generateNodeList(gameContext, entity);
-    const path = PathfinderSystem.getPath(nodeList, targetX, targetY);
+    const path = PathfinderSystem.generateMovePath(nodeList, targetX, targetY);
 
-    if(!path) {
+    if(path.length === 0) {
         return false;
     }
 

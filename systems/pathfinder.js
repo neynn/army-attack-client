@@ -85,10 +85,16 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
     return nodeList;
 }
 
-PathfinderSystem.generateMovePath = function(nodeList, index) {
+PathfinderSystem.generateMovePath = function(nodeList, targetX, targetY) {
+    const index = PathfinderSystem.getTargetIndex(nodeList, targetX, targetY);
+    const path = [];
+
+    if(index === -1) {
+        return path;
+    }
+
     const targetNode = nodeList[index];
     const flatTree = FloodFill.flatten(targetNode);
-    const path = [];
 
     // i > 0 to exclude the origin point!
     for(let i = flatTree.length - 1; i > 0; i--) {
@@ -109,24 +115,12 @@ PathfinderSystem.getTargetIndex = function(nodeList, targetX, targetY) {
 
         if(targetX === positionX && targetY === positionY) {
             if(!isValid) {
-                return null;
+                return -1;
             }
 
             return i;
         }
     }
 
-    return null;
+    return -1;
 }   
-
-PathfinderSystem.getPath = function(nodeList, targetX, targetY) {
-    const index = PathfinderSystem.getTargetIndex(nodeList, targetX, targetY);
-
-    if(index !== null) {
-        const path = PathfinderSystem.generateMovePath(nodeList, index);
-
-        return path;
-    }
-
-    return null;
-}

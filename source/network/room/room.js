@@ -1,7 +1,5 @@
 export const Room = function(id) {
     this.id = id;
-    this.config = {};
-    this.settings = {};
     this.members = new Map();
     this.leaderID = null;
     this.maxClients = 0;

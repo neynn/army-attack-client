@@ -25,7 +25,7 @@ HealthSystem.toMax = function(entity) {
     
     healthComponent.health = healthComponent.maxHealth;
 
-    entity.events.emit(ENTITY_EVENTS.STAT_UPDATE);
+    entity.events.emit(ENTITY_EVENTS.HEALTH_UPDATE, healthComponent.health, healthComponent.maxHealth);
 }
 
 HealthSystem.setHealth = function(entity, value) {
@@ -37,7 +37,7 @@ HealthSystem.setHealth = function(entity, value) {
         healthComponent.health = value;
     }
 
-    entity.events.emit(ENTITY_EVENTS.STAT_UPDATE);
+    entity.events.emit(ENTITY_EVENTS.HEALTH_UPDATE, healthComponent.health, healthComponent.maxHealth);
 }
 
 HealthSystem.reduceHealth = function(entity, value) {
@@ -50,5 +50,5 @@ HealthSystem.reduceHealth = function(entity, value) {
         healthComponent.health = remainingHealth;
     }
 
-    entity.events.emit(ENTITY_EVENTS.STAT_UPDATE);
+    entity.events.emit(ENTITY_EVENTS.HEALTH_UPDATE, healthComponent.health, healthComponent.maxHealth);
 }

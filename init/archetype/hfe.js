@@ -7,6 +7,10 @@ export const HFEArchetype = function() {
 HFEArchetype.prototype = Object.create(DefaultArchetype.prototype);
 HFEArchetype.prototype.constructor = HFEArchetype;
 
-HFEArchetype.prototype.onConstruct = function(gameContext, entity, sprite, type) {
+HFEArchetype.prototype.onInitialize = function(gameContext, entity, sprite, type) {
+
+}
+
+HFEArchetype.prototype.onFinalize = function(gameContext, entity, sprite, type) {
 
 }

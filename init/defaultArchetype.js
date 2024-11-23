@@ -5,7 +5,6 @@ import { ENTITY_EVENTS } from "../enums.js";
 import { SimpleText } from "../source/graphics/drawable/simpleText.js";
 import { TextStyle } from "../source/graphics/applyable/textStyle.js";
 import { componentSetup } from "./componentSetup.js";
-import { PositionComponent } from "../components/position.js";
 import { SpriteComponent } from "../components/sprite.js";
 import { SpriteManager } from "../source/graphics/spriteManager.js";
 import { Archetype } from "../source/entity/archetype.js";
@@ -18,8 +17,6 @@ export const DefaultArchetype = function() {
 
 DefaultArchetype.prototype = Object.create(Archetype.prototype);
 DefaultArchetype.prototype.constructor = DefaultArchetype;
-
-DefaultArchetype.prototype.onConstruct = function(gameContext, entity, sprite, type) {}
 
 DefaultArchetype.prototype.createStatCard = function(gameContext, entity, sprite) {
     const { spriteManager } = gameContext;
@@ -42,10 +39,9 @@ DefaultArchetype.prototype.createStatCard = function(gameContext, entity, sprite
     statCard.setPosition(-48, -48);
     statCard.addChild(healthText, "HEALTH_TEXT");
 
-    entity.events.subscribe(ENTITY_EVENTS.STAT_UPDATE, "BUILDER", () => {
-        const healthComponent = entity.getComponent(HealthComponent);
-
-        healthText.setText(`${healthComponent.health}/${healthComponent.maxHealth}`);
+    entity.events.listen(ENTITY_EVENTS.HEALTH_UPDATE);
+    entity.events.subscribe(ENTITY_EVENTS.HEALTH_UPDATE, "ARCHETYPE", (health, maxHealth) => {
+        healthText.setText(`${health}/${maxHealth}`);
     });
 
     if(entity.hasComponent(AttackComponent)) {
@@ -60,10 +56,9 @@ DefaultArchetype.prototype.createStatCard = function(gameContext, entity, sprite
 
         statCard.addChild(damageText, "DAMAGE_TEXT");
 
-        entity.events.subscribe(ENTITY_EVENTS.STAT_UPDATE, "BUILDER", () => {
-            const attackComponent = entity.getComponent(AttackComponent);
-    
-            damageText.setText(`${attackComponent.damage}`);
+        entity.events.listen(ENTITY_EVENTS.DAMAGE_UPDATE);
+        entity.events.subscribe(ENTITY_EVENTS.DAMAGE_UPDATE, "ARCHETYPE", (damage) => {
+            damageText.setText(`${damage}`);
         });
     }
 }
@@ -90,23 +85,16 @@ DefaultArchetype.prototype.initializeEntity = function(gameContext, entity, spri
     entity.addComponent(teamComponent);
 
     entity.events.listen(ENTITY_EVENTS.POSITION_UPDATE);
-    entity.events.listen(ENTITY_EVENTS.DIRECTION_UPDATE);
-    entity.events.listen(ENTITY_EVENTS.SPRITE_UPDATE);
-    entity.events.listen(ENTITY_EVENTS.STAT_UPDATE);
-
-    entity.events.subscribe(ENTITY_EVENTS.POSITION_UPDATE, "BUILDER", (positionX, positionY) => {
+    entity.events.subscribe(ENTITY_EVENTS.POSITION_UPDATE, "ARCHETYPE", (positionX, positionY) => {
         const spriteComponent = entity.getComponent(SpriteComponent);
         const { spriteID } = spriteComponent;
         const sprite = spriteManager.getSprite(spriteID);
 
         sprite.setPosition(positionX, positionY);
     });
-
-    entity.events.subscribe(ENTITY_EVENTS.DIRECTION_UPDATE, "BUILDER", () => {
-
-    });
-
-    entity.events.subscribe(ENTITY_EVENTS.SPRITE_UPDATE, "BUILDER", (spriteType, animationType) => {
+    
+    entity.events.listen(ENTITY_EVENTS.SPRITE_UPDATE);
+    entity.events.subscribe(ENTITY_EVENTS.SPRITE_UPDATE, "ARCHETYPE", (spriteType, animationType) => {
         const spriteComponent = entity.getComponent(SpriteComponent);
         const { spriteID, isFlipped } = spriteComponent;
         const sprite = spriteManager.getSprite(spriteID);
@@ -121,22 +109,25 @@ DefaultArchetype.prototype.initializeEntity = function(gameContext, entity, spri
     sprite.setPosition(positionComponent.positionX, positionComponent.positionY);
 }
 
-DefaultArchetype.prototype.finalizeEntity = function(gameContext, entity, type, setup) {
+DefaultArchetype.prototype.finalizeEntity = function(gameContext, entity, sprite, type, setup) {
     const { entityManager } = gameContext;
     const { stats } = type;
     const usedStats = stats[MODE_STAT_TYPE_ID];
 
     entityManager.loadTraits(entity, usedStats.traits);
     entityManager.loadComponents(entity, setup.components);
-
-    entity.events.emit(ENTITY_EVENTS.STAT_UPDATE);
 }
+
+DefaultArchetype.prototype.onInitialize = function(gameContext, entity, sprite, type) {}
+
+DefaultArchetype.prototype.onFinalize = function(gameContext, entity, sprite, type) {}
 
 DefaultArchetype.prototype.onBuild = function(gameContext, entity, type, setup) {
     const { spriteManager } = gameContext;
     const sprite = spriteManager.createSprite(type.sprites.idle, SpriteManager.LAYER_MIDDLE);
 
     this.initializeEntity(gameContext, entity, sprite, type, setup);
-    this.onConstruct(gameContext, entity, sprite, type);
-    this.finalizeEntity(gameContext, entity, type, setup);
+    this.onInitialize(gameContext, entity, sprite, type);
+    this.finalizeEntity(gameContext, entity, sprite, type, setup);
+    this.onFinalize(gameContext, entity, sprite, type);
 }

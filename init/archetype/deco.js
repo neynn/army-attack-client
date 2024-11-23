@@ -7,6 +7,10 @@ export const DecoArchetype = function() {
 DecoArchetype.prototype = Object.create(DefaultArchetype.prototype);
 DecoArchetype.prototype.constructor = DecoArchetype;
 
-DecoArchetype.prototype.onConstruct = function(gameContext, entity, sprite, type) {
+DecoArchetype.prototype.onInitialize = function(gameContext, entity, sprite, type) {
+
+}
+
+DecoArchetype.prototype.onFinalize = function(gameContext, entity, sprite, type) {
 
 }

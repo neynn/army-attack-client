@@ -6,7 +6,6 @@ import { Logger } from "../../logger.js";
 
 export const ServerContext = function(io) {
     this.io = io;
-    this.config = {};
     this.events = new EventEmitter();
     this.clientManager = new ClientManager();
     this.roomManager = new RoomManager();

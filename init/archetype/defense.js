@@ -10,9 +10,12 @@ export const DefenseArchetype = function() {
 DefenseArchetype.prototype = Object.create(DefaultArchetype.prototype);
 DefenseArchetype.prototype.constructor = DefenseArchetype;
 
-DefenseArchetype.prototype.onConstruct = function(gameContext, entity, sprite, type) {
+DefenseArchetype.prototype.onInitialize = function(gameContext, entity, sprite, type) {
     const attackComponent = componentSetup.setupAttackComponent(type, type.stats[MODE_STAT_TYPE_ID]);
-    entity.addComponent(attackComponent);
 
+    entity.addComponent(attackComponent);
+}
+
+DefenseArchetype.prototype.onFinalize = function(gameContext, entity, sprite, type) {
     this.createStatCard(gameContext, entity, sprite);
 }
