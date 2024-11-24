@@ -1,24 +1,103 @@
 {
-    "GOD": { "id": "GOD", "components": { "Health": { "health": 99, "maxHealth": 99 }, "Attack": { "damage": 99 } }, "description": "If an entity is really powerful." },
-
-    "Infantry": { "id": "Infantry", "components": { "SubType": { "isInfantry": true } }, "description": "If a unit is an infantry." },
-    "Artillery": { "id": "Artillery", "components": { "SubType": { "isArtillery": true } }, "description": "If a unit is an artillery." },
-    "Armor": { "id": "Armor", "components": { "SubType": { "isArmor": true } }, "description": "If a unit is armored." },
-
-    "EliteArmor": { "id": "EliteArmor", "components": { "Armor": { "armor": 1 } }, "description": "Used by the elite tank to reduce damage by 1." },
-    "WeakArmor": { "id": "WeakArmor", "components": { "Armor": { "armor": -1 } }, "description": "Can be used to increase incoming damage by 1." },
-
-    "Coward": { "id": "Coward", "components": { "Move": { "isCoward": true } }, "description": "If a unit can walk on enemy tiles." },
-    "Stealth": { "id": "Stealth", "components": { "Move": { "isStealth": true } }, "description": "If a unit can move on enemy tiles." },
-    "Cloak": { "id": "Cloak", "components": { "Move": { "isStealth": true, "isCloaked": true } }, "description": "If a unit can walk through enemy units." },
-    "Avian": { "id": "Avian", "components": { "Move": { "isAvian": true } }, "description": "If a unit is flying. When flying, other units can go below it."},
- 
-    "Elite": { "id": "Elite", "components": { "Revive": { "isReviveable": true, "isElite": true } }, "description": "If an entity has the elite status." },
-    "Reviveable": { "id": "Reviveable", "components": { "Revive": { "isReviveable": true } }, "description": "If an entity can be revived." },
-    
-    "Counter": { "id": "Counter", "component": { "Attack": { "counterAttack": true, "counterMove": true } }, "description": "If an entity automatically counters." },
-
-    "Bulldoze": { "id": "Bulldoze", "description": "Used by enemy bulldozers to ignore the revive of the specified entityTypes.", "component": "IgnoreReviveComponent", "data": { "assign": { "ignoreRevive": ["Defense", "Building", "Unit"] } } },
+    "GOD": {
+        "id": "GOD",
+        "description": "If an entity is really powerful." ,
+        "components": { 
+            "Health": { "health": 99, "maxHealth": 99 },
+            "Attack": { "damage": 99, "range": 99 } 
+        }
+    },
+    "Infantry": {
+        "id": "Infantry",
+        "description": "If a unit is an infantry.",
+        "components": {
+            "UnitType": { "isInfantry": true } 
+        }
+    },
+    "Artillery": {
+        "id": "Artillery",
+        "description": "If a unit is an artillery.",
+        "components": { 
+            "UnitType": { "isArtillery": true } 
+        }
+    },
+    "Armor": {
+        "id": "Armor",
+        "description": "If a unit is armored.",
+        "components": {
+            "UnitType": { "isArmor": true } 
+        }
+    },
+    "EliteArmor": {
+        "id": "EliteArmor",
+        "description": "Used by the elite tank to reduce damage by 1.",
+        "components": {
+            "Armor": { "armor": 1 } 
+        }
+    },
+    "WeakArmor": {
+        "id": "WeakArmor",
+        "description": "Can be used to increase incoming damage by 1.",
+        "components": { 
+            "Armor": { "armor": -1 }
+        }
+    },
+    "Coward": {
+        "id": "Coward",
+        "description": "If a unit can walk on enemy tiles.",
+        "components": {
+            "Move": { "isCoward": true }
+        }
+    },
+    "Stealth": {
+        "id": "Stealth",
+        "description": "If a unit can move on enemy tiles.",
+        "components": {
+            "Move": { "isStealth": true }
+        }
+    },
+    "Cloak": {
+        "id": "Cloak",
+        "description": "If a unit can walk through enemy units.",
+        "components": {
+            "Move": { "isStealth": true, "isCloaked": true }
+        }
+    },
+    "Avian": {
+        "id": "Avian",
+        "description": "If a unit is flying. When flying, other units can go below it.",
+        "components": {
+            "Avian": { "inAir": true }
+        }
+    },
+    "Elite": {
+        "id": "Elite",
+        "description": "If an entity has the elite status.",
+        "components": {
+            "Revive": { "isReviveable": true, "isElite": true }
+        }
+    },
+    "Reviveable": {
+        "id": "Reviveable",
+        "description": "If an entity can be revived.",
+        "components": {
+            "Revive": { "isReviveable": true }
+        }
+    },
+    "Counter": {
+        "id": "Counter",
+        "description": "If an entity automatically counters.",
+        "components": {
+            "Attack": { "counterAttack": true, "counterMove": true }
+        }
+    },
+    "Bulldoze": {
+        "id": "Bulldoze",
+        "description": "Used by enemy bulldozers to ignore the revive of the specified entityTypes.",
+        "components": {
+            "Bulldoze": { "destroyUnit": true }
+        }
+    },
     "IgnoreTargeting": { "id": "IgnoreTargeting", "component": "IgnoreTargetingComponent", "data": null, "description": "Not implemented. Allows a unit to not be targeted." },
     "AoE": { "id": "AoE", "component": "AoEComponent", "data": { "assign": { "attackAllies": true } }, "description": "Not implemented. Allows the entity do do an area of effect attack." }
 }

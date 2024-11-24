@@ -1,3 +1,4 @@
+import { AvianComponent } from "../components/avian.js";
 import { MoveComponent } from "../components/move.js";
 import { PositionComponent } from "../components/position.js";
 import { TeamComponent } from "../components/team.js";
@@ -38,8 +39,8 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
     const teamLayerID = layerTypes.team.layerID;
     const typeLayerID = layerTypes.type.layerID;
     
-    const entityTeamAllies = teamTypes[teamComponent.teamID].allies;
-    const entityTeamEnemies = teamTypes[teamComponent.teamID].enemies;
+    const entityAllies = teamTypes[teamComponent.teamID].allies;
+    const entityEnemies = teamTypes[teamComponent.teamID].enemies;
 
     const nodeList = FloodFill.search(positionComponent.tileX, positionComponent.tileY, moveComponent.range, activeMap.width, activeMap.height, (child, parent) => {
         const childTypeID = activeMap.getTile(typeLayerID, child.positionX, child.positionY);
@@ -51,30 +52,34 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
         
         const parentTeamID = activeMap.getTile(teamLayerID, parent.positionX, parent.positionY);
 
-        if(!entityTeamAllies[parentTeamID] && !moveComponent.isStealth || moveComponent.isCoward) {
+        if(!entityAllies[parentTeamID] && !moveComponent.isStealth || moveComponent.isCoward) {
             return false;
         }
 
         const entityID = activeMap.getFirstEntity(child.positionX, child.positionY);
 
-        if(entityID) {
-            const tileEntity = entityManager.getEntity(entityID);
-            const tileEntityTeamComponent = tileEntity.getComponent(TeamComponent);
-            const isEnemy = entityTeamEnemies[tileEntityTeamComponent.teamID];
-            const isAlly = entityTeamAllies[tileEntityTeamComponent.teamID];
+        if(!entityID) {
+            return true;
+        }
 
-            if(isEnemy) {
-                if(!moveComponent.isCloaked) {
+        const tileEntity = entityManager.getEntity(entityID);
+        const tileEntityTeamComponent = tileEntity.getComponent(TeamComponent);
+        const isEnemy = entityEnemies[tileEntityTeamComponent.teamID];
+        const isAlly = entityAllies[tileEntityTeamComponent.teamID];
+
+        if(isEnemy) {
+            if(!moveComponent.isCloaked) {
+                return false;
+            }
+        } else if(isAlly) {
+            const avianComponent = entity.getComponent(AvianComponent);
+
+            if(!avianComponent || !avianComponent.inAir) {
+                const tileEntityAvianComponent = tileEntity.getComponent(AvianComponent);
+                const isPassingAllowed = (tileEntityAvianComponent && tileEntityAvianComponent.inAir) || settings.allowAllyPassing;
+
+                if(!isPassingAllowed) {
                     return false;
-                }
-            } else if(isAlly) {
-                if(!moveComponent.isAvian) {
-                    const tileEntityMoveComponent = tileEntity.getComponent(MoveComponent);
-                    const isPassingAllowed = tileEntityMoveComponent && tileEntityMoveComponent.isAvian || settings.allowAllyPassing;
-
-                    if(!isPassingAllowed) {
-                        return false;
-                    }
                 }
             }
         }

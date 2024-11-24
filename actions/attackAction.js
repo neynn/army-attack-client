@@ -1,7 +1,7 @@
 import { ACTION_TYPES, ENTITY_STATES } from "../enums.js";
 import { Action } from "../source/action/action.js";
 import { AnimationSystem } from "../systems/animation.js";
-import { FireSystem } from "../systems/fire.js";
+import { AttackSystem } from "../systems/attack.js";
 import { HealthSystem } from "../systems/health.js";
 import { MorphSystem } from "../systems/morph.js";
 import { ReviveSystem } from "../systems/revive.js";
@@ -39,7 +39,7 @@ AttackAction.prototype.onEnd = function(gameContext, request) {
     const { entityID, attackers, damage, state } = request;
     const target = entityManager.getEntity(entityID);
 
-    FireSystem.stopAttack(gameContext, attackers);
+    AttackSystem.stopAttack(gameContext, attackers);
 
     if(state === ENTITY_STATES.DEAD) {
         AnimationSystem.playDeath(gameContext, target);
@@ -78,14 +78,14 @@ AttackAction.prototype.isValid = function(gameContext, request, messengerID) {
         return false;
     }
 
-    const damage = FireSystem.getDamage(gameContext, targetEntity, attackers);
+    const damage = AttackSystem.getDamage(gameContext, targetEntity, attackers);
     const health = HealthSystem.getRemainingHealth(targetEntity, damage);
 
     request.attackers = attackers;
     request.damage = damage;
 
     if(health === 0) {
-        const isFatal = FireSystem.getFatalHit(gameContext, targetEntity, attackers);
+        const isFatal = AttackSystem.getFatalHit(gameContext, targetEntity, attackers);
         const isReviveable = ReviveSystem.isReviveable(targetEntity);
 
         if(isReviveable && !isFatal) {

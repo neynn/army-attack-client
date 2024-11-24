@@ -34,42 +34,35 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
     camera.centerOnMap();
     camera.bindViewport();
 
-    const blueGuardtower = gameContext.createEntity({ 
+    gameContext.createEntity({ 
         "type": "blue_guardtower",
         "tileX": 0,
         "tileY": 3,
         "team": 1
     }, "neyn");
 
-    const redBattletank = gameContext.createEntity({ 
-        "type": "red_battletank",
-        "tileX": 4,
-        "tileY": 1,
-        "team": 0
-    }, null);
-
-    const blue_elite_battery = gameContext.createEntity({ 
+    gameContext.createEntity({ 
         "type": "blue_elite_battery",
         "tileX": 4,
         "tileY": 3,
         "team": 0
     }, null);
 
-    const blueCommando = gameContext.createEntity({ 
+    gameContext.createEntity({ 
         "type": "blue_commando",
         "tileX": 1,
         "tileY": 3,
         "team": 1
     }, "neyn");
 
-    const redWarfly = gameContext.createEntity({ 
+    gameContext.createEntity({ 
         "type": "red_warfly",
         "tileX": 2,
         "tileY": 3,
         "team": 1
     }, "neyn");
 
-    const blueEliteInfantry = gameContext.createEntity({ 
+    gameContext.createEntity({ 
         "type": "blue_elite_infantry",
         "tileX": 6,
         "tileY": 5,
@@ -80,6 +73,20 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
             }
         }
     }, "neyn");
+
+    gameContext.createEntity({ 
+        "type": "red_bulldozer",
+        "tileX": 3,
+        "tileY": 1,
+        "team": 1
+    }, "neyn");
+
+    const redBattletank = gameContext.createEntity({ 
+        "type": "red_battletank",
+        "tileX": 4,
+        "tileY": 1,
+        "team": 0
+    }, null);
 
     const battleTank = gameContext.createEntity({ 
         "type": "blue_elite_battletank",

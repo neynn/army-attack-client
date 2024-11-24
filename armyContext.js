@@ -7,7 +7,7 @@ import { HealthComponent } from "./components/health.js";
 import { MoveComponent } from "./components/move.js";
 import { PositionComponent } from "./components/position.js";
 import { ReviveComponent } from "./components/revive.js";
-import { SubTypeComponent } from "./components/subType.js";
+import { UnitTypeComponent } from "./components/unitType.js";
 import { TeamComponent } from "./components/team.js";
 import { ACTION_TYPES, CAMERAS, CONTEXT_STATES, CONTROLLER_TYPES, ENTITY_ARCHETYPES, GAME_EVENTS, SYSTEM_TYPES } from "./enums.js";
 import { ActionQueue } from "./source/action/actionQueue.js";
@@ -36,6 +36,8 @@ import { ConstructionArchetype } from "./init/archetype/construction.js";
 import { PlayerController } from "./init/controller/player.js";
 import { UnitArchetype } from "./init/archetype/unit.js";
 import { EditorController } from "./init/controller/editor.js";
+import { AvianComponent } from "./components/avian.js";
+import { BulldozeComponent } from "./components/bulldoze.js";
 
 export const ArmyContext = function() {
     GameContext.call(this, 60);
@@ -65,9 +67,11 @@ ArmyContext.prototype.loadResources = function(resources) {
             "Attack": AttackComponent,
             "Construction": ConstructionComponent,
             "Move": MoveComponent,
-            "SubType": SubTypeComponent,
+            "UnitType": UnitTypeComponent,
             "Revive": ReviveComponent,
-            "Armor": ArmorComponent
+            "Armor": ArmorComponent,
+            "Avian": AvianComponent,
+            "Bulldoze": BulldozeComponent
         }
     );
 
