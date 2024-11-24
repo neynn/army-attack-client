@@ -1,6 +1,8 @@
 import { ArmorComponent } from "../components/armor.js";
 import { AttackComponent } from "../components/attack.js";
 import { BulldozeComponent } from "../components/bulldoze.js";
+import { UnitBusterComponent } from "../components/unitBuster.js";
+import { UnitTypeComponent } from "../components/unitType.js";
 import { ENTITY_ARCHETYPES } from "../enums.js";
 import { MorphSystem } from "./morph.js";
 
@@ -13,15 +15,37 @@ AttackSystem.getDamage = function(gameContext, target, attackerIDs) {
     let armor = 0;
 
     const armorComponent = target.getComponent(ArmorComponent);
+    const unitTypeComponent = target.getComponent(UnitTypeComponent);
 
     if(armorComponent) {
         armor = armorComponent.armor;
     }
 
     for(const attackerID of attackerIDs) {
+        let damage = 0;
+
         const attacker = entityManager.getEntity(attackerID);
         const attackComponent = attacker.getComponent(AttackComponent);
-        const damage = attackComponent.damage - armor;
+
+        if(unitTypeComponent) {
+            const unitBusterComponent = attacker.getComponent(UnitBusterComponent);
+
+            if(unitBusterComponent) {
+                if(unitTypeComponent.isInfantry) {
+                    damage += unitBusterComponent.infantry;
+                }
+
+                if(unitTypeComponent.isArmor) {
+                    damage += unitBusterComponent.armor;
+                }
+
+                if(unitTypeComponent.isArtillery) {
+                    damage += unitBusterComponent.artillery;
+                }
+            }
+        }
+
+        damage += attackComponent.damage - armor;
 
         if(damage > 0) {
             totalDamage += damage;
@@ -31,7 +55,7 @@ AttackSystem.getDamage = function(gameContext, target, attackerIDs) {
     return totalDamage;
 }
 
-AttackSystem.getFatalHit = function(gameContext, target, attackerIDs) {
+AttackSystem.getBulldozed = function(gameContext, target, attackerIDs) {
     const { entityManager } = gameContext;
     const killableArchetypes = {
         [ENTITY_ARCHETYPES.UNIT]: "destroyUnit",

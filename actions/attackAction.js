@@ -85,10 +85,10 @@ AttackAction.prototype.isValid = function(gameContext, request, messengerID) {
     request.damage = damage;
 
     if(health === 0) {
-        const isFatal = AttackSystem.getFatalHit(gameContext, targetEntity, attackers);
+        const isBulldozed = AttackSystem.getBulldozed(gameContext, targetEntity, attackers);
         const isReviveable = ReviveSystem.isReviveable(targetEntity);
 
-        if(isReviveable && !isFatal) {
+        if(isReviveable && !isBulldozed) {
             request.state = ENTITY_STATES.DOWN;
         } else {
             request.state = ENTITY_STATES.DEAD;

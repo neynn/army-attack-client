@@ -98,6 +98,13 @@
             "Bulldoze": { "destroyUnit": true }
         }
     },
+    "TankBuster": {
+        "id": "TankBuster",
+        "description": "Deals 1 extra damage to units with the -Armor- trait.",
+        "components": {
+            "UnitBuster": { "armor": 1 }
+        }
+    },
     "IgnoreTargeting": { "id": "IgnoreTargeting", "component": "IgnoreTargetingComponent", "data": null, "description": "Not implemented. Allows a unit to not be targeted." },
     "AoE": { "id": "AoE", "component": "AoEComponent", "data": { "assign": { "attackAllies": true } }, "description": "Not implemented. Allows the entity do do an area of effect attack." }
 }

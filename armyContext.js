@@ -9,7 +9,7 @@ import { PositionComponent } from "./components/position.js";
 import { ReviveComponent } from "./components/revive.js";
 import { UnitTypeComponent } from "./components/unitType.js";
 import { TeamComponent } from "./components/team.js";
-import { ACTION_TYPES, CAMERAS, CONTEXT_STATES, CONTROLLER_TYPES, ENTITY_ARCHETYPES, GAME_EVENTS, SYSTEM_TYPES } from "./enums.js";
+import { ACTION_TYPES, CAMERAS, CONTEXT_STATES, CONTROLLER_TYPES, ENTITY_ARCHETYPES, SYSTEM_TYPES } from "./enums.js";
 import { ActionQueue } from "./source/action/actionQueue.js";
 import { GameContext } from "./source/gameContext.js";
 import { MainMenuState } from "./states/context/mainMenu.js";
@@ -38,6 +38,7 @@ import { UnitArchetype } from "./init/archetype/unit.js";
 import { EditorController } from "./init/controller/editor.js";
 import { AvianComponent } from "./components/avian.js";
 import { BulldozeComponent } from "./components/bulldoze.js";
+import { UnitBusterComponent } from "./components/unitBuster.js";
 
 export const ArmyContext = function() {
     GameContext.call(this, 60);
@@ -71,7 +72,8 @@ ArmyContext.prototype.loadResources = function(resources) {
             "Revive": ReviveComponent,
             "Armor": ArmorComponent,
             "Avian": AvianComponent,
-            "Bulldoze": BulldozeComponent
+            "Bulldoze": BulldozeComponent,
+            "UnitBuster": UnitBusterComponent
         }
     );
 

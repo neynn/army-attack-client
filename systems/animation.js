@@ -1,5 +1,6 @@
 import { PositionComponent } from "../components/position.js";
 import { SpriteComponent } from "../components/sprite.js";
+import { UnitTypeComponent } from "../components/unitType.js";
 import { SpriteManager } from "../source/graphics/spriteManager.js";
 import { DirectionSystem } from "./direction.js";
 import { MorphSystem } from "./morph.js";
@@ -25,6 +26,7 @@ AnimationSystem.playFire = function(gameContext, entity, attackersIDs) {
 
     for(const attackerID of attackersIDs) {
         const attacker = entityManager.getEntity(attackerID);
+        const unitTypeComponent = attacker.getComponent(UnitTypeComponent);
         const weaponSprite = spriteManager.createSprite(attacker.config.sprites.weapon);
         const weaponSpriteID = weaponSprite.getID();
 
@@ -33,6 +35,15 @@ AnimationSystem.playFire = function(gameContext, entity, attackersIDs) {
         soundPlayer.playRandom(attacker.config.sounds.fire);
         entitySprite.addChild(weaponSprite, weaponSpriteID);
         weaponSprite.expire();
+
+        if(unitTypeComponent && unitTypeComponent.isArtillery) {
+            const artillerySprite = spriteManager.createSprite(attacker.config.sprites.weapon);
+            const artillerySpriteID = artillerySprite.getID();
+
+            entitySprite.addChild(artillerySprite, artillerySpriteID);
+            artillerySprite.flip();
+            artillerySprite.expire();
+        }
     }
 }
 

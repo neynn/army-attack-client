@@ -56,7 +56,7 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
     }, "neyn");
 
     gameContext.createEntity({ 
-        "type": "red_warfly",
+        "type": "red_artillery",
         "tileX": 2,
         "tileY": 3,
         "team": 1
@@ -109,7 +109,7 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
 
     actionQueue.addRequest(createMoveRequest(battleTank.id, 7, 1));
     actionQueue.addRequest(createMoveRequest(battleTank.id, 3, 0));
-    actionQueue.addRequest(createAttackRequest(redBattletank.id));
+    //actionQueue.addRequest(createAttackRequest(redBattletank.id));
 }
 
 StoryModePlayState.prototype.exit = function(stateMachine) {

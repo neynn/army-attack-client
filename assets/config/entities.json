@@ -179,7 +179,7 @@
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
         "stats": {
-            "story": { "health": 10, "damage": 3, "attackRange": 1, "moveRange": 5, "traits": ["Infantry"] }, 
+            "story": { "health": 10, "damage": 3, "attackRange": 1, "moveRange": 5, "traits": ["Infantry", "TankBuster"] }, 
             "versus": { "health": 10, "damage": 3, "attackRange": 1, "moveRange": 5, "traits": ["Infantry"] }
         },
         "sprites": {
