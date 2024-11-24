@@ -4,7 +4,6 @@ import { BulldozeComponent } from "../components/bulldoze.js";
 import { UnitBusterComponent } from "../components/unitBuster.js";
 import { UnitTypeComponent } from "../components/unitType.js";
 import { ENTITY_ARCHETYPES } from "../enums.js";
-import { MorphSystem } from "./morph.js";
 
 export const AttackSystem = function() {}
 
@@ -77,14 +76,4 @@ AttackSystem.getBulldozed = function(gameContext, target, attackerIDs) {
     }
 
     return false;
-}
-
-AttackSystem.stopAttack = function(gameContext, attackers) {
-    const { entityManager } = gameContext;
-    
-    for(const attackerID of attackers) {
-        const attacker = entityManager.getEntity(attackerID);
-        
-        MorphSystem.toIdle(attacker);
-    }
 }

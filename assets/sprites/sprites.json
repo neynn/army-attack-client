@@ -10408,10 +10408,10 @@
             "1": {"x":0,"y":0,"w":114,"h":97,"offset":{"x":0,"y":0}}
         }
     },
-    "blue_motorpool_costruction": {
-        "id": "blue_motorpool_costruction",
+    "blue_motorpool_construction": {
+        "id": "blue_motorpool_construction",
         "directory": "assets/sprites/buildings/blue_building",
-        "source": "blue_motorpool_costruction.png",
+        "source": "blue_motorpool_construction.png",
         "bounds": {"x":-47,"y":-50,"w":286,"h":289},
         "frameTime": 0.03,
         "allowFlip": false,

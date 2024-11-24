@@ -31,7 +31,8 @@ export const SYSTEM_TYPES = Object.freeze({
 
 export const ACTION_TYPES = Object.freeze({
     "MOVE": "MOVE",
-    "ATTACK": "ATTACK"
+    "ATTACK": "ATTACK",
+    "CONSTRUCTION": "CONSTRUCTION"
 });
 
 export const CONTROLLER_STATES = Object.freeze({

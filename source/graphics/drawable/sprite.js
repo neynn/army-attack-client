@@ -27,9 +27,7 @@ Sprite.LOOP_COMPLETE = "LOOP_COMPLETE";
 Sprite.prototype = Object.create(Drawable.prototype);
 Sprite.prototype.constructor = Sprite;
 
-Sprite.prototype.initialize = function(config) {
-    const { type, animation, frameCount, frameTime } = config;
-
+Sprite.prototype.initialize = function({ type, animation, frameCount, frameTime }) {
     this.typeID = type;
     this.animationID = animation;
     this.frameCount = frameCount;
@@ -38,8 +36,8 @@ Sprite.prototype.initialize = function(config) {
     this.currentFrame = 0;
     this.loopCount = 0;
     this.loopLimit = 0;
-    this.isStatic = false;
     this.isRepeating = true;
+    this.isStatic = false;
     this.bounds.clear();
 }
 

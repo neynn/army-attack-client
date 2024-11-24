@@ -55,10 +55,17 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
         "team": 1
     }, "neyn");
 
-    gameContext.createEntity({ 
+    gameContext.createEntity({
         "type": "red_artillery",
         "tileX": 2,
         "tileY": 3,
+        "team": 1
+    }, "neyn");
+
+    gameContext.createEntity({
+        "type": "blue_bootcamp_construction",
+        "tileX": 2,
+        "tileY": 9,
         "team": 1
     }, "neyn");
 

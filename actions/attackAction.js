@@ -39,7 +39,7 @@ AttackAction.prototype.onEnd = function(gameContext, request) {
     const { entityID, attackers, damage, state } = request;
     const target = entityManager.getEntity(entityID);
 
-    AttackSystem.stopAttack(gameContext, attackers);
+    AnimationSystem.revertToIdle(gameContext, attackers);
 
     if(state === ENTITY_STATES.DEAD) {
         AnimationSystem.playDeath(gameContext, target);

@@ -29,3 +29,23 @@ export const positionToTile = function(positionX, positionY) {
 		"y": tileY 
 	}
 }
+
+export const positionSizeOffsetCenter = function(sizeX, sizeY) {
+    const xOffset = Camera.TILE_WIDTH * (sizeX / 2 - 0.5);
+    const yOffset = Camera.TILE_HEIGHT * (sizeY / 2 - 0.5);
+
+    return { 
+		"x": xOffset,
+		"y": yOffset
+	}
+}
+
+export const positionSizeOffset = function(sizeX, sizeY) {
+    const xOffset = Camera.TILE_WIDTH * (sizeX - 1);
+    const yOffset = Camera.TILE_HEIGHT * (sizeY - 1);
+
+    return { 
+		"x": xOffset,
+		"y": yOffset
+	}
+}

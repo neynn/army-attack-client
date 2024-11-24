@@ -12,10 +12,10 @@ ConstructionArchetype.prototype.onInitialize = function(gameContext, entity, spr
     const constructionComponent = componentSetup.setupConstructionComponent(type);
     
     sprite.freeze();
-    sprite.setFrame(2);
+    sprite.setFrame(0);
     entity.addComponent(constructionComponent);
 }
 
 ConstructionArchetype.prototype.onFinalize = function(gameContext, entity, sprite, type) {
-
+    this.createStatCard(gameContext, entity, sprite);
 }

@@ -8,6 +8,7 @@ import { componentSetup } from "../componentSetup.js";
 import { SpriteComponent } from "../../components/sprite.js";
 import { SpriteManager } from "../../source/graphics/spriteManager.js";
 import { Archetype } from "../../source/entity/archetype.js";
+import { positionSizeOffset } from "../../source/camera/helpers.js";
 
 const MODE_STAT_TYPE_ID = "story";
 
@@ -27,6 +28,7 @@ DefaultArchetype.prototype.createStatCard = function(gameContext, entity, sprite
 
     const statCardType = teamTypes[teamComponent.teamID].sprites.stat_card;
     const statCard = spriteManager.createSprite(statCardType, null);
+    const { x, y } = positionSizeOffset(entity.config.dimX, entity.config.dimY);
 
     const healthText = new SimpleText("HEALTH_TEXT");
 
@@ -36,7 +38,7 @@ DefaultArchetype.prototype.createStatCard = function(gameContext, entity, sprite
     healthText.setPosition(95, 90);
     healthText.setText(`${healthComponent.health}/${healthComponent.maxHealth}`);
 
-    statCard.setPosition(-48, -48);
+    statCard.setPosition(x - 48, y - 48);
     statCard.addChild(healthText, "HEALTH_TEXT");
 
     entity.events.listen(ENTITY_EVENTS.HEALTH_UPDATE);

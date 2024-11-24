@@ -198,12 +198,14 @@ ControllerSystem.deselectEntity = function(gameContext, controller, entity) {
     controllerComponent.nodeList = [];
 }
 
-ControllerSystem.isSelectable = function(entity, controller) {
-    const entityID = entity.getID();
-    const isControlled = controller.hasEntity(entityID);
+ControllerSystem.isControlled = function(entityID, controller) {
+    return controller.hasEntity(entityID);
+}
+
+ControllerSystem.isMoveable = function(entity, controller) {
     const healthComponent = entity.getComponent(HealthComponent);
     const isSelectable = entity.hasComponent(MoveComponent) && healthComponent.health > 0;
     const controllerComponent = controller.getComponent(ControllerComponent);
 
-    return isSelectable && isControlled && controllerComponent.selectedEntity === null;
+    return isSelectable && controllerComponent.selectedEntity === null;
 }

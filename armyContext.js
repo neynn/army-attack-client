@@ -39,6 +39,7 @@ import { EditorController } from "./init/controller/editor.js";
 import { AvianComponent } from "./components/avian.js";
 import { BulldozeComponent } from "./components/bulldoze.js";
 import { UnitBusterComponent } from "./components/unitBuster.js";
+import { ConstructionAction } from "./actions/constructionAction.js";
 
 export const ArmyContext = function() {
     GameContext.call(this, 60);
@@ -102,6 +103,7 @@ ArmyContext.prototype.initialize = function() {
     
     this.actionQueue.registerAction(ACTION_TYPES.MOVE, new MoveAction());
     this.actionQueue.registerAction(ACTION_TYPES.ATTACK, new AttackAction());
+    this.actionQueue.registerAction(ACTION_TYPES.CONSTRUCTION, new ConstructionAction());
 
     this.states.addState(CONTEXT_STATES.MAIN_MENU, new MainMenuState());
     this.states.addState(CONTEXT_STATES.STORY_MODE, new StoryModeState());
