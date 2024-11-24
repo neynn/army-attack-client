@@ -1,9 +1,17 @@
-export const Family = function(reference, name, DEBUG_NAME = "AUTO") {
-    this.id = Symbol(DEBUG_NAME);
+export const Family = function(id, reference, name) {
+    this.id = id;
     this.reference = reference;
     this.name = name;
     this.parent = null;
     this.children = [];
+}
+
+Family.prototype.getID = function() {
+    return this.id;
+}
+
+Family.prototype.overwriteName = function(name) {
+    this.name = name;
 }
 
 Family.prototype.setParent = function(parent) {
@@ -25,8 +33,10 @@ Family.prototype.addChild = function(child) {
         return false;
     }
 
-    if(this.hasChild(child.id, child.name)) {
-        return false;
+    for(const element of this.children) {
+        if(element.id === child.id || element.name === child.name) {
+            return false;
+        }
     }
 
     this.children.push(child);
@@ -61,26 +71,6 @@ Family.prototype.onRemove = function() {
     this.parent = null;
 }
 
-Family.prototype.hasChild = function(id, name) {
-    for(const child of this.children) {
-        if(child.id === id || child.name !== null && child.name === name) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-Family.prototype.getChildByName = function(name) {
-    for(const child of this.children) {
-        if(child.name !== null && child.name === name) {
-            return child;
-        }
-    }
-
-    return null;
-}
-
 Family.prototype.getParent = function() {
     return this.parent;
 }
@@ -91,4 +81,24 @@ Family.prototype.getChildren = function() {
 
 Family.prototype.getReference = function() {
     return this.reference;
+}
+
+Family.prototype.hasChild = function(name) {
+    for(const child of this.children) {
+        if(child.name === name) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+Family.prototype.getChildByName = function(name) {
+    for(const child of this.children) {
+        if(child.name === name) {
+            return child;
+        }
+    }
+
+    return null;
 }

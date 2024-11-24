@@ -1,6 +1,6 @@
 import { ACTION_TYPES, ENTITY_STATES } from "../enums.js";
 import { Action } from "../source/action/action.js";
-import { DeathSystem } from "../systems/death.js";
+import { AnimationSystem } from "../systems/animation.js";
 import { FireSystem } from "../systems/fire.js";
 import { HealthSystem } from "../systems/health.js";
 import { MorphSystem } from "../systems/morph.js";
@@ -24,7 +24,7 @@ AttackAction.prototype.onStart = function(gameContext, request) {
     const { entityID, attackers, damage, state } = request;
     const target = entityManager.getEntity(entityID);
 
-    FireSystem.startAttack(gameContext, attackers, target);
+    AnimationSystem.playFire(gameContext, target, attackers);
     HealthSystem.reduceHealth(target, damage);
 
     if(state === ENTITY_STATES.DOWN) {
@@ -39,10 +39,10 @@ AttackAction.prototype.onEnd = function(gameContext, request) {
     const { entityID, attackers, damage, state } = request;
     const target = entityManager.getEntity(entityID);
 
-    FireSystem.endAttack(gameContext, attackers);
+    FireSystem.stopAttack(gameContext, attackers);
 
     if(state === ENTITY_STATES.DEAD) {
-        DeathSystem.playDeathAnimation(gameContext, target);
+        AnimationSystem.playDeath(gameContext, target);
         gameContext.destroyEntity(entityID);
     } else if(state === ENTITY_STATES.IDLE) {
         MorphSystem.toIdle(target);

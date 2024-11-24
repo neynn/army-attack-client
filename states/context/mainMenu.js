@@ -1,4 +1,5 @@
 import { CONTEXT_STATES } from "../../enums.js";
+import { SpriteManager } from "../../source/graphics/spriteManager.js";
 import { State } from "../../source/state/state.js";
 import { UIElement } from "../../source/ui/uiElement.js";
 
@@ -26,9 +27,13 @@ MainMenuState.prototype.enter = function(stateMachine) {
     const buttonVersus = uiManager.getButton("MAIN_MENU", "BUTTON_VERSUS");
     const buttonEdit = uiManager.getButton("MAIN_MENU", "BUTTON_EDIT");
 
-    const spritePlay = spriteManager.addSpriteToDrawable(buttonPlay, "TEST", "blue_battletank_idle");
-    const spriteVersus = spriteManager.addSpriteToDrawable(buttonVersus, "TEST", "red_battletank_idle");
-    const spriteEdit = spriteManager.addSpriteToDrawable(buttonEdit, "TEST", "blue_elite_battery_idle");
+    const spritePlay = spriteManager.createSprite("blue_battletank_idle");
+    const spriteVersus = spriteManager.createSprite("red_battletank_idle");
+    const spriteEdit = spriteManager.createSprite("blue_elite_battery_idle");
+    
+    buttonPlay.addChild(spritePlay, "TEST");
+    buttonVersus.addChild(spriteVersus, "TEST");
+    buttonEdit.addChild(spriteEdit, "TEST")
 
     buttonPlay.events.subscribe(UIElement.EVENT_FIRST_COLLISION, "TEST", () => spriteManager.updateSprite(spritePlay.getID(), "blue_battletank_aim"));
     buttonPlay.events.subscribe(UIElement.EVENT_FINAL_COLLISION, "TEST", () => spriteManager.updateSprite(spritePlay.getID(), "blue_battletank_idle"));

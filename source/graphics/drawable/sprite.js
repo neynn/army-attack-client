@@ -39,6 +39,7 @@ Sprite.prototype.initialize = function(config) {
     this.loopCount = 0;
     this.loopLimit = 0;
     this.isStatic = false;
+    this.isRepeating = true;
     this.bounds.clear();
 }
 
@@ -103,10 +104,6 @@ Sprite.prototype.onDebug = function(context, viewportX, viewportY, localX, local
     }
 }
 
-Sprite.prototype.setLoopLimit = function(loopLimit = 0) {
-    this.loopLimit = loopLimit;
-}
-
 Sprite.prototype.setLayerID = function(layerID) {
     this.layerID = layerID;
 }
@@ -130,7 +127,8 @@ Sprite.prototype.repeat = function() {
     this.isRepeating = true;
 }
 
-Sprite.prototype.expire = function() {
+Sprite.prototype.expire = function(loops = 0) {
+    this.loopLimit = this.loopCount + loops;
     this.isRepeating = false;
 }
 

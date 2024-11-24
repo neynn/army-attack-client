@@ -90,7 +90,7 @@ SpriteManager.prototype.end = function() {
     }
 }
 
-SpriteManager.prototype.createSprite = function(typeID, layerID, animationID) {
+SpriteManager.prototype.createSprite = function(typeID, layerID = null, animationID) {
     if(!this.spriteTypes[typeID]) {
         return null;
     }
@@ -188,65 +188,6 @@ SpriteManager.prototype.getSprite = function(spriteID) {
     }
 
     return sprite;
-}
-
-SpriteManager.prototype.addSpriteToDrawable = function(drawable, childName, typeID, animationID) {
-    const sprite = this.createSprite(typeID, null, animationID);
-
-    if(!sprite) {
-        return false;
-    }
-
-    drawable.addChild(sprite, childName);
-
-    return sprite;
-}
-
-SpriteManager.prototype.createChildSprite = function(spriteID, childTypeID, childName = Symbol("AUTO")) {
-    const parent = this.sprites.get(spriteID);
-
-    if(!parent) {
-        Logger.log(false, "Sprite does not exist!", "SpriteManager.prototype.createChildSprite", {spriteID, childTypeID, childName});
-
-        return null;
-    }
-
-    if(parent.hasChild(childName)) {
-        Logger.log(false, "Child already exists!", "SpriteManager.prototype.createChildSprite", {spriteID, childTypeID, childName})
-
-        return null;
-    }
-
-    const childSprite = this.createSprite(childTypeID, null);
-
-    parent.addChild(childSprite, childName);
-
-    return childSprite;
-}
-
-SpriteManager.prototype.destroyChildSprite = function(parentID, childName) {
-    const parent = this.sprites.get(parentID);
-
-    if(!parent) {
-        Logger.log(false, "Sprite does not exist!", "SpriteManager.prototype.destroyChildSprite", {parentID, childName});
-        
-        return false;
-    }
-
-    const child = parent.getChild(childName);
-
-    if(!child) {
-        Logger.log(false, "Child does not exist!", "SpriteManager.prototype.destroyChildSprite", {parentID, childName});
-
-        return false;
-    }
-
-    const reference = child.getReference();
-    const referenceID = reference.getID();
-
-    this.destroySprite(referenceID);
-    
-    return true;
 }
 
 SpriteManager.prototype.addToLayer = function(layerID, sprite) {

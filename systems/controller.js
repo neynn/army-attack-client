@@ -1,7 +1,6 @@
 import { ControllerComponent } from "../components/controller.js";
 import { PositionComponent } from "../components/position.js";
 import { DirectionSystem } from "./direction.js";
-import { SpriteComponent } from "../components/sprite.js";
 import { ConquerSystem } from "./conquer.js";
 import { PathfinderSystem } from "./pathfinder.js";
 import { MorphSystem } from "./morph.js";
@@ -9,10 +8,9 @@ import { TargetSystem } from "./target.js";
 import { TeamSystem } from "./team.js";
 import { HealthComponent } from "../components/health.js";
 import { MoveComponent } from "../components/move.js";
+import { AnimationSystem } from "./animation.js";
 
 export const ControllerSystem = function() {}
-
-ControllerSystem.MOVE_CURSOR_ID = "MOVE_CURSOR";
 
 ControllerSystem.resetAttackerSprites = function(gameContext, attackers) {
     const { entityManager } = gameContext;
@@ -173,18 +171,16 @@ ControllerSystem.selectEntity = function(gameContext, controller, entity) {
         }
     }
 
-    const controllerComponent = controller.getComponent(ControllerComponent);
-    const spriteComponent = entity.getComponent(SpriteComponent);
+    AnimationSystem.playSelect(gameContext, entity);
 
-    spriteManager.createChildSprite(spriteComponent.spriteID, "cursor_move_1x1", ControllerSystem.MOVE_CURSOR_ID);
-    soundPlayer.playRandom(entity.config.sounds.select);
+    const controllerComponent = controller.getComponent(ControllerComponent);
 
     controllerComponent.nodeList = nodeList;
     controllerComponent.selectedEntity = entity.id;
 }
 
 ControllerSystem.deselectEntity = function(gameContext, controller, entity) {
-    const { spriteManager, mapLoader } = gameContext;
+    const { mapLoader } = gameContext;
     const controllerComponent  = controller.getComponent(ControllerComponent);
     const layerTypes = gameContext.getConfig("layerTypes");
     const activeMap = mapLoader.getActiveMap();
@@ -196,9 +192,7 @@ ControllerSystem.deselectEntity = function(gameContext, controller, entity) {
         ConquerSystem.convertTileGraphics(gameContext, positionX, positionY, 1);
     }
 
-    const spriteComponent = entity.getComponent(SpriteComponent);
-
-    spriteManager.destroyChildSprite(spriteComponent.spriteID, ControllerSystem.MOVE_CURSOR_ID);
+    AnimationSystem.stopSelect(gameContext, entity)
 
     controllerComponent.selectedEntity = null;
     controllerComponent.nodeList = [];

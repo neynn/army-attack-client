@@ -40,7 +40,7 @@ UIElement.prototype.getCollisions = function(mouseX, mouseY, mouseRange) {
 
         collidedElements.push(element);
 
-        const children = element.getAllChildren();
+        const children = element.getChildren();
         const nextLocalX = localX - element.position.x;
         const nextLocalY = localY - element.position.y;
 

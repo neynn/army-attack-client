@@ -4,7 +4,7 @@ import { Rectangle } from "../math/rect.js";
 import { Vec2 } from "../math/vec2.js";
 import { Family } from "./family.js";
 
-export const Drawable = function(id = null, DEBUG_NAME = null) {
+export const Drawable = function(id = null, DEBUG_NAME = "") {
     this.DEBUG_NAME = DEBUG_NAME;
     this.id = id;
     this.family = null;
@@ -19,7 +19,7 @@ export const Drawable = function(id = null, DEBUG_NAME = null) {
     }
 }
 
-Drawable.DEFAULT_FAMILY_NAME = "AUTO";
+Drawable.DEFAULT_FAMILY_NAME = "DEFAULT_FAMILY_NAME";
 
 Drawable.prototype.onUpdate = function(timestamp, deltaTime) {}
 
@@ -32,7 +32,7 @@ Drawable.prototype.update = function(timestamp, deltaTime) {
 
     while(updateStack.length > 0) {
         const drawable = updateStack.pop();
-        const children = drawable.getAllChildren();
+        const children = drawable.getChildren();
 
         for(const child of children) {
             const reference = child.getReference();
@@ -53,7 +53,7 @@ Drawable.prototype.debug = function(context, viewportX, viewportY) {
 
     while(debugStack.length > 0) {
         const { drawable, localX, localY } = debugStack.pop();
-        const children = drawable.getAllChildren();
+        const children = drawable.getChildren();
 
         context.save();
         drawable.onDebug(context, viewportX, viewportY, localX, localY);
@@ -85,7 +85,7 @@ Drawable.prototype.draw = function(context, viewportX, viewportY) {
 
     while(drawStack.length > 0) {
         const { drawable, localX, localY } = drawStack.pop();
-        const children = drawable.getAllChildren();
+        const children = drawable.getChildren();
 
         context.save();
         drawable.onDraw(context, viewportX, viewportY, localX, localY);
@@ -113,7 +113,7 @@ Drawable.prototype.getFamilyStack = function() {
     while(stack.length > 0) {
         const drawable = stack.pop();
         const drawableID = drawable.getID();
-        const children = drawable.getAllChildren();
+        const children = drawable.getChildren();
 
         for(let i = children.length - 1; i >= 0; i--) {
             const child = children[i];
@@ -183,7 +183,7 @@ Drawable.prototype.hasChild = function(name) {
         return false;
     }
 
-    return this.family.hasChild(null, name);
+    return this.family.hasChild(name);
 }
 
 Drawable.prototype.getChild = function(name) {
@@ -194,7 +194,7 @@ Drawable.prototype.getChild = function(name) {
     return this.family.getChildByName(name);
 }
 
-Drawable.prototype.getAllChildren = function() {
+Drawable.prototype.getChildren = function() {
     if(!this.family) {
         return [];
     }
@@ -202,16 +202,32 @@ Drawable.prototype.getAllChildren = function() {
     return this.family.getChildren();
 }
 
+Drawable.prototype.getChildID = function(name) {
+    if(!this.family) {
+        return null;
+    }
+
+    const child = this.family.getChildByName(name);
+    
+    if(!child) {
+        return null;
+    }
+
+    const childID = child.getID();
+
+    return childID;
+}
+
 Drawable.prototype.hasFamily = function() {
     return this.family !== null;
 }
 
 Drawable.prototype.openFamily = function(name = Drawable.DEFAULT_FAMILY_NAME) {
-    if(this.family) {
+    if(this.family || this.id === null) {
         return false;
     }
 
-    this.family = new Family(this, name, this.DEBUG_NAME);
+    this.family = new Family(this.id, this, name);
 
     return true;
 }
@@ -227,8 +243,8 @@ Drawable.prototype.closeFamily = function() {
     return true;
 }
 
-Drawable.prototype.addChild = function(drawable, childName) {
-    if(childName === undefined) {
+Drawable.prototype.addChild = function(drawable, name) {
+    if(drawable.getID() === null || name === undefined) {
         return false;
     }
     
@@ -236,12 +252,14 @@ Drawable.prototype.addChild = function(drawable, childName) {
         this.openFamily();
     }
 
-    if(this.family.getChildByName(childName)) {
+    if(this.family.hasChild(name)) {
         return false;
     }
 
-    if(!drawable.hasFamily()) {
-        drawable.openFamily(childName);
+    if(drawable.hasFamily()) {
+        drawable.family.overwriteName(name);
+    } else {
+        drawable.openFamily(name);
     }
 
     this.family.addChild(drawable.family);
@@ -249,12 +267,12 @@ Drawable.prototype.addChild = function(drawable, childName) {
     return true;
 }
 
-Drawable.prototype.removeChild = function(childName) {
+Drawable.prototype.removeChild = function(name) {
     if(!this.family) {
         return false;
     }
 
-    const child = this.family.getChildByName(childName);
+    const child = this.family.getChildByName(name);
 
     if(child === null) {
         return false;

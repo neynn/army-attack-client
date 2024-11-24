@@ -25,10 +25,10 @@ DefaultArchetype.prototype.createStatCard = function(gameContext, entity, sprite
     const healthComponent = entity.getComponent(HealthComponent);
     const teamComponent = entity.getComponent(TeamComponent);
 
-    const starCardType = teamTypes[teamComponent.teamID].sprites.stat_card;
-    const statCard = spriteManager.createChildSprite(sprite.id, starCardType, "STATS");
+    const statCardType = teamTypes[teamComponent.teamID].sprites.stat_card;
+    const statCard = spriteManager.createSprite(statCardType, null);
 
-    const healthText = new SimpleText();
+    const healthText = new SimpleText("HEALTH_TEXT");
 
     healthText.style.setFontType("ArmyAttack Arial");
     healthText.style.setAlignment(TextStyle.TEXT_ALIGN_RIGHT);
@@ -46,7 +46,7 @@ DefaultArchetype.prototype.createStatCard = function(gameContext, entity, sprite
 
     if(entity.hasComponent(AttackComponent)) {
         const attackComponent = entity.getComponent(AttackComponent);
-        const damageText = new SimpleText();
+        const damageText = new SimpleText("DAMAGE_TEXT");
 
         damageText.style.setFontType("ArmyAttack Arial");
         damageText.style.setAlignment(TextStyle.TEXT_ALIGN_RIGHT);
@@ -61,6 +61,8 @@ DefaultArchetype.prototype.createStatCard = function(gameContext, entity, sprite
             damageText.setText(`${damage}`);
         });
     }
+
+    sprite.addChild(statCard, "STATS");
 }
 
 DefaultArchetype.prototype.initializeEntity = function(gameContext, entity, sprite, type, setup) {

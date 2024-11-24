@@ -36,25 +36,7 @@ FireSystem.getFatalHit = function(gameContext, target, attackers) {
     return false;
 }
 
-FireSystem.startAttack = function(gameContext, attackers, target) {
-    const { entityManager, client, spriteManager } = gameContext;
-    const { soundPlayer } = client;
-    const spriteComponent = target.getComponent(SpriteComponent);
-
-    for(const attackerID of attackers) {
-        const attacker = entityManager.getEntity(attackerID);
-        
-        DirectionSystem.lookAt(attacker, target);
-        MorphSystem.toFire(attacker);
-        soundPlayer.playRandom(attacker.config.sounds.fire);
-        
-        spriteManager
-        .createChildSprite(spriteComponent.spriteID, attacker.config.sprites.weapon)
-        .expire();
-    }
-}
-
-FireSystem.endAttack = function(gameContext, attackers) {
+FireSystem.stopAttack = function(gameContext, attackers) {
     const { entityManager } = gameContext;
     
     for(const attackerID of attackers) {
