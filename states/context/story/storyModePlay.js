@@ -1,4 +1,3 @@
-import { createAttackRequest } from "../../../actions/attackAction.js";
 import { createMoveRequest } from "../../../actions/moveAction.js";
 import { CAMERAS, CONTROLLER_TYPES } from "../../../enums.js";
 import { MapParser } from "../../../source/map/mapParser.js";

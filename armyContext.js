@@ -1,3 +1,4 @@
+import { ACTION_TYPES, CAMERAS, CONTEXT_STATES, CONTROLLER_TYPES, ENTITY_ARCHETYPES, SYSTEM_TYPES } from "./enums.js";
 import { AttackAction } from "./actions/attackAction.js";
 import { MoveAction } from "./actions/moveAction.js";
 import { ArmorComponent } from "./components/armor.js";
@@ -9,7 +10,6 @@ import { PositionComponent } from "./components/position.js";
 import { ReviveComponent } from "./components/revive.js";
 import { UnitTypeComponent } from "./components/unitType.js";
 import { TeamComponent } from "./components/team.js";
-import { ACTION_TYPES, CAMERAS, CONTEXT_STATES, CONTROLLER_TYPES, ENTITY_ARCHETYPES, SYSTEM_TYPES } from "./enums.js";
 import { ActionQueue } from "./source/action/actionQueue.js";
 import { GameContext } from "./source/gameContext.js";
 import { MainMenuState } from "./states/context/mainMenu.js";
@@ -40,6 +40,7 @@ import { AvianComponent } from "./components/avian.js";
 import { BulldozeComponent } from "./components/bulldoze.js";
 import { UnitBusterComponent } from "./components/unitBuster.js";
 import { ConstructionAction } from "./actions/constructionAction.js";
+import { ArmyCamera } from "./armyCamera.js";
 
 export const ArmyContext = function() {
     GameContext.call(this, 60);
@@ -78,20 +79,6 @@ ArmyContext.prototype.loadResources = function(resources) {
         }
     );
 
-    this.controllerManager.registerController(CONTROLLER_TYPES.PLAYER, PlayerController);
-    this.controllerManager.registerController(CONTROLLER_TYPES.EDITOR, EditorController);
-    
-    this.entityManager.registerArchetype(ENTITY_ARCHETYPES.UNIT, new UnitArchetype());
-    this.entityManager.registerArchetype(ENTITY_ARCHETYPES.DEFENSE, new DefenseArchetype());
-    this.entityManager.registerArchetype(ENTITY_ARCHETYPES.DECO, new DecoArchetype());
-    this.entityManager.registerArchetype(ENTITY_ARCHETYPES.BUILDING, new BuildingArchetype());
-    this.entityManager.registerArchetype(ENTITY_ARCHETYPES.HFE, new HFEArchetype());
-    this.entityManager.registerArchetype(ENTITY_ARCHETYPES.TOWN, new TownArchetype());
-    this.entityManager.registerArchetype(ENTITY_ARCHETYPES.CONSTRUCTION, new ConstructionArchetype());
-
-    this.systemManager.registerSystem(SYSTEM_TYPES.DOWN, DownSystem);
-    this.systemManager.registerSystem(SYSTEM_TYPES.MOVE, MoveSystem);
-
     this.settings = resources.settings;
     this.config = resources.config;
     this.config.tileConversions = this.parseConversions();
@@ -104,6 +91,22 @@ ArmyContext.prototype.initialize = function() {
     this.actionQueue.registerAction(ACTION_TYPES.MOVE, new MoveAction());
     this.actionQueue.registerAction(ACTION_TYPES.ATTACK, new AttackAction());
     this.actionQueue.registerAction(ACTION_TYPES.CONSTRUCTION, new ConstructionAction());
+    
+    this.entityManager.registerArchetype(ENTITY_ARCHETYPES.UNIT, new UnitArchetype());
+    this.entityManager.registerArchetype(ENTITY_ARCHETYPES.DEFENSE, new DefenseArchetype());
+    this.entityManager.registerArchetype(ENTITY_ARCHETYPES.DECO, new DecoArchetype());
+    this.entityManager.registerArchetype(ENTITY_ARCHETYPES.BUILDING, new BuildingArchetype());
+    this.entityManager.registerArchetype(ENTITY_ARCHETYPES.HFE, new HFEArchetype());
+    this.entityManager.registerArchetype(ENTITY_ARCHETYPES.TOWN, new TownArchetype());
+    this.entityManager.registerArchetype(ENTITY_ARCHETYPES.CONSTRUCTION, new ConstructionArchetype());
+
+    this.controllerManager.registerController(CONTROLLER_TYPES.PLAYER, PlayerController);
+    this.controllerManager.registerController(CONTROLLER_TYPES.EDITOR, EditorController);
+
+    this.systemManager.registerSystem(SYSTEM_TYPES.DOWN, DownSystem);
+    this.systemManager.registerSystem(SYSTEM_TYPES.MOVE, MoveSystem);
+
+    this.renderer.registerCamera(CAMERAS.ARMY_CAMERA, ArmyCamera);
 
     this.states.addState(CONTEXT_STATES.MAIN_MENU, new MainMenuState());
     this.states.addState(CONTEXT_STATES.STORY_MODE, new StoryModeState());
@@ -137,7 +140,7 @@ ArmyContext.prototype.initialize = function() {
         console.log(`${reason} is disconnected from the server!`);
     });
 
-    this.renderer.createCamera(CAMERAS.ARMY_CAMERA, Renderer.CAMERA_TYPE_2D, 0, 0, 500, 500);    
+    this.renderer.createCamera(CAMERAS.ARMY_CAMERA, CAMERAS.ARMY_CAMERA, 0, 0, 500, 500);    
     this.renderer.resizeDisplay(window.innerWidth, window.innerHeight);
     
     this.switchState(CONTEXT_STATES.MAIN_MENU);

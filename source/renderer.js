@@ -1,7 +1,7 @@
-import { Camera2D } from "./camera/2D/camera2D.js";
 import { Canvas } from "./camera/canvas.js";
 import { FPSCounter } from "./camera/fpsCounter.js";
 import { EventEmitter } from "./events/eventEmitter.js";
+import { Logger } from "./logger.js";
 import { isRectangleRectangleIntersect } from "./math/math.js";
 
 export const Renderer = function() {
@@ -18,10 +18,8 @@ export const Renderer = function() {
     this.events.listen(Renderer.EVENT_CAMERA_FINISH);
 
     this.cameras = new Map();
+    this.cameraTypes = new Map();
     this.cameraStack = [];
-    this.cameraTypes = {
-        [Renderer.CAMERA_TYPE_2D]: Camera2D
-    }
 
     window.addEventListener("resize", () => {
         this.resizeDisplay(window.innerWidth, window.innerHeight);
@@ -33,7 +31,6 @@ Renderer.DEBUG_CAMERA = 1 << 0;
 Renderer.DEBUG_INTERFACE = 1 << 1;
 Renderer.DEBUG_SPRITES = 1 << 2;
 Renderer.DEBUG_MAP = 1 << 3;
-Renderer.CAMERA_TYPE_2D = "2D";
 Renderer.EVENT_SCREEN_RESIZE = "EVENT_SCREEN_RESIZE";
 Renderer.EVENT_CAMERA_FINISH = "EVENT_CAMERA_FINISH";
 Renderer.ANCHOR_TYPE_TOP_CENTER = "TOP_CENTER";
@@ -58,6 +55,36 @@ Renderer.prototype.getHeight = function() {
     return this.windowHeight;
 }
 
+Renderer.prototype.registerCamera = function(typeID, type) {
+    if(!typeID || !type) {
+        Logger.log(false, "Parameter is undefined!", "Renderer.prototype.registerCamera ", { typeID, type });
+
+        return false;
+    }
+
+    if(this.cameraTypes.has(typeID)) {
+        Logger.log(false, "CameraType is already registered!", "Renderer.prototype.registerCamera", {typeID});
+
+        return false;
+    }
+
+    this.cameraTypes.set(typeID, type);
+
+    return true;
+}
+
+Renderer.prototype.unregisterCamera = function(typeID) {
+    if(!this.cameraTypes.has(typeID)) {
+        Logger.log(false, "CameraType does not exist!", "Renderer.prototype.unregisterCamera", { typeID });
+
+        return false;
+    }
+
+    this.cameraTypes.delete(typeID);
+
+    return true;
+}
+
 Renderer.prototype.getCamera = function(cameraID) {
     const camera = this.cameras.get(cameraID);
 
@@ -68,8 +95,8 @@ Renderer.prototype.getCamera = function(cameraID) {
     return camera;
 }
 
-Renderer.prototype.createCamera = function(cameraID, type, x, y, w, h) {
-    const CameraType = this.cameraTypes[type];
+Renderer.prototype.createCamera = function(cameraID, typeID, x, y, w, h) {
+    const CameraType = this.cameraTypes.get(typeID);
 
     if(!CameraType) {
         return null;
