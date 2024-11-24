@@ -47,7 +47,6 @@
                 "ground": { "id": "ground", "fill": 1 },
                 "border": { "id": "border", "fill": 0 },
                 "decoration": { "id": "decoration", "fill": 0 },
-                "overlay": { "id": "overlay", "fill": 0 },
                 "cloud": { "id": "cloud", "fill": 0 },
                 "type": { "id": "type", "fill": 0 },
                 "team": { "id": "team", "fill": 0 }
@@ -55,8 +54,7 @@
             "backgroundLayers": [
                 { "id": "ground", "opacity": 1, "autoGenerate": false },
                 { "id": "border", "opacity": 1, "autoGenerate": true },
-                { "id": "decoration", "opacity": 1, "autoGenerate": false },
-                { "id": "overlay", "opacity": 1, "autoGenerate": true }
+                { "id": "decoration", "opacity": 1, "autoGenerate": false }
             ],
             "foregroundLayers": [
                 { "id":"cloud", "opacity": 1, "autoGenerate": false }

@@ -70,8 +70,7 @@ ControllerIdleState.prototype.update = function(stateMachine, gameContext) {
     const controller = stateMachine.getContext();
 
     if(actionQueue.isRunning()) {
-        const controllerComponent = controller.getComponent(ControllerComponent);
-        ControllerSystem.resetAttackerOverlays(gameContext, controllerComponent.attackers);
+        ControllerSystem.resetAttackerOverlays(gameContext);
         return;
     }
 

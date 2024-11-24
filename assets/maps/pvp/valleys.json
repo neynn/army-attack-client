@@ -4,8 +4,7 @@
     "backgroundLayers": [
         { "id": "ground", "opacity": 1, "autoGenerate": false },
         { "id": "border", "opacity": 1, "autoGenerate": true },
-        { "id": "decoration", "opacity": 1, "autoGenerate": false },
-        { "id": "overlay", "opacity": 1, "autoGenerate": true }
+        { "id": "decoration", "opacity": 1, "autoGenerate": false }
     ],
     "foregroundLayers": [ 
         { "id": "cloud", "opacity": 1, "autoGenerate": false }

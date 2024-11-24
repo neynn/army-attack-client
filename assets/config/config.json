@@ -22,7 +22,6 @@
         "ground": { "id": "ground", "layerID": "ground" },
         "decoration": { "id": "decoration", "layerID": "decoration" },
         "border": { "id": "border", "layerID": "border" },
-        "overlay": { "id": "overlay", "layerID": "overlay" },
         "cloud": { "id": "cloud", "layerID": "cloud" },
         "type": { "id": "type", "layerID": "type" },
         "team": { "id": "team", "layerID": "team" }

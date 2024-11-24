@@ -9,6 +9,8 @@ import { TeamSystem } from "./team.js";
 import { HealthComponent } from "../components/health.js";
 import { MoveComponent } from "../components/move.js";
 import { AnimationSystem } from "./animation.js";
+import { CAMERAS } from "../enums.js";
+import { ArmyCamera } from "../armyCamera.js";
 
 export const ControllerSystem = function() {}
 
@@ -26,55 +28,41 @@ ControllerSystem.resetAttackerSprites = function(gameContext, attackers) {
     }
 }
 
-ControllerSystem.resetAttackerOverlays = function(gameContext, attackers) {
-    const { entityManager, mapLoader } = gameContext;
-    const layerTypes = gameContext.getConfig("layerTypes");
-    const activeMap = mapLoader.getActiveMap();
+ControllerSystem.resetAttackerOverlays = function(gameContext) {
+    const { renderer } = gameContext;
+    const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
 
-    for(const attackerID of attackers) {
-        const attacker = entityManager.getEntity(attackerID);
-
-        if(!attacker) {
-            continue;
-        }
-
-        const positionComponent = attacker.getComponent(PositionComponent);
-
-        activeMap.clearTile(layerTypes.overlay.layerID, positionComponent.tileX, positionComponent.tileY);
-    }
+    camera.clearOverlay(ArmyCamera.OVERLAY_TYPE_ATTACK);
 }
 
 ControllerSystem.resetAttacker = function(gameContext, attackerID) {
-    const { entityManager, mapLoader } = gameContext;
+    const { entityManager, renderer } = gameContext;
     const attacker = entityManager.getEntity(attackerID);
 
     if(!attacker) {
         return;
     }
 
-    const layerTypes = gameContext.getConfig("layerTypes");
-    const activeMap = mapLoader.getActiveMap();
+    const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
     const positionComponent = attacker.getComponent(PositionComponent);
 
-    activeMap.clearTile(layerTypes.overlay.layerID, positionComponent.tileX, positionComponent.tileY);
+    camera.removeOverlay(ArmyCamera.OVERLAY_TYPE_ATTACK, positionComponent.tileX, positionComponent.tileY);
     MorphSystem.toIdle(attacker);
 }
 
 ControllerSystem.hightlightAttacker = function(gameContext, target, attackerID) {
-    const { entityManager, mapLoader, tileManager } = gameContext;
+    const { entityManager, tileManager, renderer } = gameContext;
     const attacker = entityManager.getEntity(attackerID);
 
     if(!attacker) {
         return;
     }
 
-    const layerTypes = gameContext.getConfig("layerTypes");
-    const activeMap = mapLoader.getActiveMap();
+    const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
     const positionComponent = attacker.getComponent(PositionComponent);
     const tileID = tileManager.getTileID("overlay", "grid_attack_1x1");
 
-    activeMap.placeTile(tileID, layerTypes.overlay.layerID, positionComponent.tileX, positionComponent.tileY);
-
+    camera.addOverlay(ArmyCamera.OVERLAY_TYPE_ATTACK, positionComponent.tileX, positionComponent.tileY, tileID);
     DirectionSystem.lookAt(attacker, target);
     MorphSystem.toAim(attacker);
 }
@@ -85,7 +73,7 @@ ControllerSystem.updateAttackers = function(gameContext, controller) {
     const oldAttackers = controllerComponent.attackers;
 
     if(!mouseEntity) {
-        ControllerSystem.resetAttackerOverlays(gameContext, oldAttackers);
+        ControllerSystem.resetAttackerOverlays(gameContext);
         ControllerSystem.resetAttackerSprites(gameContext, oldAttackers);
         controllerComponent.attackers.clear();
         return;
@@ -95,7 +83,7 @@ ControllerSystem.updateAttackers = function(gameContext, controller) {
     const isTargetable = TargetSystem.isTargetable(mouseEntity);
 
     if(!isEnemy || !isTargetable) {
-        ControllerSystem.resetAttackerOverlays(gameContext, oldAttackers);
+        ControllerSystem.resetAttackerOverlays(gameContext);
         ControllerSystem.resetAttackerSprites(gameContext, oldAttackers);
         controllerComponent.attackers.clear();
         return;
@@ -138,11 +126,10 @@ ControllerSystem.updateSelectedEntity = function(gameContext, controller) {
 }
 
 ControllerSystem.selectEntity = function(gameContext, controller, entity) {
-    const { client, spriteManager, tileManager, mapLoader, entityManager } = gameContext;
-    const { soundPlayer } = client;
+    const { tileManager, mapLoader, entityManager, renderer } = gameContext;
+    const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
     const activeMap = mapLoader.getActiveMap();
     const nodeList = PathfinderSystem.generateNodeList(gameContext, entity);
-    const layerTypes = gameContext.getConfig("layerTypes");
     const enableTileID = tileManager.getTileID("overlay", "grid_enabled_1x1");
     const attackTileID = tileManager.getTileID("overlay", "grid_attack_1x1");
 
@@ -150,14 +137,14 @@ ControllerSystem.selectEntity = function(gameContext, controller, entity) {
         const { positionX, positionY, isValid } = node;
 
         if(!isValid) {
-            activeMap.placeTile(attackTileID, layerTypes.overlay.layerID, positionX, positionY);
+            camera.addOverlay(ArmyCamera.OVERLAY_TYPE_MOVE, positionX, positionY, attackTileID);
             continue;
         } 
 
         const isEmpty = !activeMap.isTileOccupied(positionX, positionY);
 
         if(isEmpty) {
-            activeMap.placeTile(enableTileID, layerTypes.overlay.layerID, positionX, positionY);
+            camera.addOverlay(ArmyCamera.OVERLAY_TYPE_MOVE, positionX, positionY, enableTileID);
             continue;
         }
 
@@ -180,15 +167,14 @@ ControllerSystem.selectEntity = function(gameContext, controller, entity) {
 }
 
 ControllerSystem.deselectEntity = function(gameContext, controller, entity) {
-    const { mapLoader } = gameContext;
+    const { renderer } = gameContext;
     const controllerComponent  = controller.getComponent(ControllerComponent);
-    const layerTypes = gameContext.getConfig("layerTypes");
-    const activeMap = mapLoader.getActiveMap();
+    const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
+
+    camera.clearOverlay(ArmyCamera.OVERLAY_TYPE_MOVE);
 
     for(const node of controllerComponent.nodeList) {
-        const {positionX, positionY} = node;
-
-        activeMap.clearTile(layerTypes.overlay.layerID, positionX, positionY);
+        const { positionX, positionY } = node;
         ConquerSystem.convertTileGraphics(gameContext, positionX, positionY, 1);
     }
 
