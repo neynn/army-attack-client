@@ -31,16 +31,10 @@ AttackSystem.getDamage = function(gameContext, target, attackerIDs) {
             const unitBusterComponent = attacker.getComponent(UnitBusterComponent);
 
             if(unitBusterComponent) {
-                if(unitTypeComponent.isInfantry) {
-                    damage += unitBusterComponent.infantry;
-                }
-
-                if(unitTypeComponent.isArmor) {
-                    damage += unitBusterComponent.armor;
-                }
-
-                if(unitTypeComponent.isArtillery) {
-                    damage += unitBusterComponent.artillery;
+                for(const unitType in unitBusterComponent) {
+                    if(unitTypeComponent[unitType]) {
+                        damage += unitBusterComponent[unitType];
+                    }
                 }
             }
         }

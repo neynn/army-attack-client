@@ -1,5 +1,5 @@
 export const UnitTypeComponent = function() {
-    this.isInfantry = false;
-    this.isArmor = false;
-    this.isArtillery = false;
+    this.infantry = false;
+    this.armor = false;
+    this.artillery = false;
 }

@@ -36,7 +36,7 @@ AnimationSystem.playFire = function(gameContext, entity, attackersIDs) {
         entitySprite.addChild(weaponSprite, weaponSpriteID);
         weaponSprite.expire();
 
-        if(unitTypeComponent && unitTypeComponent.isArtillery) {
+        if(unitTypeComponent && unitTypeComponent.artillery) {
             const artillerySprite = spriteManager.createSprite(attacker.config.sprites.weapon);
             const artillerySpriteID = artillerySprite.getID();
 

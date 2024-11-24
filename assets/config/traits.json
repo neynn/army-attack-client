@@ -11,21 +11,21 @@
         "id": "Infantry",
         "description": "If a unit is an infantry.",
         "components": {
-            "UnitType": { "isInfantry": true } 
+            "UnitType": { "infantry": true } 
         }
     },
     "Artillery": {
         "id": "Artillery",
         "description": "If a unit is an artillery.",
         "components": { 
-            "UnitType": { "isArtillery": true } 
+            "UnitType": { "artillery": true } 
         }
     },
     "Armor": {
         "id": "Armor",
         "description": "If a unit is armored.",
         "components": {
-            "UnitType": { "isArmor": true } 
+            "UnitType": { "armor": true } 
         }
     },
     "EliteArmor": {
