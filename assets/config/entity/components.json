@@ -1,0 +1,13 @@
+{
+    "Health": { "id": "Health", "save": true, "load": true },
+    "Construction": { "id": "Construction", "save": true, "load": true },
+    "Revive": { "id": "Revive", "save": true, "load": true },
+    
+    "Attack": { "id": "Attack", "save": false, "load": true },
+    "Move": { "id": "Move", "save": false, "load": true },
+    "UnitType": { "id": "UnitType", "save": false, "load": true },
+    "Armor": { "id": "Armor", "save": false, "load": true },
+    "Avian": { "id": "Avian", "save": false, "load": true },
+    "Bulldoze": { "id": "Bulldoze", "save": false, "load": true },
+    "UnitBuster": { "id": "UnitBuster", "save": false, "load": true }
+}

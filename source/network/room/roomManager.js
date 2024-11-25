@@ -36,7 +36,7 @@ RoomManager.prototype.start = function() {
 
 RoomManager.prototype.end = function() {
     this.rooms.clear();
-    this.idGenerator.stop();
+    this.idGenerator.reset();
 }
 
 RoomManager.prototype.getRoom = function(roomID) {

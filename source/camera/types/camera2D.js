@@ -30,18 +30,6 @@ Camera2D.prototype.getViewportBounds = function() {
     const startY = Math.floor(this.viewportY / Camera.TILE_HEIGHT);
     const endX = Math.floor((this.viewportX + this.getViewportWidth()) / Camera.TILE_WIDTH) + offsetX;
     const endY = Math.floor((this.viewportY + this.getViewportHeight()) / Camera.TILE_HEIGHT) + offsetY;
-
-    return {
-        startX,
-        startY,
-        endX,
-        endY
-    }
-}
-
-Camera2D.prototype.clampViewportBounds = function(viewportBounds) {
-    const { startX, startY, endX, endY } = viewportBounds;
-
     const clampedStartX = clampValue(startX, this.mapWidth - 1, 0);
     const clampedStartY = clampValue(startY, this.mapHeight - 1, 0);
     const clampedEndX = clampValue(endX, this.mapWidth - 1, 0);

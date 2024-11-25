@@ -1,6 +1,7 @@
 {
-    "entities": { "id": "entities", "directory": "assets/config", "source": "entities.json" },
-    "traits": { "id": "traits", "directory": "assets/config", "source": "traits.json" },
+    "entities": { "id": "entities", "directory": "assets/config/entity", "source": "entities.json" },
+    "components": { "id": "components", "directory": "assets/config/entity", "source": "components.json" },
+    "traits": { "id": "traits", "directory": "assets/config/entity", "source": "traits.json" },
     "uiConfig": { "id": "uiConfig", "directory": "assets/config", "source": "uiConfig.json" },
     "config": { "id": "config", "directory": "assets/config", "source": "config.json" },
     "settings": { "id": "settings", "directory": "assets/config", "source": "settings.json" },

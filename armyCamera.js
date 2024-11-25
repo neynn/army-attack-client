@@ -77,10 +77,9 @@ ArmyCamera.prototype.update = function(gameContext) {
     }
 
     const viewportBounds = this.getViewportBounds();
-    const { startX, startY, endX, endY } = this.clampViewportBounds(viewportBounds);
 
     for(const layerConfig of activeMap.backgroundLayers) {
-        this.drawTileLayer(gameContext, activeMap, layerConfig, startX, startY, endX, endY);
+        this.drawTileLayer(gameContext, activeMap, layerConfig, viewportBounds);
     }
     
     this.drawOverlay(gameContext);
@@ -95,7 +94,7 @@ ArmyCamera.prototype.update = function(gameContext) {
      */
 
     for(const layerConfig of activeMap.foregroundLayers) {
-        this.drawTileLayer(gameContext, activeMap, layerConfig, startX, startY, endX, endY);
+        this.drawTileLayer(gameContext, activeMap, layerConfig, viewportBounds);
     }
 
     if((Renderer.DEBUG & Renderer.DEBUG_MAP) !== 0) {
@@ -109,14 +108,14 @@ ArmyCamera.prototype.update = function(gameContext) {
         context.textAlign = "center";
         context.fillStyle = "#ff0000";
 
-        this.drawWithCallback(activeMap, typeLayer, startX, startY, endX, endY, (renderX, renderY, tileID) => {
+        this.drawWithCallback(activeMap, typeLayer, viewportBounds, (renderX, renderY, tileID) => {
             const drawX = renderX - x + 16;
             const drawY = renderY - y + 16;
 
             context.fillText(tileID, drawX, drawY);
         });
 
-        this.drawWithCallback(activeMap, teamLayer, startX, startY, endX, endY, (renderX, renderY, tileID) => {
+        this.drawWithCallback(activeMap, teamLayer, viewportBounds, (renderX, renderY, tileID) => {
             const drawX = renderX - x - 16 + Camera.TILE_WIDTH;
             const drawY = renderY - y + 16;
 
@@ -145,7 +144,8 @@ ArmyCamera.prototype.drawOverlay = function(gameContext) {
     }
 }
 
-ArmyCamera.prototype.drawWithCallback = function(map2D, layerConfig, startX, startY, endX, endY, onDraw) {
+ArmyCamera.prototype.drawWithCallback = function(map2D, layerConfig, onDraw, viewportBounds) {
+    const { startX, startY, endX, endY } = viewportBounds;
     const { id, opacity } = layerConfig;
 
     if(!opacity) {
@@ -207,7 +207,8 @@ ArmyCamera.prototype.drawSpriteLayer = function(gameContext, spriteLayer) {
     }
 }
 
-ArmyCamera.prototype.drawTileLayer = function(gameContext, map2D, layerConfig, startX, startY, endX, endY) {
+ArmyCamera.prototype.drawTileLayer = function(gameContext, map2D, layerConfig, viewportBounds) {
+    const { startX, startY, endX, endY } = viewportBounds;
     const { id, opacity } = layerConfig;
 
     if(!opacity) {

@@ -1,4 +1,4 @@
-import { ACTION_TYPES, CAMERAS, CONTEXT_STATES, CONTROLLER_TYPES, ENTITY_ARCHETYPES, SYSTEM_TYPES } from "./enums.js";
+import { ACTION_TYPES, CAMERA_TYPES, CAMERAS, CONTEXT_STATES, CONTROLLER_TYPES, ENTITY_ARCHETYPES, SYSTEM_TYPES } from "./enums.js";
 import { AttackAction } from "./actions/attackAction.js";
 import { MoveAction } from "./actions/moveAction.js";
 import { ArmorComponent } from "./components/armor.js";
@@ -24,7 +24,6 @@ import { PlaceSystem } from "./systems/place.js";
 import { StoryModePlayState } from "./states/context/story/storyModePlay.js";
 import { StoryModeIntroState } from "./states/context/story/storyModeIntro.js";
 import { MoveSystem } from "./systems/move.js";
-import { Renderer } from "./source/renderer.js";
 import { SpriteComponent } from "./components/sprite.js";
 import { Socket } from "./source/network/socket.js";
 import { DefenseArchetype } from "./init/archetype/defense.js";
@@ -57,28 +56,7 @@ ArmyContext.prototype.loadResources = function(resources) {
     this.spriteManager.load(resources.sprites);
     this.tileManager.load(resources.tiles, resources.tileMeta);
     this.uiManager.load(resources.uiConfig, resources.icons, resources.fonts);
-    this.entityManager.load(
-        resources.entities,
-        resources.traits,
-        {
-            "Health": HealthComponent,
-            "Construction": ConstructionComponent,
-            "Revive": ReviveComponent
-        },
-        {
-            "Health": HealthComponent,
-            "Attack": AttackComponent,
-            "Construction": ConstructionComponent,
-            "Move": MoveComponent,
-            "UnitType": UnitTypeComponent,
-            "Revive": ReviveComponent,
-            "Armor": ArmorComponent,
-            "Avian": AvianComponent,
-            "Bulldoze": BulldozeComponent,
-            "UnitBuster": UnitBusterComponent
-        }
-    );
-
+    this.entityManager.load(resources.entities, resources.components, resources.traits);
     this.settings = resources.settings;
     this.config = resources.config;
     this.config.tileConversions = this.parseConversions();
@@ -106,7 +84,18 @@ ArmyContext.prototype.initialize = function() {
     this.systemManager.registerSystem(SYSTEM_TYPES.DOWN, DownSystem);
     this.systemManager.registerSystem(SYSTEM_TYPES.MOVE, MoveSystem);
 
-    this.renderer.registerCamera(CAMERAS.ARMY_CAMERA, ArmyCamera);
+    this.renderer.registerCamera(CAMERA_TYPES.ARMY_ATTACK, ArmyCamera);
+
+    this.entityManager.registerComponentReference("Health", HealthComponent);
+    this.entityManager.registerComponentReference("Construction", ConstructionComponent);
+    this.entityManager.registerComponentReference("Revive", ReviveComponent);
+    this.entityManager.registerComponentReference("Attack", AttackComponent);
+    this.entityManager.registerComponentReference("Move", MoveComponent);
+    this.entityManager.registerComponentReference("UnitType", UnitTypeComponent);
+    this.entityManager.registerComponentReference("Armor", ArmorComponent);
+    this.entityManager.registerComponentReference("Avian", AvianComponent);
+    this.entityManager.registerComponentReference("Bulldoze", BulldozeComponent);
+    this.entityManager.registerComponentReference("UnitBuster", UnitBusterComponent);
 
     this.states.addState(CONTEXT_STATES.MAIN_MENU, new MainMenuState());
     this.states.addState(CONTEXT_STATES.STORY_MODE, new StoryModeState());
@@ -140,7 +129,7 @@ ArmyContext.prototype.initialize = function() {
         console.log(`${reason} is disconnected from the server!`);
     });
 
-    this.renderer.createCamera(CAMERAS.ARMY_CAMERA, CAMERAS.ARMY_CAMERA, 0, 0, 500, 500);    
+    this.renderer.createCamera(CAMERAS.ARMY_CAMERA, CAMERA_TYPES.ARMY_ATTACK, 0, 0, 500, 500);    
     this.renderer.resizeDisplay(window.innerWidth, window.innerHeight);
     
     this.switchState(CONTEXT_STATES.MAIN_MENU);
