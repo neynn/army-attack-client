@@ -43,7 +43,7 @@ export const PlayerController = function(id) {
     };
     this.hoveredEntity = null;
     this.selectedEntity = null;
-    this.nodeList = [];
+    this.nodeList = new Map();
     this.attackers = new Set();
 }
 
@@ -63,12 +63,12 @@ PlayerController.prototype.updateCursorSpriteSelected = function(gameContext) {
 
     if(!this.hoveredEntity) {
         const { x, y } = gameContext.getMouseTile();
-        const targetIndex = PathfinderSystem.getTargetIndex(this.nodeList, x ,y);
+        const nodeKey = `${x}-${y}`;
 
-        if(targetIndex === -1) {
-            sprite.hide();
-        } else {
+        if(this.nodeList.has(nodeKey)) {
             spriteManager.updateSprite(spriteComponent.spriteID, this.moveSprite);
+        } else {
+            sprite.hide();
         }
 
         return;
@@ -228,7 +228,7 @@ PlayerController.prototype.getNodeList = function() {
 }
 
 PlayerController.prototype.clearNodeList = function() {
-    this.nodeList = [];
+    this.nodeList.clear();
 }
 
 PlayerController.prototype.setAttackers = function(attackers) {
