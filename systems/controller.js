@@ -1,4 +1,3 @@
-import { ControllerComponent } from "../components/controller.js";
 import { PositionComponent } from "../components/position.js";
 import { DirectionSystem } from "./direction.js";
 import { ConquerSystem } from "./conquer.js";
@@ -69,13 +68,12 @@ ControllerSystem.hightlightAttacker = function(gameContext, target, attackerID) 
 
 ControllerSystem.updateAttackers = function(gameContext, controller) {
     const mouseEntity = gameContext.getMouseEntity();
-    const controllerComponent = controller.getComponent(ControllerComponent);
-    const oldAttackers = controllerComponent.attackers;
+    const oldAttackers = controller.getAttackers();
 
     if(!mouseEntity) {
         ControllerSystem.resetAttackerOverlays(gameContext);
         ControllerSystem.resetAttackerSprites(gameContext, oldAttackers);
-        controllerComponent.attackers.clear();
+        controller.clearAttackers();
         return;
     }
 
@@ -85,7 +83,7 @@ ControllerSystem.updateAttackers = function(gameContext, controller) {
     if(!isEnemy || !isTargetable) {
         ControllerSystem.resetAttackerOverlays(gameContext);
         ControllerSystem.resetAttackerSprites(gameContext, oldAttackers);
-        controllerComponent.attackers.clear();
+        controller.clearAttackers();
         return;
     }
 
@@ -103,14 +101,13 @@ ControllerSystem.updateAttackers = function(gameContext, controller) {
         }
     }
 
-    controllerComponent.attackers.clear();
-    controllerComponent.attackers = updatedList;
+    controller.setAttackers(updatedList);
 }
 
 ControllerSystem.updateSelectedEntity = function(gameContext, controller) {
     const { entityManager } = gameContext;
-    const controllerComponent = controller.getComponent(ControllerComponent);
-    const selectedEntity = entityManager.getEntity(controllerComponent.selectedEntity);
+    const selectedEntityID = controller.getSelectedEntity();
+    const selectedEntity = entityManager.getEntity(selectedEntityID);
 
     if(!selectedEntity) {
         return;
@@ -132,6 +129,7 @@ ControllerSystem.selectEntity = function(gameContext, controller, entity) {
     const nodeList = PathfinderSystem.generateNodeList(gameContext, entity);
     const enableTileID = tileManager.getTileID("overlay", "grid_enabled_1x1");
     const attackTileID = tileManager.getTileID("overlay", "grid_attack_1x1");
+    const entityID = entity.getID();
 
     for(const node of nodeList) {
         const { positionX, positionY, isValid } = node;
@@ -158,30 +156,26 @@ ControllerSystem.selectEntity = function(gameContext, controller, entity) {
         }
     }
 
+    controller.selectEntity(entityID);
+    controller.setNodeList(nodeList);
     AnimationSystem.playSelect(gameContext, entity);
-
-    const controllerComponent = controller.getComponent(ControllerComponent);
-
-    controllerComponent.nodeList = nodeList;
-    controllerComponent.selectedEntity = entity.id;
 }
 
 ControllerSystem.deselectEntity = function(gameContext, controller, entity) {
     const { renderer } = gameContext;
-    const controllerComponent  = controller.getComponent(ControllerComponent);
+    const nodeList = controller.getNodeList();
     const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
 
     camera.clearOverlay(ArmyCamera.OVERLAY_TYPE_MOVE);
 
-    for(const node of controllerComponent.nodeList) {
+    for(const node of nodeList) {
         const { positionX, positionY } = node;
         ConquerSystem.convertTileGraphics(gameContext, positionX, positionY, 1);
     }
 
+    controller.deselectEntity();
+    controller.clearNodeList();
     AnimationSystem.stopSelect(gameContext, entity)
-
-    controllerComponent.selectedEntity = null;
-    controllerComponent.nodeList = [];
 }
 
 ControllerSystem.isControlled = function(entityID, controller) {
@@ -191,7 +185,7 @@ ControllerSystem.isControlled = function(entityID, controller) {
 ControllerSystem.isMoveable = function(entity, controller) {
     const healthComponent = entity.getComponent(HealthComponent);
     const isSelectable = entity.hasComponent(MoveComponent) && healthComponent.health > 0;
-    const controllerComponent = controller.getComponent(ControllerComponent);
+    const selectedEntityID = controller.getSelectedEntity();
 
-    return isSelectable && controllerComponent.selectedEntity === null;
+    return isSelectable && selectedEntityID === null;
 }

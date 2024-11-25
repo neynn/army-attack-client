@@ -1,7 +1,5 @@
 import { createAttackRequest } from "../../actions/attackAction.js";
 import { createConstructionRequest } from "../../actions/constructionAction.js";
-import { ConstructionComponent } from "../../components/construction.js";
-import { ControllerComponent } from "../../components/controller.js";
 import { CONTROLLER_STATES } from "../../enums.js";
 import { State } from "../../source/state/state.js";
 import { ConstructionSystem } from "../../systems/construction.js";
@@ -69,10 +67,12 @@ ControllerIdleState.prototype.update = function(stateMachine, gameContext) {
     const { actionQueue } = gameContext;
     const controller = stateMachine.getContext();
 
+    controller.updateCursorPositionDefault(gameContext);
+    controller.updateCursorSpriteIdle(gameContext);
+
     if(actionQueue.isRunning()) {
         ControllerSystem.resetAttackerOverlays(gameContext);
-        return;
+    } else {
+        ControllerSystem.updateAttackers(gameContext, controller);   
     }
-
-    ControllerSystem.updateAttackers(gameContext, controller);
 }

@@ -11,7 +11,6 @@
     "Bulldoze": { "id": "Bulldoze", "allowSave": false, "allowLoad": true },
     "UnitBuster": { "id": "UnitBuster", "allowSave": false, "allowLoad": true },
 
-    "Controller": { "id": "Controller", "allowSave": false, "allowLoad": false },
     "Direction": { "id": "Direction", "allowSave": false, "allowLoad": false },
     "Position": { "id": "Position", "allowSave": false, "allowLoad": false },
     "Resource": { "id": "Resource", "allowSave": false, "allowLoad": false },

@@ -1,4 +1,3 @@
-import { ControllerComponent } from "../../components/controller.js";
 import { CONTROLLER_STATES } from "../../enums.js";
 import { State } from "../../source/state/state.js";
 import { TeamSystem } from "../../systems/team.js";
@@ -18,8 +17,7 @@ ControllerSelectedState.prototype.onEventEnter = function(stateMachine, gameCont
     const { soundPlayer } = client;
 
     const controller = stateMachine.getContext();
-    const controllerComponent = controller.getComponent(ControllerComponent);
-    const selectedEntityID = controllerComponent.selectedEntity;
+    const selectedEntityID = controller.getSelectedEntity();
     const selectedEntity = entityManager.getEntity(selectedEntityID);
 
     const { x, y } = gameContext.getMouseTile();
@@ -46,6 +44,9 @@ ControllerSelectedState.prototype.onEventEnter = function(stateMachine, gameCont
 ControllerSelectedState.prototype.update = function(stateMachine, gameContext) {
     const controller = stateMachine.getContext();
 
+    controller.updateCursorPositionDefault(gameContext);
+    controller.updateCursorSpriteSelected(gameContext);
+    
     ControllerSystem.updateSelectedEntity(gameContext, controller);
     ControllerSystem.updateAttackers(gameContext, controller);
 }

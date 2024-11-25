@@ -102,3 +102,9 @@ AnimationSystem.advanceConstructionFrame = function(gameContext, entity, stepsCo
     
     sprite.setFrame(frame);
 }
+
+AnimationSystem.updateControllerSprite = function(gameContext, controller) {
+    const { spriteManager } = gameContext;
+    const spriteComponent = controller.getComponent(SpriteComponent);
+    const sprite = spriteManager.getSprite(spriteComponent.spriteID);
+}

@@ -8,15 +8,8 @@ import { ConstructionComponent } from "../components/construction.js";
 import { PositionComponent } from "../components/position.js";
 import { tileToPosition_center } from "../source/camera/helpers.js";
 import { DirectionComponent } from "../components/direction.js";
-import { ControllerComponent } from "../components/controller.js";
 
 export const componentSetup = {};
-
-componentSetup.setupControllerComponent = function() {
-    const controllerComponent = new ControllerComponent();
-    
-    return controllerComponent;
-}
 
 componentSetup.setupDirectionComponent = function() {
     const directionComponent = new DirectionComponent();
