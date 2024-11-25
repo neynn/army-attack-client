@@ -19,17 +19,8 @@ export const DefaultArchetype = function() {
 DefaultArchetype.prototype = Object.create(Archetype.prototype);
 DefaultArchetype.prototype.constructor = DefaultArchetype;
 
-DefaultArchetype.prototype.createStatCard = function(gameContext, entity, sprite) {
-    const { spriteManager } = gameContext;
-    const teamTypes = gameContext.getConfig("teamTypes");
-
+DefaultArchetype.prototype.addHealthText = function(entity, statCard) {
     const healthComponent = entity.getComponent(HealthComponent);
-    const teamComponent = entity.getComponent(TeamComponent);
-
-    const statCardType = teamTypes[teamComponent.teamID].sprites.stat_card;
-    const statCard = spriteManager.createSprite(statCardType, null);
-    const { x, y } = positionSizeOffset(entity.config.dimX, entity.config.dimY);
-
     const healthText = new SimpleText("HEALTH_TEXT");
 
     healthText.style.setFontType("ArmyAttack Arial");
@@ -38,33 +29,56 @@ DefaultArchetype.prototype.createStatCard = function(gameContext, entity, sprite
     healthText.setPosition(95, 90);
     healthText.setText(`${healthComponent.health}/${healthComponent.maxHealth}`);
 
-    statCard.setPosition(x - 48, y - 48);
     statCard.addChild(healthText, "HEALTH_TEXT");
 
     entity.events.listen(ENTITY_EVENTS.HEALTH_UPDATE);
     entity.events.subscribe(ENTITY_EVENTS.HEALTH_UPDATE, "ARCHETYPE", (health, maxHealth) => {
         healthText.setText(`${health}/${maxHealth}`);
     });
+}
+
+DefaultArchetype.prototype.addDamageText = function(entity, statCard) {
+    const attackComponent = entity.getComponent(AttackComponent);
+    const damageText = new SimpleText("DAMAGE_TEXT");
+
+    damageText.style.setFontType("ArmyAttack Arial");
+    damageText.style.setAlignment(TextStyle.TEXT_ALIGN_RIGHT);
+
+    damageText.setPosition(95, 78);
+    damageText.setText(`${attackComponent.damage}`);
+
+    statCard.addChild(damageText, "DAMAGE_TEXT");
+
+    entity.events.listen(ENTITY_EVENTS.DAMAGE_UPDATE);
+    entity.events.subscribe(ENTITY_EVENTS.DAMAGE_UPDATE, "ARCHETYPE", (damage) => {
+        damageText.setText(`${damage}`);
+    });
+}
+
+DefaultArchetype.prototype.createStatCard = function(gameContext, entity, sprite) {
+    const { spriteManager } = gameContext;
+    const teamTypes = gameContext.getConfig("teamTypes");
+    const teamComponent = entity.getComponent(TeamComponent);
+    const { x, y } = positionSizeOffset(entity.config.dimX, entity.config.dimY);
 
     if(entity.hasComponent(AttackComponent)) {
-        const attackComponent = entity.getComponent(AttackComponent);
-        const damageText = new SimpleText("DAMAGE_TEXT");
+        const statCardType = teamTypes[teamComponent.teamID].sprites.stat_card;
+        const statCard = spriteManager.createSprite(statCardType, null);
 
-        damageText.style.setFontType("ArmyAttack Arial");
-        damageText.style.setAlignment(TextStyle.TEXT_ALIGN_RIGHT);
+        this.addHealthText(entity, statCard);
+        this.addDamageText(entity, statCard);
 
-        damageText.setPosition(95, 78);
-        damageText.setText(`${attackComponent.damage}`);
+        statCard.setPosition(x - 48, y - 48);
+        sprite.addChild(statCard, "STATS");
+    } else {
+        const statCardType = teamTypes[teamComponent.teamID].sprites.stat_card_small;
+        const statCard = spriteManager.createSprite(statCardType, null);
 
-        statCard.addChild(damageText, "DAMAGE_TEXT");
+        this.addHealthText(entity, statCard);
 
-        entity.events.listen(ENTITY_EVENTS.DAMAGE_UPDATE);
-        entity.events.subscribe(ENTITY_EVENTS.DAMAGE_UPDATE, "ARCHETYPE", (damage) => {
-            damageText.setText(`${damage}`);
-        });
+        statCard.setPosition(x - 48, y - 48);
+        sprite.addChild(statCard, "STATS");
     }
-
-    sprite.addChild(statCard, "STATS");
 }
 
 DefaultArchetype.prototype.initializeEntity = function(gameContext, entity, sprite, type, setup) {

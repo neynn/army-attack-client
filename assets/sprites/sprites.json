@@ -23810,6 +23810,17 @@
             "1": {"x":0,"y":0,"w":38,"h":25,"offset":{"x":0,"y":0}}
         }
     },
+    "unit_stat_card_good_small": {
+        "id": "unit_stat_card_good_small",
+        "directory": "assets/sprites/ui",
+        "source": "unit_stat_card_good_small.png",
+        "bounds": {"x":59,"y":83,"w":38,"h":12},
+        "frameTime": 1,
+        "allowFlip": false,
+        "frames": {
+            "1": {"x":0,"y":0,"w":38,"h":12,"offset":{"x":0,"y":0}}
+        }
+    },
     "unit_stat_card_bad": {
         "id": "unit_stat_card_bad",
         "directory": "assets/sprites/ui",
@@ -23819,6 +23830,17 @@
         "allowFlip": false,
         "frames": {
             "1": {"x":0,"y":0,"w":38,"h":25,"offset":{"x":0,"y":0}}
+        }
+    },
+    "unit_stat_card_bad_small": {
+        "id": "unit_stat_card_bad_small",
+        "directory": "assets/sprites/ui",
+        "source": "unit_stat_card_bad_small.png",
+        "bounds": {"x":59,"y":83,"w":38,"h":12},
+        "frameTime": 1,
+        "allowFlip": false,
+        "frames": {
+            "1": {"x":0,"y":0,"w":38,"h":12,"offset":{"x":0,"y":0}}
         }
     },
     "icon_unit_repair": {

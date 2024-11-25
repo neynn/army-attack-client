@@ -9,7 +9,6 @@ import { ControllerIdleState } from "../../states/controller/idle.js";
 import { componentSetup } from "../componentSetup.js";
 import { PositionComponent } from "../../components/position.js";
 import { SpriteComponent } from "../../components/sprite.js";
-import { PathfinderSystem } from "../../systems/pathfinder.js";
 
 export const PlayerController = function(id) {
     Controller.call(this, id);

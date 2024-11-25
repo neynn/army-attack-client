@@ -94,14 +94,20 @@
             "name": "#CONFIG_TEAM_CRIMSON",
             "allies": { "0": true, "2": true },
             "enemies": { "1": true, "3": true },
-            "sprites": { "stat_card": "unit_stat_card_bad" }
+            "sprites": { 
+                "stat_card": "unit_stat_card_bad",
+                "stat_card_small": "unit_stat_card_bad_small"
+            }
         },
         "1": {
             "id": 1,
             "name": "#CONFIG_TEAM_ALLIES",
             "allies": { "1": true, "2": true },
             "enemies": { "0": true, "3": true },
-            "sprites": { "stat_card": "unit_stat_card_good" }
+            "sprites": { 
+                "stat_card": "unit_stat_card_good",
+                "stat_card_small": "unit_stat_card_good_small"
+            }
         },
         "2": {
             "id": 2,
