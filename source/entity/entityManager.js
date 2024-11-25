@@ -85,7 +85,7 @@ EntityManager.prototype.saveComponents = function(entity) {
     for(const componentID in this.componentTypes) {
         const componentType = this.componentTypes[componentID];
 
-        if(!componentType.save) {
+        if(!componentType.allowSave) {
             continue;
         }
 
@@ -119,7 +119,7 @@ EntityManager.prototype.loadComponents = function(entity, savedComponents) {
     for(const componentID in savedComponents) {
         const componentType = this.componentTypes[componentID];
 
-        if(!componentType || !componentType.load) {
+        if(!componentType || !componentType.allowLoad) {
             Logger.log(false, "Component is not registered as loadable!", "EntityManager.prototype.loadComponents", { componentID }); 
             continue;
         }
@@ -161,7 +161,7 @@ EntityManager.prototype.loadTraits = function(entity, traits) {
         for(const componentID in components) {
             const componentType = this.componentTypes[componentID];
 
-            if(!componentType || !componentType.load) {
+            if(!componentType || !componentType.allowLoad) {
                 Logger.log(false, `Component is not registered as loadable!`, "EntityManager.prototype.loadTraits", { traitID, componentID }); 
                 continue;
             }

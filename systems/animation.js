@@ -89,7 +89,7 @@ AnimationSystem.playConstruction = function(gameContext, entity) {
     const { x, y } = positionSizeOffsetCenter(entity.config.dimX, entity.config.dimY);
 
     entitySprite.addChild(delaySprite, "DELAY_SPRITE");
-    soundPlayer.playRandom(["sound_building_construction"]);
+    soundPlayer.playRandom(entity.config.sounds.build);
     delaySprite.expire();
     delaySprite.setPosition(x, y);
 }
