@@ -1,24 +1,25 @@
-import { ResourceLoader } from "./source/resourceLoader.js";
 import { ImageSheet } from "./source/graphics/imageSheet.js";
 import { ArmyContext } from "./armyContext.js";
-import { GlobalResourceManager } from "./source/resourceManager.js";
+import { GlobalResourceManager, ResourceManager } from "./source/resourceManager.js";
 
 const gameContext = new ArmyContext();
 
 GlobalResourceManager.setServerAddress("https://neynn.github.io/army-attack-client");
 
 GlobalResourceManager.loadMain("assets", "files.json").then(async files => {
+  const sprites = {};
+  const tiles = {};
   const usedMB = [];
   const usedMBLarge = [];
 
-  await ResourceLoader.loadImages(files.sprites, ((key, image, config) => {
+  await GlobalResourceManager.loadImages(files.sprites, ((key, image, config) => {
     const imageSheet = new ImageSheet(image, config);
     imageSheet.defineDefaultAnimation();
 
     const imageSize = image.width * image.height * 4;
-    const imageSizeMB = imageSize / ResourceLoader.SIZE_MB;
+    const imageSizeMB = imageSize / ResourceManager.SIZE_MB;
 
-    if(imageSize >= ResourceLoader.BIG_IMAGE) {
+    if(imageSize >= ResourceManager.SIZE_BIG_IMAGE) {
       usedMBLarge.push({
         "imageID": key,
         "imageSizeMB": imageSizeMB
@@ -30,17 +31,17 @@ GlobalResourceManager.loadMain("assets", "files.json").then(async files => {
       "imageSizeMB": imageSizeMB
     });
 
-    files.sprites[key] = imageSheet;
-  }));
+    sprites[key] = imageSheet;
+  }), (key, error, config) => console.error(key, config, error));
 
   console.log(usedMB, usedMBLarge);
 
-  await ResourceLoader.loadImages(files.tiles, ((key, image, config) => {
+  await GlobalResourceManager.loadImages(files.tiles, ((key, image, config) => {
     const imageSheet = new ImageSheet(image, config);
     imageSheet.defineAnimations();
     imageSheet.defineDefaultAnimation();
-    files.tiles[key] = imageSheet;
-  }));
+    tiles[key] = imageSheet;
+  }), (key, error, config) => console.error(key, config, error));
 
   const fontPromises = [];
 
@@ -53,6 +54,9 @@ GlobalResourceManager.loadMain("assets", "files.json").then(async files => {
 
   await Promise.allSettled(fontPromises);
 
+  files.sprites = sprites;
+  files.tiles = tiles;
+  
   return files;
 }).then(resources => {
   gameContext.loadResources(resources);

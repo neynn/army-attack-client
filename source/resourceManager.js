@@ -1,4 +1,4 @@
-const ResourceManager = function() {
+export const ResourceManager = function() {
     this.serverAddress = null;
     this.audioContext = new AudioContext();
     this.audioBuffers = new Map();
@@ -130,6 +130,23 @@ ResourceManager.prototype.loadMain = async function(directory, source) {
     }
 
     return files;
+}
+
+ResourceManager.prototype.loadImages = function(imageMeta, onLoad, onError) {
+    const promises = [];
+  
+    for(const imageID in imageMeta) {
+        const imageConfig = imageMeta[imageID];
+        const { directory, source } = imageConfig;
+        const imagePath = this.getPath(directory, source ? source : `${imageID}${ResourceManager.DEFAULT_IMAGE_TYPE}`);
+        const imagePromise = this.promiseHTMLImage(imagePath)
+        .then(image => onLoad(imageID, image, imageConfig))
+        .catch(error => onError(imageID, error, imageConfig));
+  
+        promises.push(imagePromise);
+    }
+  
+    return Promise.allSettled(promises);
 }
 
 ResourceManager.prototype.getAudioSource = async function(meta, volume) {

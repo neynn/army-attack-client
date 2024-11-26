@@ -48,17 +48,7 @@ export const ArmyContext = function() {
 ArmyContext.prototype = Object.create(GameContext.prototype);
 ArmyContext.prototype.constructor = ArmyContext;
 
-ArmyContext.prototype.loadResources = function(resources) {
-    this.client.musicPlayer.load(resources.music);
-    this.client.soundPlayer.load(resources.sounds);
-    this.client.socket.load(resources.settings.socket);
-    this.mapLoader.load(resources.maps);
-    this.spriteManager.load(resources.sprites);
-    this.tileManager.load(resources.tiles, resources.tileMeta);
-    this.uiManager.load(resources.uiConfig, resources.icons, resources.fonts);
-    this.entityManager.load(resources.entities, resources.components, resources.traits);
-    this.settings = resources.settings;
-    this.config = resources.config;
+ArmyContext.prototype.onResourcesLoad = function(resources) {
     this.config.tileConversions = this.parseConversions();
 }
 

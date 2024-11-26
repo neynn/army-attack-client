@@ -1,5 +1,4 @@
 import { CONTEXT_STATES } from "../../enums.js";
-import { SpriteManager } from "../../source/graphics/spriteManager.js";
 import { State } from "../../source/state/state.js";
 import { UIElement } from "../../source/ui/uiElement.js";
 
