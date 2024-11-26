@@ -11,10 +11,6 @@ export const Camera = function(positionX, positionY, viewportWidth, viewportHeig
 Camera.VIEWPORT_MODE_AUTO = 0;
 Camera.VIEWPORT_MODE_FIXED = 1;
 Camera.VIEWPORT_MODE_FORCED = 2;
-Camera.TILE_WIDTH = 96;
-Camera.TILE_HEIGHT = 96;
-Camera.TILE_WIDTH_HALF = 48;
-Camera.TILE_HEIGHT_HALF = 48;
 
 Camera.prototype.update = function(gameContext) {}
 

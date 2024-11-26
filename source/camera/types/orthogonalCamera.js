@@ -6,6 +6,8 @@ export const OrthogonalCamera = function(positionX, positionY, viewportWidth, vi
 
     this.tileWidth = 0;
     this.tileHeight = 0;
+    this.halfTileWidth = 0;
+    this.halfTileHeight = 0;
     this.mapWidth = 0;
     this.mapHeight = 0;
 }
@@ -13,9 +15,11 @@ export const OrthogonalCamera = function(positionX, positionY, viewportWidth, vi
 OrthogonalCamera.prototype = Object.create(MoveableCamera.prototype);
 OrthogonalCamera.prototype.constructor = OrthogonalCamera;
 
-OrthogonalCamera.prototype.loadTile = function(tileWidth, tileHeight) {
+OrthogonalCamera.prototype.loadTileDimensions = function(tileWidth, tileHeight) {
     this.tileWidth = tileWidth;
     this.tileHeight = tileHeight;
+    this.halfTileWidth = tileWidth / 2;
+    this.halfTileHeight = tileHeight / 2;
 }
 
 OrthogonalCamera.prototype.loadWorld = function(mapWidth, mapHeight) {
@@ -59,4 +63,63 @@ OrthogonalCamera.prototype.getWorldBounds = function() {
         "endX": clampedEndX,
         "endY": clampedEndY
     }
+}
+
+OrthogonalCamera.prototype.getTileDimensions = function() {
+    return {
+        "width": this.tileWidth,
+        "height": this.tileHeight,
+        "halfWidth": this.halfTileWidth,
+        "halfHeight": this.halfTileHeight
+    }
+}
+
+OrthogonalCamera.prototype.transformTileToPosition = function(tileX, tileY) {
+	const positionX = tileX * this.tileWidth;
+	const positionY = tileY * this.tileHeight;
+
+	return {
+		"x": positionX,
+		"y": positionY
+	}
+}
+
+OrthogonalCamera.prototype.transformPositionToTile = function(positionX, positionY) {
+    const tileX = Math.trunc(positionX / this.tileWidth);
+	const tileY = Math.trunc(positionY / this.tileHeight);
+
+	return {
+		"x": tileX,
+		"y": tileY 
+	}
+}
+
+OrthogonalCamera.prototype.transformSizeToPositionOffsetCenter = function(sizeX, sizeY) {
+    const xOffset = this.tileWidth * (sizeX / 2 - 0.5);
+    const yOffset = this.tileHeight * (sizeY / 2 - 0.5);
+
+    return { 
+		"x": xOffset,
+		"y": yOffset
+	}
+}
+
+OrthogonalCamera.prototype.transformSizeToPositionOffset = function(sizeX, sizeY) {
+    const xOffset = this.tileWidth * (sizeX - 1);
+    const yOffset = this.tileHeight * (sizeY - 1);
+
+    return { 
+		"x": xOffset,
+		"y": yOffset
+	}
+}
+
+OrthogonalCamera.prototype.transformTileToPositionCenter = function(tileX, tileY) {
+    const positionX = tileX * this.tileWidth + this.halfTileWidth;
+	const positionY = tileY * this.tileHeight + this.halfTileHeight;
+
+	return {
+		"x": positionX,
+		"y": positionY
+	}
 }

@@ -1,7 +1,7 @@
 import { PositionComponent } from "../components/position.js";
 import { SpriteComponent } from "../components/sprite.js";
 import { UnitTypeComponent } from "../components/unitType.js";
-import { positionSizeOffsetCenter } from "../source/camera/helpers.js";
+import { CAMERAS } from "../enums.js";
 import { SpriteManager } from "../source/graphics/spriteManager.js";
 import { DirectionSystem } from "./direction.js";
 import { MorphSystem } from "./morph.js";
@@ -81,12 +81,13 @@ AnimationSystem.stopSelect = function(gameContext, entity) {
 }
 
 AnimationSystem.playConstruction = function(gameContext, entity) {
-    const { client, spriteManager } = gameContext;
+    const { client, spriteManager, renderer } = gameContext;
     const { soundPlayer } = client;
+    const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
     const spriteComponent = entity.getComponent(SpriteComponent);
     const entitySprite = spriteManager.getSprite(spriteComponent.spriteID);
     const delaySprite = spriteManager.createSprite("icon_delay");
-    const { x, y } = positionSizeOffsetCenter(entity.config.dimX, entity.config.dimY);
+    const { x, y } = camera.transformSizeToPositionOffsetCenter(entity.config.dimX, entity.config.dimY);
 
     entitySprite.addChild(delaySprite, "DELAY_SPRITE");
     soundPlayer.playRandom(entity.config.sounds.build);

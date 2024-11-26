@@ -1,14 +1,13 @@
 import { AttackComponent } from "../../components/attack.js";
 import { HealthComponent } from "../../components/health.js";
 import { TeamComponent } from "../../components/team.js";
-import { ENTITY_EVENTS } from "../../enums.js";
+import { CAMERAS, ENTITY_EVENTS } from "../../enums.js";
 import { SimpleText } from "../../source/graphics/drawable/simpleText.js";
 import { TextStyle } from "../../source/graphics/applyable/textStyle.js";
 import { componentSetup } from "../componentSetup.js";
 import { SpriteComponent } from "../../components/sprite.js";
 import { SpriteManager } from "../../source/graphics/spriteManager.js";
 import { Archetype } from "../../source/entity/archetype.js";
-import { positionSizeOffset } from "../../source/camera/helpers.js";
 
 const MODE_STAT_TYPE_ID = "story";
 
@@ -56,10 +55,11 @@ DefaultArchetype.prototype.addDamageText = function(entity, statCard) {
 }
 
 DefaultArchetype.prototype.createStatCard = function(gameContext, entity, sprite) {
-    const { spriteManager } = gameContext;
+    const { spriteManager, renderer } = gameContext;
+    const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
     const teamTypes = gameContext.getConfig("teamTypes");
     const teamComponent = entity.getComponent(TeamComponent);
-    const { x, y } = positionSizeOffset(entity.config.dimX, entity.config.dimY);
+    const { x, y } = camera.transformSizeToPositionOffset(entity.config.dimX, entity.config.dimY);
 
     if(entity.hasComponent(AttackComponent)) {
         const statCardType = teamTypes[teamComponent.teamID].sprites.stat_card;
@@ -82,7 +82,8 @@ DefaultArchetype.prototype.createStatCard = function(gameContext, entity, sprite
 }
 
 DefaultArchetype.prototype.initializeEntity = function(gameContext, entity, sprite, type, setup) {
-    const { spriteManager } = gameContext;
+    const { spriteManager, renderer } = gameContext;
+    const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
     const { stats } = type;
     const usedStats = stats[MODE_STAT_TYPE_ID];
 
@@ -91,6 +92,10 @@ DefaultArchetype.prototype.initializeEntity = function(gameContext, entity, spri
     const teamComponent = componentSetup.setupTeamComponent(setup);
     const spriteComponent = componentSetup.setupSpriteComponent(sprite);
     const healthComponent = componentSetup.setupHealthComponent(type, usedStats);
+
+    const { x, y } = camera.transformTileToPositionCenter(positionComponent.tileX, positionComponent.tileY);
+    positionComponent.positionX = x;
+    positionComponent.positionY = y;
 
     entity.useEvents();
 

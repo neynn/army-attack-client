@@ -6,7 +6,6 @@ import { TeamComponent } from "../components/team.js";
 import { clampValue } from "../source/math/math.js";
 import { ConstructionComponent } from "../components/construction.js";
 import { PositionComponent } from "../components/position.js";
-import { tileToPosition_center } from "../source/camera/helpers.js";
 import { DirectionComponent } from "../components/direction.js";
 
 export const componentSetup = {};
@@ -20,10 +19,9 @@ componentSetup.setupDirectionComponent = function() {
 componentSetup.setupPositionComponent = function(setup) {
     const positionComponent = new PositionComponent();
     const { tileX, tileY } = setup;
-    const { x, y } = tileToPosition_center(tileX, tileY);
 
-    positionComponent.positionX = x;
-    positionComponent.positionY = y;
+    positionComponent.positionX = 0;
+    positionComponent.positionY = 0;
     positionComponent.tileX = tileX;
     positionComponent.tileY = tileY;
 

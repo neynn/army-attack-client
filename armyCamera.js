@@ -1,4 +1,3 @@
-import { Camera } from "./source/camera/camera.js";
 import { Renderer } from "./source/renderer.js";
 import { OrthogonalCamera } from "./source/camera/types/orthogonalCamera.js";
 
@@ -116,7 +115,7 @@ ArmyCamera.prototype.update = function(gameContext) {
         });
 
         this.drawWithCallback(activeMap, teamLayer, viewportBounds, (renderX, renderY, tileID) => {
-            const drawX = renderX - x - 16 + Camera.TILE_WIDTH;
+            const drawX = renderX - x - 16 + this.tileWidth;
             const drawY = renderY - y + 16;
 
             context.fillText(tileID, drawX, drawY);
@@ -136,8 +135,8 @@ ArmyCamera.prototype.drawOverlay = function(gameContext) {
 
         for(const [positionKey, overlayData] of overlay) {
             const { x, y, id } = overlayData;
-            const renderX = Camera.TILE_WIDTH * x - vX;
-            const renderY = Camera.TILE_HEIGHT * y - vY;
+            const renderX = this.tileWidth * x - vX;
+            const renderY = this.tileHeight * y - vY;
     
             tileManager.drawTileGraphics(id, context, renderX, renderY);
         }
@@ -156,11 +155,11 @@ ArmyCamera.prototype.drawWithCallback = function(map2D, layerConfig, onDraw, vie
     const layer = map2D.layers[id];
 
     for(let i = startY; i <= endY; i++) {
-        const renderY = i * Camera.TILE_HEIGHT;
+        const renderY = i * this.tileHeight;
         const row = i * width;
 
         for(let j = startX; j <= endX; j++) {
-            const renderX = j * Camera.TILE_WIDTH;
+            const renderX = j * this.tileWidth;
             const index = row + j;
             const tileID = layer[index];
 
@@ -224,7 +223,7 @@ ArmyCamera.prototype.drawTileLayer = function(gameContext, map2D, layerConfig, v
     context.globalAlpha = opacity;
 
     for(let i = startY; i <= endY; i++) {
-        const renderY = i * Camera.TILE_HEIGHT - y;
+        const renderY = i * this.tileHeight - y;
         const row = i * width;
 
         for(let j = startX; j <= endX; j++) {
@@ -235,7 +234,7 @@ ArmyCamera.prototype.drawTileLayer = function(gameContext, map2D, layerConfig, v
                 continue;
             }
             
-            const renderX = j * Camera.TILE_WIDTH - x;
+            const renderX = j * this.tileWidth - x;
 
             tileManager.drawTileGraphics(tileID, context, renderX, renderY);
         }
@@ -255,12 +254,12 @@ ArmyCamera.prototype.drawMapOutlines = function(gameContext, mapWidth, mapHeight
     context.fillStyle = ArmyCamera.MAP_OUTLINE_COLOR;
 
     for(let i = 0; i <= mapHeight; i++) {
-        const renderY = i * Camera.TILE_HEIGHT - y;
-        context.fillRect(0, renderY, viewportWidth + Camera.TILE_HEIGHT, lineSize);
+        const renderY = i * this.tileHeight - y;
+        context.fillRect(0, renderY, viewportWidth + this.tileHeight, lineSize);
     }
 
     for (let j = 0; j <= mapWidth; j++) {
-        const renderX = j * Camera.TILE_WIDTH - x;
-        context.fillRect(renderX, 0, lineSize, viewportHeight + Camera.TILE_HEIGHT);
+        const renderX = j * this.tileWidth - x;
+        context.fillRect(renderX, 0, lineSize, viewportHeight + this.tileHeight);
     }
 }

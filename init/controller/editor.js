@@ -1,5 +1,4 @@
 import { MapEditor } from "../../source/map/mapEditor.js";
-import { Camera } from "../../source/camera/camera.js";
 import { Cursor } from "../../source/client/cursor.js";
 import { Controller } from "../../source/controller/controller.js";
 import { saveMap, saveTemplateAsFile } from "../../source/helpers.js";
@@ -221,6 +220,7 @@ EditorController.prototype.initializeRenderEvents = function(gameContext) {
     
         const { tileName, tileID } = brush;
         const { x, y } = camera.getViewportPosition();
+        const { width, height, halfWidth, halfHeight } = camera.getTileDimensions();
         const context = renderer.getContext();
         const startX = cursorTile.x - brushSize;
         const startY = cursorTile.y - brushSize;
@@ -230,18 +230,18 @@ EditorController.prototype.initializeRenderEvents = function(gameContext) {
         context.globalAlpha = this.mapEditor.config.overlayOpacity;
 
         for(let i = startY; i <= endY; i++) {
-            const renderY = i * Camera.TILE_HEIGHT - y;
+            const renderY = i * height - y;
 
             for(let j = startX; j <= endX; j++) {   
-                const renderX = j * Camera.TILE_WIDTH - x;
+                const renderX = j * width - x;
 
                 if(tileID === 0) {
-                    tileManager.drawEmptyTile(context, renderX, renderY, Camera.TILE_WIDTH_HALF, Camera.TILE_HEIGHT_HALF);
+                    tileManager.drawEmptyTile(context, renderX, renderY, halfWidth, halfHeight);
                 } else {
                     tileManager.drawTileGraphics(tileID, context, renderX, renderY);
                     context.fillStyle = "#eeeeee";
                     context.textAlign = "center";
-                    context.fillText(tileName, renderX + Camera.TILE_WIDTH_HALF, renderY);  
+                    context.fillText(tileName, renderX + halfWidth, renderY);  
                 } 
             }
         }

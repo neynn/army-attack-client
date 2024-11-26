@@ -1,5 +1,4 @@
-import { CONTROLLER_STATES } from "../../enums.js";
-import { tileToPosition_center } from "../../source/camera/helpers.js";
+import { CAMERAS, CONTROLLER_STATES } from "../../enums.js";
 import { Cursor } from "../../source/client/cursor.js";
 import { Controller } from "../../source/controller/controller.js";
 import { SpriteManager } from "../../source/graphics/spriteManager.js";
@@ -112,29 +111,31 @@ PlayerController.prototype.updateCursorSpriteDefault = function(gameContext) {
 }
 
 PlayerController.prototype.updateCursorPositionAirstrike = function(gameContext) {
-    const { spriteManager } = gameContext;
+    const { spriteManager, renderer } = gameContext;
+    const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
     const spriteComponent = this.getComponent(SpriteComponent);
     const { x, y } = gameContext.getMouseTile();
-    const centerPosition = tileToPosition_center(x, y);
+    const centerPosition = camera.transformTileToPositionCenter(x, y);
     const sprite = spriteManager.getSprite(spriteComponent.spriteID);
 
     sprite.setPosition(centerPosition.x, centerPosition.y);
 }
 
 PlayerController.prototype.updateCursorPositionDefault = function(gameContext) {
-    const { spriteManager, entityManager } = gameContext;
+    const { spriteManager, renderer, entityManager } = gameContext;
+    const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
     const spriteComponent = this.getComponent(SpriteComponent);
     const sprite = spriteManager.getSprite(spriteComponent.spriteID);
 
     if(!this.hoveredEntity) {
         const { x, y } = gameContext.getMouseTile();
-        const centerPosition = tileToPosition_center(x, y);
+        const centerPosition = camera.transformTileToPositionCenter(x, y);
 
         sprite.setPosition(centerPosition.x, centerPosition.y);
     } else {
         const hoverEntity = entityManager.getEntity(this.hoveredEntity);
         const positionComponent = hoverEntity.getComponent(PositionComponent);
-        const centerPosition = tileToPosition_center(positionComponent.tileX, positionComponent.tileY);
+        const centerPosition = camera.transformTileToPositionCenter(positionComponent.tileX, positionComponent.tileY);
 
         sprite.setPosition(centerPosition.x, centerPosition.y);
     }
@@ -179,9 +180,10 @@ PlayerController.prototype.addClickEvent = function(gameContext) {
 }
 
 PlayerController.prototype.initialize = function(gameContext, payload) {
-    const { spriteManager } = gameContext;
+    const { spriteManager, renderer } = gameContext;
+    const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
     const controllerSprite = spriteManager.createSprite("cursor_attack_1x1", SpriteManager.LAYER_TOP);
-    const { x, y } = tileToPosition_center(0, 0);
+    const { x, y } = camera.transformTileToPositionCenter(0, 0);
 
     controllerSprite.setPosition(x, y);
 

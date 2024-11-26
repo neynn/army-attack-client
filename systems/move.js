@@ -1,11 +1,11 @@
 import { MoveComponent } from "../components/move.js";
 import { PositionComponent } from "../components/position.js";
-import { ENTITY_EVENTS, SYSTEM_TYPES } from "../enums.js";
-import { Camera } from "../source/camera/camera.js";
-import { tileToPosition_center } from "../source/camera/helpers.js";
+import { CAMERAS, ENTITY_EVENTS, SYSTEM_TYPES } from "../enums.js";
 
 export const MoveSystem = function(gameContext, entity) {
-    const { timer } = gameContext;
+    const { timer, renderer } = gameContext;
+    const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
+    const { width } = camera.getTileDimensions();
     const deltaTime = timer.getFixedDeltaTime();
 
     const positionComponent = entity.getComponent(PositionComponent);
@@ -20,18 +20,18 @@ export const MoveSystem = function(gameContext, entity) {
 
         moveComponent.distance += moveSpeed;
 
-        while(moveComponent.distance >= Camera.TILE_WIDTH && moveComponent.path.length !== 0) {
+        while(moveComponent.distance >= width && moveComponent.path.length !== 0) {
             const {deltaX, deltaY} = moveComponent.path[0];
             const tileX = positionComponent.tileX + deltaX;
             const tileY = positionComponent.tileY + deltaY;
-            const {x, y} = tileToPosition_center(tileX, tileY);
+            const { x, y } = camera.transformTileToPositionCenter(tileX, tileY);
             
             positionComponent.positionX = x;
             positionComponent.positionY = y;
             positionComponent.tileX = tileX;
             positionComponent.tileY = tileY;
 
-            moveComponent.distance -= Camera.TILE_WIDTH;
+            moveComponent.distance -= width;
             moveComponent.path.shift();
         }
     }
@@ -55,10 +55,11 @@ MoveSystem.beginMove = function(gameContext, entity, path) {
 }
 
 MoveSystem.endMove = function(gameContext, entity, targetX, targetY) {
-    const { systemManager } = gameContext;
+    const { systemManager, renderer } = gameContext;
+    const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
     const positionComponent = entity.getComponent(PositionComponent);
     const moveComponent = entity.getComponent(MoveComponent);
-    const {x, y} = tileToPosition_center(targetX, targetY);
+    const { x, y } = camera.transformTileToPositionCenter(targetX, targetY);
 
     positionComponent.positionX = x;
     positionComponent.positionY = y;
