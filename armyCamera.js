@@ -1,9 +1,9 @@
 import { Camera } from "./source/camera/camera.js";
 import { Renderer } from "./source/renderer.js";
-import { Camera2D } from "./source/camera/types/camera2D.js";
+import { OrthogonalCamera } from "./source/camera/types/orthogonalCamera.js";
 
 export const ArmyCamera = function(positionX, positionY, width, height) {
-    Camera2D.call(this, positionX, positionY, width, height);
+    OrthogonalCamera.call(this, positionX, positionY, width, height);
 
     this.overlays = {
         [ArmyCamera.OVERLAY_TYPE_MOVE]: new Map(),
@@ -17,7 +17,7 @@ ArmyCamera.OVERLAY_TYPE_ATTACK = "ATTACK";
 ArmyCamera.OVERLAY_TYPE_RANGE = "RANGE";
 ArmyCamera.MAP_OUTLINE_COLOR = "#dddddd";
 
-ArmyCamera.prototype = Object.create(Camera2D.prototype);
+ArmyCamera.prototype = Object.create(OrthogonalCamera.prototype);
 ArmyCamera.prototype.constructor = ArmyCamera;
 
 ArmyCamera.prototype.getOverlayKey = function(positionX, positionY) {
@@ -76,7 +76,7 @@ ArmyCamera.prototype.update = function(gameContext) {
         return;
     }
 
-    const viewportBounds = this.getViewportBounds();
+    const viewportBounds = this.getWorldBounds();
 
     for(const layerConfig of activeMap.backgroundLayers) {
         this.drawTileLayer(gameContext, activeMap, layerConfig, viewportBounds);

@@ -423,7 +423,7 @@ EditorController.prototype.initializeUIEvents = function(gameContext) {
 
         this.mapEditor.resizeMap(gameMap, newWidth, newHeight);
 
-        camera.loadViewport(newWidth, newHeight);
+        camera.loadWorld(newWidth, newHeight);
     }); 
 
     uiManager.addClick(id, "BUTTON_VIEW_ALL", () => {

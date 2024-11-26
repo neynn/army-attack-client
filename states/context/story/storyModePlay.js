@@ -30,7 +30,7 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
     }, "neyn");
 
     gameContext.initializeTilemap(MAP);
-    camera.centerOnMap();
+    camera.centerWorld();
     camera.bindViewport();
 
     gameContext.createEntity({ 

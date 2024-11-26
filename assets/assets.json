@@ -1,16 +1,16 @@
 {
-    "entities": { "id": "entities", "directory": "assets/config/entity", "source": "entities.json" },
-    "components": { "id": "components", "directory": "assets/config/entity", "source": "components.json" },
-    "traits": { "id": "traits", "directory": "assets/config/entity", "source": "traits.json" },
     "uiConfig": { "id": "uiConfig", "directory": "assets/config", "source": "uiConfig.json" },
     "config": { "id": "config", "directory": "assets/config", "source": "config.json" },
     "settings": { "id": "settings", "directory": "assets/config", "source": "settings.json" },
+    "tileMeta": { "id": "tileMeta", "directory": "assets/config", "source": "tileMeta.json" },
+    "entities": { "id": "entities", "directory": "assets/entity", "source": "entities.json" },
+    "components": { "id": "components", "directory": "assets/entity", "source": "components.json" },
+    "traits": { "id": "traits", "directory": "assets/entity", "source": "traits.json" },
     "fonts": { "id": "fonts", "directory": "assets/fonts", "source": "fonts.json" },
     "icons": { "id": "icons", "directory": "assets/icons", "source": "icons.json" },
     "maps": { "id": "maps", "directory": "assets/maps", "source": "maps.json" },
     "music": { "id": "music", "directory": "assets/music", "source": "music.json" },
     "sounds": { "id": "sounds", "directory": "assets/sounds", "source": "sounds.json" },
     "sprites": { "id": "sprites", "directory": "assets/sprites", "source": "sprites.json" },
-    "tiles": { "id": "tiles", "directory": "assets/tiles", "source": "tiles.json" },
-    "tileMeta": { "id": "tileMeta", "directory": "assets/tiles", "source": "tileMeta.json" }
+    "tiles": { "id": "tiles", "directory": "assets/tiles", "source": "tiles.json" }
 }

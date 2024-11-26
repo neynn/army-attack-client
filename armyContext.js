@@ -119,9 +119,8 @@ ArmyContext.prototype.initialize = function() {
         console.log(`${reason} is disconnected from the server!`);
     });
 
-    this.renderer.createCamera(CAMERAS.ARMY_CAMERA, CAMERA_TYPES.ARMY_ATTACK, 0, 0, 500, 500);    
+    this.renderer.createCamera(CAMERAS.ARMY_CAMERA, CAMERA_TYPES.ARMY_ATTACK, 0, 0, 500, 500).loadTile(96, 96); 
     this.renderer.resizeDisplay(window.innerWidth, window.innerHeight);
-    
     this.switchState(CONTEXT_STATES.MAIN_MENU);
 }
 
@@ -129,7 +128,7 @@ ArmyContext.prototype.onMapLoad = function(gameMap) {
     const { width, height, meta } = gameMap;
     const { music } = meta;
 
-    this.renderer.getCamera(CAMERAS.ARMY_CAMERA).loadViewport(width, height);
+    this.renderer.getCamera(CAMERAS.ARMY_CAMERA).loadWorld(width, height);
 
     if(music) {
         this.client.musicPlayer.loadTrack(music);

@@ -6,7 +6,7 @@ const gameContext = new ArmyContext();
 
 GlobalResourceManager.setServerAddress("https://neynn.github.io/army-attack-client");
 
-GlobalResourceManager.loadMain("assets", "files.json").then(async files => {
+GlobalResourceManager.loadMain("assets", "assets.json").then(async files => {
   const sprites = {};
   const tiles = {};
   const usedMB = [];

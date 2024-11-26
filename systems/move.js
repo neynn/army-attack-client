@@ -12,7 +12,7 @@ export const MoveSystem = function(gameContext, entity) {
     const moveComponent = entity.getComponent(MoveComponent);
 
     if(moveComponent.path.length !== 0) {
-        const {deltaX, deltaY} = moveComponent.path[0];
+        const { deltaX, deltaY } = moveComponent.path[0];
         const moveSpeed = moveComponent.speed * deltaTime;
 
         positionComponent.positionX += deltaX * moveSpeed;
