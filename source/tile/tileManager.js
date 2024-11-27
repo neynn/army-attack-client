@@ -46,39 +46,6 @@ TileManager.prototype.updateDynamicTileTypes = function(timestamp) {
     }
 }
 
-TileManager.prototype.drawTileGraphics = function(tileID, context, renderX, renderY, scaleX = 1, scaleY = 1) {
-    const { set, animation } = this.getTileMeta(tileID);
-    
-    const tileType = this.tileTypes[set];
-    const tileBuffer = tileType.getImage();
-    const tileAnimation = tileType.getAnimation(animation);
-    const currentFrame = tileAnimation.getCurrentFrame();
-
-    for(const component of currentFrame) {
-        const { id, shiftX, shiftY } = component;
-        const { x, y, w, h, offset } = tileType.getFrameByID(id);
-        const drawX = renderX + (offset.x + shiftX) * scaleX;
-        const drawY = renderY + (offset.y + shiftY) * scaleY;
-        const drawWidth = w * scaleX;
-        const drawHeight = h * scaleY;
-
-        context.drawImage(
-            tileBuffer,
-            x, y, w, h,
-            drawX, drawY, drawWidth, drawHeight
-        );
-    }
-}
-
-TileManager.prototype.drawEmptyTile = function(context, renderX, renderY, width, height) {
-    context.fillStyle = "#701867";
-    context.fillRect(renderX, renderY, width, height);
-    context.fillRect(renderX + width, renderY + height, width, height);
-    context.fillStyle = "#000000";
-    context.fillRect(renderX + width, renderY, width, height);
-    context.fillRect(renderX, renderY + height, width, height);
-}
-
 TileManager.prototype.invertTileMeta = function() {
     for(const tileID in this.tileMeta.values) {
         const { id, set, animation } = this.tileMeta.values[tileID];

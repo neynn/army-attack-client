@@ -135,10 +135,11 @@ EditorController.prototype.scrollLayerButton = function(gameContext, buttonID) {
 }
 
 EditorController.prototype.loadButtonEvents = function(gameContext) {
-    const { uiManager, tileManager } = gameContext;
+    const { uiManager, renderer } = gameContext;
     const { slots, id } = this.mapEditor.config.interface;
     const pageElements = this.mapEditor.getPage();
     const contextID = gameContext.getID();
+    const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
 
     for(const buttonID of slots) {
         const button = uiManager.getButton(id, buttonID);
@@ -157,9 +158,9 @@ EditorController.prototype.loadButtonEvents = function(gameContext) {
 
         button.events.subscribe(UIElement.EVENT_DRAW, contextID, (context, localX, localY) => {
             if(tileID === 0) {
-                tileManager.drawEmptyTile(context, localX, localY, 25, 25);
+                camera.drawEmptyTile(context, localX, localY, 25, 25);
             } else {
-                tileManager.drawTileGraphics(tileID, context, localX, localY, EditorController.GRAPHICS_BUTTON_SCALE, EditorController.GRAPHICS_BUTTON_SCALE);
+                camera.drawTileGraphics(gameContext, tileID, localX, localY, EditorController.GRAPHICS_BUTTON_SCALE, EditorController.GRAPHICS_BUTTON_SCALE);
                 context.fillStyle = "#eeeeee";
                 context.textAlign = "center";
                 context.fillText(tileName, localX + 25, localY + 25);
@@ -197,7 +198,7 @@ EditorController.prototype.updateButtonText = function(gameContext) {
 }
 
 EditorController.prototype.initializeRenderEvents = function(gameContext) {
-    const { renderer, tileManager } = gameContext;
+    const { renderer } = gameContext;
     const { layerButtons } = this.mapEditor.config.interface;
     const contextID = gameContext.getID();
 
@@ -236,9 +237,9 @@ EditorController.prototype.initializeRenderEvents = function(gameContext) {
                 const renderX = j * width - x;
 
                 if(tileID === 0) {
-                    tileManager.drawEmptyTile(context, renderX, renderY, halfWidth, halfHeight);
+                    camera.drawEmptyTile(context, renderX, renderY, halfWidth, halfHeight);
                 } else {
-                    tileManager.drawTileGraphics(tileID, context, renderX, renderY);
+                    camera.drawTileGraphics(gameContext, tileID, renderX, renderY);
                     context.fillStyle = "#eeeeee";
                     context.textAlign = "center";
                     context.fillText(tileName, renderX + halfWidth, renderY);  

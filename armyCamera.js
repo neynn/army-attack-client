@@ -126,8 +126,6 @@ ArmyCamera.prototype.update = function(gameContext) {
 }
 
 ArmyCamera.prototype.drawOverlay = function(gameContext) {
-    const { renderer, tileManager } = gameContext;
-    const context = renderer.getContext();
     const { x: vX, y: vY} = this.getViewportPosition();
 
     for(const overlayKey in this.overlays) {
@@ -137,8 +135,8 @@ ArmyCamera.prototype.drawOverlay = function(gameContext) {
             const { x, y, id } = overlayData;
             const renderX = this.tileWidth * x - vX;
             const renderY = this.tileHeight * y - vY;
-    
-            tileManager.drawTileGraphics(id, context, renderX, renderY);
+
+            this.drawTileGraphics(gameContext, id, renderX, renderY);
         }
     }
 }
@@ -206,6 +204,31 @@ ArmyCamera.prototype.drawSpriteLayer = function(gameContext, spriteLayer) {
     }
 }
 
+ArmyCamera.prototype.drawTileGraphics = function(gameContext, tileID, renderX, renderY, scaleX = 1, scaleY = 1) {
+    const { tileManager, renderer } = gameContext;
+    const { set, animation } = tileManager.getTileMeta(tileID);
+    const tileType = tileManager.tileTypes[set];
+    const tileBuffer = tileType.getImage();
+    const tileAnimation = tileType.getAnimation(animation);
+    const currentFrame = tileAnimation.getCurrentFrame();
+    const context = renderer.getContext();
+
+    for(const component of currentFrame) {
+        const { id, shiftX, shiftY } = component;
+        const { x, y, w, h, offset } = tileType.getFrameByID(id);
+        const drawX = renderX + (offset.x + shiftX) * scaleX;
+        const drawY = renderY + (offset.y + shiftY) * scaleY;
+        const drawWidth = w * scaleX;
+        const drawHeight = h * scaleY;
+
+        context.drawImage(
+            tileBuffer,
+            x, y, w, h,
+            drawX, drawY, drawWidth, drawHeight
+        );
+    }
+}
+
 ArmyCamera.prototype.drawTileLayer = function(gameContext, map2D, layerConfig, viewportBounds) {
     const { startX, startY, endX, endY } = viewportBounds;
     const { id, opacity } = layerConfig;
@@ -214,7 +237,7 @@ ArmyCamera.prototype.drawTileLayer = function(gameContext, map2D, layerConfig, v
         return;
     }
 
-    const { tileManager, renderer } = gameContext;
+    const { renderer } = gameContext;
     const { x, y } = this.getViewportPosition();
     const context = renderer.getContext();
     const width = map2D.width;
@@ -236,7 +259,7 @@ ArmyCamera.prototype.drawTileLayer = function(gameContext, map2D, layerConfig, v
             
             const renderX = j * this.tileWidth - x;
 
-            tileManager.drawTileGraphics(tileID, context, renderX, renderY);
+            this.drawTileGraphics(gameContext, tileID, renderX, renderY);
         }
     }
 

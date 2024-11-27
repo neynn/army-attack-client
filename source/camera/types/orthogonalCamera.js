@@ -12,6 +12,9 @@ export const OrthogonalCamera = function(positionX, positionY, viewportWidth, vi
     this.mapHeight = 0;
 }
 
+OrthogonalCamera.EMPTY_TILE_COLOR_A = "#701867";
+OrthogonalCamera.EMPTY_TILE_COLOR_B = "#000000";
+
 OrthogonalCamera.prototype = Object.create(MoveableCamera.prototype);
 OrthogonalCamera.prototype.constructor = OrthogonalCamera;
 
@@ -122,4 +125,13 @@ OrthogonalCamera.prototype.transformTileToPositionCenter = function(tileX, tileY
 		"x": positionX,
 		"y": positionY
 	}
+}
+
+OrthogonalCamera.prototype.drawEmptyTile = function(context, renderX, renderY, width, height) {
+    context.fillStyle = OrthogonalCamera.EMPTY_TILE_COLOR_A;
+    context.fillRect(renderX, renderY, width, height);
+    context.fillRect(renderX + width, renderY + height, width, height);
+    context.fillStyle = OrthogonalCamera.EMPTY_TILE_COLOR_B;
+    context.fillRect(renderX + width, renderY, width, height);
+    context.fillRect(renderX, renderY + height, width, height);
 }
