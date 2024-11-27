@@ -1,10 +1,12 @@
+import { Sheet } from "./resources/sheet.js";
+
 export const ResourceManager = function() {
     this.serverAddress = null;
     this.audioContext = new AudioContext();
     this.audioBuffers = new Map();
 
-    this.sprites = new Map();
-    this.tiles = new Map();
+    this.spriteSheets = new Map();
+    this.tileSheets = new Map();
     this.fonts = new Map();
     this.maps = new Map();
 }
@@ -14,6 +16,18 @@ ResourceManager.SIZE_MB = 1048576;
 ResourceManager.SIZE_BIG_IMAGE = 2048 * 2048 * 4;
 ResourceManager.DEFAULT_IMAGE_TYPE = ".png";
 ResourceManager.DEFAULT_AUDIO_TYPE = ".mp3";
+
+ResourceManager.prototype.addTileSheet = function(id, image) {
+    if(this.tileSheets.has(id)) {
+        return false;
+    }
+
+    const sheet = new Sheet(id, image);
+
+    this.tileSheets.set(id, sheet);
+
+    return true;
+}
 
 ResourceManager.prototype.loadMapData = async function(meta) {
     const { id, directory, source } = meta;
@@ -174,6 +188,16 @@ ResourceManager.prototype.getSpriteBuffer = function(meta) {
 
 ResourceManager.prototype.setServerAddress = function(address) {
     this.serverAddress = address;
+}
+
+ResourceManager.prototype.getTileSheet = function(sheetID) {
+    const sheet = this.tileSheets.get(sheetID);
+
+    if(!sheet) {
+        return null;
+    }
+
+    return sheet.getBuffer();
 }
 
 export const GlobalResourceManager = new ResourceManager();

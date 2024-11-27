@@ -205,19 +205,24 @@ ArmyCamera.prototype.drawSpriteLayer = function(gameContext, spriteLayer) {
 }
 
 ArmyCamera.prototype.drawTileGraphics = function(gameContext, tileID, renderX, renderY, scaleX = 1, scaleY = 1) {
-    const { tileManager, renderer } = gameContext;
+    const { tileManager, renderer, resourceManager } = gameContext;
     const { set, animation } = tileManager.getTileMeta(tileID);
+    const tileBuffer = resourceManager.getTileSheet(set); //<-- use resourceManager
+
+    if(!tileBuffer) {
+        return;
+    }
+
     const tileType = tileManager.tileTypes[set];
-    const tileBuffer = tileType.getImage();
     const tileAnimation = tileType.getAnimation(animation);
     const currentFrame = tileAnimation.getCurrentFrame();
     const context = renderer.getContext();
 
     for(const component of currentFrame) {
         const { id, shiftX, shiftY } = component;
-        const { x, y, w, h, offset } = tileType.getFrameByID(id);
-        const drawX = renderX + (offset.x + shiftX) * scaleX;
-        const drawY = renderY + (offset.y + shiftY) * scaleY;
+        const { x, y, w, h } = tileType.getFrameByID(id);
+        const drawX = renderX + shiftX * scaleX;
+        const drawY = renderY + shiftY * scaleY;
         const drawWidth = w * scaleX;
         const drawHeight = h * scaleY;
 

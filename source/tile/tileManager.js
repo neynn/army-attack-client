@@ -1,3 +1,4 @@
+import { ImageSheet } from "../graphics/imageSheet.js";
 import { Logger } from "../logger.js";
 
 export const TileManager = function() {
@@ -8,8 +9,7 @@ export const TileManager = function() {
 
 TileManager.prototype.load = function(tileTypes, tileMeta) {
     if(typeof tileTypes === "object") {
-        this.tileTypes = tileTypes;
-        this.loadDynamicTileTypes();
+        this.loadTileTypes(tileTypes);
     } else {
         Logger.log(false, "TileTypes cannot be undefined!", "TileManager.prototype.load", null);
     }
@@ -38,10 +38,7 @@ TileManager.prototype.updateDynamicTileTypes = function(timestamp) {
 
         for(const animationID of dynamicAnimationList) {
             const animation = dynamicTileType.getAnimation(animationID);
-            const currentFrameTime = timestamp % animation.frameTimeTotal;
-            const frameIndex = Math.floor(currentFrameTime / animation.frameTime);
-
-            animation.setFrameIndex(frameIndex);
+            animation.updateFrameIndex(timestamp);
         }
     }
 }
@@ -58,20 +55,25 @@ TileManager.prototype.invertTileMeta = function() {
     }
 }
 
-TileManager.prototype.loadDynamicTileTypes = function() {
-    for(const typeID in this.tileTypes) {
-        const tileSet = this.tileTypes[typeID];
-        const animations = tileSet.getAnimations();
+TileManager.prototype.loadTileTypes = function(tileTypes) {
+    for(const typeID in tileTypes) {
+        this.dynamicTileTypes[typeID] = [];
+
+        const tileType = tileTypes[typeID];
+        const imageSheet = new ImageSheet(null, tileType);
+
+        imageSheet.defineAnimations();
+        imageSheet.defineDefaultAnimation();
+
+        const animations = imageSheet.getAnimations();
 
         for(const [animationID, animation] of animations) {
             if(animation.frameCount > 1) {
-                if(this.dynamicTileTypes[typeID] === undefined) {
-                    this.dynamicTileTypes[typeID] = [];
-                }
-
                 this.dynamicTileTypes[typeID].push(animationID);
             }
         }
+
+        this.tileTypes[typeID] = imageSheet;
     }
 }
 

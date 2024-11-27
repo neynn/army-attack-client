@@ -7,7 +7,10 @@ export const Animation = function(id) {
     this.frameIndex = 0;
 }
 
-Animation.prototype.setFrameIndex = function(frameIndex) {
+Animation.prototype.updateFrameIndex = function(timestamp) {
+    const currentFrameTime = timestamp % (this.frameCount * this.frameTime);
+    const frameIndex = Math.floor(currentFrameTime / this.frameTime);
+
     this.frameIndex = frameIndex;
 }
 
@@ -15,19 +18,16 @@ Animation.prototype.initialize = function(frameList, frameTime) {
     this.frameList = frameList;
     this.frameTime = frameTime;
     this.frameCount = frameList.length;
-    this.frameTimeTotal = frameTime * frameList.length;
     this.frameIndex = 0;
 }
 
 Animation.prototype.setFrameTime = function(frameTime) {
     this.frameTime = frameTime;
-    this.frameTimeTotal = frameTime * this.frameList.length;
 }
 
 Animation.prototype.addFrame = function(frame) {
     this.frameList.push(frame);
     this.frameCount++;
-    this.frameTimeTotal += this.frameTime;
 }
 
 Animation.prototype.getCurrentFrame = function() {
@@ -36,7 +36,7 @@ Animation.prototype.getCurrentFrame = function() {
 
 Animation.prototype.getFrame = function(frameIndex) {
     if(frameIndex >= this.frameCount || frameIndex < 0) {
-        return null;
+        return [];
     }
 
     return this.frameList[frameIndex];

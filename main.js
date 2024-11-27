@@ -8,7 +8,6 @@ GlobalResourceManager.setServerAddress("https://neynn.github.io/army-attack-clie
 
 GlobalResourceManager.loadMain("assets", "assets.json").then(async files => {
   const sprites = {};
-  const tiles = {};
   const usedMB = [];
   const usedMBLarge = [];
 
@@ -36,12 +35,9 @@ GlobalResourceManager.loadMain("assets", "assets.json").then(async files => {
 
   console.log(usedMB, usedMBLarge);
 
-  await GlobalResourceManager.loadImages(files.tiles, ((key, image, config) => {
-    const imageSheet = new ImageSheet(image, config);
-    imageSheet.defineAnimations();
-    imageSheet.defineDefaultAnimation();
-    tiles[key] = imageSheet;
-  }), (key, error, config) => console.error(key, config, error));
+  await GlobalResourceManager.loadImages(files.tiles,
+  (key, image, config) => GlobalResourceManager.addTileSheet(key, image),
+  (key, error, config) => console.error(key, config, error));
 
   const fontPromises = [];
 
@@ -55,7 +51,6 @@ GlobalResourceManager.loadMain("assets", "assets.json").then(async files => {
   await Promise.allSettled(fontPromises);
 
   files.sprites = sprites;
-  files.tiles = tiles;
   
   return files;
 }).then(resources => {
