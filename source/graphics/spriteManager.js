@@ -3,6 +3,7 @@ import { Logger } from "../logger.js";
 import { ImageSheet } from "./imageSheet.js";
 import { Sprite } from "./drawable/sprite.js";
 import { EventEmitter } from "../events/eventEmitter.js";
+import { GlobalResourceManager } from "../resourceManager.js";
 
 export const SpriteManager = function() {
     this.timestamp = 0;
@@ -28,7 +29,7 @@ SpriteManager.LAYER_TOP = 2;
 
 SpriteManager.prototype.load = function(spriteTypes) {
     if(typeof spriteTypes === "object") {
-        this.spriteTypes = spriteTypes;
+        this.loadSpriteTypes(spriteTypes);
     } else {
         Logger.log(false, "SpriteTypes cannot be undefined!", "SpriteManager.prototype.load", null);
     }
@@ -39,6 +40,18 @@ SpriteManager.prototype.update = function(gameContext) {
     const realTime = timer.getRealTime();
     
     this.timestamp = realTime;
+}
+
+SpriteManager.prototype.loadSpriteTypes = function(spriteTypes) {
+    for(const typeID in spriteTypes) {
+        const spriteType = spriteTypes[typeID];
+        const imageSheet = new ImageSheet(typeID);
+
+        imageSheet.load(spriteType);
+        imageSheet.defineDefaultAnimation();
+
+        this.spriteTypes[typeID] = imageSheet;
+    }
 }
 
 SpriteManager.prototype.removeSpriteReference = function(spriteID) {
@@ -73,7 +86,6 @@ SpriteManager.prototype.addSpriteReference = function(spriteID) {
 
     if(count === undefined) {
         this.spriteReferences.set(spriteID, 1);
-        this.spriteTypes[spriteID].toBuffer();
     } else {
         this.spriteReferences.set(spriteID, count + 1);
     }
@@ -116,9 +128,13 @@ SpriteManager.prototype.createSprite = function(typeID, layerID = null, animatio
 
 SpriteManager.prototype.drawSprite = function(sprite, context, viewportX, viewportY, localX, localY) {
     const { typeID, animationID, currentFrame, isFlipped } = sprite;
+    const spriteBuffer = GlobalResourceManager.getSpriteSheet(typeID);
+
+    if(!spriteBuffer) {
+        return;
+    }
 
     const spriteType = this.spriteTypes[typeID];
-    const spriteBuffer = spriteType.getImage();
     const spriteBounds = spriteType.getBounds();
     const animationType = spriteType.getAnimation(animationID);
     const animationFrame = animationType.getFrame(currentFrame);

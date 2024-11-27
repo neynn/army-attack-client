@@ -60,8 +60,9 @@ TileManager.prototype.loadTileTypes = function(tileTypes) {
         this.dynamicTileTypes[typeID] = [];
 
         const tileType = tileTypes[typeID];
-        const imageSheet = new ImageSheet(null, tileType);
+        const imageSheet = new ImageSheet(typeID);
 
+        imageSheet.load(tileType);
         imageSheet.defineAnimations();
         imageSheet.defineDefaultAnimation();
 

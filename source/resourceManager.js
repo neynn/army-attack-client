@@ -29,6 +29,18 @@ ResourceManager.prototype.addTileSheet = function(id, image) {
     return true;
 }
 
+ResourceManager.prototype.addSpriteSheet = function(id, image) {
+    if(this.spriteSheets.has(id)) {
+        return false;
+    }
+
+    const sheet = new Sheet(id, image);
+
+    this.spriteSheets.set(id, sheet);
+
+    return true;
+}
+
 ResourceManager.prototype.loadMapData = async function(meta) {
     const { id, directory, source } = meta;
 
@@ -192,6 +204,16 @@ ResourceManager.prototype.setServerAddress = function(address) {
 
 ResourceManager.prototype.getTileSheet = function(sheetID) {
     const sheet = this.tileSheets.get(sheetID);
+
+    if(!sheet) {
+        return null;
+    }
+
+    return sheet.getBuffer();
+}
+
+ResourceManager.prototype.getSpriteSheet = function(sheetID) {
+    const sheet = this.spriteSheets.get(sheetID);
 
     if(!sheet) {
         return null;

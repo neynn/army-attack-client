@@ -1,7 +1,7 @@
 import { Animation } from "./animation.js";
 
-export const ImageSheet = function(image, config) {
-    this.id = null;
+export const ImageSheet = function(id) {
+    this.id = id;
     this.directory = null;
     this.source = null;
     this.frames = {};
@@ -11,47 +11,12 @@ export const ImageSheet = function(image, config) {
     this.frameTime = 1;
     this.allowFlip = false;
     this.loadedAnimations = new Map();
-    this.image = image;
-    this.buffer = null;
-    
-    this.loadFromConfig(config);
 }
 
 ImageSheet.DEFAULT_ANIMATION_ID = "default";
 
 ImageSheet.prototype.getBounds = function() {
     return this.bounds;
-}
-
-ImageSheet.prototype.getImage = function() {
-    if(this.buffer) {
-        return this.buffer;
-    }
-
-    return this.image;
-}
-
-ImageSheet.prototype.toBuffer = function() {
-    if(this.buffer) {
-        return;
-    }
-
-    const canvas = document.createElement("canvas");
-
-    canvas.width = this.image.width;
-    canvas.height = this.image.height;
-
-    const context = canvas.getContext("2d");
-    
-    context.imageSmoothingEnabled = false;
-
-    context.drawImage(
-        this.image,
-        0, 0, canvas.width, canvas.height,
-        0, 0, canvas.width, canvas.height
-    );
-
-    this.buffer = canvas;
 }
 
 ImageSheet.prototype.hasAnimation = function(animationID) {
@@ -66,7 +31,7 @@ ImageSheet.prototype.getAnimations = function() {
     return this.loadedAnimations;
 }
 
-ImageSheet.prototype.loadFromConfig = function(config) {
+ImageSheet.prototype.load = function(config) {
     const { id, directory, source, bounds, frameTime, frames, allowFlip, animations, patterns } = config;
 
     this.id = id;

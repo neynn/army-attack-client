@@ -7,14 +7,10 @@ const gameContext = new ArmyContext();
 GlobalResourceManager.setServerAddress("https://neynn.github.io/army-attack-client");
 
 GlobalResourceManager.loadMain("assets", "assets.json").then(async files => {
-  const sprites = {};
   const usedMB = [];
   const usedMBLarge = [];
 
   await GlobalResourceManager.loadImages(files.sprites, ((key, image, config) => {
-    const imageSheet = new ImageSheet(image, config);
-    imageSheet.defineDefaultAnimation();
-
     const imageSize = image.width * image.height * 4;
     const imageSizeMB = imageSize / ResourceManager.SIZE_MB;
 
@@ -30,7 +26,7 @@ GlobalResourceManager.loadMain("assets", "assets.json").then(async files => {
       "imageSizeMB": imageSizeMB
     });
 
-    sprites[key] = imageSheet;
+    GlobalResourceManager.addSpriteSheet(key, image);
   }), (key, error, config) => console.error(key, config, error));
 
   console.log(usedMB, usedMBLarge);
@@ -49,8 +45,6 @@ GlobalResourceManager.loadMain("assets", "assets.json").then(async files => {
   }
 
   await Promise.allSettled(fontPromises);
-
-  files.sprites = sprites;
   
   return files;
 }).then(resources => {
