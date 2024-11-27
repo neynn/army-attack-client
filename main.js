@@ -1,16 +1,16 @@
-import { ImageSheet } from "./source/graphics/imageSheet.js";
 import { ArmyContext } from "./armyContext.js";
-import { GlobalResourceManager, ResourceManager } from "./source/resourceManager.js";
+import { ResourceManager } from "./source/resourceManager.js";
 
 const gameContext = new ArmyContext();
+const { resourceManager } = gameContext;
 
-GlobalResourceManager.setServerAddress("https://neynn.github.io/army-attack-client");
+resourceManager.setServerAddress("https://neynn.github.io/army-attack-client");
 
-GlobalResourceManager.loadMain("assets", "assets.json").then(async files => {
+resourceManager.loadMain("assets", "assets.json").then(async files => {
   const usedMB = [];
   const usedMBLarge = [];
 
-  await GlobalResourceManager.loadImages(files.sprites, ((key, image, config) => {
+  resourceManager.loadImages(files.sprites, ((key, image, config) => {
     const imageSize = image.width * image.height * 4;
     const imageSizeMB = imageSize / ResourceManager.SIZE_MB;
 
@@ -26,20 +26,20 @@ GlobalResourceManager.loadMain("assets", "assets.json").then(async files => {
       "imageSizeMB": imageSizeMB
     });
 
-    GlobalResourceManager.addSpriteSheet(key, image);
+    resourceManager.addSpriteSheet(key, image);
   }), (key, error, config) => console.error(key, config, error));
 
   console.log(usedMB, usedMBLarge);
 
-  await GlobalResourceManager.loadImages(files.tiles,
-  (key, image, config) => GlobalResourceManager.addTileSheet(key, image),
+  resourceManager.loadImages(files.tiles,
+  (key, image, config) => resourceManager.addTileSheet(key, image),
   (key, error, config) => console.error(key, config, error));
 
   const fontPromises = [];
 
   for(const fontID in files.fonts) {
     const fontMeta = files.fonts[fontID];
-    const fontPromise = GlobalResourceManager.loadCSSFont(fontMeta);
+    const fontPromise = resourceManager.loadCSSFont(fontMeta);
 
     fontPromises.push(fontPromise);
   }
@@ -56,4 +56,3 @@ GlobalResourceManager.loadMain("assets", "assets.json").then(async files => {
 });
 
 console.log(gameContext);
-console.log(GlobalResourceManager);
