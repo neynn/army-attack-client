@@ -7,8 +7,4 @@ export const ControllerBuildState = function() {
 ControllerBuildState.prototype = Object.create(State.prototype);
 ControllerBuildState.prototype.constructor = ControllerBuildState;
 
-ControllerBuildState.prototype.onEventEnter = function(stateMachine, gameContext) {
-    const { mapLoader, entityManager, spriteManager } = gameContext;
-    const controller = stateMachine.getContext();
-    const activeMapID = mapLoader.getActiveMapID();
-}
+ControllerBuildState.prototype.onEventEnter = function(stateMachine, gameContext) {}

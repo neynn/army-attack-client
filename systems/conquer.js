@@ -4,8 +4,8 @@ import { TeamSystem } from "./team.js";
 export const ConquerSystem = function() {}
 
 ConquerSystem.convertTileGraphics = function(gameContext, tileX, tileY, teamID) {
-    const { mapLoader, tileManager } = gameContext;
-    const activeMap = mapLoader.getActiveMap();
+    const { mapManager, tileManager } = gameContext;
+    const activeMap = mapManager.getActiveMap();
 
     if(!activeMap) {
         return false;
@@ -39,7 +39,7 @@ ConquerSystem.convertTileGraphics = function(gameContext, tileX, tileY, teamID) 
 }
 
 ConquerSystem.updateBorder = function(gameContext, tileX, tileY) {
-    const { mapLoader, tileManager, controllerManager } = gameContext;
+    const { mapManager, tileManager, controllerManager } = gameContext;
     const settings = gameContext.getConfig("settings");
     const controller = controllerManager.getController("neyn"); //TODO <-- Set player controller as main?
 
@@ -47,7 +47,7 @@ ConquerSystem.updateBorder = function(gameContext, tileX, tileY) {
         return false;
     }
 
-    const activeMap = mapLoader.getActiveMap();
+    const activeMap = mapManager.getActiveMap();
 
     if(!activeMap) {
         return false;

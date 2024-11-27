@@ -123,9 +123,9 @@ ControllerSystem.updateSelectedEntity = function(gameContext, controller) {
 }
 
 ControllerSystem.selectEntity = function(gameContext, controller, entity) {
-    const { tileManager, mapLoader, entityManager, renderer } = gameContext;
+    const { tileManager, mapManager, entityManager, renderer } = gameContext;
     const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
-    const activeMap = mapLoader.getActiveMap();
+    const activeMap = mapManager.getActiveMap();
     const nodeList = PathfinderSystem.generateNodeList(gameContext, entity);
     const enableTileID = tileManager.getTileID("overlay", "grid_enabled_1x1");
     const attackTileID = tileManager.getTileID("overlay", "grid_attack_1x1");

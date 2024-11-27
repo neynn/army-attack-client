@@ -23,7 +23,7 @@ MapEditorState.prototype.enter = function(stateMachine) {
 
 MapEditorState.prototype.exit = function(stateMachine) {
     const gameContext = stateMachine.getContext();
-    const { mapLoader } = gameContext;
+    const { mapManager } = gameContext;
 
-    mapLoader.unparseUI("MAP_EDITOR", gameContext);
+    mapManager.unparseUI("MAP_EDITOR", gameContext);
 }

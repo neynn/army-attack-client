@@ -3,8 +3,8 @@ import { PositionComponent } from "../components/position.js";
 export const PlaceSystem = function() {}
 
 PlaceSystem.placeEntity = function(gameContext, entity) {
-    const { mapLoader } = gameContext;
-    const activeMap = mapLoader.getActiveMap();
+    const { mapManager } = gameContext;
+    const activeMap = mapManager.getActiveMap();
 
     if(!activeMap) {
         return false;
@@ -19,8 +19,8 @@ PlaceSystem.placeEntity = function(gameContext, entity) {
 }
 
 PlaceSystem.removeEntity = function(gameContext, entity) {
-    const { mapLoader } = gameContext;
-    const activeMap = mapLoader.getActiveMap();
+    const { mapManager } = gameContext;
+    const activeMap = mapManager.getActiveMap();
 
     if(!activeMap) {
         return false;

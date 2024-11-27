@@ -4,7 +4,7 @@ import { EntityManager } from "./entity/entityManager.js";
 import { EventEmitter } from "./events/eventEmitter.js";
 import { SpriteManager } from "./graphics/spriteManager.js";
 import { UIManager } from "./ui/uiManager.js";
-import { MapLoader } from "./map/mapLoader.js";
+import { MapManager } from "./map/mapManager.js";
 import { StateMachine } from "./state/stateMachine.js";
 import { Timer } from "./timer.js";
 import { UIElement } from "./ui/uiElement.js";
@@ -24,7 +24,7 @@ export const GameContext = function(fps = 60) {
     this.client = new Client();
     this.renderer = new Renderer();
     this.timer = new Timer(fps);
-    this.mapLoader = new MapLoader();
+    this.mapManager = new MapManager();
     this.questManager = new QuestManager();
     this.controllerManager = new ControllerManager();
     this.tileManager = new TileManager();
@@ -62,7 +62,7 @@ GameContext.prototype.loadResources = function(resources) {
     this.client.musicPlayer.load(resources.music);
     this.client.soundPlayer.load(resources.sounds);
     this.client.socket.load(resources.settings.socket);
-    this.mapLoader.load(resources.maps);
+    this.mapManager.load(resources.maps);
     this.spriteManager.load(resources.sprites);
     this.tileManager.load(resources.tiles, resources.tileMeta);
     this.uiManager.load(resources.uiConfig, resources.icons, resources.fonts);
@@ -129,7 +129,7 @@ GameContext.prototype.getMouseTile = function() {
 }
 
 GameContext.prototype.getTileEntity = function(tileX, tileY) {
-    const activeMap = this.mapLoader.getActiveMap();
+    const activeMap = this.mapManager.getActiveMap();
 
     if(!activeMap) {
         return null;
@@ -228,21 +228,25 @@ GameContext.prototype.onMapLoad = function(gameMap) {}
 
 GameContext.prototype.parseMap = async function(mapID, onParse) {
     if(!onParse) {
-        Logger.log(false, "No parser given!", "GameContext.prototype.parseMap", { mapID, code });
-
+        Logger.log(false, "No parser given!", "GameContext.prototype.parseMap", { mapID });
         return false;
     }
 
-    const mapData = await this.mapLoader.getMapData(mapID);
-    const { data, meta, success, code } = mapData;
+    const mapType = this.mapManager.getMapType(mapID);
 
-    if(!success) {
-        Logger.log(false, "Map could not be loaded!", "GameContext.prototype.parseMap", { mapID, code });
-
+    if(!mapType) {
+        Logger.log(false, "MapType does not exist!", "GameContext.prototype.parseMap", { mapID });
         return false;
     }
 
-    const parsedMap = onParse(mapID, data, meta);
+    const mapData = await this.resourceManager.loadMapData(mapType);
+
+    if(!mapData) {
+        Logger.log(false, "Map could not be loaded!", "GameContext.prototype.parseMap", { mapID });
+        return false;
+    }
+
+    const parsedMap = onParse(mapID, mapData, mapType);
 
     this.loadMap(mapID, parsedMap);
 
@@ -254,8 +258,8 @@ GameContext.prototype.loadMap = function(mapID, gameMap) {
         return false;
     }
     
-    this.mapLoader.addMap(mapID, gameMap);
-    this.mapLoader.updateActiveMap(mapID);
+    this.mapManager.addMap(mapID, gameMap);
+    this.mapManager.updateActiveMap(mapID);
     this.actionQueue.start();
     this.onMapLoad(gameMap);
 

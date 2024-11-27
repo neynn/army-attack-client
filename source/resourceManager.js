@@ -16,6 +16,9 @@ ResourceManager.SIZE_MB = 1048576;
 ResourceManager.SIZE_BIG_IMAGE = 2048 * 2048 * 4;
 ResourceManager.DEFAULT_IMAGE_TYPE = ".png";
 ResourceManager.DEFAULT_AUDIO_TYPE = ".mp3";
+ResourceManager.SUCCESS_TYPE_LOAD = "LOAD";
+ResourceManager.ERROR_TYPE_MISSING_TYPE = "MISSING_TYPE";
+ResourceManager.ERROR_TYPE_MISSING_FILE = "MISSING_FILE";
 
 ResourceManager.prototype.addTileSheet = function(id, image) {
     if(this.tileSheets.has(id)) {

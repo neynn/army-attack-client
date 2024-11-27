@@ -153,7 +153,7 @@ ArmyContext.prototype.onEntityDestroy = function(entity) {
 }
 
 ArmyContext.prototype.initializeTilemap = function(mapID) {
-    const gameMap = this.mapLoader.getLoadedMap(mapID);
+    const gameMap = this.mapManager.getLoadedMap(mapID);
 
     if(!gameMap) {
         return false;

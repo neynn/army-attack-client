@@ -7,8 +7,8 @@ import { FloodFill } from "../source/pathfinders/floodFill.js";
 export const PathfinderSystem = function() {}
 
 PathfinderSystem.isTileFree = function(gameContext, targetX, targetY) {
-    const { mapLoader } = gameContext;
-    const activeMap = mapLoader.getActiveMap();
+    const { mapManager } = gameContext;
+    const activeMap = mapManager.getActiveMap();
     
     if(!activeMap) {
         return false;
@@ -20,8 +20,8 @@ PathfinderSystem.isTileFree = function(gameContext, targetX, targetY) {
 }
 
 PathfinderSystem.generateNodeList = function(gameContext, entity) {
-    const { mapLoader, entityManager } = gameContext;
-    const activeMap = mapLoader.getActiveMap();
+    const { mapManager, entityManager } = gameContext;
+    const activeMap = mapManager.getActiveMap();
     
     if(!activeMap || !entity || !entity.hasComponent(MoveComponent)) {
         return [];

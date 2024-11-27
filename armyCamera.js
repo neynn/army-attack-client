@@ -68,8 +68,8 @@ ArmyCamera.prototype.clearOverlay = function(overlayID) {
 }
 
 ArmyCamera.prototype.update = function(gameContext) {
-    const { mapLoader, spriteManager, renderer } = gameContext;
-    const activeMap = mapLoader.getActiveMap();
+    const { mapManager, spriteManager, renderer } = gameContext;
+    const activeMap = mapManager.getActiveMap();
 
     if(!activeMap) {
         return;

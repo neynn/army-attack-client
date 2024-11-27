@@ -44,8 +44,8 @@ EditorController.prototype.initialize = function(gameContext, data) {
 }
 
 EditorController.prototype.incrementTypeIndex = function(gameContext) {
-    const { mapLoader } = gameContext;
-    const gameMap = mapLoader.getLoadedMap(this.currentMapID);
+    const { mapManager } = gameContext;
+    const gameMap = mapManager.getLoadedMap(this.currentMapID);
 
     if(!gameMap) {
         return;
@@ -70,8 +70,8 @@ EditorController.prototype.incrementTypeIndex = function(gameContext) {
 }
 
 EditorController.prototype.updateLayerOpacity = function(gameContext) {
-    const { mapLoader } = gameContext;
-    const gameMap = mapLoader.getLoadedMap(this.currentMapID);
+    const { mapManager } = gameContext;
+    const gameMap = mapManager.getLoadedMap(this.currentMapID);
 
     if(!gameMap) {
         return;
@@ -306,7 +306,7 @@ EditorController.prototype.initializeCursorEvents = function(gameContext) {
 }
 
 EditorController.prototype.initializeUIEvents = function(gameContext) {
-    const { uiManager, mapLoader, renderer } = gameContext;
+    const { uiManager, mapManager, renderer } = gameContext;
     const { id, layerButtons, layerButtonStates } = this.mapEditor.config.interface;
     const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
 
@@ -362,7 +362,7 @@ EditorController.prototype.initializeUIEvents = function(gameContext) {
     });
 
     uiManager.addClick(id, "BUTTON_SAVE", () => {
-        const mapData = mapLoader.getLoadedMap(this.currentMapID);
+        const mapData = mapManager.getLoadedMap(this.currentMapID);
         const saveData = saveMap(mapData);
 
         saveTemplateAsFile(this.currentMapID + ".json", saveData);
@@ -397,7 +397,7 @@ EditorController.prototype.initializeUIEvents = function(gameContext) {
     });
 
     uiManager.addClick(id, "BUTTON_RESIZE", () => {
-        const gameMap = mapLoader.getLoadedMap(this.currentMapID);
+        const gameMap = mapManager.getLoadedMap(this.currentMapID);
 
         if(!gameMap) {
             console.warn(`GameMap cannot be undefined! Returning...`);

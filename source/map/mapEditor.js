@@ -166,9 +166,9 @@ MapEditor.prototype.undo = function(gameContext) {
         return false;
     }
 
-    const { mapLoader } = gameContext;
+    const { mapManager } = gameContext;
     const { mapID, mode, actions } = this.activityStack.pop();
-    const gameMap = mapLoader.getLoadedMap(mapID);
+    const gameMap = mapManager.getLoadedMap(mapID);
 
     if(!gameMap) {
         return false;
@@ -182,9 +182,9 @@ MapEditor.prototype.undo = function(gameContext) {
 }
 
 MapEditor.prototype.swapFlag = function(gameContext, mapID, layerID) {
-    const { mapLoader } = gameContext;
+    const { mapManager } = gameContext;
     const cursorTile = gameContext.getMouseTile();
-    const gameMap = mapLoader.getLoadedMap(mapID);
+    const gameMap = mapManager.getLoadedMap(mapID);
 
     if(!gameMap) {
         return false;
@@ -231,9 +231,9 @@ MapEditor.prototype.swapFlag = function(gameContext, mapID, layerID) {
 }
 
 MapEditor.prototype.paint = function(gameContext, mapID, layerID) {
-    const { mapLoader } = gameContext;
+    const { mapManager } = gameContext;
     const cursorTile = gameContext.getMouseTile();
-    const gameMap = mapLoader.getLoadedMap(mapID);
+    const gameMap = mapManager.getLoadedMap(mapID);
     const brush = this.getBrush();
 
     if(!gameMap || !brush) {

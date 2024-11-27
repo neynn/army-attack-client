@@ -13,8 +13,8 @@ TargetSystem.isTargetable = function(entity) {
 }
 
 TargetSystem.getUniqueEntitiesInRangeOfEntity = function(gameContext, entity, range = 0, exclusionList = []) {
-    const { mapLoader } = gameContext;
-    const activeMap = mapLoader.getActiveMap();
+    const { mapManager } = gameContext;
+    const activeMap = mapManager.getActiveMap();
     const entities = new Set();
 
     if(!activeMap) {
