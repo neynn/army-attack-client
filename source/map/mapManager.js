@@ -1,9 +1,11 @@
 import { Logger } from "../logger.js";
+import { JSONManager } from "../resources/jsonManager.js";
 
 export const MapManager = function() {
     this.mapTypes = {};
     this.loadedMaps = new Map();
     this.activeMapID = null;
+    this.resources = new JSONManager();
 }
 
 MapManager.prototype.load = function(mapTypes) {
@@ -12,6 +14,25 @@ MapManager.prototype.load = function(mapTypes) {
     } else {
         Logger.log(false, "MapTypes cannot be undefined!", "MapManager.prototype.load", null);
     }
+}
+
+MapManager.prototype.parseMap = async function(mapID, onParse) {
+    const mapType = this.getMapType(mapID);
+
+    if(!mapType) {
+        Logger.log(false, "MapType does not exist!", "MapManager.prototype.parseMap", { mapID });
+        return null;
+    }
+
+    const mapData = await this.resources.loadFileData(mapType);
+
+    if(!mapData) {
+        return null;
+    }
+
+    const parsedMap = onParse(mapID, mapData, mapType);
+
+    return parsedMap;
 }
 
 MapManager.prototype.setActiveMap = function(mapID) {

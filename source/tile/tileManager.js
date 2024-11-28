@@ -1,15 +1,22 @@
 import { ImageSheet } from "../graphics/imageSheet.js";
 import { Logger } from "../logger.js";
+import { ImageManager } from "../resources/imageManager.js";
 
 export const TileManager = function() {
     this.tileTypes = {};
     this.tileMeta = {};
     this.dynamicTileTypes = {};
+    this.resources = new ImageManager();
 }
 
 TileManager.prototype.load = function(tileTypes, tileMeta) {
     if(typeof tileTypes === "object") {
         this.loadTileTypes(tileTypes);
+
+        this.resources.loadImages(tileTypes,
+        (key, image, config) => this.resources.addImage(key, image),
+        (key, error, config) => console.error(key, config, error));
+
     } else {
         Logger.log(false, "TileTypes cannot be undefined!", "TileManager.prototype.load", null);
     }

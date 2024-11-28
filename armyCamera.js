@@ -205,9 +205,10 @@ ArmyCamera.prototype.drawSpriteLayer = function(gameContext, spriteLayer) {
 }
 
 ArmyCamera.prototype.drawTileGraphics = function(gameContext, tileID, renderX, renderY, scaleX = 1, scaleY = 1) {
-    const { tileManager, renderer, resourceManager } = gameContext;
+    const { tileManager, renderer } = gameContext;
+    const { resources } = tileManager;
     const { set, animation } = tileManager.getTileMeta(tileID);
-    const tileBuffer = resourceManager.getTileSheet(set); //<-- use resourceManager
+    const tileBuffer = resources.getImage(set);
 
     if(!tileBuffer) {
         return;

@@ -1,10 +1,11 @@
 import { Logger } from "../logger.js";
-import { GlobalResourceManager } from "../resourceManager.js";
+import { AudioManager } from "../resources/audioManager.js";
 
 export const SoundPlayer = function() {
     this.activeSounds = new Map();
     this.soundTypes = {};
     this.defaultVolume = 0.3;
+    this.resouces = new AudioManager();
 }
 
 SoundPlayer.prototype.load = function(soundTypes) {
@@ -67,8 +68,7 @@ SoundPlayer.prototype.playSound = function(audioID, volume = this.defaultVolume)
     }
 
     this.activeSounds.set(audioID, null);
-
-    GlobalResourceManager.getAudioSource(soundType, volume).then(source => {
+    this.resouces.getAudioSource(soundType, volume).then(source => {
         this.activeSounds.set(audioID, source);
 
         source.onended = () => this.activeSounds.delete(audioID);
@@ -105,7 +105,7 @@ SoundPlayer.prototype.loadSound = async function(audioID) {
         return null;
     }
 
-    return GlobalResourceManager.bufferAudio(soundType);
+    return this.resouces.bufferAudio(soundType);
 }
 
 SoundPlayer.prototype.loadAllSounds = function() {

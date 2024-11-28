@@ -15,7 +15,7 @@ import { Renderer } from "./renderer.js";
 import { ControllerManager } from "./controller/controllerManager.js";
 import { QuestManager } from "./questManager.js";
 import { ClientQueue } from "./action/clientQueue.js";
-import { GlobalResourceManager } from "./resourceManager.js";
+import { ResourceManager } from "./resourceManager.js";
 
 export const GameContext = function(fps = 60) {
     this.id = "GAME_CONTEXT";
@@ -35,7 +35,7 @@ export const GameContext = function(fps = 60) {
     this.actionQueue = new ClientQueue();
     this.events = new EventEmitter();
     this.states = new StateMachine(this);
-    this.resourceManager = GlobalResourceManager;
+    this.resourceManager = new ResourceManager();
 
     this.timer.inputFunction = (realTime, deltaTime) => {
         this.client.update(this);
@@ -232,21 +232,12 @@ GameContext.prototype.parseMap = async function(mapID, onParse) {
         return false;
     }
 
-    const mapType = this.mapManager.getMapType(mapID);
+    const parsedMap = await this.mapManager.parseMap(mapID, onParse);
 
-    if(!mapType) {
-        Logger.log(false, "MapType does not exist!", "GameContext.prototype.parseMap", { mapID });
+    if(!parsedMap) {
+        Logger.log(false, "Map could not be parsed!", "GameContext.prototype.parseMap", { mapID });
         return false;
     }
-
-    const mapData = await this.resourceManager.loadMapData(mapType);
-
-    if(!mapData) {
-        Logger.log(false, "Map could not be loaded!", "GameContext.prototype.parseMap", { mapID });
-        return false;
-    }
-
-    const parsedMap = onParse(mapID, mapData, mapType);
 
     this.loadMap(mapID, parsedMap);
 

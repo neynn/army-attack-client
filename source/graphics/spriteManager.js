@@ -3,7 +3,7 @@ import { Logger } from "../logger.js";
 import { ImageSheet } from "./imageSheet.js";
 import { Sprite } from "./drawable/sprite.js";
 import { EventEmitter } from "../events/eventEmitter.js";
-import { GlobalResourceManager } from "../resourceManager.js";
+import { ImageManager } from "../resources/imageManager.js";
 
 export const SpriteManager = function() {
     this.timestamp = 0;
@@ -11,6 +11,7 @@ export const SpriteManager = function() {
     this.sprites = new Map();
     this.spriteReferences = new Map();
     this.idGenerator = new IDGenerator("@SPRITE");
+    this.resources = new ImageManager();
     this.layers = {
         [SpriteManager.LAYER_BOTTOM]: [],
         [SpriteManager.LAYER_MIDDLE]: [],
@@ -30,6 +31,31 @@ SpriteManager.LAYER_TOP = 2;
 SpriteManager.prototype.load = function(spriteTypes) {
     if(typeof spriteTypes === "object") {
         this.loadSpriteTypes(spriteTypes);
+
+        const usedMB = [];
+        const usedMBLarge = [];
+
+        this.resources.loadImages(spriteTypes, ((key, image, config) => {
+            const imageSize = image.width * image.height * 4;
+            const imageSizeMB = imageSize / ImageManager.SIZE_MB;
+        
+            if(imageSize >= ImageManager.SIZE_BIG_IMAGE) {
+              usedMBLarge.push({
+                "imageID": key,
+                "imageSizeMB": imageSizeMB
+              });
+            }
+        
+            usedMB.push({
+              "imageID": key,
+              "imageSizeMB": imageSizeMB
+            });
+        
+            this.resources.addImage(key, image);
+          }), (key, error, config) => console.error(key, config, error));
+
+          console.log(usedMB, usedMBLarge);
+          
     } else {
         Logger.log(false, "SpriteTypes cannot be undefined!", "SpriteManager.prototype.load", null);
     }
@@ -128,7 +154,7 @@ SpriteManager.prototype.createSprite = function(typeID, layerID = null, animatio
 
 SpriteManager.prototype.drawSprite = function(sprite, context, viewportX, viewportY, localX, localY) {
     const { typeID, animationID, currentFrame, isFlipped } = sprite;
-    const spriteBuffer = GlobalResourceManager.getSpriteSheet(typeID);
+    const spriteBuffer = this.resources.getImage(typeID);
 
     if(!spriteBuffer) {
         return;
