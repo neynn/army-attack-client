@@ -1,4 +1,4 @@
-import { ArmyContext } from "./armyContext.js";
+import { ArmyContext } from "./game/armyContext.js";
 import { ResourceManager } from "./source/resourceManager.js";
 
 const gameContext = new ArmyContext();
