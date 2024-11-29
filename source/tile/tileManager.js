@@ -3,10 +3,10 @@ import { Logger } from "../logger.js";
 import { ImageManager } from "../resources/imageManager.js";
 
 export const TileManager = function() {
+    this.resources = new ImageManager();
+    this.dynamicTileTypes = {};
     this.tileTypes = {};
     this.tileMeta = {};
-    this.dynamicTileTypes = {};
-    this.resources = new ImageManager();
 }
 
 TileManager.prototype.load = function(tileTypes, tileMeta) {
@@ -14,8 +14,8 @@ TileManager.prototype.load = function(tileTypes, tileMeta) {
         this.loadTileTypes(tileTypes);
 
         this.resources.loadImages(tileTypes,
-        (key, image, config) => this.resources.addImage(key, image),
-        (key, error, config) => console.error(key, config, error));
+        (key, image) => this.resources.addReference(key),
+        (key, error) => console.error(key, error));
 
     } else {
         Logger.log(false, "TileTypes cannot be undefined!", "TileManager.prototype.load", null);

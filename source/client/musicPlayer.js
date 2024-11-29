@@ -124,7 +124,6 @@ MusicPlayer.prototype.resetTrack = function(audioID = this.currentTack) {
     return true;
 }
 
-
 MusicPlayer.prototype.setVolume = function(volume = this.volume, audioID = this.currentTack) {
     const audio = this.resources.audio.get(audioID);
 

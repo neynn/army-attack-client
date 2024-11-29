@@ -1,7 +1,8 @@
 import { ArmyContext } from "./armyContext.js";
+import { ResourceManager } from "./source/resourceManager.js";
 
 const gameContext = new ArmyContext();
-const { resourceManager } = gameContext;
+const resourceManager = new ResourceManager();
 
 resourceManager.loadMain("assets", "assets.json").then(async files => {
   const fontPromises = [];

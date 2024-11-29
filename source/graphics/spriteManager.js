@@ -6,22 +6,16 @@ import { EventEmitter } from "../events/eventEmitter.js";
 import { ImageManager } from "../resources/imageManager.js";
 
 export const SpriteManager = function() {
-    this.timestamp = 0;
-    this.spriteTypes = {};
-    this.sprites = new Map();
-    this.spriteReferences = new Map();
-    this.idGenerator = new IDGenerator("@SPRITE");
     this.resources = new ImageManager();
+    this.idGenerator = new IDGenerator("@SPRITE");
+    this.sprites = new Map();
+    this.spriteTypes = {};
+    this.timestamp = 0;
     this.layers = {
         [SpriteManager.LAYER_BOTTOM]: [],
         [SpriteManager.LAYER_MIDDLE]: [],
         [SpriteManager.LAYER_TOP]: []
     };
-    this.layerStack = [
-        SpriteManager.LAYER_BOTTOM,
-        SpriteManager.LAYER_MIDDLE,
-        SpriteManager.LAYER_TOP
-    ];
 }
 
 SpriteManager.LAYER_BOTTOM = 0;
@@ -35,7 +29,7 @@ SpriteManager.prototype.load = function(spriteTypes) {
         const usedMB = [];
         const usedMBLarge = [];
 
-        this.resources.loadImages(spriteTypes, ((key, image, config) => {
+        this.resources.loadImages(spriteTypes, ((key, image) => {
             const imageSize = image.width * image.height * 4;
             const imageSizeMB = imageSize / ImageManager.SIZE_MB;
         
@@ -50,9 +44,7 @@ SpriteManager.prototype.load = function(spriteTypes) {
               "imageID": key,
               "imageSizeMB": imageSizeMB
             });
-        
-            this.resources.addImage(key, image);
-          }), (key, error, config) => console.error(key, config, error));
+          }), (key, error) => console.error(key, error));
 
           console.log(usedMB, usedMBLarge);
           
@@ -78,45 +70,6 @@ SpriteManager.prototype.loadSpriteTypes = function(spriteTypes) {
 
         this.spriteTypes[typeID] = imageSheet;
     }
-}
-
-SpriteManager.prototype.removeSpriteReference = function(spriteID) {
-    if(!this.spriteTypes[spriteID]) {
-        Logger.log(false, "SpriteType does not exist!", "SpriteManager.prototype.removeSpriteReference", { spriteID });
-
-        return false;
-    }
-
-    const count = this.spriteReferences.get(spriteID);
-
-    if(count !== undefined) {
-        this.spriteReferences.set(spriteID, count - 1);
-
-        if(count - 1 <= 0) {
-            this.spriteReferences.delete(spriteID);
-            //UNLOAD THE SPRITE!
-        }
-    }
-
-    return true;
-}
-
-SpriteManager.prototype.addSpriteReference = function(spriteID) {
-    if(!this.spriteTypes[spriteID]) {
-        Logger.log(false, "SpriteType does not exist!", "SpriteManager.prototype.addSpriteReference", { spriteID });
-
-        return false;
-    }
-
-    const count = this.spriteReferences.get(spriteID);
-
-    if(count === undefined) {
-        this.spriteReferences.set(spriteID, 1);
-    } else {
-        this.spriteReferences.set(spriteID, count + 1);
-    }
-
-    return true;
 }
 
 SpriteManager.prototype.end = function() {
@@ -147,7 +100,7 @@ SpriteManager.prototype.createSprite = function(typeID, layerID = null, animatio
     }
 
     this.updateSprite(sprite.id, typeID, animationID);
-    this.addSpriteReference(typeID);
+    this.resources.addReference(typeID);
 
     return sprite;
 }
@@ -315,8 +268,8 @@ SpriteManager.prototype.updateSprite = function(spriteID, typeID, animationID = 
         sprite.initialize(config);
 
         this.initializeBounds(sprite);
-        this.addSpriteReference(typeID);
-        //this.removeSpriteReference(spriteTypeID);
+        this.resources.addReference(typeID);
+        this.resources.removeReference(spriteTypeID);
     }
 
     return true;

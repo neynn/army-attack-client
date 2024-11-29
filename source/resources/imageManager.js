@@ -39,20 +39,19 @@ ImageManager.prototype.promiseHTMLImage = function(path) {
 }
 
 ImageManager.prototype.loadImages = function(imageMeta, onLoad, onError) {
-    const promises = [];
-  
     for(const imageID in imageMeta) {
         const imageConfig = imageMeta[imageID];
         const { directory, source } = imageConfig;
-        const imagePath = this.getPath(directory, source ? source : `${imageID}${ImageManager.DEFAULT_IMAGE_TYPE}`);
-        const imagePromise = this.promiseHTMLImage(imagePath)
-        .then(image => onLoad(imageID, image, imageConfig))
-        .catch(error => onError(imageID, error, imageConfig));
-  
-        promises.push(imagePromise);
+        const fileName = source ? source : `${imageID}${ImageManager.DEFAULT_IMAGE_TYPE}`;
+        const imagePath = this.getPath(directory, fileName);
+
+        this.promiseHTMLImage(imagePath)
+        .then(image => {
+            this.addImage(imageID, image);
+            onLoad(imageID, image);
+        })
+        .catch(error => onError(imageID, error));
     }
-  
-    return Promise.allSettled(promises);
 }
 
 ImageManager.prototype.getImage = function(imageID) {
@@ -63,4 +62,28 @@ ImageManager.prototype.getImage = function(imageID) {
     }
 
     return sheet.getBuffer();
+}
+
+ImageManager.prototype.addReference = function(imageID) {
+    const sheet = this.images.get(imageID);
+
+    if(!sheet) {
+        return -1;
+    }
+    
+    sheet.addReference();
+
+    return sheet.getReferences();
+}
+
+ImageManager.prototype.removeReference = function(imageID) {
+    const sheet = this.images.get(imageID);
+
+    if(!sheet) {
+        return -1;
+    }
+    
+    sheet.removeReference();
+
+    return sheet.getReferences();
 }

@@ -7,11 +7,11 @@ export const Sheet = function(id, image) {
 }
 
 Sheet.prototype.addReference = function() {
-    this.references ++;
+    this.references++;
 }
 
 Sheet.prototype.removeReference = function() {
-    this.references --;
+    this.references--;
 }
 
 Sheet.prototype.toBuffer = function() {
@@ -48,4 +48,8 @@ Sheet.prototype.getBuffer = function() {
     }
 
     return this.image;
+}
+
+Sheet.prototype.getReferences = function() {
+    return this.references;
 }

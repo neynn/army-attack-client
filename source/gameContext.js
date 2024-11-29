@@ -15,7 +15,6 @@ import { Renderer } from "./renderer.js";
 import { ControllerManager } from "./controller/controllerManager.js";
 import { QuestManager } from "./questManager.js";
 import { ClientQueue } from "./action/clientQueue.js";
-import { ResourceManager } from "./resourceManager.js";
 
 export const GameContext = function(fps = 60) {
     this.id = "GAME_CONTEXT";
@@ -35,7 +34,6 @@ export const GameContext = function(fps = 60) {
     this.actionQueue = new ClientQueue();
     this.events = new EventEmitter();
     this.states = new StateMachine(this);
-    this.resourceManager = new ResourceManager();
 
     this.timer.inputFunction = (realTime, deltaTime) => {
         this.client.update(this);

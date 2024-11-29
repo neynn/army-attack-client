@@ -1,5 +1,6 @@
 import { Renderer } from "./source/renderer.js";
 import { OrthogonalCamera } from "./source/camera/types/orthogonalCamera.js";
+import { SpriteManager } from "./source/graphics/spriteManager.js";
 
 export const ArmyCamera = function(positionX, positionY, width, height) {
     OrthogonalCamera.call(this, positionX, positionY, width, height);
@@ -82,11 +83,9 @@ ArmyCamera.prototype.update = function(gameContext) {
     }
     
     this.drawOverlay(gameContext);
-
-    for(const layerID of spriteManager.layerStack) {
-        const layer = spriteManager.layers[layerID];
-        this.drawSpriteLayer(gameContext, layer);
-    }
+    this.drawSpriteLayer(gameContext, spriteManager.layers[SpriteManager.LAYER_BOTTOM]);
+    this.drawSpriteLayer(gameContext, spriteManager.layers[SpriteManager.LAYER_MIDDLE]);
+    this.drawSpriteLayer(gameContext, spriteManager.layers[SpriteManager.LAYER_TOP]);
 
     /**
      * Draw range here. 
