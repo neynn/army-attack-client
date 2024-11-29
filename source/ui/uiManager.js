@@ -1,20 +1,25 @@
 import { EffectManager } from "../effects/effectManager.js";
 import { Logger } from "../logger.js";
 import { Renderer } from "../renderer.js";
+import { ImageManager } from "../resources/imageManager.js";
 import { Button } from "./elements/button.js";
 import { ButtonCircle } from "./elements/button/buttonCircle.js";
 import { ButtonSquare } from "./elements/button/buttonSquare.js";
 import { Container } from "./elements/container.js";
+import { DynamicTextElement } from "./elements/dynamicTextElement.js";
 import { Icon } from "./elements/icon.js";
 import { TextElement } from "./elements/textElement.js";
 import { UIElement } from "./uiElement.js";
 
 export const UIManager = function() {
+    this.effectManager = new EffectManager();
+    this.resources = new ImageManager();
     this.interfaceTypes = {};
     this.iconTypes = {};
     this.fontTypes = {};
     this.elementTypes = {
         [UIManager.ELEMENT_TYPE_TEXT]: TextElement,
+        [UIManager.ELEMENT_TYPE_DYNAMIC_TEXT]: DynamicTextElement,
         [UIManager.ELEMENT_TYPE_BUTTON_SQUARE]: ButtonSquare,
         [UIManager.ELEMENT_TYPE_BUTTON_CIRCLE]: ButtonCircle,
         [UIManager.ELEMENT_TYPE_ICON]: Icon,
@@ -24,10 +29,10 @@ export const UIManager = function() {
     this.elements = new Map();
     this.parentElements = new Set();
     this.previousCollisions = new Set();
-    this.effectManager = new EffectManager();
 }
 
 UIManager.ELEMENT_TYPE_TEXT = "TEXT";
+UIManager.ELEMENT_TYPE_DYNAMIC_TEXT = "DYNAMIC_TEXT";
 UIManager.ELEMENT_TYPE_BUTTON = "BUTTON";
 UIManager.ELEMENT_TYPE_BUTTON_SQUARE = "BUTTON_SQUARE";
 UIManager.ELEMENT_TYPE_BUTTON_CIRCLE = "BUTTON_CIRCLE";
@@ -37,6 +42,7 @@ UIManager.ELEMENT_TYPE_ICON = "ICON";
 UIManager.prototype.load = function(interfaceTypes, iconTypes, fontTypes) {
     if(typeof interfaceTypes === "object") {
         this.interfaceTypes = interfaceTypes;
+        //this.resources.loadImages(iconTypes, (imageID, image) => console.log(imageID), (imageID, error) => console.error(imageID));
     } else {
         Logger.log(false, "InterfaceTypes cannot be undefined!", "UIManager.prototype.load", null);
     }
@@ -296,34 +302,30 @@ UIManager.prototype.setText = function(interfaceID, textID, message) {
     return true;
 }
 
-UIManager.prototype.addTextRequest = function(interfaceID, textID, callback) {
-    const text = this.getText(interfaceID, textID);
+UIManager.prototype.addDynamicText = function(interfaceID, textID, onEvent) {
+    const text = this.getElement(interfaceID, textID);
 
-    if(!text) {
+    if(!text || !(text instanceof DynamicTextElement)) {
         Logger.log(false, "Text does not exist!", "UIManager.prototype.addTextRequest", { interfaceID, textID });
-
         return false;
     }
 
-    this.removeTextRequest(interfaceID, textID);
+    this.removeDynamicText(interfaceID, textID);
 
-    text.setDynamic(true);
-    text.events.subscribe(TextElement.EVENT_REQUEST_TEXT, "UI_MANAGER", (answer) => answer(callback()));
+    text.events.subscribe(DynamicTextElement.EVENT_REQUEST_TEXT, "UI_MANAGER", (element) => onEvent(element));
 
     return true;
 }
 
-UIManager.prototype.removeTextRequest = function(interfaceID, textID) {
-    const text = this.getText(interfaceID, textID);
+UIManager.prototype.removeDynamicText = function(interfaceID, textID) {
+    const text = this.getElement(interfaceID, textID);
 
-    if(!text) {
+    if(!text || !(text instanceof DynamicTextElement)) {
         Logger.log(false, "Text does not exist!", "UIManager.prototype.removeTextRequest", { interfaceID, textID });
-
         return false;
     }
 
-    text.setDynamic(false);
-    text.events.mute(TextElement.EVENT_REQUEST_TEXT);
+    text.events.mute(DynamicTextElement.EVENT_REQUEST_TEXT);
 
     return true;
 }

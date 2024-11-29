@@ -1,7 +1,7 @@
 {
     "Health": { "id": "Health", "allowSave": true, "allowLoad": true },
     "Construction": { "id": "Construction", "allowSave": true, "allowLoad": true },
-    "Revive": { "id": "Revive", "allowSave": true, "allowLoad": true },
+    "Decay": { "id": "Decay", "allowSave": true, "allowLoad": true },
 
     "Attack": { "id": "Attack", "allowSave": false, "allowLoad": true },
     "Move": { "id": "Move", "allowSave": false, "allowLoad": true },

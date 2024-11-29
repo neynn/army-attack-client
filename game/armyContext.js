@@ -11,7 +11,6 @@ import { ConstructionComponent } from "./components/construction.js";
 import { HealthComponent } from "./components/health.js";
 import { MoveComponent } from "./components/move.js";
 import { PositionComponent } from "./components/position.js";
-import { ReviveComponent } from "./components/revive.js";
 import { UnitTypeComponent } from "./components/unitType.js";
 import { TeamComponent } from "./components/team.js";
 import { MainMenuState } from "./states/context/mainMenu.js";
@@ -41,6 +40,7 @@ import { BulldozeComponent } from "./components/bulldoze.js";
 import { UnitBusterComponent } from "./components/unitBuster.js";
 import { ConstructionAction } from "./actions/constructionAction.js";
 import { ArmyCamera } from "./armyCamera.js";
+import { DecayComponent } from "./components/decay.js";
 
 export const ArmyContext = function() {
     GameContext.call(this, 60);
@@ -79,7 +79,7 @@ ArmyContext.prototype.initialize = function() {
 
     this.entityManager.registerComponentReference("Health", HealthComponent);
     this.entityManager.registerComponentReference("Construction", ConstructionComponent);
-    this.entityManager.registerComponentReference("Revive", ReviveComponent);
+    this.entityManager.registerComponentReference("Decay", DecayComponent);
     this.entityManager.registerComponentReference("Attack", AttackComponent);
     this.entityManager.registerComponentReference("Move", MoveComponent);
     this.entityManager.registerComponentReference("UnitType", UnitTypeComponent);

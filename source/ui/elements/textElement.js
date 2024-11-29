@@ -10,15 +10,10 @@ export const TextElement = function(id) {
     this.isLooping = false;
     this.isRevealing = false;
     this.lettersPerSecond = 2;
-    this.isDynamic = false;
-
-    this.events.listen(TextElement.EVENT_REQUEST_TEXT);
 }
 
 TextElement.prototype = Object.create(UIElement.prototype);
 TextElement.prototype.constructor = TextElement;
-
-TextElement.EVENT_REQUEST_TEXT = "TextElement.EVENT_REQUEST_TEXT";
 
 TextElement.prototype.loadFromConfig = function(config) {
     const { id, opacity, position, font, align, color = [0, 0, 0, 0], text } = config;
@@ -70,16 +65,6 @@ TextElement.prototype.setText = function(text) {
     return true;
 }
 
-TextElement.prototype.setDynamic = function(isDynamic) {
-    if(isDynamic === undefined) {
-        return false;
-    }
-
-    this.isDynamic = isDynamic;
-
-    return true;
-}
-
 TextElement.prototype.revealText = function() {
     this.revealedText = this.fullText;
 } 
@@ -91,10 +76,6 @@ TextElement.prototype.revealLetter = function() {
 }
 
 TextElement.prototype.onDraw = function(context, viewportX, viewportY, localX, localY) {
-    if(this.isDynamic) {
-        this.events.emit(TextElement.EVENT_REQUEST_TEXT, (textResponse) => this.setText(textResponse));
-    }
-
     this.style.apply(context);
 
     context.globalAlpha = this.opacity;

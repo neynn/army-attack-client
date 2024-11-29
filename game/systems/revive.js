@@ -1,11 +1,11 @@
-import { ReviveComponent } from "../components/revive.js";
+import { DecayComponent } from "../components/decay.js";
 import { SYSTEM_TYPES } from "../enums.js";
 import { MorphSystem } from "./morph.js";
 
 export const ReviveSystem = function() {}
 
 ReviveSystem.isReviveable = function(entity) {
-    const reviveableComponent = entity.getComponent(ReviveComponent);
+    const reviveableComponent = entity.getComponent(DecayComponent);
 
     if(!reviveableComponent) {
         return false;

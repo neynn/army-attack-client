@@ -8,9 +8,6 @@
 //TODO: Drop kill items. -> Use drop trait!
 //TODO: Drop hit items. -> Use drop trait!
 
-//sprite manager gets add icon / add sprite functions.
-//Fire system becomes attack system! Damage calculations are also done in that system!
-
 //TODO: Add "Auto" mode to mapEditor.
 //TODO: Add "Debug-Menu"
 

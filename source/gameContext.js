@@ -67,6 +67,7 @@ GameContext.prototype.loadResources = function(resources) {
     this.entityManager.load(resources.entities, resources.components, resources.traits);
     this.settings = resources.settings;
     this.config = resources.config;
+    this.onResourcesLoad(resources);
 }
 
 GameContext.prototype.initialize = function() {}
