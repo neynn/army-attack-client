@@ -2,7 +2,7 @@ import { ActionQueue } from "../source/action/actionQueue.js";
 import { GameContext } from "../source/gameContext.js";
 import { Socket } from "../source/network/socket.js";
 
-import { ACTION_TYPES, CAMERA_TYPES, CAMERAS, CONTEXT_STATES, CONTROLLER_TYPES, ENTITY_ARCHETYPES, SYSTEM_TYPES } from "./enums.js";
+import { ACTION_TYPES, CAMERA_TYPES, CAMERAS, CONTEXT_STATES, CONTROLLER_TYPES, SYSTEM_TYPES } from "./enums.js";
 import { AttackAction } from "./actions/attackAction.js";
 import { MoveAction } from "./actions/moveAction.js";
 import { ArmorComponent } from "./components/armor.js";
@@ -61,13 +61,13 @@ ArmyContext.prototype.initialize = function() {
     this.actionQueue.registerAction(ACTION_TYPES.ATTACK, new AttackAction());
     this.actionQueue.registerAction(ACTION_TYPES.CONSTRUCTION, new ConstructionAction());
     
-    this.entityManager.registerArchetype(ENTITY_ARCHETYPES.UNIT, new UnitArchetype());
-    this.entityManager.registerArchetype(ENTITY_ARCHETYPES.DEFENSE, new DefenseArchetype());
-    this.entityManager.registerArchetype(ENTITY_ARCHETYPES.DECO, new DecoArchetype());
-    this.entityManager.registerArchetype(ENTITY_ARCHETYPES.BUILDING, new BuildingArchetype());
-    this.entityManager.registerArchetype(ENTITY_ARCHETYPES.HFE, new HFEArchetype());
-    this.entityManager.registerArchetype(ENTITY_ARCHETYPES.TOWN, new TownArchetype());
-    this.entityManager.registerArchetype(ENTITY_ARCHETYPES.CONSTRUCTION, new ConstructionArchetype());
+    this.entityManager.registerArchetype("Unit", new UnitArchetype());
+    this.entityManager.registerArchetype("Defense", new DefenseArchetype());
+    this.entityManager.registerArchetype("Deco", new DecoArchetype());
+    this.entityManager.registerArchetype("Building", new BuildingArchetype());
+    this.entityManager.registerArchetype("HFE", new HFEArchetype());
+    this.entityManager.registerArchetype("Town", new TownArchetype());
+    this.entityManager.registerArchetype("Construction", new ConstructionArchetype());
 
     this.controllerManager.registerController(CONTROLLER_TYPES.PLAYER, PlayerController);
     this.controllerManager.registerController(CONTROLLER_TYPES.EDITOR, EditorController);

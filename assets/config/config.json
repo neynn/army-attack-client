@@ -84,7 +84,7 @@
         "Water": { "id": "Water", "maxDrop": 1, "icon": "resource_icon_water" },
         "XP": { "id": "XP", "maxDrop": 5, "icon": "resource_icon_xp" },
         "Honor": { "id": "Honor", "maxDrop": 1, "icon": "resource_icon_honor" },
-        "PVPXP": { "id": "PVPXP", "maxDrop": 5, "icon": "pvp_rank_icon" },
+        "PVP_XP": { "id": "PVP_XP", "maxDrop": 5, "icon": "pvp_rank_icon" },
         "SocialEnergy": { "id": "SocialEnergy", "maxDrop": 1, "icon": "resource_icon_social_energy" },
         "Dollor": { "id": "Dollor", "maxDrop": 1, "icon": "icon_dollor" },
         "BackgroundEnergy": { "id": "BackgroundEnergy", "maxDrop": 0, "icon": null }

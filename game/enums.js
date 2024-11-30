@@ -8,16 +8,6 @@ export const GAME_EVENTS = Object.freeze({
     "WORLD_EVENT": "WORLD_EVENT"
 });
 
-export const ENTITY_ARCHETYPES = Object.freeze({
-    "UNIT": "Unit",
-    "DEFENSE": "Defense",
-    "DECO": "Deco",
-    "BUILDING": "Building",
-    "CONSTRUCTION": "Construction",
-    "HFE": "HFE",
-    "TOWN": "Town"
-});
-
 export const CONTROLLER_TYPES = Object.freeze({
     "PLAYER": "PLAYER",
     "EDITOR": "EDITOR"

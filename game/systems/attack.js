@@ -3,15 +3,8 @@ import { AttackComponent } from "../components/attack.js";
 import { BulldozeComponent } from "../components/bulldoze.js";
 import { UnitBusterComponent } from "../components/unitBuster.js";
 import { UnitSizeComponent } from "../components/unitSize.js";
-import { ENTITY_ARCHETYPES } from "../enums.js";
 
 export const AttackSystem = function() {}
-
-AttackSystem.ARCHETYPE_BULLDOZE_MAP = {
-    [ENTITY_ARCHETYPES.UNIT]: "destroyUnit",
-    [ENTITY_ARCHETYPES.DECO]: "destroyDeco",
-    [ENTITY_ARCHETYPES.BUILDING]: "destroyBuilding"
-};
 
 AttackSystem.getDamage = function(gameContext, target, attackerIDs) {
     const { entityManager } = gameContext;
@@ -57,7 +50,7 @@ AttackSystem.getDamage = function(gameContext, target, attackerIDs) {
 AttackSystem.getBulldozed = function(gameContext, target, attackerIDs) {
     const { entityManager } = gameContext;
     const archetype = target.config.archetype;
-    const requiredFlag = AttackSystem.ARCHETYPE_BULLDOZE_MAP[archetype];
+    const requiredFlag = BulldozeComponent.ARCHETYPE_BULLDOZE_MAP[archetype];
 
     if(!requiredFlag) {
         return false;

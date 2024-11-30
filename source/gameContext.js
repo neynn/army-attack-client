@@ -195,7 +195,6 @@ GameContext.prototype.onEntityCreate = function(entity) {}
 GameContext.prototype.createEntity = function(setup, masterID, externalID) {
     if(typeof setup !== "object") {
         Logger.error(false, "Setup does not exist!", "GameContext.prototype.createEntity", null);
-
         return null;
     }
 
