@@ -5,7 +5,7 @@
 
     "Attack": { "id": "Attack", "allowSave": false, "allowLoad": true },
     "Move": { "id": "Move", "allowSave": false, "allowLoad": true },
-    "UnitType": { "id": "UnitType", "allowSave": false, "allowLoad": true },
+    "UnitSize": { "id": "UnitSize", "allowSave": false, "allowLoad": true },
     "Armor": { "id": "Armor", "allowSave": false, "allowLoad": true },
     "Avian": { "id": "Avian", "allowSave": false, "allowLoad": true },
     "Bulldoze": { "id": "Bulldoze", "allowSave": false, "allowLoad": true },

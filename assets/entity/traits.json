@@ -9,23 +9,23 @@
     },
     "Infantry": {
         "id": "Infantry",
-        "description": "If a unit is an infantry.",
+        "description": "If a unit is an infantry. Also counts the amount of space needed.",
         "components": {
-            "UnitType": { "infantry": true } 
+            "UnitSize": { "infantry": 1 } 
         }
     },
     "Artillery": {
         "id": "Artillery",
-        "description": "If a unit is an artillery.",
+        "description": "If a unit is an artillery. Also counts the amount of space needed.",
         "components": { 
-            "UnitType": { "artillery": true } 
+            "UnitSize": { "artillery": 1 } 
         }
     },
     "Armor": {
         "id": "Armor",
-        "description": "If a unit is armored.",
+        "description": "If a unit is armored. Also counts the amount of space needed.",
         "components": {
-            "UnitType": { "armor": true } 
+            "UnitSize": { "armor": 1 } 
         }
     },
     "EliteArmor": {

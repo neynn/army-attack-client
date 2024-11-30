@@ -1,5 +1,5 @@
 export const BulldozeComponent = function() {
     this.destroyUnit = false;
-    this.destroyDecoration = false;
+    this.destroyDeco = false;
     this.destroyBuilding = false;
 }

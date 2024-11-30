@@ -52,5 +52,3 @@ ResourceManager.prototype.loadMain = async function(directory, source) {
 
     return files;
 }
-
-export const GlobalResourceManager = new ResourceManager();

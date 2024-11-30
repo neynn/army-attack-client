@@ -11,7 +11,7 @@ import { ConstructionComponent } from "./components/construction.js";
 import { HealthComponent } from "./components/health.js";
 import { MoveComponent } from "./components/move.js";
 import { PositionComponent } from "./components/position.js";
-import { UnitTypeComponent } from "./components/unitType.js";
+import { UnitSizeComponent } from "./components/unitSize.js";
 import { TeamComponent } from "./components/team.js";
 import { MainMenuState } from "./states/context/mainMenu.js";
 import { MapEditorState } from "./states/context/mapEditor.js";
@@ -82,7 +82,7 @@ ArmyContext.prototype.initialize = function() {
     this.entityManager.registerComponentReference("Decay", DecayComponent);
     this.entityManager.registerComponentReference("Attack", AttackComponent);
     this.entityManager.registerComponentReference("Move", MoveComponent);
-    this.entityManager.registerComponentReference("UnitType", UnitTypeComponent);
+    this.entityManager.registerComponentReference("UnitSize", UnitSizeComponent);
     this.entityManager.registerComponentReference("Armor", ArmorComponent);
     this.entityManager.registerComponentReference("Avian", AvianComponent);
     this.entityManager.registerComponentReference("Bulldoze", BulldozeComponent);

@@ -62,6 +62,20 @@
             }
         }
     },
+    "entityTypes": {
+        "Building": { "id": "Building" },
+        "Construction": { "id": "Construction" },
+        "Deco": { "id": "Deco" },
+        "Defense": { "id": "Defense" },
+        "HFE": { "id": "HFE" },
+        "Town": { "id": "Town" },
+        "Unit": { "id": "Unit" }
+    },
+    "unitTypes": {
+        "Armor": { "id": "Armor" },
+        "Artillery": { "id": "Artillery" },
+        "Infantry": { "id": "Infantry" }
+    },
     "resourceTypes": {
         "Money": { "id": "Money", "maxDrop": 50, "icon": "resource_icon_cash" },
         "Gold": { "id": "Gold", "maxDrop": 1, "icon": "resource_icon_credits" },
@@ -70,11 +84,10 @@
         "Water": { "id": "Water", "maxDrop": 1, "icon": "resource_icon_water" },
         "XP": { "id": "XP", "maxDrop": 5, "icon": "resource_icon_xp" },
         "Honor": { "id": "Honor", "maxDrop": 1, "icon": "resource_icon_honor" },
-        "PVP_XP": { "id": "PVP_XP", "maxDrop": 5, "icon": "pvp_rank_icon" },
-        "Social_Energy": { "id": "Social_Energy", "maxDrop": 1, "icon": "resource_icon_social_energy" },
+        "PVPXP": { "id": "PVPXP", "maxDrop": 5, "icon": "pvp_rank_icon" },
+        "SocialEnergy": { "id": "SocialEnergy", "maxDrop": 1, "icon": "resource_icon_social_energy" },
         "Dollor": { "id": "Dollor", "maxDrop": 1, "icon": "icon_dollor" },
-        "BackgroundEnergy": { "id": "BackgroundEnergy", "maxDrop": null, "icon": null },
-        "Time": { "id": "Time", "maxDrop": 1, "icon": null }
+        "BackgroundEnergy": { "id": "BackgroundEnergy", "maxDrop": 0, "icon": null }
     },
     "tileTypes": {
         "0": { "id": 0, "color": "#000000", "name": "Ground", "passability": "Land", "autoCapture": false, "hasBorder": true },
@@ -121,7 +134,8 @@
             "name": "#CONFIG_TEAM_ANGRY", 
             "allies": {},
             "enemies": { "0": true, "1": true },
-            "sprites": {} }
+            "sprites": {}
+        }
     },
     "ObjectiveType": {
         "Select": { "ID":"Select", "Type":"Client" },
@@ -288,8 +302,8 @@
         "Item": { "id": "Item", "reference": "itemTypes" }
     },
     "collectionTypes": {
-        "collection_scout": {
-            "id": "collection_scout",
+        "Scout": {
+            "id": "Scout",
             "name": "#CONFIG_COLLECTION_SCOUT",
             "items": [
                 {"id": "scout_binoculars", "value": 1},
@@ -302,8 +316,8 @@
                 {"type": "Resource", "id": "Energy", "value": 3}
             ]
         },
-        "collection_infantry": {
-            "id": "collection_infantry",
+        "Infantry": {
+            "id": "Infantry",
             "name": "#CONFIG_COLLECTION_INFANTRY",
             "items": [
                 {"id": "infantry_combat_boots", "value": 1},
@@ -317,8 +331,8 @@
                 {"type": "Item", "id": "medal_bronzestar", "value": 1}
             ]
         },
-        "collection_apc": {
-            "id": "collection_apc",
+        "APC": {
+            "id": "APC",
             "name": "#CONFIG_COLLECTION_APC",
             "items": [
                 {"id": "apc_ammo_shells", "value": 1},
@@ -332,8 +346,8 @@
                 {"type": "Item", "id": "medal_bronzestar", "value": 1}
             ]
         },
-        "collection_artillery": {
-            "id": "collection_artillery",
+        "Artillery": {
+            "id": "Artillery",
             "name": "#CONFIG_COLLECTION_ARTILLERY",
             "items": [
                 {"id": "artillery_ammo", "value": 1},
@@ -348,8 +362,8 @@
                 {"type": "Item", "id": "medal_silverstar", "value": 1}
             ]
         },
-        "collection_battle_tank": {
-            "id": "collection_battle_tank",
+        "BattleTank": {
+            "id": "BattleTank",
             "name": "#CONFIG_COLLECTION_BATTLETANK",
             "items": [
                 {"id": "battle_tank_armor_plates", "value": 1},
@@ -363,8 +377,8 @@
                 {"type": "Item", "id": "medal_silverstar", "value": 1}
             ]
         },
-        "collection_stormtroop": {
-            "id": "collection_stormtroop",
+        "Stormtroop": {
+            "id": "Stormtroop",
             "name": "#CONFIG_COLLECTION_STORMTROOP",
             "items": [
                 {"id": "stormtroop_ammo_crate", "value": 1},
@@ -378,8 +392,8 @@
                 {"type": "Item", "id": "medal_goldstar", "value": 1}
             ]
         },
-        "collection_rocket_battery": {
-            "id": "collection_rocket_battery",
+        "RocketBattery": {
+            "id": "RocketBattery",
             "name": "#CONFIG_COLLECTION_ROCKETBATTERY",
             "items": [
                 {"id": "rocket_battery_headphones", "value": 1},
@@ -393,8 +407,8 @@
                 {"type": "Item", "id": "medal_goldstar", "value": 1}
             ]
         },
-        "collection_pvp": {
-            "id": "collection_pvp",
+        "PVP": {
+            "id": "PVP",
             "name": "#CONFIG_COLLECTION_PVP",
             "items": [
                 {"id": "pvp_compass", "value": 1},
@@ -407,46 +421,46 @@
         }
     },
     "itemTypes": {
-        "apc_ammo_shells": { "id": "apc_ammo_shells", "icon": "apc_ammo_shells", "collection": "collection_apc", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "apc_blueprints": { "id": "apc_blueprints", "icon": "apc_blueprints", "collection": "collection_apc", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "apc_duct_tape": { "id": "apc_duct_tape", "icon": "apc_duct_tape", "collection": "collection_apc", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "apc_gas_canister": { "id": "apc_gas_canister", "icon": "apc_gas_canister", "collection": "collection_apc", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "apc_tires": { "id": "apc_tires", "icon": "apc_tires", "collection": "collection_apc", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "artillery_ammo": { "id": "artillery_ammo", "icon": "artillery_ammo", "collection": "collection_artillery", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "artillery_fire_mission": { "id": "artillery_fire_mission", "icon": "artillery_fire_mission", "collection": "collection_artillery", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "artillery_mortar_base_plate": { "id": "artillery_mortar_base_plate", "icon": "artillery_mortar_base_plate", "collection": "collection_artillery", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "artillery_rangefinder": { "id": "artillery_rangefinder", "icon": "artillery_rangefinder", "collection": "collection_artillery", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "artillery_smoke_marker": { "id": "artillery_smoke_marker", "icon": "artillery_smoke_marker", "collection": "collection_artillery", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "battle_tank_armor_plates": { "id": "battle_tank_armor_plates", "icon": "battle_tank_armor_plates", "collection": "collection_battle_tank", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "battle_tank_blueprints": { "id": "battle_tank_blueprints", "icon": "battle_tank_blueprints", "collection": "collection_battle_tank", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "battle_tank_broken_track": { "id": "battle_tank_broken_track", "icon": "battle_tank_broken_track", "collection": "collection_battle_tank", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "battle_tank_driver_goggles": { "id": "battle_tank_driver_goggles", "icon": "battle_tank_driver_goggles", "collection": "collection_battle_tank", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "battle_tank_heat_ammunition": { "id": "battle_tank_heat_ammunition", "icon": "battle_tank_heat_ammunition", "collection": "collection_battle_tank", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "infantry_combat_boots": { "id": "infantry_combat_boots", "icon": "infantry_combat_boots", "collection": "collection_infantry", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "infantry_dog_tags": { "id": "infantry_dog_tags", "icon": "infantry_dog_tags", "collection": "collection_infantry", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "infantry_grenade": { "id": "infantry_grenade", "icon": "infantry_grenade", "collection": "collection_infantry", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "infantry_mre": { "id": "infantry_mre", "icon": "infantry_mre", "collection": "collection_infantry", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "infantry_sergeant_hat": { "id": "infantry_sergeant_hat", "icon": "infantry_sergeant_hat", "collection": "collection_infantry", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "pvp_compass": { "id": "pvp_compass", "icon": "pvp_compass", "collection": "collection_pvp", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "pvp_survival_shovel": { "id": "pvp_survival_shovel", "icon": "pvp_survival_shovel", "collection": "collection_pvp", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "pvp_tent": { "id": "pvp_tent", "icon": "pvp_tent", "collection": "collection_pvp", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "pvp_torn_flag": { "id": "pvp_torn_flag", "icon": "pvp_torn_flag", "collection": "collection_pvp", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "pvp_war_loot": { "id": "pvp_war_loot", "icon": "pvp_war_loot", "collection": "collection_pvp", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "rocket_battery_headphones": { "id": "rocket_battery_headphones", "icon": "rocket_battery_headphones", "collection": "collection_rocket_battery", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "rocket_battery_radar": { "id": "rocket_battery_radar", "icon": "rocket_battery_radar", "collection": "collection_rocket_battery", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "rocket_battery_rockets": { "id": "rocket_battery_rockets", "icon": "rocket_battery_rockets", "collection": "collection_rocket_battery", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "rocket_battery_shock_and_awe": { "id": "rocket_battery_shock_and_awe", "icon": "rocket_battery_shock_and_awe", "collection": "collection_rocket_battery", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "rocket_battery_strategic_map": { "id": "rocket_battery_strategic_map", "icon": "rocket_battery_strategic_map", "collection": "collection_rocket_battery", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "scout_binoculars": { "id": "scout_binoculars", "icon": "scout_binoculars", "collection": "collection_scout", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "scout_camo": { "id": "scout_camo", "icon": "scout_camo", "collection": "collection_scout", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "scout_canteen": { "id": "scout_canteen", "icon": "scout_canteen", "collection": "collection_scout", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "scout_field_radio": { "id": "scout_field_radio", "icon": "scout_field_radio", "collection": "collection_scout", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "scout_tactical_map": { "id": "scout_tactical_map", "icon": "scout_tactical_map", "collection": "collection_scout", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "stormtroop_ammo_crate": { "id": "stormtroop_ammo_crate", "icon": "stormtroop_ammo_crate", "collection": "collection_stormtroop", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "stormtroop_balaclava": { "id": "stormtroop_balaclava", "icon": "stormtroop_balaclava", "collection": "collection_stormtroop", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "stormtroop_beret": { "id": "stormtroop_beret", "icon": "stormtroop_beret", "collection": "collection_stormtroop", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "stormtroop_combat_knife": { "id": "stormtroop_combat_knife", "icon": "stormtroop_combat_knife", "collection": "collection_stormtroop", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
-        "stormtroop_supressor": { "id": "stormtroop_supressor", "icon": "stormtroop_supressor", "collection": "collection_stormtroop", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "apc_ammo_shells": { "id": "apc_ammo_shells", "icon": "apc_ammo_shells", "collection": "APC", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "apc_blueprints": { "id": "apc_blueprints", "icon": "apc_blueprints", "collection": "APC", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "apc_duct_tape": { "id": "apc_duct_tape", "icon": "apc_duct_tape", "collection": "APC", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "apc_gas_canister": { "id": "apc_gas_canister", "icon": "apc_gas_canister", "collection": "APC", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "apc_tires": { "id": "apc_tires", "icon": "apc_tires", "collection": "APC", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "artillery_ammo": { "id": "artillery_ammo", "icon": "artillery_ammo", "collection": "Artillery", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "artillery_fire_mission": { "id": "artillery_fire_mission", "icon": "artillery_fire_mission", "collection": "Artillery", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "artillery_mortar_base_plate": { "id": "artillery_mortar_base_plate", "icon": "artillery_mortar_base_plate", "collection": "Artillery", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "artillery_rangefinder": { "id": "artillery_rangefinder", "icon": "artillery_rangefinder", "collection": "Artillery", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "artillery_smoke_marker": { "id": "artillery_smoke_marker", "icon": "artillery_smoke_marker", "collection": "Artillery", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "battle_tank_armor_plates": { "id": "battle_tank_armor_plates", "icon": "battle_tank_armor_plates", "collection": "BattleTank", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "battle_tank_blueprints": { "id": "battle_tank_blueprints", "icon": "battle_tank_blueprints", "collection": "BattleTank", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "battle_tank_broken_track": { "id": "battle_tank_broken_track", "icon": "battle_tank_broken_track", "collection": "BattleTank", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "battle_tank_driver_goggles": { "id": "battle_tank_driver_goggles", "icon": "battle_tank_driver_goggles", "collection": "BattleTank", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "battle_tank_heat_ammunition": { "id": "battle_tank_heat_ammunition", "icon": "battle_tank_heat_ammunition", "collection": "BattleTank", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "infantry_combat_boots": { "id": "infantry_combat_boots", "icon": "infantry_combat_boots", "collection": "Infantry", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "infantry_dog_tags": { "id": "infantry_dog_tags", "icon": "infantry_dog_tags", "collection": "Infantry", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "infantry_grenade": { "id": "infantry_grenade", "icon": "infantry_grenade", "collection": "Infantry", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "infantry_mre": { "id": "infantry_mre", "icon": "infantry_mre", "collection": "Infantry", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "infantry_sergeant_hat": { "id": "infantry_sergeant_hat", "icon": "infantry_sergeant_hat", "collection": "Infantry", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "pvp_compass": { "id": "pvp_compass", "icon": "pvp_compass", "collection": "PVP", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "pvp_survival_shovel": { "id": "pvp_survival_shovel", "icon": "pvp_survival_shovel", "collection": "PVP", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "pvp_tent": { "id": "pvp_tent", "icon": "pvp_tent", "collection": "PVP", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "pvp_torn_flag": { "id": "pvp_torn_flag", "icon": "pvp_torn_flag", "collection": "PVP", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "pvp_war_loot": { "id": "pvp_war_loot", "icon": "pvp_war_loot", "collection": "PVP", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "rocket_battery_headphones": { "id": "rocket_battery_headphones", "icon": "rocket_battery_headphones", "collection": "RocketBattery", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "rocket_battery_radar": { "id": "rocket_battery_radar", "icon": "rocket_battery_radar", "collection": "RocketBattery", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "rocket_battery_rockets": { "id": "rocket_battery_rockets", "icon": "rocket_battery_rockets", "collection": "RocketBattery", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "rocket_battery_shock_and_awe": { "id": "rocket_battery_shock_and_awe", "icon": "rocket_battery_shock_and_awe", "collection": "RocketBattery", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "rocket_battery_strategic_map": { "id": "rocket_battery_strategic_map", "icon": "rocket_battery_strategic_map", "collection": "RocketBattery", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "scout_binoculars": { "id": "scout_binoculars", "icon": "scout_binoculars", "collection": "Scout", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "scout_camo": { "id": "scout_camo", "icon": "scout_camo", "collection": "Scout", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "scout_canteen": { "id": "scout_canteen", "icon": "scout_canteen", "collection": "Scout", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "scout_field_radio": { "id": "scout_field_radio", "icon": "scout_field_radio", "collection": "Scout", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "scout_tactical_map": { "id": "scout_tactical_map", "icon": "scout_tactical_map", "collection": "Scout", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "stormtroop_ammo_crate": { "id": "stormtroop_ammo_crate", "icon": "stormtroop_ammo_crate", "collection": "Stormtroop", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "stormtroop_balaclava": { "id": "stormtroop_balaclava", "icon": "stormtroop_balaclava", "collection": "Stormtroop", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "stormtroop_beret": { "id": "stormtroop_beret", "icon": "stormtroop_beret", "collection": "Stormtroop", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "stormtroop_combat_knife": { "id": "stormtroop_combat_knife", "icon": "stormtroop_combat_knife", "collection": "Stormtroop", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
+        "stormtroop_supressor": { "id": "stormtroop_supressor", "icon": "stormtroop_supressor", "collection": "Stormtroop", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
         "ally_report": { "id": "ally_report", "icon": "ally_report", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
         "intel": { "id": "intel", "icon": "icon_intel_item", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
         "construction_artillery_tubes": { "id": "construction_artillery_tubes", "icon": "icon_construction_artillery_tubes", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },

@@ -190,9 +190,11 @@ PlayerController.prototype.initialize = function(gameContext, payload) {
 
     const spriteComponent = componentSetup.setupSpriteComponent(controllerSprite);
     const teamComponent = componentSetup.setupTeamComponent(payload);
+    const resourceComponent = componentSetup.setupResourceComponent(payload);
 
     this.addComponent(teamComponent);
     this.addComponent(spriteComponent);
+    this.addComponent(resourceComponent);
 
     this.addClickEvent(gameContext);
     this.addDragEvent(gameContext);

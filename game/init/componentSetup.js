@@ -8,8 +8,15 @@ import { TeamComponent } from "../components/team.js";
 import { ConstructionComponent } from "../components/construction.js";
 import { PositionComponent } from "../components/position.js";
 import { DirectionComponent } from "../components/direction.js";
+import { ResourceComponent } from "../components/resource.js";
 
 export const componentSetup = {};
+
+componentSetup.setupResourceComponent = function(setup) {
+    const resourceComponent = new ResourceComponent();
+
+    return resourceComponent;
+}   
 
 componentSetup.setupDirectionComponent = function() {
     const directionComponent = new DirectionComponent();

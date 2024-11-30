@@ -13,6 +13,89 @@ export const VersusModeState = function() {
 VersusModeState.prototype = Object.create(State.prototype);
 VersusModeState.prototype.constructor = VersusModeState;
 
+VersusModeState.prototype.onRoomUpdate = function(gameContext, payload) {}
+
+VersusModeState.prototype.onStartInstance = function(gameContext, payload) {
+    this.states.setNextState(CONTEXT_STATES.VERSUS_MODE_PLAY);
+}
+
+VersusModeState.prototype.onInstanceController = function(gameContext, payload) {
+    const { id, setup } = payload;
+
+    gameContext.createController(setup, id);
+}
+
+VersusModeState.prototype.onInstanceMap = function(gameContext, payload) {
+    const { client } = gameContext;
+    const { socket } = client;
+    const { id } = payload;
+
+    gameContext
+    .parseMap(id, (id, data, meta) => MapParser.parseMap2D(id, data, meta, true))
+    .then(success => {
+        if(!success) {
+            socket.messageRoom(GAME_EVENTS.INSTANCE_MAP, { "success": false, "error": "NO_MAP_FILE" });
+        } else {
+            gameContext.initializeTilemap(id);
+
+            socket.messageRoom(GAME_EVENTS.INSTANCE_MAP, { "success": true, "error": null });
+        }
+    });
+}
+
+VersusModeState.prototype.onInstanceMapFromData = function(gameContext, payload) {
+    const { client } = gameContext;
+    const { socket } = client;
+    const { id, data, meta } = payload;
+    const gameMap = MapParser.parseMap2D(id, data, meta, true);
+
+    gameContext.loadMap(id, gameMap);
+    gameContext.initializeTilemap(id);
+
+    socket.messageRoom(GAME_EVENTS.INSTANCE_MAP, { "success": true, "error": null });
+}
+
+VersusModeState.prototype.onInstanceEntity = function(gameContext, payload) {
+    const { id, master, setup } = payload;
+
+    gameContext.createEntity(setup, master, id);
+}
+
+VersusModeState.prototype.onInstanceEntityBatch = function(gameContext, payload) {
+    const { batch } = payload;
+            
+    for(const setup of batch) {
+        const { id, master } = setup;
+
+        gameContext.createEntity(setup, master, id);
+    }
+}
+
+VersusModeState.prototype.onEntityAction = function(gameContext, payload) {
+    const { actionQueue } = gameContext;
+
+    actionQueue.queueAction(payload);
+}
+
+VersusModeState.prototype.onEntityEvent = function(gameContext, payload) {}
+
+VersusModeState.prototype.onServerMessage = function(gameContext, type, payload) {
+    console.log(type, payload, "FROM SERVER");
+
+    switch(type) {
+        case ROOM_EVENTS.ROOM_UPDATE: return this.onRoomUpdate(gameContext, payload);
+        case ROOM_EVENTS.START_INSTANCE: return this.onStartInstance(gameContext, payload);
+        case GAME_EVENTS.INSTANCE_CONTROLLER: return this.onInstanceController(gameContext, payload);
+        case GAME_EVENTS.INSTANCE_MAP: return this.onInstanceMap(gameContext, payload);
+        case GAME_EVENTS.INSTANCE_MAP_FROM_DATA: return this.onInstanceMapFromData(gameContext, payload);
+        case GAME_EVENTS.INSTANCE_ENTITY: return this.onInstanceEntity(gameContext, payload);
+        case GAME_EVENTS.INSTANCE_ENTITY_BATCH: return this.onInstanceEntityBatch(gameContext, payload);
+        case GAME_EVENTS.ENTITY_ACTION: return this.onEntityAction(gameContext, payload);
+        case GAME_EVENTS.WORLD_EVENT: return this.onEntityEvent(gameContext, payload);
+        default: return console.log("Unknown message type " + type);
+    }
+}
+
 VersusModeState.prototype.enter = function(stateMachine) {
     const gameContext = stateMachine.getContext();
     const contextID = gameContext.getID();
@@ -25,85 +108,7 @@ VersusModeState.prototype.enter = function(stateMachine) {
         }
     });
 
-    socket.events.subscribe(Socket.EVENT_MESSAGE_FROM_SERVER, contextID, (type, payload) => {
-        console.log(type, payload, "FROM SERVER");
-
-        switch(type) {
-            case ROOM_EVENTS.ROOM_UPDATE: {
-                break;
-            }
-            case ROOM_EVENTS.START_INSTANCE: {
-                this.states.setNextState(CONTEXT_STATES.VERSUS_MODE_PLAY);
-                break;
-            }
-            case GAME_EVENTS.INSTANCE_CONTROLLER: {
-                const { id, setup } = payload;
-
-                gameContext.createController(setup, id);
-                break;
-            }
-            case GAME_EVENTS.INSTANCE_MAP: {
-                const { id } = payload;
-
-                gameContext
-                .parseMap(id, (id, data, meta) => MapParser.parseMap2D(id, data, meta, true))
-                .then(success => {
-                    if(!success) {
-                        socket.messageRoom(GAME_EVENTS.INSTANCE_MAP, { "success": false, "error": "NO_MAP_FILE" });
-                        return;
-                    }
-
-                    gameContext.initializeTilemap(id);
-                    socket.messageRoom(GAME_EVENTS.INSTANCE_MAP, { "success": true, "error": null });
-                });
-
-                break;
-            }
-            case GAME_EVENTS.INSTANCE_MAP_FROM_DATA: {
-                const { id, data, meta } = payload;
-                const gameMap = MapParser.parseMap2D(id, data, meta, true);
-
-                gameContext.loadMap(id, gameMap);
-                gameContext.initializeTilemap(id);
-                socket.messageRoom(GAME_EVENTS.INSTANCE_MAP, { "success": true, "error": null });
-
-                break;
-            }
-            case GAME_EVENTS.INSTANCE_ENTITY: {
-                const { id, master, setup } = payload;
-
-                gameContext.createEntity(setup, master, id);
-                break;
-            }
-            case GAME_EVENTS.INSTANCE_ENTITY_BATCH: {
-                const { batch } = payload;
-                
-                for(const setup of batch) {
-                    const { id, master } = setup;
-
-                    gameContext.createEntity(setup, master, id);
-                }
-                break;
-            }
-            case GAME_EVENTS.ENTITY_ACTION: {
-                //payload = request!
-                actionQueue.queueAction(payload);
-                break;
-            }
-            case GAME_EVENTS.ENTITY_DEATH: {
-                //Handles the death of an entity
-                break;
-            }
-            case GAME_EVENTS.DROP_ITEM: {
-                //Handles the drop of an item.
-                break;
-            }
-            default: {
-                console.log("Unknown message type " + type);
-            }
-        }
-    });
-
+    socket.events.subscribe(Socket.EVENT_MESSAGE_FROM_SERVER, contextID, (type, payload) => this.onServerMessage(gameContext, type, payload));
     client.socket.connect();
 
     this.states.setNextState(CONTEXT_STATES.VERSUS_MODE_LOBBY);

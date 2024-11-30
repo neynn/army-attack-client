@@ -2,7 +2,7 @@ import { SpriteManager } from "../../source/graphics/spriteManager.js";
 
 import { PositionComponent } from "../components/position.js";
 import { SpriteComponent } from "../components/sprite.js";
-import { UnitTypeComponent } from "../components/unitType.js";
+import { UnitSizeComponent } from "../components/unitSize.js";
 import { CAMERAS } from "../enums.js";
 import { DirectionSystem } from "./direction.js";
 import { MorphSystem } from "./morph.js";
@@ -40,7 +40,7 @@ AnimationSystem.playFire = function(gameContext, entity, attackersIDs) {
 
     for(const attackerID of attackersIDs) {
         const attacker = entityManager.getEntity(attackerID);
-        const unitTypeComponent = attacker.getComponent(UnitTypeComponent);
+        const unitSizeComponent = attacker.getComponent(UnitSizeComponent);
         const weaponSprite = spriteManager.createSprite(attacker.config.sprites.weapon);
         const weaponSpriteID = weaponSprite.getID();
 
@@ -50,7 +50,7 @@ AnimationSystem.playFire = function(gameContext, entity, attackersIDs) {
         entitySprite.addChild(weaponSprite, weaponSpriteID);
         weaponSprite.expire();
 
-        if(unitTypeComponent && unitTypeComponent.artillery) {
+        if(unitSizeComponent && unitSizeComponent.artillery) {
             const artillerySprite = spriteManager.createSprite(attacker.config.sprites.weapon);
             const artillerySpriteID = artillerySprite.getID();
 

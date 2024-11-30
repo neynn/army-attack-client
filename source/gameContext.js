@@ -54,6 +54,29 @@ export const GameContext = function(fps = 60) {
     }
 }
 
+GameContext.prototype.start = function() {
+    const { cursor } = this.client;
+
+    cursor.events.subscribe(Cursor.LEFT_MOUSE_CLICK, EventEmitter.SUPER_SUBSCRIBER_ID, () => {
+        const clickedElements = this.uiManager.getCollidedElements(cursor.position.x, cursor.position.y, cursor.radius);
+
+        for(const element of clickedElements) {
+            element.events.emit(UIElement.EVENT_CLICKED);
+        }
+    });
+
+    this.actionQueue.start();
+    this.timer.start();
+}
+
+GameContext.prototype.end = function() {
+    this.actionQueue.end();
+    this.entityManager.end();
+    this.spriteManager.end();
+    this.tileManager.end();
+    this.uiManager.end();
+}
+
 GameContext.prototype.onResourcesLoad = function(resources) {}
 
 GameContext.prototype.loadResources = function(resources) {
@@ -71,26 +94,6 @@ GameContext.prototype.loadResources = function(resources) {
 }
 
 GameContext.prototype.initialize = function() {}
-
-GameContext.prototype.addUIClickEvent = function() {
-    const { cursor } = this.client;
-
-    cursor.events.subscribe(Cursor.LEFT_MOUSE_CLICK, EventEmitter.SUPER_SUBSCRIBER_ID, () => {
-        const clickedElements = this.uiManager.getCollidedElements(cursor.position.x, cursor.position.y, cursor.radius);
-
-        for(const element of clickedElements) {
-            element.events.emit(UIElement.EVENT_CLICKED);
-        }
-    });
-}
-
-GameContext.prototype.exitGame = function() {
-    this.actionQueue.end();
-    this.entityManager.end();
-    this.spriteManager.end();
-    this.tileManager.end();
-    this.uiManager.end();
-}
 
 GameContext.prototype.getConfig = function(elementID) {
     if(!elementID) {
@@ -250,7 +253,6 @@ GameContext.prototype.loadMap = function(mapID, gameMap) {
     
     this.mapManager.addMap(mapID, gameMap);
     this.mapManager.updateActiveMap(mapID);
-    this.actionQueue.start();
     this.onMapLoad(gameMap);
 
     return true;
