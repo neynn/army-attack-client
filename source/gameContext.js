@@ -171,15 +171,14 @@ GameContext.prototype.addLockEvent = function() {
     });
 }
 
-GameContext.prototype.createController = function(setup, controllerID) {
+GameContext.prototype.createController = function(setup) {
     if(typeof setup !== "object") {
         Logger.error(false, "Setup does not exist!", "GameContext.prototype.createController", null);
-
         return null;
     }
 
-    const { type } = setup;
-    const controller = this.controllerManager.createController(type, controllerID);
+    const { type, id } = setup;
+    const controller = this.controllerManager.createController(type, id);
 
     if(!controller) {
         return null;
@@ -192,17 +191,17 @@ GameContext.prototype.createController = function(setup, controllerID) {
 
 GameContext.prototype.onEntityCreate = function(entity) {}
 
-GameContext.prototype.createEntity = function(setup, masterID, externalID) {
+GameContext.prototype.createEntity = function(setup) {
     if(typeof setup !== "object") {
         Logger.error(false, "Setup does not exist!", "GameContext.prototype.createEntity", null);
         return null;
     }
 
-    const { type } = setup;
-    const entity = this.entityManager.createEntity(type, externalID);
+    const { type, master, id } = setup;
+    const entity = this.entityManager.createEntity(type, id);
     const entityID = entity.getID();
 
-    this.controllerManager.addEntity(masterID, entityID);
+    this.controllerManager.addEntity(master, entityID);
     this.entityManager.buildEntity(this, entity, type, setup);
     this.onEntityCreate(entity);
 

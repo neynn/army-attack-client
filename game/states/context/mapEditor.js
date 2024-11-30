@@ -18,8 +18,9 @@ MapEditorState.prototype.enter = function(stateMachine) {
     uiManager.unparseUI("FPS_COUNTER", gameContext);
     camera.unbindViewport();
     gameContext.createController({
-        "type": CONTROLLER_TYPES.EDITOR
-    }, "MAP_EDITOR");
+        "type": CONTROLLER_TYPES.EDITOR,
+        "id": "MAP_EDITOR"
+    });
 }
 
 MapEditorState.prototype.exit = function(stateMachine) {

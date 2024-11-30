@@ -1,8 +1,6 @@
 import { componentSetup } from "../componentSetup.js";
 import { DefaultArchetype } from "./default.js";
 
-const MODE_STAT_TYPE_ID = "story";
-
 export const DefenseArchetype = function() {
     DefaultArchetype.call(this);
 }
@@ -10,12 +8,15 @@ export const DefenseArchetype = function() {
 DefenseArchetype.prototype = Object.create(DefaultArchetype.prototype);
 DefenseArchetype.prototype.constructor = DefenseArchetype;
 
-DefenseArchetype.prototype.onInitialize = function(gameContext, entity, sprite, type) {
-    const attackComponent = componentSetup.setupAttackComponent(type, type.stats[MODE_STAT_TYPE_ID]);
+DefenseArchetype.prototype.onInitialize = function(gameContext, entity, sprite, type, setup) {
+    const { stats } = type;
+    const { mode } = setup;
+
+    const attackComponent = componentSetup.setupAttackComponent(stats[mode]);
 
     entity.addComponent(attackComponent);
 }
 
-DefenseArchetype.prototype.onFinalize = function(gameContext, entity, sprite, type) {
+DefenseArchetype.prototype.onFinalize = function(gameContext, entity, sprite, type, setup) {
     this.createStatCard(gameContext, entity, sprite);
 }

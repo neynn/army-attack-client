@@ -7,10 +7,10 @@ export const BuildingArchetype = function() {
 BuildingArchetype.prototype = Object.create(DefaultArchetype.prototype);
 BuildingArchetype.prototype.constructor = BuildingArchetype;
 
-BuildingArchetype.prototype.onInitialize = function(gameContext, entity, sprite, type) {
+BuildingArchetype.prototype.onInitialize = function(gameContext, entity, sprite, type, setup) {
 
 }
 
-BuildingArchetype.prototype.onFinalize = function(gameContext, entity, sprite, type) {
+BuildingArchetype.prototype.onFinalize = function(gameContext, entity, sprite, type, setup) {
 
 }

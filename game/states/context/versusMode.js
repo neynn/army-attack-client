@@ -20,9 +20,7 @@ VersusModeState.prototype.onStartInstance = function(gameContext, payload) {
 }
 
 VersusModeState.prototype.onInstanceController = function(gameContext, payload) {
-    const { id, setup } = payload;
-
-    gameContext.createController(setup, id);
+    gameContext.createController(payload);
 }
 
 VersusModeState.prototype.onInstanceMap = function(gameContext, payload) {
@@ -56,18 +54,14 @@ VersusModeState.prototype.onInstanceMapFromData = function(gameContext, payload)
 }
 
 VersusModeState.prototype.onInstanceEntity = function(gameContext, payload) {
-    const { id, master, setup } = payload;
-
-    gameContext.createEntity(setup, master, id);
+    gameContext.createEntity(payload);
 }
 
 VersusModeState.prototype.onInstanceEntityBatch = function(gameContext, payload) {
     const { batch } = payload;
             
     for(const setup of batch) {
-        const { id, master } = setup;
-
-        gameContext.createEntity(setup, master, id);
+        gameContext.createEntity(setup);
     }
 }
 

@@ -78,7 +78,7 @@ componentSetup.setupMoveComponent = function(type, stats) {
     return moveComponent;
 }
 
-componentSetup.setupAttackComponent = function(type, stats) {
+componentSetup.setupAttackComponent = function(stats) {
     const attackComponent = new AttackComponent();
 
     attackComponent.damage = stats.damage;
@@ -87,7 +87,7 @@ componentSetup.setupAttackComponent = function(type, stats) {
     return attackComponent;
 }
 
-componentSetup.setupHealthComponent = function(type, stats) {
+componentSetup.setupHealthComponent = function(stats) {
     const healthComponent = new HealthComponent();
 
     healthComponent.health = stats.health;

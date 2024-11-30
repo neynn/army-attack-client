@@ -10,8 +10,6 @@ import { CAMERAS, ENTITY_EVENTS } from "../../enums.js";
 import { componentSetup } from "../componentSetup.js";
 import { SpriteComponent } from "../../components/sprite.js";
 
-const MODE_STAT_TYPE_ID = "story";
-
 export const DefaultArchetype = function() {
     Archetype.call(this);
 }
@@ -86,13 +84,13 @@ DefaultArchetype.prototype.initializeEntity = function(gameContext, entity, spri
     const { spriteManager, renderer } = gameContext;
     const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
     const { stats } = type;
-    const usedStats = stats[MODE_STAT_TYPE_ID];
+    const { mode } = setup;
 
     const directionComponent = componentSetup.setupDirectionComponent();
     const positionComponent = componentSetup.setupPositionComponent(setup);
     const teamComponent = componentSetup.setupTeamComponent(setup);
     const spriteComponent = componentSetup.setupSpriteComponent(sprite);
-    const healthComponent = componentSetup.setupHealthComponent(type, usedStats);
+    const healthComponent = componentSetup.setupHealthComponent(stats[mode]);
 
     const { x, y } = camera.transformTileToPositionCenter(positionComponent.tileX, positionComponent.tileY);
     positionComponent.positionX = x;
@@ -134,22 +132,25 @@ DefaultArchetype.prototype.initializeEntity = function(gameContext, entity, spri
 DefaultArchetype.prototype.finalizeEntity = function(gameContext, entity, sprite, type, setup) {
     const { entityManager } = gameContext;
     const { stats } = type;
-    const usedStats = stats[MODE_STAT_TYPE_ID];
+    const { mode, components } = setup;
+    const { traits } = stats[mode];
 
-    entityManager.loadTraits(entity, usedStats.traits);
-    entityManager.loadComponents(entity, setup.components);
+    entityManager.loadTraits(entity, traits);
+    entityManager.loadComponents(entity, components);
 }
 
-DefaultArchetype.prototype.onInitialize = function(gameContext, entity, sprite, type) {}
+DefaultArchetype.prototype.onInitialize = function(gameContext, entity, sprite, type, setup) {}
 
-DefaultArchetype.prototype.onFinalize = function(gameContext, entity, sprite, type) {}
+DefaultArchetype.prototype.onFinalize = function(gameContext, entity, sprite, type, setup) {}
 
 DefaultArchetype.prototype.onBuild = function(gameContext, entity, type, setup) {
     const { spriteManager } = gameContext;
-    const sprite = spriteManager.createSprite(type.sprites.idle, SpriteManager.LAYER_MIDDLE);
+    const { sprites } = type;
+    const { idle } = sprites;
+    const sprite = spriteManager.createSprite(idle, SpriteManager.LAYER_MIDDLE);
 
     this.initializeEntity(gameContext, entity, sprite, type, setup);
-    this.onInitialize(gameContext, entity, sprite, type);
+    this.onInitialize(gameContext, entity, sprite, type, setup);
     this.finalizeEntity(gameContext, entity, sprite, type, setup);
-    this.onFinalize(gameContext, entity, sprite, type);
+    this.onFinalize(gameContext, entity, sprite, type, setup);
 }

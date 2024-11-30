@@ -8,7 +8,7 @@ export const ConstructionArchetype = function() {
 ConstructionArchetype.prototype = Object.create(DefaultArchetype.prototype);
 ConstructionArchetype.prototype.constructor = ConstructionArchetype;
 
-ConstructionArchetype.prototype.onInitialize = function(gameContext, entity, sprite, type) {
+ConstructionArchetype.prototype.onInitialize = function(gameContext, entity, sprite, type, setup) {
     const constructionComponent = componentSetup.setupConstructionComponent(type);
     
     sprite.freeze();
@@ -16,6 +16,6 @@ ConstructionArchetype.prototype.onInitialize = function(gameContext, entity, spr
     entity.addComponent(constructionComponent);
 }
 
-ConstructionArchetype.prototype.onFinalize = function(gameContext, entity, sprite, type) {
+ConstructionArchetype.prototype.onFinalize = function(gameContext, entity, sprite, type, setup) {
     this.createStatCard(gameContext, entity, sprite);
 }
