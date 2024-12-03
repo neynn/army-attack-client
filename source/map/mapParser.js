@@ -70,7 +70,7 @@ MapParser.createUint8LayerEmpty = function(fill = 0, width, height) {
     return layerBuffer;
 }
 
-MapParser.parseMap2D = function(mapID, config, meta, loadGraphics) {
+MapParser.parseMap2D = function(mapID, config, meta) {
     const map2D = new GameMap(mapID);
     const parsedLayers = {};
 
@@ -83,20 +83,18 @@ MapParser.parseMap2D = function(mapID, config, meta, loadGraphics) {
         metaLayers = []
     } = config;
 
-    if(loadGraphics) {
-        for(const layerConfig of backgroundLayers) {
-            const { id } = layerConfig; 
-            const layerData = layers[id];
-            const parsedLayerData = MapParser.createUint16Layer(layerData, width, height);
-            parsedLayers[id] = parsedLayerData;
-        }
-    
-        for(const layerConfig of foregroundLayers) {
-            const { id } = layerConfig; 
-            const layerData = layers[id];
-            const parsedLayerData = MapParser.createUint16Layer(layerData, width, height);
-            parsedLayers[id] = parsedLayerData;
-        }
+    for(const layerConfig of backgroundLayers) {
+        const { id } = layerConfig; 
+        const layerData = layers[id];
+        const parsedLayerData = MapParser.createUint16Layer(layerData, width, height);
+        parsedLayers[id] = parsedLayerData;
+    }
+
+    for(const layerConfig of foregroundLayers) {
+        const { id } = layerConfig; 
+        const layerData = layers[id];
+        const parsedLayerData = MapParser.createUint16Layer(layerData, width, height);
+        parsedLayers[id] = parsedLayerData;
     }
 
     for(const layerConfig of metaLayers) {
@@ -117,7 +115,7 @@ MapParser.parseMap2D = function(mapID, config, meta, loadGraphics) {
     return map2D;
 }
 
-MapParser.parseMap2DEmpty = function(mapID, config, meta, loadGraphics) {
+MapParser.parseMap2DEmpty = function(mapID, config, meta) {
     const map2D = new GameMap(mapID);
     const parsedLayers = {};
 
@@ -130,20 +128,18 @@ MapParser.parseMap2DEmpty = function(mapID, config, meta, loadGraphics) {
         metaLayers = []
     } = config;
 
-    if(loadGraphics) {
-        for(const layerConfig of backgroundLayers) {
-            const { id } = layerConfig; 
-            const { fill } = layers[id];
-            const parsedLayerData = MapParser.createUint16LayerEmpty(fill, width, height);
-            parsedLayers[id] = parsedLayerData;
-        }
-    
-        for(const layerConfig of foregroundLayers) {
-            const { id } = layerConfig; 
-            const { fill } = layers[id];
-            const parsedLayerData = MapParser.createUint16LayerEmpty(fill, width, height);
-            parsedLayers[id] = parsedLayerData;
-        }
+    for(const layerConfig of backgroundLayers) {
+        const { id } = layerConfig; 
+        const { fill } = layers[id];
+        const parsedLayerData = MapParser.createUint16LayerEmpty(fill, width, height);
+        parsedLayers[id] = parsedLayerData;
+    }
+
+    for(const layerConfig of foregroundLayers) {
+        const { id } = layerConfig; 
+        const { fill } = layers[id];
+        const parsedLayerData = MapParser.createUint16LayerEmpty(fill, width, height);
+        parsedLayers[id] = parsedLayerData;
     }
 
     for(const layerConfig of metaLayers) {

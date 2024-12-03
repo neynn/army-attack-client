@@ -5,3 +5,4 @@ Action.prototype.onEnd = function(gameContext, request) {}
 Action.prototype.onUpdate = function(gameContext, request) {}
 Action.prototype.isFinished = function(gameContext, request) {}
 Action.prototype.isValid = function(gameContext, request, messengerID) {}
+Action.prototype.createRequest = function(...args) {}

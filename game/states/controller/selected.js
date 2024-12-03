@@ -1,9 +1,7 @@
 import { State } from "../../../source/state/state.js";
 
-import { CONTROLLER_STATES } from "../../enums.js";
+import { ACTION_TYPES, CONTROLLER_STATES } from "../../enums.js";
 import { TeamSystem } from "../../systems/team.js";
-import { createMoveRequest } from "../../actions/moveAction.js";
-import { createAttackRequest } from "../../actions/attackAction.js";
 import { ControllerSystem } from "../../systems/controller.js";
 
 export const ControllerSelectedState = function() {
@@ -30,12 +28,12 @@ ControllerSelectedState.prototype.onEventEnter = function(stateMachine, gameCont
         const isEnemy = TeamSystem.isEntityEnemy(gameContext, controller, mouseEntity);
 
         if(isEnemy) {
-            actionQueue.addRequest(createAttackRequest(mouseEntityID));
+            actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.ATTACK, mouseEntityID));
         } else {
             soundPlayer.playSound("sound_error", 0.5);
         }
     } else {
-        actionQueue.addRequest(createMoveRequest(selectedEntityID, x, y));
+        actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.MOVE, selectedEntityID, x, y));
     }
 
     ControllerSystem.deselectEntity(gameContext, controller, selectedEntity);

@@ -1,6 +1,5 @@
 import { Action } from "../../source/action/action.js";
 
-import { ACTION_TYPES } from "../enums.js";
 import { AnimationSystem } from "../systems/animation.js";
 import { ConstructionSystem } from "../systems/construction.js";
 
@@ -68,9 +67,8 @@ ConstructionAction.prototype.isValid = function(gameContext, request, messengerI
     return true;
 }
 
-export const createConstructionRequest = function(entityID) {
+ConstructionAction.prototype.createRequest = function(entityID) {
     return {
-        "type": ACTION_TYPES.CONSTRUCTION,
         "entityID": entityID,
         "deltaSteps": 0
     }

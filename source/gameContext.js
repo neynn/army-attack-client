@@ -71,10 +71,10 @@ GameContext.prototype.loadResources = function(resources) {
     this.world.mapManager.load(resources.maps);
     this.spriteManager.load(resources.sprites);
     this.tileManager.load(resources.tiles, resources.tileMeta);
-    this.uiManager.load(resources.uiConfig, resources.icons, resources.fonts);
+    this.uiManager.load(resources.interfaces, resources.icons, resources.fonts);
     this.world.entityManager.load(resources.entities, resources.components, resources.traits);
     this.settings = resources.settings;
-    this.world.config = resources.config;
+    this.world.config = resources.world;
     this.onResourcesLoad(resources);
 }
 
@@ -155,28 +155,6 @@ GameContext.prototype.createEntity = function(setup) {
     }
 
     return this.world.createEntity(this, setup);
-}
-
-GameContext.prototype.destroyEntity = function(entityID) {
-    this.world.destroyEntity(entityID);
-}
-
-GameContext.prototype.parseMap = async function(mapID, onParse) {
-    if(!onParse) {
-        Logger.log(false, "No parser given!", "GameContext.prototype.parseMap", { mapID });
-        return false;
-    }
-
-    const parsedMap = await this.world.mapManager.parseMap(mapID, onParse);
-
-    if(!parsedMap) {
-        Logger.log(false, "Map could not be parsed!", "GameContext.prototype.parseMap", { mapID });
-        return false;
-    }
-
-    this.world.loadMap(mapID, parsedMap);
-
-    return true;
 }
 
 GameContext.prototype.clearEvents = function() {

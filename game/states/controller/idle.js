@@ -1,8 +1,6 @@
 import { State } from "../../../source/state/state.js";
 
-import { createAttackRequest } from "../../actions/attackAction.js";
-import { createConstructionRequest } from "../../actions/constructionAction.js";
-import { CONTROLLER_STATES } from "../../enums.js";
+import { ACTION_TYPES, CONTROLLER_STATES } from "../../enums.js";
 import { ConstructionSystem } from "../../systems/construction.js";
 import { ControllerSystem } from "../../systems/controller.js";
 import { HealthSystem } from "../../systems/health.js";
@@ -31,7 +29,7 @@ ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext)
     const isTargetable = TargetSystem.isTargetable(mouseEntity);
 
     if(isEnemy && isTargetable) {     
-        actionQueue.addRequest(createAttackRequest(entityID));
+        actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.ATTACK, entityID));
         return;
     }
 
@@ -49,10 +47,10 @@ ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext)
             const result = ConstructionSystem.getConstructionResult(controller, mouseEntity);
             
             //TODO: Open GUI and check if the controller has enough materials/resources.
-            gameContext.destroyEntity(entityID);
+            world.destroyEntity(entityID);
             gameContext.createEntity(result);
         } else {
-            actionQueue.addRequest(createConstructionRequest(entityID));
+            actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.CONSTRUCTION, entityID));
         }
 
         return;

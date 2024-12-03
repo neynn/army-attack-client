@@ -5,6 +5,7 @@ import { MapParser } from "../../../source/map/mapParser.js";
 import { State } from "../../../source/state/state.js";
 
 import { CONTEXT_STATES, GAME_EVENTS } from "../../enums.js";
+import { World } from "../../../source/world.js";
 
 export const VersusModeState = function() {
     State.call(this);
@@ -24,19 +25,16 @@ VersusModeState.prototype.onInstanceController = function(gameContext, payload) 
 }
 
 VersusModeState.prototype.onInstanceMap = function(gameContext, payload) {
-    const { client } = gameContext;
+    const { client, world } = gameContext;
     const { socket } = client;
     const { id } = payload;
 
-    gameContext
-    .parseMap(id, (id, data, meta) => MapParser.parseMap2D(id, data, meta, true))
-    .then(success => {
-        if(!success) {
-            socket.messageRoom(GAME_EVENTS.INSTANCE_MAP, { "success": false, "error": "NO_MAP_FILE" });
-        } else {
+    world.parseMap(id, MapParser.parseMap2D).then(code => {
+        if(code === World.CODE_PARSE_MAP_SUCCESS) {
             gameContext.initializeTilemap(id);
-
             socket.messageRoom(GAME_EVENTS.INSTANCE_MAP, { "success": true, "error": null });
+        } else {
+            socket.messageRoom(GAME_EVENTS.INSTANCE_MAP, { "success": false, "error": "NO_MAP_FILE" })
         }
     });
 }

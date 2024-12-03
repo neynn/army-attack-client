@@ -1,6 +1,6 @@
 import { Action } from "../../source/action/action.js";
 
-import { ACTION_TYPES, ENTITY_STATES } from "../enums.js";
+import { ENTITY_STATES } from "../enums.js";
 import { AnimationSystem } from "../systems/animation.js";
 import { AttackSystem } from "../systems/attack.js";
 import { HealthSystem } from "../systems/health.js";
@@ -46,7 +46,7 @@ AttackAction.prototype.onEnd = function(gameContext, request) {
 
     if(state === ENTITY_STATES.DEAD) {
         AnimationSystem.playDeath(gameContext, target);
-        gameContext.destroyEntity(entityID);
+        world.destroyEntity(entityID);
     } else if(state === ENTITY_STATES.IDLE) {
         MorphSystem.toIdle(target);
     }
@@ -105,9 +105,8 @@ AttackAction.prototype.isValid = function(gameContext, request, messengerID) {
     return true;
 }
 
-export const createAttackRequest = function(entityID) {
+AttackAction.prototype.createRequest = function(entityID) {
     return {
-        "type": ACTION_TYPES.ATTACK,
         "entityID": entityID,
         "attackers": [],
         "damage": 0,

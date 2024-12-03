@@ -8,6 +8,7 @@ import { UIElement } from "../../../source/ui/uiElement.js";
 import { MapParser } from "../../../source/map/mapParser.js";
 
 import { CAMERAS } from "../../enums.js";
+import { World } from "../../../source/world.js";
 
 export const EditorController = function(id) {
     Controller.call(this, id);
@@ -391,10 +392,8 @@ EditorController.prototype.initializeUIEvents = function(gameContext) {
     uiManager.addClick(id, "BUTTON_LOAD", () => {
         const mapID = prompt("MAP-ID?");
 
-        gameContext
-        .parseMap(mapID, (id, data, meta) => MapParser.parseMap2D(id, data, meta, true))
-        .then(success => {
-            if(success) {
+        world.parseMap(mapID, MapParser.parseMap2D).then(code => {
+            if(code === World.CODE_PARSE_MAP_SUCCESS) {
                 this.currentMapID = mapID;
             }
         });

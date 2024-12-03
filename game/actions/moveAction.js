@@ -3,7 +3,6 @@ import { Action } from "../../source/action/action.js";
 import { DirectionSystem } from "../systems/direction.js";
 import { MoveSystem } from "../systems/move.js";
 import { PathfinderSystem } from "../systems/pathfinder.js";
-import { ACTION_TYPES } from "../enums.js";
 import { MorphSystem } from "../systems/morph.js";
 import { PlaceSystem } from "../systems/place.js";
 import { HealthSystem } from "../systems/health.js";
@@ -77,10 +76,9 @@ MoveAction.prototype.isValid = function(gameContext, request, messengerID) {
     return true;
 }
 
-export const createMoveRequest = function(entityID, targetX, targetY) {
+MoveAction.prototype.createRequest = function(entityID, targetX, targetY) {
     return {
         "entityID": entityID,
-        "type": ACTION_TYPES.MOVE,
         "targetX": targetX,
         "targetY": targetY,
         "path": []

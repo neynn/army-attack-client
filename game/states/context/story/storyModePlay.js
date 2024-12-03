@@ -1,8 +1,8 @@
 import { MapParser } from "../../../../source/map/mapParser.js";
 import { State } from "../../../../source/state/state.js";
+import { World } from "../../../../source/world.js";
 
-import { createMoveRequest } from "../../../actions/moveAction.js";
-import { CAMERAS, CONTROLLER_TYPES } from "../../../enums.js";
+import { ACTION_TYPES, CAMERAS, CONTROLLER_TYPES } from "../../../enums.js";
 
 export const StoryModePlayState = function() {
     State.call(this);
@@ -17,25 +17,26 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
     const { actionQueue } = world;
     const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
     const MAP = "pvp_valleys";
-    const success = await gameContext.parseMap(MAP, (id, data, meta) => MapParser.parseMap2D(id, data, meta, true));
+    const code = await world.parseMap(MAP, MapParser.parseMap2D);
 
-    if(!success) {
-        console.error("Error loading map!");
+    if(code !== World.CODE_PARSE_MAP_SUCCESS) {
         return;
     }
 
-    uiManager.parseUI("STORY_MODE", gameContext);
-    
     gameContext.createController({
         "type": CONTROLLER_TYPES.PLAYER,
         "team": 1,
         "id": "neyn"
     });
-
+    
     gameContext.initializeTilemap(MAP);
-    camera.centerWorld();
-    camera.bindViewport();
 
+    camera.centerWorld();
+
+    camera.bindViewport();
+    
+    uiManager.parseUI("STORY_MODE", gameContext);
+    
     gameContext.createEntity({ 
         "type": "blue_guardtower",
         "mode": "story",
@@ -134,9 +135,8 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
         }
     });
 
-    actionQueue.addRequest(createMoveRequest(battleTank.id, 7, 1));
-    actionQueue.addRequest(createMoveRequest(battleTank.id, 3, 0));
-    //actionQueue.addRequest(createAttackRequest(redBattletank.id));
+    actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.MOVE, battleTank.id, 7, 1));
+    actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.MOVE, battleTank.id, 3, 0));
 }
 
 StoryModePlayState.prototype.exit = function(stateMachine) {

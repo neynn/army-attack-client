@@ -30,6 +30,20 @@ ActionQueue.PRIORITY_SUPER = 1;
 
 ActionQueue.prototype.update = function(gameContext) {}
 
+ActionQueue.prototype.createRequest = function(type, ...args) {
+    const actionType = this.actionTypes[type];
+    
+    if(!actionType) {
+        return {};
+    }
+
+    const request = actionType.createRequest(...args);
+
+    request.type = type;
+    
+    return request;
+}
+
 ActionQueue.prototype.addRequest = function(request, messengerID = null) {
     const actionType = this.actionTypes[request.type];
 

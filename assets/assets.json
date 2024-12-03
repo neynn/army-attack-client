@@ -1,6 +1,6 @@
 {
-    "uiConfig": { "id": "uiConfig", "directory": "assets/config", "source": "uiConfig.json" },
-    "config": { "id": "config", "directory": "assets/config", "source": "config.json" },
+    "interfaces": { "id": "interfaces", "directory": "assets/config", "source": "interfaces.json" },
+    "world": { "id": "world", "directory": "assets/config", "source": "world.json" },
     "settings": { "id": "settings", "directory": "assets/config", "source": "settings.json" },
     "tileMeta": { "id": "tileMeta", "directory": "assets/config", "source": "tileMeta.json" },
     "entities": { "id": "entities", "directory": "assets/entity", "source": "entities.json" },

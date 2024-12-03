@@ -22,6 +22,8 @@ export const World = function() {
     this.events.listen(World.EVENT_ENTITY_DESTROY);
 }
 
+World.CODE_PARSE_MAP_ERROR = 0;
+World.CODE_PARSE_MAP_SUCCESS = 1;
 World.EVENT_MAP_LOAD = "EVENT_MAP_LOAD";
 World.EVENT_ENTITY_CREATE = "EVENT_ENTITY_CREATE";
 World.EVENT_ENTITY_DESTROY = "EVENT_ENTITY_DESTROY";
@@ -31,6 +33,26 @@ World.prototype.update = function(gameContext) {
     this.controllerManager.update(gameContext);
     this.systemManager.update(gameContext);
     this.entityManager.update(gameContext);
+}
+
+World.prototype.parseMap = async function(mapID, onParse) {
+    if(!onParse) {
+        Logger.log(false, "No parser given!", "World.prototype.parseMap", { mapID });
+
+        return World.CODE_PARSE_MAP_ERROR;
+    }
+
+    const parsedMap = await this.mapManager.parseMap(mapID, onParse);
+
+    if(!parsedMap) {
+        Logger.log(false, "Map could not be parsed!", "World.prototype.parseMap", { mapID });
+
+        return World.CODE_PARSE_MAP_ERROR;
+    }
+
+    this.loadMap(mapID, parsedMap);
+
+    return World.CODE_PARSE_MAP_SUCCESS;
 }
 
 World.prototype.loadMap = function(mapID, gameMap) {
