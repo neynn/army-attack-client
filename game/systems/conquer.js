@@ -4,16 +4,17 @@ import { TeamSystem } from "./team.js";
 export const ConquerSystem = function() {}
 
 ConquerSystem.convertTileGraphics = function(gameContext, tileX, tileY, teamID) {
-    const { mapManager, tileManager } = gameContext;
+    const { world, tileManager } = gameContext;
+    const { mapManager } = world;
     const activeMap = mapManager.getActiveMap();
 
     if(!activeMap) {
         return false;
     }
 
-    const layerTypes = gameContext.getConfig("layerTypes");
-    const convertableLayerTypes = gameContext.getConfig("convertableLayerTypes");
-    const tileConversions = gameContext.getConfig("tileConversions");
+    const layerTypes = world.getConfig("layerTypes");
+    const convertableLayerTypes = world.getConfig("convertableLayerTypes");
+    const tileConversions = world.getConfig("tileConversions");
 
     for(const convertableTypeID in convertableLayerTypes) {
         const { layerType } = convertableLayerTypes[convertableTypeID];
@@ -39,8 +40,9 @@ ConquerSystem.convertTileGraphics = function(gameContext, tileX, tileY, teamID) 
 }
 
 ConquerSystem.updateBorder = function(gameContext, tileX, tileY) {
-    const { mapManager, tileManager, controllerManager } = gameContext;
-    const settings = gameContext.getConfig("settings");
+    const { tileManager, world } = gameContext;
+    const { mapManager, controllerManager } = world;
+    const settings = world.getConfig("settings");
     const controller = controllerManager.getController("neyn"); //TODO <-- Set player controller as main?
 
     if(!settings.drawBorder) {
@@ -53,8 +55,8 @@ ConquerSystem.updateBorder = function(gameContext, tileX, tileY) {
         return false;
     }
 
-    const tileTypes = gameContext.getConfig("tileTypes");
-    const layerTypes = gameContext.getConfig("layerTypes");
+    const tileTypes = world.getConfig("tileTypes");
+    const layerTypes = world.getConfig("layerTypes");
     const teamLayerID = layerTypes.team.layerID;
     const typeLayerID = layerTypes.type.layerID;
     const borderLayerID = layerTypes.border.layerID;
@@ -87,7 +89,7 @@ ConquerSystem.updateBorder = function(gameContext, tileX, tileY) {
         return 1;
     });
 
-    const autotilerTypes = gameContext.getConfig("autotilerTypes");
+    const autotilerTypes = world.getConfig("autotilerTypes");
     const borderAutotilerID = autotilerTypes.border.autotilerID;
     const tileID = tileManager.getAutotilerID(borderAutotilerID, autoIndex);
 

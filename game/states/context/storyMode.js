@@ -13,7 +13,8 @@ StoryModeState.prototype.constructor = StoryModeState;
 StoryModeState.prototype.enter = function(stateMachine) {
     const gameContext = stateMachine.getContext();
     const contextID = gameContext.getID();
-    const { actionQueue } = gameContext;
+    const { world } = gameContext;
+    const { actionQueue } = world;
 
     actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_VALID, contextID, (request, messengerID, priority) => {
         if(priority === ActionQueue.PRIORITY_NORMAL) {

@@ -8,7 +8,8 @@ import { TeamComponent } from "../components/team.js";
 export const PathfinderSystem = function() {}
 
 PathfinderSystem.isTileFree = function(gameContext, targetX, targetY) {
-    const { mapManager } = gameContext;
+    const { world } = gameContext;
+    const { mapManager } = world;
     const activeMap = mapManager.getActiveMap();
     
     if(!activeMap) {
@@ -21,7 +22,8 @@ PathfinderSystem.isTileFree = function(gameContext, targetX, targetY) {
 }
 
 PathfinderSystem.generateNodeList = function(gameContext, entity) {
-    const { mapManager, entityManager } = gameContext;
+    const { world } = gameContext;
+    const { mapManager, entityManager } = world;
     const activeMap = mapManager.getActiveMap();
     
     if(!activeMap || !entity || !entity.hasComponent(MoveComponent)) {
@@ -32,10 +34,10 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
     const moveComponent = entity.getComponent(MoveComponent);
     const teamComponent = entity.getComponent(TeamComponent);
 
-    const settings = gameContext.getConfig("settings");
-    const layerTypes = gameContext.getConfig("layerTypes");
-    const teamTypes = gameContext.getConfig("teamTypes");
-    const tileTypes = gameContext.getConfig("tileTypes");
+    const settings = world.getConfig("settings");
+    const layerTypes = world.getConfig("layerTypes");
+    const teamTypes = world.getConfig("teamTypes");
+    const tileTypes = world.getConfig("tileTypes");
 
     const teamLayerID = layerTypes.team.layerID;
     const typeLayerID = layerTypes.type.layerID;

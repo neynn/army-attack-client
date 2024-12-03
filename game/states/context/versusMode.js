@@ -42,12 +42,12 @@ VersusModeState.prototype.onInstanceMap = function(gameContext, payload) {
 }
 
 VersusModeState.prototype.onInstanceMapFromData = function(gameContext, payload) {
-    const { client } = gameContext;
+    const { client, world } = gameContext;
     const { socket } = client;
     const { id, data, meta } = payload;
     const gameMap = MapParser.parseMap2D(id, data, meta, true);
 
-    gameContext.loadMap(id, gameMap);
+    world.loadMap(id, gameMap);
     gameContext.initializeTilemap(id);
 
     socket.messageRoom(GAME_EVENTS.INSTANCE_MAP, { "success": true, "error": null });
@@ -66,7 +66,8 @@ VersusModeState.prototype.onInstanceEntityBatch = function(gameContext, payload)
 }
 
 VersusModeState.prototype.onEntityAction = function(gameContext, payload) {
-    const { actionQueue } = gameContext;
+    const { world } = gameContext;
+    const { actionQueue } = world;
 
     actionQueue.queueAction(payload);
 }
@@ -93,7 +94,8 @@ VersusModeState.prototype.onServerMessage = function(gameContext, type, payload)
 VersusModeState.prototype.enter = function(stateMachine) {
     const gameContext = stateMachine.getContext();
     const contextID = gameContext.getID();
-    const { actionQueue, client } = gameContext;
+    const { world, client } = gameContext;
+    const { actionQueue } = world;
     const { socket } = client;
     
     actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_VALID, contextID, (request, messengerID, priority) => {

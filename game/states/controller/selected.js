@@ -14,7 +14,8 @@ ControllerSelectedState.prototype = Object.create(State.prototype);
 ControllerSelectedState.prototype.constructor = ControllerSelectedState;
 
 ControllerSelectedState.prototype.onEventEnter = function(stateMachine, gameContext) {
-    const { entityManager, client, actionQueue } = gameContext;
+    const { client, world } = gameContext;
+    const { actionQueue, entityManager } = world;
     const { soundPlayer } = client;
 
     const controller = stateMachine.getContext();
@@ -22,7 +23,7 @@ ControllerSelectedState.prototype.onEventEnter = function(stateMachine, gameCont
     const selectedEntity = entityManager.getEntity(selectedEntityID);
 
     const { x, y } = gameContext.getMouseTile();
-    const mouseEntity = gameContext.getTileEntity(x, y);
+    const mouseEntity = world.getTileEntity(x, y);
 
     if(mouseEntity) {
         const mouseEntityID = mouseEntity.getID();

@@ -17,7 +17,8 @@ ControllerIdleState.prototype = Object.create(State.prototype);
 ControllerIdleState.prototype.constructor = ControllerIdleState;
 
 ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext) {
-    const { actionQueue } = gameContext;
+    const { world } = gameContext;
+    const { actionQueue } = world;
     const controller = stateMachine.getContext();
     const mouseEntity = gameContext.getMouseEntity();
 
@@ -41,9 +42,15 @@ ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext)
         return;
     }
 
+    //Add eventManager to the gameContext. the event manager gets filled with, well, events, which are just functions, like the actionQueue
+    //The eventManager instantly processed events.
     if(ConstructionSystem.isConstruction(mouseEntity)) {
         if(ConstructionSystem.isComplete(mouseEntity)) {
-            //TODO open "complete_construction" interface.
+            const result = ConstructionSystem.getConstructionResult(controller, mouseEntity);
+            
+            //TODO: Open GUI and check if the controller has enough materials/resources.
+            gameContext.destroyEntity(entityID);
+            gameContext.createEntity(result);
         } else {
             actionQueue.addRequest(createConstructionRequest(entityID));
         }
@@ -65,7 +72,8 @@ ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext)
 }
 
 ControllerIdleState.prototype.update = function(stateMachine, gameContext) {
-    const { actionQueue } = gameContext;
+    const { world } = gameContext;
+    const { actionQueue } = world;
     const controller = stateMachine.getContext();
 
     controller.updateCursorPositionDefault(gameContext);

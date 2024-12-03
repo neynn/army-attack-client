@@ -1,0 +1,94 @@
+import { ClientQueue } from "./action/clientQueue.js";
+import { ControllerManager } from "./controller/controllerManager.js";
+import { EntityManager } from "./entity/entityManager.js";
+import { EventEmitter } from "./events/eventEmitter.js";
+import { Logger } from "./logger.js";
+import { MapManager } from "./map/mapManager.js";
+import { QuestManager } from "./questManager.js";
+import { SystemManager } from "./system/systemManager.js";
+
+export const World = function() {
+    this.config = {};
+    this.actionQueue = new ClientQueue();
+    this.mapManager = new MapManager();
+    this.entityManager = new EntityManager();
+    this.systemManager = new SystemManager();
+    this.questManager = new QuestManager();
+    this.controllerManager = new ControllerManager();
+    this.events = new EventEmitter();
+
+    this.events.listen(World.EVENT_MAP_LOAD);
+    this.events.listen(World.EVENT_ENTITY_CREATE);
+    this.events.listen(World.EVENT_ENTITY_DESTROY);
+}
+
+World.EVENT_MAP_LOAD = "EVENT_MAP_LOAD";
+World.EVENT_ENTITY_CREATE = "EVENT_ENTITY_CREATE";
+World.EVENT_ENTITY_DESTROY = "EVENT_ENTITY_DESTROY";
+
+World.prototype.update = function(gameContext) {
+    this.actionQueue.update(gameContext);
+    this.controllerManager.update(gameContext);
+    this.systemManager.update(gameContext);
+    this.entityManager.update(gameContext);
+}
+
+World.prototype.loadMap = function(mapID, gameMap) {
+    if(!gameMap) {
+        return;
+    }
+    
+    this.mapManager.addMap(mapID, gameMap);
+    this.mapManager.updateActiveMap(mapID);
+    this.events.emit(World.EVENT_MAP_LOAD, gameMap);
+}
+
+World.prototype.getTileEntity = function(tileX, tileY) {
+    const activeMap = this.mapManager.getActiveMap();
+
+    if(!activeMap) {
+        return null;
+    }
+
+    const entityID = activeMap.getFirstEntity(tileX, tileY);
+    
+    return this.entityManager.getEntity(entityID);
+}
+
+World.prototype.createEntity = function(gameContext, setup) {
+    const { type, master, id } = setup;
+    const entity = this.entityManager.createEntity(type, id);
+    const entityID = entity.getID();
+
+    this.controllerManager.addEntity(master, entityID);
+    this.entityManager.buildEntity(gameContext, entity, type, setup);
+    this.events.emit(World.EVENT_ENTITY_CREATE, entity);
+
+    return entity;
+}
+
+World.prototype.destroyEntity = function(entityID) {
+    const entity = this.entityManager.getEntity(entityID);
+
+    if(!entity) {
+        return;
+    }
+
+    this.controllerManager.removeEntity(entityID);
+    this.entityManager.destroyEntity(entityID);
+    this.events.emit(World.EVENT_ENTITY_DESTROY, entity);
+}
+
+World.prototype.getConfig = function(elementID) {
+    if(!elementID) {
+        return this.config;
+    }
+
+    if(this.config[elementID]) {
+        return this.config[elementID];
+    }
+
+    Logger.error(false, "Element does not exist!", "World.prototype.getConfig", { elementID });
+
+    return {};
+}

@@ -45,7 +45,8 @@ EditorController.prototype.initialize = function(gameContext, data) {
 }
 
 EditorController.prototype.incrementTypeIndex = function(gameContext) {
-    const { mapManager } = gameContext;
+    const { world } = gameContext;
+    const { mapManager } = world;
     const gameMap = mapManager.getLoadedMap(this.currentMapID);
 
     if(!gameMap) {
@@ -53,7 +54,7 @@ EditorController.prototype.incrementTypeIndex = function(gameContext) {
     }
 
     const { x, y } = gameContext.getMouseTile();
-    const tileTypes = gameContext.getConfig("tileTypes");
+    const tileTypes = world.getConfig("tileTypes");
     const tileTypeIDs = [];
 
     for(const typeID of Object.keys(tileTypes)) {
@@ -71,7 +72,8 @@ EditorController.prototype.incrementTypeIndex = function(gameContext) {
 }
 
 EditorController.prototype.updateLayerOpacity = function(gameContext) {
-    const { mapManager } = gameContext;
+    const { world } = gameContext;
+    const { mapManager } = world;
     const gameMap = mapManager.getLoadedMap(this.currentMapID);
 
     if(!gameMap) {
@@ -307,7 +309,8 @@ EditorController.prototype.initializeCursorEvents = function(gameContext) {
 }
 
 EditorController.prototype.initializeUIEvents = function(gameContext) {
-    const { uiManager, mapManager, renderer } = gameContext;
+    const { uiManager, world, renderer } = gameContext;
+    const { mapManager } = world;
     const { id, layerButtons, layerButtonStates } = this.mapEditor.config.interface;
     const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
 
@@ -380,7 +383,7 @@ EditorController.prototype.initializeUIEvents = function(gameContext) {
         const { data, meta } = this.mapEditor.getDefaultMapData();
         const defaultMap = MapParser.parseMap2DEmpty(mapID, data, meta, true);
 
-        gameContext.loadMap(mapID, defaultMap);
+        world.loadMap(mapID, defaultMap);
         
         this.currentMapID = mapID;
     });

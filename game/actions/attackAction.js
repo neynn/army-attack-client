@@ -21,7 +21,8 @@ AttackAction.prototype.onClear = function() {
 }
 
 AttackAction.prototype.onStart = function(gameContext, request) {
-    const { entityManager } = gameContext;
+    const { world } = gameContext;
+    const { entityManager } = world;
     const { entityID, attackers, damage, state } = request;
     const target = entityManager.getEntity(entityID);
 
@@ -36,7 +37,8 @@ AttackAction.prototype.onStart = function(gameContext, request) {
 }
 
 AttackAction.prototype.onEnd = function(gameContext, request) {
-    const { entityManager } = gameContext;
+    const { world } = gameContext;
+    const { entityManager } = world;
     const { entityID, attackers, damage, state } = request;
     const target = entityManager.getEntity(entityID);
 
@@ -58,7 +60,8 @@ AttackAction.prototype.onUpdate = function(gameContext, request) {
 }
 
 AttackAction.prototype.isFinished = function(gameContext, request) {
-    const settings = gameContext.getConfig("settings");
+    const { world } = gameContext;
+    const settings = world.getConfig("settings");
     const timeRequired = settings.hitDuration;
 
     return this.timePassed >= timeRequired;
@@ -66,7 +69,8 @@ AttackAction.prototype.isFinished = function(gameContext, request) {
 
 AttackAction.prototype.isValid = function(gameContext, request, messengerID) {
     const { entityID } = request;
-    const { entityManager } = gameContext; 
+    const { world } = gameContext; 
+    const { entityManager } = world;
     const targetEntity = entityManager.getEntity(entityID);
 
     if(!targetEntity) {

@@ -15,7 +15,8 @@ ReviveSystem.isReviveable = function(entity) {
 }
 
 ReviveSystem.downEntity = function(gameContext, entity) {
-    const { client, systemManager } = gameContext;
+    const { client, world } = gameContext;
+    const { systemManager } = world;
     const { soundPlayer } = client;
 
     MorphSystem.toDown(entity);

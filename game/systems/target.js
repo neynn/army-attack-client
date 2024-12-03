@@ -14,7 +14,8 @@ TargetSystem.isTargetable = function(entity) {
 }
 
 TargetSystem.getUniqueEntitiesInRangeOfEntity = function(gameContext, entity, range = 0, exclusionList = []) {
-    const { mapManager } = gameContext;
+    const { world } = gameContext;
+    const { mapManager } = world;
     const activeMap = mapManager.getActiveMap();
     const entities = new Set();
 
@@ -47,7 +48,8 @@ TargetSystem.getUniqueEntitiesInRangeOfEntity = function(gameContext, entity, ra
 }
 
 TargetSystem.getAttackers = function(gameContext, target) {
-    const { entityManager } = gameContext;
+    const { world } = gameContext;
+    const { entityManager } = world;
     const attackerIDs = [];
 
     if(!TargetSystem.isTargetable(target)) {
@@ -55,7 +57,7 @@ TargetSystem.getAttackers = function(gameContext, target) {
     }
 
     const targetID = target.getID();
-    const settings = gameContext.getConfig("settings");
+    const settings = world.getConfig("settings");
     const possibleAttackerIDs = TargetSystem.getUniqueEntitiesInRangeOfEntity(gameContext, target, settings.maxAttackRange, [targetID]);
 
     for(const attackerID of possibleAttackerIDs) {

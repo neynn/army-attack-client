@@ -12,7 +12,8 @@ export const AnimationSystem = function() {}
 AnimationSystem.CONSTRUCTION_FRAMES = [0, 0, 1, 1, 2];
 
 AnimationSystem.revertToIdle = function(gameContext, entityIDs) {
-    const { entityManager } = gameContext;
+    const { world } = gameContext;
+    const { entityManager } = world;
     
     for(const entityID of entityIDs) {
         const entity = entityManager.getEntity(entityID);
@@ -33,7 +34,8 @@ AnimationSystem.playDeath = function(gameContext, entity) {
 }
 
 AnimationSystem.playFire = function(gameContext, entity, attackersIDs) {
-    const { entityManager, client, spriteManager } = gameContext;
+    const { world, client, spriteManager } = gameContext;
+    const { entityManager } = world;
     const { soundPlayer } = client;
     const spriteComponent = entity.getComponent(SpriteComponent);
     const entitySprite = spriteManager.getSprite(spriteComponent.spriteID);

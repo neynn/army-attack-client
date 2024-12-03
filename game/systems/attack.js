@@ -7,7 +7,8 @@ import { UnitSizeComponent } from "../components/unitSize.js";
 export const AttackSystem = function() {}
 
 AttackSystem.getDamage = function(gameContext, target, attackerIDs) {
-    const { entityManager } = gameContext;
+    const { world } = gameContext;
+    const { entityManager } = world;
 
     let totalDamage = 0;
     let armor = 0;
@@ -48,7 +49,8 @@ AttackSystem.getDamage = function(gameContext, target, attackerIDs) {
 }
 
 AttackSystem.getBulldozed = function(gameContext, target, attackerIDs) {
-    const { entityManager } = gameContext;
+    const { world } = gameContext;
+    const { entityManager } = world;
     const archetype = target.config.archetype;
     const requiredFlag = BulldozeComponent.ARCHETYPE_BULLDOZE_MAP[archetype];
 

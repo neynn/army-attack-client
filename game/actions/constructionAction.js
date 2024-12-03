@@ -17,7 +17,8 @@ ConstructionAction.prototype.onClear = function() {
 }
 
 ConstructionAction.prototype.onStart = function(gameContext, request) {
-    const { entityManager } = gameContext;
+    const { world } = gameContext;
+    const { entityManager } = world;
     const { entityID } = request;
     const entity = entityManager.getEntity(entityID);
 
@@ -25,7 +26,8 @@ ConstructionAction.prototype.onStart = function(gameContext, request) {
 }
 
 ConstructionAction.prototype.onEnd = function(gameContext, request) {
-    const { entityManager } = gameContext;
+    const { world } = gameContext;
+    const { entityManager } = world;
     const { entityID, deltaSteps } = request;
     const entity = entityManager.getEntity(entityID);
 
@@ -40,14 +42,16 @@ ConstructionAction.prototype.onUpdate = function(gameContext, request) {
 }
 
 ConstructionAction.prototype.isFinished = function(gameContext, request) {
-    const settings = gameContext.getConfig("settings");
+    const { world } = gameContext;
+    const settings = world.getConfig("settings");
     const constructionDuration = settings.iconDuration;
 
     return this.timePassed >= constructionDuration;
 }
 
 ConstructionAction.prototype.isValid = function(gameContext, request, messengerID) {
-    const { entityManager } = gameContext;
+    const { world } = gameContext;
+    const { entityManager } = world;
     const { entityID } = request;
     const entity = entityManager.getEntity(entityID);
 

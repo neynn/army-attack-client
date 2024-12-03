@@ -14,7 +14,8 @@ import { ArmyCamera } from "../armyCamera.js";
 export const ControllerSystem = function() {}
 
 ControllerSystem.resetAttackerSprites = function(gameContext, attackers) {
-    const { entityManager } = gameContext;
+    const { world } = gameContext;
+    const { entityManager } = world;
 
     for(const attackerID of attackers) {
         const attacker = entityManager.getEntity(attackerID);
@@ -35,7 +36,8 @@ ControllerSystem.resetAttackerOverlays = function(gameContext) {
 }
 
 ControllerSystem.resetAttacker = function(gameContext, attackerID) {
-    const { entityManager, renderer } = gameContext;
+    const { world, renderer } = gameContext;
+    const { entityManager } = world;
     const attacker = entityManager.getEntity(attackerID);
 
     if(!attacker) {
@@ -50,7 +52,8 @@ ControllerSystem.resetAttacker = function(gameContext, attackerID) {
 }
 
 ControllerSystem.hightlightAttacker = function(gameContext, target, attackerID) {
-    const { entityManager, tileManager, renderer } = gameContext;
+    const { world, tileManager, renderer } = gameContext;
+    const { entityManager } = world;
     const attacker = entityManager.getEntity(attackerID);
 
     if(!attacker) {
@@ -105,7 +108,8 @@ ControllerSystem.updateAttackers = function(gameContext, controller) {
 }
 
 ControllerSystem.updateSelectedEntity = function(gameContext, controller) {
-    const { entityManager } = gameContext;
+    const { world } = gameContext;
+    const { entityManager } = world;
     const selectedEntityID = controller.getSelectedEntity();
     const selectedEntity = entityManager.getEntity(selectedEntityID);
 
@@ -123,7 +127,8 @@ ControllerSystem.updateSelectedEntity = function(gameContext, controller) {
 }
 
 ControllerSystem.selectEntity = function(gameContext, controller, entity) {
-    const { tileManager, mapManager, entityManager, renderer } = gameContext;
+    const { tileManager, world, renderer } = gameContext;
+    const { mapManager, entityManager } = world;
     const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
     const activeMap = mapManager.getActiveMap();
     const nodeList = PathfinderSystem.generateNodeList(gameContext, entity);

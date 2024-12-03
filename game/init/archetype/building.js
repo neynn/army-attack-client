@@ -12,5 +12,5 @@ BuildingArchetype.prototype.onInitialize = function(gameContext, entity, sprite,
 }
 
 BuildingArchetype.prototype.onFinalize = function(gameContext, entity, sprite, type, setup) {
-
+    this.createStatCard(gameContext, entity, sprite);
 }

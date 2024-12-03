@@ -91,7 +91,8 @@ PlayerController.prototype.updateCursorSpriteIdle = function(gameContext) {
 }
 
 PlayerController.prototype.updateCursorSpriteDefault = function(gameContext) {
-    const { spriteManager, entityManager } = gameContext;
+    const { spriteManager, world } = gameContext;
+    const { entityManager } = world;
     const spriteComponent = this.getComponent(SpriteComponent);
     const hoverEntity = entityManager.getEntity(this.hoveredEntity);
     const spriteKey = `${hoverEntity.config.dimX}-${hoverEntity.config.dimY}`;
@@ -123,7 +124,8 @@ PlayerController.prototype.updateCursorPositionAirstrike = function(gameContext)
 }
 
 PlayerController.prototype.updateCursorPositionDefault = function(gameContext) {
-    const { spriteManager, renderer, entityManager } = gameContext;
+    const { spriteManager, renderer, world } = gameContext;
+    const { entityManager } = world;
     const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
     const spriteComponent = this.getComponent(SpriteComponent);
     const sprite = spriteManager.getSprite(spriteComponent.spriteID);
@@ -143,8 +145,9 @@ PlayerController.prototype.updateCursorPositionDefault = function(gameContext) {
 }
 
 PlayerController.prototype.updateCursorHoverData = function(gameContext) {
+    const { world } = gameContext;
     const { x, y } = gameContext.getMouseTile();
-    const mouseEntity = gameContext.getTileEntity(x, y);
+    const mouseEntity = world.getTileEntity(x, y);
 
     if(!mouseEntity) {
         this.hoveredEntity = null;

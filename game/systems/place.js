@@ -3,7 +3,8 @@ import { PositionComponent } from "../components/position.js";
 export const PlaceSystem = function() {}
 
 PlaceSystem.placeEntity = function(gameContext, entity) {
-    const { mapManager } = gameContext;
+    const { world } = gameContext;
+    const { mapManager } = world;
     const activeMap = mapManager.getActiveMap();
 
     if(!activeMap) {
@@ -19,7 +20,8 @@ PlaceSystem.placeEntity = function(gameContext, entity) {
 }
 
 PlaceSystem.removeEntity = function(gameContext, entity) {
-    const { mapManager } = gameContext;
+    const { world } = gameContext;
+    const { mapManager } = world;
     const activeMap = mapManager.getActiveMap();
 
     if(!activeMap) {

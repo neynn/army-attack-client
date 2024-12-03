@@ -3,7 +3,8 @@ import { TeamComponent } from "../components/team.js";
 export const TeamSystem = function() {}
 
 TeamSystem.isAllied = function(gameContext, teamIDA, teamIDB) {
-    const teamTypes = gameContext.getConfig("teamTypes");
+    const { world } = gameContext;
+    const teamTypes = world.getConfig("teamTypes");
     const teamA = teamTypes[teamIDA];
     const teamB = teamTypes[teamIDB];
 
@@ -19,7 +20,8 @@ TeamSystem.isAllied = function(gameContext, teamIDA, teamIDB) {
 }
 
 TeamSystem.isEnemy = function(gameContext, teamIDA, teamIDB) {
-    const teamTypes = gameContext.getConfig("teamTypes");
+    const { world } = gameContext;
+    const teamTypes = world.getConfig("teamTypes");
     const teamA = teamTypes[teamIDA];
     const teamB = teamTypes[teamIDB];
 

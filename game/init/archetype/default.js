@@ -54,9 +54,9 @@ DefaultArchetype.prototype.addDamageText = function(entity, statCard) {
 }
 
 DefaultArchetype.prototype.createStatCard = function(gameContext, entity, sprite) {
-    const { spriteManager, renderer } = gameContext;
+    const { spriteManager, renderer, world } = gameContext;
     const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
-    const teamTypes = gameContext.getConfig("teamTypes");
+    const teamTypes = world.getConfig("teamTypes");
     const teamComponent = entity.getComponent(TeamComponent);
     const { x, y } = camera.transformSizeToPositionOffset(entity.config.dimX, entity.config.dimY);
 
@@ -130,7 +130,8 @@ DefaultArchetype.prototype.initializeEntity = function(gameContext, entity, spri
 }
 
 DefaultArchetype.prototype.finalizeEntity = function(gameContext, entity, sprite, type, setup) {
-    const { entityManager } = gameContext;
+    const { world } = gameContext;
+    const { entityManager } = world;
     const { stats } = type;
     const { mode, components } = setup;
     const { traits } = stats[mode];

@@ -25,7 +25,8 @@ MapEditorState.prototype.enter = function(stateMachine) {
 
 MapEditorState.prototype.exit = function(stateMachine) {
     const gameContext = stateMachine.getContext();
-    const { mapManager } = gameContext;
+    const { world } = gameContext;
+    const { mapManager } = world;
 
     mapManager.unparseUI("MAP_EDITOR", gameContext);
 }

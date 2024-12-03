@@ -17,7 +17,8 @@ MoveAction.prototype.constructor = MoveAction;
 
 MoveAction.prototype.onStart = function(gameContext, request) {
     const { targetX, targetY, entityID, path } = request;
-    const { entityManager } = gameContext;
+    const { world } = gameContext;
+    const { entityManager } = world;
     const entity = entityManager.getEntity(entityID);
 
     DirectionSystem.lookAtTile(entity, targetX, targetY);    
@@ -28,7 +29,8 @@ MoveAction.prototype.onStart = function(gameContext, request) {
 
 MoveAction.prototype.onEnd = function(gameContext, request) {
     const { targetX, targetY, entityID } = request;
-    const { entityManager, actionQueue } = gameContext;
+    const { world } = gameContext;
+    const { entityManager } = world;
     const entity = entityManager.getEntity(entityID);
 
     MoveSystem.endMove(gameContext, entity, targetX, targetY);
@@ -38,7 +40,8 @@ MoveAction.prototype.onEnd = function(gameContext, request) {
 
 MoveAction.prototype.isFinished = function(gameContext, request) {
     const { entityID } = request;
-    const { entityManager } = gameContext;
+    const { world } = gameContext;
+    const { entityManager } = world;
     const entity = entityManager.getEntity(entityID);
     const isFinished = MoveSystem.isPathFinished(entity);
 
@@ -47,7 +50,8 @@ MoveAction.prototype.isFinished = function(gameContext, request) {
 
 MoveAction.prototype.isValid = function(gameContext, request, messengerID) {
     const { entityID, targetX, targetY } = request;
-    const { entityManager } = gameContext; 
+    const { world } = gameContext;
+    const { entityManager } = world;
     const entity = entityManager.getEntity(entityID);
 
     if(!entity) {

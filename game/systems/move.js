@@ -45,7 +45,8 @@ MoveSystem.isPathFinished = function(entity) {
 }
 
 MoveSystem.beginMove = function(gameContext, entity, path) {
-    const { client, systemManager } = gameContext;
+    const { client, world } = gameContext;
+    const { systemManager } = world;
     const { soundPlayer } = client;
     const moveComponent = entity.getComponent(MoveComponent);
 
@@ -55,7 +56,8 @@ MoveSystem.beginMove = function(gameContext, entity, path) {
 }
 
 MoveSystem.endMove = function(gameContext, entity, targetX, targetY) {
-    const { systemManager, renderer } = gameContext;
+    const { world, renderer } = gameContext;
+    const { systemManager } = world;
     const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
     const positionComponent = entity.getComponent(PositionComponent);
     const moveComponent = entity.getComponent(MoveComponent);

@@ -21,7 +21,8 @@ System.prototype.hasEntity = function(entityID) {
 }
 
 System.prototype.update = function(gameContext) {
-    const { entityManager } = gameContext;
+    const { world } = gameContext;
+    const { entityManager } = world;
     const invalidIDs = [];
 
     for(const entityID of this.entities) {

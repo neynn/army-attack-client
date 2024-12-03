@@ -41,6 +41,8 @@ import { UnitBusterComponent } from "./components/unitBuster.js";
 import { ConstructionAction } from "./actions/constructionAction.js";
 import { ArmyCamera } from "./armyCamera.js";
 import { DecayComponent } from "./components/decay.js";
+import { World } from "../source/world.js";
+import { EventEmitter } from "../source/events/eventEmitter.js";
 
 export const ArmyContext = function() {
     GameContext.call(this, 60);
@@ -50,43 +52,43 @@ ArmyContext.prototype = Object.create(GameContext.prototype);
 ArmyContext.prototype.constructor = ArmyContext;
 
 ArmyContext.prototype.onResourcesLoad = function(resources) {
-    this.config.tileConversions = this.parseConversions();
+    this.world.config.tileConversions = this.parseConversions();
 }
 
 ArmyContext.prototype.initialize = function() {
-    this.actionQueue.setMaxSize(20);
-    this.actionQueue.setMaxRequests(20);
+    this.world.actionQueue.setMaxSize(20);
+    this.world.actionQueue.setMaxRequests(20);
     
-    this.actionQueue.registerAction(ACTION_TYPES.MOVE, new MoveAction());
-    this.actionQueue.registerAction(ACTION_TYPES.ATTACK, new AttackAction());
-    this.actionQueue.registerAction(ACTION_TYPES.CONSTRUCTION, new ConstructionAction());
+    this.world.actionQueue.registerAction(ACTION_TYPES.MOVE, new MoveAction());
+    this.world.actionQueue.registerAction(ACTION_TYPES.ATTACK, new AttackAction());
+    this.world.actionQueue.registerAction(ACTION_TYPES.CONSTRUCTION, new ConstructionAction());
     
-    this.entityManager.registerArchetype("Unit", new UnitArchetype());
-    this.entityManager.registerArchetype("Defense", new DefenseArchetype());
-    this.entityManager.registerArchetype("Deco", new DecoArchetype());
-    this.entityManager.registerArchetype("Building", new BuildingArchetype());
-    this.entityManager.registerArchetype("HFE", new HFEArchetype());
-    this.entityManager.registerArchetype("Town", new TownArchetype());
-    this.entityManager.registerArchetype("Construction", new ConstructionArchetype());
+    this.world.entityManager.registerArchetype("Unit", new UnitArchetype());
+    this.world.entityManager.registerArchetype("Defense", new DefenseArchetype());
+    this.world.entityManager.registerArchetype("Deco", new DecoArchetype());
+    this.world.entityManager.registerArchetype("Building", new BuildingArchetype());
+    this.world.entityManager.registerArchetype("HFE", new HFEArchetype());
+    this.world.entityManager.registerArchetype("Town", new TownArchetype());
+    this.world.entityManager.registerArchetype("Construction", new ConstructionArchetype());
 
-    this.controllerManager.registerController(CONTROLLER_TYPES.PLAYER, PlayerController);
-    this.controllerManager.registerController(CONTROLLER_TYPES.EDITOR, EditorController);
+    this.world.controllerManager.registerController(CONTROLLER_TYPES.PLAYER, PlayerController);
+    this.world.controllerManager.registerController(CONTROLLER_TYPES.EDITOR, EditorController);
 
-    this.systemManager.registerSystem(SYSTEM_TYPES.DOWN, DownSystem);
-    this.systemManager.registerSystem(SYSTEM_TYPES.MOVE, MoveSystem);
+    this.world.systemManager.registerSystem(SYSTEM_TYPES.DOWN, DownSystem);
+    this.world.systemManager.registerSystem(SYSTEM_TYPES.MOVE, MoveSystem);
+
+    this.world.entityManager.registerComponentReference("Health", HealthComponent);
+    this.world.entityManager.registerComponentReference("Construction", ConstructionComponent);
+    this.world.entityManager.registerComponentReference("Decay", DecayComponent);
+    this.world.entityManager.registerComponentReference("Attack", AttackComponent);
+    this.world.entityManager.registerComponentReference("Move", MoveComponent);
+    this.world.entityManager.registerComponentReference("UnitSize", UnitSizeComponent);
+    this.world.entityManager.registerComponentReference("Armor", ArmorComponent);
+    this.world.entityManager.registerComponentReference("Avian", AvianComponent);
+    this.world.entityManager.registerComponentReference("Bulldoze", BulldozeComponent);
+    this.world.entityManager.registerComponentReference("UnitBuster", UnitBusterComponent);
 
     this.renderer.registerCamera(CAMERA_TYPES.ARMY_ATTACK, ArmyCamera);
-
-    this.entityManager.registerComponentReference("Health", HealthComponent);
-    this.entityManager.registerComponentReference("Construction", ConstructionComponent);
-    this.entityManager.registerComponentReference("Decay", DecayComponent);
-    this.entityManager.registerComponentReference("Attack", AttackComponent);
-    this.entityManager.registerComponentReference("Move", MoveComponent);
-    this.entityManager.registerComponentReference("UnitSize", UnitSizeComponent);
-    this.entityManager.registerComponentReference("Armor", ArmorComponent);
-    this.entityManager.registerComponentReference("Avian", AvianComponent);
-    this.entityManager.registerComponentReference("Bulldoze", BulldozeComponent);
-    this.entityManager.registerComponentReference("UnitBuster", UnitBusterComponent);
 
     this.states.addState(CONTEXT_STATES.MAIN_MENU, new MainMenuState());
     this.states.addState(CONTEXT_STATES.STORY_MODE, new StoryModeState());
@@ -103,11 +105,11 @@ ArmyContext.prototype.initialize = function() {
 
     this.client.soundPlayer.loadAllSounds();
     
-    this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_RUN, "DEBUG", (request, priority) => {
+    this.world.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_RUN, "DEBUG", (request, priority) => {
         console.log(request, "IS PROCESSING", priority);
     });
 
-    this.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_INVALID, "DEBUG", (request, messengerID, priority) => {
+    this.world.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_INVALID, "DEBUG", (request, messengerID, priority) => {
         this.client.soundPlayer.playSound("sound_error", 0.5);
         console.log(request, "IS INVALID", messengerID, priority);
     });
@@ -120,49 +122,49 @@ ArmyContext.prototype.initialize = function() {
         console.log(`${reason} is disconnected from the server!`);
     });
 
+    this.world.events.subscribe(World.EVENT_ENTITY_CREATE, EventEmitter.SUPER_SUBSCRIBER_ID, (entity) => {
+        PlaceSystem.placeEntity(this, entity);
+
+        const saveData = this.saveEntity(entity.id);
+    
+        console.log(saveData);
+    });
+
+    this.world.events.subscribe(World.EVENT_ENTITY_DESTROY, EventEmitter.SUPER_SUBSCRIBER_ID, (entity) => {
+        const spriteComponent = entity.getComponent(SpriteComponent);
+
+        this.spriteManager.destroySprite(spriteComponent.spriteID);
+    
+        PlaceSystem.removeEntity(this, entity);
+    });
+
+    this.world.events.subscribe(World.EVENT_MAP_LOAD, EventEmitter.SUPER_SUBSCRIBER_ID, (gameMap) => {
+        const { width, height, meta } = gameMap;
+        const { music } = meta;
+    
+        this.renderer.getCamera(CAMERAS.ARMY_CAMERA).loadWorld(width, height);
+    
+        if(music) {
+            this.client.musicPlayer.loadTrack(music);
+            this.client.musicPlayer.swapTrack(music);
+        }
+    });
+
     this.renderer.createCamera(CAMERAS.ARMY_CAMERA, CAMERA_TYPES.ARMY_ATTACK, 0, 0, 500, 500).loadTileDimensions(96, 96); 
     this.renderer.resizeDisplay(window.innerWidth, window.innerHeight);
     this.switchState(CONTEXT_STATES.MAIN_MENU);
 }
 
-ArmyContext.prototype.onMapLoad = function(gameMap) {
-    const { width, height, meta } = gameMap;
-    const { music } = meta;
-
-    this.renderer.getCamera(CAMERAS.ARMY_CAMERA).loadWorld(width, height);
-
-    if(music) {
-        this.client.musicPlayer.loadTrack(music);
-        this.client.musicPlayer.swapTrack(music);
-    }
-}
-
-ArmyContext.prototype.onEntityCreate = function(entity) {
-    PlaceSystem.placeEntity(this, entity);
-
-    const saveData = this.saveEntity(entity.id);
-
-    console.log(saveData);
-}
-
-ArmyContext.prototype.onEntityDestroy = function(entity) {
-    const spriteComponent = entity.getComponent(SpriteComponent);
-
-    this.spriteManager.destroySprite(spriteComponent.spriteID);
-
-    PlaceSystem.removeEntity(this, entity);
-}
-
 ArmyContext.prototype.initializeTilemap = function(mapID) {
-    const gameMap = this.mapManager.getLoadedMap(mapID);
+    const gameMap = this.world.mapManager.getLoadedMap(mapID);
 
     if(!gameMap) {
         return false;
     }
 
-    const layerTypes = this.getConfig("layerTypes");
-    const tileTypes = this.getConfig("tileTypes");
-    const teamTypes = this.getConfig("teamTypes");
+    const layerTypes = this.world.getConfig("layerTypes");
+    const tileTypes = this.world.getConfig("tileTypes");
+    const teamTypes = this.world.getConfig("teamTypes");
     const teamLayerID = layerTypes.team.layerID;
     const typeLayerID = layerTypes.type.layerID;
 
@@ -190,7 +192,7 @@ ArmyContext.prototype.initializeTilemap = function(mapID) {
 }
 
 ArmyContext.prototype.saveEntity = function(entityID) {
-    const entity = this.entityManager.getEntity(entityID);
+    const entity = this.world.entityManager.getEntity(entityID);
 
     if(!entity) {
         return null;
@@ -198,7 +200,7 @@ ArmyContext.prototype.saveEntity = function(entityID) {
 
     const positionComponent = entity.getComponent(PositionComponent);
     const teamComponent = entity.getComponent(TeamComponent);
-    const savedComponents = this.entityManager.saveComponents(entity);
+    const savedComponents = this.world.entityManager.saveComponents(entity);
 
     return {
         "id": entityID,
@@ -212,7 +214,7 @@ ArmyContext.prototype.saveEntity = function(entityID) {
 
 ArmyContext.prototype.parseConversions = function() {
     const { tileManager } = this;
-    const conversions = this.getConfig("tileConversions");
+    const conversions = this.world.getConfig("tileConversions");
     const newConversions = {};
 
     for(const setID in conversions) {
