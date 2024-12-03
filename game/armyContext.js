@@ -138,11 +138,12 @@ ArmyContext.prototype.initialize = function() {
         PlaceSystem.removeEntity(this, entity);
     });
 
-    this.world.events.subscribe(World.EVENT_MAP_LOAD, EventEmitter.SUPER_SUBSCRIBER_ID, (gameMap) => {
-        const { width, height, meta } = gameMap;
+    this.world.events.subscribe(World.EVENT_MAP_LOAD, EventEmitter.SUPER_SUBSCRIBER_ID, (worldMap) => {
+        const { width, height, meta } = worldMap;
         const { music } = meta;
-    
-        this.renderer.getCamera(CAMERAS.ARMY_CAMERA).loadWorld(width, height);
+        const camera = this.renderer.getCamera(CAMERAS.ARMY_CAMERA);
+
+        camera.loadWorld(width, height);
     
         if(music) {
             this.client.musicPlayer.loadTrack(music);
@@ -150,7 +151,11 @@ ArmyContext.prototype.initialize = function() {
         }
     });
 
-    this.renderer.createCamera(CAMERAS.ARMY_CAMERA, CAMERA_TYPES.ARMY_ATTACK, 0, 0, 500, 500).loadTileDimensions(96, 96); 
+    const camera = this.renderer.createCamera(CAMERAS.ARMY_CAMERA, CAMERA_TYPES.ARMY_ATTACK, 0, 0, 500, 500);
+    const settings = this.world.getConfig("settings");
+
+    camera.loadTileDimensions(settings.tileWidth, settings.tileHeight); 
+
     this.renderer.resizeDisplay(window.innerWidth, window.innerHeight);
     this.switchState(CONTEXT_STATES.MAIN_MENU);
 }

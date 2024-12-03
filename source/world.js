@@ -55,14 +55,14 @@ World.prototype.parseMap = async function(mapID, onParse) {
     return World.CODE_PARSE_MAP_SUCCESS;
 }
 
-World.prototype.loadMap = function(mapID, gameMap) {
-    if(!gameMap) {
+World.prototype.loadMap = function(mapID, worldMap) {
+    if(!worldMap) {
         return;
     }
     
-    this.mapManager.addMap(mapID, gameMap);
+    this.mapManager.addMap(mapID, worldMap);
     this.mapManager.updateActiveMap(mapID);
-    this.events.emit(World.EVENT_MAP_LOAD, gameMap);
+    this.events.emit(World.EVENT_MAP_LOAD, worldMap);
 }
 
 World.prototype.getTileEntity = function(tileX, tileY) {

@@ -37,20 +37,18 @@
             },
             "slots": ["BUTTON_0", "BUTTON_1", "BUTTON_2", "BUTTON_3", "BUTTON_4", "BUTTON_5", "BUTTON_6", "BUTTON_7", "BUTTON_8"]
         },
-        "defaultMapMeta": {
-            "music": "music_remastered"
+        "defaultMapLayers": {
+            "ground": { "id": "ground", "fill": 1 },
+            "border": { "id": "border", "fill": 0 },
+            "decoration": { "id": "decoration", "fill": 0 },
+            "cloud": { "id": "cloud", "fill": 0 },
+            "type": { "id": "type", "fill": 0 },
+            "team": { "id": "team", "fill": 0 }
         },
-        "defaultMapSetup": {
+        "defaultMapMeta": {
+            "music": "music_remastered",
             "width": 20,
             "height": 20,
-            "layers": {
-                "ground": { "id": "ground", "fill": 1 },
-                "border": { "id": "border", "fill": 0 },
-                "decoration": { "id": "decoration", "fill": 0 },
-                "cloud": { "id": "cloud", "fill": 0 },
-                "type": { "id": "type", "fill": 0 },
-                "team": { "id": "team", "fill": 0 }
-            },
             "backgroundLayers": [
                 { "id": "ground", "opacity": 1, "autoGenerate": false },
                 { "id": "border", "opacity": 1, "autoGenerate": true },

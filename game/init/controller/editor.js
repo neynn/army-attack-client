@@ -368,9 +368,8 @@ EditorController.prototype.initializeUIEvents = function(gameContext) {
 
     uiManager.addClick(id, "BUTTON_SAVE", () => {
         const mapData = mapManager.getLoadedMap(this.currentMapID);
-        const saveData = saveMap(mapData);
-
-        saveTemplateAsFile(this.currentMapID + ".json", saveData);
+        
+        saveMap(this.currentMapID, mapData);
     });
 
     uiManager.addClick(id, "BUTTON_CREATE", () => {
@@ -381,8 +380,8 @@ EditorController.prototype.initializeUIEvents = function(gameContext) {
         }
 
         const mapID = `${Date.now()}`;
-        const { data, meta } = this.mapEditor.getDefaultMapData();
-        const defaultMap = MapParser.parseMap2DEmpty(mapID, data, meta, true);
+        const { layers, meta } = this.mapEditor.getDefaultMapData();
+        const defaultMap = MapParser.parseMap2DEmpty(mapID, layers, meta);
 
         world.loadMap(mapID, defaultMap);
         

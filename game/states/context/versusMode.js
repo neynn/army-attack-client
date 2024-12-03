@@ -42,10 +42,10 @@ VersusModeState.prototype.onInstanceMap = function(gameContext, payload) {
 VersusModeState.prototype.onInstanceMapFromData = function(gameContext, payload) {
     const { client, world } = gameContext;
     const { socket } = client;
-    const { id, data, meta } = payload;
-    const gameMap = MapParser.parseMap2D(id, data, meta, true);
+    const { id, layers, meta } = payload;
+    const worldMap = MapParser.parseMap2D(id, layers, meta);
 
-    world.loadMap(id, gameMap);
+    world.loadMap(id, worldMap);
     gameContext.initializeTilemap(id);
 
     socket.messageRoom(GAME_EVENTS.INSTANCE_MAP, { "success": true, "error": null });

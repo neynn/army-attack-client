@@ -304,7 +304,7 @@ MapEditor.prototype.resizeMap = function(gameMap, width, height) {
 
 MapEditor.prototype.getDefaultMapData = function() {
     return {
-        "data": this.config.defaultMapSetup,
+        "layers": this.config.defaultMapLayers,
         "meta": this.config.defaultMapMeta,
         "success": true,
         "code": "DEFAULT"

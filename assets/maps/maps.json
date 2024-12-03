@@ -4,7 +4,22 @@
         "directory": "assets/maps/pvp",
         "source": "valleys.json",
         "music": "music_desertscorpion",
+        "width": 11,
+        "height": 11,
+        "author": "neyn",
         "type": "PVP",
+        "backgroundLayers": [
+            { "id": "ground", "opacity": 1, "autoGenerate": false },
+            { "id": "border", "opacity": 1, "autoGenerate": true },
+            { "id": "decoration", "opacity": 1, "autoGenerate": false }
+        ],
+        "foregroundLayers": [ 
+            { "id": "cloud", "opacity": 1, "autoGenerate": false }
+        ],
+        "metaLayers": [
+            { "id": "type", "opacity": 1, "autoGenerate": false },
+            { "id": "team", "opacity": 1, "autoGenerate": false }
+        ],
         "entities": [],
         "flags": {}
     }

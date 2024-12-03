@@ -6,9 +6,6 @@ export const GameMap = function(id) {
     this.height = 0;
     this.meta = {};
     this.layers = {};
-    this.backgroundLayers = [];
-    this.foregroundLayers = [];
-    this.metaLayers = [];
     this.usedTiles = new Map();
 }
 
@@ -97,7 +94,7 @@ GameMap.prototype.isTileOccupied = function(tileX, tileY) {
 GameMap.prototype.getAutoGeneratingLayers = function() {
     const layerIDs = new Set();
 
-    for(const layerConfig of this.backgroundLayers) {
+    for(const layerConfig of this.meta.backgroundLayers) {
         const { id, autoGenerate } = layerConfig;
 
         if(autoGenerate) {
@@ -105,7 +102,7 @@ GameMap.prototype.getAutoGeneratingLayers = function() {
         }
     }
 
-    for(const layerConfig of this.foregroundLayers) {
+    for(const layerConfig of this.meta.foregroundLayers) {
         const { id, autoGenerate } = layerConfig;
 
         if(autoGenerate) {
@@ -113,7 +110,7 @@ GameMap.prototype.getAutoGeneratingLayers = function() {
         }
     }
 
-    for(const layerConfig of this.metaLayers) {
+    for(const layerConfig of this.meta.metaLayers) {
         const { id, autoGenerate } = layerConfig;
 
         if(autoGenerate) {
@@ -131,7 +128,7 @@ GameMap.prototype.setLayerOpacity = function(layerID, opacity) {
 
     opacity = clampValue(opacity, 1, 0);
 
-    for(const layerConfig of this.backgroundLayers) {
+    for(const layerConfig of this.meta.backgroundLayers) {
         const { id } = layerConfig;
 
         if(id === layerID) {
@@ -141,7 +138,7 @@ GameMap.prototype.setLayerOpacity = function(layerID, opacity) {
         }
     }
 
-    for(const layerConfig of this.foregroundLayers) {
+    for(const layerConfig of this.meta.foregroundLayers) {
         const { id } = layerConfig;
 
         if(id === layerID) {
@@ -151,7 +148,7 @@ GameMap.prototype.setLayerOpacity = function(layerID, opacity) {
         }
     }
 
-    for(const layerConfig of this.metaLayers) {
+    for(const layerConfig of this.meta.metaLayers) {
         const { id } = layerConfig;
 
         if(id === layerID) {

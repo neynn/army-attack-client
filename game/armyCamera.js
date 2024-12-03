@@ -79,7 +79,7 @@ ArmyCamera.prototype.update = function(gameContext) {
 
     const viewportBounds = this.getWorldBounds();
 
-    for(const layerConfig of activeMap.backgroundLayers) {
+    for(const layerConfig of activeMap.meta.backgroundLayers) {
         this.drawTileLayer(gameContext, activeMap, layerConfig, viewportBounds);
     }
     
@@ -92,15 +92,15 @@ ArmyCamera.prototype.update = function(gameContext) {
      * Draw range here. 
      */
 
-    for(const layerConfig of activeMap.foregroundLayers) {
+    for(const layerConfig of activeMap.meta.foregroundLayers) {
         this.drawTileLayer(gameContext, activeMap, layerConfig, viewportBounds);
     }
 
     if((Renderer.DEBUG & Renderer.DEBUG_MAP) !== 0) {
         const { x, y } = this.getViewportPosition();
         const context = renderer.getContext();
-        const typeLayer = activeMap.metaLayers[0];
-        const teamLayer = activeMap.metaLayers[1];
+        const typeLayer = activeMap.meta.metaLayers[0];
+        const teamLayer = activeMap.meta.metaLayers[1];
 
         context.font = "16px Arial";
         context.textBaseline = "middle";

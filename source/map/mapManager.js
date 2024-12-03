@@ -17,20 +17,20 @@ MapManager.prototype.load = function(mapTypes) {
 }
 
 MapManager.prototype.parseMap = async function(mapID, onParse) {
-    const mapType = this.getMapType(mapID);
+    const meta = this.getMapType(mapID);
 
-    if(!mapType) {
+    if(!meta) {
         Logger.log(false, "MapType does not exist!", "MapManager.prototype.parseMap", { mapID });
         return null;
     }
 
-    const mapData = await this.resources.loadFileData(mapType);
+    const layers = await this.resources.loadFileData(meta);
 
-    if(!mapData) {
+    if(!layers) {
         return null;
     }
 
-    const parsedMap = onParse(mapID, mapData, mapType);
+    const parsedMap = onParse(mapID, layers, meta);
 
     return parsedMap;
 }

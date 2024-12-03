@@ -39,13 +39,13 @@ export const packerToJSON = (id, packerFile) => {
   saveTemplateAsFile(`${id}.json`, meta);
 }
 
-export const saveMap = function(map2D) {
+export const saveMap = function(mapID, map2D) {
     if(!map2D) {
         return `{ "ERROR": "MAP NOT LOADED! USE CREATE OR LOAD!" }`;
     }
   
     const stringifyArray = (array) => {
-        let result = `[\n            `;
+        let result = `[\n        `;
 
         for (let i = 0; i < map2D.height; i++) {
             let row = ``;
@@ -64,30 +64,30 @@ export const saveMap = function(map2D) {
             result += row;
 
             if (i < map2D.height - 1) {
-                result += `,\n            `;
+                result += `,\n        `;
             }
         }
 
-        result += `\n        ]`;
+        result += `\n    ]`;
         
         return result;
     }
 
     const formattedBackground = [];
 
-    for(const layerConfig of map2D.backgroundLayers) {
+    for(const layerConfig of map2D.meta.backgroundLayers) {
         formattedBackground.push(`{ "id": "${layerConfig.id}", "opacity": ${layerConfig.opacity}, "autoGenerate": ${layerConfig.autoGenerate} }`);
     }
 
     const formattedForeground = [];
 
-    for(const layerConfig of map2D.foregroundLayers) {
+    for(const layerConfig of map2D.meta.foregroundLayers) {
         formattedForeground.push(`{ "id": "${layerConfig.id}", "opacity": ${layerConfig.opacity}, "autoGenerate": ${layerConfig.autoGenerate} }`);
     }
 
     const formattedMeta = [];
 
-    for(const layerConfig of map2D.metaLayers) {
+    for(const layerConfig of map2D.meta.metaLayers) {
         formattedMeta.push(`{ "id": "${layerConfig.id}", "opacity": ${layerConfig.opacity}, "autoGenerate": ${layerConfig.autoGenerate} }`);
     }
 
@@ -104,6 +104,7 @@ export const saveMap = function(map2D) {
       
     const downloadableString = 
 `{
+    "music": "${map2D.meta.music}",
     "width": ${map2D.width},
     "height": ${map2D.height},
     "backgroundLayers": [
@@ -114,30 +115,16 @@ export const saveMap = function(map2D) {
     ],
     "metaLayers": [
         ${formattedMeta.join(",\n        ")}
-    ],
-    "layers": {
-        ${formattedLayers.join(",\n        ")}
-    }
+    ]
 }`;
 
-    return downloadableString;
-}
+    const downloadableLayers = 
+`{
+    ${formattedLayers.join(",\n    ")}
+}`;
 
-export const dirtySave = function(map2D) {
-  if(!map2D) {
-      return `{ "ERROR": "MAP NOT LOADED! USE CREATE OR LOAD!" }`;
-  }
-
-  const { width, height, backgroundLayers, foregroundLayers, metaLayers, layers } = map2D;
-
-  return JSON.stringify({
-      width,
-      height,
-      backgroundLayers,
-      foregroundLayers,
-      metaLayers,
-      layers
-  });
+    saveTemplateAsFile("layers_" + mapID + ".json", downloadableLayers);
+    saveTemplateAsFile("meta_" + mapID + ".json", downloadableString);
 }
 
 export const saveSprites = function(spriteTypes) {
