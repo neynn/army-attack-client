@@ -49,18 +49,16 @@
             "music": "music_remastered",
             "width": 20,
             "height": 20,
-            "backgroundLayers": [
-                { "id": "ground", "opacity": 1, "autoGenerate": false },
-                { "id": "border", "opacity": 1, "autoGenerate": true },
-                { "id": "decoration", "opacity": 1, "autoGenerate": false }
-            ],
-            "foregroundLayers": [
-                { "id":"cloud", "opacity": 1, "autoGenerate": false }
-            ],
-            "metaLayers": [
-                { "id": "type", "opacity": 1, "autoGenerate": false }, 
-                { "id": "team", "opacity": 1, "autoGenerate": false } 
-            ]
+            "layerConfig": {
+                "ground": { "id": "ground", "opacity": 1, "autoGenerate": false, "isMeta": false },
+                "border": { "id": "border", "opacity": 1, "autoGenerate": true, "isMeta": false },
+                "decoration": { "id": "decoration", "opacity": 1, "autoGenerate": false, "isMeta": false },
+                "cloud": { "id": "cloud", "opacity": 1, "autoGenerate": false, "isMeta": false },
+                "type": { "id": "type", "opacity": 1, "autoGenerate": false, "isMeta": true },
+                "team": { "id": "team", "opacity": 1, "autoGenerate": false, "isMeta": true }
+            },
+            "background": ["ground", "border", "decoration"],
+            "foreground": ["cloud"]
         },
         "hiddenSets": {
             "overlay": 1,

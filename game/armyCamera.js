@@ -77,10 +77,11 @@ ArmyCamera.prototype.update = function(gameContext) {
         return;
     }
 
+    const { background, foreground, layerConfig } = activeMap.meta;
     const viewportBounds = this.getWorldBounds();
 
-    for(const layerConfig of activeMap.meta.backgroundLayers) {
-        this.drawTileLayer(gameContext, activeMap, layerConfig, viewportBounds);
+    for(const layerID of background) {
+        this.drawTileLayer(gameContext, activeMap, layerConfig[layerID], viewportBounds);
     }
     
     this.drawOverlay(gameContext);
@@ -92,15 +93,15 @@ ArmyCamera.prototype.update = function(gameContext) {
      * Draw range here. 
      */
 
-    for(const layerConfig of activeMap.meta.foregroundLayers) {
-        this.drawTileLayer(gameContext, activeMap, layerConfig, viewportBounds);
+    for(const layerID of foreground) {
+        this.drawTileLayer(gameContext, activeMap, layerConfig[layerID], viewportBounds);
     }
 
     if((Renderer.DEBUG & Renderer.DEBUG_MAP) !== 0) {
         const { x, y } = this.getViewportPosition();
         const context = renderer.getContext();
-        const typeLayer = activeMap.meta.metaLayers[0];
-        const teamLayer = activeMap.meta.metaLayers[1];
+        const typeLayer = layerConfig["type"];
+        const teamLayer = layerConfig["team"];
 
         context.font = "16px Arial";
         context.textBaseline = "middle";
@@ -150,7 +151,7 @@ ArmyCamera.prototype.drawWithCallback = function(map2D, layerConfig, onDraw, vie
     }
 
     const width = map2D.width;
-    const layer = map2D.layers[id];
+    const layer = map2D.getGraphicsLayer(id);
 
     for(let i = startY; i <= endY; i++) {
         const renderY = i * this.tileHeight;
@@ -247,7 +248,7 @@ ArmyCamera.prototype.drawTileLayer = function(gameContext, map2D, layerConfig, v
     const { x, y } = this.getViewportPosition();
     const context = renderer.getContext();
     const width = map2D.width;
-    const layer = map2D.layers[id];
+    const layer = map2D.getGraphicsLayer(id);
 
     context.globalAlpha = opacity;
 

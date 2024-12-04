@@ -73,33 +73,24 @@ export const saveMap = function(mapID, map2D) {
         return result;
     }
 
-    const formattedBackground = [];
+    const formattedConfig = [];
 
-    for(const layerConfig of map2D.meta.backgroundLayers) {
-        formattedBackground.push(`{ "id": "${layerConfig.id}", "opacity": ${layerConfig.opacity}, "autoGenerate": ${layerConfig.autoGenerate} }`);
-    }
+    for(const layerID in map2D.meta.layerConfig) {
+        const layerConfig = map2D.meta.layerConfig[layerID];
 
-    const formattedForeground = [];
-
-    for(const layerConfig of map2D.meta.foregroundLayers) {
-        formattedForeground.push(`{ "id": "${layerConfig.id}", "opacity": ${layerConfig.opacity}, "autoGenerate": ${layerConfig.autoGenerate} }`);
-    }
-
-    const formattedMeta = [];
-
-    for(const layerConfig of map2D.meta.metaLayers) {
-        formattedMeta.push(`{ "id": "${layerConfig.id}", "opacity": ${layerConfig.opacity}, "autoGenerate": ${layerConfig.autoGenerate} }`);
+        formattedConfig.push(`"${layerConfig.id}": { "id": "${layerConfig.id}", "opacity": ${layerConfig.opacity}, "autoGenerate": ${layerConfig.autoGenerate}, "isMeta": ${layerConfig.isMeta} }`);
     }
 
 	const formattedLayers = [];
     const autoLayers = map2D.getAutoGeneratingLayers();
+    const graphics = map2D.getGraphicsLayers();
 
-	for(const layerID in map2D.layers) {
+	for(const layerID in graphics) {
 		if(autoLayers.has(layerID)) {
 			continue;
 		}
 
-		formattedLayers.push(`"${layerID}": ${stringifyArray(map2D.layers[layerID])}`);
+		formattedLayers.push(`"${layerID}": ${stringifyArray(graphics[layerID])}`);
 	}
       
     const downloadableString = 
@@ -107,15 +98,11 @@ export const saveMap = function(mapID, map2D) {
     "music": "${map2D.meta.music}",
     "width": ${map2D.width},
     "height": ${map2D.height},
-    "backgroundLayers": [
-        ${formattedBackground.join(",\n        ")}
-    ],
-    "foregroundLayers": [ 
-        ${formattedForeground.join(",\n        ")}
-    ],
-    "metaLayers": [
-        ${formattedMeta.join(",\n        ")}
-    ]
+    "layerConfig": {
+        ${formattedConfig.join(",\n        ")}
+    },
+    "background": ${JSON.stringify(map2D.meta.background)},
+    "foreground": ${JSON.stringify(map2D.meta.foreground)}
 }`;
 
     const downloadableLayers = 

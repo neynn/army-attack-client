@@ -1,4 +1,4 @@
-import { GameMap } from "./gameMap.js";
+import { WorldMap } from "./worldMap.js";
 
 export const MapParser = function() {}
 
@@ -71,88 +71,52 @@ MapParser.createUint8LayerEmpty = function(fill = 0, width, height) {
 }
 
 MapParser.parseMap2D = function(mapID, layers, meta) {
-    const map2D = new GameMap(mapID);
+    const map2D = new WorldMap(mapID);
     const parsedLayers = {};
 
     const { 
         width = 0,
         height = 0,
-        backgroundLayers = [],
-        foregroundLayers = [],
-        metaLayers = []
+        layerConfig = {}
     } = meta;
 
-    for(const layerConfig of backgroundLayers) {
-        const { id } = layerConfig; 
+    for(const layerID in layerConfig) {
+        const { id } = layerConfig[layerID];
         const layerData = layers[id];
         const parsedLayerData = MapParser.createUint16Layer(layerData, width, height);
-
-        parsedLayers[id] = parsedLayerData;
-    }
-
-    for(const layerConfig of foregroundLayers) {
-        const { id } = layerConfig; 
-        const layerData = layers[id];
-        const parsedLayerData = MapParser.createUint16Layer(layerData, width, height);
-
-        parsedLayers[id] = parsedLayerData;
-    }
-
-    for(const layerConfig of metaLayers) {
-        const { id } = layerConfig; 
-        const layerData = layers[id];
-        const parsedLayerData = MapParser.createUint8Layer(layerData, width, height);
 
         parsedLayers[id] = parsedLayerData;
     }
 
     map2D.width = width;
     map2D.height = height;
-    map2D.layers = parsedLayers;
+    map2D.setGraphicsLayers(parsedLayers);
     map2D.meta = JSON.parse(JSON.stringify(meta));
     
     return map2D;
 }
 
 MapParser.parseMap2DEmpty = function(mapID, layers, meta) {
-    const map2D = new GameMap(mapID);
+    const map2D = new WorldMap(mapID);
     const parsedLayers = {};
 
     const { 
         width = 0,
         height = 0,
-        backgroundLayers = [],
-        foregroundLayers = [],
-        metaLayers = []
+        layerConfig = {},
     } = meta;
 
-    for(const layerConfig of backgroundLayers) {
-        const { id } = layerConfig; 
+    for(const layerID in layerConfig) {
+        const { id } = layerConfig[layerID];
         const { fill } = layers[id];
         const parsedLayerData = MapParser.createUint16LayerEmpty(fill, width, height);
-
-        parsedLayers[id] = parsedLayerData;
-    }
-
-    for(const layerConfig of foregroundLayers) {
-        const { id } = layerConfig; 
-        const { fill } = layers[id];
-        const parsedLayerData = MapParser.createUint16LayerEmpty(fill, width, height);
-
-        parsedLayers[id] = parsedLayerData;
-    }
-
-    for(const layerConfig of metaLayers) {
-        const { id } = layerConfig; 
-        const { fill } = layers[id];
-        const parsedLayerData = MapParser.createUint8LayerEmpty(fill, width, height);
 
         parsedLayers[id] = parsedLayerData;
     }
 
     map2D.width = width;
     map2D.height = height;
-    map2D.layers = parsedLayers;
+    map2D.setGraphicsLayers(parsedLayers);
     map2D.meta = JSON.parse(JSON.stringify(meta));
 
     return map2D;
