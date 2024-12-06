@@ -160,14 +160,12 @@ Drawable.prototype.show = function() {
 
 Drawable.prototype.setOpacity = function(opacity) {
     if(opacity === undefined) {
-        return false;
+        return;
     }
 
     opacity = clampValue(opacity, 1, 0);
 
     this.opacity = opacity;
-
-    return true;
 }
 
 Drawable.prototype.hasParent = function() {
@@ -224,28 +222,24 @@ Drawable.prototype.hasFamily = function() {
 
 Drawable.prototype.openFamily = function(name = Drawable.DEFAULT_FAMILY_NAME) {
     if(this.family || this.id === null) {
-        return false;
+        return;
     }
 
     this.family = new Family(this.id, this, name);
-
-    return true;
 }
 
 Drawable.prototype.closeFamily = function() {
     if(!this.family) {
-        return false;
+        return;
     }
 
     this.family.onRemove();
     this.family = null;
-
-    return true;
 }
 
 Drawable.prototype.addChild = function(drawable, name) {
     if(drawable.getID() === null || name === undefined) {
-        return false;
+        return;
     }
     
     if(!this.family) {
@@ -253,7 +247,7 @@ Drawable.prototype.addChild = function(drawable, name) {
     }
 
     if(this.family.hasChild(name)) {
-        return false;
+        return;
     }
 
     if(drawable.hasFamily()) {
@@ -263,24 +257,20 @@ Drawable.prototype.addChild = function(drawable, name) {
     }
 
     this.family.addChild(drawable.family);
-
-    return true;
 }
 
 Drawable.prototype.removeChild = function(name) {
     if(!this.family) {
-        return false;
+        return;
     }
 
     const child = this.family.getChildByName(name);
 
     if(child === null) {
-        return false;
+        return;
     }
 
     const reference = child.getReference();
 
     reference.closeFamily();
-
-    return true;
 }

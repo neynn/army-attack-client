@@ -17,11 +17,11 @@ EffectManager.EFFECT_TYPE_FADE_OUT = "FADE_OUT";
 
 EffectManager.prototype.addEffect = function(drawable, effectList) {
     if(!Array.isArray(effectList)) {
-        return false;
+        return;
     }
 
     if(!(drawable instanceof Drawable)) {
-        return false;
+        return;
     }
 
     for(const effect of effectList) {
@@ -34,8 +34,6 @@ EffectManager.prototype.addEffect = function(drawable, effectList) {
 
         this[effectID](drawable, value, threshold);
     }
-
-    return true;
 }
 
 EffectManager.prototype.addFadeIn = function(drawable, increment = 0.1, threshold = 1) {

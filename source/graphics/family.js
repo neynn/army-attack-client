@@ -16,7 +16,7 @@ Family.prototype.overwriteName = function(name) {
 
 Family.prototype.setParent = function(parent) {
     if(parent.id === this.id) {
-        return false;
+        return;
     }
 
     if(this.parent !== null) {
@@ -24,38 +24,33 @@ Family.prototype.setParent = function(parent) {
     }
 
     this.parent = parent;
-
-    return true;
 }
 
 Family.prototype.addChild = function(child) {
     if(child.id === this.id) {
-        return false;
+        return;
     }
 
     for(const element of this.children) {
         if(element.id === child.id || element.name === child.name) {
-            return false;
+            return;
         }
     }
 
     this.children.push(child);
     child.setParent(this);
-    
-    return true;
 }
 
 Family.prototype.removeChild = function(child) {
     for(let i = 0; i < this.children.length; i++) {
         if(this.children[i].id === child.id) {
             this.children.splice(i, 1);
+
             child.parent = null;
 
-            return true;
+            return;
         }
     }
-
-    return false;
 }
 
 Family.prototype.onRemove = function() {

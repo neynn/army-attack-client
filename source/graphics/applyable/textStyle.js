@@ -20,22 +20,18 @@ TextStyle.TEXT_ALIGN_CENTER = "center";
 
 TextStyle.prototype.setAlignment = function(alignment) {
     if(alignment === undefined) {
-        return false;
+        return;
     }
 
     this.alignment = alignment;
-
-    return true;
 }
 
 TextStyle.prototype.setBaseline = function(baseline) {
     if(baseline === undefined) {
-        return false;
+        return;
     }
 
     this.baseline = baseline;
-
-    return true;
 }
 
 TextStyle.prototype.updateFont = function() {
@@ -44,34 +40,28 @@ TextStyle.prototype.updateFont = function() {
 
 TextStyle.prototype.setFontType = function(fontType) {
     if(fontType === undefined) {
-        return false;
+        return;
     }
 
     this.fontType = fontType;
     this.updateFont();
-
-    return true;
 }
 
 TextStyle.prototype.setFontSize = function(fontSize) {
     if(fontSize === undefined) {
-        return false;
+        return;
     }
 
     this.fontSize = fontSize;
     this.updateFont();
-
-    return true;
 }
 
 TextStyle.prototype.setFont = function(font) {
     if(font === undefined) {
-        return false;
+        return;
     }
 
     this.font = font;
-    
-    return true;
 }
 
 TextStyle.prototype.apply = function(context) {

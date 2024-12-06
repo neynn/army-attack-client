@@ -151,7 +151,7 @@ ArmyCamera.prototype.drawWithCallback = function(map2D, layerConfig, onDraw, vie
     }
 
     const width = map2D.width;
-    const layer = map2D.getGraphicsLayer(id);
+    const layer = map2D.getLayer(id);
 
     for(let i = startY; i <= endY; i++) {
         const renderY = i * this.tileHeight;
@@ -248,7 +248,7 @@ ArmyCamera.prototype.drawTileLayer = function(gameContext, map2D, layerConfig, v
     const { x, y } = this.getViewportPosition();
     const context = renderer.getContext();
     const width = map2D.width;
-    const layer = map2D.getGraphicsLayer(id);
+    const layer = map2D.getLayer(id);
 
     context.globalAlpha = opacity;
 

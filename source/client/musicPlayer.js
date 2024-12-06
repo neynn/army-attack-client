@@ -11,8 +11,8 @@ export const MusicPlayer = function() {
 }
 
 MusicPlayer.prototype.loadAllTracks = function() {
-    for(const key in this.musicTypes) {
-        this.loadTrack(key);
+    for(const trackID in this.musicTypes) {
+        this.loadTrack(trackID);
     }
 }
 
@@ -32,20 +32,16 @@ MusicPlayer.prototype.load = function(musicTypes) {
 MusicPlayer.prototype.swapTrack = function(audioID, volume = this.volume) {
     if(!this.resources.audio.has(audioID)) {
         Logger.log(false, "Track does not exist!", "MusicPlayer.prototype.swapTrack", {audioID});
-
-        return false;
+        return;
     }
 
     if(this.currentTack === audioID) {
         Logger.log(false, "Track is already playing!", "MusicPlayer.prototype.swapTrack", {audioID});
-
-        return false;
+        return;
     }
 
     this.resetTrack(this.currentTack);
     this.playTrack(audioID, volume);
-
-    return true;
 }
 
 MusicPlayer.prototype.loadTrack = function(audioID) {
@@ -53,20 +49,17 @@ MusicPlayer.prototype.loadTrack = function(audioID) {
 
     if(!musicType) {
         Logger.log(false, "Track does not exist!", "MusicPlayer.prototype.loadTrack", {audioID});
-
-        return false;
+        return;
     }
 
     if(this.resources.audio.has(audioID)) {
         Logger.log(false, "Track is already loaded!", "MusicPlayer.prototype.loadTrack", {audioID});
-
-        return false;
+        return;
     }
 
     const audio = this.resources.loadHTMLAudio(musicType);
-    this.resources.audio.set(audioID, audio);
 
-    return true;
+    this.resources.audio.set(audioID, audio);
 }
 
 MusicPlayer.prototype.playTrack = function(audioID = this.currentTack, volume = this.volume) {
@@ -74,14 +67,12 @@ MusicPlayer.prototype.playTrack = function(audioID = this.currentTack, volume = 
 
     if(!audio) {
         Logger.log(false, "Track does not exist!", "MusicPlayer.prototype.playTrack", {audioID});
-
-        return false;
+        return;
     }
 
     if(!audio.paused) {
         Logger.log(false, "Track is already playing!", "MusicPlayer.prototype.playTrack", {audioID});
-
-        return false;
+        return;
     }
 
     if(audioID !== this.currentTack) {
@@ -89,10 +80,9 @@ MusicPlayer.prototype.playTrack = function(audioID = this.currentTack, volume = 
     }
 
     this.currentTack = audioID;
+    
     audio.volume = volume;
     audio.play();
-
-    return true;
 }
 
 MusicPlayer.prototype.pauseTrack = function(audioID = this.currentTack) {
@@ -100,13 +90,10 @@ MusicPlayer.prototype.pauseTrack = function(audioID = this.currentTack) {
 
     if(!audio) {
         Logger.log(false, "Track does not exist!", "MusicPlayer.prototype.pauseTrack", {audioID});
-
-        return false;
+        return;
     }
 
     audio.pause();
-
-    return true;
 }
 
 MusicPlayer.prototype.resetTrack = function(audioID = this.currentTack) {
@@ -114,14 +101,11 @@ MusicPlayer.prototype.resetTrack = function(audioID = this.currentTack) {
 
     if(!audio) {
         Logger.log(false, "Track does not exist!", "MusicPlayer.prototype.resetTrack", {audioID});
-
-        return false;
+        return;
     }
 
     audio.currentTime = 0;
     audio.pause();
-
-    return true;
 }
 
 MusicPlayer.prototype.setVolume = function(volume = this.volume, audioID = this.currentTack) {
@@ -129,13 +113,10 @@ MusicPlayer.prototype.setVolume = function(volume = this.volume, audioID = this.
 
     if(!audio) {
         Logger.log(false, "Track does not exist!", "MusicPlayer.prototype.setVolume", {audioID});
-
-        return false;
+        return;
     }
 
     audio.volume = volume;
-
-    return true;
 }
 
 MusicPlayer.prototype.adjustVolume = function(byValue = 0, audioID = this.currentTack) {
@@ -144,11 +125,8 @@ MusicPlayer.prototype.adjustVolume = function(byValue = 0, audioID = this.curren
 
     if(!audio) {
         Logger.log(false, "Track does not exist!", "MusicPlayer.prototype.adjustVolume", {audioID});
-
-        return false;
+        return;
     }
 
     audio.volume = this.volume;
-
-    return true;
 }

@@ -2,7 +2,7 @@ import { Cursor } from "../../../source/client/cursor.js";
 import { Controller } from "../../../source/controller/controller.js";
 import { SpriteManager } from "../../../source/graphics/spriteManager.js";
 
-import { CAMERAS, CONTROLLER_STATES } from "../../enums.js";
+import { CAMERA_TYPES, CONTROLLER_STATES } from "../../enums.js";
 import { ControllerBuildState } from "../../states/controller/build.js";
 import { ControllerSelectedState } from "../../states/controller/selected.js";
 import { ControllerIdleState } from "../../states/controller/idle.js";
@@ -114,7 +114,7 @@ PlayerController.prototype.updateCursorSpriteDefault = function(gameContext) {
 
 PlayerController.prototype.updateCursorPositionAirstrike = function(gameContext) {
     const { spriteManager, renderer } = gameContext;
-    const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
+    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
     const spriteComponent = this.getComponent(SpriteComponent);
     const { x, y } = gameContext.getMouseTile();
     const centerPosition = camera.transformTileToPositionCenter(x, y);
@@ -126,7 +126,7 @@ PlayerController.prototype.updateCursorPositionAirstrike = function(gameContext)
 PlayerController.prototype.updateCursorPositionDefault = function(gameContext) {
     const { spriteManager, renderer, world } = gameContext;
     const { entityManager } = world;
-    const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
+    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
     const spriteComponent = this.getComponent(SpriteComponent);
     const sprite = spriteManager.getSprite(spriteComponent.spriteID);
 
@@ -185,7 +185,7 @@ PlayerController.prototype.addClickEvent = function(gameContext) {
 
 PlayerController.prototype.initialize = function(gameContext, payload) {
     const { spriteManager, renderer } = gameContext;
-    const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
+    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
     const controllerSprite = spriteManager.createSprite("cursor_attack_1x1", SpriteManager.LAYER_TOP);
     const { x, y } = camera.transformTileToPositionCenter(0, 0);
 

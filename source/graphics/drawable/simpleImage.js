@@ -26,10 +26,8 @@ SimpleImage.prototype.onDraw = function(context, viewportX, viewportY, localX, l
 
 SimpleImage.prototype.setImage = function(image) {
     if(image === undefined) {
-        return false;
+        return;
     }
 
     this.image = image;
-
-    return true;
 }

@@ -282,7 +282,7 @@ MapEditor.prototype.paint = function(gameContext, mapID, layerID) {
 
 MapEditor.prototype.resizeMap = function(gameMap, width, height) {
     const defaultSetup = this.config.defaultMapLayers;
-    const graphics = gameMap.getGraphicsLayers();
+    const graphics = gameMap.getLayers();
 
     for(const layerID in graphics) {
         const layerSetup = defaultSetup[layerID];

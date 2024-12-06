@@ -25,10 +25,8 @@ SimpleText.prototype.onDraw = function(context, viewportX, viewportY, localX, lo
 
 SimpleText.prototype.setText = function(text) {
     if(text === undefined) {
-        return false;
+        return;
     }
 
     this.text = text;
-
-    return true;
 }

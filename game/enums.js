@@ -56,12 +56,8 @@ export const CONTROLLER_EVENTS = Object.freeze({
     "SELECT": "SELECT"
 });
 
-export const CAMERAS = Object.freeze({
-    "ARMY_CAMERA": "ARMY_CAMERA"
-});
-
 export const CAMERA_TYPES = Object.freeze({
-    "ARMY_ATTACK": "ARMY_ATTACK"
+    "ARMY_CAMERA": "ARMY_CAMERA"
 });
 
 export const ENTITY_STATES = Object.freeze({

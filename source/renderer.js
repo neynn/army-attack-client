@@ -1,7 +1,7 @@
+import { Camera } from "./camera/camera.js";
 import { Canvas } from "./camera/canvas.js";
 import { FPSCounter } from "./camera/fpsCounter.js";
 import { EventEmitter } from "./events/eventEmitter.js";
-import { Logger } from "./logger.js";
 import { isRectangleRectangleIntersect } from "./math/math.js";
 
 export const Renderer = function() {
@@ -18,7 +18,6 @@ export const Renderer = function() {
     this.events.listen(Renderer.EVENT_CAMERA_FINISH);
 
     this.cameras = new Map();
-    this.cameraTypes = new Map();
     this.cameraStack = [];
 
     window.addEventListener("resize", () => {
@@ -55,36 +54,6 @@ Renderer.prototype.getHeight = function() {
     return this.windowHeight;
 }
 
-Renderer.prototype.registerCamera = function(typeID, type) {
-    if(!typeID || !type) {
-        Logger.log(false, "Parameter is undefined!", "Renderer.prototype.registerCamera ", { typeID, type });
-
-        return false;
-    }
-
-    if(this.cameraTypes.has(typeID)) {
-        Logger.log(false, "CameraType is already registered!", "Renderer.prototype.registerCamera", {typeID});
-
-        return false;
-    }
-
-    this.cameraTypes.set(typeID, type);
-
-    return true;
-}
-
-Renderer.prototype.unregisterCamera = function(typeID) {
-    if(!this.cameraTypes.has(typeID)) {
-        Logger.log(false, "CameraType does not exist!", "Renderer.prototype.unregisterCamera", { typeID });
-
-        return false;
-    }
-
-    this.cameraTypes.delete(typeID);
-
-    return true;
-}
-
 Renderer.prototype.getCamera = function(cameraID) {
     const camera = this.cameras.get(cameraID);
 
@@ -95,28 +64,24 @@ Renderer.prototype.getCamera = function(cameraID) {
     return camera;
 }
 
-Renderer.prototype.createCamera = function(cameraID, typeID, x, y, w, h) {
-    const CameraType = this.cameraTypes.get(typeID);
-
-    if(!CameraType) {
-        return null;
+Renderer.prototype.addCamera = function(cameraID, camera) {
+    if(!(camera instanceof Camera) || this.cameras.has(cameraID)) {
+        return;
     }
-
-    if(this.cameras.has(cameraID)) {
-        return null;
-    }
-
-    const camera = new CameraType(x, y, w, h);
 
     this.cameras.set(cameraID, camera);
     this.cameraStack.push(cameraID);
 
-    return camera;
+    const viewportMode = camera.getMode();
+
+    if(viewportMode === Camera.VIEWPORT_MODE_AUTO) {
+        camera.loadViewport(0, 0, this.windowWidth, this.windowHeight);
+    }
 }
 
-Renderer.prototype.destroyCamera = function(cameraID) {
+Renderer.prototype.removeCamera = function(cameraID) {
     if(!this.cameras.has(cameraID)) {
-        return false;
+        return;
     }
 
     this.cameras.delete(cameraID);
@@ -129,8 +94,6 @@ Renderer.prototype.destroyCamera = function(cameraID) {
             break;
         }
     }
-
-    return true;
 }
 
 Renderer.prototype.drawUI = function(gameContext) {
@@ -154,10 +117,7 @@ Renderer.prototype.drawUI = function(gameContext) {
 Renderer.prototype.drawCameraOutlines = function() {
     this.display.context.strokeStyle = "#eeeeee";
     this.display.context.lineWidth = 3;
-
-    for(const [cameraID, camera] of this.cameras) {
-        this.display.context.strokeRect(camera.position.x, camera.position.y, camera.viewportWidth, camera.viewportHeight);
-    }
+    this.cameras.forEach(camera => this.display.context.strokeRect(camera.position.x, camera.position.y, camera.viewportWidth, camera.viewportHeight));
 }
 
 Renderer.prototype.update = function(gameContext) {

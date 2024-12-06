@@ -3,9 +3,10 @@ import { ROOM_EVENTS } from "../../../source/network/events.js";
 import { Socket } from "../../../source/network/socket.js";
 import { MapParser } from "../../../source/map/mapParser.js";
 import { State } from "../../../source/state/state.js";
-
-import { CONTEXT_STATES, GAME_EVENTS } from "../../enums.js";
 import { World } from "../../../source/world.js";
+
+import { CAMERA_TYPES, CONTEXT_STATES, GAME_EVENTS } from "../../enums.js";
+import { ArmyCamera } from "../../armyCamera.js";
 
 export const VersusModeState = function() {
     State.call(this);
@@ -92,10 +93,15 @@ VersusModeState.prototype.onServerMessage = function(gameContext, type, payload)
 VersusModeState.prototype.enter = function(stateMachine) {
     const gameContext = stateMachine.getContext();
     const contextID = gameContext.getID();
-    const { world, client } = gameContext;
+    const { world, renderer, client } = gameContext;
     const { actionQueue } = world;
     const { socket } = client;
-    
+    const camera = new ArmyCamera();
+    const settings = world.getConfig("settings");
+
+    camera.loadTileDimensions(settings.tileWidth, settings.tileHeight);
+    renderer.addCamera(CAMERA_TYPES.ARMY_CAMERA, camera);
+
     actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_VALID, contextID, (request, messengerID, priority) => {
         if(priority === ActionQueue.PRIORITY_NORMAL) {
             socket.messageRoom(GAME_EVENTS.ENTITY_ACTION, request);

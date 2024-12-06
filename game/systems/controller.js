@@ -8,7 +8,7 @@ import { TeamSystem } from "./team.js";
 import { HealthComponent } from "../components/health.js";
 import { MoveComponent } from "../components/move.js";
 import { AnimationSystem } from "./animation.js";
-import { CAMERAS } from "../enums.js";
+import { CAMERA_TYPES } from "../enums.js";
 import { ArmyCamera } from "../armyCamera.js";
 
 export const ControllerSystem = function() {}
@@ -30,7 +30,7 @@ ControllerSystem.resetAttackerSprites = function(gameContext, attackers) {
 
 ControllerSystem.resetAttackerOverlays = function(gameContext) {
     const { renderer } = gameContext;
-    const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
+    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
 
     camera.clearOverlay(ArmyCamera.OVERLAY_TYPE_ATTACK);
 }
@@ -44,7 +44,7 @@ ControllerSystem.resetAttacker = function(gameContext, attackerID) {
         return;
     }
 
-    const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
+    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
     const positionComponent = attacker.getComponent(PositionComponent);
 
     camera.removeOverlay(ArmyCamera.OVERLAY_TYPE_ATTACK, positionComponent.tileX, positionComponent.tileY);
@@ -60,7 +60,7 @@ ControllerSystem.hightlightAttacker = function(gameContext, target, attackerID) 
         return;
     }
 
-    const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
+    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
     const positionComponent = attacker.getComponent(PositionComponent);
     const tileID = tileManager.getTileID("overlay", "grid_attack_1x1");
 
@@ -129,7 +129,7 @@ ControllerSystem.updateSelectedEntity = function(gameContext, controller) {
 ControllerSystem.selectEntity = function(gameContext, controller, entity) {
     const { tileManager, world, renderer } = gameContext;
     const { mapManager, entityManager } = world;
-    const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
+    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
     const activeMap = mapManager.getActiveMap();
     const nodeList = PathfinderSystem.generateNodeList(gameContext, entity);
     const enableTileID = tileManager.getTileID("overlay", "grid_enabled_1x1");
@@ -172,7 +172,7 @@ ControllerSystem.selectEntity = function(gameContext, controller, entity) {
 ControllerSystem.deselectEntity = function(gameContext, controller, entity) {
     const { renderer } = gameContext;
     const controllerNodeList = controller.getNodeList();
-    const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
+    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
 
     camera.clearOverlay(ArmyCamera.OVERLAY_TYPE_MOVE);
 

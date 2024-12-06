@@ -66,6 +66,7 @@ ImageSheet.prototype.defineDefaultAnimation = function() {
 
     for(const frameID in this.frames) {
         const frame = this.createFrame(frameID);
+        
         defaultAnimation.addFrame(frame);
     }
 

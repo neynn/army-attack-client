@@ -1,8 +1,8 @@
 import { Camera } from "../camera.js";
 import { lerpValue } from "../../math/math.js";
 
-export const MoveableCamera = function(positionX, positionY, viewportWidth, viewportHeight) {
-    Camera.call(this, positionX, positionY, viewportWidth, viewportHeight);
+export const MoveableCamera = function() {
+    Camera.call(this);
     
     this.viewportX = 0;
     this.viewportY = 0;
@@ -26,7 +26,7 @@ MoveableCamera.prototype.loadWorld = function(worldWidth, worldHeight) {
     this.worldHeight = worldHeight;
 }
 
-MoveableCamera.prototype.onViewportLoad = function() {
+MoveableCamera.prototype.onViewportResize = function() {
     this.reloadViewportLimit();
 }
 

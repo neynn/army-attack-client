@@ -90,7 +90,7 @@ MapParser.parseMap2D = function(mapID, layers, meta) {
 
     map2D.width = width;
     map2D.height = height;
-    map2D.setGraphicsLayers(parsedLayers);
+    map2D.setLayers(parsedLayers);
     map2D.meta = JSON.parse(JSON.stringify(meta));
     
     return map2D;
@@ -116,7 +116,7 @@ MapParser.parseMap2DEmpty = function(mapID, layers, meta) {
 
     map2D.width = width;
     map2D.height = height;
-    map2D.setGraphicsLayers(parsedLayers);
+    map2D.setLayers(parsedLayers);
     map2D.meta = JSON.parse(JSON.stringify(meta));
 
     return map2D;

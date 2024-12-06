@@ -30,9 +30,9 @@ MainMenuState.prototype.enter = function(stateMachine) {
     uiManager.addClick("MAIN_MENU", "BUTTON_EDIT", () => gameContext.switchState(CONTEXT_STATES.EDIT_MODE));
     uiManager.addClick("MAIN_MENU", "BUTTON_VERSUS", () => gameContext.switchState(CONTEXT_STATES.VERSUS_MODE));
 
-    const buttonPlay = uiManager.getButton("MAIN_MENU", "BUTTON_PLAY");
-    const buttonVersus = uiManager.getButton("MAIN_MENU", "BUTTON_VERSUS");
-    const buttonEdit = uiManager.getButton("MAIN_MENU", "BUTTON_EDIT");
+    const buttonPlay = uiManager.getElement("MAIN_MENU", "BUTTON_PLAY");
+    const buttonVersus = uiManager.getElement("MAIN_MENU", "BUTTON_VERSUS");
+    const buttonEdit = uiManager.getElement("MAIN_MENU", "BUTTON_EDIT");
 
     const spritePlay = spriteManager.createSprite("blue_battletank_idle");
     const spriteVersus = spriteManager.createSprite("red_battletank_idle");

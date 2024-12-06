@@ -1,10 +1,10 @@
 import { MoveComponent } from "../components/move.js";
 import { PositionComponent } from "../components/position.js";
-import { CAMERAS, ENTITY_EVENTS, SYSTEM_TYPES } from "../enums.js";
+import { CAMERA_TYPES, ENTITY_EVENTS, SYSTEM_TYPES } from "../enums.js";
 
 export const MoveSystem = function(gameContext, entity) {
     const { timer, renderer } = gameContext;
-    const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
+    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
     const { width } = camera.getTileDimensions();
     const deltaTime = timer.getFixedDeltaTime();
 
@@ -58,7 +58,7 @@ MoveSystem.beginMove = function(gameContext, entity, path) {
 MoveSystem.endMove = function(gameContext, entity, targetX, targetY) {
     const { world, renderer } = gameContext;
     const { systemManager } = world;
-    const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
+    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
     const positionComponent = entity.getComponent(PositionComponent);
     const moveComponent = entity.getComponent(MoveComponent);
     const { x, y } = camera.transformTileToPositionCenter(targetX, targetY);

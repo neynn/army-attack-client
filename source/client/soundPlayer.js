@@ -27,8 +27,7 @@ SoundPlayer.prototype.isPlaying = function(audioID) {
 SoundPlayer.prototype.playRandom = function(soundList, volume) {
     if(!soundList || soundList.length === 0) {
         Logger.log(false, "List is undefined or empty!", "SoundPlayer.prototype.playRandom", null);
-
-        return false;
+        return;
     }
 
     const index = Math.floor(Math.random() * soundList.length);
@@ -37,8 +36,7 @@ SoundPlayer.prototype.playRandom = function(soundList, volume) {
 
     if(!soundType) {
         Logger.log(false, "Sound does not exist!", "SoundPlayer.prototype.playRandom", {soundID});
-
-        return false;
+        return;
     }
 
     if(this.isPlaying(soundID) && !soundType.allowStacking) {
@@ -48,8 +46,6 @@ SoundPlayer.prototype.playRandom = function(soundList, volume) {
     }
 
     this.playSound(soundID, volume);
-
-    return true;
 }
 
 SoundPlayer.prototype.playSound = function(audioID, volume = this.defaultVolume) {
@@ -57,14 +53,12 @@ SoundPlayer.prototype.playSound = function(audioID, volume = this.defaultVolume)
 
     if(!soundType) {
         Logger.log(false, "SoundType does not exist!", "SoundPlayer.prototype.playSound", {audioID});
-
-        return false;
+        return;
     }
 
     if(this.isPlaying(audioID) && !soundType.allowStacking) {
         Logger.log(false, "Sound is already playing!", "SoundPlayer.prototype.playSound", {audioID});
-
-        return false;
+        return;
     }
 
     this.activeSounds.set(audioID, null);
@@ -74,15 +68,12 @@ SoundPlayer.prototype.playSound = function(audioID, volume = this.defaultVolume)
         source.onended = () => this.activeSounds.delete(audioID);
         source.start(0);
     });
-
-    return true;
 }
 
 SoundPlayer.prototype.stopSound = function(audioID) {
     if(!this.activeSounds.has(audioID)) {
         Logger.log(false, "Sound is not active!", "SoundPlayer.prototype.stopSound", {audioID});
-
-        return false;
+        return;
     }
 
     const sound = this.activeSounds.get(audioID);
@@ -92,8 +83,6 @@ SoundPlayer.prototype.stopSound = function(audioID) {
     }
 
     this.activeSounds.delete(audioID);
-
-    return true;
 }
 
 SoundPlayer.prototype.loadSound = async function(audioID) {

@@ -6,7 +6,7 @@ import { Archetype } from "../../../source/entity/archetype.js";
 import { AttackComponent } from "../../components/attack.js";
 import { HealthComponent } from "../../components/health.js";
 import { TeamComponent } from "../../components/team.js";
-import { CAMERAS, ENTITY_EVENTS } from "../../enums.js";
+import { CAMERA_TYPES, ENTITY_EVENTS } from "../../enums.js";
 import { componentSetup } from "../componentSetup.js";
 import { SpriteComponent } from "../../components/sprite.js";
 
@@ -55,7 +55,7 @@ DefaultArchetype.prototype.addDamageText = function(entity, statCard) {
 
 DefaultArchetype.prototype.createStatCard = function(gameContext, entity, sprite) {
     const { spriteManager, renderer, world } = gameContext;
-    const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
+    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
     const teamTypes = world.getConfig("teamTypes");
     const teamComponent = entity.getComponent(TeamComponent);
     const { x, y } = camera.transformSizeToPositionOffset(entity.config.dimX, entity.config.dimY);
@@ -82,7 +82,7 @@ DefaultArchetype.prototype.createStatCard = function(gameContext, entity, sprite
 
 DefaultArchetype.prototype.initializeEntity = function(gameContext, entity, sprite, type, setup) {
     const { spriteManager, renderer } = gameContext;
-    const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
+    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
     const { stats } = type;
     const { mode } = setup;
 

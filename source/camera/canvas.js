@@ -14,7 +14,7 @@ Canvas.prototype.clear = function() {
 
 Canvas.prototype.resize = function(width, height) {
     this.clear();
-
+    
     this.canvas.width = width;
     this.canvas.height = height;
     this.width = width;

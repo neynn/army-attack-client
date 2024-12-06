@@ -7,7 +7,7 @@ import { Renderer } from "../../../source/renderer.js";
 import { UIElement } from "../../../source/ui/uiElement.js";
 import { MapParser } from "../../../source/map/mapParser.js";
 
-import { CAMERAS } from "../../enums.js";
+import { CAMERA_TYPES } from "../../enums.js";
 import { World } from "../../../source/world.js";
 
 export const EditorController = function(id) {
@@ -115,7 +115,7 @@ EditorController.prototype.scrollLayerButton = function(gameContext, buttonID) {
     if(nextState === EditorController.BUTTON_STATE_EDIT) {
         if(this.currentLayerButtonID !== null) {
             const currentButton = layerButtons[this.currentLayerButtonID];
-            const currentButtonText = uiManager.getText(id, currentButton.text);
+            const currentButtonText = uiManager.getElement(id, currentButton.text);
             const currentButtonColor = layerButtonStates[EditorController.BUTTON_STATE_VISIBLE].textColor;
         
             currentButton.state = EditorController.BUTTON_STATE_VISIBLE;
@@ -129,7 +129,7 @@ EditorController.prototype.scrollLayerButton = function(gameContext, buttonID) {
         this.currentLayerButtonID = button.id;
     }
 
-    const buttonText = uiManager.getText(id, button.text);
+    const buttonText = uiManager.getElement(id, button.text);
     const buttonColor = layerButtonStates[nextState].textColor;
 
     buttonText.style.setColorArray(buttonColor);
@@ -143,10 +143,10 @@ EditorController.prototype.loadButtonEvents = function(gameContext) {
     const { slots, id } = this.mapEditor.config.interface;
     const pageElements = this.mapEditor.getPage();
     const contextID = gameContext.getID();
-    const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
+    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
 
     for(const buttonID of slots) {
-        const button = uiManager.getButton(id, buttonID);
+        const button = uiManager.getElement(id, buttonID);
 
         button.events.unsubscribe(UIElement.EVENT_CLICKED, contextID);
         button.events.unsubscribe(UIElement.EVENT_DRAW, contextID);
@@ -155,7 +155,7 @@ EditorController.prototype.loadButtonEvents = function(gameContext) {
     for(let i = 0; i < slots.length; i++) {
         const buttonID = slots[i];
         const brushData = pageElements[i];
-        const button = uiManager.getButton(id, buttonID);
+        const button = uiManager.getElement(id, buttonID);
         const { tileName, tileID } = brushData;
 
         button.events.subscribe(UIElement.EVENT_CLICKED, contextID, () => this.mapEditor.setBrush(brushData));
@@ -313,7 +313,7 @@ EditorController.prototype.initializeUIEvents = function(gameContext) {
     const { uiManager, world, renderer } = gameContext;
     const { mapManager } = world;
     const { id, layerButtons, layerButtonStates } = this.mapEditor.config.interface;
-    const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
+    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
 
     uiManager.addClick(id, "BUTTON_TILESET_MODE", () => {
         this.mapEditor.scrollBrushMode(1);
@@ -432,7 +432,7 @@ EditorController.prototype.initializeUIEvents = function(gameContext) {
     uiManager.addClick(id, "BUTTON_VIEW_ALL", () => {
         for(const buttonID in layerButtons) {
             const button = layerButtons[buttonID];
-            const buttonText = uiManager.getText(id, button.text);
+            const buttonText = uiManager.getElement(id, button.text);
             const buttonColor = layerButtonStates[EditorController.BUTTON_STATE_VISIBLE].textColor;
 
             button.state = EditorController.BUTTON_STATE_VISIBLE;

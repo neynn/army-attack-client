@@ -6,23 +6,19 @@ export const WorldMap = function(id) {
     this.height = 0;
     this.meta = {};
     this.layers = {};
-    this.usedTiles = new Map();
+    this.occupiedTiles = new Map();
 }
 
-WorldMap.prototype.setGraphicsLayers = function(graphics) {
+WorldMap.prototype.setLayers = function(graphics) {
     this.layers = graphics;
 }
 
-WorldMap.prototype.getGraphicsLayer = function(layerID) {
+WorldMap.prototype.getLayer = function(layerID) {
     return this.layers[layerID];
 }
 
-WorldMap.prototype.getGraphicsLayers = function() {
+WorldMap.prototype.getLayers = function() {
     return this.layers;
-}
-
-WorldMap.prototype.getID = function() {
-    return this.id;
 }
 
 WorldMap.prototype.setPointer = function(entityID, tileX, tileY) {
@@ -31,10 +27,10 @@ WorldMap.prototype.setPointer = function(entityID, tileX, tileY) {
     }
 
     const index = tileY * this.width + tileX;
-    const entityList = this.usedTiles.get(index);
+    const entityList = this.occupiedTiles.get(index);
     
     if(!entityList) {
-        this.usedTiles.set(index, new Set([entityID]));
+        this.occupiedTiles.set(index, new Set([entityID]));
     } else {
         entityList.add(entityID);
     }
@@ -46,7 +42,7 @@ WorldMap.prototype.removePointer = function(entityID, tileX, tileY) {
     }
 
     const index = tileY * this.width + tileX;
-    const entityList = this.usedTiles.get(index);
+    const entityList = this.occupiedTiles.get(index);
 
     if(!entityList) {
         return;
@@ -55,7 +51,7 @@ WorldMap.prototype.removePointer = function(entityID, tileX, tileY) {
     entityList.delete(entityID);
 
     if(entityList.size === 0) {
-        this.usedTiles.delete(index);
+        this.occupiedTiles.delete(index);
     }
 }
 
@@ -65,7 +61,7 @@ WorldMap.prototype.getEntityList = function(tileX, tileY) {
     }
 
     const index = tileY * this.width + tileX;
-    const entityList = this.usedTiles.get(index);
+    const entityList = this.occupiedTiles.get(index);
 
     if(!entityList) {
         return null;
@@ -80,7 +76,7 @@ WorldMap.prototype.getFirstEntity = function(tileX, tileY) {
     }
 
     const index = tileY * this.width + tileX;
-    const entityList = this.usedTiles.get(index);
+    const entityList = this.occupiedTiles.get(index);
 
     if(!entityList) {
         return null;
@@ -94,7 +90,7 @@ WorldMap.prototype.getFirstEntity = function(tileX, tileY) {
 
 WorldMap.prototype.isTileOccupied = function(tileX, tileY) {
     const index = tileY * this.width + tileX;
-    const isOccupied = this.usedTiles.has(index) && this.usedTiles.get(index).size > 0;
+    const isOccupied = this.occupiedTiles.has(index) && this.occupiedTiles.get(index).size > 0;
 
     return isOccupied;
 }
@@ -148,19 +144,11 @@ WorldMap.prototype.resizeLayer = function(layerID, width, height, fill = 0) {
         newLayer[i] = fill;
     }
 
-    for(let i = 0; i < this.height; i++) {
-        if(i >= height) {
-            break;
-        }
-
+    for(let i = 0; i < this.height && i < height; i++) {
         const newRow = i * width;
         const oldRow = i * this.width;
 
-        for(let j = 0; j < this.width; j++) {
-            if(j >= width) {
-                break;
-            }
-
+        for(let j = 0; j < this.width && j < width; j++) {
             const newIndex = newRow + j;
             const oldIndex = oldRow + j;
 
@@ -218,14 +206,10 @@ WorldMap.prototype.isTileOutOfBounds = function(tileX, tileY) {
 
 WorldMap.prototype.getTile = function(layerID, tileX, tileY) {
     const layer = this.layers[layerID];
+    const isOutOfBounds = this.isTileOutOfBounds(tileX, tileY);
 
-    if(!layer) {
-        console.warn(`Layer ${layerID} does not exist! Returning null...`);
-        return null;
-    }
-
-    if(this.isTileOutOfBounds(tileX, tileY)) {
-        console.warn(`Tile ${tileY},${tileX} of layer ${layerID} does not exist! Returning null...`);
+    if(!layer || isOutOfBounds) {
+        console.warn(`Layer ${layerID} does not exist or tile ${tileX} ${tileY} is out of bounds! Returning null...`);
         return null;
     }
 

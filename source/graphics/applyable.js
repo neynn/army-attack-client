@@ -26,19 +26,18 @@ Applyable.prototype.setColor = function(r = 0, g = 0, b = 0, a = 0) {
 Applyable.prototype.setColorArray = function(color) {
     if(!Array.isArray(color) || color.length < 3) {
         this.setColor(0, 0, 0, 0);
-
-        return false;
+        return;
     }
 
     if(color.length === 3) {
         const [r, g, b] = color;
+
         this.setColor(r, g, b, 1);
     } else {
         const [r, g, b, a] = color;
+        
         this.setColor(r, g, b, a);
     }
-
-    return true;
 }
 
 Applyable.prototype.getRGBAString = function() {

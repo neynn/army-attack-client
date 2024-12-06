@@ -1,8 +1,8 @@
 import { clampValue } from "../../math/math.js";
 import { MoveableCamera } from "./moveableCamera.js";
 
-export const OrthogonalCamera = function(positionX, positionY, viewportWidth, viewportHeight) {
-    MoveableCamera.call(this, positionX, positionY, viewportWidth, viewportHeight);
+export const OrthogonalCamera = function() {
+    MoveableCamera.call(this);
 
     this.tileWidth = 0;
     this.tileHeight = 0;

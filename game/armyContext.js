@@ -1,8 +1,10 @@
 import { ActionQueue } from "../source/action/actionQueue.js";
 import { GameContext } from "../source/gameContext.js";
 import { Socket } from "../source/network/socket.js";
+import { World } from "../source/world.js";
+import { EventEmitter } from "../source/events/eventEmitter.js";
 
-import { ACTION_TYPES, CAMERA_TYPES, CAMERAS, CONTEXT_STATES, CONTROLLER_TYPES, SYSTEM_TYPES } from "./enums.js";
+import { ACTION_TYPES, CAMERA_TYPES, CONTEXT_STATES, CONTROLLER_TYPES, SYSTEM_TYPES } from "./enums.js";
 import { AttackAction } from "./actions/attackAction.js";
 import { MoveAction } from "./actions/moveAction.js";
 import { ArmorComponent } from "./components/armor.js";
@@ -39,10 +41,7 @@ import { AvianComponent } from "./components/avian.js";
 import { BulldozeComponent } from "./components/bulldoze.js";
 import { UnitBusterComponent } from "./components/unitBuster.js";
 import { ConstructionAction } from "./actions/constructionAction.js";
-import { ArmyCamera } from "./armyCamera.js";
 import { DecayComponent } from "./components/decay.js";
-import { World } from "../source/world.js";
-import { EventEmitter } from "../source/events/eventEmitter.js";
 
 export const ArmyContext = function() {
     GameContext.call(this, 60);
@@ -77,18 +76,16 @@ ArmyContext.prototype.initialize = function() {
     this.world.systemManager.registerSystem(SYSTEM_TYPES.DOWN, DownSystem);
     this.world.systemManager.registerSystem(SYSTEM_TYPES.MOVE, MoveSystem);
 
-    this.world.entityManager.registerComponentReference("Health", HealthComponent);
-    this.world.entityManager.registerComponentReference("Construction", ConstructionComponent);
-    this.world.entityManager.registerComponentReference("Decay", DecayComponent);
-    this.world.entityManager.registerComponentReference("Attack", AttackComponent);
-    this.world.entityManager.registerComponentReference("Move", MoveComponent);
-    this.world.entityManager.registerComponentReference("UnitSize", UnitSizeComponent);
-    this.world.entityManager.registerComponentReference("Armor", ArmorComponent);
-    this.world.entityManager.registerComponentReference("Avian", AvianComponent);
-    this.world.entityManager.registerComponentReference("Bulldoze", BulldozeComponent);
-    this.world.entityManager.registerComponentReference("UnitBuster", UnitBusterComponent);
-
-    this.renderer.registerCamera(CAMERA_TYPES.ARMY_ATTACK, ArmyCamera);
+    this.world.entityManager.registerComponent("Health", HealthComponent);
+    this.world.entityManager.registerComponent("Construction", ConstructionComponent);
+    this.world.entityManager.registerComponent("Decay", DecayComponent);
+    this.world.entityManager.registerComponent("Attack", AttackComponent);
+    this.world.entityManager.registerComponent("Move", MoveComponent);
+    this.world.entityManager.registerComponent("UnitSize", UnitSizeComponent);
+    this.world.entityManager.registerComponent("Armor", ArmorComponent);
+    this.world.entityManager.registerComponent("Avian", AvianComponent);
+    this.world.entityManager.registerComponent("Bulldoze", BulldozeComponent);
+    this.world.entityManager.registerComponent("UnitBuster", UnitBusterComponent);
 
     this.states.addState(CONTEXT_STATES.MAIN_MENU, new MainMenuState());
     this.states.addState(CONTEXT_STATES.STORY_MODE, new StoryModeState());
@@ -141,9 +138,11 @@ ArmyContext.prototype.initialize = function() {
     this.world.events.subscribe(World.EVENT_MAP_LOAD, EventEmitter.SUPER_SUBSCRIBER_ID, (worldMap) => {
         const { width, height, meta } = worldMap;
         const { music } = meta;
-        const camera = this.renderer.getCamera(CAMERAS.ARMY_CAMERA);
+        const camera = this.renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
 
-        camera.loadWorld(width, height);
+        if(camera) {
+            camera.loadWorld(width, height);
+        }
     
         if(music) {
             this.client.musicPlayer.loadTrack(music);
@@ -151,12 +150,6 @@ ArmyContext.prototype.initialize = function() {
         }
     });
 
-    const camera = this.renderer.createCamera(CAMERAS.ARMY_CAMERA, CAMERA_TYPES.ARMY_ATTACK, 0, 0, 500, 500);
-    const settings = this.world.getConfig("settings");
-
-    camera.loadTileDimensions(settings.tileWidth, settings.tileHeight); 
-
-    this.renderer.resizeDisplay(window.innerWidth, window.innerHeight);
     this.switchState(CONTEXT_STATES.MAIN_MENU);
 }
 

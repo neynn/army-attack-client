@@ -2,7 +2,7 @@ import { MapParser } from "../../../../source/map/mapParser.js";
 import { State } from "../../../../source/state/state.js";
 import { World } from "../../../../source/world.js";
 
-import { ACTION_TYPES, CAMERAS, CONTROLLER_TYPES } from "../../../enums.js";
+import { ACTION_TYPES, CAMERA_TYPES, CONTROLLER_TYPES } from "../../../enums.js";
 
 export const StoryModePlayState = function() {
     State.call(this);
@@ -15,7 +15,7 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
     const gameContext = stateMachine.getContext();
     const { uiManager, world, renderer } = gameContext;
     const { actionQueue } = world;
-    const camera = renderer.getCamera(CAMERAS.ARMY_CAMERA);
+    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
     const MAP = "pvp_valleys";
     const code = await world.parseMap(MAP, MapParser.parseMap2D);
 
