@@ -142,6 +142,7 @@ ArmyContext.prototype.initialize = function() {
 
         if(camera) {
             camera.loadWorld(width, height);
+            this.renderer.reloadCamera(CAMERA_TYPES.ARMY_CAMERA);
         }
     
         if(music) {

@@ -21,6 +21,16 @@ export const MoveableCamera = function() {
 MoveableCamera.prototype = Object.create(Camera.prototype);
 MoveableCamera.prototype.constructor = MoveableCamera;
 
+MoveableCamera.prototype.cutViewport = function(windowWidth, windowHeight) {
+    if(this.worldWidth < windowWidth) {
+        this.viewportWidth = this.worldWidth;
+    }
+
+    if(this.worldHeight < windowHeight) {
+        this.viewportHeight = this.worldHeight;
+    }
+}
+
 MoveableCamera.prototype.loadWorld = function(worldWidth, worldHeight) {
     this.worldWidth = worldWidth;
     this.worldHeight = worldHeight;

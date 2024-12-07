@@ -113,3 +113,10 @@ VersusModeState.prototype.enter = function(stateMachine) {
 
     this.states.setNextState(CONTEXT_STATES.VERSUS_MODE_LOBBY);
 }
+
+VersusModeState.prototype.exit = function(stateMachine) {
+    const gameContext = stateMachine.getContext();
+    const { renderer } = gameContext;
+
+    renderer.removeCamera(CAMERA_TYPES.ARMY_CAMERA);
+}

@@ -12,15 +12,19 @@ Camera.VIEWPORT_MODE_AUTO = 0;
 Camera.VIEWPORT_MODE_FIXED = 1;
 Camera.VIEWPORT_MODE_FORCED = 2;
 
+Camera.prototype.cutViewport = function(windowWidth, windowHeight) {}
+
 Camera.prototype.update = function(gameContext) {}
+
+Camera.prototype.setMode = function(modeID = Camera.VIEWPORT_MODE_AUTO) {
+    this.viewportMode = modeID;
+}
 
 Camera.prototype.getMode = function() {
     return this.viewportMode;
 }
 
-Camera.prototype.loadViewport = function(positionX = 0, positionY = 0, viewportWidth = 0, viewportHeight = 0) {
-    this.position.x = positionX;
-    this.position.y = positionY;
+Camera.prototype.setViewport = function(viewportWidth = 0, viewportHeight = 0) {
     this.viewportWidth = viewportWidth;
     this.viewportHeight = viewportHeight;
 }
@@ -34,8 +38,15 @@ Camera.prototype.getBounds = function() {
     }
 }
 
+Camera.prototype.centerPosition = function(windowWidth, windowHeight) {
+    const offsetX = (windowWidth - this.viewportWidth) / 2;
+    const offsetY = (windowHeight - this.viewportHeight) / 2;
+
+    this.setPosition(offsetX, offsetY);
+}
+
 Camera.prototype.setPosition = function(x = 0, y = 0) {
-    if(this.viewportMode === Camera.VIEWPORT_MODE_AUTO) {
+    if(this.viewportMode === Camera.VIEWPORT_MODE_FORCED) {
         this.position.x = 0;
         this.position.y = 0;
     } else {
@@ -60,10 +71,13 @@ Camera.prototype.onViewportResize = function() {}
 
 Camera.prototype.onWindowResize = function(width, height) {
     if(this.viewportMode === Camera.VIEWPORT_MODE_AUTO) {
-        this.viewportWidth = width;
-        this.viewportHeight = height;
+        this.setViewport(width, height);
+        this.cutViewport(width, height);
+        this.centerPosition(width, height);
     } else if(this.viewportMode === Camera.VIEWPORT_MODE_FIXED) {
         //TODO
+    } else if(this.viewportMode === Camera.VIEWPORT_MODE_FORCED) {
+        this.setViewport(width, height);
     }
 
     this.onViewportResize();

@@ -1,4 +1,5 @@
 import { State } from "../../../source/state/state.js";
+import { Camera } from "../../../source/camera/camera.js";
 
 import { CAMERA_TYPES, CONTROLLER_TYPES } from "../../enums.js";
 import { ArmyCamera } from "../../armyCamera.js";
@@ -16,6 +17,7 @@ MapEditorState.prototype.enter = function(stateMachine) {
     const camera = new ArmyCamera();
     const settings = world.getConfig("settings");
 
+    camera.setMode(Camera.VIEWPORT_MODE_FORCED);
     camera.loadTileDimensions(settings.tileWidth, settings.tileHeight);
     camera.unbindViewport();
     renderer.addCamera(CAMERA_TYPES.ARMY_CAMERA, camera);

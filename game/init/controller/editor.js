@@ -427,6 +427,7 @@ EditorController.prototype.initializeUIEvents = function(gameContext) {
         this.mapEditor.resizeMap(gameMap, newWidth, newHeight);
 
         camera.loadWorld(newWidth, newHeight);
+        renderer.reloadCamera(CAMERA_TYPES.ARMY_CAMERA);
     }); 
 
     uiManager.addClick(id, "BUTTON_VIEW_ALL", () => {

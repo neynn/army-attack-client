@@ -64,6 +64,16 @@ Renderer.prototype.getCamera = function(cameraID) {
     return camera;
 }
 
+Renderer.prototype.reloadCamera = function(cameraID) {
+    const camera = this.cameras.get(cameraID);
+
+    if(!camera) {
+        return;
+    }
+
+    camera.onWindowResize(this.windowWidth, this.windowHeight);
+}
+
 Renderer.prototype.addCamera = function(cameraID, camera) {
     if(!(camera instanceof Camera) || this.cameras.has(cameraID)) {
         return;
@@ -71,12 +81,6 @@ Renderer.prototype.addCamera = function(cameraID, camera) {
 
     this.cameras.set(cameraID, camera);
     this.cameraStack.push(cameraID);
-
-    const viewportMode = camera.getMode();
-
-    if(viewportMode === Camera.VIEWPORT_MODE_AUTO) {
-        camera.loadViewport(0, 0, this.windowWidth, this.windowHeight);
-    }
 }
 
 Renderer.prototype.removeCamera = function(cameraID) {
@@ -231,10 +235,4 @@ Renderer.prototype.getCollidedCamera = function(mouseX, mouseY, mouseRange) {
     }
 
     return null;
-}
-
-Renderer.prototype.centerCamera = function(cameraID) {
-    //(viewportWidth - width) / 2 <- offset!
-    //width refers to mapWidth * Camera.TILE_WIDTH
-    //The camera is centered on the screen!
 }
