@@ -15,6 +15,37 @@ export const OrthogonalCamera = function() {
 OrthogonalCamera.prototype = Object.create(MoveableCamera.prototype);
 OrthogonalCamera.prototype.constructor = OrthogonalCamera;
 
+OrthogonalCamera.prototype.drawTileGraphics = function(gameContext, tileID, renderX, renderY, scaleX = 1, scaleY = 1) {
+    const { tileManager, renderer } = gameContext;
+    const { resources } = tileManager;
+    const { set, animation } = tileManager.getTileMeta(tileID);
+    const tileBuffer = resources.getImage(set);
+
+    if(!tileBuffer) {
+        return;
+    }
+
+    const tileType = tileManager.tileTypes[set];
+    const tileAnimation = tileType.getAnimation(animation);
+    const currentFrame = tileAnimation.getCurrentFrame();
+    const context = renderer.getContext();
+
+    for(const component of currentFrame) {
+        const { id, shiftX, shiftY } = component;
+        const { x, y, w, h } = tileType.getFrameByID(id);
+        const drawX = renderX + shiftX * scaleX;
+        const drawY = renderY + shiftY * scaleY;
+        const drawWidth = w * scaleX;
+        const drawHeight = h * scaleY;
+
+        context.drawImage(
+            tileBuffer,
+            x, y, w, h,
+            drawX, drawY, drawWidth, drawHeight
+        );
+    }
+}
+
 OrthogonalCamera.prototype.loadTileDimensions = function(tileWidth, tileHeight) {
     this.tileWidth = tileWidth;
     this.tileHeight = tileHeight;

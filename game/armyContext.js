@@ -1,4 +1,4 @@
-import { ActionQueue } from "../source/action/actionQueue.js";
+import { RequestQueue } from "../source/action/requestQueue.js";
 import { GameContext } from "../source/gameContext.js";
 import { Socket } from "../source/network/socket.js";
 import { World } from "../source/world.js";
@@ -58,9 +58,9 @@ ArmyContext.prototype.initialize = function() {
     this.world.actionQueue.setMaxSize(20);
     this.world.actionQueue.setMaxRequests(20);
     
-    this.world.actionQueue.registerAction(ACTION_TYPES.MOVE, new MoveAction());
-    this.world.actionQueue.registerAction(ACTION_TYPES.ATTACK, new AttackAction());
-    this.world.actionQueue.registerAction(ACTION_TYPES.CONSTRUCTION, new ConstructionAction());
+    this.world.actionQueue.registerHandler(ACTION_TYPES.MOVE, new MoveAction());
+    this.world.actionQueue.registerHandler(ACTION_TYPES.ATTACK, new AttackAction());
+    this.world.actionQueue.registerHandler(ACTION_TYPES.CONSTRUCTION, new ConstructionAction());
     
     this.world.entityManager.registerArchetype("Unit", new UnitArchetype());
     this.world.entityManager.registerArchetype("Defense", new DefenseArchetype());
@@ -102,13 +102,13 @@ ArmyContext.prototype.initialize = function() {
 
     this.client.soundPlayer.loadAllSounds();
     
-    this.world.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_RUN, "DEBUG", (request, priority) => {
-        console.log(request, "IS PROCESSING", priority);
+    this.world.actionQueue.events.subscribe(RequestQueue.EVENT_REQUEST_RUN, "DEBUG", (item, priority) => {
+        console.log(item, "IS PROCESSING", priority);
     });
 
-    this.world.actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_INVALID, "DEBUG", (request, messengerID, priority) => {
+    this.world.actionQueue.events.subscribe(RequestQueue.EVENT_REQUEST_INVALID, "DEBUG", (item, messengerID, priority) => {
         this.client.soundPlayer.playSound("sound_error", 0.5);
-        console.log(request, "IS INVALID", messengerID, priority);
+        console.log(item, "IS INVALID", messengerID, priority);
     });
 
     this.client.socket.events.subscribe(Socket.EVENT_CONNECTED_TO_SERVER, "DEBUG", (socketID) => {

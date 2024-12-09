@@ -1,4 +1,4 @@
-import { ActionQueue } from "../../../source/action/actionQueue.js";
+import { RequestQueue } from "../../../source/action/requestQueue.js";
 import { ROOM_EVENTS } from "../../../source/network/events.js";
 import { Socket } from "../../../source/network/socket.js";
 import { MapParser } from "../../../source/map/mapParser.js";
@@ -68,7 +68,7 @@ VersusModeState.prototype.onEntityAction = function(gameContext, payload) {
     const { world } = gameContext;
     const { actionQueue } = world;
 
-    actionQueue.queueAction(payload);
+    actionQueue.enqueue(payload);
 }
 
 VersusModeState.prototype.onEntityEvent = function(gameContext, payload) {}
@@ -102,8 +102,8 @@ VersusModeState.prototype.enter = function(stateMachine) {
     camera.loadTileDimensions(settings.tileWidth, settings.tileHeight);
     renderer.addCamera(CAMERA_TYPES.ARMY_CAMERA, camera);
 
-    actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_VALID, contextID, (request, messengerID, priority) => {
-        if(priority === ActionQueue.PRIORITY_NORMAL) {
+    actionQueue.events.subscribe(RequestQueue.EVENT_REQUEST_VALID, contextID, (request, messengerID, priority) => {
+        if(priority === RequestQueue.PRIORITY_NORMAL) {
             socket.messageRoom(GAME_EVENTS.ENTITY_ACTION, request);
         }
     });

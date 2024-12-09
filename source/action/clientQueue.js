@@ -1,17 +1,18 @@
-import { ActionQueue } from "./actionQueue.js";
+import { Queue } from "../queue.js";
+import { RequestQueue } from "./requestQueue.js";
 
 /**
  * The ClientQueue updates every frame.
  * This is to ensure a smooth gameplay experience.
  */
 export const ClientQueue = function() {
-    ActionQueue.call(this);
+    RequestQueue.call(this);
 }
 
-ClientQueue.prototype = Object.create(ActionQueue.prototype);
+ClientQueue.prototype = Object.create(RequestQueue.prototype);
 ClientQueue.prototype.constructor = ClientQueue;
 
-ClientQueue.prototype.updateRequests = function(gameContext, priority) {
+ClientQueue.prototype.filterRequests = function(gameContext, priority) {
     const requests = this.requests[priority];
     const processedRequests = [];
 
@@ -28,56 +29,57 @@ ClientQueue.prototype.updateRequests = function(gameContext, priority) {
 
     for(let i = processedRequests.length - 1; i >= 0; i--) {
         const requestIndex = processedRequests[i];
+        
         requests.splice(requestIndex, 1);
     }
 }
 
 ClientQueue.prototype.processRequests = function(gameContext) {
-    const current = this.getCurrentAction();
+    const current = this.getCurrent();
 
-    if(!current || current.priority !== ActionQueue.PRIORITY_SUPER) {
-        this.updateRequests(gameContext, ActionQueue.PRIORITY_SUPER);
+    if(!current || current.priority !== RequestQueue.PRIORITY_SUPER) {
+        this.filterRequests(gameContext, RequestQueue.PRIORITY_SUPER);
     }
 
     if(!current && this.isEmpty()) {
-        this.updateRequests(gameContext, ActionQueue.PRIORITY_NORMAL);
+        this.filterRequests(gameContext, RequestQueue.PRIORITY_NORMAL);
     }
 }
 
 ClientQueue.prototype.update = function(gameContext) {
-    if(this.state === ActionQueue.IDLE) {
+    if(this.state === Queue.STATE_ACTIVE) {
         const next = this.next();
 
         if(next) {
-            const { request, priority } = next;
-            const { type } = request;
-            const actionType = this.actionTypes[type];
+            const { item, priority } = next;
+            const { type } = item;
+            const actionType = this.requestHandlers[type];
 
-            this.state = ActionQueue.PROCESSING;
-            this.events.emit(ActionQueue.EVENT_ACTION_RUN, request, priority);
+            this.toProcessing();
+            this.events.emit(RequestQueue.EVENT_REQUEST_RUN, item, priority);
             
-            actionType.onStart(gameContext, request);
+            actionType.onStart(gameContext, item);
         }
-    } else if(this.state === ActionQueue.PROCESSING) {
-        const current = this.getCurrentAction();
-        const { request, priority } = current;
-        const { type } = request;
-        const actionType = this.actionTypes[type];
+    } else if(this.state === Queue.STATE_PROCESSING) {
+        const current = this.getCurrent();
+        const { item, priority } = current;
+        const { type } = item;
+        const actionType = this.requestHandlers[type];
 
-        actionType.onUpdate(gameContext, request);
+        actionType.onUpdate(gameContext, item);
 
-        const isFinished = actionType.isFinished(gameContext, request);
+        const isFinished = actionType.isFinished(gameContext, item);
 
         if(this.isSkipping) {
             actionType.onClear();
             this.isSkipping = false;
-            this.state = ActionQueue.IDLE;
-            this.currentAction = null;
+            this.toActive();
+            this.clearCurrent();
         } else if(isFinished) {
-            actionType.onEnd(gameContext, request);
+            actionType.onEnd(gameContext, item);
             actionType.onClear();
-            this.state = ActionQueue.IDLE;
-            this.currentAction = null;
+            this.toActive();
+            this.clearCurrent();
         }
     }
 

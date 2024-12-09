@@ -1,52 +1,51 @@
-import { ActionQueue } from "./actionQueue.js";
+import { Queue } from "../queue.js";
+import { RequestQueue } from "./requestQueue.js";
 
 /**
  * The ServerQueue updates when a valid request arrives.
  * This removes the need for constant updates.
  */
 export const ServerQueue = function() {
-    ActionQueue.call(this);
+    RequestQueue.call(this);
 }
 
-ServerQueue.prototype = Object.create(ActionQueue.prototype);
+ServerQueue.prototype = Object.create(RequestQueue.prototype);
 ServerQueue.prototype.constructor = ServerQueue;
 
 ServerQueue.prototype.processRequest = function(gameContext, request, messengerID) {
-    const isValid = this.validateRequest(gameContext, request, messengerID, ActionQueue.PRIORITY_NORMAL);
+    const isValid = this.validateRequest(gameContext, request, messengerID, RequestQueue.PRIORITY_NORMAL);
 
     if(isValid) {
-        this.queueAction(request);
+        this.enqueue(request);
         this.update(this);
     }
 }
 
 ServerQueue.prototype.update = function(gameContext) {
-    if(this.state !== ActionQueue.IDLE || this.isEmpty()) {
-        return false;
+    if(this.state !== Queue.STATE_ACTIVE || this.isEmpty()) {
+        return;
     }
 
-    this.state = ActionQueue.PROCESSING;
+    this.toProcessing();
 
     const next = this.next();
 
     if(next) {
-        const { request, priority } = next;
-        const { type } = request;
-        const actionType = this.actionTypes[type];
+        const { item, priority } = next;
+        const { type } = item;
+        const actionType = this.requestHandlers[type];
 
-        this.events.emit(ActionQueue.EVENT_ACTION_RUN, request, priority);
-        this.currentAction = null;
+        this.events.emit(RequestQueue.EVENT_REQUEST_RUN, item, priority);
+        this.clearCurrent();
         
-        actionType.onStart(gameContext, request);
-        actionType.onEnd(gameContext, request);
+        actionType.onStart(gameContext, item);
+        actionType.onEnd(gameContext, item);
         actionType.onClear();
     }
 
-    this.state = ActionQueue.IDLE;
+    this.toActive();
 
     if(!this.isEmpty()) {
         this.update(gameContext);
     }
-
-    return true;
 }

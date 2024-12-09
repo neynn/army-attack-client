@@ -19,11 +19,11 @@ Logger.log = function(isSuccess, reason, script, attachments) {
 
     if(!isSuccess) {
         logEntry.timestamp = new Date().toISOString();
-        Logger.failedLogs ++;
+        Logger.failedLogs++;
         Logger.logs.push(logEntry);
         console.error(logEntry);
     } else {
-        Logger.successfulLogs ++;
+        Logger.successfulLogs++;
     }
 
     return logEntry;
@@ -39,11 +39,11 @@ Logger.warn = function(isSuccess, reason, script, attachments) {
 
     if(!isSuccess) {
         logEntry.timestamp = new Date().toISOString();
-        Logger.failedLogs ++;
+        Logger.failedLogs++;
         Logger.logs.push(logEntry);
         console.warn(logEntry);
     } else {
-        Logger.successfulLogs ++;
+        Logger.successfulLogs++;
     }
 
     return logEntry;
@@ -59,11 +59,11 @@ Logger.error = function(isSuccess, reason, script, attachments) {
 
     if(!isSuccess) {
         logEntry.timestamp = new Date().toISOString();
-        Logger.failedLogs ++;
+        Logger.failedLogs++;
         Logger.logs.push(logEntry);
         console.error(logEntry);
     } else {
-        Logger.successfulLogs ++;
+        Logger.successfulLogs++;
     }
 
     return logEntry;

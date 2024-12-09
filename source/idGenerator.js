@@ -11,7 +11,7 @@ IDGenerator.prototype.generateID = function() {
 
 IDGenerator.prototype.getID = function() {
   const id = this.generateID();
-  this.currentID ++;
+  this.currentID++;
   return id;
 }
 

@@ -5,6 +5,6 @@ export const Archetype = function() {
 Archetype.prototype.onBuild = function(gameContext, entity, type, setup) {} 
 
 Archetype.prototype.build = function(gameContext, entity, type, setup) {
-    this.count ++;
+    this.count++;
     this.onBuild(gameContext, entity, type, setup);
 }

@@ -38,9 +38,9 @@ Renderer.ANCHOR_TYPE_TOP_RIGHT = "TOP_RIGHT";
 Renderer.ANCHOR_TYPE_BOTTOM_CENTER = "BOTTOM_CENTER";
 Renderer.ANCHOR_TYPE_BOTTOM_LEFT = "BOTTOM_LEFT";
 Renderer.ANCHOR_TYPE_BOTTOM_RIGHT = "BOTTOM_RIGHT";
-Renderer.ANCHOR_TYPE_RIGHT_CENTER = "RIGHT_CENTER";
-Renderer.ANCHOR_TYPE_LEFT_CENTER = "LEFT_CENTER";
 Renderer.ANCHOR_TYPE_CENTER = "CENTER";
+Renderer.ANCHOR_TYPE_LEFT = "LEFT";
+Renderer.ANCHOR_TYPE_RIGHT = "RIGHT";
 
 Renderer.prototype.getContext = function() {
     return this.display.context;
@@ -200,7 +200,7 @@ Renderer.prototype.getAnchor = function(type, originX, originY, width, height) {
             y = this.windowHeight - originY - height;
             break;
         }
-        case Renderer.ANCHOR_TYPE_LEFT_CENTER: {
+        case Renderer.ANCHOR_TYPE_LEFT: {
             x = originX;
             y = this.windowHeight / 2 - originY - height / 2;
             break;
@@ -210,7 +210,7 @@ Renderer.prototype.getAnchor = function(type, originX, originY, width, height) {
             y = this.windowHeight / 2 - originY - height / 2;
             break;
         }
-        case Renderer.ANCHOR_TYPE_RIGHT_CENTER: {
+        case Renderer.ANCHOR_TYPE_RIGHT: {
             x = this.windowWidth - originX - width;
             y = this.windowHeight / 2 - originY - height / 2;
             break;

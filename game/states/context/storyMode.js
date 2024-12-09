@@ -1,4 +1,4 @@
-import { ActionQueue } from "../../../source/action/actionQueue.js";
+import { RequestQueue } from "../../../source/action/requestQueue.js";
 import { State } from "../../../source/state/state.js";
 
 import { CAMERA_TYPES, CONTEXT_STATES } from "../../enums.js";
@@ -21,11 +21,11 @@ StoryModeState.prototype.enter = function(stateMachine) {
 
     camera.loadTileDimensions(settings.tileWidth, settings.tileHeight); 
     renderer.addCamera(CAMERA_TYPES.ARMY_CAMERA, camera);
-    actionQueue.events.subscribe(ActionQueue.EVENT_ACTION_VALID, contextID, (request, messengerID, priority) => {
-        if(priority === ActionQueue.PRIORITY_NORMAL) {
-            actionQueue.queueAction(request);
-        } else if(priority === ActionQueue.PRIORITY_SUPER) {
-            actionQueue.queuePriorityAction(request);
+    actionQueue.events.subscribe(RequestQueue.EVENT_REQUEST_VALID, contextID, (request, messengerID, priority) => {
+        if(priority === RequestQueue.PRIORITY_NORMAL) {
+            actionQueue.enqueue(request);
+        } else if(priority === RequestQueue.PRIORITY_SUPER) {
+            actionQueue.enqueuePriority(request);
         }
     });
 
