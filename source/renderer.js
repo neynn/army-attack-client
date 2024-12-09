@@ -104,9 +104,9 @@ Renderer.prototype.drawUI = function(gameContext) {
     const { uiManager, timer } = gameContext;
     const realTime = timer.getRealTime();
     const deltaTime = timer.getDeltaTime();
-    const parentElements = uiManager.getParentElements();
+    const originIDs = uiManager.getOriginIDs();
 
-    for(const elementID of parentElements) {    
+    for(const elementID of originIDs) {    
         const element = uiManager.getElementByID(elementID);
            
         element.update(realTime, deltaTime);

@@ -27,7 +27,7 @@ export const UIManager = function() {
     };
     this.interfaceStack = [];
     this.elements = new Map();
-    this.parentElements = new Set();
+    this.origins = new Set();
     this.previousCollisions = new Set();
 }
 
@@ -183,7 +183,7 @@ UIManager.prototype.update = function(gameContext) {
 
 UIManager.prototype.end = function() {
     this.elements.clear();
-    this.parentElements.clear();
+    this.origins.clear();
     this.interfaceStack = [];
 }
 
@@ -214,8 +214,8 @@ UIManager.prototype.updateElementCollisions = function(mouseX, mouseY, mouseRang
     this.previousCollisions = currentCollisions;
 }
 
-UIManager.prototype.getParentElements = function() {
-    return this.parentElements;
+UIManager.prototype.getOriginIDs = function() {
+    return this.origins;
 }
 
 UIManager.prototype.getCollidedElements = function(mouseX, mouseY, mouseRange) {
@@ -225,7 +225,7 @@ UIManager.prototype.getCollidedElements = function(mouseX, mouseY, mouseRange) {
         return [];
     }
 
-    for(const elementUID of this.parentElements) {
+    for(const elementUID of this.origins) {
         if(!currentInterface.elementUIDs.has(elementUID)) {
             continue;
         }
@@ -348,7 +348,7 @@ UIManager.prototype.parseUI = function(userInterfaceID, gameContext) {
     for(const [configID, element] of elements) {
         const { anchor, effects, position } = userInterface[configID];
         const { bounds } = element;
-        const elementID = element.getID();
+        const uniqueID = element.getID();
 
         this.effectManager.addEffect(element, effects);
 
@@ -361,14 +361,14 @@ UIManager.prototype.parseUI = function(userInterfaceID, gameContext) {
             
             element.setPosition(x, y);
 
-            renderer.events.subscribe(Renderer.EVENT_SCREEN_RESIZE, elementID, (width, height) => {
+            renderer.events.subscribe(Renderer.EVENT_SCREEN_RESIZE, uniqueID, (width, height) => {
                 const { x, y } = renderer.getAnchor(anchor, position.x, position.y, bounds.w, bounds.h);
                 
                 element.setPosition(x, y);
             });    
         }
 
-        this.parentElements.add(elementID);
+        this.origins.add(uniqueID);
     }
 
     this.pushInterface(userInterfaceID);
@@ -388,8 +388,8 @@ UIManager.prototype.unparseUI = function(userInterfaceID, gameContext) {
 
         this.destroyElement(uniqueID);
 
-        if(this.parentElements.has(uniqueID)) {
-            this.parentElements.delete(uniqueID);
+        if(this.origins.has(uniqueID)) {
+            this.origins.delete(uniqueID);
 
             renderer.events.unsubscribe(Renderer.EVENT_SCREEN_RESIZE, uniqueID);
         }

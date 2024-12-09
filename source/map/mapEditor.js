@@ -290,6 +290,33 @@ MapEditor.prototype.resizeMap = function(gameMap, width, height) {
     gameMap.setHeight(height);
 }
 
+MapEditor.prototype.incrementTypeIndex = function(gameContext, mapID, layerID, typeID) {
+    const { world } = gameContext;
+    const { mapManager } = world;
+    const worldMap = mapManager.getLoadedMap(mapID);
+
+    if(!worldMap) {
+        return;
+    }
+
+    const { x, y } = gameContext.getMouseTile();
+    const types = world.getConfig(typeID);
+    const tileTypeIDs = [];
+
+    for(const typeID of Object.keys(types)) {
+        const type = types[typeID];
+
+        tileTypeIDs.push(type.id);
+    }
+
+    const currentID = worldMap.getTile(layerID, x, y);
+    const currentIndex = tileTypeIDs.indexOf(currentID);
+    const nextIndex = loopValue(currentIndex + 1, tileTypeIDs.length - 1, 0);
+    const nextID = tileTypeIDs[nextIndex];
+
+    worldMap.placeTile(nextID, layerID, x, y);
+}
+
 MapEditor.prototype.getDefaultMapData = function() {
     return {
         "layers": this.config.defaultMapLayers,

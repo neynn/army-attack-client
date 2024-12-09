@@ -25,14 +25,16 @@ UIElement.prototype.isColliding = function(mouseX, mouseY, mouseRange) {}
 
 UIElement.prototype.getCollisions = function(mouseX, mouseY, mouseRange) {
     const collidedElements = [];
-    const collisionStack = [{
+    const uncheckedElements = [];
+
+    uncheckedElements.push({
         "element": this,
         "localX": mouseX,
         "localY": mouseY
-    }];
+    });
 
-    while(collisionStack.length > 0) {
-        const { element, localX, localY } = collisionStack.pop();
+    while(uncheckedElements.length > 0) {
+        const { element, localX, localY } = uncheckedElements.pop();
 
         if(!element.isColliding(localX, localY, mouseRange)) {
             continue;
@@ -48,7 +50,7 @@ UIElement.prototype.getCollisions = function(mouseX, mouseY, mouseRange) {
             const reference = child.getReference();
             
             if(reference instanceof UIElement) {
-                collisionStack.push({
+                uncheckedElements.push({
                     "element": reference,
                     "localX": nextLocalX,
                     "localY": nextLocalY

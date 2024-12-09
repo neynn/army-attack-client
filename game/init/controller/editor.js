@@ -45,33 +45,6 @@ EditorController.prototype.initialize = function(gameContext, data) {
     this.updateButtonText(gameContext);
 }
 
-EditorController.prototype.incrementTypeIndex = function(gameContext) {
-    const { world } = gameContext;
-    const { mapManager } = world;
-    const gameMap = mapManager.getLoadedMap(this.currentMapID);
-
-    if(!gameMap) {
-        return;
-    }
-
-    const { x, y } = gameContext.getMouseTile();
-    const tileTypes = world.getConfig("tileTypes");
-    const tileTypeIDs = [];
-
-    for(const typeID of Object.keys(tileTypes)) {
-        const type = tileTypes[typeID];
-
-        tileTypeIDs.push(type.id);
-    }
-
-    const currentID = gameMap.getTile("type", x, y);
-    const currentIndex = tileTypeIDs.indexOf(currentID);
-    const nextIndex = loopValue(currentIndex + 1, tileTypeIDs.length - 1, 0);
-    const nextID = tileTypeIDs[nextIndex];
-
-    gameMap.placeTile(nextID, "type", x, y);
-}
-
 EditorController.prototype.updateLayerOpacity = function(gameContext) {
     const { world } = gameContext;
     const { mapManager } = world;
@@ -162,7 +135,7 @@ EditorController.prototype.loadButtonEvents = function(gameContext) {
 
         button.events.subscribe(UIElement.EVENT_DRAW, contextID, (context, localX, localY) => {
             if(tileID === 0) {
-                camera.drawEmptyTile(context, localX, localY, 25, 25);
+                camera.drawEmptyTile(context, localX, localY, EditorController.GRAPHICS_BUTTON_SCALE, EditorController.GRAPHICS_BUTTON_SCALE);
             } else {
                 camera.drawTileGraphics(gameContext, tileID, localX, localY, EditorController.GRAPHICS_BUTTON_SCALE, EditorController.GRAPHICS_BUTTON_SCALE);
                 context.fillStyle = "#eeeeee";
@@ -225,7 +198,7 @@ EditorController.prototype.initializeRenderEvents = function(gameContext) {
     
         const { tileName, tileID } = brush;
         const { x, y } = camera.getViewportPosition();
-        const { width, height, halfWidth, halfHeight } = camera.getTileDimensions();
+        const { width, height, halfWidth } = camera.getTileDimensions();
         const context = renderer.getContext();
         const startX = cursorTile.x - brushSize;
         const startY = cursorTile.y - brushSize;
@@ -241,7 +214,7 @@ EditorController.prototype.initializeRenderEvents = function(gameContext) {
                 const renderX = j * width - x;
 
                 if(tileID === 0) {
-                    camera.drawEmptyTile(context, renderX, renderY, halfWidth, halfHeight);
+                    camera.drawEmptyTile(context, renderX, renderY);
                 } else {
                     camera.drawTileGraphics(gameContext, tileID, renderX, renderY);
                     context.fillStyle = "#eeeeee";
@@ -294,7 +267,7 @@ EditorController.prototype.initializeCursorEvents = function(gameContext) {
         if(type === EditorController.BUTTON_TYPE_GRAPHICS) {
             this.mapEditor.paint(gameContext, this.currentMapID, this.currentLayer);
         } else if(type === EditorController.BUTTON_TYPE_TYPE) {
-            this.incrementTypeIndex(gameContext);
+            this.mapEditor.incrementTypeIndex(gameContext, this.currentMapID, "type", "tileTypes");
         } else if(type === EditorController.BUTTON_TYPE_BOOLEAN) {
             this.mapEditor.swapFlag(gameContext, this.currentMapID, this.currentLayer);
         }

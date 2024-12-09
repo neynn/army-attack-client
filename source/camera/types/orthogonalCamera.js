@@ -12,9 +12,6 @@ export const OrthogonalCamera = function() {
     this.mapHeight = 0;
 }
 
-OrthogonalCamera.EMPTY_TILE_COLOR_A = "#701867";
-OrthogonalCamera.EMPTY_TILE_COLOR_B = "#000000";
-
 OrthogonalCamera.prototype = Object.create(MoveableCamera.prototype);
 OrthogonalCamera.prototype.constructor = OrthogonalCamera;
 
@@ -127,11 +124,15 @@ OrthogonalCamera.prototype.transformTileToPositionCenter = function(tileX, tileY
 	}
 }
 
-OrthogonalCamera.prototype.drawEmptyTile = function(context, renderX, renderY, width, height) {
-    context.fillStyle = OrthogonalCamera.EMPTY_TILE_COLOR_A;
-    context.fillRect(renderX, renderY, width, height);
-    context.fillRect(renderX + width, renderY + height, width, height);
-    context.fillStyle = OrthogonalCamera.EMPTY_TILE_COLOR_B;
-    context.fillRect(renderX + width, renderY, width, height);
-    context.fillRect(renderX, renderY + height, width, height);
+OrthogonalCamera.prototype.drawEmptyTile = function(context, renderX, renderY, scaleX = 1, scaleY = 1) {
+    const scaledX = this.halfTileWidth * scaleX;
+    const scaledY = this.halfTileHeight * scaleY;
+
+    context.fillStyle = "#000000";
+    context.fillRect(renderX, renderY, scaledX, scaledY);
+    context.fillRect(renderX + scaledX, renderY + scaledY, scaledX, scaledY);
+
+    context.fillStyle = "#701867";
+    context.fillRect(renderX + scaledX, renderY, scaledX, scaledY);
+    context.fillRect(renderX, renderY + scaledY, scaledX, scaledY);
 }
