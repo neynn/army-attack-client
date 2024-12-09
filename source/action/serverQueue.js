@@ -31,11 +31,11 @@ ServerQueue.prototype.update = function(gameContext) {
     const next = this.next();
 
     if(next) {
-        const { item, priority } = next;
+        const { item } = next;
         const { type } = item;
         const actionType = this.requestHandlers[type];
 
-        this.events.emit(RequestQueue.EVENT_REQUEST_RUN, item, priority);
+        this.events.emit(RequestQueue.EVENT_REQUEST_RUN, next);
         this.clearCurrent();
         
         actionType.onStart(gameContext, item);

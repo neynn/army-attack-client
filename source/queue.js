@@ -6,9 +6,6 @@ export const Queue = function() {
     this.state = Queue.STATE_IDLE;
 }
 
-Queue.PRIORITY_NORMAL = 0;
-Queue.PRIORITY_SUPER = 1;
-
 Queue.STATE_IDLE = 0;
 Queue.STATE_ACTIVE = 1;
 Queue.STATE_PROCESSING = 2;
@@ -57,8 +54,8 @@ Queue.prototype.enqueue = function(item) {
     }
 
     this.queue.push({
-        "item": item,
-        "priority": Queue.PRIORITY_NORMAL
+        "time": Date.now(),
+        "item": item
     });
 }
 
@@ -72,8 +69,8 @@ Queue.prototype.enqueuePriority = function(item) {
     }
 
     this.queue.unshift({
-        "item": item,
-        "priority": Queue.PRIORITY_SUPER
+        "time": Date.now(),
+        "item": item
     });
 }
 

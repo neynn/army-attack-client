@@ -97,14 +97,18 @@ RequestQueue.prototype.registerHandler = function(handlerID, handler) {
     this.requestHandlers[handlerID] = handler;
 }
 
+RequestQueue.prototype.clearRequests = function() {
+    this.requests[RequestQueue.PRIORITY_NORMAL].length = 0;
+    this.requests[RequestQueue.PRIORITY_SUPER].length = 0;
+}
+
 RequestQueue.prototype.start = function() {
     this.toActive();
 }
 
 RequestQueue.prototype.end = function() {
-    this.requests[RequestQueue.PRIORITY_NORMAL].length = 0;
-    this.requests[RequestQueue.PRIORITY_SUPER].length = 0;
     this.isSkipping = false;
+    this.clearRequests();
     this.clearQueue();
     this.clearCurrent();
     this.toIdle();

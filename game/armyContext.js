@@ -102,8 +102,8 @@ ArmyContext.prototype.initialize = function() {
 
     this.client.soundPlayer.loadAllSounds();
     
-    this.world.actionQueue.events.subscribe(RequestQueue.EVENT_REQUEST_RUN, "DEBUG", (item, priority) => {
-        console.log(item, "IS PROCESSING", priority);
+    this.world.actionQueue.events.subscribe(RequestQueue.EVENT_REQUEST_RUN, "DEBUG", (item) => {
+        console.log(item, "IS PROCESSING");
     });
 
     this.world.actionQueue.events.subscribe(RequestQueue.EVENT_REQUEST_INVALID, "DEBUG", (item, messengerID, priority) => {

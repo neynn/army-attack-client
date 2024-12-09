@@ -29,7 +29,7 @@ ClientQueue.prototype.filterRequests = function(gameContext, priority) {
 
     for(let i = processedRequests.length - 1; i >= 0; i--) {
         const requestIndex = processedRequests[i];
-        
+
         requests.splice(requestIndex, 1);
     }
 }
@@ -51,18 +51,18 @@ ClientQueue.prototype.update = function(gameContext) {
         const next = this.next();
 
         if(next) {
-            const { item, priority } = next;
+            const { item } = next;
             const { type } = item;
             const actionType = this.requestHandlers[type];
 
             this.toProcessing();
-            this.events.emit(RequestQueue.EVENT_REQUEST_RUN, item, priority);
+            this.events.emit(RequestQueue.EVENT_REQUEST_RUN, next);
             
             actionType.onStart(gameContext, item);
         }
     } else if(this.state === Queue.STATE_PROCESSING) {
         const current = this.getCurrent();
-        const { item, priority } = current;
+        const { item } = current;
         const { type } = item;
         const actionType = this.requestHandlers[type];
 
