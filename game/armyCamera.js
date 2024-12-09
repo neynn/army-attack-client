@@ -2,8 +2,8 @@ import { Renderer } from "../source/renderer.js";
 import { OrthogonalCamera } from "../source/camera/types/orthogonalCamera.js";
 import { SpriteManager } from "../source/graphics/spriteManager.js";
 
-export const ArmyCamera = function(positionX, positionY, width, height) {
-    OrthogonalCamera.call(this, positionX, positionY, width, height);
+export const ArmyCamera = function() {
+    OrthogonalCamera.call(this);
 
     this.overlays = {
         [ArmyCamera.OVERLAY_TYPE_MOVE]: new Map(),
@@ -28,7 +28,7 @@ ArmyCamera.prototype.addOverlay = function(overlayID, positionX, positionY, tile
     const overlayType = this.overlays[overlayID];
 
     if(!overlayType) {
-        return false;
+        return;
     }
 
     const overlayKey = this.getOverlayKey(positionX, positionY);
@@ -38,38 +38,32 @@ ArmyCamera.prototype.addOverlay = function(overlayID, positionX, positionY, tile
         "y": positionY,
         "id": tileID
     });
-
-    return true;
 }
 
 ArmyCamera.prototype.removeOverlay = function(overlayID, positionX, positionY) {
     const overlayType = this.overlays[overlayID];
 
     if(!overlayType) {
-        return false;
+        return;
     }
 
     const overlayKey = this.getOverlayKey(positionX, positionY);
 
     overlayType.delete(overlayKey);
-
-    return true;
 }
 
 ArmyCamera.prototype.clearOverlay = function(overlayID) {
     const overlayType = this.overlays[overlayID];
 
     if(!overlayType) {
-        return false;
+        return;
     }
 
     overlayType.clear();
-
-    return true;
 }
 
 ArmyCamera.prototype.update = function(gameContext) {
-    const { world, spriteManager, renderer } = gameContext;
+    const { world, renderer } = gameContext;
     const { mapManager } = world;
     const activeMap = mapManager.getActiveMap();
 
@@ -84,14 +78,12 @@ ArmyCamera.prototype.update = function(gameContext) {
         this.drawTileLayer(gameContext, activeMap, layerConfig[layerID], viewportBounds);
     }
     
-    this.drawOverlay(gameContext);
-    this.drawSpriteLayer(gameContext, spriteManager.layers[SpriteManager.LAYER_BOTTOM]);
-    this.drawSpriteLayer(gameContext, spriteManager.layers[SpriteManager.LAYER_MIDDLE]);
-    this.drawSpriteLayer(gameContext, spriteManager.layers[SpriteManager.LAYER_TOP]);
-
-    /**
-     * Draw range here. 
-     */
+    this.drawOverlay(gameContext, ArmyCamera.OVERLAY_TYPE_MOVE);
+    this.drawOverlay(gameContext, ArmyCamera.OVERLAY_TYPE_ATTACK);
+    this.drawSpriteLayer(gameContext, SpriteManager.LAYER_BOTTOM);
+    this.drawSpriteLayer(gameContext, SpriteManager.LAYER_MIDDLE);
+    this.drawSpriteLayer(gameContext, SpriteManager.LAYER_TOP);
+    this.drawOverlay(gameContext, ArmyCamera.OVERLAY_TYPE_RANGE);
 
     for(const layerID of foreground) {
         this.drawTileLayer(gameContext, activeMap, layerConfig[layerID], viewportBounds);
@@ -126,19 +118,20 @@ ArmyCamera.prototype.update = function(gameContext) {
     }
 }
 
-ArmyCamera.prototype.drawOverlay = function(gameContext) {
+ArmyCamera.prototype.drawOverlay = function(gameContext, overlayID) {
     const { x: vX, y: vY} = this.getViewportPosition();
+    const overlay = this.overlays[overlayID];
 
-    for(const overlayKey in this.overlays) {
-        const overlay = this.overlays[overlayKey];
+    if(!overlay) {
+        return;
+    }
 
-        for(const [positionKey, overlayData] of overlay) {
-            const { x, y, id } = overlayData;
-            const renderX = this.tileWidth * x - vX;
-            const renderY = this.tileHeight * y - vY;
+    for(const [overlayKey, overlayData] of overlay) {
+        const { x, y, id } = overlayData;
+        const renderX = this.tileWidth * x - vX;
+        const renderY = this.tileHeight * y - vY;
 
-            this.drawTileGraphics(gameContext, id, renderX, renderY);
-        }
+        this.drawTileGraphics(gameContext, id, renderX, renderY);
     }
 }
 
@@ -167,7 +160,14 @@ ArmyCamera.prototype.drawWithCallback = function(map2D, layerConfig, onDraw, vie
     }
 }
 
-ArmyCamera.prototype.drawSpriteLayer = function(gameContext, spriteLayer) {
+ArmyCamera.prototype.drawSpriteLayer = function(gameContext, layerID) {
+    const { timer, renderer, spriteManager } = gameContext;
+    const spriteLayer = spriteManager.layers[layerID];
+
+    if(!spriteLayer) {
+        return;
+    }
+
     const visibleSprites = [];
     const viewportLeftEdge = this.viewportX;
     const viewportTopEdge = this.viewportY;
@@ -186,14 +186,14 @@ ArmyCamera.prototype.drawSpriteLayer = function(gameContext, spriteLayer) {
 
     visibleSprites.sort((spriteA, spriteB) => (spriteA.position.y) - (spriteB.position.y));
 
-    const { timer, renderer } = gameContext;
-    const context = renderer.getContext();
     const { x, y } = this.getViewportPosition(); 
+    const context = renderer.getContext();
     const realTime = timer.getRealTime();
     const deltaTime = timer.getDeltaTime();
 
     for(let i = 0; i < visibleSprites.length; i++) {
         const sprite = visibleSprites[i];
+
         sprite.update(realTime, deltaTime);
         sprite.draw(context, x, y);
     }

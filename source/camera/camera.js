@@ -67,18 +67,21 @@ Camera.prototype.getViewportHeight = function() {
     return this.viewportHeight / this.scale;
 }
 
-Camera.prototype.onViewportResize = function() {} 
+Camera.prototype.reloadViewport = function() {} 
 
 Camera.prototype.onWindowResize = function(width, height) {
-    if(this.viewportMode === Camera.VIEWPORT_MODE_AUTO) {
-        this.setViewport(width, height);
-        this.cutViewport(width, height);
-        this.centerPosition(width, height);
-    } else if(this.viewportMode === Camera.VIEWPORT_MODE_FIXED) {
-        //TODO
-    } else if(this.viewportMode === Camera.VIEWPORT_MODE_FORCED) {
-        this.setViewport(width, height);
+    switch(this.viewportMode) {
+        case Camera.VIEWPORT_MODE_AUTO: {
+            this.setViewport(width, height);
+            this.cutViewport(width, height);
+            this.centerPosition(width, height);
+            break;
+        }
+        case Camera.VIEWPORT_MODE_FORCED: {
+            this.setViewport(width, height);
+            break;
+        }
     }
 
-    this.onViewportResize();
+    this.reloadViewport();
 }

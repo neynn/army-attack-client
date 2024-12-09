@@ -122,13 +122,10 @@ MapEditor.prototype.reloadAll = function() {
 MapEditor.prototype.loadConfig = function(config) {
     if(config === undefined) {
         Logger.log(false, "Config cannot be undefined!", "MapEditor.prototype.loadConfig", null);
-
-        return false;
+        return;
     }
 
     this.config = config;
-
-    return true;
 }
 
 MapEditor.prototype.loadBrushSets = function(tileMeta) {
@@ -163,7 +160,7 @@ MapEditor.prototype.setBrush = function(brush = null) {
 
 MapEditor.prototype.undo = function(gameContext) {
     if(this.activityStack.length === 0) {
-        return false;
+        return;
     }
 
     const { world } = gameContext;
@@ -172,14 +169,12 @@ MapEditor.prototype.undo = function(gameContext) {
     const gameMap = mapManager.getLoadedMap(mapID);
 
     if(!gameMap) {
-        return false;
+        return;
     }
 
     for(const { layerID, tileX, tileY, oldID, newID } of actions) {
         gameMap.placeTile(oldID, layerID, tileX, tileY);
     }
-
-    return true;
 }
 
 MapEditor.prototype.swapFlag = function(gameContext, mapID, layerID) {
@@ -282,31 +277,22 @@ MapEditor.prototype.paint = function(gameContext, mapID, layerID) {
 
 MapEditor.prototype.resizeMap = function(gameMap, width, height) {
     const defaultSetup = this.config.defaultMapLayers;
-    const graphics = gameMap.getLayers();
+    const layers = gameMap.getLayers();
 
-    for(const layerID in graphics) {
+    for(const layerID in layers) {
         const layerSetup = defaultSetup[layerID];
+        const fill = layerSetup ? layerSetup.fill : 0;
 
-        if(layerSetup) {
-            const { fill } = layerSetup;
-            gameMap.resizeLayer(layerID, width, height, fill);
-            continue;
-        }
-
-        gameMap.resizeLayer(layerID, width, height, 0);
+        gameMap.resizeLayer(layerID, width, height, fill);
     }
 
-    gameMap.width = width;
-    gameMap.height = height;
-
-    return true;
+    gameMap.setWidth(width);
+    gameMap.setHeight(height);
 }
 
 MapEditor.prototype.getDefaultMapData = function() {
     return {
         "layers": this.config.defaultMapLayers,
-        "meta": this.config.defaultMapMeta,
-        "success": true,
-        "code": "DEFAULT"
+        "meta": this.config.defaultMapMeta
     }
 }

@@ -9,6 +9,14 @@ export const WorldMap = function(id) {
     this.occupiedTiles = new Map();
 }
 
+WorldMap.prototype.setWidth = function(width) {
+    this.width = width;
+}
+
+WorldMap.prototype.setHeight = function(height) {
+    this.height = height;
+}
+
 WorldMap.prototype.setLayers = function(graphics) {
     this.layers = graphics;
 }

@@ -34,7 +34,7 @@ OrthogonalCamera.prototype.loadWorld = function(mapWidth, mapHeight) {
     this.worldWidth = worldWidth;
     this.worldHeight = worldHeight;
 
-    this.reloadViewportLimit();
+    this.reloadViewport();
 }
 
 OrthogonalCamera.prototype.screenToWorldTile = function(screenX, screenY) {

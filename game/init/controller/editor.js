@@ -2,7 +2,7 @@ import { MapEditor } from "../../../source/map/mapEditor.js";
 import { Cursor } from "../../../source/client/cursor.js";
 import { Controller } from "../../../source/controller/controller.js";
 import { saveMap, saveTemplateAsFile } from "../../../source/helpers.js";
-import { loopValue } from "../../../source/math/math.js";
+import { clampValue, loopValue } from "../../../source/math/math.js";
 import { Renderer } from "../../../source/renderer.js";
 import { UIElement } from "../../../source/ui/uiElement.js";
 import { MapParser } from "../../../source/map/mapParser.js";
@@ -400,30 +400,18 @@ EditorController.prototype.initializeUIEvents = function(gameContext) {
 
     uiManager.addClick(id, "BUTTON_RESIZE", () => {
         const gameMap = mapManager.getLoadedMap(this.currentMapID);
+        const { maxMapWidth, maxMapHeight } = this.mapEditor.config;
 
         if(!gameMap) {
             console.warn(`GameMap cannot be undefined! Returning...`);
-
             return;
         }
 
-        const newWidth = parseInt(prompt("MAP_WIDTH"));
-        const newHeight = parseInt(prompt("MAP_HEIGHT"));
-
-        if(newWidth < 0 || newHeight < 0) {
-            console.warn(`Width or Height cannot be below 0! Returning...`);
-
-            return;
-        }
-
-        const { maxMapWidth, maxMapHeight } = this.mapEditor.config;
-    
-        if(newWidth > maxMapWidth || newHeight > maxMapHeight) {
-            console.warn({maxMapWidth, maxMapHeight});
-
-            return;
-        }
-
+        const parsedWidth = parseInt(prompt("MAP_WIDTH"));
+        const parsedHeight = parseInt(prompt("MAP_HEIGHT"));
+        const newWidth = clampValue(parsedWidth, maxMapWidth, 1);
+        const newHeight = clampValue(parsedHeight, maxMapHeight, 1);
+      
         this.mapEditor.resizeMap(gameMap, newWidth, newHeight);
 
         camera.loadWorld(newWidth, newHeight);

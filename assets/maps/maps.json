@@ -17,8 +17,25 @@
             "team": { "id": "team", "opacity": 1, "autoGenerate": false, "isMeta": true }
         },
         "background": ["ground", "border", "decoration"],
-        "foreground": ["cloud"],
-        "entities": [],
-        "flags": {}
+        "foreground": ["cloud"]
+    },
+    "large": {
+        "id": "large",
+        "directory": "assets/maps",
+        "source": "large.json",
+        "author": "neyn",
+        "music": "music_remastered",
+        "width": 200,
+        "height": 200,
+        "layerConfig": {
+            "ground": { "id": "ground", "opacity": 1, "autoGenerate": false, "isMeta": false },
+            "border": { "id": "border", "opacity": 1, "autoGenerate": true, "isMeta": false },
+            "decoration": { "id": "decoration", "opacity": 1, "autoGenerate": false, "isMeta": false },
+            "cloud": { "id": "cloud", "opacity": 1, "autoGenerate": false, "isMeta": false },
+            "type": { "id": "type", "opacity": 1, "autoGenerate": false, "isMeta": true },
+            "team": { "id": "team", "opacity": 1, "autoGenerate": false, "isMeta": true }
+        },
+        "background": ["ground","border","decoration"],
+        "foreground": ["cloud"]
     }
 }
