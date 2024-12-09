@@ -1,6 +1,6 @@
 import { Cursor } from "../../../source/client/cursor.js";
-import { Controller } from "../../../source/controller/controller.js";
 import { SpriteManager } from "../../../source/graphics/spriteManager.js";
+import { EntityController } from "../../../source/controller/entityController.js";
 
 import { CAMERA_TYPES, CONTROLLER_STATES } from "../../enums.js";
 import { ControllerBuildState } from "../../states/controller/build.js";
@@ -11,42 +11,14 @@ import { PositionComponent } from "../../components/position.js";
 import { SpriteComponent } from "../../components/sprite.js";
 
 export const PlayerController = function(id) {
-    Controller.call(this, id);
-    this.moveSprite = "cursor_select_1x1";
-    this.selectSprites = {
-        "1-1": "cursor_select_1x1",
-        "2-1": "cursor_select_2x1",
-        "2-2": "cursor_select_2x2",
-        "3-2": "cursor_select_3x2",
-        "3-3": "cursor_select_3x3",
-        "4-1": "cursor_select_4x1",
-        "4-2": "cursor_select_4x2",
-        "4-4": "cursor_select_4x4"
-    };
-    this.attackSprites = {
-        "1-1": "cursor_attack_1x1",
-        "2-1": "cursor_attack_2x1",
-        "2-2": "cursor_attack_2x2",
-        "3-2": "cursor_attack_3x2",
-        "3-3": "cursor_attack_3x3",
-        "4-1": "cursor_attack_4x1",
-        "4-2": "cursor_attack_4x2",
-        "4-4": "cursor_attack_4x4"
-    };
-    this.powerupSprites = {
-        "1-1": "cursor_powerup_1x1",
-        "2-2": "cursor_powerup_2x2",
-        "3-1": "cursor_powerup_3x1",
-        "3-3": "cursor_powerup_3x3",
-        "6-1": "cursor_powerup_6x1"
-    };
+    EntityController.call(this, id);
     this.hoveredEntity = null;
     this.selectedEntity = null;
     this.nodeList = new Map();
     this.attackers = new Set();
 }
 
-PlayerController.prototype = Object.create(Controller.prototype);
+PlayerController.prototype = Object.create(EntityController.prototype);
 PlayerController.prototype.constructor = PlayerController;
 
 PlayerController.prototype.updateCursorSpriteSelected = function(gameContext) {
@@ -65,7 +37,7 @@ PlayerController.prototype.updateCursorSpriteSelected = function(gameContext) {
         const nodeKey = `${x}-${y}`;
 
         if(this.nodeList.has(nodeKey)) {
-            spriteManager.updateSprite(spriteComponent.spriteID, this.moveSprite);
+            spriteManager.updateSprite(spriteComponent.spriteID, this.config.sprites.move["1-1"]);
         } else {
             sprite.hide();
         }
@@ -98,13 +70,13 @@ PlayerController.prototype.updateCursorSpriteDefault = function(gameContext) {
     const spriteKey = `${hoverEntity.config.dimX}-${hoverEntity.config.dimY}`;
 
     if(this.attackers.size > 0) {
-        const spriteType = this.attackSprites[spriteKey];
+        const spriteType = this.config.sprites.attack[spriteKey];
 
         if(spriteType) {
             spriteManager.updateSprite(spriteComponent.spriteID, spriteType);
         }
     } else {
-        const spriteType = this.selectSprites[spriteKey];
+        const spriteType = this.config.sprites.select[spriteKey];
 
         if(spriteType) {
             spriteManager.updateSprite(spriteComponent.spriteID, spriteType);
@@ -183,7 +155,7 @@ PlayerController.prototype.addClickEvent = function(gameContext) {
     });
 }
 
-PlayerController.prototype.initialize = function(gameContext, payload) {
+PlayerController.prototype.onCreate = function(gameContext, payload) {
     const { spriteManager, renderer } = gameContext;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
     const controllerSprite = spriteManager.createSprite("cursor_attack_1x1", SpriteManager.LAYER_TOP);

@@ -96,8 +96,6 @@ DefaultArchetype.prototype.initializeEntity = function(gameContext, entity, spri
     positionComponent.positionX = x;
     positionComponent.positionY = y;
 
-    entity.useEvents();
-
     entity.addComponent(positionComponent);
     entity.addComponent(spriteComponent);
     entity.addComponent(directionComponent);

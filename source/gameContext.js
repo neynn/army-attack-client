@@ -69,6 +69,7 @@ GameContext.prototype.loadResources = function(resources) {
     this.client.soundPlayer.load(resources.sounds);
     this.client.socket.load(resources.settings.socket);
     this.world.mapManager.load(resources.maps);
+    this.world.controllerManager.load(resources.controllers);
     this.spriteManager.load(resources.sprites);
     this.tileManager.load(resources.tiles, resources.tileMeta);
     this.uiManager.load(resources.interfaces, resources.icons, resources.fonts);
@@ -143,7 +144,7 @@ GameContext.prototype.createController = function(setup) {
         return null;
     }
 
-    controller.initialize(this, setup);
+    controller.onCreate(this, setup);
 
     return controller;
 }

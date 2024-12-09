@@ -1,8 +1,17 @@
 import { Logger } from "../logger.js";
 
 export const ControllerManager = function() {
-    this.types = new Map();
+    this.controllerTypes = {};
+    this.constructors = new Map();
     this.controllers = new Map();
+}
+
+ControllerManager.prototype.load = function(controllerTypes) {
+    if(typeof controllerTypes === "object") {
+        this.controllerTypes = controllerTypes;
+    } else {
+        Logger.log(false, "ControllerTypes cannot be undefined!", "ControllerManager.prototype.load", null);
+    }
 }
 
 ControllerManager.prototype.registerController = function(typeID, type) {
@@ -11,32 +20,28 @@ ControllerManager.prototype.registerController = function(typeID, type) {
         return;
     }
 
-    if(this.types.has(typeID)) {
+    if(this.constructors.has(typeID)) {
         Logger.log(false, "ControllerType is already registered!", "ControllerManager.prototype.registerController", {typeID});
         return;
     }
 
-    this.types.set(typeID, type);
-}
-
-ControllerManager.prototype.unregisterController = function(typeID) {
-    if(!this.types.has(typeID)) {
-        Logger.log(false, "ControllerType does not exist!", "ControllerManager.prototype.unregisterController", {typeID});
-        return;
-    }
-
-    this.types.delete(typeID);
+    this.constructors.set(typeID, type);
 }
 
 ControllerManager.prototype.createController = function(typeID, controllerID) {
-    if(!this.types.has(typeID) || this.controllers.has(controllerID)) {
+    if(!this.constructors.has(typeID) || this.controllers.has(controllerID)) {
         Logger.log(false, "ControllerType does not exist or controllerID is already reserved!", "ControllerManager.prototype.createController", {typeID, controllerID});
 
         return null;
     }
 
-    const ControllerType = this.types.get(typeID);
+    const controllerConfig = this.controllerTypes[typeID];
+    const ControllerType = this.constructors.get(typeID);
     const controller = new ControllerType(controllerID);
+
+    if(controllerConfig) {
+        controller.setConfig(controllerConfig);
+    } 
 
     this.controllers.set(controllerID, controller);
 

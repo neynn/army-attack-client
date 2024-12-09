@@ -3,6 +3,7 @@
     "world": { "id": "world", "directory": "assets/config", "source": "world.json" },
     "settings": { "id": "settings", "directory": "assets/config", "source": "settings.json" },
     "tileMeta": { "id": "tileMeta", "directory": "assets/config", "source": "tileMeta.json" },
+    "controllers": { "id": "controllers", "directory": "assets/config", "source": "controllers.json" },
     "entities": { "id": "entities", "directory": "assets/entity", "source": "entities.json" },
     "components": { "id": "components", "directory": "assets/entity", "source": "components.json" },
     "traits": { "id": "traits", "directory": "assets/entity", "source": "traits.json" },
