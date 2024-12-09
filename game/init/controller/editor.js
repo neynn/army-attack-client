@@ -1,14 +1,14 @@
 import { MapEditor } from "../../../source/map/mapEditor.js";
 import { Cursor } from "../../../source/client/cursor.js";
 import { Controller } from "../../../source/controller/controller.js";
-import { saveMap, saveTemplateAsFile } from "../../../source/helpers.js";
-import { clampValue, loopValue } from "../../../source/math/math.js";
+import { saveMap } from "../../../source/helpers.js";
+import { clampValue } from "../../../source/math/math.js";
 import { Renderer } from "../../../source/renderer.js";
 import { UIElement } from "../../../source/ui/uiElement.js";
 import { MapParser } from "../../../source/map/mapParser.js";
+import { World } from "../../../source/world.js";
 
 import { CAMERA_TYPES } from "../../enums.js";
-import { World } from "../../../source/world.js";
 
 export const EditorController = function(id) {
     Controller.call(this, id);
@@ -179,7 +179,7 @@ EditorController.prototype.initializeRenderEvents = function(gameContext) {
     const { layerButtons } = this.mapEditor.config.interface;
     const contextID = gameContext.getID();
 
-    renderer.events.subscribe(Renderer.EVENT_CAMERA_FINISH, contextID, (renderer, camera) => {
+    renderer.events.subscribe(Renderer.EVENT_CAMERA_FINISH, contextID, (camera) => {
         const cursorTile = gameContext.getMouseTile();
         const brush = this.mapEditor.getBrush();
         const brushSize = this.mapEditor.getBrushSize();

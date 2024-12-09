@@ -70,7 +70,7 @@ ImageSheet.prototype.defineDefaultAnimation = function() {
         defaultAnimation.addFrame(frame);
     }
 
-    this.loadedAnimations.set(ImageSheet.DEFAULT_ANIMATION_ID, defaultAnimation);
+    this.addAnimation(ImageSheet.DEFAULT_ANIMATION_ID, defaultAnimation);
 }
 
 ImageSheet.prototype.createFrame = function(frameID) {
@@ -129,18 +129,26 @@ ImageSheet.prototype.createPatternFrame = function(patternID) {
     return frame;
 }
 
+ImageSheet.prototype.addAnimation = function(animationID, animation) {
+    const frameCount = animation.getFrameCount();
+
+    if(frameCount < 1) {
+        console.error(`Animation ${animationID} has no frames!`);
+        return;
+    }
+
+    this.loadedAnimations.set(animationID, animation);
+}
+
 ImageSheet.prototype.defineAnimations = function() {
     for(const patternID in this.patterns) {
         const animation = new Animation(patternID);
         const patternFrame = this.createPatternFrame(patternID);
 
         animation.setFrameTime(this.frameTime);
+        animation.addFrame(patternFrame);
 
-        if(patternFrame.length > 0) {
-            animation.addFrame(patternFrame);
-        }
-
-        this.loadedAnimations.set(patternID, animation);
+        this.addAnimation(patternID, animation);
     }
     
     for(const frameID in this.frames) {
@@ -148,12 +156,9 @@ ImageSheet.prototype.defineAnimations = function() {
         const frame = this.createFrame(frameID);
 
         animation.setFrameTime(this.frameTime);
+        animation.addFrame(frame);
 
-        if(frame.length > 0) {
-            animation.addFrame(frame);
-        }
-
-        this.loadedAnimations.set(frameID, animation);
+        this.addAnimation(frameID, animation);
     }
 
     for(const animationID in this.animations) {
@@ -166,19 +171,15 @@ ImageSheet.prototype.defineAnimations = function() {
             if(this.frames[frameID]) {
                 const frame = this.createFrame(frameID);
 
-                if(frame.length > 0) {
-                    animation.addFrame(frame);
-                }
+                animation.addFrame(frame);
             } else {
                 const patternFrame = this.createPatternFrame(frameID);
 
-                if(patternFrame.length > 0) {
-                    animation.addFrame(patternFrame);
-                }
+                animation.addFrame(patternFrame);
             }
         }
 
-        this.loadedAnimations.set(animationID, animation);
+        this.addAnimation(animationID, animation);
     }
 }
 

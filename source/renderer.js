@@ -111,14 +111,21 @@ Renderer.prototype.drawUI = function(gameContext) {
            
         element.update(realTime, deltaTime);
         element.draw(this.display.context, 0, 0);
-
-        if((Renderer.DEBUG & Renderer.DEBUG_INTERFACE) !== 0) {
-            element.debug(this.display.context, 0, 0);
-        }
     }
 }
 
-Renderer.prototype.drawCameraOutlines = function() {
+Renderer.prototype.drawUIDebug = function(gameContext) {
+    const { uiManager } = gameContext;
+    const originIDs = uiManager.getOriginIDs();
+
+    for(const elementID of originIDs) {    
+        const element = uiManager.getElementByID(elementID);
+
+        element.debug(this.display.context, 0, 0);
+    }
+}
+
+Renderer.prototype.drawCameraDebug = function() {
     this.display.context.strokeStyle = "#eeeeee";
     this.display.context.lineWidth = 3;
     this.cameras.forEach(camera => this.display.context.strokeRect(camera.position.x, camera.position.y, camera.viewportWidth, camera.viewportHeight));
@@ -132,21 +139,22 @@ Renderer.prototype.update = function(gameContext) {
     this.display.clear();
     this.fpsCounter.update(deltaTime);
 
-    for(const [cameraID, camera] of this.cameras) {
+    this.cameras.forEach(camera => {
         context.save();
-        context.beginPath();
-        context.rect(camera.position.x, camera.position.y, camera.viewportWidth, camera.viewportHeight);
-        context.clip();
         camera.update(gameContext);
-        this.events.emit(Renderer.EVENT_CAMERA_FINISH, this, camera);
+        this.events.emit(Renderer.EVENT_CAMERA_FINISH, camera);
         context.restore();
-    }
+    });
 
     if((Renderer.DEBUG & Renderer.DEBUG_CAMERA) !== 0) {
-        this.drawCameraOutlines();
+        this.drawCameraDebug();
     }
 
     this.drawUI(gameContext);
+
+    if((Renderer.DEBUG & Renderer.DEBUG_INTERFACE) !== 0) {
+        this.drawUIDebug(gameContext);
+    }
 }
 
 Renderer.prototype.resizeDisplay = function(width, height) {
