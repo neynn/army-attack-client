@@ -107,38 +107,36 @@ EntityManager.prototype.saveComponents = function(entity) {
     return savedComponents;
 }
 
-EntityManager.prototype.loadComponents = function(entity, savedComponents) {
-    if(!savedComponents) {
-        Logger.log(false, "SavedComponents cannot be undefined", "EntityManager.prototype.loadComponents", null); 
-        return; 
+EntityManager.prototype.loadComponentFields = function(component, fields = {}) {
+    for(const fieldID in fields) {
+        if(component[fieldID] === undefined) {
+            Logger.log(false, `Field does not exist on component!`, "EntityManager.prototype.loadComponent", { fieldID }); 
+            continue;
+        }
+
+        component[fieldID] = fields[fieldID];
     }
+}
 
-    for(const componentID in savedComponents) {
+EntityManager.prototype.loadCustomComponents = function(entity, customComponents = {}) {
+    for(const componentID in customComponents) {
         const componentType = this.componentTypes[componentID];
+        const componentFields = customComponents[componentID];
 
-        if(!componentType || !componentType.allowLoad) {
-            Logger.log(false, "Component is not registered as loadable!", "EntityManager.prototype.loadComponents", { componentID }); 
+        if(!componentType) {
+            Logger.log(false, "Component is not registered as customizeable!", "EntityManager.prototype.loadCustomComponents", { componentID }); 
             continue;
         }
 
         const componentConstructor = componentType.reference;
-        const component = entity.getComponent(componentConstructor);
+        const entityComponent = entity.getComponent(componentConstructor);
 
-        if(!component) {
-            Logger.log(false, `Entity does not have component!`, "EntityManager.prototype.loadComponents", { "entityID": entity.id, componentID }); 
+        if(!entityComponent) {
+            Logger.log(false, `Entity does not have component!`, "EntityManager.prototype.loadCustomComponents", { "entityID": entity.id, componentID }); 
             continue;
         }
 
-        const componentSetup = savedComponents[componentID];
-
-        for(const fieldID in componentSetup) {
-            if(component[fieldID] === undefined) {
-                Logger.log(false, `Field does not exist on component!`, "EntityManager.prototype.loadComponents", { fieldID, componentID }); 
-                continue;
-            }
-
-            component[fieldID] = componentSetup[fieldID];
-        }
+        this.loadComponentFields(entityComponent, componentFields);
     }
 }
 
@@ -155,25 +153,24 @@ EntityManager.prototype.loadTraits = function(entity, traits) {
         
         for(const componentID in components) {
             const componentType = this.componentTypes[componentID];
+            const componentFields = components[componentID];
 
-            if(!componentType || !componentType.allowLoad) {
+            if(!componentType || !componentType.allowTrait || !componentType.reference) {
                 Logger.log(false, `Component is not registered as loadable!`, "EntityManager.prototype.loadTraits", { traitID, componentID }); 
                 continue;
             }
 
             const componentConstructor = componentType.reference;
+            const entityComponent = entity.getComponent(componentConstructor);
 
-            if(!componentConstructor) {
-                Logger.log(false, `ComponentConstructor is not registered!`, "EntityManager.prototype.loadTraits", { traitID, componentID }); 
-                continue;
-            }
-
-            if(!entity.hasComponent(componentConstructor)) {
-                entity.addComponent(new componentConstructor())
+            if(!entityComponent) {
+                const component = new componentConstructor();
+                this.loadComponentFields(component, componentFields);
+                entity.addComponent(component);
+            } else {
+                this.loadComponentFields(entityComponent, componentFields);
             }
         }
-
-        this.loadComponents(entity, components);
     }
 }
 

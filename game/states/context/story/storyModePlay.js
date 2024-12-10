@@ -137,6 +137,9 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
 
     actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.MOVE, battleTank.id, 7, 1));
     actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.MOVE, battleTank.id, 3, 0));
+
+    const s = gameContext.saveSnapshot();
+    console.log(s);
 }
 
 StoryModePlayState.prototype.exit = function(stateMachine) {

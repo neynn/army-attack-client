@@ -42,6 +42,7 @@ import { BulldozeComponent } from "./components/bulldoze.js";
 import { UnitBusterComponent } from "./components/unitBuster.js";
 import { ConstructionAction } from "./actions/constructionAction.js";
 import { DecayComponent } from "./components/decay.js";
+import { CounterComponent } from "./components/counter.js";
 
 export const ArmyContext = function() {
     GameContext.call(this, 60);
@@ -86,6 +87,7 @@ ArmyContext.prototype.initialize = function() {
     this.world.entityManager.registerComponent("Avian", AvianComponent);
     this.world.entityManager.registerComponent("Bulldoze", BulldozeComponent);
     this.world.entityManager.registerComponent("UnitBuster", UnitBusterComponent);
+    this.world.entityManager.registerComponent("Counter", CounterComponent);
 
     this.states.addState(CONTEXT_STATES.MAIN_MENU, new MainMenuState());
     this.states.addState(CONTEXT_STATES.STORY_MODE, new StoryModeState());
@@ -121,10 +123,6 @@ ArmyContext.prototype.initialize = function() {
 
     this.world.events.subscribe(World.EVENT_ENTITY_CREATE, EventEmitter.SUPER_SUBSCRIBER_ID, (entity) => {
         PlaceSystem.placeEntity(this, entity);
-
-        const saveData = this.saveEntity(entity.id);
-    
-        console.log(saveData);
     });
 
     this.world.events.subscribe(World.EVENT_ENTITY_DESTROY, EventEmitter.SUPER_SUBSCRIBER_ID, (entity) => {
@@ -190,27 +188,6 @@ ArmyContext.prototype.initializeTilemap = function(mapID) {
     return true;
 }
 
-ArmyContext.prototype.saveEntity = function(entityID) {
-    const entity = this.world.entityManager.getEntity(entityID);
-
-    if(!entity) {
-        return null;
-    }
-
-    const positionComponent = entity.getComponent(PositionComponent);
-    const teamComponent = entity.getComponent(TeamComponent);
-    const savedComponents = this.world.entityManager.saveComponents(entity);
-
-    return {
-        "id": entityID,
-        "type": entity.config.id,
-        "tileX": positionComponent.tileX,
-        "tileY": positionComponent.tileY,
-        "team": teamComponent.teamID,
-        "components": savedComponents
-    }
-}
-
 ArmyContext.prototype.parseConversions = function() {
     const { tileManager } = this;
     const conversions = this.world.getConfig("tileConversions");
@@ -243,4 +220,31 @@ ArmyContext.prototype.parseConversions = function() {
     }
 
     return newConversions;
+}
+
+ArmyContext.prototype.saveSnapshot = function() {
+    const entities = [];
+
+    this.world.entityManager.entities.forEach(entity => {
+        const positionComponent = entity.getComponent(PositionComponent);
+        const teamComponent = entity.getComponent(TeamComponent);
+        const savedComponents = this.world.entityManager.saveComponents(entity);
+
+        entities.push({
+            "type": entity.config.id,
+            "tileX": positionComponent.tileX,
+            "tileY": positionComponent.tileY,
+            "team": teamComponent.teamID,
+            "components": savedComponents
+        });
+    });
+
+    return {
+        "time": Date.now(),
+        "entities": entities
+    }
+}
+
+ArmyContext.prototype.loadSnapshot = function(snapshot) {
+    //loads a snapshot of a game state.
 }

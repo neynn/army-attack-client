@@ -135,7 +135,7 @@ DefaultArchetype.prototype.finalizeEntity = function(gameContext, entity, sprite
     const { traits } = stats[mode];
 
     entityManager.loadTraits(entity, traits);
-    entityManager.loadComponents(entity, components);
+    entityManager.loadCustomComponents(entity, components);
 }
 
 DefaultArchetype.prototype.onInitialize = function(gameContext, entity, sprite, type, setup) {}

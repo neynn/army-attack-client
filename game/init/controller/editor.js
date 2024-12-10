@@ -6,13 +6,12 @@ import { Renderer } from "../../../source/renderer.js";
 import { UIElement } from "../../../source/ui/uiElement.js";
 import { MapParser } from "../../../source/map/mapParser.js";
 import { World } from "../../../source/world.js";
-import { WorldEntity } from "../../../source/entity/worldEntity.js";
+import { EntityController } from "../../../source/controller/entityController.js";
 
 import { CAMERA_TYPES } from "../../enums.js";
 
-
 export const EditorController = function(id) {
-    WorldEntity.call(this, id, "Editor");
+    EntityController.call(this, id, "Editor");
     this.mapEditor = new MapEditor();
     this.currentLayer = null;
     this.currentLayerButtonID = null;
@@ -28,7 +27,7 @@ EditorController.BUTTON_TYPE_BOOLEAN = "0";
 EditorController.BUTTON_TYPE_GRAPHICS = "1";
 EditorController.BUTTON_TYPE_TYPE = "2";
 
-EditorController.prototype = Object.create(WorldEntity.prototype);
+EditorController.prototype = Object.create(EntityController.prototype);
 EditorController.prototype.constructor = EditorController;
 
 EditorController.prototype.onCreate = function(gameContext, data) {

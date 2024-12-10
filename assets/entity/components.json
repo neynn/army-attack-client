@@ -1,19 +1,20 @@
 {
-    "Health": { "id": "Health", "allowSave": true, "allowLoad": true },
-    "Construction": { "id": "Construction", "allowSave": true, "allowLoad": true },
-    "Decay": { "id": "Decay", "allowSave": true, "allowLoad": true },
+    "Health": { "id": "Health", "allowSave": true, "allowTrait": true },
+    "Attack": { "id": "Attack", "allowSave": true, "allowTrait": true },
+    "Decay": { "id": "Decay", "allowSave": true, "allowTrait": true },
+    "Construction": { "id": "Construction", "allowSave": true, "allowTrait": false },
 
-    "Attack": { "id": "Attack", "allowSave": false, "allowLoad": true },
-    "Move": { "id": "Move", "allowSave": false, "allowLoad": true },
-    "UnitSize": { "id": "UnitSize", "allowSave": false, "allowLoad": true },
-    "Armor": { "id": "Armor", "allowSave": false, "allowLoad": true },
-    "Avian": { "id": "Avian", "allowSave": false, "allowLoad": true },
-    "Bulldoze": { "id": "Bulldoze", "allowSave": false, "allowLoad": true },
-    "UnitBuster": { "id": "UnitBuster", "allowSave": false, "allowLoad": true },
+    "Counter": { "id": "Counter", "allowSave": false, "allowTrait": true },
+    "Move": { "id": "Move", "allowSave": false, "allowTrait": true },
+    "UnitSize": { "id": "UnitSize", "allowSave": false, "allowTrait": true },
+    "Armor": { "id": "Armor", "allowSave": false, "allowTrait": true },
+    "Avian": { "id": "Avian", "allowSave": false, "allowTrait": true },
+    "Bulldoze": { "id": "Bulldoze", "allowSave": false, "allowTrait": true },
+    "UnitBuster": { "id": "UnitBuster", "allowSave": false, "allowTrait": true },
 
-    "Direction": { "id": "Direction", "allowSave": false, "allowLoad": false },
-    "Position": { "id": "Position", "allowSave": false, "allowLoad": false },
-    "Resource": { "id": "Resource", "allowSave": false, "allowLoad": false },
-    "Sprite": { "id": "Sprite", "allowSave": false, "allowLoad": false },
-    "Team": { "id": "Team", "allowSave": false, "allowLoad": false }
+    "Direction": { "id": "Direction", "allowSave": false, "allowTrait": false },
+    "Position": { "id": "Position", "allowSave": false, "allowTrait": false },
+    "Resource": { "id": "Resource", "allowSave": false, "allowTrait": false },
+    "Sprite": { "id": "Sprite", "allowSave": false, "allowTrait": false },
+    "Team": { "id": "Team", "allowSave": false, "allowTrait": false }
 }

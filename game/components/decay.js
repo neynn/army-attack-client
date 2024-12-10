@@ -7,3 +7,9 @@ export const DecayComponent = function() {
 
 DecayComponent.DECAY_TYPE_TIME = 0;
 DecayComponent.DECAY_TYPE_TURN = 1;
+
+DecayComponent.prototype.save = function() {
+    return {
+        "decayProgress": this.decayProgress
+    }
+}
