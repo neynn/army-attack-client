@@ -101,11 +101,9 @@ DefaultArchetype.prototype.initializeEntity = function(entity, type, setup) {
 }
 
 DefaultArchetype.prototype.finalizeEntity = function(gameContext, entity, type, setup) {
-    const { world, spriteManager, renderer } = gameContext;
-    const { entityManager } = world;
-    const { stats, sprites } = type;
-    const { mode, components, tileX, tileY } = setup;
-    const { traits } = stats[mode];
+    const { spriteManager, renderer } = gameContext;
+    const { sprites } = type;
+    const { tileX, tileY } = setup;
 
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
     const sprite = spriteManager.createSprite(sprites["idle"], SpriteManager.LAYER_MIDDLE);
@@ -113,9 +111,6 @@ DefaultArchetype.prototype.finalizeEntity = function(gameContext, entity, type, 
 
     const positionComponent = entity.getComponent(PositionComponent);
     const spriteComponent = entity.getComponent(SpriteComponent);
-
-    entityManager.loadTraits(entity, traits);
-    entityManager.loadCustomComponents(entity, components);
 
     positionComponent.tileX = tileX;
     positionComponent.tileY = tileY;
@@ -156,6 +151,14 @@ DefaultArchetype.prototype.onInitialize = function(entity, type, setup) {}
 DefaultArchetype.prototype.onFinalize = function(gameContext, entity, sprite, type, setup) {}
 
 DefaultArchetype.prototype.onBuild = function(gameContext, entity, type, setup) {
+    const { world } = gameContext;
+    const { entityManager } = world;
+    const { stats } = type;
+    const { mode, components } = setup;
+    const { traits } = stats[mode];
+
     this.initializeEntity(entity, type, setup);
+    entityManager.loadTraits(entity, traits);
+    entityManager.loadCustomComponents(entity, components);
     this.finalizeEntity(gameContext, entity, type, setup);
 }
