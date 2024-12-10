@@ -81,27 +81,50 @@ DefaultArchetype.prototype.createStatCard = function(gameContext, entity, sprite
     }
 }
 
-DefaultArchetype.prototype.initializeEntity = function(gameContext, entity, sprite, type, setup) {
-    const { spriteManager, renderer } = gameContext;
-    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
+DefaultArchetype.prototype.initializeEntity = function(entity, type, setup) {
     const { stats } = type;
     const { mode } = setup;
 
+    const positionComponent = PositionComponent.create();
+    const spriteComponent = SpriteComponent.create();
     const directionComponent = DirectionComponent.create();
-    const positionComponent = PositionComponent.create(setup);
     const teamComponent = TeamComponent.create(setup);
-    const spriteComponent = SpriteComponent.create(sprite);
     const healthComponent = HealthComponent.create(stats[mode]);
-
-    const { x, y } = camera.transformTileToPositionCenter(positionComponent.tileX, positionComponent.tileY);
-    positionComponent.positionX = x;
-    positionComponent.positionY = y;
 
     entity.addComponent(positionComponent);
     entity.addComponent(spriteComponent);
     entity.addComponent(directionComponent);
     entity.addComponent(healthComponent);
     entity.addComponent(teamComponent);
+
+    this.onInitialize(entity, type, setup);
+}
+
+DefaultArchetype.prototype.finalizeEntity = function(gameContext, entity, type, setup) {
+    const { world, spriteManager, renderer } = gameContext;
+    const { entityManager } = world;
+    const { stats, sprites } = type;
+    const { mode, components, tileX, tileY } = setup;
+    const { traits } = stats[mode];
+
+    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
+    const sprite = spriteManager.createSprite(sprites["idle"], SpriteManager.LAYER_MIDDLE);
+    const { x, y } = camera.transformTileToPositionCenter(tileX, tileY);
+
+    const positionComponent = entity.getComponent(PositionComponent);
+    const spriteComponent = entity.getComponent(SpriteComponent);
+
+    entityManager.loadTraits(entity, traits);
+    entityManager.loadCustomComponents(entity, components);
+
+    positionComponent.tileX = tileX;
+    positionComponent.tileY = tileY;
+    positionComponent.positionX = x;
+    positionComponent.positionY = y;
+
+    spriteComponent.spriteID = sprite.getID();
+
+    sprite.setPosition(positionComponent.positionX, positionComponent.positionY);
 
     entity.events.listen(ENTITY_EVENTS.POSITION_UPDATE);
     entity.events.subscribe(ENTITY_EVENTS.POSITION_UPDATE, "ARCHETYPE", (positionX, positionY) => {
@@ -125,32 +148,14 @@ DefaultArchetype.prototype.initializeEntity = function(gameContext, entity, spri
         }
     });
 
-    sprite.setPosition(positionComponent.positionX, positionComponent.positionY);
+    this.onFinalize(gameContext, entity, sprite, type, setup);
 }
 
-DefaultArchetype.prototype.finalizeEntity = function(gameContext, entity, sprite, type, setup) {
-    const { world } = gameContext;
-    const { entityManager } = world;
-    const { stats } = type;
-    const { mode, components } = setup;
-    const { traits } = stats[mode];
-
-    entityManager.loadTraits(entity, traits);
-    entityManager.loadCustomComponents(entity, components);
-}
-
-DefaultArchetype.prototype.onInitialize = function(gameContext, entity, sprite, type, setup) {}
+DefaultArchetype.prototype.onInitialize = function(entity, type, setup) {}
 
 DefaultArchetype.prototype.onFinalize = function(gameContext, entity, sprite, type, setup) {}
 
 DefaultArchetype.prototype.onBuild = function(gameContext, entity, type, setup) {
-    const { spriteManager } = gameContext;
-    const { sprites } = type;
-    const { idle } = sprites;
-    const sprite = spriteManager.createSprite(idle, SpriteManager.LAYER_MIDDLE);
-
-    this.initializeEntity(gameContext, entity, sprite, type, setup);
-    this.onInitialize(gameContext, entity, sprite, type, setup);
-    this.finalizeEntity(gameContext, entity, sprite, type, setup);
-    this.onFinalize(gameContext, entity, sprite, type, setup);
+    this.initializeEntity(entity, type, setup);
+    this.finalizeEntity(gameContext, entity, type, setup);
 }

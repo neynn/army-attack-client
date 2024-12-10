@@ -7,7 +7,6 @@ export const MoveComponent = function() {
     this.isCoward = false;
     this.isStealth = false;
     this.isCloaked = false;
-    this.isAvian = false;
 }
 
 MoveComponent.create = function(setup = {}, stats = {}) {

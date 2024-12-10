@@ -9,7 +9,7 @@ export const UnitArchetype = function() {
 UnitArchetype.prototype = Object.create(DefaultArchetype.prototype);
 UnitArchetype.prototype.constructor = UnitArchetype;
 
-UnitArchetype.prototype.onInitialize = function(gameContext, entity, sprite, type, setup) {
+UnitArchetype.prototype.onInitialize = function(entity, type, setup) {
     const { stats } = type;
     const { mode } = setup;
 

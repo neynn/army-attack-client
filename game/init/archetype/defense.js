@@ -8,7 +8,7 @@ export const DefenseArchetype = function() {
 DefenseArchetype.prototype = Object.create(DefaultArchetype.prototype);
 DefenseArchetype.prototype.constructor = DefenseArchetype;
 
-DefenseArchetype.prototype.onInitialize = function(gameContext, entity, sprite, type, setup) {
+DefenseArchetype.prototype.onInitialize = function(entity, type, setup) {
     const { stats } = type;
     const { mode } = setup;
 
