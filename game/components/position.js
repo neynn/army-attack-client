@@ -11,3 +11,15 @@ PositionComponent.prototype.save = function() {
         "tileY": this.tileY
     }
 }
+
+PositionComponent.create = function(setup = {}) {
+    const positionComponent = new PositionComponent();
+    const { tileX, tileY } = setup;
+
+    positionComponent.positionX = 0;
+    positionComponent.positionY = 0;
+    positionComponent.tileX = tileX ?? 0;
+    positionComponent.tileY = tileY ?? 0;
+
+    return positionComponent;
+}

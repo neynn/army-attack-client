@@ -8,3 +8,13 @@ ConstructionComponent.prototype.save = function() {
         "stepsCompleted": this.stepsCompleted
     }
 }
+
+ConstructionComponent.create = function(setup = {}) {
+    const constructionComponent = new ConstructionComponent();
+    const { constructionSteps } = setup;
+
+    constructionComponent.stepsRequired = constructionSteps;
+    constructionComponent.stepsCompleted = 0;
+    
+    return constructionComponent;
+}

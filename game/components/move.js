@@ -9,3 +9,19 @@ export const MoveComponent = function() {
     this.isCloaked = false;
     this.isAvian = false;
 }
+
+MoveComponent.create = function(setup = {}, stats = {}) {
+    const moveComponent = new MoveComponent();
+    const { passability } = setup;
+    const { moveRange } = stats;
+
+    if(passability !== undefined) {
+        for(const passabilityID of passability) {
+            moveComponent.passability[passabilityID] = true;
+        }
+    }
+
+    moveComponent.range = moveRange ?? 0;
+
+    return moveComponent;
+}

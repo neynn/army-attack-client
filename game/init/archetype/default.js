@@ -7,8 +7,9 @@ import { AttackComponent } from "../../components/attack.js";
 import { HealthComponent } from "../../components/health.js";
 import { TeamComponent } from "../../components/team.js";
 import { CAMERA_TYPES, ENTITY_EVENTS } from "../../enums.js";
-import { componentSetup } from "../componentSetup.js";
 import { SpriteComponent } from "../../components/sprite.js";
+import { DirectionComponent } from "../../components/direction.js";
+import { PositionComponent } from "../../components/position.js";
 
 export const DefaultArchetype = function() {
     Archetype.call(this);
@@ -86,11 +87,11 @@ DefaultArchetype.prototype.initializeEntity = function(gameContext, entity, spri
     const { stats } = type;
     const { mode } = setup;
 
-    const directionComponent = componentSetup.setupDirectionComponent();
-    const positionComponent = componentSetup.setupPositionComponent(setup);
-    const teamComponent = componentSetup.setupTeamComponent(setup);
-    const spriteComponent = componentSetup.setupSpriteComponent(sprite);
-    const healthComponent = componentSetup.setupHealthComponent(stats[mode]);
+    const directionComponent = DirectionComponent.create();
+    const positionComponent = PositionComponent.create(setup);
+    const teamComponent = TeamComponent.create(setup);
+    const spriteComponent = SpriteComponent.create(sprite);
+    const healthComponent = HealthComponent.create(stats[mode]);
 
     const { x, y } = camera.transformTileToPositionCenter(positionComponent.tileX, positionComponent.tileY);
     positionComponent.positionX = x;

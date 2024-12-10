@@ -9,3 +9,17 @@ HealthComponent.prototype.save = function() {
         "health": this.health
     }
 }
+
+HealthComponent.create = function(setup = {}) {
+    const healthComponent = new HealthComponent();
+    const { health } = setup;
+
+    healthComponent.health = health ?? 0;
+    healthComponent.maxHealth = health ?? 0;
+
+    if(healthComponent.health < 1) {
+        health.health = 1;
+    }
+    
+    return healthComponent;
+}

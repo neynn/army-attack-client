@@ -14,6 +14,16 @@ ControllerManager.prototype.load = function(controllerTypes) {
     }
 }
 
+ControllerManager.prototype.getMaster = function(entityID) {
+    for(const [controllerID, controller] of this.controllers) {
+        if(controller.hasEntity(entityID)) {
+            return controllerID;
+        }
+    }
+
+    return null;
+}
+
 ControllerManager.prototype.registerController = function(typeID, type) {
     if(!typeID || !type) {
         Logger.log(false, "Parameter is undefined!", "ControllerManager.prototype.registerController", {typeID, type});

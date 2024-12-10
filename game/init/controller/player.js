@@ -6,9 +6,10 @@ import { CAMERA_TYPES, CONTROLLER_STATES } from "../../enums.js";
 import { ControllerBuildState } from "../../states/controller/build.js";
 import { ControllerSelectedState } from "../../states/controller/selected.js";
 import { ControllerIdleState } from "../../states/controller/idle.js";
-import { componentSetup } from "../componentSetup.js";
 import { PositionComponent } from "../../components/position.js";
 import { SpriteComponent } from "../../components/sprite.js";
+import { ResourceComponent } from "../../components/resource.js";
+import { TeamComponent } from "../../components/team.js";
 
 export const PlayerController = function(id) {
     EntityController.call(this, id);
@@ -163,9 +164,9 @@ PlayerController.prototype.onCreate = function(gameContext, payload) {
 
     controllerSprite.setPosition(x, y);
 
-    const spriteComponent = componentSetup.setupSpriteComponent(controllerSprite);
-    const teamComponent = componentSetup.setupTeamComponent(payload);
-    const resourceComponent = componentSetup.setupResourceComponent(payload);
+    const spriteComponent = SpriteComponent.create(controllerSprite);
+    const teamComponent = TeamComponent.create(payload);
+    const resourceComponent = ResourceComponent.create();
 
     this.addComponent(teamComponent);
     this.addComponent(spriteComponent);

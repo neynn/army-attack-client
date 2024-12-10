@@ -1,4 +1,4 @@
-import { componentSetup } from "../componentSetup.js";
+import { ConstructionComponent } from "../../components/construction.js";;
 import { DefaultArchetype } from "./default.js";
 
 export const ConstructionArchetype = function() {
@@ -9,7 +9,7 @@ ConstructionArchetype.prototype = Object.create(DefaultArchetype.prototype);
 ConstructionArchetype.prototype.constructor = ConstructionArchetype;
 
 ConstructionArchetype.prototype.onInitialize = function(gameContext, entity, sprite, type, setup) {
-    const constructionComponent = componentSetup.setupConstructionComponent(type);
+    const constructionComponent = ConstructionComponent.create(type);
     
     sprite.freeze();
     sprite.setFrame(0);

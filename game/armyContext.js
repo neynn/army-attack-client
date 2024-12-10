@@ -43,6 +43,7 @@ import { UnitBusterComponent } from "./components/unitBuster.js";
 import { ConstructionAction } from "./actions/constructionAction.js";
 import { DecayComponent } from "./components/decay.js";
 import { CounterComponent } from "./components/counter.js";
+import { ResourceComponent } from "./components/resource.js";
 
 export const ArmyContext = function() {
     GameContext.call(this, 60);
@@ -88,6 +89,7 @@ ArmyContext.prototype.initialize = function() {
     this.world.entityManager.registerComponent("Bulldoze", BulldozeComponent);
     this.world.entityManager.registerComponent("UnitBuster", UnitBusterComponent);
     this.world.entityManager.registerComponent("Counter", CounterComponent);
+    this.world.entityManager.registerComponent("Resource", ResourceComponent);
 
     this.states.addState(CONTEXT_STATES.MAIN_MENU, new MainMenuState());
     this.states.addState(CONTEXT_STATES.STORY_MODE, new StoryModeState());
@@ -224,27 +226,50 @@ ArmyContext.prototype.parseConversions = function() {
 
 ArmyContext.prototype.saveSnapshot = function() {
     const entities = [];
+    const controllers = [];
+
+    this.world.controllerManager.controllers.forEach(controller => {
+        const controllerID = controller.getID();
+        const savedComponents = this.world.entityManager.saveComponents(controller);
+
+        controllers.push({
+            "id": controllerID,
+            "components": savedComponents
+        });
+    });
 
     this.world.entityManager.entities.forEach(entity => {
+        const entityID = entity.getID();
         const positionComponent = entity.getComponent(PositionComponent);
         const teamComponent = entity.getComponent(TeamComponent);
         const savedComponents = this.world.entityManager.saveComponents(entity);
+        const masterID = this.world.controllerManager.getMaster(entityID);
 
         entities.push({
             "type": entity.config.id,
             "tileX": positionComponent.tileX,
             "tileY": positionComponent.tileY,
             "team": teamComponent.teamID,
+            "master": masterID,
             "components": savedComponents
         });
     });
 
     return {
         "time": Date.now(),
+        "controllers": controllers,
         "entities": entities
     }
 }
 
 ArmyContext.prototype.loadSnapshot = function(snapshot) {
-    //loads a snapshot of a game state.
+    const { time, entities, controllers } = snapshot;
+
+    for(const controller of controllers) {
+        this.createController(controller);
+    }
+
+    for(const entity of entities) {
+        this.createEntity(entity);
+    }
 }

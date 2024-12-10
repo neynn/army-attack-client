@@ -27,3 +27,7 @@ ResourceComponent.RESOURCE_TYPE_MAP = {
     "Dollor": "dollor",
     "BackgroundEnergy": "backgroundEnergy"
 };
+
+ResourceComponent.create = function() {
+    return new ResourceComponent();
+}

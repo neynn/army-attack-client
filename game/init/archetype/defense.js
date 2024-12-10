@@ -1,4 +1,4 @@
-import { componentSetup } from "../componentSetup.js";
+import { AttackComponent } from "../../components/attack.js";
 import { DefaultArchetype } from "./default.js";
 
 export const DefenseArchetype = function() {
@@ -12,7 +12,7 @@ DefenseArchetype.prototype.onInitialize = function(gameContext, entity, sprite, 
     const { stats } = type;
     const { mode } = setup;
 
-    const attackComponent = componentSetup.setupAttackComponent(stats[mode]);
+    const attackComponent = AttackComponent.create(stats[mode]);
 
     entity.addComponent(attackComponent);
 }

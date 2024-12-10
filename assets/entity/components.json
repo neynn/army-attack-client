@@ -14,7 +14,7 @@
 
     "Direction": { "id": "Direction", "allowSave": false, "allowTrait": false },
     "Position": { "id": "Position", "allowSave": false, "allowTrait": false },
-    "Resource": { "id": "Resource", "allowSave": false, "allowTrait": false },
+    "Resource": { "id": "Resource", "allowSave": true, "allowTrait": false },
     "Sprite": { "id": "Sprite", "allowSave": false, "allowTrait": false },
     "Team": { "id": "Team", "allowSave": false, "allowTrait": false }
 }
