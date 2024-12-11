@@ -11,6 +11,7 @@ import { ConquerSystem } from "../../systems/conquer.js";
 
 export const VersusModeState = function() {
     State.call(this);
+    this.controllerID = null;
 }
 
 VersusModeState.prototype = Object.create(State.prototype);
@@ -24,18 +25,23 @@ VersusModeState.prototype.onStartInstance = function(gameContext, payload) {
 
 VersusModeState.prototype.onInstanceController = function(gameContext, payload) {
     const { world } = gameContext;
+    const controller = world.createController(gameContext, payload);
+    const controllerID = controller.getID();
 
-    world.createController(gameContext, payload);
+    this.controllerID = controllerID;
 }
 
 VersusModeState.prototype.onInstanceMap = function(gameContext, payload) {
     const { client, world } = gameContext;
+    const { controllerManager } = world;
     const { socket } = client;
     const { id } = payload;
 
     world.parseMap(id, MapParser.parseMap2D).then(code => {
         if(code === World.CODE_PARSE_MAP_SUCCESS) {
-            ConquerSystem.reloadGraphics(gameContext, id);
+            const controller = controllerManager.getController(this.controllerID);
+
+            ConquerSystem.reloadGraphics(gameContext, controller, id);
             socket.messageRoom(GAME_EVENTS.INSTANCE_MAP, { "success": true, "error": null });
         } else {
             socket.messageRoom(GAME_EVENTS.INSTANCE_MAP, { "success": false, "error": "NO_MAP_FILE" })
@@ -45,12 +51,14 @@ VersusModeState.prototype.onInstanceMap = function(gameContext, payload) {
 
 VersusModeState.prototype.onInstanceMapFromData = function(gameContext, payload) {
     const { client, world } = gameContext;
+    const { controllerManager } = world;
     const { socket } = client;
     const { id, layers, meta } = payload;
     const worldMap = MapParser.parseMap2D(id, layers, meta);
+    const controller = controllerManager.getController(this.controllerID);
 
     world.loadMap(id, worldMap);
-    ConquerSystem.reloadGraphics(gameContext, id);
+    ConquerSystem.reloadGraphics(gameContext, controller, id); //TODO: Not really needed.
     socket.messageRoom(GAME_EVENTS.INSTANCE_MAP, { "success": true, "error": null });
 }
 

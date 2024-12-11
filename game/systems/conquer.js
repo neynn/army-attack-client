@@ -95,16 +95,15 @@ ConquerSystem.updateBorder = function(gameContext, tileX, tileY, teamID) {
     activeMap.placeTile(tileID, borderLayerID, tileX, tileY);
 }
 
-ConquerSystem.reloadGraphics = function(gameContext, mapID) {
+ConquerSystem.reloadGraphics = function(gameContext, controller, mapID) {
     const { world } = gameContext;
-    const { mapManager, controllerManager } = world;
+    const { mapManager } = world;
     const worldMap = mapManager.getLoadedMap(mapID);
 
     if(!worldMap) {
         return;
     }
 
-    const controller = controllerManager.getController("neyn"); //TODO <-- Set player controller as main?
     const layerTypes = world.getConfig("layerTypes");
     const teamLayerID = layerTypes.team.layerID;
     const teamComponent = controller.getComponent(TeamComponent);

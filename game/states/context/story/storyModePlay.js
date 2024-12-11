@@ -24,13 +24,13 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
         return;
     }
 
-    world.createController(gameContext, {
+    const controller = world.createController(gameContext, {
         "type": CONTROLLER_TYPES.PLAYER,
         "team": 1,
         "id": "neyn"
     });
     
-    ConquerSystem.reloadGraphics(gameContext, MAP);
+    ConquerSystem.reloadGraphics(gameContext, controller, MAP);
 
     camera.centerWorld();
 
