@@ -11,7 +11,7 @@ import { ConquerSystem } from "../../systems/conquer.js";
 
 export const VersusModeState = function() {
     State.call(this);
-    this.controllerID = null;
+    this.teamID = null;
 }
 
 VersusModeState.prototype = Object.create(State.prototype);
@@ -21,6 +21,12 @@ VersusModeState.prototype.onRoomUpdate = function(gameContext, payload) {}
 
 VersusModeState.prototype.onStartInstance = function(gameContext, payload) {
     this.states.setNextState(CONTEXT_STATES.VERSUS_MODE_PLAY);
+}
+
+VersusModeState.prototype.onInstanceTeam = function(gameContext, payload) {
+    const { teamID } = payload;
+
+    this.teamID = teamID;
 }
 
 VersusModeState.prototype.onInstanceController = function(gameContext, payload) {
@@ -92,6 +98,7 @@ VersusModeState.prototype.onServerMessage = function(gameContext, type, payload)
     switch(type) {
         case ROOM_EVENTS.ROOM_UPDATE: return this.onRoomUpdate(gameContext, payload);
         case ROOM_EVENTS.START_INSTANCE: return this.onStartInstance(gameContext, payload);
+        case GAME_EVENTS.INSTANCE_TEAM: return this.onInstanceTeam(gameContext, payload);
         case GAME_EVENTS.INSTANCE_CONTROLLER: return this.onInstanceController(gameContext, payload);
         case GAME_EVENTS.INSTANCE_MAP: return this.onInstanceMap(gameContext, payload);
         case GAME_EVENTS.INSTANCE_MAP_FROM_DATA: return this.onInstanceMapFromData(gameContext, payload);

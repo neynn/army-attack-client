@@ -73,13 +73,15 @@ ControllerIdleState.prototype.update = function(stateMachine, gameContext) {
     const { world } = gameContext;
     const { actionQueue } = world;
     const controller = stateMachine.getContext();
+    const hoveredEntity = controller.getHoveredEntity();
 
-    controller.updateCursorPositionDefault(gameContext);
-    controller.updateCursorSpriteIdle(gameContext);
+    controller.regulateSpritePosition(gameContext, hoveredEntity);
 
     if(actionQueue.isRunning()) {
-        ControllerSystem.resetAttackerOverlays(gameContext);
+        ControllerSystem.resetAttackers(gameContext, controller);
     } else {
         ControllerSystem.updateAttackers(gameContext, controller);   
     }
+
+    controller.updateHoverSprite(gameContext);
 }

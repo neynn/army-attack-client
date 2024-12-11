@@ -3,6 +3,7 @@ import { State } from "../../../source/state/state.js";
 import { ACTION_TYPES, CONTROLLER_STATES } from "../../enums.js";
 import { TeamSystem } from "../../systems/team.js";
 import { ControllerSystem } from "../../systems/controller.js";
+import { SpriteComponent } from "../../components/sprite.js";
 
 export const ControllerSelectedState = function() {
     State.call(this);
@@ -17,7 +18,7 @@ ControllerSelectedState.prototype.onEventEnter = function(stateMachine, gameCont
     const { soundPlayer } = client;
 
     const controller = stateMachine.getContext();
-    const selectedEntityID = controller.getSelectedEntity();
+    const selectedEntityID = controller.getFirstSelected();
     const selectedEntity = entityManager.getEntity(selectedEntityID);
 
     const { x, y } = gameContext.getMouseTile();
@@ -41,12 +42,41 @@ ControllerSelectedState.prototype.onEventEnter = function(stateMachine, gameCont
     stateMachine.setNextState(CONTROLLER_STATES.IDLE);
 }
 
+ControllerSelectedState.prototype.updateCursorSprite = function(gameContext, controller) {
+    const { spriteManager } = gameContext;
+    const spriteComponent = controller.getComponent(SpriteComponent);
+    const sprite = spriteManager.getSprite(spriteComponent.spriteID);
+    const hoveredEntity = controller.getHoveredEntity();
+
+    if(controller.hasNoSelection()) {
+        return;
+    }
+
+    if(hoveredEntity) {
+        controller.updateHoverSprite(gameContext);
+        return;
+    }
+    
+    const nodeKey = `${controller.tileX}-${controller.tileY}`;
+    const nodeList = controller.getNodeList();
+
+    if(!nodeList.has(nodeKey)) {
+        sprite.hide();
+        return;
+    }
+
+    spriteManager.updateSprite(spriteComponent.spriteID, controller.config.sprites.move["1-1"]);
+    sprite.show();
+}
+
 ControllerSelectedState.prototype.update = function(stateMachine, gameContext) {
     const controller = stateMachine.getContext();
+    const hoveredEntity = controller.getHoveredEntity();
 
-    controller.updateCursorPositionDefault(gameContext);
-    controller.updateCursorSpriteSelected(gameContext);
+    controller.regulateSpritePosition(gameContext, hoveredEntity);
     
     ControllerSystem.updateSelectedEntity(gameContext, controller);
     ControllerSystem.updateAttackers(gameContext, controller);
+
+    this.updateCursorSprite(gameContext, controller);
 }

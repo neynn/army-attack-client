@@ -1,6 +1,7 @@
 {
     "PLAYER": {
         "id": "PLAYER",
+        "type": "Entity",
         "sprites": {
             "move": {
                 "1-1": "cursor_select_1x1"
@@ -35,6 +36,7 @@
         }
     },
     "EDITOR": {
-        "id": "EDITOR"
+        "id": "EDITOR",
+        "type": "World"
     }
 }

@@ -14,59 +14,30 @@ import { TeamComponent } from "../../components/team.js";
 export const PlayerController = function(id) {
     EntityController.call(this, id);
     this.hoveredEntity = null;
-    this.selectedEntity = null;
     this.nodeList = new Map();
     this.attackers = new Set();
+    this.tileX = -1;
+    this.tileY = -1;
 }
 
 PlayerController.prototype = Object.create(EntityController.prototype);
 PlayerController.prototype.constructor = PlayerController;
 
-PlayerController.prototype.updateCursorSpriteSelected = function(gameContext) {
-    const { spriteManager } = gameContext;
-    const spriteComponent = this.getComponent(SpriteComponent);
-    const sprite = spriteManager.getSprite(spriteComponent.spriteID);
-
-    if(!this.selectedEntity) {
-        return;
-    }
-
-    sprite.show();
-
-    if(!this.hoveredEntity) {
-        const { x, y } = gameContext.getMouseTile();
-        const nodeKey = `${x}-${y}`;
-
-        if(this.nodeList.has(nodeKey)) {
-            spriteManager.updateSprite(spriteComponent.spriteID, this.config.sprites.move["1-1"]);
-        } else {
-            sprite.hide();
-        }
-
-        return;
-    }
-
-    this.updateCursorSpriteDefault(gameContext);
+PlayerController.prototype.getHoveredEntity = function() {
+    return this.hoveredEntity;
 }
 
-PlayerController.prototype.updateCursorSpriteIdle = function(gameContext) {
-    const { spriteManager } = gameContext;
+PlayerController.prototype.updateHoverSprite = function(gameContext) {
+    const { spriteManager, world } = gameContext;
+    const { entityManager } = world;
     const spriteComponent = this.getComponent(SpriteComponent);
     const sprite = spriteManager.getSprite(spriteComponent.spriteID);
 
     if(!this.hoveredEntity) {
         sprite.hide();
         return;
-    } 
+    }
 
-    this.updateCursorSpriteDefault(gameContext);
-    sprite.show();
-}
-
-PlayerController.prototype.updateCursorSpriteDefault = function(gameContext) {
-    const { spriteManager, world } = gameContext;
-    const { entityManager } = world;
-    const spriteComponent = this.getComponent(SpriteComponent);
     const hoverEntity = entityManager.getEntity(this.hoveredEntity);
     const spriteKey = `${hoverEntity.config.dimX}-${hoverEntity.config.dimY}`;
 
@@ -75,58 +46,35 @@ PlayerController.prototype.updateCursorSpriteDefault = function(gameContext) {
 
         if(spriteType) {
             spriteManager.updateSprite(spriteComponent.spriteID, spriteType);
+            sprite.show();
         }
     } else {
         const spriteType = this.config.sprites.select[spriteKey];
 
         if(spriteType) {
             spriteManager.updateSprite(spriteComponent.spriteID, spriteType);
+            sprite.show();
         }
     }
 }
 
-PlayerController.prototype.updateCursorPositionAirstrike = function(gameContext) {
-    const { spriteManager, renderer } = gameContext;
-    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
-    const spriteComponent = this.getComponent(SpriteComponent);
-    const { x, y } = gameContext.getMouseTile();
-    const centerPosition = camera.transformTileToPositionCenter(x, y);
-    const sprite = spriteManager.getSprite(spriteComponent.spriteID);
-
-    sprite.setPosition(centerPosition.x, centerPosition.y);
-}
-
-PlayerController.prototype.updateCursorPositionDefault = function(gameContext) {
+PlayerController.prototype.regulateSpritePosition = function(gameContext, entityID = null) {
     const { spriteManager, renderer, world } = gameContext;
     const { entityManager } = world;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
     const spriteComponent = this.getComponent(SpriteComponent);
     const sprite = spriteManager.getSprite(spriteComponent.spriteID);
 
-    if(!this.hoveredEntity) {
-        const { x, y } = gameContext.getMouseTile();
-        const centerPosition = camera.transformTileToPositionCenter(x, y);
-
-        sprite.setPosition(centerPosition.x, centerPosition.y);
-    } else {
-        const hoverEntity = entityManager.getEntity(this.hoveredEntity);
-        const positionComponent = hoverEntity.getComponent(PositionComponent);
+    if(entityID !== null) {
+        const entity = entityManager.getEntity(entityID);
+        const positionComponent = entity.getComponent(PositionComponent);
         const centerPosition = camera.transformTileToPositionCenter(positionComponent.tileX, positionComponent.tileY);
 
         sprite.setPosition(centerPosition.x, centerPosition.y);
-    }
-}
-
-PlayerController.prototype.updateCursorHoverData = function(gameContext) {
-    const { world } = gameContext;
-    const { x, y } = gameContext.getMouseTile();
-    const mouseEntity = world.getTileEntity(x, y);
-
-    if(!mouseEntity) {
-        this.hoveredEntity = null;
     } else {
-        const mouseEntityID = mouseEntity.getID();
-        this.hoveredEntity = mouseEntityID;
+        const centerPosition = camera.transformTileToPositionCenter(this.tileX, this.tileY);
+
+        sprite.setPosition(centerPosition.x, centerPosition.y); 
     }
 }
 
@@ -183,20 +131,20 @@ PlayerController.prototype.onCreate = function(gameContext, payload) {
 }
 
 PlayerController.prototype.update = function(gameContext) {
-    this.updateCursorHoverData(gameContext);
+    const { world } = gameContext;
+    const { x, y } = gameContext.getMouseTile();
+    const mouseEntity = world.getTileEntity(x, y);
+
+    if(!mouseEntity) {
+        this.hoveredEntity = null;
+    } else {
+        const mouseEntityID = mouseEntity.getID();
+        this.hoveredEntity = mouseEntityID;
+    }
+
+    this.tileX = x;
+    this.tileY = y;
     this.states.update(gameContext);
-}
-
-PlayerController.prototype.selectEntity = function(entityID) {
-    this.selectedEntity = entityID;
-}
-
-PlayerController.prototype.deselectEntity = function() {
-    this.selectedEntity = null;
-}
-
-PlayerController.prototype.getSelectedEntity = function() {
-    return this.selectedEntity;
 }
 
 PlayerController.prototype.setNodeList = function(nodeList) {

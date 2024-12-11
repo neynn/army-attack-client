@@ -19,6 +19,7 @@ export const World = function() {
 
     this.events.listen(World.EVENT_MAP_LOAD);
     this.events.listen(World.EVENT_CONTROLLER_CREATE);
+    this.events.listen(World.EVENT_CONTROLLER_DESTROY);
     this.events.listen(World.EVENT_ENTITY_CREATE);
     this.events.listen(World.EVENT_ENTITY_DESTROY);
 }
@@ -27,6 +28,7 @@ World.CODE_PARSE_MAP_ERROR = 0;
 World.CODE_PARSE_MAP_SUCCESS = 1;
 World.EVENT_MAP_LOAD = "EVENT_MAP_LOAD";
 World.EVENT_CONTROLLER_CREATE = "EVENT_CONTROLLER_CREATE";
+World.EVENT_CONTROLLER_DESTROY = "EVENT_CONTROLLER_DESTROY";
 World.EVENT_ENTITY_CREATE = "EVENT_ENTITY_CREATE";
 World.EVENT_ENTITY_DESTROY = "EVENT_ENTITY_DESTROY";
 
@@ -96,6 +98,17 @@ World.prototype.createController = function(gameContext, setup) {
     controller.onCreate(gameContext, setup);
 
     return controller;
+}
+
+World.prototype.destroyController = function(controllerID) {
+    const controller = this.controllerManager.getController(controllerID);
+
+    if(!controller) {
+        return;
+    }
+
+    this.controllerManager.destroyController(controllerID);
+    this.events.emit(World.EVENT_CONTROLLER_DESTROY, controller);
 }
 
 World.prototype.createEntity = function(gameContext, setup) {

@@ -28,11 +28,12 @@ ControllerSystem.resetAttackerSprites = function(gameContext, attackers) {
     }
 }
 
-ControllerSystem.resetAttackerOverlays = function(gameContext) {
+ControllerSystem.resetAttackers = function(gameContext, controller) {
     const { renderer } = gameContext;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
 
     camera.clearOverlay(ArmyCamera.OVERLAY_TYPE_ATTACK);
+    controller.clearAttackers();
 }
 
 ControllerSystem.resetAttacker = function(gameContext, attackerID) {
@@ -74,9 +75,8 @@ ControllerSystem.updateAttackers = function(gameContext, controller) {
     const oldAttackers = controller.getAttackers();
 
     if(!mouseEntity) {
-        ControllerSystem.resetAttackerOverlays(gameContext);
         ControllerSystem.resetAttackerSprites(gameContext, oldAttackers);
-        controller.clearAttackers();
+        ControllerSystem.resetAttackers(gameContext, controller);
         return;
     }
 
@@ -84,33 +84,30 @@ ControllerSystem.updateAttackers = function(gameContext, controller) {
     const isTargetable = TargetSystem.isTargetable(mouseEntity);
 
     if(!isEnemy || !isTargetable) {
-        ControllerSystem.resetAttackerOverlays(gameContext);
         ControllerSystem.resetAttackerSprites(gameContext, oldAttackers);
-        controller.clearAttackers();
+        ControllerSystem.resetAttackers(gameContext, controller);
         return;
     }
 
-    const updatedList = new Set();
-    const newAttackers = TargetSystem.getAttackers(gameContext, mouseEntity);
+    const newAttackers = new Set(TargetSystem.getAttackers(gameContext, mouseEntity));
 
     for(const attackerID of newAttackers) {
         ControllerSystem.hightlightAttacker(gameContext, mouseEntity, attackerID);
-        updatedList.add(attackerID);
     }
 
     for(const attackerID of oldAttackers) {
-        if(!updatedList.has(attackerID)) {
+        if(!newAttackers.has(attackerID)) {
             ControllerSystem.resetAttacker(gameContext, attackerID);
         }
     }
 
-    controller.setAttackers(updatedList);
+    controller.setAttackers(newAttackers);
 }
 
 ControllerSystem.updateSelectedEntity = function(gameContext, controller) {
     const { world } = gameContext;
     const { entityManager } = world;
-    const selectedEntityID = controller.getSelectedEntity();
+    const selectedEntityID = controller.getFirstSelected();
     const selectedEntity = entityManager.getEntity(selectedEntityID);
 
     if(!selectedEntity) {
@@ -164,7 +161,7 @@ ControllerSystem.selectEntity = function(gameContext, controller, entity) {
         }
     }
 
-    controller.selectEntity(entityID);
+    controller.selectSingle(entityID);
     controller.setNodeList(controllerNodeList);
     AnimationSystem.playSelect(gameContext, entity);
 }
@@ -181,7 +178,7 @@ ControllerSystem.deselectEntity = function(gameContext, controller, entity) {
         ConquerSystem.convertTileGraphics(gameContext, positionX, positionY, 1);
     }
 
-    controller.deselectEntity();
+    controller.deselectAll();
     controller.clearNodeList();
     AnimationSystem.stopSelect(gameContext, entity)
 }
@@ -193,7 +190,7 @@ ControllerSystem.isControlled = function(entityID, controller) {
 ControllerSystem.isMoveable = function(entity, controller) {
     const healthComponent = entity.getComponent(HealthComponent);
     const isSelectable = entity.hasComponent(MoveComponent) && healthComponent.health > 0;
-    const selectedEntityID = controller.getSelectedEntity();
+    const selectedEntityID = controller.getFirstSelected();
 
     return isSelectable && selectedEntityID === null;
 }
