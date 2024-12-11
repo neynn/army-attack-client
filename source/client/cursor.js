@@ -16,7 +16,8 @@ export const Cursor = function() {
     this.addEventHandler("mousedown", event => this.eventMouseDown(event));
     this.addEventHandler("mouseup", event => this.eventMouseUp(event));
     this.addEventHandler("mousemove", event => this.eventMouseMove(event)); 
-    this.addEventHandler("wheel", event => this.eventMouseScroll(event));   
+    this.addEventHandler("wheel", event => this.eventMouseScroll(event));
+    this.addEventHandler("pointerlockchange", event => this.eventPointerLockChange(event));
     
     this.events = new EventEmitter();
     this.events.listen(Cursor.LEFT_MOUSE_CLICK);
@@ -151,12 +152,20 @@ Cursor.prototype.eventMouseScroll = function(event) {
     }
 }
 
-Cursor.prototype.lock = function() {
-    this.isLocked = true;
+Cursor.prototype.eventPointerLockChange = function(event) {}
+
+Cursor.prototype.lock = function(target) {
+    if(!this.isLocked) {
+        target.requestPointerLock();
+        this.isLocked = true;
+    }
 }
 
 Cursor.prototype.unlock = function() {
-    this.isLocked = false;
+    if(this.isLocked) {
+        document.exitPointerLock();
+        this.isLocked = false;
+    }
 }
 
 Cursor.prototype.update = function() {

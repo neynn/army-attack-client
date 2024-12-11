@@ -155,7 +155,6 @@ ArmyContext.prototype.initialize = function() {
 }
 
 ArmyContext.prototype.parseConversions = function() {
-    const { tileManager } = this;
     const conversions = this.world.getConfig("tileConversions");
     const newConversions = {};
 
@@ -164,7 +163,7 @@ ArmyContext.prototype.parseConversions = function() {
 
         for(const frameID in set) {
             const config = {};
-            const mainID = tileManager.getTileID(setID, frameID);
+            const mainID = this.tileManager.getTileID(setID, frameID);
 
             if(mainID === null) {
                 continue;
@@ -174,7 +173,7 @@ ArmyContext.prototype.parseConversions = function() {
 
             for(const teamID in teamConversions) {
                 const [tileSetID, tileFrameID] = teamConversions[teamID];
-                const tileID = tileManager.getTileID(tileSetID, tileFrameID);
+                const tileID = this.tileManager.getTileID(tileSetID, tileFrameID);
 
                 if(teamID !== null) {
                     config[teamID] = tileID;
@@ -230,10 +229,10 @@ ArmyContext.prototype.loadSnapshot = function(snapshot) {
     const { time, entities, controllers } = snapshot;
 
     for(const controller of controllers) {
-        this.createController(controller);
+        this.world.createController(this, controller);
     }
 
     for(const entity of entities) {
-        this.createEntity(entity);
+        this.world.createEntity(this, entity);
     }
 }

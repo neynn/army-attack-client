@@ -24,7 +24,7 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
         return;
     }
 
-    gameContext.createController({
+    world.createController(gameContext, {
         "type": CONTROLLER_TYPES.PLAYER,
         "team": 1,
         "id": "neyn"
@@ -38,7 +38,7 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
     
     uiManager.parseUI("STORY_MODE", gameContext);
     
-    gameContext.createEntity({ 
+    world.createEntity(gameContext, { 
         "type": "blue_guardtower",
         "mode": "story",
         "tileX": 0,
@@ -47,7 +47,7 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
         "master": "neyn"
     });
 
-    gameContext.createEntity({ 
+    world.createEntity(gameContext, { 
         "type": "blue_elite_battery",
         "mode": "story",
         "tileX": 4,
@@ -56,7 +56,7 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
         "master": null
     });
 
-    gameContext.createEntity({ 
+    world.createEntity(gameContext, { 
         "type": "blue_commando",
         "mode": "story",
         "tileX": 1,
@@ -65,7 +65,7 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
         "master": "neyn"
     });
 
-    gameContext.createEntity({
+    world.createEntity(gameContext, {
         "type": "red_artillery",
         "mode": "story",
         "tileX": 2,
@@ -74,7 +74,7 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
         "master": "neyn"
     });
 
-    gameContext.createEntity({
+    world.createEntity(gameContext, {
         "type": "blue_bootcamp_construction",
         "mode": "story",
         "tileX": 2,
@@ -83,7 +83,7 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
         "master": "neyn"
     });
 
-    gameContext.createEntity({ 
+    world.createEntity(gameContext, { 
         "type": "blue_elite_infantry",
         "mode": "story",
         "tileX": 6,
@@ -97,7 +97,7 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
         }
     });
 
-    gameContext.createEntity({ 
+    world.createEntity(gameContext, { 
         "type": "red_bulldozer",
         "mode": "story",
         "tileX": 3,
@@ -106,7 +106,7 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
         "master": "neyn"
     });
 
-    const redBattletank = gameContext.createEntity({ 
+    const redBattletank = world.createEntity(gameContext, { 
         "type": "red_battletank",
         "mode": "story",
         "tileX": 4,
@@ -115,7 +115,7 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
         "master": null
     });
 
-    const battleTank = gameContext.createEntity({ 
+    const battleTank = world.createEntity(gameContext, { 
         "type": "blue_elite_battletank",
         "mode": "story",
         "tileX": 0,

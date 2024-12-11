@@ -23,7 +23,7 @@ MapEditorState.prototype.enter = function(stateMachine) {
     renderer.addCamera(CAMERA_TYPES.ARMY_CAMERA, camera);
     uiManager.parseUI("MAP_EDITOR", gameContext);
     uiManager.unparseUI("FPS_COUNTER", gameContext);
-    gameContext.createController({
+    world.createController(gameContext, {
         "type": CONTROLLER_TYPES.EDITOR,
         "id": "MAP_EDITOR"
     });

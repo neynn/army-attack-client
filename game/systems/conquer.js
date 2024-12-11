@@ -1,4 +1,5 @@
 import { Autotiler } from "../../source/tile/autotiler.js";
+
 import { TeamComponent } from "../components/team.js";
 import { TeamSystem } from "./team.js";
 

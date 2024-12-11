@@ -6,7 +6,6 @@ import { UIManager } from "./ui/uiManager.js";
 import { StateMachine } from "./state/stateMachine.js";
 import { Timer } from "./timer.js";
 import { UIElement } from "./ui/uiElement.js";
-import { Logger } from "./logger.js";
 import { TileManager } from "./tile/tileManager.js";
 import { Renderer } from "./renderer.js";
 import { World } from "./world.js";
@@ -37,9 +36,11 @@ export const GameContext = function(fps = 60) {
         this.uiManager.update(this);
         this.renderer.update(this);
     }
+
+    this.addClickEvent();
 }
 
-GameContext.prototype.start = function() {
+GameContext.prototype.addClickEvent = function() {
     const { cursor } = this.client;
 
     cursor.events.subscribe(Cursor.LEFT_MOUSE_CLICK, EventEmitter.SUPER_SUBSCRIBER_ID, () => {
@@ -49,7 +50,9 @@ GameContext.prototype.start = function() {
             element.events.emit(UIElement.EVENT_CLICKED);
         }
     });
+}
 
+GameContext.prototype.start = function() {
     this.world.actionQueue.start();
     this.timer.start();
 }
@@ -109,55 +112,6 @@ GameContext.prototype.getMouseEntity = function() {
     return mouseEntity;
 }
 
-GameContext.prototype.lockPointer = function() {
-    if(!this.client.cursor.isLocked) {
-        this.renderer.display.canvas.requestPointerLock();
-    }
-}
-
-GameContext.prototype.unlockPointer = function() {
-    if(this.client.cursor.isLocked) {      
-        document.exitPointerLock();
-    }
-}
-
-GameContext.prototype.addLockEvent = function() {
-    document.addEventListener("pointerlockchange", () => {
-        if(document.pointerLockElement === this.renderer.display.canvas) {
-            this.client.cursor.lock();
-        } else {
-            this.client.cursor.unlock();
-        }
-    });
-}
-
-GameContext.prototype.createController = function(setup) {
-    if(typeof setup !== "object") {
-        Logger.error(false, "Setup does not exist!", "GameContext.prototype.createController", null);
-        return null;
-    }
-
-    const { type, id } = setup;
-    const controller = this.world.controllerManager.createController(type, id);
-
-    if(!controller) {
-        return null;
-    }
-
-    controller.onCreate(this, setup);
-
-    return controller;
-}
-
-GameContext.prototype.createEntity = function(setup) {
-    if(typeof setup !== "object") {
-        Logger.error(false, "Setup does not exist!", "GameContext.prototype.createEntity", null);
-        return null;
-    }
-
-    return this.world.createEntity(this, setup);
-}
-
 GameContext.prototype.clearEvents = function() {
     this.client.cursor.events.unsubscribeAll(this.id);
     this.client.keyboard.events.unsubscribeAll(this.id);
@@ -172,7 +126,7 @@ GameContext.prototype.getID = function() {
 
 GameContext.prototype.switchState = function(stateID) {
     if(!this.states.hasState(stateID)) {
-        return false;
+        return;
     }
 
     this.clearEvents();

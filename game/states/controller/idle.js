@@ -48,7 +48,7 @@ ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext)
             
             //TODO: Open GUI and check if the controller has enough materials/resources.
             world.destroyEntity(entityID);
-            gameContext.createEntity(result);
+            world.createEntity(gameContext, result);
         } else {
             actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.CONSTRUCTION, entityID));
         }

@@ -18,6 +18,7 @@ export const World = function() {
     this.events = new EventEmitter();
 
     this.events.listen(World.EVENT_MAP_LOAD);
+    this.events.listen(World.EVENT_CONTROLLER_CREATE);
     this.events.listen(World.EVENT_ENTITY_CREATE);
     this.events.listen(World.EVENT_ENTITY_DESTROY);
 }
@@ -25,6 +26,7 @@ export const World = function() {
 World.CODE_PARSE_MAP_ERROR = 0;
 World.CODE_PARSE_MAP_SUCCESS = 1;
 World.EVENT_MAP_LOAD = "EVENT_MAP_LOAD";
+World.EVENT_CONTROLLER_CREATE = "EVENT_CONTROLLER_CREATE";
 World.EVENT_ENTITY_CREATE = "EVENT_ENTITY_CREATE";
 World.EVENT_ENTITY_DESTROY = "EVENT_ENTITY_DESTROY";
 
@@ -77,7 +79,31 @@ World.prototype.getTileEntity = function(tileX, tileY) {
     return this.entityManager.getEntity(entityID);
 }
 
+World.prototype.createController = function(gameContext, setup) {
+    if(typeof setup !== "object") {
+        Logger.error(false, "Setup does not exist!", "World.prototype.createController", null);
+        return null;
+    }
+
+    const { type, id } = setup;
+    const controller = this.controllerManager.createController(type, id);
+
+    if(!controller) {
+        return null;
+    }
+
+    this.events.emit(World.EVENT_CONTROLLER_CREATE, controller);
+    controller.onCreate(gameContext, setup);
+
+    return controller;
+}
+
 World.prototype.createEntity = function(gameContext, setup) {
+    if(typeof setup !== "object") {
+        Logger.error(false, "Setup does not exist!", "World.prototype.createEntity", null);
+        return null;
+    }
+
     const { type, master, id } = setup;
     const entity = this.entityManager.createEntity(type, id);
     const entityID = entity.getID();
