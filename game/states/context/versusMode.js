@@ -7,6 +7,7 @@ import { World } from "../../../source/world.js";
 
 import { CAMERA_TYPES, CONTEXT_STATES, GAME_EVENTS } from "../../enums.js";
 import { ArmyCamera } from "../../armyCamera.js";
+import { ConquerSystem } from "../../systems/conquer.js";
 
 export const VersusModeState = function() {
     State.call(this);
@@ -32,7 +33,7 @@ VersusModeState.prototype.onInstanceMap = function(gameContext, payload) {
 
     world.parseMap(id, MapParser.parseMap2D).then(code => {
         if(code === World.CODE_PARSE_MAP_SUCCESS) {
-            gameContext.initializeTilemap(id);
+            ConquerSystem.reloadGraphics(gameContext, id);
             socket.messageRoom(GAME_EVENTS.INSTANCE_MAP, { "success": true, "error": null });
         } else {
             socket.messageRoom(GAME_EVENTS.INSTANCE_MAP, { "success": false, "error": "NO_MAP_FILE" })
@@ -47,8 +48,7 @@ VersusModeState.prototype.onInstanceMapFromData = function(gameContext, payload)
     const worldMap = MapParser.parseMap2D(id, layers, meta);
 
     world.loadMap(id, worldMap);
-    gameContext.initializeTilemap(id);
-
+    ConquerSystem.reloadGraphics(gameContext, id);
     socket.messageRoom(GAME_EVENTS.INSTANCE_MAP, { "success": true, "error": null });
 }
 

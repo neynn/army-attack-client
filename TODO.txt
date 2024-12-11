@@ -10,7 +10,3 @@
 
 //TODO: Add "Auto" mode to mapEditor.
 //TODO: Add "Debug-Menu"
-
-//TeamSystem does not check for control...
-//TODO: save a list of entities for the controllers. => armyContext.saveEntities();
-//Tackly dynamic text updated => part of effect manager now.

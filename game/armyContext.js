@@ -154,42 +154,6 @@ ArmyContext.prototype.initialize = function() {
     this.switchState(CONTEXT_STATES.MAIN_MENU);
 }
 
-ArmyContext.prototype.initializeTilemap = function(mapID) {
-    const gameMap = this.world.mapManager.getLoadedMap(mapID);
-
-    if(!gameMap) {
-        return false;
-    }
-
-    const layerTypes = this.world.getConfig("layerTypes");
-    const tileTypes = this.world.getConfig("tileTypes");
-    const teamTypes = this.world.getConfig("teamTypes");
-    const teamLayerID = layerTypes.team.layerID;
-    const typeLayerID = layerTypes.type.layerID;
-
-    gameMap.updateTiles((index, tileX, tileY) => {
-        const team = gameMap.getTile(teamLayerID, tileX, tileY);
-        const type = gameMap.getTile(typeLayerID, tileX, tileY);
-
-        if(tileTypes[type] === undefined) {
-            console.warn(`TileType ${type} does not exist!`);
-        } 
-
-        if(teamTypes[team] === undefined) {
-            console.warn(`TeamType ${team} does not exist!`);  
-        }
-    });
-
-    gameMap.updateTiles((index, tileX, tileY) => {
-        const teamID = gameMap.getTile(teamLayerID, tileX, tileY);
-        
-        ConquerSystem.updateBorder(this, tileX, tileY);
-        ConquerSystem.convertTileGraphics(this, tileX, tileY, teamID);
-    });
-
-    return true;
-}
-
 ArmyContext.prototype.parseConversions = function() {
     const { tileManager } = this;
     const conversions = this.world.getConfig("tileConversions");

@@ -3,6 +3,7 @@ import { State } from "../../../../source/state/state.js";
 import { World } from "../../../../source/world.js";
 
 import { ACTION_TYPES, CAMERA_TYPES, CONTROLLER_TYPES } from "../../../enums.js";
+import { ConquerSystem } from "../../../systems/conquer.js";
 
 export const StoryModePlayState = function() {
     State.call(this);
@@ -29,7 +30,7 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
         "id": "neyn"
     });
     
-    gameContext.initializeTilemap(MAP);
+    ConquerSystem.reloadGraphics(gameContext, MAP);
 
     camera.centerWorld();
 

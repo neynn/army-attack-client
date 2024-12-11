@@ -1,4 +1,5 @@
 import { Autotiler } from "../../source/tile/autotiler.js";
+import { TeamComponent } from "../components/team.js";
 import { TeamSystem } from "./team.js";
 
 export const ConquerSystem = function() {}
@@ -9,7 +10,7 @@ ConquerSystem.convertTileGraphics = function(gameContext, tileX, tileY, teamID) 
     const activeMap = mapManager.getActiveMap();
 
     if(!activeMap) {
-        return false;
+        return;
     }
 
     const layerTypes = world.getConfig("layerTypes");
@@ -35,24 +36,21 @@ ConquerSystem.convertTileGraphics = function(gameContext, tileX, tileY, teamID) 
 
         activeMap.placeTile(convertedTileID, layerID, tileX, tileY);
     }
-
-    return true;
 }
 
-ConquerSystem.updateBorder = function(gameContext, tileX, tileY) {
+ConquerSystem.updateBorder = function(gameContext, tileX, tileY, teamID) {
     const { tileManager, world } = gameContext;
-    const { mapManager, controllerManager } = world;
+    const { mapManager } = world;
     const settings = world.getConfig("settings");
-    const controller = controllerManager.getController("neyn"); //TODO <-- Set player controller as main?
 
     if(!settings.drawBorder) {
-        return false;
+        return;
     }
 
     const activeMap = mapManager.getActiveMap();
 
     if(!activeMap) {
-        return false;
+        return;
     }
 
     const tileTypes = world.getConfig("tileTypes");
@@ -65,11 +63,11 @@ ConquerSystem.updateBorder = function(gameContext, tileX, tileY) {
     const centerType = tileTypes[centerTypeID];
 
     if(!centerType || !centerType.hasBorder) {
-        return false;
+        return;
     }
 
-    if(!TeamSystem.isTeamFriendly(gameContext, controller, centerTeamID)) {
-        return false;
+    if(!TeamSystem.isAllied(gameContext, teamID, centerTeamID)) {
+        return;
     }
 
     const autoIndex = Autotiler.autotile8Bits(tileX, tileY, (center, neighbor) => {
@@ -94,4 +92,26 @@ ConquerSystem.updateBorder = function(gameContext, tileX, tileY) {
     const tileID = tileManager.getAutotilerID(borderAutotilerID, autoIndex);
 
     activeMap.placeTile(tileID, borderLayerID, tileX, tileY);
+}
+
+ConquerSystem.reloadGraphics = function(gameContext, mapID) {
+    const { world } = gameContext;
+    const { mapManager, controllerManager } = world;
+    const worldMap = mapManager.getLoadedMap(mapID);
+
+    if(!worldMap) {
+        return;
+    }
+
+    const controller = controllerManager.getController("neyn"); //TODO <-- Set player controller as main?
+    const layerTypes = world.getConfig("layerTypes");
+    const teamLayerID = layerTypes.team.layerID;
+    const teamComponent = controller.getComponent(TeamComponent);
+
+    worldMap.updateTiles((index, tileX, tileY) => {
+        const teamID = worldMap.getTile(teamLayerID, tileX, tileY);
+        
+        ConquerSystem.updateBorder(gameContext, tileX, tileY, teamComponent.teamID);
+        ConquerSystem.convertTileGraphics(gameContext, tileX, tileY, teamID);
+    });
 }
