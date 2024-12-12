@@ -4,6 +4,9 @@ import { ACTION_TYPES, CONTROLLER_STATES } from "../../enums.js";
 import { TeamSystem } from "../../systems/team.js";
 import { ControllerSystem } from "../../systems/controller.js";
 import { SpriteComponent } from "../../components/sprite.js";
+import { PositionComponent } from "../../components/position.js";
+import { DirectionSystem } from "../../systems/direction.js";
+import { MorphSystem } from "../../systems/morph.js";
 
 export const ControllerSelectedState = function() {
     State.call(this);
@@ -48,7 +51,7 @@ ControllerSelectedState.prototype.updateCursorSprite = function(gameContext, con
     const sprite = spriteManager.getSprite(spriteComponent.spriteID);
     const hoveredEntity = controller.getHoveredEntity();
 
-    if(controller.hasNoSelection()) {
+    if(controller.getSelectedCount() === 0) {
         return;
     }
 
@@ -69,13 +72,31 @@ ControllerSelectedState.prototype.updateCursorSprite = function(gameContext, con
     sprite.show();
 }
 
+ControllerSelectedState.prototype.updateEntity = function(gameContext, controller) {
+    const { world } = gameContext;
+    const { entityManager } = world;
+    const selectedEntityID = controller.getFirstSelected();
+    const selectedEntity = entityManager.getEntity(selectedEntityID);
+
+    if(!selectedEntity) {
+        return;
+    }
+
+    const positionComponent = selectedEntity.getComponent(PositionComponent);
+    
+    if(controller.tileX !== positionComponent.tileX) {
+        DirectionSystem.lookHorizontal(selectedEntity, controller.tileX < positionComponent.tileX);
+        MorphSystem.morphHorizontal(selectedEntity);
+    }
+}
+
 ControllerSelectedState.prototype.update = function(stateMachine, gameContext) {
     const controller = stateMachine.getContext();
     const hoveredEntity = controller.getHoveredEntity();
 
     controller.regulateSpritePosition(gameContext, hoveredEntity);
     
-    ControllerSystem.updateSelectedEntity(gameContext, controller);
+    this.updateEntity(gameContext, controller);
     ControllerSystem.updateAttackers(gameContext, controller);
 
     this.updateCursorSprite(gameContext, controller);

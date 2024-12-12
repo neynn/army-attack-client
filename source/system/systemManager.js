@@ -12,49 +12,40 @@ SystemManager.prototype.update = function(gameContext) {
     }
 }
 
-SystemManager.prototype.registerSystem = function(systemID, reference) {
+SystemManager.prototype.registerSystem = function(systemID, onUpdate) {
     if(this.systems.has(systemID)) {
-        Logger.log(false, "System already exists!", "SystemManager.prototype.registerSystem", {systemID});
-
-        return false;
+        Logger.log(false, "System already exists!", "SystemManager.prototype.registerSystem", { systemID });
+        return;
     }
 
-    if(typeof reference !== "function") {
-        Logger.log(false, "System is invalid!", "SystemManager.prototype.registerSystem", {systemID});
-
-        return false;
+    if(typeof onUpdate !== "function") {
+        Logger.log(false, "System is invalid!", "SystemManager.prototype.registerSystem", { systemID });
+        return;
     }
 
-    const system = new System(systemID, reference);
+    const system = new System(systemID, onUpdate);
+
     this.systems.set(systemID, system);
-
-    return true;
 }
 
 SystemManager.prototype.addEntity = function(systemID, entityID) {
     const system = this.systems.get(systemID);
 
     if(!system) {
-        Logger.log(false, "System does not exist!", "SystemManager.prototype.addEntity", {systemID, entityID});
-
-        return false;
+        Logger.log(false, "System does not exist!", "SystemManager.prototype.addEntity", { systemID, entityID });
+        return;
     }
 
     system.addEntity(entityID);
-
-    return true;
 }
 
 SystemManager.prototype.removeEntity = function(systemID, entityID) {
     const system = this.systems.get(systemID);
 
     if(!system) {
-        Logger.log(false, "System does not exist!", "SystemManager.prototype.removeEntity", {systemID, entityID});
-
-        return false;
+        Logger.log(false, "System does not exist!", "SystemManager.prototype.removeEntity", { systemID, entityID });
+        return;
     }
 
     system.removeEntity(entityID);
-
-    return true;
 }

@@ -33,7 +33,7 @@ ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext)
         return;
     }
 
-    const isControlled = ControllerSystem.isControlled(entityID, controller);
+    const isControlled = controller.hasEntity(entityID);
     const isAlive = HealthSystem.isAlive(mouseEntity);
 
     if(!isControlled || !isAlive) {

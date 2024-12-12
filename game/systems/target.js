@@ -32,7 +32,7 @@ TargetSystem.getUniqueEntitiesInRangeOfEntity = function(gameContext, entity, ra
 
     for(let i = startY; i < endY; i++) {
         for(let j = startX; j < endX; j++) {
-            const entityID = activeMap.getFirstEntity(j, i);
+            const entityID = activeMap.getTopEntity(j, i);
 
             if(entityID && !entities.has(entityID)) {
                 entities.add(entityID);
@@ -50,12 +50,12 @@ TargetSystem.getUniqueEntitiesInRangeOfEntity = function(gameContext, entity, ra
 TargetSystem.getAttackers = function(gameContext, target) {
     const { world } = gameContext;
     const { entityManager } = world;
-    const attackerIDs = [];
 
     if(!TargetSystem.isTargetable(target)) {
-        return attackerIDs;
+        return [];
     }
 
+    const attackers = [];
     const targetID = target.getID();
     const settings = world.getConfig("settings");
     const possibleAttackerIDs = TargetSystem.getUniqueEntitiesInRangeOfEntity(gameContext, target, settings.maxAttackRange, [targetID]);
@@ -67,32 +67,22 @@ TargetSystem.getAttackers = function(gameContext, target) {
             continue;
         }
 
-        const canTarget = TargetSystem.canAttackerTarget(gameContext, attacker, target);
+        const isAlive = HealthSystem.isAlive(attacker);
+        const isEnemy = TeamSystem.isEntityEnemy(gameContext, attacker, target);
+        const hasRange = TargetSystem.hasRange(target, attacker);
 
-        if(canTarget) {
-            attackerIDs.push(attackerID);
+        if(isAlive && isEnemy && hasRange) {
+            attackers.push(attackerID);
         }
     }
 
-    return attackerIDs;
+    return attackers;
 }
 
-TargetSystem.canAttackerTarget = function(gameContext, attacker, target) {
+TargetSystem.hasRange = function(target, attacker) {
     const attackComponent = attacker.getComponent(AttackComponent);
 
     if(!attackComponent) {
-        return false;
-    }
-
-    const isAlive = HealthSystem.isAlive(attacker);
-
-    if(!isAlive) {
-        return false;
-    }
-
-    const isEnemy = TeamSystem.isEntityEnemy(gameContext, attacker, target);
-
-    if(!isEnemy) {
         return false;
     }
 

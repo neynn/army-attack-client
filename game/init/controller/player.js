@@ -40,21 +40,12 @@ PlayerController.prototype.updateHoverSprite = function(gameContext) {
 
     const hoverEntity = entityManager.getEntity(this.hoveredEntity);
     const spriteKey = `${hoverEntity.config.dimX}-${hoverEntity.config.dimY}`;
+    const spriteTypeID = this.attackers.size > 0 ? "attack" : "select"; 
+    const spriteType = this.config.sprites[spriteTypeID][spriteKey];
 
-    if(this.attackers.size > 0) {
-        const spriteType = this.config.sprites.attack[spriteKey];
-
-        if(spriteType) {
-            spriteManager.updateSprite(spriteComponent.spriteID, spriteType);
-            sprite.show();
-        }
-    } else {
-        const spriteType = this.config.sprites.select[spriteKey];
-
-        if(spriteType) {
-            spriteManager.updateSprite(spriteComponent.spriteID, spriteType);
-            sprite.show();
-        }
+    if(spriteType) {
+        spriteManager.updateSprite(spriteComponent.spriteID, spriteType);
+        sprite.show();
     }
 }
 

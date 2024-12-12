@@ -20,17 +20,14 @@ ConstructionSystem.isComplete = function(entity) {
     return isComplete;
 }
 
-ConstructionSystem.advanceConstruction = function(gameContext, entity, deltaSteps) {
+ConstructionSystem.advanceConstruction = function(gameContext, entity, steps) {
     const constructionComponent = entity.getComponent(ConstructionComponent);
-    const stepsCompleted = clampValue(constructionComponent.stepsCompleted + deltaSteps, constructionComponent.stepsRequired, 0);
+    const stepsCompleted = clampValue(constructionComponent.stepsCompleted + steps, constructionComponent.stepsRequired, 0);
 
-    AnimationSystem.advanceConstructionFrame(gameContext, entity, stepsCompleted);
     constructionComponent.stepsCompleted = stepsCompleted;
+    AnimationSystem.advanceConstructionFrame(gameContext, entity, stepsCompleted);
 }
 
-
-//GAME_EVENTS.INSTANCE_ENTITY -> get the constructionResult from the config
-//GAME_EVENTS.REMOVE_ENTITY -> remove the construction site
 ConstructionSystem.getConstructionResult = function(controller, entity) {
     const controllerID = controller.getID();
     const entityID = entity.getID();

@@ -76,7 +76,7 @@ World.prototype.getTileEntity = function(tileX, tileY) {
         return null;
     }
 
-    const entityID = activeMap.getFirstEntity(tileX, tileY);
+    const entityID = activeMap.getTopEntity(tileX, tileY);
     
     return this.entityManager.getEntity(entityID);
 }

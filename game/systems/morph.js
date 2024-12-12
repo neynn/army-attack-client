@@ -8,7 +8,7 @@ MorphSystem.updateSprite = function(entity, spriteKey) {
     const spriteID = entity.config.sprites[spriteKey];
 
     if(!spriteID) {
-        return false;
+        return;
     }
 
     entity.events.emit(ENTITY_EVENTS.SPRITE_UPDATE, spriteID);
@@ -32,7 +32,7 @@ MorphSystem.morphDirectional = function(entity, southTypeID, northTypeID) {
     const directionComponent = entity.getComponent(DirectionComponent);
 
     if(northTypeID === undefined && southTypeID === undefined) {
-        return false;
+        return;
     }
 
     if(directionComponent.directionX === DirectionComponent.DIRECTION_WEST) {
@@ -46,8 +46,6 @@ MorphSystem.morphDirectional = function(entity, southTypeID, northTypeID) {
     } else {
         MorphSystem.updateSprite(entity, southTypeID);
     }
-
-    return true;
 }
 
 MorphSystem.toAim = function(entity) {

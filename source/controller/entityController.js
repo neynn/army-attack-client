@@ -9,8 +9,8 @@ export const EntityController = function(id) {
 EntityController.prototype = Object.create(WorldEntity.prototype);
 EntityController.prototype.constructor = EntityController;
 
-EntityController.prototype.hasNoSelection = function() {
-    return this.selectedEntities.size === 0;
+EntityController.prototype.getSelectedCount = function() {
+    return this.selectedEntities.size;
 }
 
 EntityController.prototype.selectSingle = function(entityID) {

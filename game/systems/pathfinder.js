@@ -59,7 +59,7 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
             return false;
         }
 
-        const entityID = activeMap.getFirstEntity(child.positionX, child.positionY);
+        const entityID = activeMap.getTopEntity(child.positionX, child.positionY);
 
         if(!entityID) {
             return true;

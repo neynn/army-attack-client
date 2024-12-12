@@ -48,7 +48,7 @@ AttackSystem.getDamage = function(gameContext, target, attackerIDs) {
     return totalDamage;
 }
 
-AttackSystem.getBulldozed = function(gameContext, target, attackerIDs) {
+AttackSystem.isBulldozed = function(gameContext, target, attackerIDs) {
     const { world } = gameContext;
     const { entityManager } = world;
     const archetype = target.config.archetype;

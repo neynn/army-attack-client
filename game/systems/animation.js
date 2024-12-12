@@ -18,7 +18,9 @@ AnimationSystem.revertToIdle = function(gameContext, entityIDs) {
     for(const entityID of entityIDs) {
         const entity = entityManager.getEntity(entityID);
         
-        MorphSystem.toIdle(entity);
+        if(entity) {
+            MorphSystem.toIdle(entity);
+        }
     }
 }
 
@@ -48,6 +50,7 @@ AnimationSystem.playFire = function(gameContext, entity, attackersIDs) {
 
         DirectionSystem.lookAt(attacker, entity);
         MorphSystem.toFire(attacker);
+
         soundPlayer.playRandom(attacker.config.sounds.fire);
         entitySprite.addChild(weaponSprite, weaponSpriteID);
         weaponSprite.expire();
@@ -105,10 +108,4 @@ AnimationSystem.advanceConstructionFrame = function(gameContext, entity, stepsCo
     const frame = AnimationSystem.CONSTRUCTION_FRAMES[stepsCompleted];
     
     sprite.setFrame(frame);
-}
-
-AnimationSystem.updateControllerSprite = function(gameContext, controller) {
-    const { spriteManager } = gameContext;
-    const spriteComponent = controller.getComponent(SpriteComponent);
-    const sprite = spriteManager.getSprite(spriteComponent.spriteID);
 }

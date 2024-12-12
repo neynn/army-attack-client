@@ -41,6 +41,7 @@ export const MoveSystem = function(gameContext, entity) {
 
 MoveSystem.isPathFinished = function(entity) {
     const moveComponent = entity.getComponent(MoveComponent);
+    
     return moveComponent.path.length === 0;
 }
 

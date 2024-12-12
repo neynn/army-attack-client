@@ -4,13 +4,6 @@ import { ENTITY_EVENTS } from "../enums.js";
 
 export const DirectionSystem = function() {}
 
-DirectionSystem.oppositions = new Map([
-    [DirectionComponent.DIRECTION_NORTH, DirectionComponent.DIRECTION_SOUTH],
-    [DirectionComponent.DIRECTION_EAST, DirectionComponent.DIRECTION_WEST],
-    [DirectionComponent.DIRECTION_SOUTH, DirectionComponent.DIRECTION_NORTH],
-    [DirectionComponent.DIRECTION_WEST, DirectionComponent.DIRECTION_EAST]
-]);
-
 DirectionSystem.changeDirection = function(entity, directionX, directionY) {
     const directionComponent = entity.getComponent(DirectionComponent);
 

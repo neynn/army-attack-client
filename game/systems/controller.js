@@ -13,21 +13,6 @@ import { ArmyCamera } from "../armyCamera.js";
 
 export const ControllerSystem = function() {}
 
-ControllerSystem.resetAttackerSprites = function(gameContext, attackers) {
-    const { world } = gameContext;
-    const { entityManager } = world;
-
-    for(const attackerID of attackers) {
-        const attacker = entityManager.getEntity(attackerID);
-
-        if(!attacker) {
-            continue;
-        }
-
-        MorphSystem.toIdle(attacker);
-    }
-}
-
 ControllerSystem.resetAttackers = function(gameContext, controller) {
     const { renderer } = gameContext;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
@@ -75,7 +60,7 @@ ControllerSystem.updateAttackers = function(gameContext, controller) {
     const oldAttackers = controller.getAttackers();
 
     if(!mouseEntity) {
-        ControllerSystem.resetAttackerSprites(gameContext, oldAttackers);
+        AnimationSystem.revertToIdle(gameContext, oldAttackers);
         ControllerSystem.resetAttackers(gameContext, controller);
         return;
     }
@@ -84,7 +69,7 @@ ControllerSystem.updateAttackers = function(gameContext, controller) {
     const isTargetable = TargetSystem.isTargetable(mouseEntity);
 
     if(!isEnemy || !isTargetable) {
-        ControllerSystem.resetAttackerSprites(gameContext, oldAttackers);
+        AnimationSystem.revertToIdle(gameContext, oldAttackers);
         ControllerSystem.resetAttackers(gameContext, controller);
         return;
     }
@@ -102,25 +87,6 @@ ControllerSystem.updateAttackers = function(gameContext, controller) {
     }
 
     controller.setAttackers(newAttackers);
-}
-
-ControllerSystem.updateSelectedEntity = function(gameContext, controller) {
-    const { world } = gameContext;
-    const { entityManager } = world;
-    const selectedEntityID = controller.getFirstSelected();
-    const selectedEntity = entityManager.getEntity(selectedEntityID);
-
-    if(!selectedEntity) {
-        return;
-    }
-
-    const { x, y } = gameContext.getMouseTile();
-    const positionComponent = selectedEntity.getComponent(PositionComponent);
-    
-    if(x !== positionComponent.tileX) {
-        DirectionSystem.lookHorizontal(selectedEntity, x < positionComponent.tileX);
-        MorphSystem.morphHorizontal(selectedEntity);
-    }
 }
 
 ControllerSystem.selectEntity = function(gameContext, controller, entity) {
@@ -151,7 +117,7 @@ ControllerSystem.selectEntity = function(gameContext, controller, entity) {
             continue;
         }
 
-        const tileEntityID = activeMap.getFirstEntity(positionX, positionY);
+        const tileEntityID = activeMap.getTopEntity(positionX, positionY);
         const tileEntity = entityManager.getEntity(tileEntityID);
         const isFriendly = TeamSystem.isEntityFriendly(gameContext, entity, tileEntity);
 
@@ -181,10 +147,6 @@ ControllerSystem.deselectEntity = function(gameContext, controller, entity) {
     controller.deselectAll();
     controller.clearNodeList();
     AnimationSystem.stopSelect(gameContext, entity)
-}
-
-ControllerSystem.isControlled = function(entityID, controller) {
-    return controller.hasEntity(entityID);
 }
 
 ControllerSystem.isMoveable = function(entity, controller) {

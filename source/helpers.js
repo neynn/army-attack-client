@@ -82,11 +82,12 @@ export const saveMap = function(mapID, map2D) {
     }
 
 	const formattedLayers = [];
-    const autoLayers = map2D.getAutoGeneratingLayers();
     const graphics = map2D.getLayers();
 
 	for(const layerID in graphics) {
-		if(autoLayers.has(layerID)) {
+        const layerConfig = map2D.meta.layerConfig[layerID];
+
+		if(layerConfig && layerConfig,autoGenerate) {
 			continue;
 		}
 
