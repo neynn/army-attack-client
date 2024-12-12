@@ -81,6 +81,18 @@ World.prototype.getTileEntity = function(tileX, tileY) {
     return this.entityManager.getEntity(entityID);
 }
 
+World.prototype.getTileEntityList = function(tileX, tileY) {
+    const activeMap = this.mapManager.getActiveMap();
+
+    if(!activeMap) {
+        return [];
+    }
+
+    const entityList = activeMap.getEntities(tileX, tileY);
+    
+    return entityList;
+}
+
 World.prototype.createController = function(gameContext, setup) {
     if(typeof setup !== "object") {
         Logger.error(false, "Setup does not exist!", "World.prototype.createController", null);

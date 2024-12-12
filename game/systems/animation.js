@@ -1,4 +1,5 @@
 import { SpriteManager } from "../../source/graphics/spriteManager.js";
+import { ConstructionComponent } from "../components/construction.js";
 
 import { PositionComponent } from "../components/position.js";
 import { SpriteComponent } from "../components/sprite.js";
@@ -8,8 +9,6 @@ import { DirectionSystem } from "./direction.js";
 import { MorphSystem } from "./morph.js";
 
 export const AnimationSystem = function() {}
-
-AnimationSystem.CONSTRUCTION_FRAMES = [0, 0, 1, 1, 2];
 
 AnimationSystem.revertToIdle = function(gameContext, entityIDs) {
     const { world } = gameContext;
@@ -105,7 +104,7 @@ AnimationSystem.advanceConstructionFrame = function(gameContext, entity, stepsCo
     const { spriteManager } = gameContext;
     const spriteComponent = entity.getComponent(SpriteComponent);
     const sprite = spriteManager.getSprite(spriteComponent.spriteID);
-    const frame = AnimationSystem.CONSTRUCTION_FRAMES[stepsCompleted];
+    const frame = ConstructionComponent.CONSTRUCTION_FRAMES[stepsCompleted];
     
     sprite.setFrame(frame);
 }

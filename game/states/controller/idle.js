@@ -64,7 +64,7 @@ ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext)
 
     if(isMoveable) {
         ControllerSystem.selectEntity(gameContext, controller, mouseEntity);
-            
+        
         stateMachine.setNextState(CONTROLLER_STATES.SELECTED);
     }
 }

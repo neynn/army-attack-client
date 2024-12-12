@@ -1,6 +1,5 @@
 import { MapEditor } from "../../../source/map/mapEditor.js";
 import { Cursor } from "../../../source/client/cursor.js";
-import { saveMap } from "../../../source/helpers.js";
 import { clampValue } from "../../../source/math/math.js";
 import { Renderer } from "../../../source/renderer.js";
 import { UIElement } from "../../../source/ui/uiElement.js";
@@ -9,6 +8,7 @@ import { World } from "../../../source/world.js";
 import { EntityController } from "../../../source/controller/entityController.js";
 
 import { CAMERA_TYPES } from "../../enums.js";
+import { saveMap } from "../../../helpers.js"
 
 export const EditorController = function(id) {
     EntityController.call(this, id, "Editor");

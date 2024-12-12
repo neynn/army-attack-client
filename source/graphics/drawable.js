@@ -168,6 +168,10 @@ Drawable.prototype.setOpacity = function(opacity) {
     this.opacity = opacity;
 }
 
+Drawable.prototype.getOpacity = function() {
+    return this.opacity;
+}
+
 Drawable.prototype.hasParent = function() {
     if(!this.family) {
         return false;

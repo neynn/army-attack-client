@@ -1,4 +1,5 @@
-import { EffectManager } from "../effects/effectManager.js";
+import { createFadeInEffect } from "../effects/example/fadeIn.js";
+import { createFadeOutEffect } from "../effects/example/fadeOut.js";
 import { Logger } from "../logger.js";
 import { Renderer } from "../renderer.js";
 import { ImageManager } from "../resources/imageManager.js";
@@ -12,7 +13,6 @@ import { TextElement } from "./elements/textElement.js";
 import { UIElement } from "./uiElement.js";
 
 export const UIManager = function() {
-    this.effectManager = new EffectManager();
     this.resources = new ImageManager();
     this.interfaceTypes = {};
     this.iconTypes = {};
@@ -25,11 +25,18 @@ export const UIManager = function() {
         [UIManager.ELEMENT_TYPE_ICON]: Icon,
         [UIManager.ELEMENT_TYPE_CONTAINER]: Container
     };
+    this.effectTypes = {
+        [UIManager.EFFECT_TYPE_FADE_IN]: createFadeInEffect,
+        [UIManager.EFFECT_TYPE_FADE_OUT]: createFadeOutEffect
+    }
     this.interfaceStack = [];
     this.elements = new Map();
     this.origins = new Set();
     this.previousCollisions = new Set();
 }
+
+UIManager.EFFECT_TYPE_FADE_IN = "FADE_IN";
+UIManager.EFFECT_TYPE_FADE_OUT = "FADE_OUT";
 
 UIManager.ELEMENT_TYPE_TEXT = "TEXT";
 UIManager.ELEMENT_TYPE_DYNAMIC_TEXT = "DYNAMIC_TEXT";
@@ -163,21 +170,7 @@ UIManager.prototype.popInterface = function(userInterfaceID) {
 UIManager.prototype.update = function(gameContext) {
     const { timer, client } = gameContext;
     const { cursor } = client;
-    const deltaTime = timer.getDeltaTime();
-    const activeEffects = this.effectManager.getActiveEffects();
 
-    for(const [effectID, { drawableID, onCall }] of activeEffects) {
-        const element = this.elements.get(drawableID);
-
-        if(!element) {
-            this.effectManager.markEffectForDeletion(effectID);
-            continue;
-        }
-
-        onCall(element, deltaTime);
-    }
-
-    this.effectManager.deleteCompletedEffects();
     this.updateElementCollisions(cursor.position.x, cursor.position.y, cursor.radius);
 }
 
@@ -334,8 +327,42 @@ UIManager.prototype.createInterfaceElements = function(userInterfaceID) {
     return elements;
 }
 
-UIManager.prototype.parseUI = function(userInterfaceID, gameContext) {
+UIManager.prototype.addEffects = function(gameContext, element, effects = []) {
     const { renderer } = gameContext;
+
+    for(const effectConfig of effects) {
+        const { type, value, threshold } = effectConfig;
+        const effectBuilder = this.effectTypes[type];
+
+        if(!effectBuilder) {
+            continue;
+        }
+
+        const effect = effectBuilder(element, value, threshold);
+
+        renderer.effects.addEffect(effect);
+    }
+}
+
+UIManager.prototype.anchorElement = function(gameContext, element, originalPosition, anchorType = Renderer.ANCHOR_TYPE_TOP_LEFT) {
+    const { renderer } = gameContext;
+    const { bounds } = element;
+    const { w, h } = bounds;
+    const { x, y } = originalPosition;
+
+    const uniqueID = element.getID();
+    const anchor = renderer.getAnchor(anchorType, x, y, w, h);
+            
+    element.setPosition(anchor.x, anchor.y);
+
+    renderer.events.subscribe(Renderer.EVENT_SCREEN_RESIZE, uniqueID, (width, height) => {
+        const anchor = renderer.getAnchor(anchorType, x, y, w, h);
+        
+        element.setPosition(anchor.x, anchor.y);
+    });    
+}
+
+UIManager.prototype.parseUI = function(userInterfaceID, gameContext) {
     const userInterface = this.interfaceTypes[userInterfaceID];
 
     if(!userInterface) {
@@ -347,28 +374,14 @@ UIManager.prototype.parseUI = function(userInterfaceID, gameContext) {
 
     for(const [configID, element] of elements) {
         const { anchor, effects, position } = userInterface[configID];
-        const { bounds } = element;
         const uniqueID = element.getID();
 
-        this.effectManager.addEffect(element, effects);
+        this.addEffects(gameContext, element, effects);
 
-        if(element.hasParent()) {
-            continue;
+        if(!element.hasParent()) {
+            this.anchorElement(gameContext, element, position, anchor);
+            this.origins.add(uniqueID);
         }
-
-        if(anchor) {
-            const { x, y } = renderer.getAnchor(anchor, position.x, position.y, bounds.w, bounds.h);
-            
-            element.setPosition(x, y);
-
-            renderer.events.subscribe(Renderer.EVENT_SCREEN_RESIZE, uniqueID, (width, height) => {
-                const { x, y } = renderer.getAnchor(anchor, position.x, position.y, bounds.w, bounds.h);
-                
-                element.setPosition(x, y);
-            });    
-        }
-
-        this.origins.add(uniqueID);
     }
 
     this.pushInterface(userInterfaceID);

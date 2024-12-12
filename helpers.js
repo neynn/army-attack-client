@@ -87,7 +87,7 @@ export const saveMap = function(mapID, map2D) {
 	for(const layerID in graphics) {
         const layerConfig = map2D.meta.layerConfig[layerID];
 
-		if(layerConfig && layerConfig,autoGenerate) {
+		if(layerConfig && layerConfig.autoGenerate) {
 			continue;
 		}
 

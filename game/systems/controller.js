@@ -91,16 +91,15 @@ ControllerSystem.updateAttackers = function(gameContext, controller) {
 
 ControllerSystem.selectEntity = function(gameContext, controller, entity) {
     const { tileManager, world, renderer } = gameContext;
-    const { mapManager, entityManager } = world;
+
+    const nodeList = new Map();
+    const entityID = entity.getID();
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
-    const activeMap = mapManager.getActiveMap();
-    const nodeList = PathfinderSystem.generateNodeList(gameContext, entity);
+    const nodes = PathfinderSystem.generateNodeList(gameContext, entity);
     const enableTileID = tileManager.getTileID("overlay", "grid_enabled_1x1");
     const attackTileID = tileManager.getTileID("overlay", "grid_attack_1x1");
-    const entityID = entity.getID();
-    const controllerNodeList = new Map();
 
-    for(const node of nodeList) {
+    for(const node of nodes) {
         const { positionX, positionY, isValid } = node;
         const nodeKey = `${positionX}-${positionY}`;
 
@@ -109,16 +108,14 @@ ControllerSystem.selectEntity = function(gameContext, controller, entity) {
             continue;
         } 
 
-        const isEmpty = !activeMap.isTileOccupied(positionX, positionY);
+        const tileEntity = world.getTileEntity(positionX, positionY);
 
-        if(isEmpty) {
+        if(!tileEntity) {
             camera.addOverlay(ArmyCamera.OVERLAY_TYPE_MOVE, positionX, positionY, enableTileID);
-            controllerNodeList.set(nodeKey, node);
+            nodeList.set(nodeKey, node);
             continue;
         }
 
-        const tileEntityID = activeMap.getTopEntity(positionX, positionY);
-        const tileEntity = entityManager.getEntity(tileEntityID);
         const isFriendly = TeamSystem.isEntityFriendly(gameContext, entity, tileEntity);
 
         if(isFriendly) {
@@ -128,24 +125,27 @@ ControllerSystem.selectEntity = function(gameContext, controller, entity) {
     }
 
     controller.selectSingle(entityID);
-    controller.setNodeList(controllerNodeList);
+    controller.setNodeList(nodeList);
+
     AnimationSystem.playSelect(gameContext, entity);
 }
 
 ControllerSystem.deselectEntity = function(gameContext, controller, entity) {
     const { renderer } = gameContext;
-    const controllerNodeList = controller.getNodeList();
+    const nodeList = controller.getNodeList();
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
 
     camera.clearOverlay(ArmyCamera.OVERLAY_TYPE_MOVE);
 
-    for(const [nodeKey, node] of controllerNodeList) {
+    nodeList.forEach(node => {
         const { positionX, positionY } = node;
+        
         ConquerSystem.convertTileGraphics(gameContext, positionX, positionY, 1);
-    }
+    });
 
     controller.deselectAll();
     controller.clearNodeList();
+
     AnimationSystem.stopSelect(gameContext, entity)
 }
 

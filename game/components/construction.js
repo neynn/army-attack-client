@@ -3,6 +3,8 @@ export const ConstructionComponent = function() {
     this.stepsCompleted = 0;
 }
 
+ConstructionComponent.CONSTRUCTION_FRAMES = [0, 0, 1, 1, 2];
+
 ConstructionComponent.prototype.save = function() {
     return {
         "stepsCompleted": this.stepsCompleted

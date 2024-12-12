@@ -1,6 +1,7 @@
 import { Camera } from "./camera/camera.js";
 import { Canvas } from "./camera/canvas.js";
 import { FPSCounter } from "./camera/fpsCounter.js";
+import { EffectManager } from "./effects/effectManager.js";
 import { EventEmitter } from "./events/eventEmitter.js";
 import { isRectangleRectangleIntersect } from "./math/math.js";
 
@@ -8,6 +9,7 @@ export const Renderer = function() {
     this.windowWidth = window.innerWidth;
     this.windowHeight = window.innerHeight;
 
+    this.effects = new EffectManager();
     this.fpsCounter = new FPSCounter();
 
     this.display = new Canvas();
@@ -145,6 +147,8 @@ Renderer.prototype.update = function(gameContext) {
         this.events.emit(Renderer.EVENT_CAMERA_FINISH, camera);
         context.restore();
     });
+
+    this.effects.update(gameContext);
 
     if((Renderer.DEBUG & Renderer.DEBUG_CAMERA) !== 0) {
         this.drawCameraDebug();
