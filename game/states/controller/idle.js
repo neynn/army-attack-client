@@ -69,7 +69,7 @@ ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext)
     }
 }
 
-ControllerIdleState.prototype.update = function(stateMachine, gameContext) {
+ControllerIdleState.prototype.onUpdate = function(stateMachine, gameContext) {
     const { world } = gameContext;
     const { actionQueue } = world;
     const controller = stateMachine.getContext();

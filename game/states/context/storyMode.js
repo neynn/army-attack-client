@@ -1,17 +1,22 @@
 import { RequestQueue } from "../../../source/action/requestQueue.js";
-import { State } from "../../../source/state/state.js";
+import { StateMachine } from "../../../source/state/stateMachine.js";
 
 import { CAMERA_TYPES, CONTEXT_STATES } from "../../enums.js";
 import { ArmyCamera } from "../../armyCamera.js";
+import { StoryModeIntroState } from "./story/storyModeIntro.js";
+import { StoryModePlayState } from "./story/storyModePlay.js";
 
 export const StoryModeState = function() {
-    State.call(this);
+    StateMachine.call(this, null);
+    
+    this.addState(CONTEXT_STATES.STORY_MODE_INTRO, new StoryModeIntroState());
+    this.addState(CONTEXT_STATES.STORY_MODE_PLAY, new StoryModePlayState());
 }
 
-StoryModeState.prototype = Object.create(State.prototype);
+StoryModeState.prototype = Object.create(StateMachine.prototype);
 StoryModeState.prototype.constructor = StoryModeState;
 
-StoryModeState.prototype.enter = function(stateMachine) {
+StoryModeState.prototype.onEnter = function(stateMachine) {
     const gameContext = stateMachine.getContext();
     const contextID = gameContext.getID();
     const { world, renderer } = gameContext;
@@ -29,10 +34,10 @@ StoryModeState.prototype.enter = function(stateMachine) {
         }
     });
 
-    this.states.setNextState(CONTEXT_STATES.STORY_MODE_PLAY);
+    this.setNextState(CONTEXT_STATES.STORY_MODE_PLAY);
 }
 
-StoryModeState.prototype.exit = function(stateMachine) {
+StoryModeState.prototype.onExit = function(stateMachine) {
     const gameContext = stateMachine.getContext();
     const { renderer } = gameContext;
 

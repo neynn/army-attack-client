@@ -90,7 +90,7 @@ PlayerController.prototype.addClickEvent = function(gameContext) {
         const clickedElements = uiManager.getCollidedElements(cursor.position.x, cursor.position.y, cursor.radius);
 
         if(clickedElements.length === 0) {
-            this.states.onEventEnter(gameContext);
+            this.states.eventEnter(gameContext);
         }
     });
 }

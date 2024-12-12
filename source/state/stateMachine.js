@@ -1,45 +1,24 @@
+import { State } from "./state.js";
+
 export const StateMachine = function(context) {
+    State.call(this);
+
     this.currentState = null;
     this.previousState = null;
     this.nextState = null;
     this.context = context;
     this.states = new Map();
 
-    if(!context) {
+    if(context === undefined) {
         console.warn(`No context given to state machine!`);
     }
 }
 
-StateMachine.prototype.initializeSubstates = function(stateID) {
-    const state = this.states.get(stateID);
+StateMachine.prototype = Object.create(State.prototype);
+StateMachine.prototype.constructor = StateMachine;
 
-    if(!state) {
-        console.warn(`State does not exist!`);
-        return;
-    }
-
-    if(state.states instanceof StateMachine) {
-        console.warn(`StateMachine is already initialized!`);
-        return;
-    }
-
-    state.states = new StateMachine(this.context);
-}
-
-StateMachine.prototype.addSubstate = function(stateID, substateID, substate) {
-    const state = this.states.get(stateID);
-
-    if(!state) {
-        console.warn(`State does not exist!`);
-        return;
-    }
-
-    if(!(state.states instanceof StateMachine)) {
-        console.warn(`StateMachine is not initialized!`);
-        return;
-    }
-
-    state.states.addState(substateID, substate);
+StateMachine.prototype.setContext = function(context) {
+    this.context = context;
 }
 
 StateMachine.prototype.hasState = function(stateID) {
@@ -59,11 +38,11 @@ StateMachine.prototype.setNextState = function(stateID) {
 
 StateMachine.prototype.update = function(gameContext) {
     if(this.currentState !== null) {
-        this.currentState.update(this, gameContext);
+        this.currentState.onUpdate(this, gameContext);
     }
 }
 
-StateMachine.prototype.onEventEnter = function(...event) {
+StateMachine.prototype.eventEnter = function(...event) {
     if(this.currentState !== null) {
         this.currentState.onEventEnter(this, ...event);
     }
@@ -71,12 +50,12 @@ StateMachine.prototype.onEventEnter = function(...event) {
 
 StateMachine.prototype.changeState = function(state) {
     if(this.currentState !== null) {
-       this.currentState.exit(this);
-       this.previousState = this.currentState;
+        this.currentState.onExit(this);
+        this.previousState = this.currentState;
     }
 
     this.currentState = state;
-    this.currentState.enter(this);
+    this.currentState.onEnter(this);
 }
 
 StateMachine.prototype.goToPreviousState = function() {
@@ -99,13 +78,18 @@ StateMachine.prototype.addState = function(stateID, state) {
 
     if(this.hasState(stateID)) {
         console.warn(`State (${stateID}) already exists!`);
+        return;
+    }
+
+    if(state instanceof StateMachine) {
+        state.setContext(this.context);
     }
 
     this.states.set(stateID, state);
 }
 
 StateMachine.prototype.removeState = function(stateID) {
-    if(!this.states.has(stateID)) {
+    if(!this.hasState(stateID)) {
         console.warn(`State (${stateID}) is not registered!`);
         return;
     }

@@ -15,36 +15,6 @@ export const ControllerSelectedState = function() {
 ControllerSelectedState.prototype = Object.create(State.prototype);
 ControllerSelectedState.prototype.constructor = ControllerSelectedState;
 
-ControllerSelectedState.prototype.onEventEnter = function(stateMachine, gameContext) {
-    const { client, world } = gameContext;
-    const { actionQueue, entityManager } = world;
-    const { soundPlayer } = client;
-
-    const controller = stateMachine.getContext();
-    const selectedEntityID = controller.getFirstSelected();
-    const selectedEntity = entityManager.getEntity(selectedEntityID);
-
-    const { x, y } = gameContext.getMouseTile();
-    const mouseEntity = world.getTileEntity(x, y);
-
-    if(mouseEntity) {
-        const mouseEntityID = mouseEntity.getID();
-        const isEnemy = TeamSystem.isEntityEnemy(gameContext, controller, mouseEntity);
-
-        if(isEnemy) {
-            actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.ATTACK, mouseEntityID));
-        } else {
-            soundPlayer.playSound("sound_error", 0.5);
-        }
-    } else {
-        actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.MOVE, selectedEntityID, x, y));
-    }
-
-    ControllerSystem.deselectEntity(gameContext, controller, selectedEntity);
-    
-    stateMachine.setNextState(CONTROLLER_STATES.IDLE);
-}
-
 ControllerSelectedState.prototype.updateCursorSprite = function(gameContext, controller) {
     const { spriteManager } = gameContext;
     const spriteComponent = controller.getComponent(SpriteComponent);
@@ -90,7 +60,37 @@ ControllerSelectedState.prototype.updateEntity = function(gameContext, controlle
     }
 }
 
-ControllerSelectedState.prototype.update = function(stateMachine, gameContext) {
+ControllerSelectedState.prototype.onEventEnter = function(stateMachine, gameContext) {
+    const { client, world } = gameContext;
+    const { actionQueue, entityManager } = world;
+    const { soundPlayer } = client;
+
+    const controller = stateMachine.getContext();
+    const selectedEntityID = controller.getFirstSelected();
+    const selectedEntity = entityManager.getEntity(selectedEntityID);
+
+    const { x, y } = gameContext.getMouseTile();
+    const mouseEntity = world.getTileEntity(x, y);
+
+    if(mouseEntity) {
+        const mouseEntityID = mouseEntity.getID();
+        const isEnemy = TeamSystem.isEntityEnemy(gameContext, controller, mouseEntity);
+
+        if(isEnemy) {
+            actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.ATTACK, mouseEntityID));
+        } else {
+            soundPlayer.playSound("sound_error", 0.5);
+        }
+    } else {
+        actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.MOVE, selectedEntityID, x, y));
+    }
+
+    ControllerSystem.deselectEntity(gameContext, controller, selectedEntity);
+    
+    stateMachine.setNextState(CONTROLLER_STATES.IDLE);
+}
+
+ControllerSelectedState.prototype.onUpdate = function(stateMachine, gameContext) {
     const controller = stateMachine.getContext();
     const hoveredEntity = controller.getHoveredEntity();
 

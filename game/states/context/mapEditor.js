@@ -11,7 +11,7 @@ export const MapEditorState = function() {
 MapEditorState.prototype = Object.create(State.prototype);
 MapEditorState.prototype.constructor = MapEditorState;
 
-MapEditorState.prototype.enter = function(stateMachine) {
+MapEditorState.prototype.onEnter = function(stateMachine) {
     const gameContext = stateMachine.getContext();
     const { world, uiManager, renderer } = gameContext;
     const camera = new ArmyCamera();
@@ -29,7 +29,7 @@ MapEditorState.prototype.enter = function(stateMachine) {
     });
 }
 
-MapEditorState.prototype.exit = function(stateMachine) {
+MapEditorState.prototype.onExit = function(stateMachine) {
     const gameContext = stateMachine.getContext();
     const { world, renderer } = gameContext;
     const { mapManager } = world;

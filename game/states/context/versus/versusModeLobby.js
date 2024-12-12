@@ -8,7 +8,7 @@ export const VersusModeLobbyState = function() {
 VersusModeLobbyState.prototype = Object.create(State.prototype);
 VersusModeLobbyState.prototype.constructor = VersusModeLobbyState;
 
-VersusModeLobbyState.prototype.enter = function(stateMachine) {
+VersusModeLobbyState.prototype.onEnter = function(stateMachine) {
     const gameContext = stateMachine.getContext();
     const { uiManager, client } = gameContext;
     
@@ -34,7 +34,7 @@ VersusModeLobbyState.prototype.enter = function(stateMachine) {
     });
 }
 
-VersusModeLobbyState.prototype.exit = function(stateMachine) {
+VersusModeLobbyState.prototype.onExit = function(stateMachine) {
     const gameContext = stateMachine.getContext();
     const { uiManager } = gameContext;
 

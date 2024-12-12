@@ -96,14 +96,6 @@ ArmyContext.prototype.initialize = function() {
     this.states.addState(CONTEXT_STATES.VERSUS_MODE, new VersusModeState());
     this.states.addState(CONTEXT_STATES.EDIT_MODE, new MapEditorState());
 
-    this.states.initializeSubstates(CONTEXT_STATES.STORY_MODE);
-    this.states.addSubstate(CONTEXT_STATES.STORY_MODE, CONTEXT_STATES.STORY_MODE_INTRO, new StoryModeIntroState());
-    this.states.addSubstate(CONTEXT_STATES.STORY_MODE, CONTEXT_STATES.STORY_MODE_PLAY, new StoryModePlayState());
-
-    this.states.initializeSubstates(CONTEXT_STATES.VERSUS_MODE);
-    this.states.addSubstate(CONTEXT_STATES.VERSUS_MODE, CONTEXT_STATES.VERSUS_MODE_LOBBY, new VersusModeLobbyState());
-    this.states.addSubstate(CONTEXT_STATES.VERSUS_MODE, CONTEXT_STATES.VERSUS_MODE_PLAY, new VersusModePlayState());
-
     this.client.soundPlayer.loadAllSounds();
     
     this.world.actionQueue.events.subscribe(RequestQueue.EVENT_REQUEST_RUN, "DEBUG", (item) => {

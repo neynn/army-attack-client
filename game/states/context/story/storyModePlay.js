@@ -12,7 +12,7 @@ export const StoryModePlayState = function() {
 StoryModePlayState.prototype = Object.create(State.prototype);
 StoryModePlayState.prototype.constructor = StoryModePlayState;
 
-StoryModePlayState.prototype.enter = async function(stateMachine) {
+StoryModePlayState.prototype.onEnter = async function(stateMachine) {
     const gameContext = stateMachine.getContext();
     const { uiManager, world, renderer } = gameContext;
     const { actionQueue } = world;
@@ -143,7 +143,7 @@ StoryModePlayState.prototype.enter = async function(stateMachine) {
     console.log(s);
 }
 
-StoryModePlayState.prototype.exit = function(stateMachine) {
+StoryModePlayState.prototype.onExit = function(stateMachine) {
     const gameContext = stateMachine.getContext();
     const { uiManager } = gameContext;
 

@@ -10,7 +10,7 @@ export const MainMenuState = function() {
 MainMenuState.prototype = Object.create(State.prototype);
 MainMenuState.prototype.constructor = MainMenuState;
 
-MainMenuState.prototype.enter = function(stateMachine) {
+MainMenuState.prototype.onEnter = function(stateMachine) {
     const gameContext = stateMachine.getContext();
     const { uiManager, renderer, spriteManager } = gameContext;
 
@@ -52,7 +52,7 @@ MainMenuState.prototype.enter = function(stateMachine) {
     buttonEdit.events.subscribe(UIElement.EVENT_FINAL_COLLISION, "TEST", () => spriteManager.updateSprite(spriteEdit.getID(), "blue_elite_battery_idle"));
 }
 
-MainMenuState.prototype.exit = function(stateMachine) {
+MainMenuState.prototype.onExit = function(stateMachine) {
     const gameContext = stateMachine.getContext();
     const { uiManager } = gameContext;
 

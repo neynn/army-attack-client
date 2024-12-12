@@ -2,25 +2,32 @@ import { RequestQueue } from "../../../source/action/requestQueue.js";
 import { ROOM_EVENTS } from "../../../source/network/events.js";
 import { Socket } from "../../../source/network/socket.js";
 import { MapParser } from "../../../source/map/mapParser.js";
-import { State } from "../../../source/state/state.js";
+import { StateMachine } from "../../../source/state/stateMachine.js";
 import { World } from "../../../source/world.js";
 
 import { CAMERA_TYPES, CONTEXT_STATES, GAME_EVENTS } from "../../enums.js";
 import { ArmyCamera } from "../../armyCamera.js";
 import { ConquerSystem } from "../../systems/conquer.js";
+import { VersusModeLobbyState } from "./versus/versusModeLobby.js";
+import { VersusModePlayState } from "./versus/versusModePlay.js";
 
 export const VersusModeState = function() {
-    State.call(this);
+    StateMachine.call(this, null);
+
     this.teamID = null;
+    this.addState(CONTEXT_STATES.VERSUS_MODE_LOBBY, new VersusModeLobbyState());
+    this.addState(CONTEXT_STATES.VERSUS_MODE_PLAY, new VersusModePlayState());
 }
 
-VersusModeState.prototype = Object.create(State.prototype);
+VersusModeState.prototype = Object.create(StateMachine.prototype);
 VersusModeState.prototype.constructor = VersusModeState;
 
-VersusModeState.prototype.onRoomUpdate = function(gameContext, payload) {}
+VersusModeState.prototype.onRoomUpdate = function(gameContext, payload) {
+    
+}
 
 VersusModeState.prototype.onStartInstance = function(gameContext, payload) {
-    this.states.setNextState(CONTEXT_STATES.VERSUS_MODE_PLAY);
+    this.setNextState(CONTEXT_STATES.VERSUS_MODE_PLAY);
 }
 
 VersusModeState.prototype.onInstanceTeam = function(gameContext, payload) {
@@ -90,7 +97,9 @@ VersusModeState.prototype.onEntityAction = function(gameContext, payload) {
     actionQueue.enqueue(payload);
 }
 
-VersusModeState.prototype.onEntityEvent = function(gameContext, payload) {}
+VersusModeState.prototype.onEntityEvent = function(gameContext, payload) {
+
+}
 
 VersusModeState.prototype.onServerMessage = function(gameContext, type, payload) {
     console.log(type, payload, "FROM SERVER");
@@ -110,7 +119,7 @@ VersusModeState.prototype.onServerMessage = function(gameContext, type, payload)
     }
 }
 
-VersusModeState.prototype.enter = function(stateMachine) {
+VersusModeState.prototype.onEnter = function(stateMachine) {
     const gameContext = stateMachine.getContext();
     const contextID = gameContext.getID();
     const { world, renderer, client } = gameContext;
@@ -131,10 +140,10 @@ VersusModeState.prototype.enter = function(stateMachine) {
     socket.events.subscribe(Socket.EVENT_MESSAGE_FROM_SERVER, contextID, (type, payload) => this.onServerMessage(gameContext, type, payload));
     client.socket.connect();
 
-    this.states.setNextState(CONTEXT_STATES.VERSUS_MODE_LOBBY);
+    this.setNextState(CONTEXT_STATES.VERSUS_MODE_LOBBY);
 }
 
-VersusModeState.prototype.exit = function(stateMachine) {
+VersusModeState.prototype.onExit = function(stateMachine) {
     const gameContext = stateMachine.getContext();
     const { renderer } = gameContext;
 
