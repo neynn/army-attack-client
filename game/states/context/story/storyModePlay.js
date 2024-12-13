@@ -148,4 +148,4 @@ StoryModePlayState.prototype.onExit = function(stateMachine) {
     const { uiManager } = gameContext;
 
     uiManager.unparseUI("PLAY_GAME", gameContext);
-}   
+}

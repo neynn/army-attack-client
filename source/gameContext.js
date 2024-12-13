@@ -27,6 +27,7 @@ export const GameContext = function(fps = 60) {
     }
 
     this.timer.updateFunction = (gameTime, fixedDeltaTime) => {
+        this.states.update(this);
         this.world.update(this);
     }
 

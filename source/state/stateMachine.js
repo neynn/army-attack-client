@@ -39,6 +39,10 @@ StateMachine.prototype.setNextState = function(stateID) {
 StateMachine.prototype.update = function(gameContext) {
     if(this.currentState !== null) {
         this.currentState.onUpdate(this, gameContext);
+
+        if(this.currentState.update) {
+            this.currentState.update(gameContext);
+        }
     }
 }
 
@@ -48,12 +52,19 @@ StateMachine.prototype.eventEnter = function(...event) {
     }
 }
 
-StateMachine.prototype.changeState = function(state) {
+StateMachine.prototype.exit = function() {
     if(this.currentState !== null) {
+        if(this.currentState.exit) {
+            this.currentState.exit();
+        }
+        
         this.currentState.onExit(this);
         this.previousState = this.currentState;
     }
+}
 
+StateMachine.prototype.changeState = function(state) {
+    this.exit();
     this.currentState = state;
     this.currentState.onEnter(this);
 }
