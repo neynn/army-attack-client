@@ -1,8 +1,7 @@
 import { RequestQueue } from "../../../source/action/requestQueue.js";
 import { StateMachine } from "../../../source/state/stateMachine.js";
 
-import { CAMERA_TYPES, CONTEXT_STATES } from "../../enums.js";
-import { ArmyCamera } from "../../armyCamera.js";
+import { CONTEXT_STATES } from "../../enums.js";
 import { StoryModeIntroState } from "./story/storyModeIntro.js";
 import { StoryModePlayState } from "./story/storyModePlay.js";
 
@@ -19,13 +18,10 @@ StoryModeState.prototype.constructor = StoryModeState;
 StoryModeState.prototype.onEnter = function(stateMachine) {
     const gameContext = stateMachine.getContext();
     const contextID = gameContext.getID();
-    const { world, renderer } = gameContext;
+    const { world } = gameContext;
     const { actionQueue } = world;
-    const camera = new ArmyCamera();
-    const settings = world.getConfig("settings");
 
-    camera.loadTileDimensions(settings.tileWidth, settings.tileHeight); 
-    renderer.addCamera(CAMERA_TYPES.ARMY_CAMERA, camera);
+    gameContext.createArmyCamera();
     actionQueue.events.subscribe(RequestQueue.EVENT_REQUEST_VALID, contextID, (request, messengerID, priority) => {
         if(priority === RequestQueue.PRIORITY_NORMAL) {
             actionQueue.enqueue(request);
@@ -39,7 +35,6 @@ StoryModeState.prototype.onEnter = function(stateMachine) {
 
 StoryModeState.prototype.onExit = function(stateMachine) {
     const gameContext = stateMachine.getContext();
-    const { renderer } = gameContext;
 
-    renderer.removeCamera(CAMERA_TYPES.ARMY_CAMERA);
+    gameContext.destroyArmyCamera();
 }

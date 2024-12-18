@@ -39,6 +39,7 @@ import { ConstructionAction } from "./actions/constructionAction.js";
 import { DecayComponent } from "./components/decay.js";
 import { CounterComponent } from "./components/counter.js";
 import { ResourceComponent } from "./components/resource.js";
+import { ArmyCamera } from "./armyCamera.js";
 
 export const ArmyContext = function() {
     GameContext.call(this, 60);
@@ -222,4 +223,18 @@ ArmyContext.prototype.loadSnapshot = function(snapshot) {
     for(const entity of entities) {
         this.world.createEntity(this, entity);
     }
+}
+
+ArmyContext.prototype.createArmyCamera = function() {
+    const camera = new ArmyCamera();
+    const settings = this.world.getConfig("settings");
+    
+    camera.loadTileDimensions(settings.tileWidth, settings.tileHeight);
+    this.renderer.addCamera(CAMERA_TYPES.ARMY_CAMERA, camera);
+
+    return camera;
+}
+
+ArmyContext.prototype.destroyArmyCamera = function() {
+    this.renderer.removeCamera(CAMERA_TYPES.ARMY_CAMERA);
 }
