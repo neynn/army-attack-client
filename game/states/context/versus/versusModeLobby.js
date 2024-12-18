@@ -1,9 +1,7 @@
 import { ROOM_EVENTS } from "../../../../source/network/events.js";
 import { State } from "../../../../source/state/state.js";
 
-export const VersusModeLobbyState = function() {
-    State.call(this);
-}
+export const VersusModeLobbyState = function() {}
 
 VersusModeLobbyState.prototype = Object.create(State.prototype);
 VersusModeLobbyState.prototype.constructor = VersusModeLobbyState;

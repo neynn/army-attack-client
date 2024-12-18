@@ -7,9 +7,7 @@ import { HealthSystem } from "../../systems/health.js";
 import { TargetSystem } from "../../systems/target.js";
 import { TeamSystem } from "../../systems/team.js";
 
-export const ControllerIdleState = function() {
-    State.call(this);
-}
+export const ControllerIdleState = function() {}
 
 ControllerIdleState.prototype = Object.create(State.prototype);
 ControllerIdleState.prototype.constructor = ControllerIdleState;
@@ -44,11 +42,13 @@ ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext)
     //The eventManager instantly processed events.
     if(ConstructionSystem.isConstruction(mouseEntity)) {
         if(ConstructionSystem.isComplete(mouseEntity)) {
-            const result = ConstructionSystem.getConstructionResult(controller, mouseEntity);
+            if(!actionQueue.isRunning()) {
+                const result = ConstructionSystem.getConstructionResult(controller, mouseEntity);
             
-            //TODO: Open GUI and check if the controller has enough materials/resources.
-            world.destroyEntity(entityID);
-            world.createEntity(gameContext, result);
+                //TODO: Open GUI and check if the controller has enough materials/resources.
+                world.destroyEntity(entityID);
+                world.createEntity(gameContext, result);
+            }
         } else {
             actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.CONSTRUCTION, entityID));
         }

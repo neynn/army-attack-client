@@ -5,9 +5,7 @@ import { World } from "../../../../source/world.js";
 import { ACTION_TYPES, CAMERA_TYPES, CONTROLLER_TYPES } from "../../../enums.js";
 import { ConquerSystem } from "../../../systems/conquer.js";
 
-export const StoryModePlayState = function() {
-    State.call(this);
-}
+export const StoryModePlayState = function() {}
 
 StoryModePlayState.prototype = Object.create(State.prototype);
 StoryModePlayState.prototype.constructor = StoryModePlayState;

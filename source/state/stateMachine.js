@@ -1,18 +1,18 @@
 import { State } from "./state.js";
 
 export const StateMachine = function(context) {
-    State.call(this);
-
     this.currentState = null;
     this.previousState = null;
     this.nextState = null;
     this.context = context;
     this.states = new Map();
 
-    if(context === undefined) {
+    if(!context) {
         console.warn(`No context given to state machine!`);
     }
 }
+
+StateMachine.AUTO_ASSIGN_CONTEXT = 1;
 
 StateMachine.prototype = Object.create(State.prototype);
 StateMachine.prototype.constructor = StateMachine;
@@ -81,6 +81,16 @@ StateMachine.prototype.getContext = function() {
     return this.context;
 }
 
+StateMachine.prototype.applyContext = function(state) {
+    if(state instanceof StateMachine) {
+        const context = state.getContext();
+
+        if(context === StateMachine.AUTO_ASSIGN_CONTEXT) {
+            state.setContext(this.context);
+        }
+    }
+}
+
 StateMachine.prototype.addState = function(stateID, state) {
     if(!state) {
         console.warn(`State (${stateID}) is not defined!`);
@@ -92,10 +102,7 @@ StateMachine.prototype.addState = function(stateID, state) {
         return;
     }
 
-    if(state instanceof StateMachine) {
-        state.setContext(this.context);
-    }
-
+    this.applyContext(state);
     this.states.set(stateID, state);
 }
 

@@ -1,8 +1,6 @@
 import { State } from "../../../source/state/state.js";
 
-export const ControllerBuildState = function() {
-    State.call(this);
-}
+export const ControllerBuildState = function() {}
 
 ControllerBuildState.prototype = Object.create(State.prototype);
 ControllerBuildState.prototype.constructor = ControllerBuildState;

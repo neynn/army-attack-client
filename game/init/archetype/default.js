@@ -11,17 +11,19 @@ import { SpriteComponent } from "../../components/sprite.js";
 import { DirectionComponent } from "../../components/direction.js";
 import { PositionComponent } from "../../components/position.js";
 
-export const DefaultArchetype = function() {
-    Archetype.call(this);
-}
+export const DefaultArchetype = function() {}
 
 DefaultArchetype.prototype = Object.create(Archetype.prototype);
 DefaultArchetype.prototype.constructor = DefaultArchetype;
 
+DefaultArchetype.prototype.onInitialize = function(entity, type, setup) {}
+
+DefaultArchetype.prototype.onFinalize = function(gameContext, entity, sprite, type, setup) {}
+
 DefaultArchetype.prototype.addHealthText = function(entity, statCard) {
     const healthComponent = entity.getComponent(HealthComponent);
     const healthText = new SimpleText("HEALTH_TEXT");
-
+    
     healthText.style.setFontType("ArmyAttack Arial");
     healthText.style.setAlignment(TextStyle.TEXT_ALIGN_RIGHT);
 
@@ -60,6 +62,8 @@ DefaultArchetype.prototype.createStatCard = function(gameContext, entity, sprite
     const teamTypes = world.getConfig("teamTypes");
     const teamComponent = entity.getComponent(TeamComponent);
     const { x, y } = camera.transformSizeToPositionOffset(entity.config.dimX, entity.config.dimY);
+    const positionX = x - 48;
+    const positionY = y - 48;
 
     if(entity.hasComponent(AttackComponent)) {
         const statCardType = teamTypes[teamComponent.teamID].sprites.stat_card;
@@ -68,7 +72,7 @@ DefaultArchetype.prototype.createStatCard = function(gameContext, entity, sprite
         this.addHealthText(entity, statCard);
         this.addDamageText(entity, statCard);
 
-        statCard.setPosition(x - 48, y - 48);
+        statCard.setPosition(positionX, positionY);
         sprite.addChild(statCard, "STATS");
     } else {
         const statCardType = teamTypes[teamComponent.teamID].sprites.stat_card_small;
@@ -76,7 +80,7 @@ DefaultArchetype.prototype.createStatCard = function(gameContext, entity, sprite
 
         this.addHealthText(entity, statCard);
 
-        statCard.setPosition(x - 48, y - 48);
+        statCard.setPosition(positionX, positionY);
         sprite.addChild(statCard, "STATS");
     }
 }
@@ -145,10 +149,6 @@ DefaultArchetype.prototype.finalizeEntity = function(gameContext, entity, type, 
 
     this.onFinalize(gameContext, entity, sprite, type, setup);
 }
-
-DefaultArchetype.prototype.onInitialize = function(entity, type, setup) {}
-
-DefaultArchetype.prototype.onFinalize = function(gameContext, entity, sprite, type, setup) {}
 
 DefaultArchetype.prototype.onBuild = function(gameContext, entity, type, setup) {
     const { world } = gameContext;

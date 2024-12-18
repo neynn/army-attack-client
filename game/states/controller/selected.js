@@ -8,9 +8,7 @@ import { PositionComponent } from "../../components/position.js";
 import { DirectionSystem } from "../../systems/direction.js";
 import { MorphSystem } from "../../systems/morph.js";
 
-export const ControllerSelectedState = function() {
-    State.call(this);
-}
+export const ControllerSelectedState = function() {}
 
 ControllerSelectedState.prototype = Object.create(State.prototype);
 ControllerSelectedState.prototype.constructor = ControllerSelectedState;

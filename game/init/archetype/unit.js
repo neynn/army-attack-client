@@ -2,9 +2,7 @@ import { AttackComponent } from "../../components/attack.js";
 import { MoveComponent } from "../../components/move.js";
 import { DefaultArchetype } from "./default.js";
 
-export const UnitArchetype = function() {
-    DefaultArchetype.call(this);
-}
+export const UnitArchetype = function() {}
 
 UnitArchetype.prototype = Object.create(DefaultArchetype.prototype);
 UnitArchetype.prototype.constructor = UnitArchetype;

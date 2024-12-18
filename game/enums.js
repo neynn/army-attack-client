@@ -5,8 +5,8 @@ export const GAME_EVENTS = Object.freeze({
     "INSTANCE_MAP": 3,
     "INSTANCE_MAP_FROM_DATA": 4,
     "INSTANCE_CONTROLLER": 5,
-    "ENTITY_ACTION": 6,
-    "WORLD_EVENT": 7
+    "ACTION": 6,
+    "ACTION_BATCH": 7
 });
 
 export const CONTROLLER_TYPES = Object.freeze({

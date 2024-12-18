@@ -7,9 +7,7 @@ import { MorphSystem } from "../systems/morph.js";
 import { PlaceSystem } from "../systems/place.js";
 import { HealthSystem } from "../systems/health.js";
 
-export const MoveAction = function() {
-    Action.call(this);
-}
+export const MoveAction = function() {}
 
 MoveAction.prototype = Object.create(Action.prototype);
 MoveAction.prototype.constructor = MoveAction;

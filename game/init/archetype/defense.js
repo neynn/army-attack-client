@@ -1,9 +1,7 @@
 import { AttackComponent } from "../../components/attack.js";
 import { DefaultArchetype } from "./default.js";
 
-export const DefenseArchetype = function() {
-    DefaultArchetype.call(this);
-}
+export const DefenseArchetype = function() {}
 
 DefenseArchetype.prototype = Object.create(DefaultArchetype.prototype);
 DefenseArchetype.prototype.constructor = DefenseArchetype;

@@ -7,15 +7,16 @@ import { VersusModeLobbyState } from "./versus/versusModeLobby.js";
 import { VersusModePlayState } from "./versus/versusModePlay.js";
 import { instanceMapFromData } from "../../serverEvents/instanceMapFromData.js";
 import { instanceMapFromID } from "../../serverEvents/instanceMapFromID.js";
-import { queueEntityAction } from "../../serverEvents/queueEntityAction.js";
 import { instanceEntity } from "../../serverEvents/instanceEntity.js";
 import { instanceEntityBatch } from "../../serverEvents/instanceEntityBatch.js";
 import { instanceController } from "../../serverEvents/instanceController.js";
 import { roomUpdate } from "../../serverEvents/roomUpdate.js";
 import { startVersusInstance } from "../../serverEvents/startVersusInstance.js";
+import { queueAction } from "../../serverEvents/queueAction.js";
+import { queueActionBatch } from "../../serverEvents/queueActionBatch.js";
 
 export const VersusModeState = function() {
-    StateMachine.call(this, null);
+    StateMachine.call(this, StateMachine.AUTO_ASSIGN_CONTEXT);
 
     this.addState(CONTEXT_STATES.VERSUS_MODE_LOBBY, new VersusModeLobbyState());
     this.addState(CONTEXT_STATES.VERSUS_MODE_PLAY, new VersusModePlayState());
@@ -38,7 +39,8 @@ VersusModeState.prototype.onServerMessage = function(gameContext, type, payload)
         case GAME_EVENTS.INSTANCE_MAP_FROM_DATA: return instanceMapFromData(gameContext, payload);
         case GAME_EVENTS.INSTANCE_ENTITY: return instanceEntity(gameContext, payload);
         case GAME_EVENTS.INSTANCE_ENTITY_BATCH: return instanceEntityBatch(gameContext, payload);
-        case GAME_EVENTS.ENTITY_ACTION: return queueEntityAction(gameContext, payload);
+        case GAME_EVENTS.ACTION: return queueAction(gameContext, payload);
+        case GAME_EVENTS.ACTION_BATCH: return queueActionBatch(gameContext, payload);
         default: return console.log("Unknown message type " + type);
     }
 }

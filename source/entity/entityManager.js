@@ -243,7 +243,7 @@ EntityManager.prototype.buildEntity = function(gameContext, entity, typeID, setu
         return;
     }
 
-    archetype.build(gameContext, entity, entityType, setup);
+    archetype.onBuild(gameContext, entity, entityType, setup);
 } 
 
 EntityManager.prototype.destroyEntity = function(entityID) {

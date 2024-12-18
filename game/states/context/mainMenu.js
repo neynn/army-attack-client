@@ -3,9 +3,7 @@ import { UIElement } from "../../../source/ui/uiElement.js";
 
 import { CONTEXT_STATES } from "../../enums.js";
 
-export const MainMenuState = function() {
-    State.call(this);
-}
+export const MainMenuState = function() {}
 
 MainMenuState.prototype = Object.create(State.prototype);
 MainMenuState.prototype.constructor = MainMenuState;

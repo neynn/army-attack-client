@@ -9,7 +9,6 @@ import { ReviveSystem } from "../systems/revive.js";
 import { TargetSystem } from "../systems/target.js";
 
 export const AttackAction = function() {
-    Action.call(this);
     this.timePassed = 0;
 }
 

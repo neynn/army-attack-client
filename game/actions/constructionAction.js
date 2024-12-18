@@ -4,7 +4,6 @@ import { AnimationSystem } from "../systems/animation.js";
 import { ConstructionSystem } from "../systems/construction.js";
 
 export const ConstructionAction = function() {
-    Action.call(this);
     this.timePassed = 0;
 }
 

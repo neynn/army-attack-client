@@ -1,9 +1,7 @@
 import { ConstructionComponent } from "../../components/construction.js";;
 import { DefaultArchetype } from "./default.js";
 
-export const ConstructionArchetype = function() {
-    DefaultArchetype.call(this);
-}
+export const ConstructionArchetype = function() {}
 
 ConstructionArchetype.prototype = Object.create(DefaultArchetype.prototype);
 ConstructionArchetype.prototype.constructor = ConstructionArchetype;

@@ -3,9 +3,7 @@ import { Camera } from "../../../source/camera/camera.js";
 
 import { CAMERA_TYPES, CONTROLLER_TYPES } from "../../enums.js";
 
-export const MapEditorState = function() {
-    State.call(this);
-}
+export const MapEditorState = function() {}
 
 MapEditorState.prototype = Object.create(State.prototype);
 MapEditorState.prototype.constructor = MapEditorState;
