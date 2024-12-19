@@ -10,28 +10,28 @@ export const Timer = function(timeStep) {
         this.realTime = deltaTime / 1000;
         this.passedTime = this.realTime - this.lastTime;
     
-        this.inputFunction(this.realTime, this.passedTime);
+        this.input(this.realTime, this.passedTime);
     
         this.accumulatedTime += this.passedTime;
     
         while(this.accumulatedTime > this.timeStep) {
             this.gameTime += this.timeStep;
-            this.updateFunction(this.gameTime, this.timeStep);
+            this.update(this.gameTime, this.timeStep);
             this.accumulatedTime -= this.timeStep;
         }
     
-        this.renderFunction(this.realTime, this.passedTime);
+        this.render(this.realTime, this.passedTime);
     
         this.lastTime = this.realTime;
         this.queue();
     }
 }
 
-Timer.prototype.inputFunction = function(realTime, deltaTime) {}
+Timer.prototype.input = function(realTime, deltaTime) {}
 
-Timer.prototype.updateFunction = function(gameTime, fixedDeltaTime) {}
+Timer.prototype.update = function(gameTime, fixedDeltaTime) {}
 
-Timer.prototype.renderFunction = function(realTime, deltaTime) {}
+Timer.prototype.render = function(realTime, deltaTime) {}
 
 Timer.prototype.queue = function() {
     requestAnimationFrame(this.updateProxy);

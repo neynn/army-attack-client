@@ -1,7 +1,13 @@
+import { StateMachine } from "../state/stateMachine.js";
+import { EventEmitter } from "../events/eventEmitter.js";
+
 export const Entity = function(id = null, DEBUG_NAME = "") {
     this.DEBUG_NAME = DEBUG_NAME;
     this.id = id;
+    this.config = {};
     this.components = new Map();
+    this.states = new StateMachine(this);
+    this.events = new EventEmitter();
 }
 
 Entity.prototype.getID = function() {
@@ -26,4 +32,20 @@ Entity.prototype.removeComponent = function(componentID) {
     if(this.components.has(componentID)) {
         this.components.delete(componentID);
     }
+}
+
+Entity.prototype.setConfig = function(config) {
+    if(config === undefined) {
+        return;
+    }
+
+    this.config = config;
+} 
+
+Entity.prototype.getConfig = function() {
+    return this.config;
+}
+
+Entity.prototype.update = function(gameContext) {
+    this.states.update(gameContext);
 }

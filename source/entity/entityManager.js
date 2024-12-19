@@ -1,6 +1,6 @@
 import { IDGenerator } from "../idGenerator.js";
 import { Logger } from "../logger.js";
-import { WorldEntity } from "./worldEntity.js";
+import { Entity } from "./entity.js";
 
 export const EntityManager = function() {
     this.componentTypes = {};
@@ -213,7 +213,7 @@ EntityManager.prototype.getEntity = function(entityID) {
 EntityManager.prototype.createEntity = function(entityTypeID, externalID) {    
     const config = this.entityTypes[entityTypeID];
     const entityID = externalID || this.idGenerator.getID();
-    const entity = new WorldEntity(entityID, entityTypeID);
+    const entity = new Entity(entityID, entityTypeID);
    
     if(typeof config === "object") {
         entity.setConfig(config);

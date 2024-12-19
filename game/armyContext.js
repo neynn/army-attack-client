@@ -3,6 +3,7 @@ import { GameContext } from "../source/gameContext.js";
 import { Socket } from "../source/network/socket.js";
 import { World } from "../source/world.js";
 import { EventEmitter } from "../source/events/eventEmitter.js";
+import { NETWORK_EVENTS } from "../source/network/events.js";
 
 import { ACTION_TYPES, CAMERA_TYPES, CONTEXT_STATES, CONTROLLER_TYPES, SYSTEM_TYPES } from "./enums.js";
 import { AttackAction } from "./actions/attackAction.js";
@@ -104,6 +105,7 @@ ArmyContext.prototype.initialize = function() {
     });
 
     this.client.socket.events.subscribe(Socket.EVENT_CONNECTED_TO_SERVER, "DEBUG", (socketID) => {
+        this.client.socket.emit(NETWORK_EVENTS.REGISTER, { "user-id": "neyn!" }, (response) => console.log(response));
         console.log(`${socketID} is connected to the server!`);
     });
 
@@ -137,6 +139,10 @@ ArmyContext.prototype.initialize = function() {
             this.client.musicPlayer.loadTrack(music);
             this.client.musicPlayer.swapTrack(music);
         }
+    });
+
+    this.world.events.subscribe(World.EVENT_CONTROLLER_CREATE, EventEmitter.SUPER_SUBSCRIBER_ID, (controller) => {
+        console.log(controller, "has been created!");
     });
 
     this.switchState(CONTEXT_STATES.MAIN_MENU);

@@ -36,12 +36,6 @@ Socket.prototype.connect = async function() {
     socket.on(NETWORK_EVENTS.CONNECT, () => {
         this.isConnected = true;
         this.socket = socket;
-        this.socket.emit(NETWORK_EVENTS.REGISTER_CLIENT_REQUEST, {
-            "user-id": this.config.userID
-        }, (response) => {
-            console.log(response);
-        });
-
         this.events.emit(Socket.EVENT_CONNECTED_TO_SERVER, socket.id);
     });
 

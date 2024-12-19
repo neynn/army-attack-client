@@ -16,7 +16,7 @@ import { queueAction } from "../../serverEvents/queueAction.js";
 import { queueActionBatch } from "../../serverEvents/queueActionBatch.js";
 
 export const VersusModeState = function() {
-    StateMachine.call(this, StateMachine.AUTO_ASSIGN_CONTEXT);
+    StateMachine.call(this);
 
     this.addState(CONTEXT_STATES.VERSUS_MODE_LOBBY, new VersusModeLobbyState());
     this.addState(CONTEXT_STATES.VERSUS_MODE_PLAY, new VersusModePlayState());

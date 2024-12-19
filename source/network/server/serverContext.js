@@ -190,7 +190,7 @@ ServerContext.prototype.handleRoomMessage = function(clientID, message) {
 
 ServerContext.prototype.registerNetworkEvents = function(socket) {
     socket.on(NETWORK_EVENTS.DISCONNECT, () => this.handleDisconnect(socket.id));
-	socket.on(NETWORK_EVENTS.REGISTER_CLIENT_REQUEST, (data, request) => request(this.handleRegister(socket.id, data)));
+	socket.on(NETWORK_EVENTS.REGISTER, (data, request) => request(this.handleRegister(socket.id, data)));
     socket.on(NETWORK_EVENTS.CREATE_ROOM_REQUEST, (roomType, request) => request(this.handleRoomCreate(socket.id, roomType)));
     socket.on(NETWORK_EVENTS.JOIN_ROOM_REQUEST, (roomID, request) => request(this.handleRoomJoin(socket.id, roomID)));
     socket.on(NETWORK_EVENTS.LEAVE_ROOM_REQUEST, (request) => request(this.handleRoomLeave(socket.id)));

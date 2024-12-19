@@ -22,16 +22,16 @@ export const GameContext = function(fps = 60) {
     this.world = new World();
     this.states = new StateMachine(this);
 
-    this.timer.inputFunction = (realTime, deltaTime) => {
-        this.client.update(this);
+    this.timer.input = (realTime, deltaTime) => {
+        this.client.update();
     }
 
-    this.timer.updateFunction = (gameTime, fixedDeltaTime) => {
+    this.timer.update = (gameTime, fixedDeltaTime) => {
         this.states.update(this);
         this.world.update(this);
     }
 
-    this.timer.renderFunction = (realTime, deltaTime) => {
+    this.timer.render = (realTime, deltaTime) => {
         this.spriteManager.update(this);
         this.tileManager.update(this);
         this.uiManager.update(this);

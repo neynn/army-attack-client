@@ -12,8 +12,6 @@ export const StateMachine = function(context) {
     }
 }
 
-StateMachine.AUTO_ASSIGN_CONTEXT = 1;
-
 StateMachine.prototype = Object.create(State.prototype);
 StateMachine.prototype.constructor = StateMachine;
 
@@ -82,12 +80,18 @@ StateMachine.prototype.getContext = function() {
 }
 
 StateMachine.prototype.applyContext = function(state) {
-    if(state instanceof StateMachine) {
-        const context = state.getContext();
+    if(!this.context) {
+        return;
+    }
 
-        if(context === StateMachine.AUTO_ASSIGN_CONTEXT) {
-            state.setContext(this.context);
-        }
+    if(!(state instanceof StateMachine)) {
+        return;
+    }
+    
+    const context = state.getContext();
+
+    if(!context) {
+        state.setContext(this.context);
     }
 }
 

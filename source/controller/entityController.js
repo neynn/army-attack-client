@@ -1,12 +1,13 @@
-import { WorldEntity } from "../entity/worldEntity.js";
+import { Entity } from "../entity/entity.js";
 
 export const EntityController = function(id) {
-    WorldEntity.call(this, id, "EntityController");
+    Entity.call(this, id, "ENTITY_CONTROLLER");
+    
     this.selectedEntities = new Set();
     this.availableEntities = new Set();
 }
 
-EntityController.prototype = Object.create(WorldEntity.prototype);
+EntityController.prototype = Object.create(Entity.prototype);
 EntityController.prototype.constructor = EntityController;
 
 EntityController.prototype.getSelectedCount = function() {

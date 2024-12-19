@@ -6,7 +6,7 @@ import { StoryModeIntroState } from "./story/storyModeIntro.js";
 import { StoryModePlayState } from "./story/storyModePlay.js";
 
 export const StoryModeState = function() {
-    StateMachine.call(this, StateMachine.AUTO_ASSIGN_CONTEXT);
+    StateMachine.call(this);
     
     this.addState(CONTEXT_STATES.STORY_MODE_INTRO, new StoryModeIntroState());
     this.addState(CONTEXT_STATES.STORY_MODE_PLAY, new StoryModePlayState());
