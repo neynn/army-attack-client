@@ -9,7 +9,7 @@ export const startVersusInstance = function(gameContext, payload) {
     const contextID = gameContext.getID();
 
     actionQueue.setMode(RequestQueue.MODE_DEFERRED);
-    actionQueue.events.subscribe(RequestQueue.EVENT_REQUEST_DEFER, contextID, (executionItem) => {
+    actionQueue.events.subscribe(RequestQueue.EVENT_EXECUTION_DEFER, contextID, (executionItem) => {
         const { priority, type, data } = executionItem;
 
         if(priority === RequestQueue.PRIORITY_NORMAL) {

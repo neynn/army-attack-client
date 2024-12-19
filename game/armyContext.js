@@ -96,11 +96,11 @@ ArmyContext.prototype.initialize = function() {
         console.log(error);
     });
 
-    this.world.actionQueue.events.subscribe(RequestQueue.EVENT_REQUEST_RUNNING, "DEBUG", (item) => {
+    this.world.actionQueue.events.subscribe(RequestQueue.EVENT_EXECUTION_RUNNING, "DEBUG", (item) => {
         console.log(item, "IS PROCESSING");
     });
 
-    this.world.actionQueue.events.subscribe(RequestQueue.EVENT_REQUEST_ERROR, "DEBUG", (executionItem) => {
+    this.world.actionQueue.events.subscribe(RequestQueue.EVENT_EXECUTION_ERROR, "DEBUG", (executionItem) => {
         this.client.soundPlayer.playSound("sound_error", 0.5);
         console.log(executionItem, "IS INVALID");
     });

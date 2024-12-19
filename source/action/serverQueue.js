@@ -10,14 +10,6 @@ export const ServerQueue = function() {
 ServerQueue.prototype = Object.create(RequestQueue.prototype);
 ServerQueue.prototype.constructor = ServerQueue;
 
-ServerQueue.prototype.processElement = function(gameContext, element) {
-    const isValid = this.validateExecution(gameContext, element);
-
-    if(isValid) {
-        this.update(this);
-    }
-}
-
 ServerQueue.prototype.processUserRequest = function(gameContext, message, messengerID) {
     const element = {
         "request": message,
@@ -28,17 +20,16 @@ ServerQueue.prototype.processUserRequest = function(gameContext, message, messen
     this.processElement(gameContext, element);
 }
 
-ServerQueue.prototype.update = function(gameContext) {
-    if(this.isEmpty()) {
-        return;
-    }
+ServerQueue.prototype.processElement = function(gameContext, element) {
+    const isValid = this.validateExecution(gameContext, element);
 
-    switch(this.state) {
-        case RequestQueue.STATE_FLUSH: {
-            this.flushExecution(gameContext);
-            break;
-        }
+    if(isValid) {
+        this.process(gameContext);
     }
+}
 
-    this.update(gameContext);
+ServerQueue.prototype.onUpdate = function(gameContext) {
+    if(!this.isEmpty()) {
+        this.update(gameContext);
+    }
 }

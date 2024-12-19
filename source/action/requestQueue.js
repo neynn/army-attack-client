@@ -14,9 +14,9 @@ export const RequestQueue = function() {
     this.mode = RequestQueue.MODE_DIRECT;
 
     this.events = new EventEmitter();
-    this.events.listen(RequestQueue.EVENT_REQUEST_DEFER);
-    this.events.listen(RequestQueue.EVENT_REQUEST_ERROR);
-    this.events.listen(RequestQueue.EVENT_REQUEST_RUNNING);
+    this.events.listen(RequestQueue.EVENT_EXECUTION_DEFER);
+    this.events.listen(RequestQueue.EVENT_EXECUTION_ERROR);
+    this.events.listen(RequestQueue.EVENT_EXECUTION_RUNNING);
     this.events.listen(RequestQueue.EVENT_QUEUE_ERROR);
 }
 
@@ -32,12 +32,31 @@ RequestQueue.STATE_FLUSH = 3;
 RequestQueue.PRIORITY_NORMAL = "PRIORITY_NORMAL";
 RequestQueue.PRIORITY_SUPER = "PRIORITY_SUPER";
 
-RequestQueue.EVENT_REQUEST_DEFER = "EVENT_REQUEST_DEFER";
-RequestQueue.EVENT_REQUEST_ERROR = "EVENT_REQUEST_ERROR";
-RequestQueue.EVENT_REQUEST_RUNNING = "EVENT_REQUEST_RUNNING";
+RequestQueue.EVENT_EXECUTION_DEFER = "EVENT_EXECUTION_DEFER";
+RequestQueue.EVENT_EXECUTION_ERROR = "EVENT_EXECUTION_ERROR";
+RequestQueue.EVENT_EXECUTION_RUNNING = "EVENT_EXECUTION_RUNNING";
 RequestQueue.EVENT_QUEUE_ERROR = "EVENT_QUEUE_ERROR";
 
-RequestQueue.prototype.update = function(gameContext) {}
+RequestQueue.prototype.onUpdate = function(gameContext) {}
+
+RequestQueue.prototype.update = function(gameContext) {
+    switch(this.state) {
+        case RequestQueue.STATE_ACTIVE: {
+            this.startExecution(gameContext);
+            break;
+        }
+        case RequestQueue.STATE_PROCESSING: {
+            this.processExecution(gameContext);
+            break;
+        }
+        case RequestQueue.STATE_FLUSH: {
+            this.flushExecution(gameContext);
+            break;
+        }
+    }
+
+    this.onUpdate(gameContext);
+}
 
 RequestQueue.prototype.flushExecution = function(gameContext) {
     const next = this.next();
@@ -49,7 +68,7 @@ RequestQueue.prototype.flushExecution = function(gameContext) {
     const { type, data } = next;
     const actionType = this.requestHandlers[type];
 
-    this.events.emit(RequestQueue.EVENT_REQUEST_RUNNING, next);
+    this.events.emit(RequestQueue.EVENT_EXECUTION_RUNNING, next);
     
     actionType.onStart(gameContext, data);
     actionType.onEnd(gameContext, data);
@@ -70,7 +89,7 @@ RequestQueue.prototype.startExecution = function(gameContext) {
     const actionType = this.requestHandlers[type];
 
     this.setState(RequestQueue.STATE_PROCESSING);
-    this.events.emit(RequestQueue.EVENT_REQUEST_RUNNING, next);
+    this.events.emit(RequestQueue.EVENT_EXECUTION_RUNNING, next);
         
     actionType.onStart(gameContext, data);
 }
@@ -165,7 +184,7 @@ RequestQueue.prototype.validateExecution = function(gameContext, element) {
             "priority": priority
         };
 
-        this.events.emit(RequestQueue.EVENT_REQUEST_ERROR, errorItem);
+        this.events.emit(RequestQueue.EVENT_EXECUTION_ERROR, errorItem);
 
         return false;
     }
@@ -182,12 +201,12 @@ RequestQueue.prototype.validateExecution = function(gameContext, element) {
             break;
         }
         case RequestQueue.MODE_DEFERRED: {
-            this.events.emit(RequestQueue.EVENT_REQUEST_DEFER, executionItem);
+            this.events.emit(RequestQueue.EVENT_EXECUTION_DEFER, executionItem);
             break;
         }
         case RequestQueue.MODE_TELL: {
             this.enqueue(executionItem);
-            this.events.emit(RequestQueue.EVENT_REQUEST_DEFER, executionItem);
+            this.events.emit(RequestQueue.EVENT_EXECUTION_DEFER, executionItem);
             break;
         }
         default: {
