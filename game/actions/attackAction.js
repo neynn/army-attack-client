@@ -66,48 +66,47 @@ AttackAction.prototype.isFinished = function(gameContext, request) {
     return this.timePassed >= timeRequired;
 }
 
-AttackAction.prototype.isValid = function(gameContext, request, messengerID) {
+AttackAction.prototype.getValidated = function(gameContext, request, messengerID) {
     const { entityID } = request;
     const { world } = gameContext; 
     const { entityManager } = world;
     const targetEntity = entityManager.getEntity(entityID);
 
     if(!targetEntity) {
-        return false;
+        return null;
     }
 
     const attackers = TargetSystem.getAttackers(gameContext, targetEntity);
 
     if(attackers.length === 0) {
-        return false;
+        return null;
     }
 
+    let state = ENTITY_STATES.IDLE;
     const damage = AttackSystem.getDamage(gameContext, targetEntity, attackers);
     const health = HealthSystem.getRemainingHealth(targetEntity, damage);
-
-    request.attackers = attackers;
-    request.damage = damage;
-    request.state = ENTITY_STATES.IDLE;
 
     if(health === 0) {
         const isBulldozed = AttackSystem.isBulldozed(gameContext, targetEntity, attackers);
         const isReviveable = ReviveSystem.isReviveable(targetEntity);
 
         if(isReviveable && !isBulldozed) {
-            request.state = ENTITY_STATES.DOWN;
+            state = ENTITY_STATES.DOWN;
         } else {
-            request.state = ENTITY_STATES.DEAD;
+            state = ENTITY_STATES.DEAD;
         }
     }
     
-    return true;
-}
-
-AttackAction.prototype.createRequest = function(entityID) {
     return {
         "entityID": entityID,
-        "attackers": [],
-        "damage": 0,
-        "state": ENTITY_STATES.IDLE
+        "attackers": attackers,
+        "damage": damage,
+        "state": state
+    };
+}
+
+AttackAction.prototype.getTemplate = function(entityID) {
+    return {
+        "entityID": entityID
     }
 }

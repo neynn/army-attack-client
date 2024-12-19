@@ -45,40 +45,42 @@ MoveAction.prototype.isFinished = function(gameContext, request) {
     return isFinished;
 }
 
-MoveAction.prototype.isValid = function(gameContext, request, messengerID) {
+MoveAction.prototype.getValidated = function(gameContext, request, messengerID) {
     const { entityID, targetX, targetY } = request;
     const { world } = gameContext;
     const { entityManager } = world;
     const entity = entityManager.getEntity(entityID);
 
     if(!entity) {
-        return false;
+        return null;
     }
     
     const isAlive = HealthSystem.isAlive(entity);
     const freeTile = PathfinderSystem.isTileFree(gameContext, targetX, targetY);
 
     if(!isAlive || !freeTile) {
-        return false;
+        return null;
     }
 
     const nodeList = PathfinderSystem.generateNodeList(gameContext, entity);
     const path = PathfinderSystem.generateMovePath(nodeList, targetX, targetY);
 
     if(path.length === 0) {
-        return false;
+        return null;
     }
 
-    request.path = path;
-
-    return true;
-}
-
-MoveAction.prototype.createRequest = function(entityID, targetX, targetY) {
     return {
         "entityID": entityID,
         "targetX": targetX,
         "targetY": targetY,
-        "path": []
+        "path": path
+    }
+}
+
+MoveAction.prototype.getTemplate = function(entityID, targetX, targetY) {
+    return {
+        "entityID": entityID,
+        "targetX": targetX,
+        "targetY": targetY
     }
 }

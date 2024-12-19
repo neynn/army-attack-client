@@ -47,28 +47,28 @@ ConstructionAction.prototype.isFinished = function(gameContext, request) {
     return this.timePassed >= constructionDuration;
 }
 
-ConstructionAction.prototype.isValid = function(gameContext, request, messengerID) {
+ConstructionAction.prototype.getValidated = function(gameContext, request, messengerID) {
     const { world } = gameContext;
     const { entityManager } = world;
     const { entityID } = request;
     const entity = entityManager.getEntity(entityID);
 
     if(!ConstructionSystem.isConstruction(entity)) {
-        return false;
+        return null;
     }
 
     if(ConstructionSystem.isComplete(entity)) {
-        return false;
+        return null;
     }
 
-    request.deltaSteps = 1;
-
-    return true;
-}
-
-ConstructionAction.prototype.createRequest = function(entityID) {
     return {
         "entityID": entityID,
-        "deltaSteps": 0
+        "deltaSteps": 1
+    }
+}
+
+ConstructionAction.prototype.getTemplate = function(entityID) {
+    return {
+        "entityID": entityID
     }
 }

@@ -53,10 +53,7 @@ ArmyContext.prototype.onResourcesLoad = function(resources) {
     this.world.config.tileConversions = this.parseConversions();
 }
 
-ArmyContext.prototype.initialize = function() {
-    this.world.actionQueue.setMaxSize(20);
-    this.world.actionQueue.setMaxRequests(20);
-    
+ArmyContext.prototype.initialize = function() {    
     this.world.actionQueue.registerHandler(ACTION_TYPES.MOVE, new MoveAction());
     this.world.actionQueue.registerHandler(ACTION_TYPES.ATTACK, new AttackAction());
     this.world.actionQueue.registerHandler(ACTION_TYPES.CONSTRUCTION, new ConstructionAction());
@@ -95,13 +92,13 @@ ArmyContext.prototype.initialize = function() {
 
     this.client.soundPlayer.loadAllSounds();
     
-    this.world.actionQueue.events.subscribe(RequestQueue.EVENT_REQUEST_RUN, "DEBUG", (item) => {
+    this.world.actionQueue.events.subscribe(RequestQueue.EVENT_REQUEST_RUNNING, "DEBUG", (item) => {
         console.log(item, "IS PROCESSING");
     });
 
-    this.world.actionQueue.events.subscribe(RequestQueue.EVENT_REQUEST_INVALID, "DEBUG", (item, messengerID, priority) => {
+    this.world.actionQueue.events.subscribe(RequestQueue.EVENT_REQUEST_ERROR, "DEBUG", (executionItem) => {
         this.client.soundPlayer.playSound("sound_error", 0.5);
-        console.log(item, "IS INVALID", messengerID, priority);
+        console.log(executionItem, "IS INVALID");
     });
 
     this.client.socket.events.subscribe(Socket.EVENT_CONNECTED_TO_SERVER, "DEBUG", (socketID) => {

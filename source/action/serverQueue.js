@@ -6,16 +6,22 @@ import { RequestQueue } from "./requestQueue.js";
  */
 export const ServerQueue = function() {
     RequestQueue.call(this);
+
+    this.setMode(RequestQueue.MODE_DIRECT);
 }
 
 ServerQueue.prototype = Object.create(RequestQueue.prototype);
 ServerQueue.prototype.constructor = ServerQueue;
 
-ServerQueue.prototype.processRequest = function(gameContext, request, messengerID) {
-    const isValid = this.validateRequest(gameContext, request, messengerID, RequestQueue.PRIORITY_NORMAL);
+ServerQueue.prototype.processRequest = function(gameContext, clientRequest, messengerID) {
+    const element = {
+        "request": clientRequest,
+        "priority": RequestQueue.PRIORITY_NORMAL,
+        "messengerID": messengerID
+    };
+    const isValid = this.validateExecution(gameContext, element);
 
     if(isValid) {
-        this.enqueue(request);
         this.update(this);
     }
 }
@@ -25,7 +31,7 @@ ServerQueue.prototype.update = function(gameContext) {
         return;
     }
 
-    this.toProcessing();
+    this.setState(RequestQueue.STATE_PROCESSING);
 
     const next = this.next();
 
@@ -34,7 +40,7 @@ ServerQueue.prototype.update = function(gameContext) {
         const { type, data } = request;
         const actionType = this.requestHandlers[type];
 
-        this.events.emit(RequestQueue.EVENT_REQUEST_RUN, next);
+        this.events.emit(RequestQueue.EVENT_REQUEST_RUNNING, next);
         this.clearCurrent();
         
         actionType.onStart(gameContext, data);
@@ -42,7 +48,7 @@ ServerQueue.prototype.update = function(gameContext) {
         actionType.onClear();
     }
 
-    this.toActive();
+    this.setState(RequestQueue.STATE_ACTIVE);
 
     if(!this.isEmpty()) {
         this.update(gameContext);
