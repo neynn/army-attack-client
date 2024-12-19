@@ -22,6 +22,7 @@ export const RequestQueue = function() {
 
 RequestQueue.MODE_DIRECT = 0;
 RequestQueue.MODE_DEFERRED = 1;
+RequestQueue.MODE_TELL = 2;
 
 RequestQueue.STATE_IDLE = 0;
 RequestQueue.STATE_ACTIVE = 1;
@@ -75,7 +76,7 @@ RequestQueue.prototype.addRequest = function(request, priority = RequestQueue.PR
     priorityQueue.enqueueLast(element);
 }
 
-RequestQueue.prototype.filterRequests = function(gameContext, priority) {
+RequestQueue.prototype.filterRequestQueue = function(gameContext, priority) {
     const priorityQueue = this.requestQueues.get(priority);
 
     if(!priorityQueue) {
@@ -97,14 +98,13 @@ RequestQueue.prototype.validateExecution = function(gameContext, element) {
     const validatedData = actionType.getValidated(gameContext, data, messengerID);
 
     if(!validatedData) {
-        const executionItem = {
+        const errorItem = {
             "type": type,
             "data": data,
-            "priority": priority,
-            "valid": false
+            "priority": priority
         };
 
-        this.events.emit(RequestQueue.EVENT_REQUEST_ERROR, executionItem);
+        this.events.emit(RequestQueue.EVENT_REQUEST_ERROR, errorItem);
 
         return false;
     }
@@ -112,14 +112,27 @@ RequestQueue.prototype.validateExecution = function(gameContext, element) {
     const executionItem = {
         "type": type,
         "data": validatedData,
-        "priority": priority,
-        "valid": true
+        "priority": priority
     };
 
-    if(this.mode === RequestQueue.MODE_DIRECT) {
-        this.enqueue(executionItem);
-    } else if(this.mode === RequestQueue.MODE_DEFERRED) {
-        this.events.emit(RequestQueue.EVENT_REQUEST_DEFER, executionItem);
+    switch(this.mode) {
+        case RequestQueue.MODE_DIRECT: {
+            this.enqueue(executionItem);
+            break;
+        }
+        case RequestQueue.MODE_DEFERRED: {
+            this.events.emit(RequestQueue.EVENT_REQUEST_DEFER, executionItem);
+            break;
+        }
+        case RequestQueue.MODE_TELL: {
+            this.enqueue(executionItem);
+            this.events.emit(RequestQueue.EVENT_REQUEST_DEFER, executionItem);
+            break;
+        }
+        default: {
+            console.warn(`Unknown mode! ${this.mode}`);
+            break;
+        }
     }
 
     return true;
@@ -160,13 +173,31 @@ RequestQueue.prototype.next = function() {
     return this.current;
 }
 
-RequestQueue.prototype.enqueue = function(item) {
-    const { priority } = item;
+RequestQueue.prototype.enqueue = function(executionItem) {
+    const { priority } = executionItem;
 
-    if(priority === RequestQueue.PRIORITY_NORMAL) {
-        this.executionQueue.enqueueLast(item);
-    } else if(priority === RequestQueue.PRIORITY_SUPER) {
-        this.executionQueue.enqueueFirst(item);
+    if(this.executionQueue.isFull()) {
+        this.events.emit(RequestQueue.EVENT_QUEUE_ERROR, {
+            "error": "The execution queue is full. Item has been discarded!",
+            "item": executionItem
+        });
+
+        return;
+    }
+
+    switch(priority) {
+        case RequestQueue.PRIORITY_NORMAL: {
+            this.executionQueue.enqueueLast(executionItem);
+            break;
+        }
+        case RequestQueue.PRIORITY_SUPER: {
+            this.executionQueue.enqueueFirst(executionItem);
+            break;
+        }
+        default: {
+            console.warn(`Unknown priority! ${priority}`);
+            break;
+        }
     }
 }
 

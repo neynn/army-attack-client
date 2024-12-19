@@ -92,6 +92,10 @@ ArmyContext.prototype.initialize = function() {
 
     this.client.soundPlayer.loadAllSounds();
     
+    this.world.actionQueue.events.subscribe(RequestQueue.EVENT_QUEUE_ERROR, "DEBUG", (error) => {
+        console.log(error);
+    });
+
     this.world.actionQueue.events.subscribe(RequestQueue.EVENT_REQUEST_RUNNING, "DEBUG", (item) => {
         console.log(item, "IS PROCESSING");
     });

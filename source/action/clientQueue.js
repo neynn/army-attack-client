@@ -15,11 +15,11 @@ ClientQueue.prototype.processRequests = function(gameContext) {
     const current = this.getCurrent();
 
     if(!current || current.priority !== RequestQueue.PRIORITY_SUPER) {
-        this.filterRequests(gameContext, RequestQueue.PRIORITY_SUPER);
+        this.filterRequestQueue(gameContext, RequestQueue.PRIORITY_SUPER);
     }
 
     if(!current && this.isEmpty()) {
-        this.filterRequests(gameContext, RequestQueue.PRIORITY_NORMAL);
+        this.filterRequestQueue(gameContext, RequestQueue.PRIORITY_NORMAL);
     }
 }
 
@@ -28,7 +28,7 @@ ClientQueue.prototype.update = function(gameContext) {
         const next = this.next();
 
         if(next) {
-            const { type, data } = next;
+            const { type, data, priority } = next;
             const actionType = this.requestHandlers[type];
 
             this.setState(RequestQueue.STATE_PROCESSING);
@@ -38,7 +38,7 @@ ClientQueue.prototype.update = function(gameContext) {
         }
     } else if(this.state === RequestQueue.STATE_PROCESSING) {
         const current = this.getCurrent();
-        const { type, data } = current;
+        const { type, data, priority } = current;
         const actionType = this.requestHandlers[type];
 
         actionType.onUpdate(gameContext, data);
