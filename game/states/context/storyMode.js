@@ -1,4 +1,3 @@
-import { RequestQueue } from "../../../source/action/requestQueue.js";
 import { StateMachine } from "../../../source/state/stateMachine.js";
 
 import { CONTEXT_STATES } from "../../enums.js";
@@ -17,7 +16,7 @@ StoryModeState.prototype.constructor = StoryModeState;
 
 StoryModeState.prototype.onEnter = function(stateMachine) {
     const gameContext = stateMachine.getContext();
-    
+
     gameContext.createArmyCamera();
 
     this.setNextState(CONTEXT_STATES.STORY_MODE_PLAY);

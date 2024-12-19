@@ -10,7 +10,7 @@ export const RequestQueue = function() {
     ]);
     this.current = null;
     this.isSkipping = false;
-    this.state = RequestQueue.STATE_IDLE;
+    this.state = RequestQueue.STATE_INACTIVE;
     this.mode = RequestQueue.MODE_DIRECT;
 
     this.events = new EventEmitter();
@@ -24,9 +24,10 @@ RequestQueue.MODE_DIRECT = 0;
 RequestQueue.MODE_DEFERRED = 1;
 RequestQueue.MODE_TELL = 2;
 
-RequestQueue.STATE_IDLE = 0;
+RequestQueue.STATE_INACTIVE = 0;
 RequestQueue.STATE_ACTIVE = 1;
 RequestQueue.STATE_PROCESSING = 2;
+RequestQueue.STATE_FLUSH = 3;
 
 RequestQueue.PRIORITY_NORMAL = "PRIORITY_NORMAL";
 RequestQueue.PRIORITY_SUPER = "PRIORITY_SUPER";
@@ -37,6 +38,66 @@ RequestQueue.EVENT_REQUEST_RUNNING = "EVENT_REQUEST_RUNNING";
 RequestQueue.EVENT_QUEUE_ERROR = "EVENT_QUEUE_ERROR";
 
 RequestQueue.prototype.update = function(gameContext) {}
+
+RequestQueue.prototype.flushExecution = function(gameContext) {
+    const next = this.next();
+
+    if(!next) {
+        return;
+    }
+
+    const { type, data } = next;
+    const actionType = this.requestHandlers[type];
+
+    this.events.emit(RequestQueue.EVENT_REQUEST_RUNNING, next);
+    
+    actionType.onStart(gameContext, data);
+    actionType.onEnd(gameContext, data);
+    actionType.onClear();
+
+    this.isSkipping = false;
+    this.clearCurrent();
+}
+
+RequestQueue.prototype.startExecution = function(gameContext) {
+    const next = this.next();
+
+    if(!next) {
+        return;
+    }
+
+    const { type, data } = next;
+    const actionType = this.requestHandlers[type];
+
+    this.setState(RequestQueue.STATE_PROCESSING);
+    this.events.emit(RequestQueue.EVENT_REQUEST_RUNNING, next);
+        
+    actionType.onStart(gameContext, data);
+}
+
+RequestQueue.prototype.processExecution = function(gameContext) {
+    const current = this.getCurrent();
+
+    if(!current) {
+        return;
+    }
+
+    const { type, data } = current;
+    const actionType = this.requestHandlers[type];
+
+    actionType.onUpdate(gameContext, data);
+
+    const isFinished = actionType.isFinished(gameContext, data);
+
+    if(this.isSkipping || isFinished) {
+        actionType.onEnd(gameContext, data);
+        actionType.onClear();
+
+        this.isSkipping = false;
+        this.clearCurrent();
+        this.setState(RequestQueue.STATE_ACTIVE);
+    }
+}
 
 RequestQueue.prototype.createRequest = function(type, ...args) {
     const actionType = this.requestHandlers[type];
@@ -156,7 +217,7 @@ RequestQueue.prototype.reset = function() {
     this.executionQueue.clear();
     this.clearCurrent();
     this.setMode(RequestQueue.MODE_DIRECT);
-    this.setState(RequestQueue.STATE_IDLE);
+    this.setState(RequestQueue.STATE_INACTIVE);
 }
 
 RequestQueue.prototype.clearCurrent = function() {
@@ -213,7 +274,7 @@ RequestQueue.prototype.setMode = function(mode = RequestQueue.MODE_DIRECT) {
     this.mode = mode;
 }
 
-RequestQueue.prototype.setState = function(state = RequestQueue.STATE_IDLE) {
+RequestQueue.prototype.setState = function(state = RequestQueue.STATE_INACTIVE) {
     this.state = state;
 }
 

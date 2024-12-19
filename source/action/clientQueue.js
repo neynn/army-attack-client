@@ -1,9 +1,5 @@
 import { RequestQueue } from "./requestQueue.js";
 
-/**
- * The ClientQueue updates every frame.
- * This is to ensure a smooth gameplay experience.
- */
 export const ClientQueue = function() {
     RequestQueue.call(this);
 }
@@ -11,7 +7,7 @@ export const ClientQueue = function() {
 ClientQueue.prototype = Object.create(RequestQueue.prototype);
 ClientQueue.prototype.constructor = ClientQueue;
 
-ClientQueue.prototype.processRequests = function(gameContext) {
+ClientQueue.prototype.autoProcessRequests = function(gameContext) {
     const current = this.getCurrent();
 
     if(!current || current.priority !== RequestQueue.PRIORITY_SUPER) {
@@ -24,39 +20,20 @@ ClientQueue.prototype.processRequests = function(gameContext) {
 }
 
 ClientQueue.prototype.update = function(gameContext) {
-    if(this.state === RequestQueue.STATE_ACTIVE) {
-        const next = this.next();
-
-        if(next) {
-            const { type, data, priority } = next;
-            const actionType = this.requestHandlers[type];
-
-            this.setState(RequestQueue.STATE_PROCESSING);
-            this.events.emit(RequestQueue.EVENT_REQUEST_RUNNING, next);
-            
-            actionType.onStart(gameContext, data);
+    switch(this.state) {
+        case RequestQueue.STATE_ACTIVE: {
+            this.startExecution(gameContext);
+            break;
         }
-    } else if(this.state === RequestQueue.STATE_PROCESSING) {
-        const current = this.getCurrent();
-        const { type, data, priority } = current;
-        const actionType = this.requestHandlers[type];
-
-        actionType.onUpdate(gameContext, data);
-
-        const isFinished = actionType.isFinished(gameContext, data);
-
-        if(this.isSkipping) {
-            actionType.onClear();
-            this.isSkipping = false;
-            this.setState(RequestQueue.STATE_ACTIVE);
-            this.clearCurrent();
-        } else if(isFinished) {
-            actionType.onEnd(gameContext, data);
-            actionType.onClear();
-            this.setState(RequestQueue.STATE_ACTIVE);
-            this.clearCurrent();
+        case RequestQueue.STATE_PROCESSING: {
+            this.processExecution(gameContext);
+            break;
+        }
+        case RequestQueue.STATE_FLUSH: {
+            this.flushExecution(gameContext);
+            break;
         }
     }
 
-    this.processRequests(gameContext);
+    this.autoProcessRequests(gameContext);
 }
