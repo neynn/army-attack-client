@@ -1,4 +1,3 @@
-import { Queue } from "../queue.js";
 import { RequestQueue } from "./requestQueue.js";
 
 /**
@@ -47,28 +46,28 @@ ClientQueue.prototype.processRequests = function(gameContext) {
 }
 
 ClientQueue.prototype.update = function(gameContext) {
-    if(this.state === Queue.STATE_ACTIVE) {
+    if(this.state === RequestQueue.STATE_ACTIVE) {
         const next = this.next();
 
         if(next) {
-            const { item } = next;
-            const { type } = item;
+            const { request } = next;
+            const { type, data } = request;
             const actionType = this.requestHandlers[type];
 
             this.toProcessing();
             this.events.emit(RequestQueue.EVENT_REQUEST_RUN, next);
             
-            actionType.onStart(gameContext, item);
+            actionType.onStart(gameContext, data);
         }
-    } else if(this.state === Queue.STATE_PROCESSING) {
+    } else if(this.state === RequestQueue.STATE_PROCESSING) {
         const current = this.getCurrent();
-        const { item } = current;
-        const { type } = item;
+        const { request } = current;
+        const { type, data } = request;
         const actionType = this.requestHandlers[type];
 
-        actionType.onUpdate(gameContext, item);
+        actionType.onUpdate(gameContext, data);
 
-        const isFinished = actionType.isFinished(gameContext, item);
+        const isFinished = actionType.isFinished(gameContext, data);
 
         if(this.isSkipping) {
             actionType.onClear();
@@ -76,7 +75,7 @@ ClientQueue.prototype.update = function(gameContext) {
             this.toActive();
             this.clearCurrent();
         } else if(isFinished) {
-            actionType.onEnd(gameContext, item);
+            actionType.onEnd(gameContext, data);
             actionType.onClear();
             this.toActive();
             this.clearCurrent();

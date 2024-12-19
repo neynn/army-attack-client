@@ -1,9 +1,11 @@
 import { EventEmitter } from "../events/eventEmitter.js";
-import { Queue } from "../queue.js";
 
 export const RequestQueue = function() {
-    Queue.call(this);
-
+    this.queue = [];
+    this.current = null;
+    this.isSkipping = false;
+    this.maxSize = 0;
+    this.state = RequestQueue.STATE_IDLE;
     this.maxRequests = 0;
     this.requestHandlers = {};
     this.requests = {
@@ -17,14 +19,16 @@ export const RequestQueue = function() {
     this.events.listen(RequestQueue.EVENT_REQUEST_RUN);
 }
 
+RequestQueue.STATE_IDLE = 0;
+RequestQueue.STATE_ACTIVE = 1;
+RequestQueue.STATE_PROCESSING = 2;
 RequestQueue.PRIORITY_NORMAL = 0;
 RequestQueue.PRIORITY_SUPER = 1;
 RequestQueue.EVENT_REQUEST_VALID = "EVENT_REQUEST_VALID";
 RequestQueue.EVENT_REQUEST_INVALID = "EVENT_REQUEST_INVALID";
 RequestQueue.EVENT_REQUEST_RUN = "EVENT_REQUEST_RUN";
 
-RequestQueue.prototype = Object.create(Queue.prototype);
-RequestQueue.prototype.constructor = RequestQueue;
+RequestQueue.prototype.update = function(gameContext) {}
 
 RequestQueue.prototype.createRequest = function(type, ...args) {
     const actionType = this.requestHandlers[type];
@@ -33,15 +37,17 @@ RequestQueue.prototype.createRequest = function(type, ...args) {
         return {};
     }
 
-    const request = actionType.createRequest(...args);
-
-    request.type = type;
+    const data = actionType.createRequest(...args);
     
-    return request;
+    return {
+        "data": data,
+        "type": type
+    };
 }
 
 RequestQueue.prototype.addRequest = function(request, messengerID = null) {
-    const actionType = this.requestHandlers[request.type];
+    const { type, data } = request;
+    const actionType = this.requestHandlers[type];
 
     if(!actionType || this.requests[RequestQueue.PRIORITY_NORMAL].length >= this.maxRequests) {
         return;
@@ -55,7 +61,8 @@ RequestQueue.prototype.addRequest = function(request, messengerID = null) {
 }
 
 RequestQueue.prototype.addPriorityRequest = function(request, messengerID = null) {
-    const actionType = this.requestHandlers[request.type];
+    const { type, data } = request;
+    const actionType = this.requestHandlers[type];
 
     if(!actionType) {
         return;
@@ -69,14 +76,14 @@ RequestQueue.prototype.addPriorityRequest = function(request, messengerID = null
 }
 
 RequestQueue.prototype.validateRequest = function(gameContext, request, messengerID, priority) {
-    const { type } = request;
+    const { type, data } = request;
     const actionType = this.requestHandlers[type];
 
     if(!actionType) {
         return false;
     }
 
-    const isValid = actionType.isValid(gameContext, request, messengerID);
+    const isValid = actionType.isValid(gameContext, data, messengerID);
 
     if(!isValid) {
         this.events.emit(RequestQueue.EVENT_REQUEST_INVALID, request, messengerID, priority);
@@ -120,4 +127,90 @@ RequestQueue.prototype.setMaxRequests = function(maxRequests) {
     }
 
     this.maxRequests = maxRequests;
+}
+
+RequestQueue.prototype.clearQueue = function() {
+    this.queue.length = 0;
+}
+
+RequestQueue.prototype.clearCurrent = function() {
+    this.current = null;
+}
+
+RequestQueue.prototype.setMaxSize = function(maxSize) {
+    if(maxSize === undefined) {
+        return;
+    }
+
+    this.maxSize = maxSize;
+}
+
+RequestQueue.prototype.getCurrent = function() {
+    return this.current;
+}
+
+RequestQueue.prototype.next = function() {
+    if(this.queue.length === 0) {
+        this.current = null;
+    } else {
+        this.current = this.queue.shift();
+    }
+
+    return this.current;
+}
+
+RequestQueue.prototype.enqueue = function(request) {
+    if(this.queue.length >= this.maxSize) {
+        return;
+    }
+
+    if(!request) {
+        return;
+    }
+
+    this.queue.push({
+        "time": Date.now(),
+        "request": request
+    });
+}
+
+RequestQueue.prototype.enqueuePriority = function(request) {
+    if(this.queue.length >= this.maxSize) {
+        return;
+    }
+
+    if(!request) {
+        return;
+    }
+
+    this.queue.unshift({
+        "time": Date.now(),
+        "request": request
+    });
+}
+
+RequestQueue.prototype.isEmpty = function() {
+    return this.queue.length === 0;
+}
+
+RequestQueue.prototype.isRunning = function() {
+    return this.queue.length !== 0 || this.current !== null;
+}
+
+RequestQueue.prototype.toIdle = function() {
+    this.state = RequestQueue.STATE_IDLE;
+}
+
+RequestQueue.prototype.toActive = function() {
+    this.state = RequestQueue.STATE_ACTIVE;
+}
+
+RequestQueue.prototype.toProcessing = function() {
+    this.state = RequestQueue.STATE_PROCESSING;
+}
+
+RequestQueue.prototype.skip = function() {
+    if(this.isRunning()) {
+        this.isSkipping = true;
+    }
 }

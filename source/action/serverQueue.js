@@ -1,4 +1,3 @@
-import { Queue } from "../queue.js";
 import { RequestQueue } from "./requestQueue.js";
 
 /**
@@ -22,7 +21,7 @@ ServerQueue.prototype.processRequest = function(gameContext, request, messengerI
 }
 
 ServerQueue.prototype.update = function(gameContext) {
-    if(this.state !== Queue.STATE_ACTIVE || this.isEmpty()) {
+    if(this.state !== RequestQueue.STATE_ACTIVE || this.isEmpty()) {
         return;
     }
 
@@ -31,15 +30,15 @@ ServerQueue.prototype.update = function(gameContext) {
     const next = this.next();
 
     if(next) {
-        const { item } = next;
-        const { type } = item;
+        const { request } = next;
+        const { type, data } = request;
         const actionType = this.requestHandlers[type];
 
         this.events.emit(RequestQueue.EVENT_REQUEST_RUN, next);
         this.clearCurrent();
         
-        actionType.onStart(gameContext, item);
-        actionType.onEnd(gameContext, item);
+        actionType.onStart(gameContext, data);
+        actionType.onEnd(gameContext, data);
         actionType.onClear();
     }
 
