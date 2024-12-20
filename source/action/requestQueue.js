@@ -134,6 +134,14 @@ RequestQueue.prototype.createRequest = function(type, ...args) {
     return request;
 }
 
+RequestQueue.prototype.createElement = function(request, priority = RequestQueue.PRIORITY_NORMAL, messengerID = null) {
+    return {
+        "request": request,
+        "priority": priority,
+        "messengerID": messengerID
+    };
+}
+
 RequestQueue.prototype.addRequest = function(request, priority = RequestQueue.PRIORITY_NORMAL, messengerID = null) {
     if(!request) {
         return;
@@ -147,11 +155,7 @@ RequestQueue.prototype.addRequest = function(request, priority = RequestQueue.PR
         return;
     }
 
-    const element = {
-        "request": request,
-        "priority": priority,
-        "messengerID": messengerID
-    };
+    const element = this.createElement(request, priority, messengerID);
 
     priorityQueue.enqueueLast(element);
 }
@@ -201,12 +205,12 @@ RequestQueue.prototype.validateExecution = function(gameContext, element) {
             break;
         }
         case RequestQueue.MODE_DEFERRED: {
-            this.events.emit(RequestQueue.EVENT_EXECUTION_DEFER, executionItem);
+            this.events.emit(RequestQueue.EVENT_EXECUTION_DEFER, executionItem, request);
             break;
         }
         case RequestQueue.MODE_TELL: {
             this.enqueue(executionItem);
-            this.events.emit(RequestQueue.EVENT_EXECUTION_DEFER, executionItem);
+            this.events.emit(RequestQueue.EVENT_EXECUTION_DEFER, executionItem, request);
             break;
         }
         default: {

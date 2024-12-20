@@ -10,13 +10,8 @@ export const ServerQueue = function() {
 ServerQueue.prototype = Object.create(RequestQueue.prototype);
 ServerQueue.prototype.constructor = ServerQueue;
 
-ServerQueue.prototype.processUserRequest = function(gameContext, message, messengerID) {
-    const element = {
-        "request": message,
-        "priority": RequestQueue.PRIORITY_NORMAL,
-        "messengerID": messengerID
-    };
-    
+ServerQueue.prototype.processUserRequest = function(gameContext, request, messengerID) {
+    const element = this.createElement(request, RequestQueue.PRIORITY_NORMAL, messengerID);
     this.processElement(gameContext, element);
 }
 
