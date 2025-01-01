@@ -162,7 +162,7 @@ ArmyCamera.prototype.drawWithCallback = function(map2D, layerConfig, onDraw, vie
 
 ArmyCamera.prototype.drawSpriteLayer = function(gameContext, layerID) {
     const { timer, renderer, spriteManager } = gameContext;
-    const spriteLayer = spriteManager.layers[layerID];
+    const spriteLayer = spriteManager.getLayer(layerID);
 
     if(!spriteLayer) {
         return;

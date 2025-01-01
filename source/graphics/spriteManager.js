@@ -22,45 +22,16 @@ SpriteManager.LAYER_BOTTOM = 0;
 SpriteManager.LAYER_MIDDLE = 1;
 SpriteManager.LAYER_TOP = 2;
 
+SpriteManager.prototype.getLayer = function(layerID) {
+    return this.layers[layerID];
+}
+
 SpriteManager.prototype.load = function(spriteTypes) {
-    if(typeof spriteTypes === "object") {
-        this.loadSpriteTypes(spriteTypes);
-
-        const usedMB = [];
-        const usedMBLarge = [];
-
-        this.resources.loadImages(spriteTypes, ((key, image) => {
-            const imageSize = image.width * image.height * 4;
-            const imageSizeMB = imageSize / ImageManager.SIZE_MB;
-        
-            if(imageSize >= ImageManager.SIZE_BIG_IMAGE) {
-              usedMBLarge.push({
-                "imageID": key,
-                "imageSizeMB": imageSizeMB
-              });
-            }
-        
-            usedMB.push({
-              "imageID": key,
-              "imageSizeMB": imageSizeMB
-            });
-          }), (key, error) => console.error(key, error));
-
-          console.log(usedMB, usedMBLarge);
-          
-    } else {
+    if(typeof spriteTypes !== "object") {
         Logger.log(false, "SpriteTypes cannot be undefined!", "SpriteManager.prototype.load", null);
+        return;
     }
-}
 
-SpriteManager.prototype.update = function(gameContext) {
-    const { timer } = gameContext;
-    const realTime = timer.getRealTime();
-    
-    this.timestamp = realTime;
-}
-
-SpriteManager.prototype.loadSpriteTypes = function(spriteTypes) {
     for(const typeID in spriteTypes) {
         const spriteType = spriteTypes[typeID];
         const imageSheet = new ImageSheet(typeID);
@@ -70,9 +41,38 @@ SpriteManager.prototype.loadSpriteTypes = function(spriteTypes) {
 
         this.spriteTypes[typeID] = imageSheet;
     }
+
+    const usedMB = [];
+    const usedMBLarge = [];
+
+    this.resources.loadImages(spriteTypes, ((key, image) => {
+        const imageSize = image.width * image.height * 4;
+        const imageSizeMB = imageSize / ImageManager.SIZE_MB;
+    
+        if(imageSize >= ImageManager.SIZE_BIG_IMAGE) {
+          usedMBLarge.push({
+            "imageID": key,
+            "imageSizeMB": imageSizeMB
+          });
+        }
+    
+        usedMB.push({
+          "imageID": key,
+          "imageSizeMB": imageSizeMB
+        });
+    }), (key, error) => console.error(key, error));
+
+    console.log(usedMB, usedMBLarge);
 }
 
-SpriteManager.prototype.end = function() {
+SpriteManager.prototype.update = function(gameContext) {
+    const { timer } = gameContext;
+    const realTime = timer.getRealTime();
+    
+    this.timestamp = realTime;
+}
+
+SpriteManager.prototype.clear = function() {
     this.sprites.clear();
     this.idGenerator.reset();
 
@@ -89,9 +89,14 @@ SpriteManager.prototype.createSprite = function(typeID, layerID = null, animatio
     const spriteID = this.idGenerator.getID();
     const sprite = new Sprite(spriteID, typeID);
     
-    sprite.onDraw = (context, viewportX, viewportY, localX, localY) => this.drawSprite(sprite, context, viewportX, viewportY, localX, localY);
+    sprite.onDraw = (context, viewportX, viewportY, localX, localY) => {
+        const drawData = sprite.getDrawData();
+
+        this.drawSprite(drawData, context, viewportX, viewportY, localX, localY);
+    }
+
     sprite.setLastCallTime(this.timestamp);
-    sprite.events.subscribe(Sprite.TERMINATE, EventEmitter.SUPER_SUBSCRIBER_ID, (sprite) => this.destroySprite(sprite.id));
+    sprite.events.subscribe(Sprite.EVENT_TERMINATE, EventEmitter.SUPER_SUBSCRIBER_ID, (sprite) => this.destroySprite(sprite.id));
 
     this.sprites.set(sprite.id, sprite);
 
@@ -105,8 +110,8 @@ SpriteManager.prototype.createSprite = function(typeID, layerID = null, animatio
     return sprite;
 }
 
-SpriteManager.prototype.drawSprite = function(sprite, context, viewportX, viewportY, localX, localY) {
-    const { typeID, animationID, currentFrame, isFlipped } = sprite;
+SpriteManager.prototype.drawSprite = function(drawData, context, viewportX, viewportY, localX, localY) {
+    const { typeID, animationID, frame, isFlipped } = drawData;
     const spriteBuffer = this.resources.getImage(typeID);
 
     if(!spriteBuffer) {
@@ -116,7 +121,7 @@ SpriteManager.prototype.drawSprite = function(sprite, context, viewportX, viewpo
     const spriteType = this.spriteTypes[typeID];
     const spriteBounds = spriteType.getBounds();
     const animationType = spriteType.getAnimation(animationID);
-    const animationFrame = animationType.getFrame(currentFrame);
+    const animationFrame = animationType.getFrame(frame);
 
     for(const component of animationFrame) {
         const { id, shiftX, shiftY } = component;
@@ -142,37 +147,34 @@ SpriteManager.prototype.drawSprite = function(sprite, context, viewportX, viewpo
 
 SpriteManager.prototype.destroySprite = function(spriteID) {
     const sprite = this.sprites.get(spriteID);
-    const nonSpriteDrawables = [];
+    const otherDrawables = [];
 
     if(!sprite) {
         Logger.log(false, "Sprite does not exist!", "SpriteManager.prototype.destroySprite", { spriteID });
-
-        return nonSpriteDrawables;
+        return otherDrawables;
     }
     
     const familyStack = sprite.getFamilyStack();
 
     for(let i = familyStack.length - 1; i >= 0; i--) {
         const drawableID = familyStack[i];
+        const sprite = this.sprites.get(drawableID);
 
-        if(!this.sprites.has(drawableID)) {
-            nonSpriteDrawables.push(drawableID);
+        if(!sprite) {
+            otherDrawables.push(drawableID);
             continue;
         }
 
-        const sprite = this.sprites.get(drawableID);
-        const layerID = sprite.getLayerID();
-
         sprite.closeFamily();
 
-        if(layerID !== null) {
-            this.removeFromLayer(layerID, sprite);
+        for(const layerID in this.layers) {
+            this.removeFromLayer(sprite, layerID);
         }
-    
+
         this.sprites.delete(drawableID);
     }
 
-    return nonSpriteDrawables;
+    return otherDrawables;
 }
 
 SpriteManager.prototype.getSprite = function(spriteID) {
@@ -186,47 +188,39 @@ SpriteManager.prototype.getSprite = function(spriteID) {
 }
 
 SpriteManager.prototype.addToLayer = function(layerID, sprite) {
-    if(this.layers[layerID] === undefined) {
-        Logger.log(false, "Layer does not exist!", "SpriteManager.prototype.addToLayer", { layerID });
+    const layer = this.layers[layerID];
 
-        return false;
+    if(!layer) {
+        Logger.log(false, "Layer does not exist!", "SpriteManager.prototype.addToLayer", { layerID });
+        return;
     }
 
-    const layer = this.layers[layerID];
     const index = layer.findIndex(member => member.id === sprite.id);
 
     if(index !== -1) {
         Logger.log(false, "Sprite already exists on layer!", "SpriteManager.prototype.addToLayer", { layerID });
-
-        return false;
+        return;
     }
 
     layer.push(sprite);
-    sprite.setLayerID(layerID);
-
-    return true;
 } 
 
-SpriteManager.prototype.removeFromLayer = function(layerID, sprite) {
-    if(this.layers[layerID] === undefined) {
-        Logger.log(false, "Layer does not exist!", "SpriteManager.prototype.removeFromLayer", { layerID });
+SpriteManager.prototype.removeFromLayer = function(sprite, layerID) {
+    const layer = this.layers[layerID];
 
-        return false;
+    if(!layer) {
+        Logger.log(false, "Layer does not exist!", "SpriteManager.prototype.removeFromLayer", { layerID });
+        return;
     }
 
-    const layer = this.layers[layerID];
     const index = layer.findIndex(member => member.id === sprite.id);
 
     if(index === -1) {
         Logger.log(false, "Sprite does not exist on layer!", "SpriteManager.prototype.removeFromLayer", { layerID });
-
-        return false;
+        return;
     }
 
     layer.splice(index, 1);
-    sprite.setLayerID(null);
-
-    return true;
 }
 
 SpriteManager.prototype.updateSprite = function(spriteID, typeID, animationID = ImageSheet.DEFAULT_ANIMATION_ID) {
@@ -234,56 +228,32 @@ SpriteManager.prototype.updateSprite = function(spriteID, typeID, animationID = 
     
     if(!sprite) {
         Logger.log(false, "Sprite does not exist!", "SpriteManager.prototype.updateSprite", { spriteID });
-
-        return false;
+        return;
     }
 
     const spriteType = this.spriteTypes[typeID];
 
     if(!spriteType) {
         Logger.log(false, "SpriteType does not exist!", "SpriteManager.prototype.updateSprite", { spriteID, typeID });
-
-        return false;
+        return;
     }
 
     const animationType = spriteType.getAnimation(animationID);
 
     if(!animationType) {
         Logger.log(false, "AnimationType does not exist!", "SpriteManager.prototype.updateSprite", { spriteID, typeID, animationID });
-
-        return false;
+        return;
     }
 
-    const spriteTypeID = sprite.getTypeID();
-    const spriteAnimationID = sprite.getAnimationID();
+    const drawData = sprite.getDrawData();
 
-    if(spriteTypeID !== typeID || spriteAnimationID !== animationID) {
-        const config = {
-            "type": typeID,
-            "animation": animationID,
-            "frameCount": animationType.frameCount,
-            "frameTime": animationType.frameTime
-        };
+    if(drawData.typeID !== typeID || drawData.animationID !== animationID) {
+        const { x, y, w, h } = spriteType.getBounds();
 
-        sprite.initialize(config);
+        sprite.initialize(typeID, animationID, animationType.frameCount, animationType.frameTime);
+        sprite.setBounds(x, y, w, h);
 
-        this.initializeBounds(sprite);
         this.resources.addReference(typeID);
-        this.resources.removeReference(spriteTypeID);
+        this.resources.removeReference(drawData.typeID);
     }
-
-    return true;
-}
-
-SpriteManager.prototype.initializeBounds = function(sprite) {
-    const { typeID, bounds } = sprite;
-
-    if(!bounds.isZero()) {
-        return false;
-    }
-
-    const spriteType = this.spriteTypes[typeID];
-    const { x, y, w, h } = spriteType.getBounds();
-
-    bounds.set(x, y, w, h);
 }

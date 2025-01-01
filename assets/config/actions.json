@@ -1,0 +1,20 @@
+{
+    "Attack": {
+        "id": "Attack",
+        "description": "Attacking action",
+        "send": true,
+        "receive": true
+    },
+    "Construction": {
+        "id": "Construction",
+        "description": "Building action",
+        "send": true,
+        "receive": true
+    },
+    "Move": {
+        "id": "Move",
+        "description": "Moving action",
+        "send": true,
+        "receive": true
+    }
+}

@@ -4,7 +4,6 @@ export const Sprite = function(id, DEBUG_NAME) {
     Drawable.call(this, id, DEBUG_NAME);
     
     this.typeID = null;
-    this.layerID = null;
     this.animationID = null;
     this.lastCallTime = 0;
     this.frameCount = 0;
@@ -17,19 +16,19 @@ export const Sprite = function(id, DEBUG_NAME) {
     this.isStatic = false;
     this.isFlipped = false;
 
-    this.events.listen(Sprite.TERMINATE);
-    this.events.listen(Sprite.LOOP_COMPLETE);
+    this.events.listen(Sprite.EVENT_TERMINATE);
+    this.events.listen(Sprite.EVENT_LOOP_COMPLETE);
 }
 
-Sprite.TERMINATE = "TERMINATE";
-Sprite.LOOP_COMPLETE = "LOOP_COMPLETE";
+Sprite.EVENT_TERMINATE = "EVENT_TERMINATE";
+Sprite.EVENT_LOOP_COMPLETE = "EVENT_LOOP_COMPLETE";
 
 Sprite.prototype = Object.create(Drawable.prototype);
 Sprite.prototype.constructor = Sprite;
 
-Sprite.prototype.initialize = function({ type, animation, frameCount, frameTime }) {
-    this.typeID = type;
-    this.animationID = animation;
+Sprite.prototype.initialize = function(typeID, animationID, frameCount, frameTime) {
+    this.typeID = typeID;
+    this.animationID = animationID;
     this.frameCount = frameCount;
     this.frameTime = frameTime;
     this.floatFrame = 0;
@@ -45,20 +44,17 @@ Sprite.prototype.setLastCallTime = function(lastCallTime) {
     this.lastCallTime = lastCallTime;
 }
 
-Sprite.prototype.getLastCallTime = function() {
-    return this.lastCallTime;
+Sprite.prototype.setBounds = function(x, y, w, h) {
+    this.bounds.set(x, y, w, h);
 }
 
-Sprite.prototype.getTypeID = function() {
-    return this.typeID;
-}
-
-Sprite.prototype.getAnimationID = function() {
-    return this.animationID;
-}
-
-Sprite.prototype.getLayerID = function() {
-    return this.layerID;
+Sprite.prototype.getDrawData = function() {
+    return {
+        "typeID": this.typeID,
+        "animationID": this.animationID,
+        "frame": this.currentFrame,
+        "isFlipped": this.isFlipped
+    }
 }
 
 Sprite.prototype.getBounds = function() {
@@ -67,7 +63,12 @@ Sprite.prototype.getBounds = function() {
     const boundsX = this.position.x + adjustedX;
     const boundsY = this.position.y + y;
 
-    return { "x": boundsX, "y": boundsY, "w": w,  "h": h }
+    return {
+        "x": boundsX,
+        "y": boundsY,
+        "w": w,
+        "h": h
+    }
 }
 
 Sprite.prototype.onUpdate = function(timestamp, deltaTime) {
@@ -102,23 +103,17 @@ Sprite.prototype.onDebug = function(context, viewportX, viewportY, localX, local
     }
 }
 
-Sprite.prototype.setLayerID = function(layerID) {
-    this.layerID = layerID;
-}
-
 Sprite.prototype.setFrame = function(frameIndex = this.currentFrame) {
-    if(frameIndex >= this.frameCount || frameIndex < 0) {
-        return;
+    if(frameIndex < this.frameCount && frameIndex >= 0) {
+        this.floatFrame = frameIndex;
+        this.currentFrame = frameIndex;
     }
-
-    this.floatFrame = frameIndex;
-    this.currentFrame = frameIndex;
 }
 
 Sprite.prototype.terminate = function() {
     this.hide();
     this.freeze();
-    this.events.emit(Sprite.TERMINATE, this);
+    this.events.emit(Sprite.EVENT_TERMINATE, this);
 }
 
 Sprite.prototype.repeat = function() {
@@ -158,7 +153,7 @@ Sprite.prototype.updateFrame = function(floatFrames = 0) {
         const skippedLoops = Math.floor(this.floatFrame / this.frameCount);
         this.floatFrame -= this.frameCount * skippedLoops;
         this.loopCount += skippedLoops;
-        this.events.emit(Sprite.LOOP_COMPLETE, this, skippedLoops);
+        this.events.emit(Sprite.EVENT_LOOP_COMPLETE, this, skippedLoops);
     }
 
     if(this.loopCount > this.loopLimit && !this.isRepeating) {

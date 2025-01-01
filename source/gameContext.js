@@ -61,7 +61,7 @@ GameContext.prototype.start = function() {
 GameContext.prototype.end = function() {
     this.world.actionQueue.end();
     this.world.entityManager.end();
-    this.spriteManager.end();
+    this.spriteManager.clear();
     this.tileManager.end();
     this.uiManager.end();
 }
