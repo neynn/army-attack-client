@@ -150,7 +150,7 @@ DefaultArchetype.prototype.finalizeEntity = function(gameContext, entity, type, 
     this.onFinalize(gameContext, entity, sprite, type, setup);
 }
 
-DefaultArchetype.prototype.onBuild = function(gameContext, entity, type, setup) {
+DefaultArchetype.prototype.build = function(gameContext, entity, type, setup) {
     const { world } = gameContext;
     const { entityManager } = world;
     const { stats } = type;

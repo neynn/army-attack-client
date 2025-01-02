@@ -27,7 +27,8 @@
         },
         "BUTTON_PLAY": {
             "id": "BUTTON_PLAY",
-            "type": "BUTTON_SQUARE",
+            "type": "BUTTON",
+            "shape": 0,
             "anchor": "CENTER", 
             "position": { "x": 175, "y": 0 },
             "width": 300,
@@ -48,7 +49,8 @@
         },
         "BUTTON_VERSUS": {
             "id": "BUTTON_VERSUS",
-            "type": "BUTTON_SQUARE",
+            "type": "BUTTON",
+            "shape": 0,
             "anchor": "CENTER",
             "position": { "x": -175, "y": 0 },
             "width": 300,
@@ -69,7 +71,8 @@
         },
         "BUTTON_EDIT": {
             "id": "BUTTON_EDIT",
-            "type": "BUTTON_SQUARE",
+            "type": "BUTTON",
+            "shape": 0,
             "anchor": "CENTER", 
             "position": { "x": 175, "y": -150 },
             "width": 300,
@@ -92,7 +95,8 @@
     "VERSUS_MODE_HUB": {
         "BUTTON_CREATE_ROOM": {
             "id": "BUTTON_CREATE_ROOM",
-            "type": "BUTTON_SQUARE",
+            "type": "BUTTON",
+            "shape": 0,
             "anchor": "TOP_LEFT", 
             "position": { "x": 50, "y": 50 },
             "width": 300,
@@ -113,7 +117,8 @@
         },
         "BUTTON_JOIN_ROOM": {
             "id": "BUTTON_JOIN_ROOM",
-            "type": "BUTTON_SQUARE",
+            "type": "BUTTON",
+            "shape": 0,
             "anchor": "TOP_LEFT", 
             "position": { "x": 50, "y": 200 },
             "width": 300,
@@ -134,7 +139,8 @@
         },
         "BUTTON_LEAVE_ROOM": {
             "id": "BUTTON_LEAVE_ROOM",
-            "type": "BUTTON_SQUARE",
+            "type": "BUTTON",
+            "shape": 0,
             "anchor": "TOP_LEFT", 
             "position": { "x": 50, "y": 350 },
             "width": 300,
@@ -155,7 +161,8 @@
         },
         "BUTTON_START_INSTANCE": {
             "id": "BUTTON_START_INSTANCE",
-            "type": "BUTTON_SQUARE",
+            "type": "BUTTON",
+            "shape": 0,
             "anchor": "TOP_LEFT", 
             "position": { "x": 50, "y": 500 },
             "width": 300,
@@ -188,7 +195,8 @@
         },
         "BUTTON_SAVE": {
             "id": "BUTTON_SAVE",
-            "type": "BUTTON_SQUARE",
+            "type": "BUTTON",
+            "shape": 0,
             "anchor": "TOP_LEFT",
             "position": { "x": 0, "y": 0 },
             "width": 100,
@@ -209,7 +217,8 @@
         },
         "BUTTON_LOAD": {
             "id": "BUTTON_LOAD",
-            "type": "BUTTON_SQUARE",
+            "type": "BUTTON",
+            "shape": 0,
             "anchor": "TOP_LEFT",
             "position": { "x": 100, "y": 0 },
             "radius": 50,
@@ -231,7 +240,8 @@
         },
         "BUTTON_CREATE": {
             "id": "BUTTON_CREATE",
-            "type": "BUTTON_SQUARE",
+            "type": "BUTTON",
+            "shape": 0,
             "anchor": "TOP_LEFT",
             "position": { "x": 200, "y": 0 },
             "radius": 50,
@@ -253,7 +263,8 @@
         },
         "BUTTON_RESIZE": {
             "id": "BUTTON_RESIZE",
-            "type": "BUTTON_SQUARE",
+            "type": "BUTTON",
+            "shape": 0,
             "anchor": "TOP_LEFT",
             "position": { "x": 300, "y": 0 },
             "radius": 50,
@@ -285,7 +296,8 @@
         },
         "BUTTON_L1": {
             "id": "BUTTON_L1",
-            "type": "BUTTON_SQUARE",
+            "type": "BUTTON",
+            "shape": 0,
             "anchor": "BOTTOM_LEFT",
             "position": { "x": 0, "y": 0 },
             "radius": 50,
@@ -307,7 +319,8 @@
         },
         "BUTTON_L2": {
             "id": "BUTTON_L2",
-            "type": "BUTTON_SQUARE",
+            "type": "BUTTON",
+            "shape": 0,
             "anchor": "BOTTOM_LEFT",
             "position": { "x": 100, "y": 0 },
             "radius": 50,
@@ -329,7 +342,8 @@
         },
         "BUTTON_L3": {
             "id": "BUTTON_L3",
-            "type": "BUTTON_SQUARE",
+            "type": "BUTTON",
+            "shape": 0,
             "anchor": "BOTTOM_LEFT",
             "position": { "x": 200, "y": 0 },
             "radius": 50,
@@ -351,7 +365,8 @@
         },
         "BUTTON_LC": {
             "id": "BUTTON_LC",
-            "type": "BUTTON_SQUARE",
+            "type": "BUTTON",
+            "shape": 0,
             "anchor": "BOTTOM_LEFT",
             "position": { "x": 300, "y": 0 },
             "radius": 50,
@@ -373,7 +388,8 @@
         },
         "BUTTON_VIEW_ALL": {
             "id": "BUTTON_VIEW_ALL",
-            "type": "BUTTON_SQUARE",
+            "type": "BUTTON",
+            "shape": 0,
             "anchor": "BOTTOM_LEFT",
             "position": { "x": 400, "y": 0 },
             "radius": 50,
@@ -415,7 +431,8 @@
         },
         "BUTTON_PAGE_LAST": {
             "id": "BUTTON_PAGE_LAST",
-            "type": "BUTTON_SQUARE",
+            "type": "BUTTON",
+            "shape": 0,
             "position": { "x": 0, "y": 450 },
             "width": 150,
             "height": 50,
@@ -434,7 +451,8 @@
         },
         "BUTTON_PAGE_NEXT": {
             "id": "BUTTON_PAGE_NEXT",
-            "type": "BUTTON_SQUARE",
+            "type": "BUTTON",
+            "shape": 0,
             "position": { "x": 200, "y": 450 },
             "width": 150,
             "height": 50,
@@ -453,7 +471,8 @@
         },
         "BUTTON_SCROLL_SIZE": {
             "id": "BUTTON_SCROLL_SIZE",
-            "type": "BUTTON_SQUARE",
+            "type": "BUTTON",
+            "shape": 0,
             "position": { "x": 0, "y": 500 },
             "width": 350,
             "height": 50,
@@ -482,7 +501,8 @@
         },
         "BUTTON_TILESET_MODE": {
             "id": "BUTTON_TILESET_MODE",
-            "type": "BUTTON_SQUARE",
+            "type": "BUTTON",
+            "shape": 0,
             "position": { "x": 50, "y": 50 },
             "width": 250,
             "height": 50,
@@ -501,7 +521,8 @@
         },
         "BUTTON_TILESET_RIGHT": {
             "id": "BUTTON_TILESET_RIGHT",
-            "type": "BUTTON_SQUARE",
+            "type": "BUTTON",
+            "shape": 0,
             "position": { "x": 300, "y": 0 },
             "width": 50,
             "height": 100,
@@ -520,7 +541,8 @@
         },
         "BUTTON_TILESET_LEFT": {
             "id": "BUTTON_TILESET_LEFT",
-            "type": "BUTTON_SQUARE",
+            "type": "BUTTON",
+            "shape": 0,
             "position": { "x": 0, "y": 0 },
             "width": 50,
             "height": 100,
@@ -539,7 +561,8 @@
         },
         "BUTTON_0": {
             "id": "BUTTON_0",
-            "type": "BUTTON_SQUARE",
+            "type": "BUTTON",
+            "shape": 0,
             "position": { "x": 50, "y": 150 },
             "width": 50,
             "height": 50,
@@ -547,7 +570,9 @@
         },
         "BUTTON_1": {
             "id": "BUTTON_1",
-            "type": "BUTTON_SQUARE",
+            "type": "BUTTON",
+            "shape": 0,
+            "radius": 100,
             "position": { "x": 150, "y": 150 },
             "width": 50,
             "height": 50,
@@ -555,7 +580,8 @@
         },
         "BUTTON_2": {
             "id": "BUTTON_2",
-            "type": "BUTTON_SQUARE",
+            "type": "BUTTON",
+            "shape": 0,
             "position": { "x": 250, "y": 150 },
             "width": 50,
             "height": 50,
@@ -563,7 +589,8 @@
         },
         "BUTTON_3": {
             "id": "BUTTON_3",
-            "type": "BUTTON_SQUARE",
+            "type": "BUTTON",
+            "shape": 0,
             "position": { "x": 50, "y": 250 },
             "width": 50,
             "height": 50,
@@ -571,7 +598,8 @@
         },
         "BUTTON_4": {
             "id": "BUTTON_4",
-            "type": "BUTTON_SQUARE",
+            "type": "BUTTON",
+            "shape": 0,
             "position": { "x": 150, "y": 250 },
             "width": 50,
             "height": 50,
@@ -579,7 +607,8 @@
         },
         "BUTTON_5": {
             "id": "BUTTON_5",
-            "type": "BUTTON_SQUARE",
+            "type": "BUTTON",
+            "shape": 0,
             "position": { "x": 250, "y": 250 },
             "width": 50,
             "height": 50,
@@ -587,7 +616,8 @@
         },
         "BUTTON_6": {
             "id": "BUTTON_6",
-            "type": "BUTTON_SQUARE",
+            "type": "BUTTON",
+            "shape": 0,
             "position": { "x": 50, "y": 350 },
             "width": 50,
             "height": 50,
@@ -595,7 +625,8 @@
         },
         "BUTTON_7": {
             "id": "BUTTON_7",
-            "type": "BUTTON_SQUARE",
+            "type": "BUTTON",
+            "shape": 0,
             "position": { "x": 150, "y": 350 },
             "width": 50,
             "height": 50,
@@ -603,7 +634,8 @@
         },
         "BUTTON_8": {
             "id": "BUTTON_8",
-            "type": "BUTTON_SQUARE",
+            "type": "BUTTON",
+            "shape": 0,
             "position": { "x": 250, "y": 350 },
             "width": 50,
             "height": 50,

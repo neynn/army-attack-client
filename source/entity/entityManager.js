@@ -221,7 +221,6 @@ EntityManager.prototype.createEntity = function(entityTypeID, externalID) {
         Logger.log(false, "EntityType does not exist", "EntityManager.prototype.createEntity", {entityID, externalID});
     }
 
-
     this.entities.set(entityID, entity)
 
     return entity;
@@ -243,7 +242,7 @@ EntityManager.prototype.buildEntity = function(gameContext, entity, typeID, setu
         return;
     }
 
-    archetype.onBuild(gameContext, entity, entityType, setup);
+    archetype.build(gameContext, entity, entityType, setup);
 } 
 
 EntityManager.prototype.destroyEntity = function(entityID) {

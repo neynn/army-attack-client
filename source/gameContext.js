@@ -5,10 +5,10 @@ import { SpriteManager } from "./graphics/spriteManager.js";
 import { UIManager } from "./ui/uiManager.js";
 import { StateMachine } from "./state/stateMachine.js";
 import { Timer } from "./timer.js";
-import { UIElement } from "./ui/uiElement.js";
 import { TileManager } from "./tile/tileManager.js";
 import { Renderer } from "./renderer.js";
 import { World } from "./world.js";
+import { Button } from "./ui/elements/button.js";
 
 export const GameContext = function(fps = 60) {
     this.id = "GAME_CONTEXT";
@@ -48,7 +48,7 @@ GameContext.prototype.addClickEvent = function() {
         const clickedElements = this.uiManager.getCollidedElements(cursor.position.x, cursor.position.y, cursor.radius);
 
         for(const element of clickedElements) {
-            element.events.emit(UIElement.EVENT_CLICKED);
+            element.events.emit(Button.EVENT_CLICKED);
         }
     });
 }

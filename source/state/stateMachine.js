@@ -58,6 +58,7 @@ StateMachine.prototype.exit = function() {
         
         this.currentState.onExit(this);
         this.previousState = this.currentState;
+        this.currentState = null;
     }
 }
 
@@ -96,13 +97,13 @@ StateMachine.prototype.applyContext = function(state) {
 }
 
 StateMachine.prototype.addState = function(stateID, state) {
-    if(!state) {
-        console.warn(`State (${stateID}) is not defined!`);
+    if(this.hasState(stateID)) {
+        console.warn(`State (${stateID}) already exists!`);
         return;
     }
 
-    if(this.hasState(stateID)) {
-        console.warn(`State (${stateID}) already exists!`);
+    if(!(state instanceof State)) {
+        console.warn(`State (${stateID}) is not a state!`);
         return;
     }
 

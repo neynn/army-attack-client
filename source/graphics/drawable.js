@@ -4,7 +4,7 @@ import { Rectangle } from "../math/rect.js";
 import { Vec2 } from "../math/vec2.js";
 import { Family } from "./family.js";
 
-export const Drawable = function(id = null, DEBUG_NAME = "") {
+export const Drawable = function(id = null, DEBUG_NAME = "Drawable") {
     this.DEBUG_NAME = DEBUG_NAME;
     this.id = id;
     this.family = null;

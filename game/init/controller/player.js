@@ -13,6 +13,7 @@ import { TeamComponent } from "../../components/team.js";
 
 export const PlayerController = function(id) {
     EntityController.call(this, id);
+    
     this.hoveredEntity = null;
     this.nodeList = new Map();
     this.attackers = new Set();

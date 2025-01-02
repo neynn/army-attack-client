@@ -3,15 +3,11 @@ import { Drawable } from "../graphics/drawable.js";
 export const UIElement = function(id, DEBUG_NAME) {
     Drawable.call(this, id, DEBUG_NAME);
     
-    this.events.listen(UIElement.EVENT_DRAW);
-    this.events.listen(UIElement.EVENT_CLICKED);
     this.events.listen(UIElement.EVENT_FIRST_COLLISION);
     this.events.listen(UIElement.EVENT_FINAL_COLLISION);
     this.events.listen(UIElement.EVENT_COLLISION);
 }
 
-UIElement.EVENT_DRAW = "EVENT_DRAW";
-UIElement.EVENT_CLICKED = "EVENT_CLICKED";
 UIElement.EVENT_FINAL_COLLISION = "EVENT_FINAL_COLLISION";
 UIElement.EVENT_FIRST_COLLISION = "EVENT_FIRST_COLLISION";
 UIElement.EVENT_COLLISION = "EVENT_COLLISION";
@@ -19,9 +15,13 @@ UIElement.EVENT_COLLISION = "EVENT_COLLISION";
 UIElement.prototype = Object.create(Drawable.prototype);
 UIElement.prototype.constructor = UIElement;
 
-UIElement.prototype.loadFromConfig = function(config) {}
+UIElement.prototype.loadFromConfig = function(config) {
+    console.warn(`Method loadFromConfig has not been defined!`);
+}
 
-UIElement.prototype.isColliding = function(mouseX, mouseY, mouseRange) {}
+UIElement.prototype.isColliding = function(mouseX, mouseY, mouseRange) {
+    return false;
+}
 
 UIElement.prototype.getCollisions = function(mouseX, mouseY, mouseRange) {
     const collidedElements = [];
@@ -35,8 +35,9 @@ UIElement.prototype.getCollisions = function(mouseX, mouseY, mouseRange) {
 
     while(uncheckedElements.length > 0) {
         const { element, localX, localY } = uncheckedElements.pop();
+        const isColliding = element.isColliding(localX, localY, mouseRange);
 
-        if(!element.isColliding(localX, localY, mouseRange)) {
+        if(!isColliding) {
             continue;
         }
 

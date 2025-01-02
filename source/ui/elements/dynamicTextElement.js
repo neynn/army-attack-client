@@ -2,9 +2,10 @@ import { TextStyle } from "../../graphics/applyable/textStyle.js";
 import { UIElement } from "../uiElement.js";
 
 export const DynamicTextElement = function(id) {
-    UIElement.call(this, id, "DYNAMIC_TEXT_ELEMENT");
-    this.style = new TextStyle();
+    UIElement.call(this, id, "DynamicTextElement");
+
     this.fullText = "";
+    this.style = new TextStyle();
     this.events.listen(DynamicTextElement.EVENT_REQUEST_TEXT);
 }
 
@@ -27,13 +28,9 @@ DynamicTextElement.prototype.loadFromConfig = function(config) {
 }
 
 DynamicTextElement.prototype.setText = function(text) {
-    if(text === undefined) {
-        return false;
+    if(text !== undefined) {
+        this.fullText = text;
     }
-
-    this.fullText = text;
-
-    return true;
 }
 
 DynamicTextElement.prototype.onDraw = function(context, viewportX, viewportY, localX, localY) {

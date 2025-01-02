@@ -4,8 +4,6 @@ import { Logger } from "../logger.js";
 import { Renderer } from "../renderer.js";
 import { ImageManager } from "../resources/imageManager.js";
 import { Button } from "./elements/button.js";
-import { ButtonCircle } from "./elements/button/buttonCircle.js";
-import { ButtonSquare } from "./elements/button/buttonSquare.js";
 import { Container } from "./elements/container.js";
 import { DynamicTextElement } from "./elements/dynamicTextElement.js";
 import { Icon } from "./elements/icon.js";
@@ -14,14 +12,14 @@ import { UIElement } from "./uiElement.js";
 
 export const UIManager = function() {
     this.resources = new ImageManager();
+    this.interfaceStack = [];
     this.interfaceTypes = {};
     this.iconTypes = {};
     this.fontTypes = {};
     this.elementTypes = {
         [UIManager.ELEMENT_TYPE_TEXT]: TextElement,
         [UIManager.ELEMENT_TYPE_DYNAMIC_TEXT]: DynamicTextElement,
-        [UIManager.ELEMENT_TYPE_BUTTON_SQUARE]: ButtonSquare,
-        [UIManager.ELEMENT_TYPE_BUTTON_CIRCLE]: ButtonCircle,
+        [UIManager.ELEMENT_TYPE_BUTTON]: Button,
         [UIManager.ELEMENT_TYPE_ICON]: Icon,
         [UIManager.ELEMENT_TYPE_CONTAINER]: Container
     };
@@ -29,9 +27,7 @@ export const UIManager = function() {
         [UIManager.EFFECT_TYPE_FADE_IN]: createFadeInEffect,
         [UIManager.EFFECT_TYPE_FADE_OUT]: createFadeOutEffect
     }
-    this.interfaceStack = [];
     this.elements = new Map();
-    this.origins = new Set();
     this.previousCollisions = new Set();
 }
 
@@ -41,8 +37,6 @@ UIManager.EFFECT_TYPE_FADE_OUT = "FADE_OUT";
 UIManager.ELEMENT_TYPE_TEXT = "TEXT";
 UIManager.ELEMENT_TYPE_DYNAMIC_TEXT = "DYNAMIC_TEXT";
 UIManager.ELEMENT_TYPE_BUTTON = "BUTTON";
-UIManager.ELEMENT_TYPE_BUTTON_SQUARE = "BUTTON_SQUARE";
-UIManager.ELEMENT_TYPE_BUTTON_CIRCLE = "BUTTON_CIRCLE";
 UIManager.ELEMENT_TYPE_CONTAINER = "CONTAINER";
 UIManager.ELEMENT_TYPE_ICON = "ICON";
 
@@ -67,16 +61,12 @@ UIManager.prototype.load = function(interfaceTypes, iconTypes, fontTypes) {
     }
 }
 
-UIManager.prototype.getUniqueID = function(interfaceID, elementID) {
-    return interfaceID + "-" + elementID;
+UIManager.prototype.getInterfaceStack = function() {
+    return this.interfaceStack;
 }
 
-UIManager.prototype.getCurrentInterface = function() {
-    if(this.interfaceStack.length === 0) {
-        return null;
-    }
-
-    return this.interfaceStack[this.interfaceStack.length - 1];
+UIManager.prototype.getUniqueID = function(interfaceID, elementID) {
+    return interfaceID + "-" + elementID;
 }
 
 UIManager.prototype.getElement = function(interfaceID, elementID) {
@@ -129,46 +119,20 @@ UIManager.prototype.destroyElement = function(uniqueID) {
     this.elements.delete(uniqueID);
 }
 
-UIManager.prototype.pushInterface = function(userInterfaceID) {
-    const userInterface = this.interfaceTypes[userInterfaceID];
-
-    if(!userInterface) {
-        Logger.log(false, "Interface does not exist!", "UIManager.prototype.pushInterface", {userInterfaceID});
-        return;
-    }
-
-    const uniqueElementIDs = new Set();
-
-    for(const elementID in userInterface) {
-        const uniqueID = this.getUniqueID(userInterfaceID, elementID);
-
-        uniqueElementIDs.add(uniqueID);
-    }
-
-    this.interfaceStack.push({
-        "id": userInterfaceID,
-        "elementUIDs": uniqueElementIDs
-    });
-}
-
-UIManager.prototype.popInterface = function(userInterfaceID) {
+UIManager.prototype.getInterfaceIndex = function(userInterfaceID) {
     for(let i = 0; i < this.interfaceStack.length; i++) {
         const { id } = this.interfaceStack[i];
 
         if(id === userInterfaceID) {
-            if(i === this.interfaceStack.length - 1) {
-                this.previousCollisions.clear();
-            }
-
-            this.interfaceStack.splice(i, 1);
-            
-            break;
+            return i;
         }
     }
+
+    return -1;
 }
 
 UIManager.prototype.update = function(gameContext) {
-    const { timer, client } = gameContext;
+    const { client } = gameContext;
     const { cursor } = client;
 
     this.updateElementCollisions(cursor.position.x, cursor.position.y, cursor.radius);
@@ -176,7 +140,6 @@ UIManager.prototype.update = function(gameContext) {
 
 UIManager.prototype.end = function() {
     this.elements.clear();
-    this.origins.clear();
     this.interfaceStack = [];
 }
 
@@ -185,20 +148,23 @@ UIManager.prototype.updateElementCollisions = function(mouseX, mouseY, mouseRang
     const collidedElements = this.getCollidedElements(mouseX, mouseY, mouseRange);
 
     for(const element of collidedElements) {
-        const elementID = element.getID();
+        const elementUID = element.getID();
+        const isPreviousCollision = this.previousCollisions.has(elementUID);
 
-        if(!this.previousCollisions.has(elementID)) {
-            element.events.emit(UIElement.EVENT_FIRST_COLLISION, mouseX, mouseY, mouseRange);
-        } else {
+        if(isPreviousCollision) {
             element.events.emit(UIElement.EVENT_COLLISION, mouseX, mouseY, mouseRange);
+        } else {
+            element.events.emit(UIElement.EVENT_FIRST_COLLISION, mouseX, mouseY, mouseRange);
         }
 
-        currentCollisions.add(elementID);
+        currentCollisions.add(elementUID);
     }
     
-    for(const elementID of this.previousCollisions) {
-        if(!currentCollisions.has(elementID)) {
-            const element = this.getElementByID(elementID);
+    for(const elementUID of this.previousCollisions) {
+        const isCurrentCollision = currentCollisions.has(elementUID);
+
+        if(!isCurrentCollision) {
+            const element = this.getElementByID(elementUID);
 
             element.events.emit(UIElement.EVENT_FINAL_COLLISION, mouseX, mouseY, mouseRange);
         }
@@ -207,27 +173,18 @@ UIManager.prototype.updateElementCollisions = function(mouseX, mouseY, mouseRang
     this.previousCollisions = currentCollisions;
 }
 
-UIManager.prototype.getOriginIDs = function() {
-    return this.origins;
-}
-
 UIManager.prototype.getCollidedElements = function(mouseX, mouseY, mouseRange) {
-    const currentInterface = this.getCurrentInterface();
+    for(let i = this.interfaceStack.length - 1; i >= 0; i--) {
+        const interfaceElement = this.interfaceStack[i];
+        const { roots } = interfaceElement;
 
-    if(!currentInterface) {
-        return [];
-    }
-
-    for(const elementUID of this.origins) {
-        if(!currentInterface.elementUIDs.has(elementUID)) {
-            continue;
-        }
-
-        const element = this.elements.get(elementUID);
-        const collisions = element.getCollisions(mouseX, mouseY, mouseRange);
-
-        if(collisions.length > 0) {
-            return collisions;
+        for(const elementUID of roots) {
+            const element = this.elements.get(elementUID);
+            const collisions = element.getCollisions(mouseX, mouseY, mouseRange);
+    
+            if(collisions.length > 0) {
+                return collisions;
+            }
         }
     }
 
@@ -237,18 +194,29 @@ UIManager.prototype.getCollidedElements = function(mouseX, mouseY, mouseRange) {
 UIManager.prototype.addClick = function(interfaceID, buttonID, callback) {
     const button = this.getElement(interfaceID, buttonID);
 
-    if(!button || !(button instanceof Button)) {
+    if(!(button instanceof Button)) {
         Logger.log(false, "Button does not exist!", "UIManager.prototype.addClick", { interfaceID, buttonID });
         return;
     }
 
-    button.events.subscribe(UIElement.EVENT_CLICKED, "UI_MANAGER", callback);
+    button.events.subscribe(Button.EVENT_CLICKED, "UI_MANAGER", callback);
+}
+
+UIManager.prototype.removeClick = function(interfaceID, buttonID) {
+    const button = this.getElement(interfaceID, buttonID);
+
+    if(!(button instanceof Button)) {
+        Logger.log(false, "Button does not exist!", "UIManager.prototype.addClick", { interfaceID, buttonID });
+        return;
+    }
+
+    button.events.mute(Button.EVENT_CLICKED);
 }
 
 UIManager.prototype.setText = function(interfaceID, textID, message) {
     const text = this.getElement(interfaceID, textID);
 
-    if(!text || !(text instanceof TextElement)) {
+    if(!(text instanceof TextElement)) {
         Logger.log(false, "Text does not exist!", "UIManager.prototype.setText", { interfaceID, textID });
         return;
     }
@@ -259,12 +227,10 @@ UIManager.prototype.setText = function(interfaceID, textID, message) {
 UIManager.prototype.addDynamicText = function(interfaceID, textID, onEvent) {
     const text = this.getElement(interfaceID, textID);
 
-    if(!text || !(text instanceof DynamicTextElement)) {
+    if(!(text instanceof DynamicTextElement)) {
         Logger.log(false, "Text does not exist!", "UIManager.prototype.addTextRequest", { interfaceID, textID });
         return;
     }
-
-    this.removeDynamicText(interfaceID, textID);
 
     text.events.subscribe(DynamicTextElement.EVENT_REQUEST_TEXT, "UI_MANAGER", (element) => onEvent(element));
 }
@@ -272,7 +238,7 @@ UIManager.prototype.addDynamicText = function(interfaceID, textID, onEvent) {
 UIManager.prototype.removeDynamicText = function(interfaceID, textID) {
     const text = this.getElement(interfaceID, textID);
 
-    if(!text || !(text instanceof DynamicTextElement)) {
+    if(!(text instanceof DynamicTextElement)) {
         Logger.log(false, "Text does not exist!", "UIManager.prototype.removeTextRequest", { interfaceID, textID });
         return;
     }
@@ -344,22 +310,30 @@ UIManager.prototype.addEffects = function(gameContext, element, effects = []) {
     }
 }
 
-UIManager.prototype.anchorElement = function(gameContext, element, originalPosition, anchorType = Renderer.ANCHOR_TYPE_TOP_LEFT) {
+UIManager.prototype.addElementAnchor = function(gameContext, element, originalPosition, anchorType = Renderer.ANCHOR_TYPE_TOP_LEFT) {
     const { renderer } = gameContext;
     const { bounds } = element;
     const { w, h } = bounds;
     const { x, y } = originalPosition;
 
-    const uniqueID = element.getID();
+    const elementUID = element.getID();
     const anchor = renderer.getAnchor(anchorType, x, y, w, h);
             
     element.setPosition(anchor.x, anchor.y);
 
-    renderer.events.subscribe(Renderer.EVENT_SCREEN_RESIZE, uniqueID, (width, height) => {
+    renderer.events.subscribe(Renderer.EVENT_SCREEN_RESIZE, elementUID, (width, height) => {
         const anchor = renderer.getAnchor(anchorType, x, y, w, h);
         
         element.setPosition(anchor.x, anchor.y);
     });    
+}
+
+UIManager.prototype.createEmptyInterface = function(id) {
+    return {
+        "id": id,
+        "elements": [],
+        "roots": []
+    }
 }
 
 UIManager.prototype.parseUI = function(userInterfaceID, gameContext) {
@@ -371,6 +345,7 @@ UIManager.prototype.parseUI = function(userInterfaceID, gameContext) {
     }
 
     const elements = this.createInterfaceElements(userInterfaceID);
+    const interfaceElement = this.createEmptyInterface(userInterfaceID);
 
     for(const [configID, element] of elements) {
         const { anchor, effects, position } = userInterface[configID];
@@ -378,35 +353,41 @@ UIManager.prototype.parseUI = function(userInterfaceID, gameContext) {
 
         this.addEffects(gameContext, element, effects);
 
+        interfaceElement.elements.push(uniqueID);
+
         if(!element.hasParent()) {
-            this.anchorElement(gameContext, element, position, anchor);
-            this.origins.add(uniqueID);
+            this.addElementAnchor(gameContext, element, position, anchor);
+
+            interfaceElement.roots.push(uniqueID);
         }
     }
 
-    this.pushInterface(userInterfaceID);
+    this.interfaceStack.push(interfaceElement);
 }
 
 UIManager.prototype.unparseUI = function(userInterfaceID, gameContext) {
     const { renderer } = gameContext;
-    const userInterface = this.interfaceTypes[userInterfaceID];
+    const interfaceIndex = this.getInterfaceIndex(userInterfaceID);
 
-    if(!userInterface) {
+    if(interfaceIndex === -1) {
         Logger.log(false, "Interface does not exist!", "UIManager.prototype.unparseUI", { userInterfaceID });
         return;
     }
 
-    for(const elementID in userInterface) {
-        const uniqueID = this.getUniqueID(userInterfaceID, elementID);
+    const interfaceElement = this.interfaceStack[interfaceIndex];
+    const { elements, roots } = interfaceElement;
 
-        this.destroyElement(uniqueID);
-
-        if(this.origins.has(uniqueID)) {
-            this.origins.delete(uniqueID);
-
-            renderer.events.unsubscribe(Renderer.EVENT_SCREEN_RESIZE, uniqueID);
-        }
+    for(const elementUID of roots) {
+        renderer.events.unsubscribe(Renderer.EVENT_SCREEN_RESIZE, elementUID);
+    }
+    
+    for(const elementUID of elements) {
+        this.destroyElement(elementUID);
     }
 
-    this.popInterface(userInterfaceID);
+    if(interfaceIndex === this.interfaceStack.length - 1) {
+        this.previousCollisions.clear();
+    }
+
+    this.interfaceStack.splice(interfaceIndex, 1);
 }

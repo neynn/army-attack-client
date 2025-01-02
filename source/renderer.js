@@ -106,24 +106,34 @@ Renderer.prototype.drawUI = function(gameContext) {
     const { uiManager, timer } = gameContext;
     const realTime = timer.getRealTime();
     const deltaTime = timer.getDeltaTime();
-    const originIDs = uiManager.getOriginIDs();
+    const interfaceStack = uiManager.getInterfaceStack();
 
-    for(const elementID of originIDs) {    
-        const element = uiManager.getElementByID(elementID);
+    for(let i = interfaceStack.length - 1; i >= 0; i--) {
+        const interfaceElement = interfaceStack[i];
+        const { roots } = interfaceElement;
+
+        for(const elementUID of roots) {
+            const element = uiManager.getElementByID(elementUID);
            
-        element.update(realTime, deltaTime);
-        element.draw(this.display.context, 0, 0);
+            element.update(realTime, deltaTime);
+            element.draw(this.display.context, 0, 0);
+        }
     }
 }
 
 Renderer.prototype.drawUIDebug = function(gameContext) {
     const { uiManager } = gameContext;
-    const originIDs = uiManager.getOriginIDs();
+    const interfaceStack = uiManager.getInterfaceStack();
 
-    for(const elementID of originIDs) {    
-        const element = uiManager.getElementByID(elementID);
+    for(let i = interfaceStack.length - 1; i >= 0; i--) {
+        const interfaceElement = interfaceStack[i];
+        const { roots } = interfaceElement;
 
-        element.debug(this.display.context, 0, 0);
+        for(const elementUID of roots) {
+            const element = uiManager.getElementByID(elementUID);
+           
+            element.debug(this.display.context, 0, 0);
+        }
     }
 }
 

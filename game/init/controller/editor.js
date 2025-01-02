@@ -3,6 +3,7 @@ import { Cursor } from "../../../source/client/cursor.js";
 import { clampValue } from "../../../source/math/math.js";
 import { Renderer } from "../../../source/renderer.js";
 import { UIElement } from "../../../source/ui/uiElement.js";
+import { Button } from "../../../source/ui/elements/button.js";
 import { MapParser } from "../../../source/map/mapParser.js";
 import { World } from "../../../source/world.js";
 import { EntityController } from "../../../source/controller/entityController.js";
@@ -120,8 +121,8 @@ EditorController.prototype.loadButtonEvents = function(gameContext) {
     for(const buttonID of slots) {
         const button = uiManager.getElement(id, buttonID);
 
-        button.events.unsubscribe(UIElement.EVENT_CLICKED, contextID);
-        button.events.unsubscribe(UIElement.EVENT_DRAW, contextID);
+        button.events.unsubscribe(Button.EVENT_CLICKED, contextID);
+        button.events.unsubscribe(Button.EVENT_DEFER_DRAW, contextID);
     }
 
     for(let i = 0; i < slots.length; i++) {
@@ -130,9 +131,9 @@ EditorController.prototype.loadButtonEvents = function(gameContext) {
         const button = uiManager.getElement(id, buttonID);
         const { tileName, tileID } = brushData;
 
-        button.events.subscribe(UIElement.EVENT_CLICKED, contextID, () => this.mapEditor.setBrush(brushData));
+        button.events.subscribe(Button.EVENT_CLICKED, contextID, () => this.mapEditor.setBrush(brushData));
 
-        button.events.subscribe(UIElement.EVENT_DRAW, contextID, (context, localX, localY) => {
+        button.events.subscribe(Button.EVENT_DEFER_DRAW, contextID, (element, context, localX, localY) => {
             if(tileID === 0) {
                 camera.drawEmptyTile(context, localX, localY, EditorController.GRAPHICS_BUTTON_SCALE, EditorController.GRAPHICS_BUTTON_SCALE);
             } else {
