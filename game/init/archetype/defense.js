@@ -14,7 +14,3 @@ DefenseArchetype.prototype.onInitialize = function(entity, type, setup) {
 
     entity.addComponent(attackComponent);
 }
-
-DefenseArchetype.prototype.onFinalize = function(gameContext, entity, sprite, type, setup) {
-    this.createStatCard(gameContext, entity, sprite);
-}

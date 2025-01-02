@@ -10,6 +10,9 @@ import { MorphSystem } from "./morph.js";
 
 export const AnimationSystem = function() {}
 
+AnimationSystem.FIRE_OFFSET_ARTILLERY = 48;
+AnimationSystem.FIRE_OFFSET_REGULAR = 12;
+
 AnimationSystem.revertToIdle = function(gameContext, entityIDs) {
     const { world } = gameContext;
     const { entityManager } = world;
@@ -34,6 +37,14 @@ AnimationSystem.playDeath = function(gameContext, entity) {
     soundPlayer.playRandom(entity.config.sounds.death);
 }
 
+AnimationSystem.addRandomOffset = function(fireSprite, maxOffsetX = 0, maxOffsetY = 0) {
+    const randomX = Math.random() * 2 - 1;
+    const randomY = Math.random() * 2 - 1;
+
+    fireSprite.position.x += randomX * maxOffsetX;
+    fireSprite.position.y += randomY * maxOffsetY;
+}   
+
 AnimationSystem.playFire = function(gameContext, entity, attackersIDs) {
     const { world, client, spriteManager } = gameContext;
     const { entityManager } = world;
@@ -53,6 +64,7 @@ AnimationSystem.playFire = function(gameContext, entity, attackersIDs) {
         soundPlayer.playRandom(attacker.config.sounds.fire);
         entitySprite.addChild(weaponSprite, weaponSpriteID);
         weaponSprite.expire();
+        AnimationSystem.addRandomOffset(weaponSprite, AnimationSystem.FIRE_OFFSET_REGULAR, AnimationSystem.FIRE_OFFSET_REGULAR);
 
         if(unitSizeComponent && unitSizeComponent.artillery) {
             const artillerySprite = spriteManager.createSprite(attacker.config.sprites.weapon);
@@ -61,6 +73,7 @@ AnimationSystem.playFire = function(gameContext, entity, attackersIDs) {
             entitySprite.addChild(artillerySprite, artillerySpriteID);
             artillerySprite.flip();
             artillerySprite.expire();
+            AnimationSystem.addRandomOffset(artillerySprite, AnimationSystem.FIRE_OFFSET_ARTILLERY, AnimationSystem.FIRE_OFFSET_ARTILLERY);
         }
     }
 }

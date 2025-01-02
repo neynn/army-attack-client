@@ -39,6 +39,7 @@ import { DecayComponent } from "./components/decay.js";
 import { CounterComponent } from "./components/counter.js";
 import { ResourceComponent } from "./components/resource.js";
 import { ArmyCamera } from "./armyCamera.js";
+import { CardSystem } from "./systems/card.js";
 
 export const ArmyContext = function() {
     GameContext.call(this, 60);
@@ -111,6 +112,7 @@ ArmyContext.prototype.initialize = function() {
 
     this.world.events.subscribe(World.EVENT_ENTITY_CREATE, EventEmitter.SUPER_SUBSCRIBER_ID, (entity) => {
         PlaceSystem.placeEntity(this, entity);
+        CardSystem.generateStatCard(this, entity);
     });
 
     this.world.events.subscribe(World.EVENT_ENTITY_DESTROY, EventEmitter.SUPER_SUBSCRIBER_ID, (entity) => {

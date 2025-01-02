@@ -13,8 +13,6 @@ ConstructionArchetype.prototype.onInitialize = function(entity, type, setup) {
 }
 
 ConstructionArchetype.prototype.onFinalize = function(gameContext, entity, sprite, type, setup) {
-    this.createStatCard(gameContext, entity, sprite);
-
     sprite.freeze();
     sprite.setFrame(0);
 }

@@ -1,12 +1,9 @@
-import { SimpleText } from "../../../source/graphics/drawable/simpleText.js";
-import { TextStyle } from "../../../source/graphics/applyable/textStyle.js";
 import { SpriteManager } from "../../../source/graphics/spriteManager.js";
 import { Archetype } from "../../../source/entity/archetype.js";
 
-import { AttackComponent } from "../../components/attack.js";
 import { HealthComponent } from "../../components/health.js";
 import { TeamComponent } from "../../components/team.js";
-import { CAMERA_TYPES, ENTITY_EVENTS } from "../../enums.js";
+import { CAMERA_TYPES } from "../../enums.js";
 import { SpriteComponent } from "../../components/sprite.js";
 import { DirectionComponent } from "../../components/direction.js";
 import { PositionComponent } from "../../components/position.js";
@@ -19,71 +16,6 @@ DefaultArchetype.prototype.constructor = DefaultArchetype;
 DefaultArchetype.prototype.onInitialize = function(entity, type, setup) {}
 
 DefaultArchetype.prototype.onFinalize = function(gameContext, entity, sprite, type, setup) {}
-
-DefaultArchetype.prototype.addHealthText = function(entity, statCard) {
-    const healthComponent = entity.getComponent(HealthComponent);
-    const healthText = new SimpleText("HEALTH_TEXT");
-    
-    healthText.style.setFontType("ArmyAttack Arial");
-    healthText.style.setAlignment(TextStyle.TEXT_ALIGN_RIGHT);
-
-    healthText.setPosition(95, 90);
-    healthText.setText(`${healthComponent.health}/${healthComponent.maxHealth}`);
-
-    statCard.addChild(healthText, "HEALTH_TEXT");
-
-    entity.events.listen(ENTITY_EVENTS.HEALTH_UPDATE);
-    entity.events.subscribe(ENTITY_EVENTS.HEALTH_UPDATE, "ARCHETYPE", (health, maxHealth) => {
-        healthText.setText(`${health}/${maxHealth}`);
-    });
-}
-
-DefaultArchetype.prototype.addDamageText = function(entity, statCard) {
-    const attackComponent = entity.getComponent(AttackComponent);
-    const damageText = new SimpleText("DAMAGE_TEXT");
-
-    damageText.style.setFontType("ArmyAttack Arial");
-    damageText.style.setAlignment(TextStyle.TEXT_ALIGN_RIGHT);
-
-    damageText.setPosition(95, 78);
-    damageText.setText(`${attackComponent.damage}`);
-
-    statCard.addChild(damageText, "DAMAGE_TEXT");
-
-    entity.events.listen(ENTITY_EVENTS.DAMAGE_UPDATE);
-    entity.events.subscribe(ENTITY_EVENTS.DAMAGE_UPDATE, "ARCHETYPE", (damage) => {
-        damageText.setText(`${damage}`);
-    });
-}
-
-DefaultArchetype.prototype.createStatCard = function(gameContext, entity, sprite) {
-    const { spriteManager, renderer, world } = gameContext;
-    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
-    const teamTypes = world.getConfig("teamTypes");
-    const teamComponent = entity.getComponent(TeamComponent);
-    const { x, y } = camera.transformSizeToPositionOffset(entity.config.dimX, entity.config.dimY);
-    const positionX = x - 48;
-    const positionY = y - 48;
-
-    if(entity.hasComponent(AttackComponent)) {
-        const statCardType = teamTypes[teamComponent.teamID].sprites.stat_card;
-        const statCard = spriteManager.createSprite(statCardType, null);
-
-        this.addHealthText(entity, statCard);
-        this.addDamageText(entity, statCard);
-
-        statCard.setPosition(positionX, positionY);
-        sprite.addChild(statCard, "STATS");
-    } else {
-        const statCardType = teamTypes[teamComponent.teamID].sprites.stat_card_small;
-        const statCard = spriteManager.createSprite(statCardType, null);
-
-        this.addHealthText(entity, statCard);
-
-        statCard.setPosition(positionX, positionY);
-        sprite.addChild(statCard, "STATS");
-    }
-}
 
 DefaultArchetype.prototype.initializeEntity = function(entity, type, setup) {
     const { stats } = type;

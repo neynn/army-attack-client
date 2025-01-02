@@ -17,7 +17,3 @@ UnitArchetype.prototype.onInitialize = function(entity, type, setup) {
     entity.addComponent(attackComponent);
     entity.addComponent(moveComponent);
 }
-
-UnitArchetype.prototype.onFinalize = function(gameContext, entity, sprite, type, setup) {
-    this.createStatCard(gameContext, entity, sprite);
-}
