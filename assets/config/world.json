@@ -2,7 +2,6 @@
     "settings": {
         "tileWidth": 96,
         "tileHeight": 96,
-        "allowAllyPassing": false,
         "drawBorder": true,
         "drawAttackRange": false,
         "maxQueueSize": 20,

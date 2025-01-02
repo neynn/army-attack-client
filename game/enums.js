@@ -14,11 +14,6 @@ export const CONTROLLER_TYPES = Object.freeze({
     "EDITOR": "EDITOR"
 });
 
-export const SYSTEM_TYPES = Object.freeze({
-    "DOWN": "DOWN",
-    "MOVE": "MOVE"
-});
-
 export const ACTION_TYPES = Object.freeze({
     "MOVE": "MOVE",
     "ATTACK": "ATTACK",
@@ -43,9 +38,7 @@ export const CONTEXT_STATES = Object.freeze({
 });
 
 export const ENTITY_EVENTS = Object.freeze({
-    "POSITION_UPDATE": "POSITION_UPDATE",
     "DIRECTION_UPDATE": "DIRECTION_UPDATE",
-    "SPRITE_UPDATE": "SPRITE_UPDATE",
     "HEALTH_UPDATE": "HEALTH_UPDATE",
     "DAMAGE_UPDATE": "DAMAGE_UPDATE",
     "DAMAGE_TAKEN": "DAMAGE_TAKEN",

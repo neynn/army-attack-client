@@ -1,3 +1,1 @@
-export const DownSystem = function(gameContext, entity) {
-    console.log(`${entity.id} is down!`);
-}
+export const DownSystem = function() {}

@@ -1,8 +1,11 @@
 import { MoveComponent } from "../components/move.js";
 import { PositionComponent } from "../components/position.js";
-import { CAMERA_TYPES, ENTITY_EVENTS, SYSTEM_TYPES } from "../enums.js";
+import { CAMERA_TYPES } from "../enums.js";
+import { SpriteSystem } from "./sprite.js";
 
-export const MoveSystem = function(gameContext, entity) {
+export const MoveSystem = function() {}
+
+MoveSystem.updatePath = function(gameContext, entity) {
     const { timer, renderer } = gameContext;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
     const { width } = camera.getTileDimensions();
@@ -36,7 +39,7 @@ export const MoveSystem = function(gameContext, entity) {
         }
     }
 
-    entity.events.emit(ENTITY_EVENTS.POSITION_UPDATE, positionComponent.positionX, positionComponent.positionY);
+    SpriteSystem.alignSpritePosition(gameContext, entity);
 }
 
 MoveSystem.isPathFinished = function(entity) {
@@ -46,19 +49,16 @@ MoveSystem.isPathFinished = function(entity) {
 }
 
 MoveSystem.beginMove = function(gameContext, entity, path) {
-    const { client, world } = gameContext;
-    const { systemManager } = world;
+    const { client } = gameContext;
     const { soundPlayer } = client;
     const moveComponent = entity.getComponent(MoveComponent);
 
     moveComponent.path = path;
     soundPlayer.playRandom(entity.config.sounds.move);
-    systemManager.addEntity(SYSTEM_TYPES.MOVE, entity.id);
 }
 
 MoveSystem.endMove = function(gameContext, entity, targetX, targetY) {
-    const { world, renderer } = gameContext;
-    const { systemManager } = world;
+    const { renderer } = gameContext;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
     const positionComponent = entity.getComponent(PositionComponent);
     const moveComponent = entity.getComponent(MoveComponent);
@@ -72,6 +72,5 @@ MoveSystem.endMove = function(gameContext, entity, targetX, targetY) {
     moveComponent.distance = 0;
     moveComponent.path = [];
 
-    entity.events.emit(ENTITY_EVENTS.POSITION_UPDATE, positionComponent.positionX, positionComponent.positionY);
-    systemManager.removeEntity(SYSTEM_TYPES.MOVE, entity.id);
+    SpriteSystem.alignSpritePosition(gameContext, entity);
 }

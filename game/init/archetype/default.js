@@ -125,28 +125,6 @@ DefaultArchetype.prototype.finalizeEntity = function(gameContext, entity, type, 
 
     sprite.setPosition(positionComponent.positionX, positionComponent.positionY);
 
-    entity.events.listen(ENTITY_EVENTS.POSITION_UPDATE);
-    entity.events.subscribe(ENTITY_EVENTS.POSITION_UPDATE, "ARCHETYPE", (positionX, positionY) => {
-        const spriteComponent = entity.getComponent(SpriteComponent);
-        const { spriteID } = spriteComponent;
-        const sprite = spriteManager.getSprite(spriteID);
-
-        sprite.setPosition(positionX, positionY);
-    });
-    
-    entity.events.listen(ENTITY_EVENTS.SPRITE_UPDATE);
-    entity.events.subscribe(ENTITY_EVENTS.SPRITE_UPDATE, "ARCHETYPE", (spriteType, animationType) => {
-        const spriteComponent = entity.getComponent(SpriteComponent);
-        const { spriteID, isFlipped } = spriteComponent;
-        const sprite = spriteManager.getSprite(spriteID);
-        
-        sprite.flip(isFlipped);
-
-        if(spriteType !== undefined) {
-            spriteManager.updateSprite(spriteID, spriteType, animationType);
-        }
-    });
-
     this.onFinalize(gameContext, entity, sprite, type, setup);
 }
 

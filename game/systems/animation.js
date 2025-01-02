@@ -18,7 +18,7 @@ AnimationSystem.revertToIdle = function(gameContext, entityIDs) {
         const entity = entityManager.getEntity(entityID);
         
         if(entity) {
-            MorphSystem.toIdle(entity);
+            MorphSystem.toIdle(gameContext, entity);
         }
     }
 }
@@ -48,7 +48,7 @@ AnimationSystem.playFire = function(gameContext, entity, attackersIDs) {
         const weaponSpriteID = weaponSprite.getID();
 
         DirectionSystem.lookAt(attacker, entity);
-        MorphSystem.toFire(attacker);
+        MorphSystem.toFire(gameContext, attacker);
 
         soundPlayer.playRandom(attacker.config.sounds.fire);
         entitySprite.addChild(weaponSprite, weaponSpriteID);

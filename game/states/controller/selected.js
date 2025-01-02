@@ -54,7 +54,7 @@ ControllerSelectedState.prototype.updateEntity = function(gameContext, controlle
     
     if(controller.tileX !== positionComponent.tileX) {
         DirectionSystem.lookHorizontal(selectedEntity, controller.tileX < positionComponent.tileX);
-        MorphSystem.morphHorizontal(selectedEntity);
+        MorphSystem.morphHorizontal(gameContext, selectedEntity);
     }
 }
 

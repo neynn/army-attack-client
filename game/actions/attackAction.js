@@ -31,7 +31,7 @@ AttackAction.prototype.onStart = function(gameContext, request) {
     if(state === ENTITY_STATES.DOWN) {
         ReviveSystem.downEntity(gameContext, target);
     } else {
-        MorphSystem.toHit(target);
+        MorphSystem.toHit(gameContext, target);
     }
 }
 
@@ -47,7 +47,7 @@ AttackAction.prototype.onEnd = function(gameContext, request) {
         AnimationSystem.playDeath(gameContext, target);
         world.destroyEntity(entityID);
     } else if(state === ENTITY_STATES.IDLE) {
-        MorphSystem.toIdle(target);
+        MorphSystem.toIdle(gameContext, target);
     }
 }
 

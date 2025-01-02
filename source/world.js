@@ -5,14 +5,12 @@ import { EventEmitter } from "./events/eventEmitter.js";
 import { Logger } from "./logger.js";
 import { MapManager } from "./map/mapManager.js";
 import { QuestManager } from "./questManager.js";
-import { SystemManager } from "./system/systemManager.js";
 
 export const World = function() {
     this.config = {};
     this.actionQueue = new ClientQueue();
     this.mapManager = new MapManager();
     this.entityManager = new EntityManager();
-    this.systemManager = new SystemManager();
     this.questManager = new QuestManager();
     this.controllerManager = new ControllerManager();
     this.events = new EventEmitter();
@@ -35,7 +33,6 @@ World.EVENT_ENTITY_DESTROY = "EVENT_ENTITY_DESTROY";
 World.prototype.update = function(gameContext) {
     this.actionQueue.update(gameContext);
     this.controllerManager.update(gameContext);
-    this.systemManager.update(gameContext);
     this.entityManager.update(gameContext);
 }
 

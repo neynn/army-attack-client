@@ -9,7 +9,6 @@ export const EntityManager = function() {
     this.idGenerator = new IDGenerator("@ENTITY");
     this.archetypes = new Map();
     this.entities = new Map();
-    this.activeEntities = new Set();
 }
 
 EntityManager.prototype.load = function(entityTypes, componentTypes, traitTypes) {
@@ -49,16 +48,13 @@ EntityManager.prototype.registerComponent = function(componentID, component) {
 }
 
 EntityManager.prototype.update = function(gameContext) {
-    for(const entityID of this.activeEntities) {
-        const entity = this.entities.get(entityID);
-
-        entity.states.update(gameContext);
+    for(const [entityID, entity] of this.entities) {
+        entity.update(gameContext);
     }
 }
 
 EntityManager.prototype.end = function() {
     this.entities.forEach(entity => this.destroyEntity(entity.id));
-    this.activeEntities.clear();
     this.idGenerator.reset();
 }
 
@@ -174,34 +170,6 @@ EntityManager.prototype.loadTraits = function(entity, traits) {
     }
 }
 
-EntityManager.prototype.enableEntity = function(entityID) {
-    if(!this.entities.has(entityID)) {
-        Logger.log(false, "Entity does not exist!", "EntityManager.prototype.enableEntity", {entityID});
-        return;
-    }
-
-    if(this.activeEntities.has(entityID)) {
-        Logger.log(false, "Entity is already active!", "EntityManager.prototype.enableEntity", {entityID});
-        return;
-    }
-
-    this.activeEntities.add(entityID);
-}
-
-EntityManager.prototype.disableEntity = function(entityID) {
-    if(!this.entities.has(entityID)) {
-        Logger.log(false, "Entity does not exist!", "EntityManager.prototype.disableEntity", {entityID});
-        return;
-    }
-
-    if(!this.activeEntities.has(entityID)) {
-        Logger.log(false, "Entity is not active!", "EntityManager.prototype.disableEntity", {entityID});
-        return;
-    }
-
-    this.activeEntities.delete(entityID);
-}
-
 EntityManager.prototype.getEntity = function(entityID) {
     if(!this.entities.has(entityID)) {
         return null;
@@ -249,10 +217,6 @@ EntityManager.prototype.destroyEntity = function(entityID) {
     if(!this.entities.has(entityID)) {
         Logger.log(false, "Entity does not exist!", "EntityManager.prototype.destroyEntity", {entityID});
         return;
-    }
-
-    if(this.activeEntities.has(entityID)) {
-        this.activeEntities.delete(entityID);
     }
     
     this.entities.delete(entityID);

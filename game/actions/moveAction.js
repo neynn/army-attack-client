@@ -20,7 +20,7 @@ MoveAction.prototype.onStart = function(gameContext, request) {
 
     DirectionSystem.lookAtTile(entity, targetX, targetY);    
     MoveSystem.beginMove(gameContext, entity, path);
-    MorphSystem.toMove(entity);
+    MorphSystem.toMove(gameContext, entity);
     PlaceSystem.removeEntity(gameContext, entity);
 }
 
@@ -31,8 +31,17 @@ MoveAction.prototype.onEnd = function(gameContext, request) {
     const entity = entityManager.getEntity(entityID);
 
     MoveSystem.endMove(gameContext, entity, targetX, targetY);
-    MorphSystem.toIdle(entity);
+    MorphSystem.toIdle(gameContext, entity);
     PlaceSystem.placeEntity(gameContext, entity);
+}
+
+MoveAction.prototype.onUpdate = function(gameContext, request) {
+    const { entityID } = request;
+    const { world } = gameContext;
+    const { entityManager } = world;
+    const entity = entityManager.getEntity(entityID);
+
+    MoveSystem.updatePath(gameContext, entity);
 }
 
 MoveAction.prototype.isFinished = function(gameContext, request) {

@@ -97,8 +97,8 @@ Button.prototype.onDraw = function(context, viewportX, viewportY, localX, localY
     this.events.emit(Button.EVENT_DEFER_DRAW, this, context, localX, localY);
     
     const { w, h } = this.bounds;
-    const isHighlightActive = this.highlight.getActive();
-    const isOutlineActive = this.outline.getActive();
+    const isHighlightActive = this.highlight.isActive();
+    const isOutlineActive = this.outline.isActive();
 
     switch(this.shape) {
         case Button.SHAPE_RECTANGLE: {

@@ -34,7 +34,7 @@ ControllerSystem.resetAttacker = function(gameContext, attackerID) {
     const positionComponent = attacker.getComponent(PositionComponent);
 
     camera.removeOverlay(ArmyCamera.OVERLAY_TYPE_ATTACK, positionComponent.tileX, positionComponent.tileY);
-    MorphSystem.toIdle(attacker);
+    MorphSystem.toIdle(gameContext, attacker);
 }
 
 ControllerSystem.hightlightAttacker = function(gameContext, target, attackerID) {
@@ -52,7 +52,7 @@ ControllerSystem.hightlightAttacker = function(gameContext, target, attackerID) 
 
     camera.addOverlay(ArmyCamera.OVERLAY_TYPE_ATTACK, positionComponent.tileX, positionComponent.tileY, tileID);
     DirectionSystem.lookAt(attacker, target);
-    MorphSystem.toAim(attacker);
+    MorphSystem.toAim(gameContext, attacker);
 }
 
 ControllerSystem.updateAttackers = function(gameContext, controller) {

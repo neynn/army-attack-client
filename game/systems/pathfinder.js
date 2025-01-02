@@ -34,7 +34,6 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
     const moveComponent = entity.getComponent(MoveComponent);
     const teamComponent = entity.getComponent(TeamComponent);
 
-    const settings = world.getConfig("settings");
     const layerTypes = world.getConfig("layerTypes");
     const teamTypes = world.getConfig("teamTypes");
     const tileTypes = world.getConfig("tileTypes");
@@ -70,16 +69,17 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
         const isEnemy = entityEnemies[tileEntityTeamComponent.teamID];
         const isAlly = entityAllies[tileEntityTeamComponent.teamID];
 
-        if(isEnemy) {
-            if(!moveComponent.isCloaked) {
-                return false;
-            }
-        } else if(isAlly) {
+        if(isEnemy && !moveComponent.isCloaked) {
+            return false;
+        }
+        
+        if(isAlly) {
             const avianComponent = entity.getComponent(AvianComponent);
 
-            if(!avianComponent || !avianComponent.inAir) {
+            if(!avianComponent || avianComponent.state === AvianComponent.STATE_GROUNDED) {
                 const tileEntityAvianComponent = tileEntity.getComponent(AvianComponent);
-                const isPassingAllowed = (tileEntityAvianComponent && tileEntityAvianComponent.inAir) || settings.allowAllyPassing;
+                const isTileEntityFlying = tileEntityAvianComponent && tileEntityAvianComponent.state === AvianComponent.STATE_FLYING;
+                const isPassingAllowed = isTileEntityFlying || activeMap.meta.allowAllyPassing;
 
                 if(!isPassingAllowed) {
                     return false;

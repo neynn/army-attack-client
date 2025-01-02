@@ -5,7 +5,7 @@ import { World } from "../source/world.js";
 import { EventEmitter } from "../source/events/eventEmitter.js";
 import { NETWORK_EVENTS } from "../source/network/events.js";
 
-import { ACTION_TYPES, CAMERA_TYPES, CONTEXT_STATES, CONTROLLER_TYPES, SYSTEM_TYPES } from "./enums.js";
+import { ACTION_TYPES, CAMERA_TYPES, CONTEXT_STATES, CONTROLLER_TYPES } from "./enums.js";
 import { AttackAction } from "./actions/attackAction.js";
 import { MoveAction } from "./actions/moveAction.js";
 import { ArmorComponent } from "./components/armor.js";
@@ -20,9 +20,7 @@ import { MainMenuState } from "./states/context/mainMenu.js";
 import { MapEditorState } from "./states/context/mapEditor.js";
 import { StoryModeState } from "./states/context/storyMode.js";
 import { VersusModeState } from "./states/context/versusMode.js";
-import { DownSystem } from "./systems/down.js";
 import { PlaceSystem } from "./systems/place.js";
-import { MoveSystem } from "./systems/move.js";
 import { SpriteComponent } from "./components/sprite.js";
 import { DefenseArchetype } from "./init/archetype/defense.js";
 import { DecoArchetype } from "./init/archetype/deco.js";
@@ -68,9 +66,6 @@ ArmyContext.prototype.initialize = function() {
 
     this.world.controllerManager.registerController(CONTROLLER_TYPES.PLAYER, PlayerController);
     this.world.controllerManager.registerController(CONTROLLER_TYPES.EDITOR, EditorController);
-
-    this.world.systemManager.registerSystem(SYSTEM_TYPES.DOWN, DownSystem);
-    this.world.systemManager.registerSystem(SYSTEM_TYPES.MOVE, MoveSystem);
 
     this.world.entityManager.registerComponent("Health", HealthComponent);
     this.world.entityManager.registerComponent("Construction", ConstructionComponent);
