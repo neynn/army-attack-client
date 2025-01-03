@@ -203,7 +203,7 @@ SpriteManager.prototype.addToLayer = function(layerID, sprite) {
     }
 
     layer.push(sprite);
-} 
+}
 
 SpriteManager.prototype.removeFromLayer = function(sprite, layerID) {
     const layer = this.layers[layerID];

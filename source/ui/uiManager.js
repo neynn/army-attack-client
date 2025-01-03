@@ -8,6 +8,7 @@ import { Container } from "./elements/container.js";
 import { DynamicTextElement } from "./elements/dynamicTextElement.js";
 import { Icon } from "./elements/icon.js";
 import { TextElement } from "./elements/textElement.js";
+import { TreeDescripton } from "./treeDescription.js";
 import { UIElement } from "./uiElement.js";
 
 export const UIManager = function() {
@@ -121,7 +122,8 @@ UIManager.prototype.destroyElement = function(uniqueID) {
 
 UIManager.prototype.getInterfaceIndex = function(userInterfaceID) {
     for(let i = 0; i < this.interfaceStack.length; i++) {
-        const { id } = this.interfaceStack[i];
+        const tree = this.interfaceStack[i];
+        const id = tree.getID();
 
         if(id === userInterfaceID) {
             return i;
@@ -175,8 +177,8 @@ UIManager.prototype.updateElementCollisions = function(mouseX, mouseY, mouseRang
 
 UIManager.prototype.getCollidedElements = function(mouseX, mouseY, mouseRange) {
     for(let i = this.interfaceStack.length - 1; i >= 0; i--) {
-        const interfaceElement = this.interfaceStack[i];
-        const { roots } = interfaceElement;
+        const tree = this.interfaceStack[i];
+        const roots = tree.getRoots();
 
         for(const elementUID of roots) {
             const element = this.elements.get(elementUID);
@@ -345,24 +347,22 @@ UIManager.prototype.parseUI = function(userInterfaceID, gameContext) {
     }
 
     const elements = this.createInterfaceElements(userInterfaceID);
-    const interfaceElement = this.createEmptyInterface(userInterfaceID);
+    const tree = new TreeDescripton(userInterfaceID);
 
     for(const [configID, element] of elements) {
         const { anchor, effects, position } = userInterface[configID];
         const uniqueID = element.getID();
 
         this.addEffects(gameContext, element, effects);
-
-        interfaceElement.elements.push(uniqueID);
+        tree.addElement(uniqueID);
 
         if(!element.hasParent()) {
             this.addElementAnchor(gameContext, element, position, anchor);
-
-            interfaceElement.roots.push(uniqueID);
+            tree.addRoot(uniqueID);
         }
     }
 
-    this.interfaceStack.push(interfaceElement);
+    this.interfaceStack.push(tree);
 }
 
 UIManager.prototype.unparseUI = function(userInterfaceID, gameContext) {
@@ -374,8 +374,9 @@ UIManager.prototype.unparseUI = function(userInterfaceID, gameContext) {
         return;
     }
 
-    const interfaceElement = this.interfaceStack[interfaceIndex];
-    const { elements, roots } = interfaceElement;
+    const tree = this.interfaceStack[interfaceIndex];
+    const elements = tree.getElements();
+    const roots = tree.getRoots();
 
     for(const elementUID of roots) {
         renderer.events.unsubscribe(Renderer.EVENT_SCREEN_RESIZE, elementUID);

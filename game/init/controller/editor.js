@@ -2,14 +2,12 @@ import { MapEditor } from "../../../source/map/mapEditor.js";
 import { Cursor } from "../../../source/client/cursor.js";
 import { clampValue } from "../../../source/math/math.js";
 import { Renderer } from "../../../source/renderer.js";
-import { UIElement } from "../../../source/ui/uiElement.js";
 import { Button } from "../../../source/ui/elements/button.js";
-import { MapParser } from "../../../source/map/mapParser.js";
-import { World } from "../../../source/world.js";
 import { EntityController } from "../../../source/controller/entityController.js";
 
 import { CAMERA_TYPES } from "../../enums.js";
 import { saveMap } from "../../../helpers.js"
+import { MapSystem } from "../../systems/map.js";
 
 export const EditorController = function(id) {
     EntityController.call(this, id, "Editor");
@@ -353,22 +351,20 @@ EditorController.prototype.initializeUIEvents = function(gameContext) {
         }
 
         const mapID = `${Date.now()}`;
-        const { layers, meta } = this.mapEditor.getDefaultMapData();
-        const defaultMap = MapParser.parseMap2DEmpty(mapID, layers, meta);
-
-        world.loadMap(mapID, defaultMap);
+        const mapData = this.mapEditor.getDefaultMapData();
+        
+        MapSystem.loadEmptyMapByData(gameContext, mapID, mapData);
         
         this.currentMapID = mapID;
     });
 
-    uiManager.addClick(id, "BUTTON_LOAD", () => {
+    uiManager.addClick(id, "BUTTON_LOAD", async () => {
         const mapID = prompt("MAP-ID?");
+        const worldMap = await MapSystem.loadMapByID(gameContext, mapID);
 
-        world.parseMap(mapID, MapParser.parseMap2D).then(code => {
-            if(code === World.CODE_PARSE_MAP_SUCCESS) {
-                this.currentMapID = mapID;
-            }
-        });
+        if(worldMap) {
+            this.currentMapID = mapID;
+        }
     });
 
     uiManager.addClick(id, "BUTTON_RESIZE", () => {

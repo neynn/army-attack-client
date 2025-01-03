@@ -20,8 +20,6 @@ import { MainMenuState } from "./states/context/mainMenu.js";
 import { MapEditorState } from "./states/context/mapEditor.js";
 import { StoryModeState } from "./states/context/storyMode.js";
 import { VersusModeState } from "./states/context/versusMode.js";
-import { PlaceSystem } from "./systems/place.js";
-import { SpriteComponent } from "./components/sprite.js";
 import { DefenseArchetype } from "./init/archetype/defense.js";
 import { DecoArchetype } from "./init/archetype/deco.js";
 import { BuildingArchetype } from "./init/archetype/building.js";
@@ -39,7 +37,7 @@ import { DecayComponent } from "./components/decay.js";
 import { CounterComponent } from "./components/counter.js";
 import { ResourceComponent } from "./components/resource.js";
 import { ArmyCamera } from "./armyCamera.js";
-import { CardSystem } from "./systems/card.js";
+import { SpawnSystem } from "./systems/spawn.js";
 
 export const ArmyContext = function() {
     GameContext.call(this, 60);
@@ -88,14 +86,8 @@ ArmyContext.prototype.initialize = function() {
 
     this.client.soundPlayer.loadAllSounds();
     
-    this.world.actionQueue.events.subscribe(RequestQueue.EVENT_QUEUE_ERROR, "DEBUG", (error) => {
-        console.log(error);
-    });
-
-    this.world.actionQueue.events.subscribe(RequestQueue.EVENT_EXECUTION_RUNNING, "DEBUG", (item) => {
-        console.log(item, "IS PROCESSING");
-    });
-
+    this.world.actionQueue.events.subscribe(RequestQueue.EVENT_QUEUE_ERROR, "DEBUG", (error) => console.log(error));
+    this.world.actionQueue.events.subscribe(RequestQueue.EVENT_EXECUTION_RUNNING, "DEBUG", (item) => console.log(item, "IS PROCESSING"));
     this.world.actionQueue.events.subscribe(RequestQueue.EVENT_EXECUTION_ERROR, "DEBUG", (executionItem) => {
         this.client.soundPlayer.playSound("sound_error", 0.5);
         console.log(executionItem, "IS INVALID");
@@ -110,38 +102,11 @@ ArmyContext.prototype.initialize = function() {
         console.log(`${reason} is disconnected from the server!`);
     });
 
-    this.world.events.subscribe(World.EVENT_ENTITY_CREATE, EventEmitter.SUPER_SUBSCRIBER_ID, (entity) => {
-        PlaceSystem.placeEntity(this, entity);
-        CardSystem.generateStatCard(this, entity);
-    });
-
-    this.world.events.subscribe(World.EVENT_ENTITY_DESTROY, EventEmitter.SUPER_SUBSCRIBER_ID, (entity) => {
-        const spriteComponent = entity.getComponent(SpriteComponent);
-
-        this.spriteManager.destroySprite(spriteComponent.spriteID);
-    
-        PlaceSystem.removeEntity(this, entity);
-    });
-
-    this.world.events.subscribe(World.EVENT_MAP_LOAD, EventEmitter.SUPER_SUBSCRIBER_ID, (worldMap) => {
-        const { width, height, meta } = worldMap;
-        const { music } = meta;
-        const camera = this.renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
-
-        if(camera) {
-            camera.loadWorld(width, height);
-            this.renderer.reloadCamera(CAMERA_TYPES.ARMY_CAMERA);
-        }
-    
-        if(music) {
-            this.client.musicPlayer.loadTrack(music);
-            this.client.musicPlayer.swapTrack(music);
-        }
-    });
-
-    this.world.events.subscribe(World.EVENT_CONTROLLER_CREATE, EventEmitter.SUPER_SUBSCRIBER_ID, (controller) => {
-        console.log(controller, "has been created!");
-    });
+    this.world.events.subscribe(World.EVENT_CONTROLLER_CREATE, "DEBUG", (controller) => console.log(controller, "HAS BEEN CREATED"));
+    this.world.events.subscribe(World.EVENT_CONTROLLER_DESTROY, "DEBUG", (controller) => console.log(controller, "HAS BEEN DESTROYED"));
+    this.world.events.subscribe(World.EVENT_ENTITY_DESTROY, "DEBUG", (entity) => console.log(entity, "HAS BEEN DESTROYED"));
+    this.world.events.subscribe(World.EVENT_ENTITY_CREATE, "DEBUG", (entity) => console.log(entity, "HAS BEEN CREATED"));
+    this.world.events.subscribe(World.EVENT_MAP_LOAD, "DEBUG", (worldMap) => console.log(worldMap, "HAS BEEN LOADED"));
 
     this.switchState(CONTEXT_STATES.MAIN_MENU);
 }
@@ -225,7 +190,7 @@ ArmyContext.prototype.loadSnapshot = function(snapshot) {
     }
 
     for(const entity of entities) {
-        this.world.createEntity(this, entity);
+        SpawnSystem.createEntity(this, entity);
     }
 }
 
@@ -237,6 +202,10 @@ ArmyContext.prototype.createArmyCamera = function() {
     this.renderer.addCamera(CAMERA_TYPES.ARMY_CAMERA, camera);
 
     return camera;
+}
+
+ArmyContext.prototype.getArmyCamera = function() {
+    return this.renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
 }
 
 ArmyContext.prototype.destroyArmyCamera = function() {

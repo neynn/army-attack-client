@@ -1,9 +1,9 @@
-import { MapParser } from "../../../../source/map/mapParser.js";
 import { State } from "../../../../source/state/state.js";
-import { World } from "../../../../source/world.js";
 
 import { ACTION_TYPES, CAMERA_TYPES, CONTROLLER_TYPES } from "../../../enums.js";
 import { ConquerSystem } from "../../../systems/conquer.js";
+import { MapSystem } from "../../../systems/map.js";
+import { SpawnSystem } from "../../../systems/spawn.js";
 
 export const StoryModePlayState = function() {}
 
@@ -16,9 +16,9 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
     const { actionQueue } = world;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
     const MAP = "pvp_valleys";
-    const code = await world.parseMap(MAP, MapParser.parseMap2D);
+    const worldMap = await MapSystem.loadMapByID(gameContext, MAP);
 
-    if(code !== World.CODE_PARSE_MAP_SUCCESS) {
+    if(!worldMap) {
         return;
     }
 
@@ -36,7 +36,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
     
     uiManager.parseUI("STORY_MODE", gameContext);
     
-    world.createEntity(gameContext, { 
+    SpawnSystem.createEntity(gameContext, { 
         "type": "blue_guardtower",
         "mode": "story",
         "tileX": 0,
@@ -45,7 +45,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "master": "neyn"
     });
 
-    world.createEntity(gameContext, { 
+    SpawnSystem.createEntity(gameContext, { 
         "type": "blue_elite_battery",
         "mode": "story",
         "tileX": 4,
@@ -54,7 +54,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "master": null
     });
 
-    world.createEntity(gameContext, { 
+    SpawnSystem.createEntity(gameContext, { 
         "type": "blue_commando",
         "mode": "story",
         "tileX": 1,
@@ -63,7 +63,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "master": "neyn"
     });
 
-    world.createEntity(gameContext, {
+    SpawnSystem.createEntity(gameContext, {
         "type": "red_artillery",
         "mode": "story",
         "tileX": 2,
@@ -72,7 +72,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "master": "neyn"
     });
 
-    world.createEntity(gameContext, {
+    SpawnSystem.createEntity(gameContext, {
         "type": "blue_bootcamp_construction",
         "mode": "story",
         "tileX": 2,
@@ -81,7 +81,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "master": "neyn"
     });
 
-    world.createEntity(gameContext, { 
+    SpawnSystem.createEntity(gameContext, { 
         "type": "blue_elite_infantry",
         "mode": "story",
         "tileX": 6,
@@ -95,7 +95,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         }
     });
 
-    world.createEntity(gameContext, { 
+    SpawnSystem.createEntity(gameContext, { 
         "type": "red_bulldozer",
         "mode": "story",
         "tileX": 3,
@@ -104,7 +104,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "master": "neyn"
     });
 
-    const redBattletank = world.createEntity(gameContext, { 
+    const redBattletank = SpawnSystem.createEntity(gameContext, { 
         "type": "red_battletank",
         "mode": "story",
         "tileX": 4,
@@ -113,7 +113,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "master": null
     });
 
-    const battleTank = world.createEntity(gameContext, { 
+    const battleTank = SpawnSystem.createEntity(gameContext, { 
         "type": "blue_elite_battletank",
         "mode": "story",
         "tileX": 0,

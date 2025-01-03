@@ -1,6 +1,7 @@
+import { SpawnSystem } from "../systems/spawn.js";
+
 export const instanceEntityBatch = function(gameContext, payload) {
-    const { world } = gameContext;
     const { batch } = payload;
     
-    batch.forEach(setup => world.createEntity(gameContext, setup));
+    batch.forEach(setup => SpawnSystem.createEntity(gameContext, setup));
 }

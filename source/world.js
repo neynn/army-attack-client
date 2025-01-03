@@ -39,21 +39,17 @@ World.prototype.update = function(gameContext) {
 World.prototype.parseMap = async function(mapID, onParse) {
     if(!onParse) {
         Logger.log(false, "No parser given!", "World.prototype.parseMap", { mapID });
-
-        return World.CODE_PARSE_MAP_ERROR;
+        return null;
     }
 
     const parsedMap = await this.mapManager.parseMap(mapID, onParse);
 
     if(!parsedMap) {
         Logger.log(false, "Map could not be parsed!", "World.prototype.parseMap", { mapID });
-
-        return World.CODE_PARSE_MAP_ERROR;
+        return null;
     }
 
-    this.loadMap(mapID, parsedMap);
-
-    return World.CODE_PARSE_MAP_SUCCESS;
+    return parsedMap;
 }
 
 World.prototype.loadMap = function(mapID, worldMap) {

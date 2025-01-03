@@ -3,6 +3,7 @@ import { Action } from "../../source/action/action.js";
 import { ENTITY_STATES } from "../enums.js";
 import { AnimationSystem } from "../systems/animation.js";
 import { AttackSystem } from "../systems/attack.js";
+import { DeathSystem } from "../systems/death.js";
 import { HealthSystem } from "../systems/health.js";
 import { MorphSystem } from "../systems/morph.js";
 import { ReviveSystem } from "../systems/revive.js";
@@ -45,7 +46,7 @@ AttackAction.prototype.onEnd = function(gameContext, request) {
 
     if(state === ENTITY_STATES.DEAD) {
         AnimationSystem.playDeath(gameContext, target);
-        world.destroyEntity(entityID);
+        DeathSystem.destroyEntity(gameContext, entityID);
     } else if(state === ENTITY_STATES.IDLE) {
         MorphSystem.toIdle(gameContext, target);
     }

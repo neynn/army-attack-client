@@ -3,7 +3,9 @@ import { State } from "../../../source/state/state.js";
 import { ACTION_TYPES, CONTROLLER_STATES } from "../../enums.js";
 import { ConstructionSystem } from "../../systems/construction.js";
 import { ControllerSystem } from "../../systems/controller.js";
+import { DeathSystem } from "../../systems/death.js";
 import { HealthSystem } from "../../systems/health.js";
+import { SpawnSystem } from "../../systems/spawn.js";
 import { TargetSystem } from "../../systems/target.js";
 import { TeamSystem } from "../../systems/team.js";
 
@@ -46,8 +48,8 @@ ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext)
                 const result = ConstructionSystem.getConstructionResult(controller, mouseEntity);
             
                 //TODO: Open GUI and check if the controller has enough materials/resources.
-                world.destroyEntity(entityID);
-                world.createEntity(gameContext, result);
+                DeathSystem.destroyEntity(gameContext, entityID);
+                SpawnSystem.createEntity(gameContext, result);
             }
         } else {
             actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.CONSTRUCTION, entityID));

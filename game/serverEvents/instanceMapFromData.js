@@ -1,13 +1,13 @@
-import { MapParser } from "../../source/map/mapParser.js";
 import { GAME_EVENTS } from "../enums.js";
+import { MapSystem } from "../systems/map.js";
 
 export const instanceMapFromData = function(gameContext, payload) {
-    const { client, world } = gameContext;
+    const { client } = gameContext;
     const { socket } = client;
-    const { id, layers, meta } = payload;
-    const worldMap = MapParser.parseMap2D(id, layers, meta);
+    const { id } = payload;
 
-    world.loadMap(id, worldMap);
+    MapSystem.loadMapByData(gameContext, id, payload);
+    
     socket.messageRoom(GAME_EVENTS.INSTANCE_MAP, {
         "success": true,
         "error": null

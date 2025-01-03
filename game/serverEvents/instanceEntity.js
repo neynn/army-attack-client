@@ -1,5 +1,5 @@
+import { SpawnSystem } from "../systems/spawn.js";
+
 export const instanceEntity = function(gameContext, payload) {
-    const { world } = gameContext;
-    
-    world.createEntity(gameContext, payload);
+    SpawnSystem.createEntity(gameContext, payload);
 }
