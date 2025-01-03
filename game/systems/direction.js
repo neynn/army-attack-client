@@ -1,6 +1,5 @@
 import { DirectionComponent } from "../components/direction.js";
 import { PositionComponent } from "../components/position.js";
-import { ENTITY_EVENTS } from "../enums.js";
 
 export const DirectionSystem = function() {}
 
@@ -14,8 +13,6 @@ DirectionSystem.changeDirection = function(entity, directionX, directionY) {
     if(directionY !== null) {
         directionComponent.directionY = directionY;
     }
-
-    entity.events.emit(ENTITY_EVENTS.DIRECTION_UPDATE);
 }
 
 DirectionSystem.lookHorizontal = function(entity, westCondition) {
@@ -26,8 +23,6 @@ DirectionSystem.lookHorizontal = function(entity, westCondition) {
     } else {
         directionComponent.directionX = DirectionComponent.DIRECTION_EAST;
     }
-
-    entity.events.emit(ENTITY_EVENTS.DIRECTION_UPDATE);
 }
 
 DirectionSystem.lookVertical = function(entity, northCondition) {
@@ -38,8 +33,6 @@ DirectionSystem.lookVertical = function(entity, northCondition) {
     } else {
         directionComponent.directionY = DirectionComponent.DIRECTION_SOUTH;
     }
-
-    entity.events.emit(ENTITY_EVENTS.DIRECTION_UPDATE);
 }
 
 DirectionSystem.lookTo = function(entity, westCondition, northCondition) {
@@ -56,8 +49,6 @@ DirectionSystem.lookTo = function(entity, westCondition, northCondition) {
     } else {
         directionComponent.directionY = DirectionComponent.DIRECTION_SOUTH;
     }
-
-    entity.events.emit(ENTITY_EVENTS.DIRECTION_UPDATE);
 }
 
 DirectionSystem.lookAt = function(entity, target) {

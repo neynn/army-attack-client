@@ -133,8 +133,12 @@ Sprite.prototype.thaw = function() {
     this.isStatic = false;
 }
 
-Sprite.prototype.flip = function(isFlipped = !this.isFlipped) {
-    this.isFlipped = isFlipped;
+Sprite.prototype.unflip = function() {
+    this.isFlipped = false;
+}
+
+Sprite.prototype.flip = function() {
+    this.isFlipped = true;
 }
 
 Sprite.prototype.updateFrame = function(floatFrames = 0) {

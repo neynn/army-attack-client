@@ -1,4 +1,34 @@
 {
+    "example_entity": {
+        "id": "example_entity",
+        "archetype": "Unit",
+        "dimX": 1, "dimY": 1, "dimZ": 1,
+        "passability": ["Land"],
+        "disableCard": false,
+        "stats": {
+            "story": { "health": 8, "damage": 5, "attackRange": 2, "moveRange": 5, "traits": [] }, 
+            "versus": { "health": 8, "damage": 5, "attackRange": 2, "moveRange": 5, "traits": [] }
+        },
+        "sprites": {
+            "aim": "blue_elite_infantry_aim",
+            "aim_ne": "blue_elite_infantry_aim_ne",
+            "fire": "blue_elite_infantry_fire",
+            "fire_ne": "blue_elite_infantry_fire_ne",
+            "hit": "blue_elite_infantry_hit",
+            "idle": "blue_elite_infantry_idle",
+            "move": "blue_elite_infantry_move",
+            "move_ne": "blue_elite_infantry_move_ne",
+            "downed": "blue_elite_infantry_downed",
+            "death": "effect_death_explosion",
+            "weapon": "effect_bullets"
+        },
+        "sounds": {
+            "fire": ["sound_red_soldier_fire1", "sound_red_soldier_fire2", "sound_red_soldier_fire3", "sound_red_soldier_fire4", "sound_blue_soldier_fire1", "sound_blue_soldier_fire2", "sound_blue_soldier_fire3", "sound_blue_soldier_fire4"],
+            "death": ["sound_blue_soldier_death"],
+            "move": ["sound_soldier_move"],
+            "select": ["sound_soldier_select_long", "sound_soldier_select_short1", "sound_soldier_select_short2", "sound_soldier_select_short3", "sound_soldier_select_short4", "sound_soldier_select_short5", "sound_soldier_select_short6", "sound_soldier_select_short7"]    
+        }
+    },
     "blue_artillery": {
         "id": "blue_artillery",
         "archetype": "Unit",

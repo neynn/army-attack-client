@@ -64,13 +64,13 @@
         }
     },
     "entityTypes": {
-        "Building": { "id": "Building" },
-        "Construction": { "id": "Construction" },
-        "Deco": { "id": "Deco" },
-        "Defense": { "id": "Defense" },
-        "HFE": { "id": "HFE" },
-        "Town": { "id": "Town" },
-        "Unit": { "id": "Unit" }
+        "Building": { "id": "Building", "disableCard": false },
+        "Construction": { "id": "Construction", "disableCard": false },
+        "Deco": { "id": "Deco", "disableCard": false },
+        "Defense": { "id": "Defense", "disableCard": false },
+        "HFE": { "id": "HFE", "disableCard": false },
+        "Town": { "id": "Town", "disableCard": false },
+        "Unit": { "id": "Unit", "disableCard": false }
     },
     "unitTypes": {
         "Armor": { "id": "Armor" },

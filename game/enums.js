@@ -38,11 +38,8 @@ export const CONTEXT_STATES = Object.freeze({
 });
 
 export const ENTITY_EVENTS = Object.freeze({
-    "DIRECTION_UPDATE": "DIRECTION_UPDATE",
     "HEALTH_UPDATE": "HEALTH_UPDATE",
-    "DAMAGE_UPDATE": "DAMAGE_UPDATE",
-    "DAMAGE_TAKEN": "DAMAGE_TAKEN",
-    "DEATH": "DEATH"
+    "DAMAGE_UPDATE": "DAMAGE_UPDATE"
 });
 
 export const CONTROLLER_EVENTS = Object.freeze({
