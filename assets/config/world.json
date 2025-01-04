@@ -1,5 +1,5 @@
 {
-    "settings": {
+    "Settings": {
         "tileWidth": 96,
         "tileHeight": 96,
         "drawBorder": true,
@@ -14,22 +14,18 @@
             "english": { "id": "english", "directory": "assets/config/language", "source": "en.json" }
         }
     },
-    "autotilerTypes": {
-        "border": { "id": "border", "autotilerID": "border" },
-        "cloud": { "id": "cloud", "autotilerID": "cloud" },
-        "range": { "id": "range", "autotilerID": "range" }
+    "AutotilerTypes": {
+        "Border": { "id": "Border", "autotilerID": "border" },
+        "Cloud": { "id": "Cloud", "autotilerID": "cloud" },
+        "Range": { "id": "Range", "autotilerID": "range" }
     },
-    "layerTypes": {
-        "ground": { "id": "ground", "layerID": "ground" },
-        "decoration": { "id": "decoration", "layerID": "decoration" },
-        "border": { "id": "border", "layerID": "border" },
-        "cloud": { "id": "cloud", "layerID": "cloud" },
-        "type": { "id": "type", "layerID": "type" },
-        "team": { "id": "team", "layerID": "team" }
-    },
-    "convertableLayerTypes": {
-        "ground": { "id": "ground", "layerType": "ground" },
-        "decoration": { "id": "decoration", "layerType": "decoration" }
+    "LayerTypes": {
+        "Ground": { "id": "Ground", "layerID": "ground", "isConvertable": true },
+        "Decoration": { "id": "Decoration", "layerID": "decoration", "isConvertable": true },
+        "Border": { "id": "Border", "layerID": "border", "isConvertable": false },
+        "Cloud": { "id": "Cloud", "layerID": "cloud", "isConvertable": false },
+        "Type": { "id": "Type", "layerID": "type", "isConvertable": false },
+        "Team": { "id": "Team", "layerID": "team", "isConvertable": false }
     },
     "VersusMode": {
         "selectableTeamEntities": {
@@ -63,7 +59,7 @@
             }
         }
     },
-    "entityTypes": {
+    "EntityTypes": {
         "Building": { "id": "Building", "disableCard": false },
         "Construction": { "id": "Construction", "disableCard": false },
         "Deco": { "id": "Deco", "disableCard": false },
@@ -72,12 +68,12 @@
         "Town": { "id": "Town", "disableCard": false },
         "Unit": { "id": "Unit", "disableCard": false }
     },
-    "unitTypes": {
+    "UnitTypes": {
         "Armor": { "id": "Armor" },
         "Artillery": { "id": "Artillery" },
         "Infantry": { "id": "Infantry" }
     },
-    "resourceTypes": {
+    "ResourceTypes": {
         "Money": { "id": "Money", "maxDrop": 50, "icon": "resource_icon_cash" },
         "Gold": { "id": "Gold", "maxDrop": 1, "icon": "resource_icon_credits" },
         "Energy": { "id": "Energy", "maxDrop": 1, "icon": "resource_icon_energy" },
@@ -90,7 +86,7 @@
         "Dollor": { "id": "Dollor", "maxDrop": 1, "icon": "icon_dollor" },
         "BackgroundEnergy": { "id": "BackgroundEnergy", "maxDrop": 0, "icon": null }
     },
-    "tileTypes": {
+    "TileTypes": {
         "0": { "id": 0, "color": "#000000", "name": "Ground", "passability": "Land", "autoCapture": false, "hasBorder": true },
         "1": { "id": 1, "color": "#ff0000", "name": "Mountain", "passability": "Mountain", "autoCapture": false, "hasBorder": false },
         "2": { "id": 2, "color": "#0000ff", "name": "Sea", "passability": "Sea", "autoCapture": false, "hasBorder": false },
@@ -216,7 +212,7 @@
         "OpenItemTab": { "ID":"OpenItemTab", "Type":"Client" },
         "OpenBuilding": { "ID":"OpenBuilding", "Type":"Client" }
     },
-    "tileConversions": {
+    "TileConversions": {
         "ground": {
             "Bg_BadTile_01": {"0": ["ground", "Bg_BadTile_01"], "1": ["ground", "Bg_GoodTile_01"]},
             "Bg_BadTile_01_desert": {"0": ["ground", "Bg_BadTile_01_desert"], "1": ["ground", "Bg_GoodTile_01_desert"]},
@@ -324,11 +320,11 @@
             "Bg_RiverTile_05": {"0": ["river_bad", "Bg_BadRiverTile_05"], "1": ["river_good", "Bg_RiverTile_05"]}
         }
     },
-    "rewardTypes": {
-        "Resource": { "id": "Resource", "reference": "resourceTypes" },
-        "Item": { "id": "Item", "reference": "itemTypes" }
+    "RewardTypes": {
+        "Resource": { "id": "Resource", "reference": "ResourceTypes" },
+        "Item": { "id": "Item", "reference": "ItemTypes" }
     },
-    "collectionTypes": {
+    "CollectionTypes": {
         "Scout": {
             "id": "Scout",
             "name": "#CONFIG_COLLECTION_SCOUT",
@@ -447,7 +443,7 @@
             "rewards": []
         }
     },
-    "itemTypes": {
+    "ItemTypes": {
         "apc_ammo_shells": { "id": "apc_ammo_shells", "icon": "apc_ammo_shells", "collection": "APC", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
         "apc_blueprints": { "id": "apc_blueprints", "icon": "apc_blueprints", "collection": "APC", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
         "apc_duct_tape": { "id": "apc_duct_tape", "icon": "apc_duct_tape", "collection": "APC", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
@@ -524,15 +520,15 @@
         "medal_silverstar": { "id": "medal_silverstar", "icon": "icon_item_medal_silverstar", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
         "medal_goldstar": { "id": "medal_goldstar", "icon": "icon_item_medal_goldstar", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true }
     },
-    "shopTabs": {
-        "specials": {
-            "id": "specials",
+    "ShopTabTypes": {
+        "Specials": {
+            "id": "Specials",
             "name": null,
             "tabType": "normal",
             "items": []
         },
-        "units": {
-            "id": "units",
+        "Units": {
+            "id": "Units",
             "name": null,
             "tabType": "normal",
             "items": [
@@ -541,64 +537,64 @@
                 "blue_battery", "blue_elite_battery"
             ]
         },
-        "areas": {
-            "id": "areas",
+        "Areas": {
+            "id": "Areas",
             "name": null,
             "tabType": "normal",
             "items": [
     
             ]
         },
-        "buildings": {
-            "id": "buildings",
+        "Buildings": {
+            "id": "Buildings",
             "name": null,
             "tabType": "normal",
             "items": [
     
             ]
         },
-        "decos": {
-            "id": "decos",
+        "Decos": {
+            "id": "Decos",
             "name": null,
             "tabType": "normal",
             "items": [
     
             ]
         },
-        "packs": {
-            "id": "packs",
+        "Packs": {
+            "id": "Packs",
             "name": null,
             "tabType": "normal",
             "items": [
     
             ]
         },
-        "supplies": {
-            "id": "supplies",
+        "Supplies": {
+            "id": "Supplies",
             "name": null,
             "tabType": "normal",
             "items": [
     
             ]
         },
-        "storage": {
-            "id": "storage",
+        "Storage": {
+            "id": "Storage",
             "name": null,
             "tabType": "normal",
             "items": [
     
             ]
         },
-        "buygold": {
-            "id": "buygold",
+        "BuyGold": {
+            "id": "BuyGold",
             "name": null,
             "tabType": "normal",
             "items": [
     
             ]
         },
-        "buycash": {
-            "id": "buycash",
+        "BuyCash": {
+            "id": "BuyCash",
             "name": null,
             "tabType": "normal",
             "items": [
@@ -606,7 +602,7 @@
             ]
         }
     },
-    "shopItemTypes": {
+    "ShopItemTypes": {
         "blue_infantry": { "id": "blue_infantry", "type": "Entity", "icon": "icon_units_infantry", "buyResource": "Money", "buyValue": 1500, "sellResouce": "Money", "sellValue": 150 },
         "blue_elite_infantry": { "id": "blue_elite_infantry", "type": "Entity", "icon": "icon_units_premium_infantry", "buyResource": "Gold", "buyValue": 30, "sellResouce": "Money", "sellValue": 3000 },
         "blue_tank": { "id": "blue_tank", "type": "Entity", "icon": "icon_units_apc", "buyResource": "Money", "buyValue": 5000, "sellResouce": "Money", "sellValue": 500 },
@@ -618,9 +614,9 @@
         "blue_battery": { "id": "blue_battery", "type": "Entity", "icon": "icon_units_rocket_battery", "buyResource": "Money", "buyValue": 30000, "sellResouce": "Money", "sellValue": 3000 },
         "blue_elite_battery": { "id": "blue_elite_battery", "type": "Entity", "icon": "icon_units_premium_rocket_battery", "buyResource": "Gold", "buyValue": 200, "sellResouce": "Money", "sellValue": 20000 }
     },
-    "fireCallTypes": {
-        "mortar": { 
-            "id": "mortar",
+    "FireCallTypes": {
+        "Mortar": { 
+            "id": "Mortar",
             "dimX": 1, "dimY": 1, "dimZ": 1,
             "damage": 2,
             "icon": "icon_mortar",
@@ -632,8 +628,8 @@
                 "fire": "sound_firemission_friendlyattack"
             }
         },
-        "napalm": { 
-            "id": "napalm",
+        "Napalm": { 
+            "id": "Napalm",
             "dimX": 3, "dimY": 1, "dimZ": 1,
             "damage": 2,
             "icon": "icon_napalm",
@@ -645,8 +641,8 @@
                 "fire": "sound_firemission_napalmstrike"
             }
         },
-        "artillery": { 
-            "id": "artillery",
+        "Artillery": { 
+            "id": "Artillery",
             "dimX": 2, "dimY": 2, "dimZ": 1,
             "damage": 3,
             "icon": "icon_artillery",
@@ -658,8 +654,8 @@
                 "fire": "sound_firemission_artillerystrike"
             }
         },
-        "doomsday": { 
-            "id": "doomsday",
+        "Doomsday": { 
+            "id": "Doomsday",
             "dimX": 3, "dimY": 3, "dimZ": 1,
             "damage": 6,
             "icon": "icon_doomsday",
@@ -671,8 +667,8 @@
                 "fire": "sound_firemission_doomsday"
             }
         },
-        "orbitalLaser": { 
-            "id": "orbitalLaser",
+        "OrbitalLaser": { 
+            "id": "OrbitalLaser",
             "dimX": 1, "dimY": 1, "dimZ": 1,
             "damage": 12,
             "icon": "icon_beam",
@@ -684,8 +680,8 @@
                 "fire": "sound_firemission_doomsday"
             }
         },
-        "carptetBomb": { 
-            "id": "carpetBomb",
+        "CarptetBomb": { 
+            "id": "CarpetBomb",
             "dimX": 6, "dimY": 1, "dimZ": 1,
             "damage": 4,
             "icon": "icon_bomb",

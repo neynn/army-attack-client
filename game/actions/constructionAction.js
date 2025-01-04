@@ -41,7 +41,7 @@ ConstructionAction.prototype.onUpdate = function(gameContext, request) {
 
 ConstructionAction.prototype.isFinished = function(gameContext, request) {
     const { world } = gameContext;
-    const settings = world.getConfig("settings");
+    const settings = world.getConfig("Settings");
     const constructionDuration = settings.iconDuration;
 
     return this.timePassed >= constructionDuration;

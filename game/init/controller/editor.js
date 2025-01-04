@@ -268,7 +268,7 @@ EditorController.prototype.initializeCursorEvents = function(gameContext) {
                 break;
             }
             case EditorController.BUTTON_TYPE_TYPE: {
-                this.mapEditor.incrementTypeIndex(gameContext, this.currentMapID, "type", "tileTypes");
+                this.mapEditor.incrementTypeIndex(gameContext, this.currentMapID, "type", "TileTypes");
                 break;
             }
             case EditorController.BUTTON_TYPE_BOOLEAN: {

@@ -82,7 +82,7 @@ CardSystem.createStatCard = function(gameContext, entity) {
 
 CardSystem.generateStatCard = function(gameContext, entity) {
     const { spriteManager, world } = gameContext;
-    const entityTypes = world.getConfig("entityTypes");
+    const entityTypes = world.getConfig("EntityTypes");
     const entityType = entityTypes[entity.config.archetype];
 
     if(entityType.disableCard || entity.config.disableCard) {

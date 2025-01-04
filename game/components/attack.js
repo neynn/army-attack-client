@@ -1,7 +1,11 @@
 export const AttackComponent = function() {
     this.damage = 0;
     this.range = 0;
+    this.type = AttackComponent.ATTACK_TYPE_PASSIVE;
 }
+
+AttackComponent.ATTACK_TYPE_PASSIVE = 0;
+AttackComponent.ATTACK_TYPE_ACTIVE = 1;
 
 AttackComponent.prototype.save = function() {
     return {

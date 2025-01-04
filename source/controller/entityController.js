@@ -1,14 +1,22 @@
 import { Entity } from "../entity/entity.js";
+import { EventEmitter } from "../events/eventEmitter.js";
+import { StateMachine } from "../state/stateMachine.js";
 
 export const EntityController = function(id) {
     Entity.call(this, id, "ENTITY_CONTROLLER");
     
+    this.states = new StateMachine(this);
+    this.events = new EventEmitter();
     this.selectedEntities = new Set();
     this.availableEntities = new Set();
 }
 
 EntityController.prototype = Object.create(Entity.prototype);
 EntityController.prototype.constructor = EntityController;
+
+EntityController.prototype.update = function(gameContext) {
+    this.states.update(gameContext);
+}
 
 EntityController.prototype.getSelectedCount = function() {
     return this.selectedEntities.size;

@@ -14,6 +14,8 @@ UnitArchetype.prototype.onInitialize = function(entity, type, setup) {
     const attackComponent = AttackComponent.create(stats[mode]);
     const moveComponent = MoveComponent.create(type, stats[mode]);
 
+    attackComponent.type = AttackComponent.ATTACK_TYPE_ACTIVE;
+    
     entity.addComponent(attackComponent);
     entity.addComponent(moveComponent);
 }

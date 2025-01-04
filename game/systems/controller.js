@@ -3,13 +3,14 @@ import { DirectionSystem } from "./direction.js";
 import { ConquerSystem } from "./conquer.js";
 import { PathfinderSystem } from "./pathfinder.js";
 import { MorphSystem } from "./morph.js";
-import { TargetSystem } from "./target.js";
 import { TeamSystem } from "./team.js";
 import { HealthComponent } from "../components/health.js";
 import { MoveComponent } from "../components/move.js";
 import { AnimationSystem } from "./animation.js";
 import { CAMERA_TYPES } from "../enums.js";
 import { ArmyCamera } from "../armyCamera.js";
+import { HealthSystem } from "./health.js";
+import { AttackSystem } from "./attack.js";
 
 export const ControllerSystem = function() {}
 
@@ -66,15 +67,15 @@ ControllerSystem.updateAttackers = function(gameContext, controller) {
     }
 
     const isAttackable = TeamSystem.isEntityAttackable(gameContext, controller, mouseEntity);
-    const isTargetable = TargetSystem.isTargetable(mouseEntity);
+    const isAlive = HealthSystem.isAlive(mouseEntity);
 
-    if(!isAttackable || !isTargetable) {
+    if(!isAttackable || !isAlive) {
         AnimationSystem.revertToIdle(gameContext, oldAttackers);
         ControllerSystem.resetAttackers(gameContext, controller);
         return;
     }
 
-    const newAttackers = new Set(TargetSystem.getAttackers(gameContext, mouseEntity));
+    const newAttackers = new Set(AttackSystem.getActiveAttackers(gameContext, mouseEntity));
 
     for(const attackerID of newAttackers) {
         ControllerSystem.hightlightAttacker(gameContext, mouseEntity, attackerID);

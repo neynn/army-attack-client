@@ -13,20 +13,6 @@ MorphSystem.morphHorizontal = function(gameContext, entity) {
     }
 }
 
-MorphSystem.morphVertical = function(gameContext, entity) {
-    const directionComponent = entity.getComponent(DirectionComponent);
-
-    if(northTypeID === undefined && southTypeID === undefined) {
-        return;
-    }
-
-    if(directionComponent.directionY === DirectionComponent.DIRECTION_NORTH) {
-        MorphSystem.updateSprite(gameContext, entity, northTypeID);
-    } else {
-        MorphSystem.updateSprite(gameContext, entity, southTypeID);
-    }
-}
-
 MorphSystem.morphDirectional = function(gameContext, entity, southTypeID, northTypeID) {
     const directionComponent = entity.getComponent(DirectionComponent);
 
@@ -58,15 +44,15 @@ MorphSystem.updateSprite = function(gameContext, entity, spriteKey) {
 }
 
 MorphSystem.toAim = function(gameContext, entity) {
-    MorphSystem.morphDirectional(gameContext, entity, "aim", "aim_ne");
+    MorphSystem.morphDirectional(gameContext, entity, "aim", entity.config.sprites["aim_ne"] ? "aim_ne" : "aim");
 }
 
 MorphSystem.toFire = function(gameContext, entity) {
-    MorphSystem.morphDirectional(gameContext, entity, "fire", "fire_ne");
+    MorphSystem.morphDirectional(gameContext, entity, "fire", entity.config.sprites["fire_ne"] ? "fire_ne" : "fire");
 }
 
 MorphSystem.toMove = function(gameContext, entity) {
-    MorphSystem.morphDirectional(gameContext, entity, "move", "move_ne");
+    MorphSystem.morphDirectional(gameContext, entity, "move", entity.config.sprites["move_ne"] ? "move_ne" : "move");
 }
 
 MorphSystem.toIdle = function(gameContext, entity) {

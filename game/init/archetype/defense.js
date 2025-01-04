@@ -12,5 +12,7 @@ DefenseArchetype.prototype.onInitialize = function(entity, type, setup) {
 
     const attackComponent = AttackComponent.create(stats[mode]);
 
+    attackComponent.type = AttackComponent.ATTACK_TYPE_PASSIVE;
+    
     entity.addComponent(attackComponent);
 }

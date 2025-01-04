@@ -6,7 +6,6 @@ import { ControllerSystem } from "../../systems/controller.js";
 import { DeathSystem } from "../../systems/death.js";
 import { HealthSystem } from "../../systems/health.js";
 import { SpawnSystem } from "../../systems/spawn.js";
-import { TargetSystem } from "../../systems/target.js";
 import { TeamSystem } from "../../systems/team.js";
 
 export const ControllerIdleState = function() {}
@@ -26,17 +25,15 @@ ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext)
 
     const entityID = mouseEntity.getID();
     const isAttackable = TeamSystem.isEntityAttackable(gameContext, controller, mouseEntity);
-    const isTargetable = TargetSystem.isTargetable(mouseEntity);
+    const isAlive = HealthSystem.isAlive(mouseEntity);
+    const isControlled = controller.hasEntity(entityID);
 
-    if(isAttackable && isTargetable) {     
+    if(isAttackable && isAlive) {
         actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.ATTACK, entityID));
         return;
     }
 
-    const isControlled = controller.hasEntity(entityID);
-    const isAlive = HealthSystem.isAlive(mouseEntity);
-
-    if(!isControlled || !isAlive) {
+    if(!isControlled) {
         return;
     }
 

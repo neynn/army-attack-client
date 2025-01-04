@@ -37,11 +37,11 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
 
     const teamMapping = world.getConfig("TeamTypesMapping");
     const teamTypes = world.getConfig("TeamTypes");
-    const layerTypes = world.getConfig("layerTypes");
-    const tileTypes = world.getConfig("tileTypes");
+    const layerTypes = world.getConfig("LayerTypes");
+    const tileTypes = world.getConfig("TileTypes");
 
-    const teamLayerID = layerTypes.team.layerID;
-    const typeLayerID = layerTypes.type.layerID;
+    const teamLayerID = layerTypes["Team"].layerID;
+    const typeLayerID = layerTypes["Type"].layerID;
     const entityAlliances = teamTypes[teamComponent.teamID].alliances;
 
     const nodeList = FloodFill.search(positionComponent.tileX, positionComponent.tileY, moveComponent.range, activeMap.width, activeMap.height, (next, current) => {

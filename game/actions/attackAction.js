@@ -8,7 +8,6 @@ import { DownSystem } from "../systems/down.js";
 import { HealthSystem } from "../systems/health.js";
 import { MorphSystem } from "../systems/morph.js";
 import { ReviveSystem } from "../systems/revive.js";
-import { TargetSystem } from "../systems/target.js";
 
 export const AttackAction = function() {
     this.timePassed = 0;
@@ -63,7 +62,7 @@ AttackAction.prototype.onUpdate = function(gameContext, request) {
 
 AttackAction.prototype.isFinished = function(gameContext, request) {
     const { world } = gameContext;
-    const settings = world.getConfig("settings");
+    const settings = world.getConfig("Settings");
     const timeRequired = settings.hitDuration;
 
     return this.timePassed >= timeRequired;
@@ -79,7 +78,7 @@ AttackAction.prototype.getValidated = function(gameContext, request, messengerID
         return null;
     }
 
-    const attackers = TargetSystem.getAttackers(gameContext, targetEntity);
+    const attackers = AttackSystem.getActiveAttackers(gameContext, targetEntity);
 
     if(attackers.length === 0) {
         return null;
@@ -105,7 +104,7 @@ AttackAction.prototype.getValidated = function(gameContext, request, messengerID
         "attackers": attackers,
         "damage": damage,
         "state": state
-    };
+    }
 }
 
 AttackAction.prototype.getTemplate = function(entityID) {

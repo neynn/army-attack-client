@@ -47,7 +47,7 @@ ArmyContext.prototype = Object.create(GameContext.prototype);
 ArmyContext.prototype.constructor = ArmyContext;
 
 ArmyContext.prototype.onResourcesLoad = function(resources) {
-    this.world.config.tileConversions = this.parseConversions();
+    this.updateConversions();
 }
 
 ArmyContext.prototype.initialize = function() {    
@@ -111,8 +111,8 @@ ArmyContext.prototype.initialize = function() {
     this.switchState(CONTEXT_STATES.MAIN_MENU);
 }
 
-ArmyContext.prototype.parseConversions = function() {
-    const conversions = this.world.getConfig("tileConversions");
+ArmyContext.prototype.updateConversions = function() {
+    const conversions = this.world.getConfig("TileConversions");
     const newConversions = {};
 
     for(const setID in conversions) {
@@ -141,7 +141,7 @@ ArmyContext.prototype.parseConversions = function() {
         }
     }
 
-    return newConversions;
+    this.world.config["TileConversions"] = newConversions;
 }
 
 ArmyContext.prototype.saveSnapshot = function() {
@@ -196,7 +196,7 @@ ArmyContext.prototype.loadSnapshot = function(snapshot) {
 
 ArmyContext.prototype.createArmyCamera = function() {
     const camera = new ArmyCamera();
-    const settings = this.world.getConfig("settings");
+    const settings = this.world.getConfig("Settings");
     
     camera.loadTileDimensions(settings.tileWidth, settings.tileHeight);
     this.renderer.addCamera(CAMERA_TYPES.ARMY_CAMERA, camera);

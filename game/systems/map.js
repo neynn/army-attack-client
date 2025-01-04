@@ -68,8 +68,8 @@ MapSystem.reloadGraphics = function(gameContext, controller, mapID) {
         return;
     }
 
-    const layerTypes = world.getConfig("layerTypes");
-    const teamLayerID = layerTypes.team.layerID;
+    const layerTypes = world.getConfig("LayerTypes");
+    const teamLayerID = layerTypes["Team"].layerID;
     const teamComponent = controller.getComponent(TeamComponent);
 
     worldMap.updateTiles((index, tileX, tileY) => {

@@ -7,6 +7,7 @@ import { CAMERA_TYPES } from "../../enums.js";
 import { SpriteComponent } from "../../components/sprite.js";
 import { DirectionComponent } from "../../components/direction.js";
 import { PositionComponent } from "../../components/position.js";
+import { EventEmitter } from "../../../source/events/eventEmitter.js";
 
 export const DefaultArchetype = function() {}
 
@@ -67,6 +68,8 @@ DefaultArchetype.prototype.build = function(gameContext, entity, type, setup) {
     const { mode, components } = setup;
     const { traits } = stats[mode];
 
+    entity.events = new EventEmitter();
+    
     this.initializeEntity(entity, type, setup);
     entityManager.loadTraits(entity, traits);
     entityManager.loadCustomComponents(entity, components);
