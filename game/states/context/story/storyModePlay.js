@@ -1,7 +1,6 @@
 import { State } from "../../../../source/state/state.js";
 
 import { ACTION_TYPES, CAMERA_TYPES, CONTROLLER_TYPES } from "../../../enums.js";
-import { ConquerSystem } from "../../../systems/conquer.js";
 import { MapSystem } from "../../../systems/map.js";
 import { SpawnSystem } from "../../../systems/spawn.js";
 
@@ -24,11 +23,11 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
 
     const controller = world.createController(gameContext, {
         "type": CONTROLLER_TYPES.PLAYER,
-        "team": 1,
+        "team": "Allies",
         "id": "neyn"
     });
     
-    ConquerSystem.reloadGraphics(gameContext, controller, MAP);
+    MapSystem.reloadGraphics(gameContext, controller, MAP);
 
     camera.centerWorld();
 
@@ -39,9 +38,9 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
     SpawnSystem.createEntity(gameContext, { 
         "type": "blue_guardtower",
         "mode": "story",
-        "tileX": 0,
-        "tileY": 3,
-        "team": 1,
+        "tileX": 4,
+        "tileY": 4,
+        "team": "Allies",
         "master": "neyn"
     });
 
@@ -50,7 +49,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "mode": "story",
         "tileX": 4,
         "tileY": 3,
-        "team": 0,
+        "team": "Crimson",
         "master": null
     });
 
@@ -59,7 +58,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "mode": "story",
         "tileX": 1,
         "tileY": 3,
-        "team": 1,
+        "team": "Allies",
         "master": "neyn"
     });
 
@@ -68,7 +67,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "mode": "story",
         "tileX": 2,
         "tileY": 3,
-        "team": 1,
+        "team": "Allies",
         "master": "neyn"
     });
 
@@ -77,7 +76,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "mode": "story",
         "tileX": 2,
         "tileY": 9,
-        "team": 1,
+        "team": "Allies",
         "master": "neyn"
     });
 
@@ -86,11 +85,11 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "mode": "story",
         "tileX": 6,
         "tileY": 5,
-        "team": 1,
+        "team": "Allies",
         "master": "neyn",
         "components": {
             "Move": {
-                "range": 15
+                "range": 50
             }
         }
     });
@@ -100,7 +99,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "mode": "story",
         "tileX": 3,
         "tileY": 1,
-        "team": 1,
+        "team": "Allies",
         "master": "neyn"
     });
 
@@ -109,7 +108,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "mode": "story",
         "tileX": 4,
         "tileY": 1,
-        "team": 0,
+        "team": "Crimson",
         "master": null
     });
 
@@ -118,7 +117,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "mode": "story",
         "tileX": 0,
         "tileY": 1,
-        "team": 1,
+        "team": "Allies",
         "master": "neyn",
         "components": {
             "Move": {

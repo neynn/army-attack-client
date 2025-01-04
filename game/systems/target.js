@@ -68,10 +68,10 @@ TargetSystem.getAttackers = function(gameContext, target) {
         }
 
         const isAlive = HealthSystem.isAlive(attacker);
-        const isEnemy = TeamSystem.isEntityEnemy(gameContext, attacker, target);
+        const isAttackable = TeamSystem.isEntityAttackable(gameContext, attacker, target);
         const hasRange = TargetSystem.hasRange(target, attacker);
 
-        if(isAlive && isEnemy && hasRange) {
+        if(isAlive && isAttackable && hasRange) {
             attackers.push(attackerID);
         }
     }

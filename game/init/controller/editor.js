@@ -262,12 +262,23 @@ EditorController.prototype.initializeCursorEvents = function(gameContext) {
         const { layerButtons } = this.mapEditor.config.interface;
         const { type } = layerButtons[this.currentLayerButtonID];
 
-        if(type === EditorController.BUTTON_TYPE_GRAPHICS) {
-            this.mapEditor.paint(gameContext, this.currentMapID, this.currentLayer);
-        } else if(type === EditorController.BUTTON_TYPE_TYPE) {
-            this.mapEditor.incrementTypeIndex(gameContext, this.currentMapID, "type", "tileTypes");
-        } else if(type === EditorController.BUTTON_TYPE_BOOLEAN) {
-            this.mapEditor.swapFlag(gameContext, this.currentMapID, this.currentLayer);
+        switch(type) {
+            case EditorController.BUTTON_TYPE_GRAPHICS: {
+                this.mapEditor.paint(gameContext, this.currentMapID, this.currentLayer)
+                break;
+            }
+            case EditorController.BUTTON_TYPE_TYPE: {
+                this.mapEditor.incrementTypeIndex(gameContext, this.currentMapID, "type", "tileTypes");
+                break;
+            }
+            case EditorController.BUTTON_TYPE_BOOLEAN: {
+                this.mapEditor.swapFlag(gameContext, this.currentMapID, this.currentLayer);
+                break;
+            }
+            default: {
+                console.warn(`Button type ${type} does not exist!`);
+                break;
+            }
         }
     });
 

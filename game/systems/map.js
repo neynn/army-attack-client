@@ -1,6 +1,8 @@
 import { MapParser } from "../../source/map/mapParser.js";
 
+import { TeamComponent } from "../components/team.js";
 import { CAMERA_TYPES } from "../enums.js";
+import { ConquerSystem } from "./conquer.js";
 
 export const MapSystem = function() {}
 
@@ -55,4 +57,25 @@ MapSystem.initializeMap = function(gameContext, worldMap) {
         client.musicPlayer.loadTrack(music);
         client.musicPlayer.swapTrack(music);
     }
+}
+
+MapSystem.reloadGraphics = function(gameContext, controller, mapID) {
+    const { world } = gameContext;
+    const { mapManager } = world;
+    const worldMap = mapManager.getLoadedMap(mapID);
+
+    if(!worldMap) {
+        return;
+    }
+
+    const layerTypes = world.getConfig("layerTypes");
+    const teamLayerID = layerTypes.team.layerID;
+    const teamComponent = controller.getComponent(TeamComponent);
+
+    worldMap.updateTiles((index, tileX, tileY) => {
+        const teamID = worldMap.getTile(teamLayerID, tileX, tileY);
+        
+        ConquerSystem.updateBorder(gameContext, tileX, tileY, teamComponent.teamID);
+        ConquerSystem.convertTileGraphics(gameContext, tileX, tileY, teamID);
+    });
 }

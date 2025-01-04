@@ -25,10 +25,10 @@ ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext)
     }
 
     const entityID = mouseEntity.getID();
-    const isEnemy = TeamSystem.isEntityEnemy(gameContext, mouseEntity, controller);
+    const isAttackable = TeamSystem.isEntityAttackable(gameContext, controller, mouseEntity);
     const isTargetable = TargetSystem.isTargetable(mouseEntity);
 
-    if(isEnemy && isTargetable) {     
+    if(isAttackable && isTargetable) {     
         actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.ATTACK, entityID));
         return;
     }

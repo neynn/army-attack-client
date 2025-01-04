@@ -30,64 +30,52 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
         return [];
     }
 
+    const avianComponent = entity.getComponent(AvianComponent);
     const positionComponent = entity.getComponent(PositionComponent);
     const moveComponent = entity.getComponent(MoveComponent);
     const teamComponent = entity.getComponent(TeamComponent);
 
+    const teamMapping = world.getConfig("TeamTypesMapping");
+    const teamTypes = world.getConfig("TeamTypes");
     const layerTypes = world.getConfig("layerTypes");
-    const teamTypes = world.getConfig("teamTypes");
     const tileTypes = world.getConfig("tileTypes");
 
     const teamLayerID = layerTypes.team.layerID;
     const typeLayerID = layerTypes.type.layerID;
-    
-    const entityAllies = teamTypes[teamComponent.teamID].allies;
-    const entityEnemies = teamTypes[teamComponent.teamID].enemies;
+    const entityAlliances = teamTypes[teamComponent.teamID].alliances;
 
-    const nodeList = FloodFill.search(positionComponent.tileX, positionComponent.tileY, moveComponent.range, activeMap.width, activeMap.height, (child, parent) => {
-        const childTypeID = activeMap.getTile(typeLayerID, child.positionX, child.positionY);
-        const childTileType = tileTypes[childTypeID];
+    const nodeList = FloodFill.search(positionComponent.tileX, positionComponent.tileY, moveComponent.range, activeMap.width, activeMap.height, (next, current) => {
+        const currentTeamID = activeMap.getTile(teamLayerID, current.positionX, current.positionY);
+        const currentAlliance = entityAlliances[teamMapping[currentTeamID]];
+        const isCurrentWalkable = currentAlliance.isWalkable || moveComponent.isStealth && !moveComponent.isCoward;
 
-        if(!moveComponent.passability[childTileType.passability]) {
-            return false;
-        }
+        if(!isCurrentWalkable) return false;
         
-        const parentTeamID = activeMap.getTile(teamLayerID, parent.positionX, parent.positionY);
+        const nextTypeID = activeMap.getTile(typeLayerID, next.positionX, next.positionY);
+        const nextTileType = tileTypes[nextTypeID];
+        const isNextPassable = moveComponent.passability[nextTileType.passability];
 
-        if(!entityAllies[parentTeamID] && !moveComponent.isStealth || moveComponent.isCoward) {
-            return false;
-        }
+        if(!isNextPassable) return false;
 
-        const entityID = activeMap.getTopEntity(child.positionX, child.positionY);
+        const entityID = activeMap.getTopEntity(next.positionX, next.positionY);
 
-        if(!entityID) {
-            return true;
-        }
+        if(!entityID) return true;
+
+        if(activeMap.meta.disablePassing) return false;
 
         const tileEntity = entityManager.getEntity(entityID);
         const tileEntityTeamComponent = tileEntity.getComponent(TeamComponent);
-        const isEnemy = entityEnemies[tileEntityTeamComponent.teamID];
-        const isAlly = entityAllies[tileEntityTeamComponent.teamID];
+        const tileEntityAlliance = entityAlliances[tileEntityTeamComponent.teamID];
+        const isPassable = tileEntityAlliance.isPassable || moveComponent.isCloaked || (avianComponent && avianComponent.state === AvianComponent.STATE_FLYING);
 
-        if(isEnemy && !moveComponent.isCloaked) {
-            return false;
-        }
-        
-        if(isAlly) {
-            const avianComponent = entity.getComponent(AvianComponent);
+        if(isPassable) return true;
 
-            if(!avianComponent || avianComponent.state === AvianComponent.STATE_GROUNDED) {
-                const tileEntityAvianComponent = tileEntity.getComponent(AvianComponent);
-                const isTileEntityFlying = tileEntityAvianComponent && tileEntityAvianComponent.state === AvianComponent.STATE_FLYING;
-                const isPassingAllowed = isTileEntityFlying || activeMap.meta.allowAllyPassing;
+        const tileEntityAvianComponent = tileEntity.getComponent(AvianComponent);
+        const isFlying = tileEntityAvianComponent && tileEntityAvianComponent.state === AvianComponent.STATE_FLYING;
 
-                if(!isPassingAllowed) {
-                    return false;
-                }
-            }
-        }
+        if(isFlying) return true;
 
-        return true;
+        return false;
     });
 
     return nodeList;

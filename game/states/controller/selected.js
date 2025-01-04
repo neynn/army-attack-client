@@ -72,9 +72,9 @@ ControllerSelectedState.prototype.onEventEnter = function(stateMachine, gameCont
 
     if(mouseEntity) {
         const mouseEntityID = mouseEntity.getID();
-        const isEnemy = TeamSystem.isEntityEnemy(gameContext, controller, mouseEntity);
+        const isAttackable = TeamSystem.isEntityAttackable(gameContext, controller, mouseEntity);
 
-        if(isEnemy) {
+        if(isAttackable) {
             actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.ATTACK, mouseEntityID));
         } else {
             soundPlayer.playSound("sound_error", 0.5);

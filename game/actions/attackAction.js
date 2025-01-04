@@ -4,6 +4,7 @@ import { ENTITY_STATES } from "../enums.js";
 import { AnimationSystem } from "../systems/animation.js";
 import { AttackSystem } from "../systems/attack.js";
 import { DeathSystem } from "../systems/death.js";
+import { DownSystem } from "../systems/down.js";
 import { HealthSystem } from "../systems/health.js";
 import { MorphSystem } from "../systems/morph.js";
 import { ReviveSystem } from "../systems/revive.js";
@@ -31,6 +32,7 @@ AttackAction.prototype.onStart = function(gameContext, request) {
 
     if(state === ENTITY_STATES.DOWN) {
         ReviveSystem.downEntity(gameContext, target);
+        DownSystem.downEntity(target);
     } else {
         MorphSystem.toHit(gameContext, target);
     }

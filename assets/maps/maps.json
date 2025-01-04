@@ -4,7 +4,7 @@
         "directory": "assets/maps/pvp",
         "source": "valleys.json",
         "music": "music_desertscorpion",
-        "allowAllyPassing": false,
+        "disablePassing": true,
         "width": 11,
         "height": 11,
         "author": "neyn",

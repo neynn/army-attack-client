@@ -31,9 +31,9 @@
         "ground": { "id": "ground", "layerType": "ground" },
         "decoration": { "id": "decoration", "layerType": "decoration" }
     },
-    "versus": {
-        "selectableEntities": {
-            "0": {
+    "VersusMode": {
+        "selectableTeamEntities": {
+            "Crimson": {
                 "red_artillery": { "id": "red_artillery", "type": "red_artillery", "buyResource": "Supplies", "buyValue": 0 },
                 "red_battery": { "id": "red_battery", "type": "red_battery", "buyResource": "Supplies", "buyValue": 0 },
                 "red_bulldozer": { "id": "red_bulldozer", "type": "red_bulldozer", "buyResource": "Supplies", "buyValue": 0 },
@@ -47,7 +47,7 @@
                 "red_supplytruck": { "id": "red_supplytruck", "type": "red_supplytruck", "buyResource": "Supplies", "buyValue": 0 },
                 "red_tank": { "id": "red_tank", "type": "red_tank", "buyResource": "Supplies", "buyValue": 0 }
             },  
-            "1": {
+            "Allies": {
                 "blue_artillery": { "id": "blue_artillery", "type": "blue_artillery", "buyResource": "Supplies", "buyValue": 0 },
                 "blue_battery": { "id": "blue_battery", "type": "blue_battery", "buyResource": "Supplies", "buyValue": 0 },
                 "blue_battletank": { "id": "blue_battletank", "type": "blue_battletank", "buyResource": "Supplies", "buyValue": 0 },
@@ -96,45 +96,71 @@
         "2": { "id": 2, "color": "#0000ff", "name": "Sea", "passability": "Sea", "autoCapture": false, "hasBorder": false },
         "3": { "id": 3, "color": "#0000ff", "name": "Shore", "passability": "Shore", "autoCapture": true, "hasBorder": false }
     },
-    "passabilityTypes": {
+    "PassabilityTypes": {
         "Land": { "id": "Land" },
         "Mountain": { "id": "Mountain" },
         "Sea": { "id": "Sea" },
         "Shore": { "id": "Shore" }
     },
-    "teamTypes": {
-        "0": {
-            "id": 0,
-            "name": "#CONFIG_TEAM_CRIMSON",
-            "allies": { "0": true, "2": true },
-            "enemies": { "1": true, "3": true },
-            "sprites": { 
+    "TeamTypesMapping": {
+        "0": "Crimson",
+        "1": "Allies",
+        "2": "Neutral",
+        "3": "Wrath"
+    },
+    "TeamTypes": {
+        "Crimson": {
+            "id": "Crimson",
+            "name": "Crimson Skies Empire",
+            "worldID": 0,
+            "alliances": {
+                "Crimson": { "isWalkable": true, "isPassable": true, "isAttackable": false },
+                "Allies": { "isWalkable": false, "isPassable": false, "isAttackable": true },
+                "Neutral": { "isWalkable": true, "isPassable": true, "isAttackable": false },
+                "Wrath": { "isWalkable": false, "isPassable": false, "isAttackable": true }
+            },
+            "sprites": {
                 "stat_card": "unit_stat_card_bad",
-                "stat_card_small": "unit_stat_card_bad_small"
+                "stat_card_small": "unit_stat_card_bad_small"  
             }
         },
-        "1": {
-            "id": 1,
-            "name": "#CONFIG_TEAM_ALLIES",
-            "allies": { "1": true, "2": true },
-            "enemies": { "0": true, "3": true },
-            "sprites": { 
+        "Allies": {
+            "id": "Allies",
+            "name": "The Resistance",
+            "worldID": 1,
+            "alliances": {
+                "Crimson": { "isWalkable": false, "isPassable": false, "isAttackable": true },
+                "Allies": { "isWalkable": true, "isPassable": true, "isAttackable": false },
+                "Neutral": { "isWalkable": true, "isPassable": true, "isAttackable": false },
+                "Wrath": { "isWalkable": false, "isPassable": false, "isAttackable": true }
+            },
+            "sprites": {
                 "stat_card": "unit_stat_card_good",
                 "stat_card_small": "unit_stat_card_good_small"
             }
         },
-        "2": {
-            "id": 2,
-            "name": "#CONFIG_TEAM_NEUTRAL",
-            "allies": {},
-            "enemies": {},
+        "Neutral": {
+            "id": "Neutral",
+            "name": "Neutral Forces",
+            "worldID": 2,
+            "alliances": {
+                "Crimson": { "isWalkable": true, "isPassable": true, "isAttackable": false },
+                "Allies": { "isWalkable": true, "isPassable": true, "isAttackable": false },
+                "Neutral": { "isWalkable": true, "isPassable": true, "isAttackable": false },
+                "Wrath": { "isWalkable": true, "isPassable": true, "isAttackable": false }
+            },
             "sprites": {}
         },
-        "3": {
-            "id": 3,
-            "name": "#CONFIG_TEAM_ANGRY", 
-            "allies": {},
-            "enemies": { "0": true, "1": true },
+        "Wrath": {
+            "id": "Wrath",
+            "name": "The Wrathful",
+            "worldID": 3,
+            "alliances": {
+                "Crimson": { "isWalkable": false, "isPassable": false, "isAttackable": true },
+                "Allies": { "isWalkable": false, "isPassable": false, "isAttackable": true },
+                "Neutral": { "isWalkable": true, "isPassable": true, "isAttackable": false },
+                "Wrath": { "isWalkable": true, "isPassable": true, "isAttackable": false }
+            },
             "sprites": {}
         }
     },

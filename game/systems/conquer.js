@@ -1,6 +1,5 @@
 import { Autotiler } from "../../source/tile/autotiler.js";
 
-import { TeamComponent } from "../components/team.js";
 import { TeamSystem } from "./team.js";
 
 export const ConquerSystem = function() {}
@@ -67,18 +66,19 @@ ConquerSystem.updateBorder = function(gameContext, tileX, tileY, teamID) {
         return;
     }
 
-    if(!TeamSystem.isAllied(gameContext, teamID, centerTeamID)) {
+    if(!TeamSystem.isTileAllied(gameContext, teamID, centerTeamID)) {
         return;
     }
 
     const autoIndex = Autotiler.autotile8Bits(tileX, tileY, (center, neighbor) => {
-        const neighborTeamID = activeMap.getTile(teamLayerID, neighbor.x, neighbor.y);
+        const { x, y } = neighbor;
+        const neighborTeamID = activeMap.getTile(teamLayerID, x, y);
 
         if(neighborTeamID !== centerTeamID) {
             return 0;
         }
 
-        const neighborTypeID = activeMap.getTile(typeLayerID, neighbor.x, neighbor.y);
+        const neighborTypeID = activeMap.getTile(typeLayerID, x, y);
         const neighborType = tileTypes[neighborTypeID];
 
         if(!neighborType || !neighborType.hasBorder) {
@@ -93,25 +93,4 @@ ConquerSystem.updateBorder = function(gameContext, tileX, tileY, teamID) {
     const tileID = tileManager.getAutotilerID(borderAutotilerID, autoIndex);
 
     activeMap.placeTile(tileID, borderLayerID, tileX, tileY);
-}
-
-ConquerSystem.reloadGraphics = function(gameContext, controller, mapID) {
-    const { world } = gameContext;
-    const { mapManager } = world;
-    const worldMap = mapManager.getLoadedMap(mapID);
-
-    if(!worldMap) {
-        return;
-    }
-
-    const layerTypes = world.getConfig("layerTypes");
-    const teamLayerID = layerTypes.team.layerID;
-    const teamComponent = controller.getComponent(TeamComponent);
-
-    worldMap.updateTiles((index, tileX, tileY) => {
-        const teamID = worldMap.getTile(teamLayerID, tileX, tileY);
-        
-        ConquerSystem.updateBorder(gameContext, tileX, tileY, teamComponent.teamID);
-        ConquerSystem.convertTileGraphics(gameContext, tileX, tileY, teamID);
-    });
 }

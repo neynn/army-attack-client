@@ -65,10 +65,10 @@ ControllerSystem.updateAttackers = function(gameContext, controller) {
         return;
     }
 
-    const isEnemy = TeamSystem.isEntityEnemy(gameContext, mouseEntity, controller);
+    const isAttackable = TeamSystem.isEntityAttackable(gameContext, controller, mouseEntity);
     const isTargetable = TargetSystem.isTargetable(mouseEntity);
 
-    if(!isEnemy || !isTargetable) {
+    if(!isAttackable || !isTargetable) {
         AnimationSystem.revertToIdle(gameContext, oldAttackers);
         ControllerSystem.resetAttackers(gameContext, controller);
         return;
@@ -116,9 +116,9 @@ ControllerSystem.selectEntity = function(gameContext, controller, entity) {
             continue;
         }
 
-        const isFriendly = TeamSystem.isEntityFriendly(gameContext, entity, tileEntity);
+        const isAttackable = TeamSystem.isEntityAttackable(gameContext, entity, tileEntity);
 
-        if(isFriendly) {
+        if(!isAttackable) {
             //TODO: Show stop sign based on entities size!
             ConquerSystem.convertTileGraphics(gameContext, positionX, positionY, 0);
         }
