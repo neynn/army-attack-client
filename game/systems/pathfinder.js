@@ -88,27 +88,25 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
         const nextTeamID = activeMap.getTile(teamLayerID, next.positionX, next.positionY);
         const nextAlliance = entityAlliances[teamMapping[nextTeamID]];
         const isNextWalkable = nextAlliance.isWalkable || moveComponent.isStealth && moveComponent.courageType !== MoveComponent.COURAGE_TYPE_COWARD;
-
+        
         const currentTeamID = activeMap.getTile(teamLayerID, current.positionX, current.positionY);
         const currentAlliance = entityAlliances[teamMapping[currentTeamID]];
-        const isCurrentWalkable = currentAlliance.isWalkable || moveComponent.isStealth && moveComponent.courageType !== MoveComponent.COURAGE_TYPE_COWARD;
+        const isCurrentWalkable = currentAlliance.isWalkable || moveComponent.isStealth;
+
+        next.state = PathfinderSystem.NODE_STATE.VALID;
 
         if(!isNextWalkable) {
-            if(isCurrentWalkable) {
-                next.state = PathfinderSystem.NODE_STATE.VALID;
-            } else {
+            if(!isCurrentWalkable || moveComponent.courageType === MoveComponent.COURAGE_TYPE_COWARD) {
                 next.state = PathfinderSystem.NODE_STATE.INVALID_WALKABILITY;
             }
 
             return FloodFill.IGNORE_NEXT;
         }
 
-        if(!isCurrentWalkable) {
-            next.state = PathfinderSystem.NODE_STATE.VALID;
+        if(!isCurrentWalkable && moveComponent.courageType === MoveComponent.COURAGE_TYPE_COWARD) {
             return FloodFill.IGNORE_NEXT;
         }
 
-        next.state = PathfinderSystem.NODE_STATE.VALID;
         return FloodFill.USE_NEXT;
     });
 
@@ -116,41 +114,29 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
 }
 
 PathfinderSystem.generateMovePath = function(nodeList, targetX, targetY) {
-    const index = PathfinderSystem.getTargetIndex(nodeList, targetX, targetY);
-    const path = [];
-
-    if(index === -1) {
-        return path;
-    }
-
-    const targetNode = nodeList[index];
-    const flatTree = FloodFill.flatten(targetNode);
-
-    // i > 0 to exclude the origin point!
-    for(let i = flatTree.length - 1; i > 0; i--) {
-        const direction = {
-            "deltaX": flatTree[i - 1].positionX - flatTree[i].positionX,
-            "deltaY": flatTree[i - 1].positionY - flatTree[i].positionY
-        }
-
-        path.push(direction);
-    }
-
-    return path;
-}
-
-PathfinderSystem.getTargetIndex = function(nodeList, targetX, targetY) {
     for(let i = 0; i < nodeList.length; i++) {
-        const { positionX, positionY, state } = nodeList[i];
+        const targetNode = nodeList[i];
+        const { positionX, positionY, state } = targetNode;
 
-        if(state !== PathfinderSystem.NODE_STATE.VALID) {
+        if(targetX !== positionX || targetY !== positionY || state !== PathfinderSystem.NODE_STATE.VALID) {
             continue;
         }
 
-        if(targetX === positionX && targetY === positionY) {
-            return i;
+        const path = [];
+        const flatTree = FloodFill.flatten(targetNode);
+
+        // i > 0 to exclude the origin point!
+        for(let i = flatTree.length - 1; i > 0; i--) {
+            const direction = {
+                "deltaX": flatTree[i - 1].positionX - flatTree[i].positionX,
+                "deltaY": flatTree[i - 1].positionY - flatTree[i].positionY
+            }
+    
+            path.push(direction);
         }
+
+        return path;
     }
 
-    return -1;
-}   
+    return [];
+}
