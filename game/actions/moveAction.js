@@ -65,9 +65,9 @@ MoveAction.prototype.getValidated = function(gameContext, request, messengerID) 
     }
     
     const isAlive = HealthSystem.isAlive(entity);
-    const freeTile = PathfinderSystem.isTileFree(gameContext, targetX, targetY);
+    const isTileFree = PathfinderSystem.isTileFree(gameContext, targetX, targetY);
 
-    if(!isAlive || !freeTile) {
+    if(!isAlive || !isTileFree) {
         return null;
     }
 

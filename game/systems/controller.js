@@ -101,10 +101,10 @@ ControllerSystem.selectEntity = function(gameContext, controller, entity) {
     const attackTileID = tileManager.getTileID("overlay", "grid_attack_1x1");
 
     for(const node of nodes) {
-        const { positionX, positionY, isValid } = node;
+        const { positionX, positionY, state } = node;
         const nodeKey = `${positionX}-${positionY}`;
 
-        if(!isValid) {
+        if(state !== PathfinderSystem.NODE_STATE.VALID) {
             camera.addOverlay(ArmyCamera.OVERLAY_TYPE_MOVE, positionX, positionY, attackTileID);
             continue;
         } 
@@ -121,7 +121,7 @@ ControllerSystem.selectEntity = function(gameContext, controller, entity) {
 
         if(!isAttackable) {
             //TODO: Show stop sign based on entities size!
-            ConquerSystem.convertTileGraphics(gameContext, positionX, positionY, 0);
+            //ConquerSystem.convertTileGraphics(gameContext, positionX, positionY, 0);
         }
     }
 
@@ -141,7 +141,7 @@ ControllerSystem.deselectEntity = function(gameContext, controller, entity) {
     nodeList.forEach(node => {
         const { positionX, positionY } = node;
         
-        ConquerSystem.convertTileGraphics(gameContext, positionX, positionY, 1);
+        //ConquerSystem.convertTileGraphics(gameContext, positionX, positionY, 1);
     });
 
     controller.deselectAll();

@@ -178,15 +178,15 @@ EntityManager.prototype.getEntity = function(entityID) {
     return this.entities.get(entityID);
 }
 
-EntityManager.prototype.createEntity = function(entityTypeID, externalID) {    
-    const config = this.entityTypes[entityTypeID];
+EntityManager.prototype.createEntity = function(typeID, externalID) {    
+    const config = this.entityTypes[typeID];
     const entityID = externalID || this.idGenerator.getID();
-    const entity = new Entity(entityID, entityTypeID);
+    const entity = new Entity(entityID, typeID);
    
-    if(typeof config === "object") {
+    if(config) {
         entity.setConfig(config);
     } else {
-        Logger.log(false, "EntityType does not exist", "EntityManager.prototype.createEntity", {entityID, externalID});
+        Logger.log(false, "EntityType does not exist", "EntityManager.prototype.createEntity", { typeID, entityID, externalID });
     }
 
     this.entities.set(entityID, entity)
@@ -194,28 +194,28 @@ EntityManager.prototype.createEntity = function(entityTypeID, externalID) {
     return entity;
 }
 
-EntityManager.prototype.buildEntity = function(gameContext, entity, typeID, setup) {
+EntityManager.prototype.getArchetype = function(typeID) {
     const entityType = this.entityTypes[typeID];
 
     if(!entityType) {
-        Logger.error(false, "EntityType does not exist!", "EntityManager.prototype.buildEntity", { typeID });
-        return;
+        Logger.error(false, "EntityType does not exist!", "EntityManager.prototype.getArchetype", { typeID });
+        return null;
     }
 
     const archetypeID = entityType.archetype;
     const archetype = this.archetypes.get(archetypeID);
 
     if(!archetype) {
-        Logger.error(false, "Archetype does not exist!", "EntityManager.prototype.buildEntity", { archetypeID, typeID });
-        return;
+        Logger.error(false, "Archetype does not exist!", "EntityManager.prototype.getArchetype", { archetypeID, typeID });
+        return null;
     }
 
-    archetype.build(gameContext, entity, entityType, setup);
-} 
+    return archetype;
+}
 
 EntityManager.prototype.destroyEntity = function(entityID) {
     if(!this.entities.has(entityID)) {
-        Logger.log(false, "Entity does not exist!", "EntityManager.prototype.destroyEntity", {entityID});
+        Logger.log(false, "Entity does not exist!", "EntityManager.prototype.destroyEntity", { entityID });
         return;
     }
     

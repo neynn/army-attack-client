@@ -1,12 +1,15 @@
 export const FloodFill = function() {}
 
+FloodFill.IGNORE_NEXT = 0;
+FloodFill.USE_NEXT = 1;
+
 FloodFill.createNode = function(g, positionX, positionY, parent) {
     return { 
         "g": g,
         "positionX": positionX,
         "positionY": positionY,
         "parent": parent,
-        "isValid": false
+        "state": null
     }
 }
 
@@ -25,8 +28,8 @@ FloodFill.getFirstEntry = function(map) {
 FloodFill.search = function(startX, startY, gLimit, mapWidth, mapHeight, onCheck) {
     const openNodes = new Map();
     const visitedNodes = new Set();
-    const allNodes = [];
     const startNode = FloodFill.createNode(0, startX, startY, null);
+    const allNodes = [];
 
     openNodes.set(FloodFill.getPositionKey(startNode.positionX, startNode.positionY), startNode);
 
@@ -59,8 +62,7 @@ FloodFill.search = function(startX, startY, gLimit, mapWidth, mapHeight, onCheck
 
             allNodes.push(childNode);
 
-            if(onCheck(childNode, node)) {
-                childNode.isValid = true;
+            if(onCheck(childNode, node) === FloodFill.USE_NEXT) {
                 openNodes.set(childKey, childNode);
             }
         }

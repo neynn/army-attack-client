@@ -66,8 +66,6 @@ GameContext.prototype.end = function() {
     this.uiManager.end();
 }
 
-GameContext.prototype.onResourcesLoad = function(resources) {}
-
 GameContext.prototype.loadResources = function(resources) {
     this.client.musicPlayer.load(resources.music);
     this.client.soundPlayer.load(resources.sounds);
@@ -80,7 +78,6 @@ GameContext.prototype.loadResources = function(resources) {
     this.world.entityManager.load(resources.entities, resources.components, resources.traits);
     this.settings = resources.settings;
     this.world.config = resources.world;
-    this.onResourcesLoad(resources);
 }
 
 GameContext.prototype.initialize = function() {}

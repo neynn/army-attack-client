@@ -31,7 +31,6 @@ import { UnitArchetype } from "./init/archetype/unit.js";
 import { EditorController } from "./init/controller/editor.js";
 import { AvianComponent } from "./components/avian.js";
 import { BulldozeComponent } from "./components/bulldoze.js";
-import { UnitBusterComponent } from "./components/unitBuster.js";
 import { ConstructionAction } from "./actions/constructionAction.js";
 import { DecayComponent } from "./components/decay.js";
 import { CounterComponent } from "./components/counter.js";
@@ -46,11 +45,9 @@ export const ArmyContext = function() {
 ArmyContext.prototype = Object.create(GameContext.prototype);
 ArmyContext.prototype.constructor = ArmyContext;
 
-ArmyContext.prototype.onResourcesLoad = function(resources) {
+ArmyContext.prototype.initialize = function() {
     this.updateConversions();
-}
 
-ArmyContext.prototype.initialize = function() {    
     this.world.actionQueue.registerHandler(ACTION_TYPES.MOVE, new MoveAction());
     this.world.actionQueue.registerHandler(ACTION_TYPES.ATTACK, new AttackAction());
     this.world.actionQueue.registerHandler(ACTION_TYPES.CONSTRUCTION, new ConstructionAction());
@@ -75,7 +72,6 @@ ArmyContext.prototype.initialize = function() {
     this.world.entityManager.registerComponent("Armor", ArmorComponent);
     this.world.entityManager.registerComponent("Avian", AvianComponent);
     this.world.entityManager.registerComponent("Bulldoze", BulldozeComponent);
-    this.world.entityManager.registerComponent("UnitBuster", UnitBusterComponent);
     this.world.entityManager.registerComponent("Counter", CounterComponent);
     this.world.entityManager.registerComponent("Resource", ResourceComponent);
 

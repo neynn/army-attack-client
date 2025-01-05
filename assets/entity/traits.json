@@ -44,9 +44,9 @@
     },
     "Coward": {
         "id": "Coward",
-        "description": "If a unit can walk on enemy tiles.",
+        "description": "If a unit can walk on enemy tiles. courageType = { 0: normal, 1: coward }",
         "components": {
-            "Move": { "isCoward": true }
+            "Move": { "courageType": 1 }
         }
     },
     "Stealth": {
@@ -96,13 +96,6 @@
         "description": "Used by enemy bulldozers to ignore the revive of the specified entityTypes.",
         "components": {
             "Bulldoze": { "destroyUnit": true }
-        }
-    },
-    "TankBuster": {
-        "id": "TankBuster",
-        "description": "Deals 1 extra damage to units with the -Armor- trait.",
-        "components": {
-            "UnitBuster": { "armor": 1 }
         }
     },
     "IgnoreTargeting": { "id": "IgnoreTargeting", "component": "IgnoreTargetingComponent", "data": null, "description": "Not implemented. Allows a unit to not be targeted." },

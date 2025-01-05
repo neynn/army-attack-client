@@ -1,13 +1,11 @@
 import { Action } from "../../source/action/action.js";
 
-import { ENTITY_STATES } from "../enums.js";
 import { AnimationSystem } from "../systems/animation.js";
 import { AttackSystem } from "../systems/attack.js";
 import { DeathSystem } from "../systems/death.js";
-import { DownSystem } from "../systems/down.js";
+import { DecaySystem } from "../systems/decay.js";
 import { HealthSystem } from "../systems/health.js";
 import { MorphSystem } from "../systems/morph.js";
-import { ReviveSystem } from "../systems/revive.js";
 
 export const AttackAction = function() {
     this.timePassed = 0;
@@ -15,6 +13,10 @@ export const AttackAction = function() {
 
 AttackAction.prototype = Object.create(Action.prototype);
 AttackAction.prototype.constructor = AttackAction;
+
+AttackAction.STATE_IDLE = 0;
+AttackAction.STATE_DOWN = 1;
+AttackAction.STATE_DEAD = 2;
 
 AttackAction.prototype.onClear = function() {
     this.timePassed = 0;
@@ -29,9 +31,8 @@ AttackAction.prototype.onStart = function(gameContext, request) {
     AnimationSystem.playFire(gameContext, target, attackers);
     HealthSystem.reduceHealth(target, damage);
 
-    if(state === ENTITY_STATES.DOWN) {
-        ReviveSystem.downEntity(gameContext, target);
-        DownSystem.downEntity(target);
+    if(state === AttackAction.STATE_DOWN) {
+        DecaySystem.beginDecay(gameContext, target);
     } else {
         MorphSystem.toHit(gameContext, target);
     }
@@ -45,10 +46,10 @@ AttackAction.prototype.onEnd = function(gameContext, request) {
 
     AnimationSystem.revertToIdle(gameContext, attackers);
 
-    if(state === ENTITY_STATES.DEAD) {
+    if(state === AttackAction.STATE_DEAD) {
         AnimationSystem.playDeath(gameContext, target);
         DeathSystem.destroyEntity(gameContext, entityID);
-    } else if(state === ENTITY_STATES.IDLE) {
+    } else if(state === AttackAction.STATE_IDLE) {
         MorphSystem.toIdle(gameContext, target);
     }
 }
@@ -84,18 +85,18 @@ AttackAction.prototype.getValidated = function(gameContext, request, messengerID
         return null;
     }
 
-    let state = ENTITY_STATES.IDLE;
+    let state = AttackAction.STATE_IDLE;
     const damage = AttackSystem.getDamage(gameContext, targetEntity, attackers);
     const health = HealthSystem.getRemainingHealth(targetEntity, damage);
 
     if(health === 0) {
-        const isBulldozed = AttackSystem.isBulldozed(gameContext, targetEntity, attackers);
-        const isReviveable = ReviveSystem.isReviveable(targetEntity);
+        const isBulldozed = AttackSystem.getBulldozed(gameContext, targetEntity, attackers);
+        const isReviveable = DecaySystem.isReviveable(targetEntity);
 
         if(isReviveable && !isBulldozed) {
-            state = ENTITY_STATES.DOWN;
+            state = AttackAction.STATE_DOWN;
         } else {
-            state = ENTITY_STATES.DEAD;
+            state = AttackAction.STATE_DEAD;
         }
     }
     

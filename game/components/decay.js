@@ -1,15 +1,16 @@
 export const DecayComponent = function() {
-    this.isReviveable = false;
     this.isElite = false;
+    this.isReviveable = false;
+    this.decayState = DecayComponent.DECAY_STATE_REGULAR;
     this.decayProgress = 0;
-    this.decayType = DecayComponent.DECAY_TYPE_TIME;
 }
 
-DecayComponent.DECAY_TYPE_TIME = 0;
-DecayComponent.DECAY_TYPE_TURN = 1;
+DecayComponent.DECAY_STATE_REGULAR = 0;
+DecayComponent.DECAY_STATE_DECAY = 1;
 
 DecayComponent.prototype.save = function() {
     return {
+        "decayState": this.decayState,
         "decayProgress": this.decayProgress
     }
 }

@@ -61,17 +61,19 @@ DefaultArchetype.prototype.finalizeEntity = function(gameContext, entity, type, 
     this.onFinalize(gameContext, entity, sprite, type, setup);
 }
 
-DefaultArchetype.prototype.build = function(gameContext, entity, type, setup) {
+DefaultArchetype.prototype.build = function(gameContext, entity, setup) {
     const { world } = gameContext;
     const { entityManager } = world;
-    const { stats } = type;
+    const config = entity.getConfig();
+
+    const { stats } = config;
     const { mode, components } = setup;
     const { traits } = stats[mode];
 
     entity.events = new EventEmitter();
     
-    this.initializeEntity(entity, type, setup);
+    this.initializeEntity(entity, config, setup);
     entityManager.loadTraits(entity, traits);
     entityManager.loadCustomComponents(entity, components);
-    this.finalizeEntity(gameContext, entity, type, setup);
+    this.finalizeEntity(gameContext, entity, config, setup);
 }

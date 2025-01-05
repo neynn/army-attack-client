@@ -4,8 +4,6 @@ import { ArmorComponent } from "../components/armor.js";
 import { AttackComponent } from "../components/attack.js";
 import { BulldozeComponent } from "../components/bulldoze.js";
 import { PositionComponent } from "../components/position.js";
-import { UnitBusterComponent } from "../components/unitBuster.js";
-import { UnitSizeComponent } from "../components/unitSize.js";
 import { HealthSystem } from "./health.js";
 import { TeamSystem } from "./team.js";
 
@@ -95,7 +93,7 @@ AttackSystem.getActiveAttackers = function(gameContext, target) {
     return attackers;
 }
 
-AttackSystem.getDamage = function(gameContext, target, attackerIDs) {
+AttackSystem.getDamage = function(gameContext, target, attackers) {
     const { world } = gameContext;
     const { entityManager } = world;
 
@@ -103,29 +101,16 @@ AttackSystem.getDamage = function(gameContext, target, attackerIDs) {
     let armor = 0;
 
     const armorComponent = target.getComponent(ArmorComponent);
-    const unitSizeComponent = target.getComponent(UnitSizeComponent);
 
     if(armorComponent) {
         armor = armorComponent.armor;
     }
 
-    for(const attackerID of attackerIDs) {
+    for(const attackerID of attackers) {
         let damage = 0;
 
         const attacker = entityManager.getEntity(attackerID);
         const attackComponent = attacker.getComponent(AttackComponent);
-
-        if(unitSizeComponent) {
-            const unitBusterComponent = attacker.getComponent(UnitBusterComponent);
-
-            if(unitBusterComponent) {
-                for(const unitType in unitBusterComponent) {
-                    if(unitSizeComponent[unitType]) {
-                        damage += unitBusterComponent[unitType];
-                    }
-                }
-            }
-        }
 
         damage += attackComponent.damage - armor;
 
@@ -137,20 +122,20 @@ AttackSystem.getDamage = function(gameContext, target, attackerIDs) {
     return totalDamage;
 }
 
-AttackSystem.isBulldozed = function(gameContext, target, attackerIDs) {
+AttackSystem.getBulldozed = function(gameContext, target, attackers) {
     const { world } = gameContext;
     const { entityManager } = world;
-    const requiredFlag = BulldozeComponent.ARCHETYPE_BULLDOZE_MAP[target.config.archetype];
+    const bulldozeFlag = BulldozeComponent.ARCHETYPE_BULLDOZE_MAP[target.config.archetype];
 
-    if(!requiredFlag) {
+    if(!bulldozeFlag) {
         return false;
     }
 
-    for(const attackerID of attackerIDs) {
+    for(const attackerID of attackers) {
         const attacker = entityManager.getEntity(attackerID);
         const bulldozeComponent = attacker.getComponent(BulldozeComponent);
 
-        if(bulldozeComponent && bulldozeComponent[requiredFlag]) {
+        if(bulldozeComponent && bulldozeComponent[bulldozeFlag]) {
             return true;
         }
     }
