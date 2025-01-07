@@ -146,11 +146,11 @@ ArmyContext.prototype.saveSnapshot = function() {
 
     this.world.controllerManager.controllers.forEach(controller => {
         const controllerID = controller.getID();
-        const savedComponents = this.world.entityManager.saveComponents(controller);
+        const saveData = controller.save();
 
         controllers.push({
             "id": controllerID,
-            "components": savedComponents
+            "data": saveData
         });
     });
 

@@ -1,12 +1,9 @@
 import { State } from "../../../source/state/state.js";
 
 import { ACTION_TYPES, CONTROLLER_STATES } from "../../enums.js";
-import { ControllerSystem } from "../../systems/controller.js";
-import { SpriteComponent } from "../../components/sprite.js";
 import { PositionComponent } from "../../components/position.js";
 import { DirectionSystem } from "../../systems/direction.js";
 import { MorphSystem } from "../../systems/morph.js";
-import { AllianceSystem } from "../../systems/alliance.js";
 
 export const ControllerSelectedState = function() {}
 
@@ -15,28 +12,19 @@ ControllerSelectedState.prototype.constructor = ControllerSelectedState;
 
 ControllerSelectedState.prototype.updateCursorSprite = function(gameContext, controller) {
     const { spriteManager } = gameContext;
-    const spriteComponent = controller.getComponent(SpriteComponent);
-    const sprite = spriteManager.getSprite(spriteComponent.spriteID);
-    const hoveredEntity = controller.getHoveredEntity();
+    const sprite = spriteManager.getSprite(controller.spriteID);
 
-    if(controller.getSelectedCount() === 0) {
-        return;
-    }
-
-    if(hoveredEntity) {
+    if(controller.hoveredEntity) {
         controller.updateHoverSprite(gameContext);
         return;
     }
-    
-    const nodeKey = `${controller.tileX}-${controller.tileY}`;
-    const nodeList = controller.getNodeList();
 
-    if(!nodeList.has(nodeKey)) {
+    if(!controller.isCursorNodeValid()) {
         sprite.hide();
         return;
     }
 
-    spriteManager.updateSprite(spriteComponent.spriteID, controller.config.sprites.move["1-1"]);
+    spriteManager.updateSprite(controller.spriteID, controller.config.sprites.move["1-1"]);
     sprite.show();
 }
 
@@ -72,7 +60,7 @@ ControllerSelectedState.prototype.onEventEnter = function(stateMachine, gameCont
 
     if(mouseEntity) {
         const mouseEntityID = mouseEntity.getID();
-        const isAttackable = AllianceSystem.isEntityAttackable(gameContext, controller, mouseEntity);
+        const isAttackable = controller.isEntityAttackable(gameContext, mouseEntity);
 
         if(isAttackable) {
             actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.ATTACK, mouseEntityID));
@@ -83,19 +71,15 @@ ControllerSelectedState.prototype.onEventEnter = function(stateMachine, gameCont
         actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.MOVE, selectedEntityID, x, y));
     }
 
-    ControllerSystem.deselectEntity(gameContext, controller, selectedEntity);
-    
+    controller.undoShowSelectEntity(gameContext, selectedEntity);
     stateMachine.setNextState(CONTROLLER_STATES.IDLE);
 }
 
 ControllerSelectedState.prototype.onUpdate = function(stateMachine, gameContext) {
     const controller = stateMachine.getContext();
-    const hoveredEntity = controller.getHoveredEntity();
 
-    controller.regulateSpritePosition(gameContext, hoveredEntity);
-    
+    controller.regulateSpritePosition(gameContext);
     this.updateEntity(gameContext, controller);
-    ControllerSystem.updateAttackers(gameContext, controller);
-
+    controller.updateAttackers(gameContext);
     this.updateCursorSprite(gameContext, controller);
 }

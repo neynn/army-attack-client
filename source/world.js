@@ -86,13 +86,13 @@ World.prototype.getTileEntityList = function(tileX, tileY) {
     return entityList;
 }
 
-World.prototype.createController = function(gameContext, setup) {
-    if(typeof setup !== "object") {
-        Logger.error(false, "Setup does not exist!", "World.prototype.createController", null);
+World.prototype.createController = function(gameContext, config) {
+    if(typeof config !== "object") {
+        Logger.error(false, "Config must be an object!", "World.prototype.createController", null);
         return null;
     }
 
-    const { type, id } = setup;
+    const { type, id } = config;
     const controller = this.controllerManager.createController(type, id);
 
     if(!controller) {
@@ -100,7 +100,7 @@ World.prototype.createController = function(gameContext, setup) {
     }
 
     this.events.emit(World.EVENT_CONTROLLER_CREATE, controller);
-    controller.onCreate(gameContext, setup);
+    controller.onCreate(gameContext, config);
 
     return controller;
 }

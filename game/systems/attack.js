@@ -4,6 +4,7 @@ import { ArmorComponent } from "../components/armor.js";
 import { AttackComponent } from "../components/attack.js";
 import { BulldozeComponent } from "../components/bulldoze.js";
 import { PositionComponent } from "../components/position.js";
+import { TeamComponent } from "../components/team.js";
 import { AllianceSystem } from "./alliance.js";
 import { HealthSystem } from "./health.js";
 
@@ -65,6 +66,7 @@ AttackSystem.getActiveAttackers = function(gameContext, target) {
         return attackers;
     }
 
+    const targetTeamComponent = target.getComponent(TeamComponent);
     const settings = world.getConfig("Settings");
     const nearbyEntities = AttackSystem.getUniqueEntitiesInRangeOfEntity(gameContext, target, settings.maxAttackRange);
 
@@ -81,11 +83,12 @@ AttackSystem.getActiveAttackers = function(gameContext, target) {
             continue;
         }
 
+        const attackerTeamComponent = attacker.getComponent(TeamComponent);
         const isAlive = HealthSystem.isAlive(attacker);
-        const isAttackable = AllianceSystem.isEntityAttackable(gameContext, attacker, target);
+        const alliance = AllianceSystem.getAlliance(gameContext, attackerTeamComponent.teamID, targetTeamComponent.teamID);
         const hasRange = AttackSystem.isTargetInRange(target, attacker, attackComponent.range);
 
-        if(isAlive && isAttackable && hasRange) {
+        if(isAlive && hasRange && (alliance && alliance.isEnemy)) {
             attackers.push(attackerID);
         }
     }

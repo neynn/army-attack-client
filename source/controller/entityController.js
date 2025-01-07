@@ -1,25 +1,35 @@
-import { Entity } from "../entity/entity.js";
 import { EventEmitter } from "../events/eventEmitter.js";
 import { StateMachine } from "../state/stateMachine.js";
+import { Controller } from "./controller.js";
 
 export const EntityController = function(id) {
-    Entity.call(this, id, "ENTITY_CONTROLLER");
-    
+    Controller.call(this, id);
+
     this.states = new StateMachine(this);
     this.events = new EventEmitter();
     this.selectedEntities = new Set();
     this.availableEntities = new Set();
 }
 
-EntityController.prototype = Object.create(Entity.prototype);
+EntityController.prototype = Object.create(Controller.prototype);
 EntityController.prototype.constructor = EntityController;
+
+EntityController.prototype.save = function() {}
+
+EntityController.prototype.load = function() {}
+
+EntityController.prototype.setConfig = function(config) {
+    if(config !== undefined) {
+        this.config = config;
+    }
+} 
+
+EntityController.prototype.getConfig = function() {
+    return this.config;
+}
 
 EntityController.prototype.update = function(gameContext) {
     this.states.update(gameContext);
-}
-
-EntityController.prototype.getSelectedCount = function() {
-    return this.selectedEntities.size;
 }
 
 EntityController.prototype.selectSingle = function(entityID) {

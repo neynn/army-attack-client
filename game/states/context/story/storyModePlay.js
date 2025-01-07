@@ -45,6 +45,15 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
     });
 
     SpawnSystem.createEntity(gameContext, { 
+        "type": "blue_battery",
+        "mode": "story",
+        "tileX": 6,
+        "tileY": 5,
+        "team": "Allies",
+        "master": "neyn"
+    });
+
+    SpawnSystem.createEntity(gameContext, { 
         "type": "blue_elite_battery",
         "mode": "story",
         "tileX": 4,
@@ -83,8 +92,8 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
     SpawnSystem.createEntity(gameContext, { 
         "type": "blue_elite_infantry",
         "mode": "story",
-        "tileX": 6,
-        "tileY": 5,
+        "tileX": 8,
+        "tileY": 6,
         "team": "Allies",
         "master": "neyn",
         "components": {

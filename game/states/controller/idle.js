@@ -1,9 +1,7 @@
 import { State } from "../../../source/state/state.js";
 
 import { ACTION_TYPES, CONTROLLER_STATES } from "../../enums.js";
-import { AllianceSystem } from "../../systems/alliance.js";
 import { ConstructionSystem } from "../../systems/construction.js";
-import { ControllerSystem } from "../../systems/controller.js";
 import { DeathSystem } from "../../systems/death.js";
 import { HealthSystem } from "../../systems/health.js";
 import { SpawnSystem } from "../../systems/spawn.js";
@@ -24,7 +22,7 @@ ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext)
     }
 
     const entityID = mouseEntity.getID();
-    const isAttackable = AllianceSystem.isEntityAttackable(gameContext, controller, mouseEntity);
+    const isAttackable = controller.isEntityAttackable(gameContext, mouseEntity);
     const isAlive = HealthSystem.isAlive(mouseEntity);
     const isControlled = controller.hasEntity(entityID);
 
@@ -37,8 +35,6 @@ ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext)
         return;
     }
 
-    //Add eventManager to the gameContext. the event manager gets filled with, well, events, which are just functions, like the actionQueue
-    //The eventManager instantly processed events.
     if(ConstructionSystem.isConstruction(mouseEntity)) {
         if(ConstructionSystem.isComplete(mouseEntity)) {
             if(!actionQueue.isRunning()) {
@@ -59,11 +55,10 @@ ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext)
         return;
     }
 
-    const isMoveable = ControllerSystem.isMoveable(mouseEntity, controller);
+    const isMoveable = controller.isEntityMoveable(mouseEntity);
 
     if(isMoveable) {
-        ControllerSystem.selectEntity(gameContext, controller, mouseEntity);
-        
+        controller.showSelectEntity(gameContext, mouseEntity);
         stateMachine.setNextState(CONTROLLER_STATES.SELECTED);
     }
 }
@@ -72,14 +67,13 @@ ControllerIdleState.prototype.onUpdate = function(stateMachine, gameContext) {
     const { world } = gameContext;
     const { actionQueue } = world;
     const controller = stateMachine.getContext();
-    const hoveredEntity = controller.getHoveredEntity();
 
-    controller.regulateSpritePosition(gameContext, hoveredEntity);
+    controller.regulateSpritePosition(gameContext);
 
     if(actionQueue.isRunning()) {
-        ControllerSystem.resetAttackers(gameContext, controller);
+        controller.resetAllAttackers(gameContext, controller);
     } else {
-        ControllerSystem.updateAttackers(gameContext, controller);   
+        controller.updateAttackers(gameContext);   
     }
 
     controller.updateHoverSprite(gameContext);

@@ -7,13 +7,23 @@ import { ControllerBuildState } from "../../states/controller/build.js";
 import { ControllerSelectedState } from "../../states/controller/selected.js";
 import { ControllerIdleState } from "../../states/controller/idle.js";
 import { PositionComponent } from "../../components/position.js";
-import { SpriteComponent } from "../../components/sprite.js";
-import { ResourceComponent } from "../../components/resource.js";
+import { ArmyCamera } from "../../armyCamera.js";
+import { AnimationSystem } from "../../systems/animation.js";
+import { PathfinderSystem } from "../../systems/pathfinder.js";
+import { AllianceSystem } from "../../systems/alliance.js";
 import { TeamComponent } from "../../components/team.js";
+import { HealthSystem } from "../../systems/health.js";
+import { AttackSystem } from "../../systems/attack.js";
+import { MorphSystem } from "../../systems/morph.js";
+import { DirectionSystem } from "../../systems/direction.js";
+import { HealthComponent } from "../../components/health.js";
+import { MoveComponent } from "../../components/move.js";
 
 export const PlayerController = function(id) {
     EntityController.call(this, id);
-    
+
+    this.spriteID = null;
+    this.teamID = null;
     this.hoveredEntity = null;
     this.nodeList = new Map();
     this.attackers = new Set();
@@ -24,15 +34,156 @@ export const PlayerController = function(id) {
 PlayerController.prototype = Object.create(EntityController.prototype);
 PlayerController.prototype.constructor = PlayerController;
 
-PlayerController.prototype.getHoveredEntity = function() {
-    return this.hoveredEntity;
+PlayerController.prototype.isEntityMoveable = function(entity) {
+    const healthComponent = entity.getComponent(HealthComponent);
+    const isSelectable = entity.hasComponent(MoveComponent) && healthComponent.health > 0;
+    const selectedEntityID = this.getFirstSelected();
+
+    return isSelectable && selectedEntityID === null;
+}
+
+PlayerController.prototype.resetAllAttackers = function(gameContext) {
+    const { renderer } = gameContext;
+    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
+
+    camera.clearOverlay(ArmyCamera.OVERLAY_TYPE_ATTACK);
+    this.attackers.clear();
+}
+
+PlayerController.prototype.resetAttacker = function(gameContext, attackerID) {
+    const { world, renderer } = gameContext;
+    const { entityManager } = world;
+    const attacker = entityManager.getEntity(attackerID);
+
+    if(!attacker) {
+        return;
+    }
+
+    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
+    const positionComponent = attacker.getComponent(PositionComponent);
+
+    camera.removeOverlay(ArmyCamera.OVERLAY_TYPE_ATTACK, positionComponent.tileX, positionComponent.tileY);
+    MorphSystem.toIdle(gameContext, attacker);
+}
+
+PlayerController.prototype.hightlightAttacker = function(gameContext, target, attackerID) {
+    const { world, tileManager, renderer } = gameContext;
+    const { entityManager } = world;
+    const attacker = entityManager.getEntity(attackerID);
+    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
+    const positionComponent = attacker.getComponent(PositionComponent);
+    const tileID = tileManager.getTileID("overlay", "grid_attack_1x1");
+
+    camera.addOverlay(ArmyCamera.OVERLAY_TYPE_ATTACK, positionComponent.tileX, positionComponent.tileY, tileID);
+    DirectionSystem.lookAt(attacker, target);
+    MorphSystem.toAim(gameContext, attacker);
+}
+
+PlayerController.prototype.updateAttackers = function(gameContext) {
+    const mouseEntity = gameContext.getMouseEntity();
+
+    if(!mouseEntity) {
+        AnimationSystem.revertToIdle(gameContext, this.attackers);
+        this.resetAllAttackers(gameContext);
+        return;
+    }
+
+    const isAttackable = this.isEntityAttackable(gameContext, mouseEntity);
+    const isAlive = HealthSystem.isAlive(mouseEntity);
+
+    if(!isAttackable || !isAlive) {
+        AnimationSystem.revertToIdle(gameContext, this.attackers);
+        this.resetAllAttackers(gameContext);
+        return;
+    }
+
+    const activeAttackers = AttackSystem.getActiveAttackers(gameContext, mouseEntity)
+    const newAttackers = new Set(activeAttackers);
+
+    for(const attackerID of newAttackers) {
+        this.hightlightAttacker(gameContext, mouseEntity, attackerID);
+    }
+
+    for(const attackerID of this.attackers) {
+        if(!newAttackers.has(attackerID)) {
+            this.resetAttacker(gameContext, attackerID);
+        }
+    }
+
+    this.attackers = newAttackers;
+}
+
+PlayerController.prototype.isEntityAttackable = function(gameContext, entity) {
+    const teamComponent = entity.getComponent(TeamComponent);
+
+    const alliance = AllianceSystem.getAlliance(gameContext, this.teamID, teamComponent.teamID);
+
+    if(!alliance) {
+        return false;
+    }
+
+    return alliance.isEnemy;
+}
+
+PlayerController.prototype.isCursorNodeValid = function() {
+    const nodeKey = `${this.tileX}-${this.tileY}`;
+    const hasNode =  this.nodeList.has(nodeKey);
+
+    return hasNode;
+}
+
+PlayerController.prototype.showSelectEntity = function(gameContext, entity) {
+    const { tileManager, world, renderer } = gameContext;
+    const DEBUG = world.getConfig("DEBUG");
+    const nodeList = new Map();
+    const entityID = entity.getID();
+    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
+    const nodes = PathfinderSystem.generateNodeList(gameContext, entity);
+    const enableTileID = tileManager.getTileID("overlay", "grid_enabled_1x1");
+    const attackTileID = tileManager.getTileID("overlay", "grid_attack_1x1");
+
+    for(const node of nodes) {
+        const { positionX, positionY, state } = node;
+        const nodeKey = `${positionX}-${positionY}`;
+
+        if(state !== PathfinderSystem.NODE_STATE.VALID) {
+            if(DEBUG["SHOW_INVALID_MOVE_TILES"]) {
+                camera.addOverlay(ArmyCamera.OVERLAY_TYPE_MOVE, positionX, positionY, attackTileID);
+            }
+            continue;
+        } 
+
+        const tileEntity = world.getTileEntity(positionX, positionY);
+
+        if(!tileEntity) {
+            camera.addOverlay(ArmyCamera.OVERLAY_TYPE_MOVE, positionX, positionY, enableTileID);
+            nodeList.set(nodeKey, node);
+            continue;
+        }
+    }
+
+    this.nodeList = nodeList;
+    this.selectSingle(entityID);
+
+    AnimationSystem.playSelect(gameContext, entity);
+}
+
+PlayerController.prototype.undoShowSelectEntity = function(gameContext, entity) {
+    const { renderer } = gameContext;
+    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
+
+    camera.clearOverlay(ArmyCamera.OVERLAY_TYPE_MOVE);
+
+    this.deselectAll();
+    this.nodeList.clear();
+
+    AnimationSystem.stopSelect(gameContext, entity);
 }
 
 PlayerController.prototype.updateHoverSprite = function(gameContext) {
     const { spriteManager, world } = gameContext;
     const { entityManager } = world;
-    const spriteComponent = this.getComponent(SpriteComponent);
-    const sprite = spriteManager.getSprite(spriteComponent.spriteID);
+    const sprite = spriteManager.getSprite(this.spriteID);
 
     if(!this.hoveredEntity) {
         sprite.hide();
@@ -45,20 +196,19 @@ PlayerController.prototype.updateHoverSprite = function(gameContext) {
     const spriteType = this.config.sprites[spriteTypeID][spriteKey];
 
     if(spriteType) {
-        spriteManager.updateSprite(spriteComponent.spriteID, spriteType);
+        spriteManager.updateSprite(this.spriteID, spriteType);
         sprite.show();
     }
 }
 
-PlayerController.prototype.regulateSpritePosition = function(gameContext, entityID = null) {
+PlayerController.prototype.regulateSpritePosition = function(gameContext) {
     const { spriteManager, renderer, world } = gameContext;
     const { entityManager } = world;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
-    const spriteComponent = this.getComponent(SpriteComponent);
-    const sprite = spriteManager.getSprite(spriteComponent.spriteID);
+    const sprite = spriteManager.getSprite(this.spriteID);
 
-    if(entityID !== null) {
-        const entity = entityManager.getEntity(entityID);
+    if(this.hoveredEntity !== null) {
+        const entity = entityManager.getEntity(this.hoveredEntity);
         const positionComponent = entity.getComponent(PositionComponent);
         const centerPosition = camera.transformTileToPositionCenter(positionComponent.tileX, positionComponent.tileY);
 
@@ -101,17 +251,11 @@ PlayerController.prototype.onCreate = function(gameContext, payload) {
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
     const controllerSprite = spriteManager.createSprite("cursor_attack_1x1", SpriteManager.LAYER_TOP);
     const { x, y } = camera.transformTileToPositionCenter(0, 0);
-
+    const spriteID = controllerSprite.getID();
     controllerSprite.setPosition(x, y);
 
-    const spriteComponent = SpriteComponent.create(controllerSprite);
-    const teamComponent = TeamComponent.create(payload);
-    const resourceComponent = ResourceComponent.create();
-
-    this.addComponent(teamComponent);
-    this.addComponent(spriteComponent);
-    this.addComponent(resourceComponent);
-
+    this.spriteID = spriteID;
+    this.teamID = payload.team ?? null;
     this.addClickEvent(gameContext);
     this.addDragEvent(gameContext);
 
@@ -137,28 +281,4 @@ PlayerController.prototype.update = function(gameContext) {
     this.tileX = x;
     this.tileY = y;
     this.states.update(gameContext);
-}
-
-PlayerController.prototype.setNodeList = function(nodeList) {
-    this.nodeList = nodeList;
-}
-
-PlayerController.prototype.getNodeList = function() {
-    return this.nodeList;
-}
-
-PlayerController.prototype.clearNodeList = function() {
-    this.nodeList.clear();
-}
-
-PlayerController.prototype.setAttackers = function(attackers) {
-    this.attackers = attackers;
-}
-
-PlayerController.prototype.clearAttackers = function() {
-    this.attackers.clear();
-}
-
-PlayerController.prototype.getAttackers = function() {
-    return this.attackers;
 }

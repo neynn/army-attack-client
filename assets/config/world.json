@@ -1,4 +1,7 @@
 {
+    "DEBUG": {
+        "SHOW_INVALID_MOVE_TILES": true
+    },
     "Settings": {
         "tileWidth": 96,
         "tileHeight": 96,

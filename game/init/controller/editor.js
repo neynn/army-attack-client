@@ -3,14 +3,15 @@ import { Cursor } from "../../../source/client/cursor.js";
 import { clampValue } from "../../../source/math/math.js";
 import { Renderer } from "../../../source/renderer.js";
 import { Button } from "../../../source/ui/elements/button.js";
-import { EntityController } from "../../../source/controller/entityController.js";
 
 import { CAMERA_TYPES } from "../../enums.js";
 import { saveMap } from "../../../helpers.js"
 import { MapSystem } from "../../systems/map.js";
+import { Controller } from "../../../source/controller/controller.js";
 
 export const EditorController = function(id) {
-    EntityController.call(this, id, "Editor");
+    Controller.call(this, id);
+
     this.mapEditor = new MapEditor();
     this.currentLayer = null;
     this.currentLayerButtonID = null;
@@ -26,7 +27,7 @@ EditorController.BUTTON_TYPE_BOOLEAN = "0";
 EditorController.BUTTON_TYPE_GRAPHICS = "1";
 EditorController.BUTTON_TYPE_TYPE = "2";
 
-EditorController.prototype = Object.create(EntityController.prototype);
+EditorController.prototype = Object.create(Controller.prototype);
 EditorController.prototype.constructor = EditorController;
 
 EditorController.prototype.onCreate = function(gameContext, data) {
