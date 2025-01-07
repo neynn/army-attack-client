@@ -1,8 +1,39 @@
 import { Autotiler } from "../../source/tile/autotiler.js";
 
-import { TeamSystem } from "./team.js";
+import { TeamComponent } from "../components/team.js";
+import { AllianceSystem } from "./alliance.js";
 
 export const ConquerSystem = function() {}
+
+ConquerSystem.conquerTile = function(gameContext, tileX, tileY, entity) {
+    const { world } = gameContext;
+    const { mapManager } = world;
+    const activeMap = mapManager.getActiveMap();
+
+    if(!activeMap) {
+        return;
+    }
+
+    const teamComponent = entity.getComponent(TeamComponent);
+    const layerTypes = world.getConfig("LayerTypes");
+    const teamTypes = world.getConfig("TeamTypes");
+    const teamLayerID = layerTypes["Team"].layerID;
+    const worldID = teamTypes[teamComponent.teamID].worldID;
+
+    ConquerSystem.convertTileGraphics(gameContext, tileX, tileY, worldID);
+    activeMap.placeTile(worldID, teamLayerID, tileX, tileY);
+
+    const startX = tileX - 1;
+    const startY = tileY - 1;
+    const endX = tileX + 1;
+    const endY = tileY + 1;
+
+    for(let i = startY; i <= endY; i++) {
+        for(let j = startX; j <= endX; j++) {
+            ConquerSystem.updateBorder(gameContext, j, i, teamComponent.teamID);
+        }
+    }
+}
 
 ConquerSystem.convertTileGraphics = function(gameContext, tileX, tileY, teamID) {
     const { world, tileManager } = gameContext;
@@ -43,33 +74,36 @@ ConquerSystem.convertTileGraphics = function(gameContext, tileX, tileY, teamID) 
 
 ConquerSystem.updateBorder = function(gameContext, tileX, tileY, teamID) {
     const { tileManager, world } = gameContext;
-    const { mapManager } = world;
     const settings = world.getConfig("Settings");
 
     if(!settings.drawBorder) {
         return;
     }
 
+    const { mapManager } = world;
     const activeMap = mapManager.getActiveMap();
 
     if(!activeMap) {
         return;
     }
 
-    const tileTypes = world.getConfig("TileTypes");
     const layerTypes = world.getConfig("LayerTypes");
-    const teamLayerID = layerTypes["Team"].layerID;
+    const tileTypes = world.getConfig("TileTypes");
     const typeLayerID = layerTypes["Type"].layerID;
     const borderLayerID = layerTypes["Border"].layerID;
     const centerTypeID = activeMap.getTile(typeLayerID, tileX, tileY);
-    const centerTeamID = activeMap.getTile(teamLayerID, tileX, tileY);
     const centerType = tileTypes[centerTypeID];
 
     if(!centerType || !centerType.hasBorder) {
         return;
     }
 
-    if(!TeamSystem.isTileAllied(gameContext, teamID, centerTeamID)) {
+    const teamLayerID = layerTypes["Team"].layerID;
+    const teamMapping = world.getConfig("TeamTypesMapping");
+    const centerTeamID = activeMap.getTile(teamLayerID, tileX, tileY);
+    const alliance = AllianceSystem.getAlliance(gameContext, teamID, teamMapping[centerTeamID]);
+
+    if(alliance.isEnemy) {
         return;
     }
 

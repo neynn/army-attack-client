@@ -1,9 +1,7 @@
 import { PositionComponent } from "../components/position.js";
 import { DirectionSystem } from "./direction.js";
-import { ConquerSystem } from "./conquer.js";
 import { PathfinderSystem } from "./pathfinder.js";
 import { MorphSystem } from "./morph.js";
-import { TeamSystem } from "./team.js";
 import { HealthComponent } from "../components/health.js";
 import { MoveComponent } from "../components/move.js";
 import { AnimationSystem } from "./animation.js";
@@ -11,6 +9,7 @@ import { CAMERA_TYPES } from "../enums.js";
 import { ArmyCamera } from "../armyCamera.js";
 import { HealthSystem } from "./health.js";
 import { AttackSystem } from "./attack.js";
+import { AllianceSystem } from "./alliance.js";
 
 export const ControllerSystem = function() {}
 
@@ -66,7 +65,7 @@ ControllerSystem.updateAttackers = function(gameContext, controller) {
         return;
     }
 
-    const isAttackable = TeamSystem.isEntityAttackable(gameContext, controller, mouseEntity);
+    const isAttackable = AllianceSystem.isEntityAttackable(gameContext, controller, mouseEntity);
     const isAlive = HealthSystem.isAlive(mouseEntity);
 
     if(!isAttackable || !isAlive) {
@@ -117,7 +116,7 @@ ControllerSystem.selectEntity = function(gameContext, controller, entity) {
             continue;
         }
 
-        const isAttackable = TeamSystem.isEntityAttackable(gameContext, entity, tileEntity);
+        const isAttackable = AllianceSystem.isEntityAttackable(gameContext, entity, tileEntity);
 
         if(!isAttackable) {
             //TODO: Show stop sign based on entities size!

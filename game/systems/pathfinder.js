@@ -4,6 +4,7 @@ import { AvianComponent } from "../components/avian.js";
 import { MoveComponent } from "../components/move.js";
 import { PositionComponent } from "../components/position.js";
 import { TeamComponent } from "../components/team.js";
+import { AllianceSystem } from "./alliance.js";
 
 export const PathfinderSystem = function() {}
 
@@ -43,13 +44,11 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
     const teamComponent = entity.getComponent(TeamComponent);
 
     const teamMapping = world.getConfig("TeamTypesMapping");
-    const teamTypes = world.getConfig("TeamTypes");
     const layerTypes = world.getConfig("LayerTypes");
     const tileTypes = world.getConfig("TileTypes");
 
     const teamLayerID = layerTypes["Team"].layerID;
     const typeLayerID = layerTypes["Type"].layerID;
-    const entityAlliances = teamTypes[teamComponent.teamID].alliances;
 
     const nodeList = FloodFill.search(positionComponent.tileX, positionComponent.tileY, moveComponent.range, activeMap.width, activeMap.height, (next, current) => {
         const nextTypeID = activeMap.getTile(typeLayerID, next.positionX, next.positionY);
@@ -71,8 +70,8 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
 
             const tileEntity = entityManager.getEntity(entityID);
             const tileEntityTeamComponent = tileEntity.getComponent(TeamComponent);
-            const tileEntityAlliance = entityAlliances[tileEntityTeamComponent.teamID];
-            const isPassable = tileEntityAlliance.isPassable || moveComponent.isCloaked || (avianComponent && avianComponent.state === AvianComponent.STATE_FLYING);
+            const tileEntityAlliance = AllianceSystem.getAlliance(gameContext, teamComponent.teamID, tileEntityTeamComponent.teamID);
+            const isPassable = tileEntityAlliance.isEntityPassingAllowed || moveComponent.isCloaked || (avianComponent && avianComponent.state === AvianComponent.STATE_FLYING);
 
             if(!isPassable) {
                 const tileEntityAvianComponent = tileEntity.getComponent(AvianComponent);
@@ -86,11 +85,11 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
         }
 
         const nextTeamID = activeMap.getTile(teamLayerID, next.positionX, next.positionY);
-        const nextAlliance = entityAlliances[teamMapping[nextTeamID]];
+        const nextAlliance = AllianceSystem.getAlliance(gameContext, teamComponent.teamID, teamMapping[nextTeamID]);
         const isNextWalkable = nextAlliance.isWalkable || moveComponent.isStealth && moveComponent.courageType !== MoveComponent.COURAGE_TYPE_COWARD;
         
         const currentTeamID = activeMap.getTile(teamLayerID, current.positionX, current.positionY);
-        const currentAlliance = entityAlliances[teamMapping[currentTeamID]];
+        const currentAlliance =  AllianceSystem.getAlliance(gameContext, teamComponent.teamID, teamMapping[currentTeamID]);
         const isCurrentWalkable = currentAlliance.isWalkable || moveComponent.isStealth;
 
         next.state = PathfinderSystem.NODE_STATE.VALID;

@@ -6,6 +6,7 @@ import { PathfinderSystem } from "../systems/pathfinder.js";
 import { MorphSystem } from "../systems/morph.js";
 import { PlaceSystem } from "../systems/place.js";
 import { HealthSystem } from "../systems/health.js";
+import { ConquerSystem } from "../systems/conquer.js";
 
 export const MoveAction = function() {}
 
@@ -30,6 +31,7 @@ MoveAction.prototype.onEnd = function(gameContext, request) {
     const { entityManager } = world;
     const entity = entityManager.getEntity(entityID);
 
+    ConquerSystem.conquerTile(gameContext, targetX, targetY, entity);
     MoveSystem.endMove(gameContext, entity, targetX, targetY);
     MorphSystem.toIdle(gameContext, entity);
     PlaceSystem.placeEntity(gameContext, entity);

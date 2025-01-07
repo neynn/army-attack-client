@@ -1,12 +1,12 @@
 import { State } from "../../../source/state/state.js";
 
 import { ACTION_TYPES, CONTROLLER_STATES } from "../../enums.js";
-import { TeamSystem } from "../../systems/team.js";
 import { ControllerSystem } from "../../systems/controller.js";
 import { SpriteComponent } from "../../components/sprite.js";
 import { PositionComponent } from "../../components/position.js";
 import { DirectionSystem } from "../../systems/direction.js";
 import { MorphSystem } from "../../systems/morph.js";
+import { AllianceSystem } from "../../systems/alliance.js";
 
 export const ControllerSelectedState = function() {}
 
@@ -72,7 +72,7 @@ ControllerSelectedState.prototype.onEventEnter = function(stateMachine, gameCont
 
     if(mouseEntity) {
         const mouseEntityID = mouseEntity.getID();
-        const isAttackable = TeamSystem.isEntityAttackable(gameContext, controller, mouseEntity);
+        const isAttackable = AllianceSystem.isEntityAttackable(gameContext, controller, mouseEntity);
 
         if(isAttackable) {
             actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.ATTACK, mouseEntityID));

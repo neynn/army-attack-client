@@ -4,8 +4,8 @@ import { ArmorComponent } from "../components/armor.js";
 import { AttackComponent } from "../components/attack.js";
 import { BulldozeComponent } from "../components/bulldoze.js";
 import { PositionComponent } from "../components/position.js";
+import { AllianceSystem } from "./alliance.js";
 import { HealthSystem } from "./health.js";
-import { TeamSystem } from "./team.js";
 
 export const AttackSystem = function() {}
 
@@ -82,7 +82,7 @@ AttackSystem.getActiveAttackers = function(gameContext, target) {
         }
 
         const isAlive = HealthSystem.isAlive(attacker);
-        const isAttackable = TeamSystem.isEntityAttackable(gameContext, attacker, target);
+        const isAttackable = AllianceSystem.isEntityAttackable(gameContext, attacker, target);
         const hasRange = AttackSystem.isTargetInRange(target, attacker, attackComponent.range);
 
         if(isAlive && isAttackable && hasRange) {

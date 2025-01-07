@@ -104,16 +104,21 @@
         "2": "Neutral",
         "3": "Wrath"
     },
+    "AllianceTypes": {
+        "Enemy": { "id": "Enemy", "isWalkable": false, "isEntityPassingAllowed": false, "isEnemy": true },
+        "Ally": { "id": "Ally", "isWalkable": true, "isEntityPassingAllowed": true, "isEnemy": false },
+        "Neutral": { "id": "Neutral", "isWalkable": true, "isEntityPassingAllowed": true, "isEnemy": false }
+    },
     "TeamTypes": {
         "Crimson": {
             "id": "Crimson",
             "name": "Crimson Skies Empire",
             "worldID": 0,
             "alliances": {
-                "Crimson": { "isWalkable": true, "isPassable": true, "isAttackable": false },
-                "Allies": { "isWalkable": false, "isPassable": false, "isAttackable": true },
-                "Neutral": { "isWalkable": true, "isPassable": true, "isAttackable": false },
-                "Wrath": { "isWalkable": false, "isPassable": false, "isAttackable": true }
+                "Crimson": "Ally",
+                "Allies": "Enemy",
+                "Neutral": "Neutral",
+                "Wrath": "Enemy"
             },
             "sprites": {
                 "stat_card": "unit_stat_card_bad",
@@ -125,10 +130,10 @@
             "name": "The Resistance",
             "worldID": 1,
             "alliances": {
-                "Crimson": { "isWalkable": false, "isPassable": false, "isAttackable": true },
-                "Allies": { "isWalkable": true, "isPassable": true, "isAttackable": false },
-                "Neutral": { "isWalkable": true, "isPassable": true, "isAttackable": false },
-                "Wrath": { "isWalkable": false, "isPassable": false, "isAttackable": true }
+                "Crimson": "Enemy",
+                "Allies": "Ally",
+                "Neutral": "Neutral",
+                "Wrath": "Enemy"
             },
             "sprites": {
                 "stat_card": "unit_stat_card_good",
@@ -140,10 +145,10 @@
             "name": "Neutral Forces",
             "worldID": 2,
             "alliances": {
-                "Crimson": { "isWalkable": true, "isPassable": true, "isAttackable": false },
-                "Allies": { "isWalkable": true, "isPassable": true, "isAttackable": false },
-                "Neutral": { "isWalkable": true, "isPassable": true, "isAttackable": false },
-                "Wrath": { "isWalkable": true, "isPassable": true, "isAttackable": false }
+                "Crimson": "Neutral",
+                "Allies": "Neutral",
+                "Neutral": "Neutral",
+                "Wrath": "Neutral"
             },
             "sprites": {}
         },
@@ -152,10 +157,10 @@
             "name": "The Wrathful",
             "worldID": 3,
             "alliances": {
-                "Crimson": { "isWalkable": false, "isPassable": false, "isAttackable": true },
-                "Allies": { "isWalkable": false, "isPassable": false, "isAttackable": true },
-                "Neutral": { "isWalkable": true, "isPassable": true, "isAttackable": false },
-                "Wrath": { "isWalkable": true, "isPassable": true, "isAttackable": false }
+                "Crimson": "Enemy",
+                "Allies": "Enemy", 
+                "Neutral": "Neutral",
+                "Wrath": "Ally"
             },
             "sprites": {}
         }

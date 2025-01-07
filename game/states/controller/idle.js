@@ -1,12 +1,12 @@
 import { State } from "../../../source/state/state.js";
 
 import { ACTION_TYPES, CONTROLLER_STATES } from "../../enums.js";
+import { AllianceSystem } from "../../systems/alliance.js";
 import { ConstructionSystem } from "../../systems/construction.js";
 import { ControllerSystem } from "../../systems/controller.js";
 import { DeathSystem } from "../../systems/death.js";
 import { HealthSystem } from "../../systems/health.js";
 import { SpawnSystem } from "../../systems/spawn.js";
-import { TeamSystem } from "../../systems/team.js";
 
 export const ControllerIdleState = function() {}
 
@@ -24,7 +24,7 @@ ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext)
     }
 
     const entityID = mouseEntity.getID();
-    const isAttackable = TeamSystem.isEntityAttackable(gameContext, controller, mouseEntity);
+    const isAttackable = AllianceSystem.isEntityAttackable(gameContext, controller, mouseEntity);
     const isAlive = HealthSystem.isAlive(mouseEntity);
     const isControlled = controller.hasEntity(entityID);
 

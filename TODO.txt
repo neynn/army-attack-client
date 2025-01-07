@@ -1,0 +1,2 @@
+- Fix bug in conquer: Borders need to use the clients teamID.
+- Add defense mechanics.
