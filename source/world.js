@@ -122,14 +122,14 @@ World.prototype.createEntity = function(gameContext, setup) {
         return null;
     }
 
-    const { type, master, id } = setup;
+    const { type, owner, id } = setup;
     const entity = this.entityManager.createEntity(type, id);
     const archetype = this.entityManager.getArchetype(type);
     const entityID = entity.getID();
 
     archetype.build(gameContext, entity, setup);
 
-    this.controllerManager.addEntity(master, entityID);
+    this.controllerManager.addEntity(owner, entityID);
     this.events.emit(World.EVENT_ENTITY_CREATE, entity);
 
     return entity;
@@ -137,14 +137,16 @@ World.prototype.createEntity = function(gameContext, setup) {
 
 World.prototype.destroyEntity = function(entityID) {
     const entity = this.entityManager.getEntity(entityID);
+    const owner = this.controllerManager.getOwnerOf(entityID);
 
-    if(!entity) {
-        return;
+    if(owner) {
+        owner.removeEntity(entityID);
     }
 
-    this.controllerManager.removeEntity(entityID);
-    this.entityManager.destroyEntity(entityID);
-    this.events.emit(World.EVENT_ENTITY_DESTROY, entity);
+    if(entity) {
+        this.entityManager.destroyEntity(entityID);
+        this.events.emit(World.EVENT_ENTITY_DESTROY, entity);
+    }
 }
 
 World.prototype.getConfig = function(elementID) {

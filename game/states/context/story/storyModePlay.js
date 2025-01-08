@@ -41,7 +41,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "tileX": 4,
         "tileY": 4,
         "team": "Allies",
-        "master": "neyn"
+        "owner": "neyn"
     });
 
     SpawnSystem.createEntity(gameContext, { 
@@ -50,7 +50,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "tileX": 6,
         "tileY": 5,
         "team": "Allies",
-        "master": "neyn"
+        "owner": "neyn"
     });
 
     SpawnSystem.createEntity(gameContext, { 
@@ -59,7 +59,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "tileX": 4,
         "tileY": 3,
         "team": "Crimson",
-        "master": null
+        "owner": null
     });
 
     SpawnSystem.createEntity(gameContext, { 
@@ -68,7 +68,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "tileX": 1,
         "tileY": 3,
         "team": "Allies",
-        "master": "neyn"
+        "owner": "neyn"
     });
 
     SpawnSystem.createEntity(gameContext, {
@@ -77,7 +77,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "tileX": 2,
         "tileY": 3,
         "team": "Allies",
-        "master": "neyn"
+        "owner": "neyn"
     });
 
     SpawnSystem.createEntity(gameContext, {
@@ -86,7 +86,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "tileX": 2,
         "tileY": 9,
         "team": "Allies",
-        "master": "neyn"
+        "owner": "neyn"
     });
 
     SpawnSystem.createEntity(gameContext, { 
@@ -95,7 +95,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "tileX": 8,
         "tileY": 6,
         "team": "Allies",
-        "master": "neyn",
+        "owner": "neyn",
         "components": {
             "Move": {
                 "range": 50
@@ -109,7 +109,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "tileX": 3,
         "tileY": 1,
         "team": "Allies",
-        "master": "neyn"
+        "owner": "neyn"
     });
 
     const redBattletank = SpawnSystem.createEntity(gameContext, { 
@@ -118,7 +118,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "tileX": 4,
         "tileY": 1,
         "team": "Crimson",
-        "master": null
+        "owner": null
     });
 
     const battleTank = SpawnSystem.createEntity(gameContext, { 
@@ -127,7 +127,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "tileX": 0,
         "tileY": 1,
         "team": "Allies",
-        "master": "neyn",
+        "owner": "neyn",
         "components": {
             "Move": {
                 range: 10

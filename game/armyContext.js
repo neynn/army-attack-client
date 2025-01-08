@@ -155,18 +155,19 @@ ArmyContext.prototype.saveSnapshot = function() {
     });
 
     this.world.entityManager.entities.forEach(entity => {
+        console.log(this.world.entityManager.saveComponent(entity, PositionComponent))
         const entityID = entity.getID();
         const positionComponent = entity.getComponent(PositionComponent);
         const teamComponent = entity.getComponent(TeamComponent);
         const savedComponents = this.world.entityManager.saveComponents(entity);
-        const masterID = this.world.controllerManager.getMaster(entityID);
-
+        const owner = this.world.controllerManager.getOwnerOf(entityID);
+        
         entities.push({
             "type": entity.config.id,
             "tileX": positionComponent.tileX,
             "tileY": positionComponent.tileY,
             "team": teamComponent.teamID,
-            "master": masterID,
+            "owner": owner ? owner.getID() : null,
             "components": savedComponents
         });
     });

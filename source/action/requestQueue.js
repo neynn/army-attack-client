@@ -142,11 +142,7 @@ RequestQueue.prototype.createElement = function(request, priority = RequestQueue
     };
 }
 
-RequestQueue.prototype.addRequest = function(request, priority = RequestQueue.PRIORITY_NORMAL, messengerID = null) {
-    if(!request) {
-        return;
-    }
-
+RequestQueue.prototype.addRequest = function(request = {}, priority = RequestQueue.PRIORITY_NORMAL, messengerID = null) {
     const { type } = request;
     const actionType = this.requestHandlers[type];
     const priorityQueue = this.requestQueues.get(priority);

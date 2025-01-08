@@ -50,7 +50,6 @@ ControllerSelectedState.prototype.onEventEnter = function(stateMachine, gameCont
     const { client, world } = gameContext;
     const { actionQueue, entityManager } = world;
     const { soundPlayer } = client;
-
     const controller = stateMachine.getContext();
     const selectedEntityID = controller.getFirstSelected();
     const selectedEntity = entityManager.getEntity(selectedEntityID);

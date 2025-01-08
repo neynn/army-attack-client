@@ -48,9 +48,7 @@ EntityManager.prototype.registerComponent = function(componentID, component) {
 }
 
 EntityManager.prototype.update = function(gameContext) {
-    for(const [entityID, entity] of this.entities) {
-        entity.update(gameContext);
-    }
+    this.entities.forEach(entity => entity.update(gameContext));
 }
 
 EntityManager.prototype.end = function() {
@@ -70,6 +68,33 @@ EntityManager.prototype.registerArchetype = function(typeID, type) {
     }
 
     this.archetypes.set(typeID, type);
+}
+
+EntityManager.prototype.saveComponent = function(entity, type) {
+    const component = entity.getComponent(type);
+
+    if(!component) {
+        return {};
+    }
+
+    if(typeof component.save === "function") {
+        return component.save();
+    }
+
+    const entries = Object.entries(component);
+    const componentData = {};
+
+    for(const [field, value] of entries) {
+        componentData[field] = value;
+    }
+
+    return componentData;
+}
+
+EntityManager.prototype.loadComponent = function(entity, type, data) {
+    //get the component from the entity.
+    //check if a load function exists.
+    //give the data to the load function.
 }
 
 EntityManager.prototype.saveComponents = function(entity) {
@@ -149,13 +174,13 @@ EntityManager.prototype.loadTraits = function(entity, traits) {
         
         for(const componentID in components) {
             const componentType = this.componentTypes[componentID];
-            const componentFields = components[componentID];
 
             if(!componentType || !componentType.allowTrait || !componentType.reference) {
                 Logger.log(false, `Component is not registered as loadable!`, "EntityManager.prototype.loadTraits", { traitID, componentID }); 
                 continue;
             }
 
+            const componentFields = components[componentID];
             const componentConstructor = componentType.reference;
             const entityComponent = entity.getComponent(componentConstructor);
 

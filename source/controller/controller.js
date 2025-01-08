@@ -3,6 +3,10 @@ export const Controller = function(id) {
     this.config = {};
 }
 
+Controller.prototype.getID = function() {
+    return this.id;
+}
+
 Controller.prototype.update = function(gameContext) {
 
 }

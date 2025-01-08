@@ -36,18 +36,21 @@ ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext)
     }
 
     if(ConstructionSystem.isConstruction(mouseEntity)) {
-        if(ConstructionSystem.isComplete(mouseEntity)) {
-            if(!actionQueue.isRunning()) {
-                const result = ConstructionSystem.getConstructionResult(controller, mouseEntity);
-            
-                //TODO: Open GUI and check if the controller has enough materials/resources.
-                DeathSystem.destroyEntity(gameContext, entityID);
-                SpawnSystem.createEntity(gameContext, result);
-            }
-        } else {
+        const isComplete = ConstructionSystem.isComplete(mouseEntity);
+
+        if(!isComplete) {
             actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.CONSTRUCTION, entityID));
+            return;
         }
 
+        if(!actionQueue.isRunning()) {
+            const result = ConstructionSystem.getConstructionResult(controller, mouseEntity);
+        
+            //TODO: Open GUI and check if the controller has enough materials/resources.
+            DeathSystem.destroyEntity(gameContext, entityID);
+            SpawnSystem.createEntity(gameContext, result);
+        }
+        
         return;
     }
 

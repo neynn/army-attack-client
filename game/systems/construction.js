@@ -39,7 +39,7 @@ ConstructionSystem.getConstructionResult = function(controller, entity) {
     return {
         "id": entityID,
         "team": teamComponent.teamID,
-        "master": controllerID,
+        "owner": controllerID,
         "type": entityConfig.constructionResult,
         "tileX": positionComponent.tileX,
         "tileY": positionComponent.tileY,
