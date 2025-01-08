@@ -4,8 +4,9 @@ import { TextStyle } from "../../source/graphics/applyable/textStyle.js";
 import { AttackComponent } from "../components/attack.js";
 import { HealthComponent } from "../components/health.js";
 import { TeamComponent } from "../components/team.js";
-import { CAMERA_TYPES, ENTITY_EVENTS } from "../enums.js";
+import { CAMERA_TYPES } from "../enums.js";
 import { SpriteComponent } from "../components/sprite.js";
+import { ArmyEntity } from "../init/armyEntity.js";
 
 export const CardSystem = function() {}
 
@@ -25,8 +26,8 @@ CardSystem.addHealthText = function(entity, statCard) {
 
     statCard.addChild(healthText, CardSystem.HEALTH_TEXT_ID);
 
-    entity.events.listen(ENTITY_EVENTS.HEALTH_UPDATE);
-    entity.events.subscribe(ENTITY_EVENTS.HEALTH_UPDATE, CardSystem.STAT_CARD_ID, (health, maxHealth) => {
+    entity.events.listen(ArmyEntity.EVENT.HEALTH_UPDATE);
+    entity.events.subscribe(ArmyEntity.EVENT.HEALTH_UPDATE, CardSystem.STAT_CARD_ID, (health, maxHealth) => {
         healthText.setText(`${health}/${maxHealth}`);
     });
 }
@@ -43,8 +44,8 @@ CardSystem.addDamageText = function(entity, statCard) {
 
     statCard.addChild(damageText, CardSystem.DAMAGE_TEXT_ID);
 
-    entity.events.listen(ENTITY_EVENTS.DAMAGE_UPDATE);
-    entity.events.subscribe(ENTITY_EVENTS.DAMAGE_UPDATE, CardSystem.STAT_CARD_ID, (damage) => {
+    entity.events.listen(ArmyEntity.EVENT.DAMAGE_UPDATE);
+    entity.events.subscribe(ArmyEntity.EVENT.DAMAGE_UPDATE, CardSystem.STAT_CARD_ID, (damage) => {
         damageText.setText(`${damage}`);
     });
 }

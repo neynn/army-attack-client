@@ -2,10 +2,9 @@ import { RequestQueue } from "../source/action/requestQueue.js";
 import { GameContext } from "../source/gameContext.js";
 import { Socket } from "../source/network/socket.js";
 import { World } from "../source/world.js";
-import { EventEmitter } from "../source/events/eventEmitter.js";
 import { NETWORK_EVENTS } from "../source/network/events.js";
 
-import { ACTION_TYPES, CAMERA_TYPES, CONTEXT_STATES, CONTROLLER_TYPES } from "./enums.js";
+import { ACTION_TYPES, CAMERA_TYPES, CONTEXT_STATES } from "./enums.js";
 import { AttackAction } from "./actions/attackAction.js";
 import { MoveAction } from "./actions/moveAction.js";
 import { ArmorComponent } from "./components/armor.js";
@@ -62,9 +61,6 @@ ArmyContext.prototype.initialize = function() {
     this.world.entityManager.registerArchetype("Construction", Construction);
     this.world.entityManager.registerArchetype("Debris", Debris);
 
-    this.world.controllerManager.registerController(CONTROLLER_TYPES.PLAYER, PlayerController);
-    this.world.controllerManager.registerController(CONTROLLER_TYPES.EDITOR, EditorController);
-
     this.world.entityManager.registerComponent("Health", HealthComponent);
     this.world.entityManager.registerComponent("Construction", ConstructionComponent);
     this.world.entityManager.registerComponent("Decay", DecayComponent);
@@ -77,6 +73,9 @@ ArmyContext.prototype.initialize = function() {
     this.world.entityManager.registerComponent("Counter", CounterComponent);
     this.world.entityManager.registerComponent("Resource", ResourceComponent);
 
+    this.world.controllerManager.registerController("Player", PlayerController);
+    this.world.controllerManager.registerController("Editor", EditorController);
+    
     this.states.addState(CONTEXT_STATES.MAIN_MENU, new MainMenuState());
     this.states.addState(CONTEXT_STATES.STORY_MODE, new StoryModeState());
     this.states.addState(CONTEXT_STATES.VERSUS_MODE, new VersusModeState());

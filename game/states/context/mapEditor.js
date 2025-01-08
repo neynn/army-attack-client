@@ -1,7 +1,7 @@
 import { State } from "../../../source/state/state.js";
 import { Camera } from "../../../source/camera/camera.js";
 
-import { CAMERA_TYPES, CONTROLLER_TYPES } from "../../enums.js";
+import { CAMERA_TYPES } from "../../enums.js";
 
 export const MapEditorState = function() {}
 
@@ -20,7 +20,7 @@ MapEditorState.prototype.onEnter = function(stateMachine) {
     uiManager.unparseUI("FPS_COUNTER", gameContext);
 
     world.createController(gameContext, {
-        "type": CONTROLLER_TYPES.EDITOR,
+        "type": "Editor",
         "id": "MAP_EDITOR"
     });
 }

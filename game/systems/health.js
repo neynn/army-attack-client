@@ -1,7 +1,7 @@
 import { clampValue } from "../../source/math/math.js";
 
 import { HealthComponent } from "../components/health.js";
-import { ENTITY_EVENTS } from "../enums.js";
+import { ArmyEntity } from "../init/armyEntity.js";
 
 export const HealthSystem = function() {}
 
@@ -22,7 +22,7 @@ HealthSystem.toMax = function(entity) {
     const healthComponent = entity.getComponent(HealthComponent);
     
     healthComponent.health = healthComponent.maxHealth;
-    entity.events.emit(ENTITY_EVENTS.HEALTH_UPDATE, healthComponent.health, healthComponent.maxHealth);
+    entity.events.emit(ArmyEntity.EVENT.HEALTH_UPDATE, healthComponent.health, healthComponent.maxHealth);
 }
 
 HealthSystem.setHealth = function(entity, value) {
@@ -30,7 +30,7 @@ HealthSystem.setHealth = function(entity, value) {
     const newHealth = clampValue(value, healthComponent.maxHealth, 0);
 
     healthComponent.health = newHealth;
-    entity.events.emit(ENTITY_EVENTS.HEALTH_UPDATE, healthComponent.health, healthComponent.maxHealth);
+    entity.events.emit(ArmyEntity.EVENT.HEALTH_UPDATE, healthComponent.health, healthComponent.maxHealth);
 }
 
 HealthSystem.reduceHealth = function(entity, value) {
@@ -38,5 +38,5 @@ HealthSystem.reduceHealth = function(entity, value) {
     const remainingHealth = clampValue(healthComponent.health - value, healthComponent.maxHealth, 0);
 
     healthComponent.health = remainingHealth;
-    entity.events.emit(ENTITY_EVENTS.HEALTH_UPDATE, healthComponent.health, healthComponent.maxHealth);
+    entity.events.emit(ArmyEntity.EVENT.HEALTH_UPDATE, healthComponent.health, healthComponent.maxHealth);
 }

@@ -1,6 +1,6 @@
 {
-    "PLAYER": {
-        "id": "PLAYER",
+    "Player": {
+        "id": "Player",
         "type": "Entity",
         "sprites": {
             "move": {
@@ -35,8 +35,8 @@
             }
         }
     },
-    "EDITOR": {
-        "id": "EDITOR",
+    "Editor": {
+        "id": "Editor",
         "type": "World"
     }
 }

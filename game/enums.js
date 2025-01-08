@@ -9,11 +9,6 @@ export const GAME_EVENTS = Object.freeze({
     "ACTION_BATCH": 7
 });
 
-export const CONTROLLER_TYPES = Object.freeze({
-    "PLAYER": "PLAYER",
-    "EDITOR": "EDITOR"
-});
-
 export const ACTION_TYPES = Object.freeze({
     "MOVE": "MOVE",
     "ATTACK": "ATTACK",
@@ -35,11 +30,6 @@ export const CONTEXT_STATES = Object.freeze({
     "VERSUS_MODE_LOBBY": "VERSUS_MODE_LOBBY",
     "VERSUS_MODE_PLAY": "VERSUS_MODE_PLAY",
     "EDIT_MODE": "EDIT_MODE"
-});
-
-export const ENTITY_EVENTS = Object.freeze({
-    "HEALTH_UPDATE": "HEALTH_UPDATE",
-    "DAMAGE_UPDATE": "DAMAGE_UPDATE"
 });
 
 export const CONTROLLER_EVENTS = Object.freeze({

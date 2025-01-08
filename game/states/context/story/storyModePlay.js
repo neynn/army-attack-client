@@ -1,6 +1,6 @@
 import { State } from "../../../../source/state/state.js";
 
-import { ACTION_TYPES, CAMERA_TYPES, CONTROLLER_TYPES } from "../../../enums.js";
+import { ACTION_TYPES, CAMERA_TYPES } from "../../../enums.js";
 import { MapSystem } from "../../../systems/map.js";
 import { SpawnSystem } from "../../../systems/spawn.js";
 
@@ -22,7 +22,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
     }
 
     const controller = world.createController(gameContext, {
-        "type": CONTROLLER_TYPES.PLAYER,
+        "type": "Player",
         "team": "Allies",
         "id": "neyn"
     });
@@ -45,9 +45,18 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
     });
 
     SpawnSystem.createEntity(gameContext, { 
-        "type": "war_machine",
+        "type": "neyn_war_machine",
         "mode": "story",
         "tileX": 6,
+        "tileY": 5,
+        "team": "Allies",
+        "owner": "neyn"
+    });
+
+    SpawnSystem.createEntity(gameContext, { 
+        "type": "michie_war_machine",
+        "mode": "story",
+        "tileX": 7,
         "tileY": 5,
         "team": "Allies",
         "owner": "neyn"
