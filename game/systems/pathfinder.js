@@ -86,7 +86,7 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
 
         const nextTeamID = activeMap.getTile(teamLayerID, next.positionX, next.positionY);
         const nextAlliance = AllianceSystem.getAlliance(gameContext, teamComponent.teamID, teamMapping[nextTeamID]);
-        const isNextWalkable = nextAlliance.isWalkable || moveComponent.isStealth && moveComponent.courageType !== MoveComponent.COURAGE_TYPE_COWARD;
+        const isNextWalkable = nextAlliance.isWalkable || moveComponent.isStealth && !moveComponent.isCoward;
         
         const currentTeamID = activeMap.getTile(teamLayerID, current.positionX, current.positionY);
         const currentAlliance =  AllianceSystem.getAlliance(gameContext, teamComponent.teamID, teamMapping[currentTeamID]);
@@ -95,14 +95,14 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
         next.state = PathfinderSystem.NODE_STATE.VALID;
 
         if(!isNextWalkable) {
-            if(!isCurrentWalkable || moveComponent.courageType === MoveComponent.COURAGE_TYPE_COWARD) {
+            if(!isCurrentWalkable || moveComponent.isCoward) {
                 next.state = PathfinderSystem.NODE_STATE.INVALID_WALKABILITY;
             }
 
             return FloodFill.IGNORE_NEXT;
         }
 
-        if(!isCurrentWalkable && moveComponent.courageType === MoveComponent.COURAGE_TYPE_COWARD) {
+        if(!isCurrentWalkable && moveComponent.isCoward) {
             return FloodFill.IGNORE_NEXT;
         }
 

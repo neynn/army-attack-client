@@ -124,11 +124,10 @@ World.prototype.createEntity = function(gameContext, setup) {
 
     const { type, owner, id } = setup;
     const entity = this.entityManager.createEntity(type, id);
-    const archetype = this.entityManager.getArchetype(type);
     const entityID = entity.getID();
 
-    archetype.build(gameContext, entity, setup);
-
+    entity.onCreate(gameContext, setup);
+    
     this.controllerManager.addEntity(owner, entityID);
     this.events.emit(World.EVENT_ENTITY_CREATE, entity);
 

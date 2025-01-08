@@ -20,14 +20,7 @@ import { MainMenuState } from "./states/context/mainMenu.js";
 import { MapEditorState } from "./states/context/mapEditor.js";
 import { StoryModeState } from "./states/context/storyMode.js";
 import { VersusModeState } from "./states/context/versusMode.js";
-import { DefenseArchetype } from "./init/archetype/defense.js";
-import { DecoArchetype } from "./init/archetype/deco.js";
-import { BuildingArchetype } from "./init/archetype/building.js";
-import { HFEArchetype } from "./init/archetype/hfe.js";
-import { TownArchetype } from "./init/archetype/town.js";
-import { ConstructionArchetype } from "./init/archetype/construction.js";
 import { PlayerController } from "./init/controller/player.js";
-import { UnitArchetype } from "./init/archetype/unit.js";
 import { EditorController } from "./init/controller/editor.js";
 import { AvianComponent } from "./components/avian.js";
 import { BulldozeComponent } from "./components/bulldoze.js";
@@ -37,6 +30,13 @@ import { CounterComponent } from "./components/counter.js";
 import { ResourceComponent } from "./components/resource.js";
 import { ArmyCamera } from "./armyCamera.js";
 import { SpawnSystem } from "./systems/spawn.js";
+import { Unit } from "./init/entities/unit.js";
+import { Defense } from "./init/entities/defense.js";
+import { Deco } from "./init/entities/deco.js";
+import { Building } from "./init/entities/building.js";
+import { HFE } from "./init/entities/hfe.js";
+import { Town } from "./init/entities/town.js";
+import { Construction } from "./init/entities/construction.js";
 
 export const ArmyContext = function() {
     GameContext.call(this, 60);
@@ -52,13 +52,13 @@ ArmyContext.prototype.initialize = function() {
     this.world.actionQueue.registerHandler(ACTION_TYPES.ATTACK, new AttackAction());
     this.world.actionQueue.registerHandler(ACTION_TYPES.CONSTRUCTION, new ConstructionAction());
     
-    this.world.entityManager.registerArchetype("Unit", new UnitArchetype());
-    this.world.entityManager.registerArchetype("Defense", new DefenseArchetype());
-    this.world.entityManager.registerArchetype("Deco", new DecoArchetype());
-    this.world.entityManager.registerArchetype("Building", new BuildingArchetype());
-    this.world.entityManager.registerArchetype("HFE", new HFEArchetype());
-    this.world.entityManager.registerArchetype("Town", new TownArchetype());
-    this.world.entityManager.registerArchetype("Construction", new ConstructionArchetype());
+    this.world.entityManager.registerArchetype("Unit", Unit);
+    this.world.entityManager.registerArchetype("Defense", Defense);
+    this.world.entityManager.registerArchetype("Deco", Deco);
+    this.world.entityManager.registerArchetype("Building", Building);
+    this.world.entityManager.registerArchetype("HFE", HFE);
+    this.world.entityManager.registerArchetype("Town", Town);
+    this.world.entityManager.registerArchetype("Construction", Construction);
 
     this.world.controllerManager.registerController(CONTROLLER_TYPES.PLAYER, PlayerController);
     this.world.controllerManager.registerController(CONTROLLER_TYPES.EDITOR, EditorController);

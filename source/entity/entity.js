@@ -76,4 +76,6 @@ Entity.prototype.getConfig = function() {
     return this.config;
 }
 
+Entity.prototype.onCreate = function(gameContext, config) {}
+
 Entity.prototype.update = function(gameContext) {}

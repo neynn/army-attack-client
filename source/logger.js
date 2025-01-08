@@ -9,6 +9,8 @@ export const Logger = {
     exportLogs: function() {}
 }
 
+Logger.SHOW_LOGS = false;
+
 Logger.log = function(isSuccess, reason, script, attachments) {
     const logEntry = {
         "success": isSuccess,
@@ -21,7 +23,9 @@ Logger.log = function(isSuccess, reason, script, attachments) {
         logEntry.timestamp = new Date().toISOString();
         Logger.failedLogs++;
         Logger.logs.push(logEntry);
-        console.error(logEntry);
+        if(Logger.SHOW_LOGS) {
+            console.log(logEntry);
+        }
     } else {
         Logger.successfulLogs++;
     }
@@ -41,7 +45,9 @@ Logger.warn = function(isSuccess, reason, script, attachments) {
         logEntry.timestamp = new Date().toISOString();
         Logger.failedLogs++;
         Logger.logs.push(logEntry);
-        console.warn(logEntry);
+        if(Logger.SHOW_LOGS) {
+            console.warn(logEntry);
+        }
     } else {
         Logger.successfulLogs++;
     }
@@ -61,7 +67,9 @@ Logger.error = function(isSuccess, reason, script, attachments) {
         logEntry.timestamp = new Date().toISOString();
         Logger.failedLogs++;
         Logger.logs.push(logEntry);
-        console.error(logEntry);
+        if(Logger.SHOW_LOGS) {
+            console.error(logEntry);
+        }
     } else {
         Logger.successfulLogs++;
     }

@@ -123,15 +123,20 @@ EntityManager.prototype.getEntity = function(entityID) {
 EntityManager.prototype.createEntity = function(typeID, externalID) {    
     const config = this.entityTypes[typeID];
     const entityID = externalID || this.idGenerator.getID();
-    const entity = new Entity(entityID, typeID);
-   
-    if(config) {
-        entity.setConfig(config);
-    } else {
+
+    if(!config) {
         Logger.log(false, "EntityType does not exist", "EntityManager.prototype.createEntity", { typeID, entityID, externalID });
+        const entity = new Entity(entityID, typeID);
+        return entity;
     }
 
-    this.entities.set(entityID, entity)
+    const { archetype } = config;
+    const Type = this.archetypes.get(archetype);
+    const entity = new Type(entityID, typeID);
+   
+    entity.setConfig(config);
+
+    this.entities.set(entityID, entity);
 
     return entity;
 }

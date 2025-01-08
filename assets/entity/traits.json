@@ -44,9 +44,9 @@
     },
     "Coward": {
         "id": "Coward",
-        "description": "If a unit can walk on enemy tiles. courageType = { 0: normal, 1: coward }",
+        "description": "If a unit can walk on enemy tiles.",
         "components": {
-            "Move": { "courageType": 1 }
+            "Move": { "isCoward": true }
         }
     },
     "Stealth": {
