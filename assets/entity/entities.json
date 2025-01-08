@@ -2867,5 +2867,34 @@
             "fire": ["sound_blue_soldier_fire1", "sound_blue_soldier_fire2", "sound_blue_soldier_fire3", "sound_blue_soldier_fire4"],
             "death": ["sound_enemy_building_destroyed"]
         }
+    },
+    "war_machine": {
+        "id": "war_machine",
+        "archetype": "Unit",
+        "dimX": 1, "dimY": 1, "dimZ": 1,
+        "passability": ["Land"],
+        "stats": {
+            "story": { "health": 8, "damage": 5, "attackRange": 2, "moveRange": 5, "traits": ["Artillery", "Stealth"] }, 
+            "versus": { "health": 8, "damage": 5, "attackRange": 2, "moveRange": 5, "traits": ["Artillery", "Stealth"] }
+        },
+        "sprites": {
+            "aim": "blue_battery_aim",
+            "aim_ne": "blue_battery_aim_ne",
+            "fire": "blue_battery_fire",
+            "fire_ne": "blue_battery_fire_ne",
+            "hit": "blue_battery_hit",
+            "idle": "blue_battery_idle",
+            "move": "blue_battery_move",
+            "move_ne": "blue_battery_move_ne",
+            "downed": "blue_battery_downed",
+            "death": "effect_death_explosion",
+            "weapon": "effect_explosion_sequence"
+        },
+        "sounds": {
+            "fire": ["sound_blue_battery_fire"],
+            "death": ["sound_blue_battery_death"],
+            "move": ["sound_battery_move"],
+            "select": ["sound_vehicle_select_long1", "sound_vehicle_select_long2", "sound_soldier_select_short1", "sound_soldier_select_short2", "sound_soldier_select_short3", "sound_soldier_select_short4", "sound_soldier_select_short5", "sound_soldier_select_short6", "sound_soldier_select_short7"]
+        }
     }
 }

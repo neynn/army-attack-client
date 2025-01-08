@@ -37,6 +37,7 @@ import { Building } from "./init/entities/building.js";
 import { HFE } from "./init/entities/hfe.js";
 import { Town } from "./init/entities/town.js";
 import { Construction } from "./init/entities/construction.js";
+import { Debris } from "./init/entities/debris.js";
 
 export const ArmyContext = function() {
     GameContext.call(this, 60);
@@ -59,6 +60,7 @@ ArmyContext.prototype.initialize = function() {
     this.world.entityManager.registerArchetype("HFE", HFE);
     this.world.entityManager.registerArchetype("Town", Town);
     this.world.entityManager.registerArchetype("Construction", Construction);
+    this.world.entityManager.registerArchetype("Debris", Debris);
 
     this.world.controllerManager.registerController(CONTROLLER_TYPES.PLAYER, PlayerController);
     this.world.controllerManager.registerController(CONTROLLER_TYPES.EDITOR, EditorController);

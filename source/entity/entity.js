@@ -5,6 +5,12 @@ export const Entity = function(id = null, DEBUG_NAME = "") {
     this.components = new Map();
 }
 
+Entity.prototype.onInteract = function(gameContext, controller) {}
+
+Entity.prototype.onCreate = function(gameContext, config) {}
+
+Entity.prototype.update = function(gameContext) {}
+
 Entity.prototype.loadComponent = function(type, data = {}) {
     if(!this.hasComponent(type)) {
         this.addComponent(new type());
@@ -75,7 +81,3 @@ Entity.prototype.setConfig = function(config) {
 Entity.prototype.getConfig = function() {
     return this.config;
 }
-
-Entity.prototype.onCreate = function(gameContext, config) {}
-
-Entity.prototype.update = function(gameContext) {}

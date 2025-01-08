@@ -27,7 +27,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "id": "neyn"
     });
     
-    MapSystem.reloadGraphics(gameContext, controller, MAP);
+    MapSystem.reloadGraphics(gameContext, MAP);
 
     camera.centerWorld();
 
@@ -45,7 +45,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
     });
 
     SpawnSystem.createEntity(gameContext, { 
-        "type": "blue_battery",
+        "type": "war_machine",
         "mode": "story",
         "tileX": 6,
         "tileY": 5,
@@ -53,7 +53,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "owner": "neyn"
     });
 
-    SpawnSystem.createEntity(gameContext, { 
+    const battery = SpawnSystem.createEntity(gameContext, { 
         "type": "blue_elite_battery",
         "mode": "story",
         "tileX": 4,
@@ -146,7 +146,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
     actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.MOVE, battleTank.id, 3, 0));
 
     const s = gameContext.saveSnapshot();
-    console.log(s);
+    console.log(s, gameContext);
 }
 
 StoryModePlayState.prototype.onExit = function(stateMachine) {

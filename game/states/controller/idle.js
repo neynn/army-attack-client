@@ -1,10 +1,7 @@
 import { State } from "../../../source/state/state.js";
 
 import { ACTION_TYPES, CONTROLLER_STATES } from "../../enums.js";
-import { ConstructionSystem } from "../../systems/construction.js";
-import { DeathSystem } from "../../systems/death.js";
 import { HealthSystem } from "../../systems/health.js";
-import { SpawnSystem } from "../../systems/spawn.js";
 
 export const ControllerIdleState = function() {}
 
@@ -31,38 +28,17 @@ ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext)
         return;
     }
 
-    if(!isControlled) {
-        return;
-    }
-
-    if(ConstructionSystem.isConstruction(mouseEntity)) {
-        const isComplete = ConstructionSystem.isComplete(mouseEntity);
-
-        if(!isComplete) {
-            actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.CONSTRUCTION, entityID));
-            return;
-        }
+    if(isControlled) {
+        mouseEntity.onInteract(gameContext, controller);
 
         if(!actionQueue.isRunning()) {
-            const result = ConstructionSystem.getConstructionResult(controller, mouseEntity);
-        
-            //TODO: Open GUI and check if the controller has enough materials/resources.
-            DeathSystem.destroyEntity(gameContext, entityID);
-            SpawnSystem.createEntity(gameContext, result);
+            const isMoveable = controller.isEntityMoveable(mouseEntity);
+    
+            if(isMoveable) {
+                controller.showSelectEntity(gameContext, mouseEntity);
+                stateMachine.setNextState(CONTROLLER_STATES.SELECTED);
+            }
         }
-        
-        return;
-    }
-
-    if(actionQueue.isRunning()) {
-        return;
-    }
-
-    const isMoveable = controller.isEntityMoveable(mouseEntity);
-
-    if(isMoveable) {
-        controller.showSelectEntity(gameContext, mouseEntity);
-        stateMachine.setNextState(CONTROLLER_STATES.SELECTED);
     }
 }
 

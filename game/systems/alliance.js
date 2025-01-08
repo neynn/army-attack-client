@@ -15,7 +15,7 @@ AllianceSystem.getAlliance = function(gameContext, actorTeamID, reactorTeamID) {
     const alliance = allianceTypes[allianceID];
 
     if(!alliance) {
-        console.warn(`AllianceType ${allianceID} of team ${teamID} does not exist!`);
+        console.warn(`AllianceType ${allianceID} of team ${actorTeamID} does not exist!`);
         return null;
     }
 

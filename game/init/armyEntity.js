@@ -77,4 +77,6 @@ ArmyEntity.prototype.onCreate = function(gameContext, config) {
     console.warn("OnCreate has not been defined!");
 }
 
-ArmyEntity.prototype.update = function(gameContext) {}
+ArmyEntity.prototype.update = function(gameContext) {
+    
+}

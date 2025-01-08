@@ -5,9 +5,7 @@ import { PositionComponent } from "../components/position.js";
 import { TeamComponent } from "../components/team.js";
 import { AnimationSystem } from "./animation.js";
 
-export const ConstructionSystem = function() {
-
-}
+export const ConstructionSystem = function() {}
 
 ConstructionSystem.isConstruction = function(entity) {
     return entity.hasComponent(ConstructionComponent);
@@ -35,7 +33,6 @@ ConstructionSystem.getConstructionResult = function(controller, entity) {
     const positionComponent = entity.getComponent(PositionComponent);
     const teamComponent = entity.getComponent(TeamComponent);
 
-    
     return {
         "id": entityID,
         "team": teamComponent.teamID,

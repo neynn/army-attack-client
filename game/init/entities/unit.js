@@ -9,6 +9,10 @@ export const Unit = function(id, DEBUG_NAME) {
 Unit.prototype = Object.create(ArmyEntity.prototype);
 Unit.prototype.constructor = Unit;
 
+Unit.prototype.onInteract = function(gameContext, controller) {
+    
+}
+
 Unit.prototype.onCreate = function(gameContext, config) {
     const { mode } = config;
 

@@ -60,6 +60,11 @@ CardSystem.createStatCard = function(gameContext, entity) {
 
     if(entity.hasComponent(AttackComponent)) {
         const statCardType = teamTypes[teamComponent.teamID].sprites.stat_card;
+
+        if(!statCardType) {
+            return null;
+        }
+
         const statCard = spriteManager.createSprite(statCardType, null);
 
         this.addHealthText(entity, statCard);
@@ -70,6 +75,11 @@ CardSystem.createStatCard = function(gameContext, entity) {
         return statCard;
     } else {
         const statCardType = teamTypes[teamComponent.teamID].sprites.stat_card_small;
+
+        if(!statCardType) {
+            return null;
+        }
+        
         const statCard = spriteManager.createSprite(statCardType, null);
 
         this.addHealthText(entity, statCard);
@@ -93,5 +103,7 @@ CardSystem.generateStatCard = function(gameContext, entity) {
     const sprite = spriteManager.getSprite(spriteComponent.spriteID);
     const statCard = CardSystem.createStatCard(gameContext, entity);
 
-    sprite.addChild(statCard, CardSystem.STAT_CARD_ID);
+    if(statCard) {
+        sprite.addChild(statCard, CardSystem.STAT_CARD_ID);
+    }
 }
