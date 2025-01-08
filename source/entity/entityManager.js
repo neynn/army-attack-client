@@ -3,7 +3,7 @@ import { Logger } from "../logger.js";
 import { Entity } from "./entity.js";
 
 export const EntityManager = function() {
-    this.componentTypes = {};
+    this.componentTypes = new Map();
     this.entityTypes = {};
     this.traitTypes = {};
     this.idGenerator = new IDGenerator("@ENTITY");
@@ -11,17 +11,11 @@ export const EntityManager = function() {
     this.entities = new Map();
 }
 
-EntityManager.prototype.load = function(entityTypes, componentTypes, traitTypes) {
+EntityManager.prototype.load = function(entityTypes, traitTypes) {
     if(typeof entityTypes === "object") {
         this.entityTypes = entityTypes;
     } else {
         Logger.log(false, "EntityTypes must be an object!", "EntityManager.prototype.load", null);
-    }
-
-    if(typeof componentTypes === "object") {
-        this.componentTypes = componentTypes;
-    } else {
-        Logger.log(false, "ComponentTypes must be an object!", "EntityManager.prototype.load", null);
     }
 
     if(typeof traitTypes === "object") {
@@ -37,14 +31,12 @@ EntityManager.prototype.registerComponent = function(componentID, component) {
         return;
     }
 
-    const componentType = this.componentTypes[componentID];
-
-    if(!componentType) {
-        Logger.log(false, "ComponentType does not exist!", "EntityManager.prototype.registerComponent", { componentID });
+    if(this.componentTypes.has(componentID)) {
+        Logger.log(false, "Component already exists!", "EntityManager.prototype.registerComponent", { componentID, component });
         return;
     }
 
-    componentType.reference = component;
+    this.componentTypes.set(componentID, component);
 }
 
 EntityManager.prototype.update = function(gameContext) {
@@ -70,128 +62,53 @@ EntityManager.prototype.registerArchetype = function(typeID, type) {
     this.archetypes.set(typeID, type);
 }
 
-EntityManager.prototype.saveComponent = function(entity, type) {
-    const component = entity.getComponent(type);
-
-    if(!component) {
-        return {};
-    }
-
-    if(typeof component.save === "function") {
-        return component.save();
-    }
-
-    const entries = Object.entries(component);
-    const componentData = {};
-
-    for(const [field, value] of entries) {
-        componentData[field] = value;
-    }
-
-    return componentData;
-}
-
-EntityManager.prototype.loadComponent = function(entity, type, data) {
-    //get the component from the entity.
-    //check if a load function exists.
-    //give the data to the load function.
-}
-
-EntityManager.prototype.saveComponents = function(entity) {
+EntityManager.prototype.saveComponents = function(entity, list = []) {
     const savedComponents = {};
 
-    for(const componentID in this.componentTypes) {
-        const componentType = this.componentTypes[componentID];
-
-        if(!componentType.allowSave) {
-            continue;
-        }
-
-        const componentConstructor = componentType.reference;
-        const component = entity.getComponent(componentConstructor);
+    for(const componentID of list) {
+        const component = this.componentTypes.get(componentID);
 
         if(!component) {
+            Logger.log(false, "Component is not registered!", "EntityManager.prototype.saveComponents", { componentID });
             continue;
         }
 
-        if(component.save) {
-            savedComponents[componentID] = component.save();
-        } else {
-            savedComponents[componentID] = {};
+        const data = entity.saveComponent(component);
 
-            for(const [field, value] of Object.entries(component)) {
-                savedComponents[componentID][field] = value;
-            }
+        if(!data) {
+            continue;
         }
+
+        savedComponents[componentID] = data;
     }
 
     return savedComponents;
 }
 
-EntityManager.prototype.loadComponentFields = function(component, fields = {}) {
-    for(const fieldID in fields) {
-        if(component[fieldID] === undefined) {
-            Logger.log(false, `Field does not exist on component!`, "EntityManager.prototype.loadComponent", { fieldID }); 
+EntityManager.prototype.loadComponents = function(entity, components = {}) {
+    for(const componentID in components) {
+        const component = this.componentTypes.get(componentID);
+        const data = components[componentID];
+
+        if(!component) {
+            Logger.log(false, "Component is not registered!", "EntityManager.prototype.loadComponents", { componentID }); 
             continue;
         }
 
-        component[fieldID] = fields[fieldID];
+        entity.loadComponent(component, data);
     }
 }
 
-EntityManager.prototype.loadCustomComponents = function(entity, customComponents = {}) {
-    for(const componentID in customComponents) {
-        const componentType = this.componentTypes[componentID];
-        const componentFields = customComponents[componentID];
-
-        if(!componentType) {
-            Logger.log(false, "Component is not registered as customizeable!", "EntityManager.prototype.loadCustomComponents", { componentID }); 
-            continue;
-        }
-
-        const componentConstructor = componentType.reference;
-        const entityComponent = entity.getComponent(componentConstructor);
-
-        if(!entityComponent) {
-            Logger.log(false, `Entity does not have component!`, "EntityManager.prototype.loadCustomComponents", { "entityID": entity.id, componentID }); 
-            continue;
-        }
-
-        this.loadComponentFields(entityComponent, componentFields);
-    }
-}
-
-EntityManager.prototype.loadTraits = function(entity, traits) {
+EntityManager.prototype.loadTraits = function(entity, traits = []) {
     for(const traitID of traits) {
         const traitType = this.traitTypes[traitID];
 
-        if(!traitType || !traitType.components) {
+        if(!traitType) {
             Logger.log(false, `TraitType does not exist!`, "EntityManager.prototype.loadTraits", { traitID }); 
             continue;
         }
 
-        const { id, components, description } = traitType;
-        
-        for(const componentID in components) {
-            const componentType = this.componentTypes[componentID];
-
-            if(!componentType || !componentType.allowTrait || !componentType.reference) {
-                Logger.log(false, `Component is not registered as loadable!`, "EntityManager.prototype.loadTraits", { traitID, componentID }); 
-                continue;
-            }
-
-            const componentFields = components[componentID];
-            const componentConstructor = componentType.reference;
-            const entityComponent = entity.getComponent(componentConstructor);
-
-            if(!entityComponent) {
-                const component = new componentConstructor();
-                this.loadComponentFields(component, componentFields);
-                entity.addComponent(component);
-            } else {
-                this.loadComponentFields(entityComponent, componentFields);
-            }
-        }
+        this.loadComponents(entity, traitType.components);
     }
 }
 

@@ -88,7 +88,7 @@
         "id": "Counter",
         "description": "If an entity automatically counters.",
         "components": {
-            "Counter": { "counterAttack": true, "counterMove": true }
+            "Counter": { "type": 3 }
         }
     },
     "Bulldoze": {

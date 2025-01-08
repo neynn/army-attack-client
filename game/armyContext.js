@@ -141,6 +141,7 @@ ArmyContext.prototype.updateConversions = function() {
 }
 
 ArmyContext.prototype.saveSnapshot = function() {
+    const components = ["Position", "Health", "Attack"];
     const entities = [];
     const controllers = [];
 
@@ -155,11 +156,10 @@ ArmyContext.prototype.saveSnapshot = function() {
     });
 
     this.world.entityManager.entities.forEach(entity => {
-        console.log(this.world.entityManager.saveComponent(entity, PositionComponent))
         const entityID = entity.getID();
         const positionComponent = entity.getComponent(PositionComponent);
         const teamComponent = entity.getComponent(TeamComponent);
-        const savedComponents = this.world.entityManager.saveComponents(entity);
+        const savedComponents = this.world.entityManager.saveComponents(entity, components);
         const owner = this.world.controllerManager.getOwnerOf(entityID);
         
         entities.push({

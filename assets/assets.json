@@ -4,7 +4,6 @@
     "settings": { "id": "settings", "directory": "assets/config", "source": "settings.json" },
     "tileMeta": { "id": "tileMeta", "directory": "assets/config", "source": "tileMeta.json" },
     "world": { "id": "world", "directory": "assets/config", "source": "world.json" },
-    "components": { "id": "components", "directory": "assets/entity", "source": "components.json" },
     "entities": { "id": "entities", "directory": "assets/entity", "source": "entities.json" },
     "traits": { "id": "traits", "directory": "assets/entity", "source": "traits.json" },
     "fonts": { "id": "fonts", "directory": "assets/fonts", "source": "fonts.json" },

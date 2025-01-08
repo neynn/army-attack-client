@@ -74,6 +74,6 @@ DefaultArchetype.prototype.build = function(gameContext, entity, setup) {
     
     this.initializeEntity(entity, config, setup);
     entityManager.loadTraits(entity, traits);
-    entityManager.loadCustomComponents(entity, components);
+    entityManager.loadComponents(entity, components);
     this.finalizeEntity(gameContext, entity, config, setup);
 }

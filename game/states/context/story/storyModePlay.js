@@ -137,7 +137,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
                 maxHealth: 99
             },
             "Attack": {
-                damage: 3
+                damage: 69
             }
         }
     });
