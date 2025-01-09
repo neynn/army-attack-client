@@ -3,6 +3,20 @@ export const HealthComponent = function() {
     this.health = 0;
 }
 
+HealthComponent.prototype.isAlive = function() {
+    return this.health > 0;
+}
+
+HealthComponent.prototype.getRemainder = function(damage) {
+    const value = this.health - damage;
+
+    if(value < 0) {
+        return 0;
+    }
+
+    return value;
+}
+
 HealthComponent.prototype.save = function() {
     return {
         "maxHealth": this.maxHealth,
@@ -10,16 +24,15 @@ HealthComponent.prototype.save = function() {
     }
 }
 
-HealthComponent.create = function(setup = {}) {
+HealthComponent.create = function(config = {}) {
     const healthComponent = new HealthComponent();
-    const { health } = setup;
+    const { 
+        health = 0,
+        maxHealth = health
+    } = config;
 
-    healthComponent.health = health ?? 0;
-    healthComponent.maxHealth = health ?? 0;
-
-    if(healthComponent.health < 1) {
-        health.health = 1;
-    }
+    healthComponent.health = health;
+    healthComponent.maxHealth = maxHealth;
     
     return healthComponent;
 }

@@ -1,7 +1,6 @@
 import { Action } from "../../source/action/action.js";
 
 import { AnimationSystem } from "../systems/animation.js";
-import { ConstructionSystem } from "../systems/construction.js";
 import { ConstructionComponent } from "../components/construction.js";
 
 export const ConstructionAction = function() {

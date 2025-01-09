@@ -2,11 +2,13 @@ export const SpriteComponent = function() {
     this.spriteID = null;
 } 
 
-SpriteComponent.create = function(sprite = {}) {
+SpriteComponent.create = function(config = {}) {
     const spriteComponent = new SpriteComponent();
-    const { id } = sprite;
+    const {
+        id = null
+    } = config;
 
-    spriteComponent.spriteID = id ?? null;
+    spriteComponent.spriteID = id;
     
     return spriteComponent;
 }

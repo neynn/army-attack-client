@@ -35,9 +35,10 @@ DecaySystem.beginDecay = function(gameContext, entity) {
         return;
     }
 
-    if(entity.hasComponent(AvianComponent)) {
-        const avianComponent = entity.getComponent(AvianComponent);
-        avianComponent.state = AvianComponent.STATE_GROUNDED;
+    const avianComponent = entity.getComponent(AvianComponent);
+
+    if(avianComponent) {
+        avianComponent.toGround();
     }
 
     if(!decayComponent.isElite) {

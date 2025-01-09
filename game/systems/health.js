@@ -5,19 +5,6 @@ import { ArmyEntity } from "../init/armyEntity.js";
 
 export const HealthSystem = function() {}
 
-HealthSystem.isAlive = function(entity) {
-    const healthComponent = entity.getComponent(HealthComponent);
-
-    return healthComponent.health !== 0;
-}
-
-HealthSystem.getRemainingHealth = function(entity, damage) {
-    const healthComponent = entity.getComponent(HealthComponent);
-    const remainingHealth = clampValue(healthComponent.health - damage, healthComponent.maxHealth, 0);
-
-    return remainingHealth;
-}
-
 HealthSystem.toMax = function(entity) {
     const healthComponent = entity.getComponent(HealthComponent);
     

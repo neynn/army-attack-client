@@ -3,25 +3,13 @@ import { PositionComponent } from "../components/position.js";
 
 export const DirectionSystem = function() {}
 
-DirectionSystem.changeDirection = function(entity, directionX, directionY) {
-    const directionComponent = entity.getComponent(DirectionComponent);
-
-    if(directionX !== null) {
-        directionComponent.directionX = directionX;
-    }
-
-    if(directionY !== null) {
-        directionComponent.directionY = directionY;
-    }
-}
-
 DirectionSystem.lookHorizontal = function(entity, westCondition) {
     const directionComponent = entity.getComponent(DirectionComponent);
 
     if(westCondition) {
-        directionComponent.directionX = DirectionComponent.DIRECTION_WEST;
+        directionComponent.toWest();
     } else {
-        directionComponent.directionX = DirectionComponent.DIRECTION_EAST;
+        directionComponent.toEast();
     }
 }
 
@@ -29,9 +17,9 @@ DirectionSystem.lookVertical = function(entity, northCondition) {
     const directionComponent = entity.getComponent(DirectionComponent);
 
     if(northCondition) {
-        directionComponent.directionY = DirectionComponent.DIRECTION_NORTH;
+        directionComponent.toNorth();
     } else {
-        directionComponent.directionY = DirectionComponent.DIRECTION_SOUTH;
+        directionComponent.toSouth();
     }
 }
 
@@ -39,15 +27,15 @@ DirectionSystem.lookTo = function(entity, westCondition, northCondition) {
     const directionComponent = entity.getComponent(DirectionComponent);
     
     if(westCondition) {
-        directionComponent.directionX = DirectionComponent.DIRECTION_WEST;
+        directionComponent.toWest();
     } else {
-        directionComponent.directionX = DirectionComponent.DIRECTION_EAST;
+        directionComponent.toEast();
     }
 
     if(northCondition) {
-        directionComponent.directionY = DirectionComponent.DIRECTION_NORTH;
+        directionComponent.toNorth();
     } else {
-        directionComponent.directionY = DirectionComponent.DIRECTION_SOUTH;
+        directionComponent.toSouth();
     }
 }
 

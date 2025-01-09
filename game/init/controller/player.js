@@ -12,7 +12,6 @@ import { AnimationSystem } from "../../systems/animation.js";
 import { PathfinderSystem } from "../../systems/pathfinder.js";
 import { AllianceSystem } from "../../systems/alliance.js";
 import { TeamComponent } from "../../components/team.js";
-import { HealthSystem } from "../../systems/health.js";
 import { AttackSystem } from "../../systems/attack.js";
 import { MorphSystem } from "../../systems/morph.js";
 import { DirectionSystem } from "../../systems/direction.js";
@@ -88,10 +87,10 @@ PlayerController.prototype.updateAttackers = function(gameContext) {
         return;
     }
 
+    const healthComponent = mouseEntity.getComponent(HealthComponent);
     const isAttackable = this.isEntityAttackable(gameContext, mouseEntity);
-    const isAlive = HealthSystem.isAlive(mouseEntity);
 
-    if(!isAttackable || !isAlive) {
+    if(!isAttackable || !healthComponent.isAlive()) {
         AnimationSystem.revertToIdle(gameContext, this.attackers);
         this.resetAllAttackers(gameContext);
         return;

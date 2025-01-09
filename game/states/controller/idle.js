@@ -1,7 +1,7 @@
 import { State } from "../../../source/state/state.js";
+import { HealthComponent } from "../../components/health.js";
 
 import { ACTION_TYPES, CONTROLLER_STATES } from "../../enums.js";
-import { HealthSystem } from "../../systems/health.js";
 
 export const ControllerIdleState = function() {}
 
@@ -20,10 +20,10 @@ ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext)
 
     const entityID = mouseEntity.getID();
     const isAttackable = controller.isEntityAttackable(gameContext, mouseEntity);
-    const isAlive = HealthSystem.isAlive(mouseEntity);
+    const healthComponent = mouseEntity.getComponent(HealthComponent);
     const isControlled = controller.hasEntity(entityID);
 
-    if(isAttackable && isAlive) {
+    if(isAttackable && healthComponent.isAlive()) {
         actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.ATTACK, entityID));
         return;
     }

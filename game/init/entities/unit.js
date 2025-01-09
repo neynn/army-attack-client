@@ -1,3 +1,4 @@
+import { ArmorComponent } from "../../components/armor.js";
 import { AttackComponent } from "../../components/attack.js";
 import { MoveComponent } from "../../components/move.js";
 import { ArmyEntity } from "../armyEntity.js";
@@ -22,9 +23,10 @@ Unit.prototype.onCreate = function(gameContext, config) {
     const attackComponent = AttackComponent.create(this.config.stats[mode]);
     const moveComponent = MoveComponent.create(this.config, this.config.stats[mode]);
     
-    attackComponent.type = AttackComponent.ATTACK_TYPE_ACTIVE;
+    attackComponent.toActive();
         
     this.addComponent(attackComponent);
     this.addComponent(moveComponent);
+    //this.addComponent(ArmorComponent.create({"armor": 2}));
     this.loadDefaultTraits(gameContext, config);
 }

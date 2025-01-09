@@ -1,22 +1,33 @@
+import { ConstructionComponent } from "../components/construction.js";
 import { PositionComponent } from "../components/position.js";
 import { TeamComponent } from "../components/team.js";
+import { DeathSystem } from "./death.js";
+import { SpawnSystem } from "./spawn.js";
 
 export const ConstructionSystem = function() {}
 
-ConstructionSystem.getConstructionResult = function(controller, entity) {
-    const controllerID = controller.getID();
-    const entityID = entity.getID();
-    const entityConfig = entity.getConfig();
+ConstructionSystem.finishConstruction = function(gameContext, entity, controller) {        
+    const constructionComponent = entity.getComponent(ConstructionComponent);
+
+    if(!constructionComponent) {
+        return;
+    }
+
     const positionComponent = entity.getComponent(PositionComponent);
     const teamComponent = entity.getComponent(TeamComponent);
-
-    return {
+    const resultType = constructionComponent.getResult();
+    const entityID = entity.getID();
+    const result = {
         "id": entityID,
         "team": teamComponent.teamID,
-        "owner": controllerID,
-        "type": entityConfig.constructionResult,
+        "owner": controller.getID(),
+        "type": resultType,
         "tileX": positionComponent.tileX,
         "tileY": positionComponent.tileY,
         "mode": "story" //TODO gets determined by the client/server
     }
+
+    //TODO: Open GUI and check if the controller has enough materials/resources.
+    DeathSystem.destroyEntity(gameContext, entityID);
+    SpawnSystem.createEntity(gameContext, result);
 }

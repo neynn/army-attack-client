@@ -1,4 +1,5 @@
 import { Action } from "../../source/action/action.js";
+import { HealthComponent } from "../components/health.js";
 
 import { AnimationSystem } from "../systems/animation.js";
 import { AttackSystem } from "../systems/attack.js";
@@ -86,10 +87,11 @@ AttackAction.prototype.getValidated = function(gameContext, request, messengerID
     }
 
     let state = AttackAction.STATE_IDLE;
+    const healthComponent = targetEntity.getComponent(HealthComponent);
     const damage = AttackSystem.getDamage(gameContext, targetEntity, attackers);
-    const health = HealthSystem.getRemainingHealth(targetEntity, damage);
+    const remainder = healthComponent.getRemainder(damage);
 
-    if(health === 0) {
+    if(remainder === 0) {
         const isBulldozed = AttackSystem.getBulldozed(gameContext, targetEntity, attackers);
         const isReviveable = DecaySystem.isReviveable(targetEntity);
 

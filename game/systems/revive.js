@@ -1,4 +1,3 @@
-import { DecayComponent } from "../components/decay.js";
 import { MorphSystem } from "./morph.js";
 
 export const ReviveSystem = function() {}

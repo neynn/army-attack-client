@@ -9,3 +9,23 @@ BulldozeComponent.ARCHETYPE_BULLDOZE_MAP = {
     "Deco": "destroyDeco",
     "Building": "destroyBuilding"
 };
+
+BulldozeComponent.prototype.isBulldozed = function(archetype) {
+    const property = BulldozeComponent.ARCHETYPE_BULLDOZE_MAP[archetype];
+
+    if(!property) {
+        return false;
+    }
+
+    return this[property];
+}
+
+BulldozeComponent.isBulldozeable = function(archetype) {
+    const property = BulldozeComponent.ARCHETYPE_BULLDOZE_MAP[archetype];
+
+    if(!property) {
+        return false;
+    }
+
+    return true;
+}

@@ -16,7 +16,7 @@ Defense.prototype.onCreate = function(gameContext, config) {
     
     const attackComponent = AttackComponent.create(this.config.stats[mode]);
     
-    attackComponent.type = AttackComponent.ATTACK_TYPE_PASSIVE;
+    attackComponent.toPassive();
         
     this.addComponent(attackComponent);
     this.loadDefaultTraits(gameContext, config);

@@ -3,10 +3,10 @@ import { isRectangleRectangleIntersect } from "../../source/math/math.js";
 import { ArmorComponent } from "../components/armor.js";
 import { AttackComponent } from "../components/attack.js";
 import { BulldozeComponent } from "../components/bulldoze.js";
+import { HealthComponent } from "../components/health.js";
 import { PositionComponent } from "../components/position.js";
 import { TeamComponent } from "../components/team.js";
 import { AllianceSystem } from "./alliance.js";
-import { HealthSystem } from "./health.js";
 
 export const AttackSystem = function() {}
 
@@ -61,8 +61,9 @@ AttackSystem.getActiveAttackers = function(gameContext, target) {
     const { world } = gameContext;
     const { entityManager } = world;
     const attackers = [];
+    const healthComponent = target.getComponent(HealthComponent);
 
-    if(!HealthSystem.isAlive(target)) {
+    if(!healthComponent.isAlive()) {
         return attackers;
     }
 
@@ -84,11 +85,11 @@ AttackSystem.getActiveAttackers = function(gameContext, target) {
         }
 
         const attackerTeamComponent = attacker.getComponent(TeamComponent);
-        const isAlive = HealthSystem.isAlive(attacker);
+        const attackerHealthComponent = attacker.getComponent(HealthComponent);
         const alliance = AllianceSystem.getAlliance(gameContext, attackerTeamComponent.teamID, targetTeamComponent.teamID);
         const hasRange = AttackSystem.isTargetInRange(target, attacker, attackComponent.range);
 
-        if(isAlive && hasRange && (alliance && alliance.isEnemy)) {
+        if(attackerHealthComponent.isAlive() && hasRange && (alliance && alliance.isEnemy)) {
             attackers.push(attackerID);
         }
     }
@@ -99,27 +100,21 @@ AttackSystem.getActiveAttackers = function(gameContext, target) {
 AttackSystem.getDamage = function(gameContext, target, attackers) {
     const { world } = gameContext;
     const { entityManager } = world;
-
-    let totalDamage = 0;
-    let armor = 0;
-
     const armorComponent = target.getComponent(ArmorComponent);
 
+    let totalDamage = 0;
+    let totalArmor = 0;
+
     if(armorComponent) {
-        armor = armorComponent.armor;
+        totalArmor += armorComponent.getArmor();
     }
 
     for(const attackerID of attackers) {
-        let damage = 0;
-
         const attacker = entityManager.getEntity(attackerID);
         const attackComponent = attacker.getComponent(AttackComponent);
-
-        damage += attackComponent.damage - armor;
-
-        if(damage > 0) {
-            totalDamage += damage;
-        }
+        const damage = attackComponent.getDamage(totalArmor);
+    
+        totalDamage += damage;
     }
 
     return totalDamage;
@@ -128,9 +123,9 @@ AttackSystem.getDamage = function(gameContext, target, attackers) {
 AttackSystem.getBulldozed = function(gameContext, target, attackers) {
     const { world } = gameContext;
     const { entityManager } = world;
-    const bulldozeFlag = BulldozeComponent.ARCHETYPE_BULLDOZE_MAP[target.config.archetype];
+    const isBulldozeable = BulldozeComponent.isBulldozeable(target.config.archetype);
 
-    if(!bulldozeFlag) {
+    if(!isBulldozeable) {
         return false;
     }
 
@@ -138,7 +133,7 @@ AttackSystem.getBulldozed = function(gameContext, target, attackers) {
         const attacker = entityManager.getEntity(attackerID);
         const bulldozeComponent = attacker.getComponent(BulldozeComponent);
 
-        if(bulldozeComponent && bulldozeComponent[bulldozeFlag]) {
+        if(bulldozeComponent && bulldozeComponent.isBulldozed(target.config.archetype)) {
             return true;
         }
     }

@@ -2,11 +2,13 @@ export const TeamComponent = function() {
     this.teamID = null;
 }
 
-TeamComponent.create = function(setup = {}) {
+TeamComponent.create = function(config = {}) {
     const teamComponent = new TeamComponent();
-    const { team } = setup;
+    const {
+        team = null
+    } = config;
     
-    teamComponent.teamID = team ?? null;
+    teamComponent.teamID = team;
 
     return teamComponent;
 }

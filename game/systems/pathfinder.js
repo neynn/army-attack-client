@@ -53,7 +53,7 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
     const nodeList = FloodFill.search(positionComponent.tileX, positionComponent.tileY, moveComponent.range, activeMap.width, activeMap.height, (next, current) => {
         const nextTypeID = activeMap.getTile(typeLayerID, next.positionX, next.positionY);
         const nextTileType = tileTypes[nextTypeID];
-        const isNextPassable = moveComponent.passability[nextTileType.passability];
+        const isNextPassable = moveComponent.hasPassability(nextTileType.passability);
 
         if(!isNextPassable) {
             next.state = PathfinderSystem.NODE_STATE.INVALID_PASSABILITY;

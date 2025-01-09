@@ -9,6 +9,14 @@ export const MoveComponent = function() {
     this.isCloaked = false;
 }
 
+MoveComponent.prototype.hasPassability = function(type) {
+    return this.passability[type];
+}
+
+MoveComponent.prototype.isPathEmpty = function() {
+    return this.path.length === 0;
+}
+
 MoveComponent.create = function(setup = {}, stats = {}) {
     const moveComponent = new MoveComponent();
     const { passability } = setup;

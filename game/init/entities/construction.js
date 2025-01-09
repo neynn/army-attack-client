@@ -1,8 +1,6 @@
 import { ConstructionComponent } from "../../components/construction.js";
 import { ACTION_TYPES } from "../../enums.js";
 import { ConstructionSystem } from "../../systems/construction.js";
-import { DeathSystem } from "../../systems/death.js";
-import { SpawnSystem } from "../../systems/spawn.js";
 import { ArmyEntity } from "../armyEntity.js";
 
 export const Construction = function(id, DEBUG_NAME) {
@@ -23,11 +21,7 @@ Construction.prototype.onInteract = function(gameContext, controller) {
     }
 
     if(!actionQueue.isRunning()) {
-        const result = ConstructionSystem.getConstructionResult(controller, this);
-    
-        //TODO: Open GUI and check if the controller has enough materials/resources.
-        DeathSystem.destroyEntity(gameContext, this.id);
-        SpawnSystem.createEntity(gameContext, result);
+        ConstructionSystem.finishConstruction(gameContext, this, controller);
     }
 }
 
