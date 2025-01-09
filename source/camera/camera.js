@@ -53,14 +53,18 @@ Camera.prototype.centerInWindow = function(windowWidth, windowHeight) {
 
 Camera.prototype.setPosition = function(x = 0, y = 0) {
     switch(this.viewportMode) {
+        case Camera.VIEWPORT_MODE.FILL_WINDOW_AUTO: {
+            this.position.x = Math.floor(x);
+            this.position.y = Math.floor(y);
+            break;
+        }
         case Camera.VIEWPORT_MODE.FILL_WINDOW_FIXED: {
             this.position.x = 0;
             this.position.y = 0;
             break;
         }
         default: {
-            this.position.x = Math.floor(x);
-            this.position.y = Math.floor(y);
+            //TODO
             break;
         }
     }

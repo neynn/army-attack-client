@@ -2,6 +2,7 @@ import { Action } from "../../source/action/action.js";
 
 import { AnimationSystem } from "../systems/animation.js";
 import { ConstructionSystem } from "../systems/construction.js";
+import { ConstructionComponent } from "../components/construction.js";
 
 export const ConstructionAction = function() {
     this.timePassed = 0;
@@ -28,8 +29,10 @@ ConstructionAction.prototype.onEnd = function(gameContext, request) {
     const { entityManager } = world;
     const { entityID, deltaSteps } = request;
     const entity = entityManager.getEntity(entityID);
+    const constructionComponent = entity.getComponent(ConstructionComponent);
 
-    ConstructionSystem.advanceConstruction(gameContext, entity, deltaSteps);
+    constructionComponent.advance(deltaSteps);
+    AnimationSystem.setConstructionFrame(gameContext, entity);
 }
 
 ConstructionAction.prototype.onUpdate = function(gameContext, request) {
@@ -52,12 +55,9 @@ ConstructionAction.prototype.getValidated = function(gameContext, request, messe
     const { entityManager } = world;
     const { entityID } = request;
     const entity = entityManager.getEntity(entityID);
+    const constructionComponent = entity.getComponent(ConstructionComponent);
 
-    if(!ConstructionSystem.isConstruction(entity)) {
-        return null;
-    }
-
-    if(ConstructionSystem.isComplete(entity)) {
+    if(!constructionComponent || constructionComponent.isComplete()) {
         return null;
     }
 

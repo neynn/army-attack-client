@@ -15,9 +15,9 @@ Construction.prototype.constructor = Construction;
 Construction.prototype.onInteract = function(gameContext, controller) {
     const { world } = gameContext;
     const { actionQueue } = world;
-    const isComplete = ConstructionSystem.isComplete(this);
+    const constructionComponent = this.getComponent(ConstructionComponent);
     
-    if(!isComplete) {
+    if(!constructionComponent.isComplete()) {
         actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.CONSTRUCTION, this.id));
         return;
     }

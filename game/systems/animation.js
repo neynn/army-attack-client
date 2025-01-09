@@ -113,11 +113,13 @@ AnimationSystem.playConstruction = function(gameContext, entity) {
     delaySprite.setPosition(x, y);
 }
 
-AnimationSystem.advanceConstructionFrame = function(gameContext, entity, stepsCompleted) {
+AnimationSystem.setConstructionFrame = function(gameContext, entity) {
     const { spriteManager } = gameContext;
     const spriteComponent = entity.getComponent(SpriteComponent);
+    const constructionComponent = entity.getComponent(ConstructionComponent);
+
     const sprite = spriteManager.getSprite(spriteComponent.spriteID);
-    const frame = ConstructionComponent.CONSTRUCTION_FRAMES[stepsCompleted];
+    const frame = constructionComponent.getFrame();
     
     sprite.setFrame(frame);
 }
