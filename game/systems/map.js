@@ -60,27 +60,26 @@ MapSystem.initializeMap = function(gameContext, worldMap) {
     }
 }
 
-MapSystem.reloadGraphics = function(gameContext, mapID) {
+MapSystem.reloadGraphics = function(gameContext) {
     const { world } = gameContext;
     const { mapManager } = world;
-    const worldMap = mapManager.getLoadedMap(mapID);
+    const worldMap = mapManager.getActiveMap();
 
     if(!worldMap) {
         return;
     }
 
+    const BORDER_RANGE = 0;
     const layerTypes = world.getConfig("LayerTypes");
     const teamLayerID = layerTypes["Team"].layerID;
 
     worldMap.updateTiles((index, tileX, tileY) => {
         const teamID = worldMap.getTile(teamLayerID, tileX, tileY);
         
-        MapSystem.updateBorder(gameContext, tileX, tileY, 0);
+        MapSystem.updateBorder(gameContext, tileX, tileY, BORDER_RANGE);
         ConquerSystem.convertTileGraphics(gameContext, tileX, tileY, teamID);
     });
 }
-
-const PERSPECTIVE_TEAM_ID = "Allies";
 
 MapSystem.updateBorder = function(gameContext, tileX, tileY, range = 0) {
     const { tileManager, world } = gameContext;
@@ -89,6 +88,12 @@ MapSystem.updateBorder = function(gameContext, tileX, tileY, range = 0) {
     const settings = world.getConfig("Settings");
 
     if(!settings.drawBorder || !activeMap || activeMap.meta.disableBorder) {
+        return;
+    }
+
+    const controllerFocus = gameContext.getCameraControllerFocus(CAMERA_TYPES.ARMY_CAMERA);
+
+    if(!controllerFocus || !controllerFocus.teamID) {
         return;
     }
 
@@ -117,9 +122,9 @@ MapSystem.updateBorder = function(gameContext, tileX, tileY, range = 0) {
             }
 
             const centerTeamID = activeMap.getTile(teamLayerID, j, i);
-            const alliance = AllianceSystem.getAlliance(gameContext, PERSPECTIVE_TEAM_ID, teamMapping[centerTeamID]);
+            const alliance = AllianceSystem.getAlliance(gameContext, controllerFocus.teamID, teamMapping[centerTeamID]);
 
-            if(alliance.isEnemy) {
+            if(!alliance || alliance.isEnemy) {
                 continue;
             }
 

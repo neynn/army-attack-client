@@ -5,6 +5,7 @@ import { SpriteManager } from "../source/graphics/spriteManager.js";
 export const ArmyCamera = function() {
     OrthogonalCamera.call(this);
 
+    this.controllerID = null;
     this.overlays = {
         [ArmyCamera.OVERLAY_TYPE_MOVE]: new Map(),
         [ArmyCamera.OVERLAY_TYPE_ATTACK]: new Map(),
@@ -15,10 +16,17 @@ export const ArmyCamera = function() {
 ArmyCamera.OVERLAY_TYPE_MOVE = "MOVE";
 ArmyCamera.OVERLAY_TYPE_ATTACK = "ATTACK";
 ArmyCamera.OVERLAY_TYPE_RANGE = "RANGE";
-ArmyCamera.MAP_OUTLINE_COLOR = "#dddddd";
 
 ArmyCamera.prototype = Object.create(OrthogonalCamera.prototype);
 ArmyCamera.prototype.constructor = ArmyCamera;
+
+ArmyCamera.prototype.focusOn = function(controllerID) {
+    this.controllerID = controllerID;
+}
+
+ArmyCamera.prototype.getFocus = function() {
+    return this.controllerID;
+}
 
 ArmyCamera.prototype.getOverlayKey = function(positionX, positionY) {
     return `${positionX}-${positionY}`;
@@ -113,8 +121,8 @@ ArmyCamera.prototype.update = function(gameContext) {
 
             context.fillText(tileID, drawX, drawY);
         });
-
-        this.drawMapOutlines(gameContext, activeMap.width, activeMap.height);
+        
+        this.drawTileOutlines(context);
     }
 }
 
@@ -240,25 +248,4 @@ ArmyCamera.prototype.drawTileLayer = function(gameContext, map2D, layerConfig, v
     }
 
     context.globalAlpha = 1;
-}
-
-ArmyCamera.prototype.drawMapOutlines = function(gameContext, mapWidth, mapHeight) {
-    const { renderer } = gameContext;
-    const context = renderer.getContext();
-    const { x, y } = this.getViewportPosition();
-    const viewportWidth = this.getViewportWidth();
-    const viewportHeight = this.getViewportHeight();
-    const lineSize = 1 / this.scale;
-
-    context.fillStyle = ArmyCamera.MAP_OUTLINE_COLOR;
-
-    for(let i = 0; i <= mapHeight; i++) {
-        const renderY = i * this.tileHeight - y;
-        context.fillRect(0, renderY, viewportWidth + this.tileHeight, lineSize);
-    }
-
-    for (let j = 0; j <= mapWidth; j++) {
-        const renderX = j * this.tileWidth - x;
-        context.fillRect(renderX, 0, lineSize, viewportHeight + this.tileHeight);
-    }
 }

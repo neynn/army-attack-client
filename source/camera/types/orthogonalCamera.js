@@ -15,6 +15,9 @@ export const OrthogonalCamera = function() {
 OrthogonalCamera.prototype = Object.create(MoveableCamera.prototype);
 OrthogonalCamera.prototype.constructor = OrthogonalCamera;
 
+OrthogonalCamera.MAP_OUTLINE_COLOR = "#dddddd";
+OrthogonalCamera.EMPTY_TILE_COLOR = { "FIRST": "#000000", "SECOND": "#701867" };
+
 OrthogonalCamera.prototype.drawTileGraphics = function(gameContext, tileID, renderX, renderY, scaleX = 1, scaleY = 1) {
     const { tileManager, renderer } = gameContext;
     const { resources } = tileManager;
@@ -43,6 +46,38 @@ OrthogonalCamera.prototype.drawTileGraphics = function(gameContext, tileID, rend
             x, y, w, h,
             drawX, drawY, drawWidth, drawHeight
         );
+    }
+}
+
+OrthogonalCamera.prototype.drawEmptyTile = function(context, renderX, renderY, scaleX = 1, scaleY = 1) {
+    const scaledX = this.halfTileWidth * scaleX;
+    const scaledY = this.halfTileHeight * scaleY;
+
+    context.fillStyle = OrthogonalCamera.EMPTY_TILE_COLOR.FIRST;
+    context.fillRect(renderX, renderY, scaledX, scaledY);
+    context.fillRect(renderX + scaledX, renderY + scaledY, scaledX, scaledY);
+
+    context.fillStyle = OrthogonalCamera.EMPTY_TILE_COLOR.SECOND;
+    context.fillRect(renderX + scaledX, renderY, scaledX, scaledY);
+    context.fillRect(renderX, renderY + scaledY, scaledX, scaledY);
+}
+
+OrthogonalCamera.prototype.drawTileOutlines = function(context) {
+    const { x, y } = this.getViewportPosition();
+    const viewportWidth = this.getViewportWidth();
+    const viewportHeight = this.getViewportHeight();
+    const lineSize = 1 / this.scale;
+
+    context.fillStyle = OrthogonalCamera.MAP_OUTLINE_COLOR;
+
+    for(let i = 0; i <= this.mapHeight; i++) {
+        const renderY = i * this.tileHeight - y;
+        context.fillRect(0, renderY, viewportWidth + this.tileHeight, lineSize);
+    }
+
+    for (let j = 0; j <= this.mapWidth; j++) {
+        const renderX = j * this.tileWidth - x;
+        context.fillRect(renderX, 0, lineSize, viewportHeight + this.tileHeight);
     }
 }
 
@@ -153,17 +188,4 @@ OrthogonalCamera.prototype.transformTileToPositionCenter = function(tileX, tileY
 		"x": positionX,
 		"y": positionY
 	}
-}
-
-OrthogonalCamera.prototype.drawEmptyTile = function(context, renderX, renderY, scaleX = 1, scaleY = 1) {
-    const scaledX = this.halfTileWidth * scaleX;
-    const scaledY = this.halfTileHeight * scaleY;
-
-    context.fillStyle = "#000000";
-    context.fillRect(renderX, renderY, scaledX, scaledY);
-    context.fillRect(renderX + scaledX, renderY + scaledY, scaledX, scaledY);
-
-    context.fillStyle = "#701867";
-    context.fillRect(renderX + scaledX, renderY, scaledX, scaledY);
-    context.fillRect(renderX, renderY + scaledY, scaledX, scaledY);
 }

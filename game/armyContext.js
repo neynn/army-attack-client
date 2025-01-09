@@ -192,6 +192,19 @@ ArmyContext.prototype.loadSnapshot = function(snapshot) {
     }
 }
 
+ArmyContext.prototype.getCameraControllerFocus = function(cameraID) {
+    const camera = this.renderer.getCamera(cameraID);
+
+    if(!camera) {
+        return null;
+    }
+
+    const focusID = camera.getFocus();
+    const controller = this.world.controllerManager.getController(focusID);
+
+    return controller;
+}
+
 ArmyContext.prototype.createArmyCamera = function() {
     const camera = new ArmyCamera();
     const settings = this.world.getConfig("Settings");
@@ -200,10 +213,6 @@ ArmyContext.prototype.createArmyCamera = function() {
     this.renderer.addCamera(CAMERA_TYPES.ARMY_CAMERA, camera);
 
     return camera;
-}
-
-ArmyContext.prototype.getArmyCamera = function() {
-    return this.renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
 }
 
 ArmyContext.prototype.destroyArmyCamera = function() {

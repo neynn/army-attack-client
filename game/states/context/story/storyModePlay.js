@@ -26,13 +26,13 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "team": "Allies",
         "id": "neyn"
     });
-    
-    MapSystem.reloadGraphics(gameContext, MAP);
 
     camera.centerWorld();
-
     camera.bindViewport();
-    
+    camera.focusOn(controller.getID());
+
+    MapSystem.reloadGraphics(gameContext);
+
     uiManager.parseUI("STORY_MODE", gameContext);
     
     SpawnSystem.createEntity(gameContext, { 
