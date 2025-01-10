@@ -2,19 +2,41 @@
     "Attack": {
         "id": "Attack",
         "description": "Attacking action",
-        "send": true,
-        "receive": true
+        "template": {
+            "entityID": null,
+            "attackers": [],
+            "damage": 0,
+            "state": 0
+        },
+        "message": {
+            "send": true,
+            "receive": false
+        }
     },
     "Construction": {
         "id": "Construction",
         "description": "Building action",
-        "send": true,
-        "receive": true
+        "template": {
+            "entityID": null,
+            "steps": 0
+        },
+        "message": {
+            "send": true,
+            "receive": true
+        }
     },
     "Move": {
         "id": "Move",
         "description": "Moving action",
-        "send": true,
-        "receive": true
+        "template": {
+            "entityID": null,
+            "targetX": -1,
+            "targetY": -1,
+            "path": []
+        },
+        "message": {
+            "send": true,
+            "receive": true
+        }
     }
 }

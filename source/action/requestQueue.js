@@ -1,8 +1,10 @@
 import { EventEmitter } from "../events/eventEmitter.js";
+import { Logger } from "../logger.js";
 import { Queue } from "../queue.js";
 
 export const RequestQueue = function() {
     this.requestHandlers = {};
+    this.actionTypes = {};
     this.executionQueue = new Queue(100);
     this.requestQueues = new Map([
         [RequestQueue.PRIORITY_NORMAL, new Queue(10)],
@@ -38,6 +40,15 @@ RequestQueue.EVENT_EXECUTION_RUNNING = "EVENT_EXECUTION_RUNNING";
 RequestQueue.EVENT_QUEUE_ERROR = "EVENT_QUEUE_ERROR";
 
 RequestQueue.prototype.onUpdate = function(gameContext) {}
+
+RequestQueue.prototype.load = function(actionTypes) {
+    if(typeof actionTypes !== "object") {
+        Logger.log(false, "ActionTypes cannot be undefined!", "RequestQueue.prototype.load", null);
+        return;
+    }
+
+    this.actionTypes = actionTypes;
+}
 
 RequestQueue.prototype.update = function(gameContext) {
     switch(this.state) {

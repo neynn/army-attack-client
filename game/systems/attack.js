@@ -30,7 +30,7 @@ AttackSystem.getUniqueEntitiesInRangeOfEntity = function(gameContext, entity, ra
         for(let j = startX; j < endX; j++) {
             const entityID = activeMap.getTopEntity(j, i);
 
-            if(entityID && !entities.has(entityID)) {
+            if(entityID) {
                 entities.add(entityID);
             }
         }

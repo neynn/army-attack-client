@@ -71,11 +71,11 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
             const tileEntity = entityManager.getEntity(entityID);
             const tileEntityTeamComponent = tileEntity.getComponent(TeamComponent);
             const tileEntityAlliance = AllianceSystem.getAlliance(gameContext, teamComponent.teamID, tileEntityTeamComponent.teamID);
-            const isPassable = tileEntityAlliance.isEntityPassingAllowed || moveComponent.isCloaked || (avianComponent && avianComponent.state === AvianComponent.STATE_FLYING);
+            const isPassable = tileEntityAlliance.isEntityPassingAllowed || moveComponent.isCloaked || (avianComponent && avianComponent.inFlying());
 
             if(!isPassable) {
                 const tileEntityAvianComponent = tileEntity.getComponent(AvianComponent);
-                const isFlying = tileEntityAvianComponent && tileEntityAvianComponent.state === AvianComponent.STATE_FLYING;
+                const isFlying = (tileEntityAvianComponent && tileEntityAvianComponent.isFlying());
         
                 if(!isFlying) {
                     next.state = PathfinderSystem.NODE_STATE.INVALID_OCCUPIED;

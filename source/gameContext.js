@@ -70,6 +70,7 @@ GameContext.prototype.loadResources = function(resources) {
     this.client.musicPlayer.load(resources.music);
     this.client.soundPlayer.load(resources.sounds);
     this.client.socket.load(resources.settings.socket);
+    this.world.actionQueue.load(resources.actions);
     this.world.mapManager.load(resources.maps);
     this.world.controllerManager.load(resources.controllers);
     this.spriteManager.load(resources.sprites);

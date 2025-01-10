@@ -6,7 +6,7 @@ export const WorldMap = function(id) {
     this.height = 0;
     this.meta = {};
     this.layers = {};
-    this.occupiedTiles = new Map();
+    this.entities = new Map();
 }
 
 WorldMap.prototype.setWidth = function(width) {
@@ -35,7 +35,7 @@ WorldMap.prototype.addPointer = function(entityID, tileX, tileY) {
     if(!entityList) {
         const index = tileY * this.width + tileX;
 
-        this.occupiedTiles.set(index, [entityID]);
+        this.entities.set(index, [entityID]);
         return;
     }
 
@@ -61,7 +61,7 @@ WorldMap.prototype.removePointer = function(entityID, tileX, tileY) {
     if(entityList.length === 0) {
         const index = tileY * this.width + tileX;
 
-        this.occupiedTiles.delete(index);
+        this.entities.delete(index);
     }
 }
 
@@ -71,7 +71,7 @@ WorldMap.prototype.getEntityList = function(tileX, tileY) {
     }
 
     const index = tileY * this.width + tileX;
-    const entityList = this.occupiedTiles.get(index);
+    const entityList = this.entities.get(index);
 
     if(!entityList) {
         return null;
@@ -112,7 +112,7 @@ WorldMap.prototype.getBottomEntity = function(tileX, tileY) {
 
 WorldMap.prototype.isTileOccupied = function(tileX, tileY) {
     const index = tileY * this.width + tileX;
-    const entityList = this.occupiedTiles.get(index);
+    const entityList = this.entities.get(index);
 
     if(!entityList) {
         return false;
