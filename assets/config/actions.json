@@ -3,6 +3,7 @@
         "id": "Attack",
         "description": "Attacking action",
         "priority": "LOW",
+        "errorSound": "sound_error",
         "message": {
             "send": true,
             "receive": false
@@ -26,9 +27,18 @@
             "receive": true
         }
     },
-    "Counter": {
-        "id": "Counter",
-        "description": "Counter action",
+    "CounterAttack": {
+        "id": "CounterAttack",
+        "description": "CounterAttack action",
+        "priority": "HIGH",
+        "message": {
+            "send": false,
+            "receive": true
+        }
+    },
+    "CounterMove": {
+        "id": "CounterMove",
+        "description": "CounterMove action",
         "priority": "HIGH",
         "message": {
             "send": false,

@@ -1,10 +1,12 @@
 export const CounterComponent = function() {
-    this.type = CounterComponent.COUNTER_TYPE.NONE;
+    this.counterMove = false;
+    this.counterAttack = false;
 }
 
-CounterComponent.COUNTER_TYPE = {
-    NONE: 0,
-    MOVE: 1,
-    ATTACK: 2,
-    ALL: 3
-};
+CounterComponent.prototype.isAttackCounterable = function() {
+    return this.counterAttack;
+}
+
+CounterComponent.prototype.isMoveCounterable = function() {
+    return this.counterMove;
+}

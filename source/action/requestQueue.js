@@ -186,28 +186,29 @@ RequestQueue.prototype.filterRequestQueue = function(gameContext) {
         const isHit = queue.filterUntilFirstHit(element => this.validateExecution(gameContext, element));
 
         if(isHit) {
-            console.log(queueID);
-            break;
+            return queueID;
         }
     }
+
+    return null;
 }
 
 RequestQueue.prototype.validateExecution = function(gameContext, element) {
     const { request, priority, messengerID } = element;
     const { type, data } = request;
-    const actionType = this.actionHandlers.get(type);
+    const actionHandler = this.actionHandlers.get(type);
+    const actionType = this.actionTypes[type];
 
-    if(!actionType) {
+    if(!actionHandler) {
         return false;
     }
 
-    const validatedData = actionType.getValidated(gameContext, data, messengerID);
+    const validatedData = actionHandler.getValidated(gameContext, data, messengerID);
 
     if(!validatedData) {
         const errorItem = {
-            "type": type,
-            "data": data,
-            "priority": priority
+            "type": actionType,
+            "element": element
         };
 
         this.events.emit(RequestQueue.EVENT_EXECUTION_ERROR, errorItem);

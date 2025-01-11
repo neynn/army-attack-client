@@ -8,6 +8,7 @@ import { PlaceSystem } from "../systems/place.js";
 import { ConquerSystem } from "../systems/conquer.js";
 import { MoveComponent } from "../components/move.js";
 import { HealthComponent } from "../components/health.js";
+import { ACTION_TYPES } from "../enums.js";
 
 export const MoveAction = function() {}
 
@@ -29,13 +30,14 @@ MoveAction.prototype.onStart = function(gameContext, request) {
 MoveAction.prototype.onEnd = function(gameContext, request) {
     const { targetX, targetY, entityID } = request;
     const { world } = gameContext;
-    const { entityManager } = world;
+    const { entityManager, actionQueue } = world;
     const entity = entityManager.getEntity(entityID);
 
     ConquerSystem.conquerTile(gameContext, targetX, targetY, entity);
     MoveSystem.endMove(gameContext, entity, targetX, targetY);
     MorphSystem.toIdle(gameContext, entity);
     PlaceSystem.placeEntity(gameContext, entity);
+    actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.COUNTER_MOVE, entityID));
 }
 
 MoveAction.prototype.onUpdate = function(gameContext, request) {

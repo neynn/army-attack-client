@@ -37,6 +37,8 @@ import { HFE } from "./init/entities/hfe.js";
 import { Town } from "./init/entities/town.js";
 import { Construction } from "./init/entities/construction.js";
 import { Debris } from "./init/entities/debris.js";
+import { CounterAttackAction } from "./actions/counterAttackAction.js";
+import { CounterMoveAction } from "./actions/counterMoveAction.js";
 
 export const ArmyContext = function() {
     GameContext.call(this, 60);
@@ -51,7 +53,9 @@ ArmyContext.prototype.initialize = function() {
     this.world.actionQueue.registerActionHandler(ACTION_TYPES.MOVE, new MoveAction());
     this.world.actionQueue.registerActionHandler(ACTION_TYPES.ATTACK, new AttackAction());
     this.world.actionQueue.registerActionHandler(ACTION_TYPES.CONSTRUCTION, new ConstructionAction());
-    
+    this.world.actionQueue.registerActionHandler(ACTION_TYPES.COUNTER_ATTACK, new CounterAttackAction());
+    this.world.actionQueue.registerActionHandler(ACTION_TYPES.COUNTER_MOVE, new CounterMoveAction());
+
     this.world.entityManager.registerArchetype("Unit", Unit);
     this.world.entityManager.registerArchetype("Defense", Defense);
     this.world.entityManager.registerArchetype("Deco", Deco);
@@ -85,9 +89,14 @@ ArmyContext.prototype.initialize = function() {
     
     this.world.actionQueue.events.subscribe(RequestQueue.EVENT_QUEUE_ERROR, "DEBUG", (error) => console.log(error));
     this.world.actionQueue.events.subscribe(RequestQueue.EVENT_EXECUTION_RUNNING, "DEBUG", (item) => console.log(item, "IS PROCESSING"));
-    this.world.actionQueue.events.subscribe(RequestQueue.EVENT_EXECUTION_ERROR, "DEBUG", (executionItem) => {
-        this.client.soundPlayer.playSound("sound_error", 0.5);
-        console.log(executionItem, "IS INVALID");
+    this.world.actionQueue.events.subscribe(RequestQueue.EVENT_EXECUTION_ERROR, "DEBUG",  (item) => {
+        const { element, type } = item;
+
+        if(type.errorSound) {
+            this.client.soundPlayer.playSound(type.errorSound, 0.5);
+        }
+
+        console.log(item, "IS INVALID");
     });
 
     this.client.socket.events.subscribe(Socket.EVENT_CONNECTED_TO_SERVER, "DEBUG", (socketID) => {

@@ -1,5 +1,6 @@
 import { AttackComponent } from "../../components/attack.js";
 import { MoveComponent } from "../../components/move.js";
+import { SpriteComponent } from "../../components/sprite.js";
 import { ArmyEntity } from "../armyEntity.js";
 
 export const Unit = function(id, DEBUG_NAME) {
@@ -26,6 +27,7 @@ Unit.prototype.onCreate = function(gameContext, config) {
         
     this.addComponent(attackComponent);
     this.addComponent(moveComponent);
+    this.getComponent(SpriteComponent).allowFlip();
     //this.addComponent(ArmorComponent.create({"armor": 2}));
     this.loadDefaultTraits(gameContext, config);
 }

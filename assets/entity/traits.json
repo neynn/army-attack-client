@@ -88,7 +88,7 @@
         "id": "Counter",
         "description": "If an entity automatically counters.",
         "components": {
-            "Counter": { "type": 3 }
+            "Counter": { "counterMove": true, "counterAttack": true }
         }
     },
     "Bulldoze": {
@@ -98,6 +98,13 @@
             "Bulldoze": { "destroyUnit": true }
         }
     },
-    "IgnoreTargeting": { "id": "IgnoreTargeting", "component": "IgnoreTargetingComponent", "data": null, "description": "Not implemented. Allows a unit to not be targeted." },
-    "AoE": { "id": "AoE", "component": "AoEComponent", "data": { "assign": { "attackAllies": true } }, "description": "Not implemented. Allows the entity do do an area of effect attack." }
+    "AoE": {
+        "id": "AoE",
+        "description": "Not implemented. Allows the entity do do an area of effect attack.",
+        "components": {
+            "Attack": {
+
+            }
+        }
+    }
 }

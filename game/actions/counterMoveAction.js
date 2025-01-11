@@ -1,5 +1,4 @@
 import { Action } from "../../source/action/action.js";
-import { AttackComponent } from "../components/attack.js";
 import { AnimationSystem } from "../systems/animation.js";
 import { AttackSystem } from "../systems/attack.js";
 import { DeathSystem } from "../systems/death.js";
@@ -7,18 +6,18 @@ import { DecaySystem } from "../systems/decay.js";
 import { HealthSystem } from "../systems/health.js";
 import { MorphSystem } from "../systems/morph.js";
 
-export const AttackAction = function() {
+export const CounterMoveAction = function() {
     this.timePassed = 0;
 }
 
-AttackAction.prototype = Object.create(Action.prototype);
-AttackAction.prototype.constructor = AttackAction;
+CounterMoveAction.prototype = Object.create(Action.prototype);
+CounterMoveAction.prototype.constructor = CounterMoveAction;
 
-AttackAction.prototype.onClear = function() {
+CounterMoveAction.prototype.onClear = function() {
     this.timePassed = 0;
 }
 
-AttackAction.prototype.onStart = function(gameContext, request) {
+CounterMoveAction.prototype.onStart = function(gameContext, request) {
     const { world } = gameContext;
     const { entityManager } = world;
     const { entityID, attackers, damage, state } = request;
@@ -34,7 +33,7 @@ AttackAction.prototype.onStart = function(gameContext, request) {
     }
 }
 
-AttackAction.prototype.onEnd = function(gameContext, request) {
+CounterMoveAction.prototype.onEnd = function(gameContext, request) {
     const { world } = gameContext;
     const { entityManager } = world;
     const { entityID, attackers, damage, state } = request;
@@ -50,14 +49,14 @@ AttackAction.prototype.onEnd = function(gameContext, request) {
     }
 }
 
-AttackAction.prototype.onUpdate = function(gameContext, request) {
+CounterMoveAction.prototype.onUpdate = function(gameContext, request) {
     const { timer } = gameContext;
     const deltaTime = timer.getFixedDeltaTime();
 
     this.timePassed += deltaTime;
 }
 
-AttackAction.prototype.isFinished = function(gameContext, request) {
+CounterMoveAction.prototype.isFinished = function(gameContext, request) {
     const { world } = gameContext;
     const settings = world.getConfig("Settings");
     const timeRequired = settings.hitDuration;
@@ -65,8 +64,8 @@ AttackAction.prototype.isFinished = function(gameContext, request) {
     return this.timePassed >= timeRequired;
 }
 
-AttackAction.prototype.getValidated = function(gameContext, request, messengerID) {
-    const { entityID } = request;
+CounterMoveAction.prototype.getValidated = function(gameContext, template, messengerID) {
+    const { entityID } = template;
     const { world } = gameContext; 
     const { entityManager } = world;
     const targetEntity = entityManager.getEntity(entityID);
@@ -75,7 +74,7 @@ AttackAction.prototype.getValidated = function(gameContext, request, messengerID
         return null;
     }
 
-    const attackers = AttackSystem.getActiveAttackers(gameContext, targetEntity);
+    const attackers = AttackSystem.getMoveCounterAttackers(gameContext, targetEntity);
 
     if(attackers.length === 0) {
         return null;
@@ -83,16 +82,16 @@ AttackAction.prototype.getValidated = function(gameContext, request, messengerID
 
     const damage = AttackSystem.getDamage(gameContext, targetEntity, attackers);
     const state = AttackSystem.getOutcomeState(gameContext, damage, targetEntity, attackers);
-    
+
     return {
         "entityID": entityID,
         "attackers": attackers,
         "damage": damage,
         "state": state
-    }
+    };
 }
 
-AttackAction.prototype.getTemplate = function(entityID) {
+CounterMoveAction.prototype.getTemplate = function(entityID) {
     return {
         "entityID": entityID
     }

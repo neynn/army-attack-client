@@ -3,12 +3,40 @@ import { isRectangleRectangleIntersect } from "../../source/math/math.js";
 import { ArmorComponent } from "../components/armor.js";
 import { AttackComponent } from "../components/attack.js";
 import { BulldozeComponent } from "../components/bulldoze.js";
+import { CounterComponent } from "../components/counter.js";
 import { HealthComponent } from "../components/health.js";
 import { PositionComponent } from "../components/position.js";
 import { TeamComponent } from "../components/team.js";
 import { AllianceSystem } from "./alliance.js";
+import { DecaySystem } from "./decay.js";
 
-export const AttackSystem = function() {}
+export const AttackSystem = function() {
+    this.id = "AttackSystem";
+}
+
+AttackSystem.OUTCOME_STATE = {
+    IDLE: 0,
+    DOWN: 1,
+    DEAD: 2
+};
+
+AttackSystem.getOutcomeState = function(gameContext, damage, target, attackerIDs) {
+    const healthComponent = target.getComponent(HealthComponent);
+    const remainder = healthComponent.getRemainder(damage);
+
+    if(remainder === 0) {
+        const isBulldozed = AttackSystem.getBulldozed(gameContext, target, attackerIDs);
+        const isReviveable = DecaySystem.isReviveable(target);
+
+        if(isReviveable && !isBulldozed) {
+            return AttackSystem.OUTCOME_STATE.DOWN;
+        }
+
+        return AttackSystem.OUTCOME_STATE.DEAD;
+    }
+
+    return AttackSystem.OUTCOME_STATE.IDLE;
+}
 
 AttackSystem.getUniqueEntitiesInRangeOfEntity = function(gameContext, entity, range = 0) {
     const { world } = gameContext;
@@ -57,7 +85,62 @@ AttackSystem.isTargetInRange = function(target, attacker, range) {
     return collision;
 }
 
+AttackSystem.getMoveCounterAttackers = function(gameContext, target) {
+    const targetTeamComponent = target.getComponent(TeamComponent);
+    const attackers = this.findAttackersInMaxRange(gameContext, target, (attacker) => {
+        const attackComponent = attacker.getComponent(AttackComponent);
+        const counterComponent = attacker.getComponent(CounterComponent);
+
+        if(!attackComponent || !counterComponent || !counterComponent.isMoveCounterable()) {
+            return false;
+        }
+
+        const attackerHealthComponent = attacker.getComponent(HealthComponent);
+
+        if(!attackerHealthComponent.isAlive()) {
+            return false;
+        }
+
+        const attackerTeamComponent = attacker.getComponent(TeamComponent);
+        const alliance = AllianceSystem.getAlliance(gameContext, attackerTeamComponent.teamID, targetTeamComponent.teamID);
+        const hasRange = AttackSystem.isTargetInRange(target, attacker, attackComponent.range);
+
+        if(hasRange && (alliance && alliance.isEnemy)) {
+            return true;
+        }
+    });
+
+    return attackers;
+}
+
 AttackSystem.getActiveAttackers = function(gameContext, target) {
+    const targetTeamComponent = target.getComponent(TeamComponent);
+    const attackers = this.findAttackersInMaxRange(gameContext, target, (attacker) => {
+        const attackComponent = attacker.getComponent(AttackComponent);
+
+        if(!attackComponent || attackComponent.type !== AttackComponent.ATTACK_TYPE_ACTIVE) {
+            return false;
+        }
+
+        const attackerHealthComponent = attacker.getComponent(HealthComponent);
+
+        if(!attackerHealthComponent.isAlive()) {
+            return false;
+        }
+
+        const attackerTeamComponent = attacker.getComponent(TeamComponent);
+        const alliance = AllianceSystem.getAlliance(gameContext, attackerTeamComponent.teamID, targetTeamComponent.teamID);
+        const hasRange = AttackSystem.isTargetInRange(target, attacker, attackComponent.range);
+
+        if(hasRange && (alliance && alliance.isEnemy)) {
+            return true;
+        }
+    });
+
+    return attackers;
+}
+
+AttackSystem.findAttackersInMaxRange = function(gameContext, target, onCheck) {
     const { world } = gameContext;
     const { entityManager } = world;
     const attackers = [];
@@ -67,7 +150,6 @@ AttackSystem.getActiveAttackers = function(gameContext, target) {
         return attackers;
     }
 
-    const targetTeamComponent = target.getComponent(TeamComponent);
     const settings = world.getConfig("Settings");
     const nearbyEntities = AttackSystem.getUniqueEntitiesInRangeOfEntity(gameContext, target, settings.maxAttackRange);
 
@@ -78,18 +160,7 @@ AttackSystem.getActiveAttackers = function(gameContext, target) {
             continue;
         }
 
-        const attackComponent = attacker.getComponent(AttackComponent);
-
-        if(!attackComponent || attackComponent.type !== AttackComponent.ATTACK_TYPE_ACTIVE) {
-            continue;
-        }
-
-        const attackerTeamComponent = attacker.getComponent(TeamComponent);
-        const attackerHealthComponent = attacker.getComponent(HealthComponent);
-        const alliance = AllianceSystem.getAlliance(gameContext, attackerTeamComponent.teamID, targetTeamComponent.teamID);
-        const hasRange = AttackSystem.isTargetInRange(target, attacker, attackComponent.range);
-
-        if(attackerHealthComponent.isAlive() && hasRange && (alliance && alliance.isEnemy)) {
+        if(onCheck(attacker)) {
             attackers.push(attackerID);
         }
     }
@@ -97,7 +168,7 @@ AttackSystem.getActiveAttackers = function(gameContext, target) {
     return attackers;
 }
 
-AttackSystem.getDamage = function(gameContext, target, attackers) {
+AttackSystem.getDamage = function(gameContext, target, attackerIDs) {
     const { world } = gameContext;
     const { entityManager } = world;
     const armorComponent = target.getComponent(ArmorComponent);
@@ -109,7 +180,7 @@ AttackSystem.getDamage = function(gameContext, target, attackers) {
         totalArmor += armorComponent.getArmor();
     }
 
-    for(const attackerID of attackers) {
+    for(const attackerID of attackerIDs) {
         const attacker = entityManager.getEntity(attackerID);
         const attackComponent = attacker.getComponent(AttackComponent);
         const damage = attackComponent.getDamage(totalArmor);
@@ -120,7 +191,7 @@ AttackSystem.getDamage = function(gameContext, target, attackers) {
     return totalDamage;
 }
 
-AttackSystem.getBulldozed = function(gameContext, target, attackers) {
+AttackSystem.getBulldozed = function(gameContext, target, attackerIDs) {
     const { world } = gameContext;
     const { entityManager } = world;
     const isBulldozeable = BulldozeComponent.isBulldozeable(target.config.archetype);
@@ -129,7 +200,7 @@ AttackSystem.getBulldozed = function(gameContext, target, attackers) {
         return false;
     }
 
-    for(const attackerID of attackers) {
+    for(const attackerID of attackerIDs) {
         const attacker = entityManager.getEntity(attackerID);
         const bulldozeComponent = attacker.getComponent(BulldozeComponent);
 

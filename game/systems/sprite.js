@@ -20,7 +20,12 @@ SpriteSystem.alignSpritePosition = function(gameContext, entity) {
 SpriteSystem.flipSprite = function(gameContext, entity, flipState) {
     const { spriteManager } = gameContext;
     const spriteComponent = entity.getComponent(SpriteComponent);
-    const { spriteID } = spriteComponent;
+    const { spriteID, isFlippable } = spriteComponent;
+
+    if(!isFlippable) {
+        return;
+    }
+
     const sprite = spriteManager.getSprite(spriteID);
 
     switch(flipState) {

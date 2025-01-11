@@ -40,8 +40,8 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "mode": "story",
         "tileX": 4,
         "tileY": 4,
-        "team": "Allies",
-        "owner": "neyn"
+        "team": "Crimson",
+        "owner": null
     });
 
     SpawnSystem.createEntity(gameContext, { 

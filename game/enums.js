@@ -12,7 +12,9 @@ export const GAME_EVENTS = Object.freeze({
 export const ACTION_TYPES = Object.freeze({
     "MOVE": "Move",
     "ATTACK": "Attack",
-    "CONSTRUCTION": "Construction"
+    "CONSTRUCTION": "Construction",
+    "COUNTER_ATTACK": "CounterAttack",
+    "COUNTER_MOVE": "CounterMove"
 });
 
 export const CONTROLLER_STATES = Object.freeze({
