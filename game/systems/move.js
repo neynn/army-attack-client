@@ -14,8 +14,8 @@ MoveSystem.updatePath = function(gameContext, entity) {
     const positionComponent = entity.getComponent(PositionComponent);
     const moveComponent = entity.getComponent(MoveComponent);
 
-    if(moveComponent.path.length !== 0) {
-        const { deltaX, deltaY } = moveComponent.path[0];
+    if(!moveComponent.isPathEmpty()) {
+        const { deltaX, deltaY } = moveComponent.getCurrentStep();
         const moveSpeed = moveComponent.speed * deltaTime;
 
         positionComponent.positionX += deltaX * moveSpeed;
@@ -23,8 +23,8 @@ MoveSystem.updatePath = function(gameContext, entity) {
 
         moveComponent.distance += moveSpeed;
 
-        while(moveComponent.distance >= width && moveComponent.path.length !== 0) {
-            const { deltaX, deltaY } = moveComponent.path[0];
+        while(moveComponent.distance >= width && !moveComponent.isPathEmpty()) {
+            const { deltaX, deltaY } = moveComponent.getCurrentStep();
             const tileX = positionComponent.tileX + deltaX;
             const tileY = positionComponent.tileY + deltaY;
             const { x, y } = camera.transformTileToPositionCenter(tileX, tileY);
@@ -35,7 +35,7 @@ MoveSystem.updatePath = function(gameContext, entity) {
             positionComponent.tileY = tileY;
 
             moveComponent.distance -= width;
-            moveComponent.path.shift();
+            moveComponent.path.pop();
         }
     }
 
@@ -63,8 +63,7 @@ MoveSystem.endMove = function(gameContext, entity, targetX, targetY) {
     positionComponent.tileX = targetX;
     positionComponent.tileY = targetY;
 
-    moveComponent.distance = 0;
-    moveComponent.path = [];
+    moveComponent.clear();
 
     SpriteSystem.alignSpritePosition(gameContext, entity);
 }

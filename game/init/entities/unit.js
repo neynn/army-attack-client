@@ -1,4 +1,3 @@
-import { ArmorComponent } from "../../components/armor.js";
 import { AttackComponent } from "../../components/attack.js";
 import { MoveComponent } from "../../components/move.js";
 import { ArmyEntity } from "../armyEntity.js";
@@ -21,7 +20,7 @@ Unit.prototype.onCreate = function(gameContext, config) {
     this.createDefaultSprite(gameContext, config);
     
     const attackComponent = AttackComponent.create(this.config.stats[mode]);
-    const moveComponent = MoveComponent.create(this.config, this.config.stats[mode]);
+    const moveComponent = MoveComponent.create(this.config.stats[mode], this.config);
     
     attackComponent.toActive();
         

@@ -14,7 +14,6 @@ Queue.prototype.getNext = function() {
     return item;
 }
 
-
 Queue.prototype.filterAll = function(onCheck) {
     for(let i = 0; i < this.elements.length; i++) {
         const element = this.elements[i];
