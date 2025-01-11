@@ -206,13 +206,7 @@ RequestQueue.prototype.validateExecution = function(gameContext, element) {
     const validatedData = actionHandler.getValidated(gameContext, data, messengerID);
 
     if(!validatedData) {
-        const errorItem = {
-            "type": actionType,
-            "element": element
-        };
-
-        this.events.emit(RequestQueue.EVENT_EXECUTION_ERROR, errorItem);
-
+        this.events.emit(RequestQueue.EVENT_EXECUTION_ERROR, request, actionType);
         return false;
     }
 
@@ -228,12 +222,12 @@ RequestQueue.prototype.validateExecution = function(gameContext, element) {
             break;
         }
         case RequestQueue.MODE_DEFERRED: {
-            this.events.emit(RequestQueue.EVENT_EXECUTION_DEFER, executionItem, request);
+            this.events.emit(RequestQueue.EVENT_EXECUTION_DEFER, executionItem, request, actionType);
             break;
         }
         case RequestQueue.MODE_TELL: {
             this.enqueue(executionItem);
-            this.events.emit(RequestQueue.EVENT_EXECUTION_DEFER, executionItem, request);
+            this.events.emit(RequestQueue.EVENT_EXECUTION_DEFER, executionItem, request, actionType);
             break;
         }
         default: {

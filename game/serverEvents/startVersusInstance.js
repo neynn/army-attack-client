@@ -9,11 +9,11 @@ export const startVersusInstance = function(gameContext, payload) {
     const contextID = gameContext.getID();
 
     actionQueue.setMode(RequestQueue.MODE_DEFERRED);
-    actionQueue.events.subscribe(RequestQueue.EVENT_EXECUTION_DEFER, contextID, (execution, original) => {
+    actionQueue.events.subscribe(RequestQueue.EVENT_EXECUTION_DEFER, contextID, (execution, request, type) => {
         const { priority } = execution;
 
         if(priority === RequestQueue.PRIORITY.LOW) {
-            socket.messageRoom(GAME_EVENTS.ACTION, original);
+            socket.messageRoom(GAME_EVENTS.ACTION, request);
         }
     });
 }

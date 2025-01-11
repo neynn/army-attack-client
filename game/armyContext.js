@@ -89,14 +89,12 @@ ArmyContext.prototype.initialize = function() {
     
     this.world.actionQueue.events.subscribe(RequestQueue.EVENT_QUEUE_ERROR, "DEBUG", (error) => console.log(error));
     this.world.actionQueue.events.subscribe(RequestQueue.EVENT_EXECUTION_RUNNING, "DEBUG", (item) => console.log(item, "IS PROCESSING"));
-    this.world.actionQueue.events.subscribe(RequestQueue.EVENT_EXECUTION_ERROR, "DEBUG",  (item) => {
-        const { element, type } = item;
-
-        if(type.errorSound) {
-            this.client.soundPlayer.playSound(type.errorSound, 0.5);
+    this.world.actionQueue.events.subscribe(RequestQueue.EVENT_EXECUTION_ERROR, "DEBUG",  (request, actionType) => {
+        if(actionType.errorSound) {
+            this.client.soundPlayer.playSound(actionType.errorSound, 0.5);
         }
 
-        console.log(item, "IS INVALID");
+        console.log(request, "IS INVALID");
     });
 
     this.client.socket.events.subscribe(Socket.EVENT_CONNECTED_TO_SERVER, "DEBUG", (socketID) => {
