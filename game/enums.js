@@ -10,9 +10,9 @@ export const GAME_EVENTS = Object.freeze({
 });
 
 export const ACTION_TYPES = Object.freeze({
-    "MOVE": "MOVE",
-    "ATTACK": "ATTACK",
-    "CONSTRUCTION": "CONSTRUCTION"
+    "MOVE": "Move",
+    "ATTACK": "Attack",
+    "CONSTRUCTION": "Construction"
 });
 
 export const CONTROLLER_STATES = Object.freeze({

@@ -26,6 +26,13 @@ Queue.prototype.filterAll = function(onCheck) {
     this.clear();
 }
 
+Queue.prototype.clearElements = function(indices) {
+    for(let i = indices.length - 1; i >= 0; i--) {
+        const index = indices[i];
+        this.elements.splice(index, 1);
+    }
+}
+
 Queue.prototype.filterUntilFirstHit = function(onCheck) {
     const processedIndices = [];
 
@@ -37,14 +44,13 @@ Queue.prototype.filterUntilFirstHit = function(onCheck) {
         processedIndices.push(i);
 
         if(isValid) {
-            break;
+            this.clearElements(processedIndices);
+            return true;
         }
     }
 
-    for(let i = processedIndices.length - 1; i >= 0; i--) {
-        const index = processedIndices[i];
-        this.elements.splice(index, 1);
-    }
+    this.clearElements(processedIndices);
+    return false;
 }
 
 Queue.prototype.setSize = function(size = 0) {

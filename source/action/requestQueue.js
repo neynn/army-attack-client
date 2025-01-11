@@ -3,12 +3,13 @@ import { Logger } from "../logger.js";
 import { Queue } from "../queue.js";
 
 export const RequestQueue = function() {
-    this.requestHandlers = {};
+    this.actionHandlers = new Map();
     this.actionTypes = {};
     this.executionQueue = new Queue(100);
     this.requestQueues = new Map([
-        [RequestQueue.PRIORITY_NORMAL, new Queue(10)],
-        [RequestQueue.PRIORITY_SUPER, new Queue(10)]
+        [RequestQueue.PRIORITY.HIGH, new Queue(10)],
+        [RequestQueue.PRIORITY.MEDIUM, new Queue(10)],
+        [RequestQueue.PRIORITY.LOW, new Queue(10)]
     ]);
     this.current = null;
     this.isSkipping = false;
@@ -31,8 +32,11 @@ RequestQueue.STATE_ACTIVE = 1;
 RequestQueue.STATE_PROCESSING = 2;
 RequestQueue.STATE_FLUSH = 3;
 
-RequestQueue.PRIORITY_NORMAL = "PRIORITY_NORMAL";
-RequestQueue.PRIORITY_SUPER = "PRIORITY_SUPER";
+RequestQueue.PRIORITY = {
+    "HIGH": "HIGH",
+    "MEDIUM": "MEDIUM",
+    "LOW": "LOW"
+};
 
 RequestQueue.EVENT_EXECUTION_DEFER = "EVENT_EXECUTION_DEFER";
 RequestQueue.EVENT_EXECUTION_ERROR = "EVENT_EXECUTION_ERROR";
@@ -66,7 +70,11 @@ RequestQueue.prototype.update = function(gameContext) {
         }
     }
 
-    this.onUpdate(gameContext);
+    const current = this.getCurrent();
+
+    if(!current) {
+        this.filterRequestQueue(gameContext);
+    }
 }
 
 RequestQueue.prototype.flushExecution = function(gameContext) {
@@ -77,7 +85,7 @@ RequestQueue.prototype.flushExecution = function(gameContext) {
     }
 
     const { type, data } = next;
-    const actionType = this.requestHandlers[type];
+    const actionType = this.actionHandlers.get(type);
 
     this.events.emit(RequestQueue.EVENT_EXECUTION_RUNNING, next);
     
@@ -97,7 +105,7 @@ RequestQueue.prototype.startExecution = function(gameContext) {
     }
 
     const { type, data } = next;
-    const actionType = this.requestHandlers[type];
+    const actionType = this.actionHandlers.get(type);
 
     this.setState(RequestQueue.STATE_PROCESSING);
     this.events.emit(RequestQueue.EVENT_EXECUTION_RUNNING, next);
@@ -113,7 +121,7 @@ RequestQueue.prototype.processExecution = function(gameContext) {
     }
 
     const { type, data } = current;
-    const actionType = this.requestHandlers[type];
+    const actionType = this.actionHandlers.get(type);
 
     actionType.onUpdate(gameContext, data);
 
@@ -130,13 +138,13 @@ RequestQueue.prototype.processExecution = function(gameContext) {
 }
 
 RequestQueue.prototype.createRequest = function(type, ...args) {
-    const actionType = this.requestHandlers[type];
-    
-    if(!actionType) {
+    const actionHandler = this.actionHandlers.get(type);
+
+    if(!actionHandler) {
         return null;
     }
 
-    const template = actionType.getTemplate(...args);
+    const template = actionHandler.getTemplate(...args);
     const request = {
         "type": type,
         "data": template
@@ -145,7 +153,7 @@ RequestQueue.prototype.createRequest = function(type, ...args) {
     return request;
 }
 
-RequestQueue.prototype.createElement = function(request, priority = RequestQueue.PRIORITY_NORMAL, messengerID = null) {
+RequestQueue.prototype.createElement = function(request, priority, messengerID = null) {
     return {
         "request": request,
         "priority": priority,
@@ -153,12 +161,18 @@ RequestQueue.prototype.createElement = function(request, priority = RequestQueue
     };
 }
 
-RequestQueue.prototype.addRequest = function(request = {}, priority = RequestQueue.PRIORITY_NORMAL, messengerID = null) {
+RequestQueue.prototype.addRequest = function(request = {}, messengerID = null) {
     const { type } = request;
-    const actionType = this.requestHandlers[type];
+    const actionType = this.actionTypes[type];
+
+    if(!actionType) {
+        return;
+    }
+
+    const { priority } = actionType;
     const priorityQueue = this.requestQueues.get(priority);
 
-    if(!actionType || !priorityQueue || priorityQueue.isFull()) {
+    if(!priorityQueue || priorityQueue.isFull()) {
         return;
     }
 
@@ -167,20 +181,21 @@ RequestQueue.prototype.addRequest = function(request = {}, priority = RequestQue
     priorityQueue.enqueueLast(element);
 }
 
-RequestQueue.prototype.filterRequestQueue = function(gameContext, priority) {
-    const priorityQueue = this.requestQueues.get(priority);
+RequestQueue.prototype.filterRequestQueue = function(gameContext) {
+    for(const [queueID, queue] of this.requestQueues) {
+        const isHit = queue.filterUntilFirstHit(element => this.validateExecution(gameContext, element));
 
-    if(!priorityQueue) {
-        return;
+        if(isHit) {
+            console.log(queueID);
+            break;
+        }
     }
-
-    priorityQueue.filterUntilFirstHit(element => this.validateExecution(gameContext, element));
 }
 
 RequestQueue.prototype.validateExecution = function(gameContext, element) {
     const { request, priority, messengerID } = element;
     const { type, data } = request;
-    const actionType = this.requestHandlers[type];
+    const actionType = this.actionHandlers.get(type);
 
     if(!actionType) {
         return false;
@@ -229,12 +244,18 @@ RequestQueue.prototype.validateExecution = function(gameContext, element) {
     return true;
 }
 
-RequestQueue.prototype.registerHandler = function(handlerID, handler) {
-    if(this.requestHandlers[handlerID] !== undefined || !handler) {
+RequestQueue.prototype.registerActionHandler = function(typeID, handler) {
+    if(this.actionHandlers.has(typeID)) {
+        Logger.log(false, "Handler already exist!", "RequestQueue.prototype.registerActionHandler", { typeID });
         return;
     }
 
-    this.requestHandlers[handlerID] = handler;
+    if(this.actionTypes[typeID] === undefined) {
+        Logger.log(false, "ActionType does not exist!", "RequestQueue.prototype.registerActionHandler", { typeID });
+        return;
+    }
+
+    this.actionHandlers.set(typeID, handler);
 }
 
 RequestQueue.prototype.start = function() {
@@ -277,11 +298,15 @@ RequestQueue.prototype.enqueue = function(executionItem) {
     }
 
     switch(priority) {
-        case RequestQueue.PRIORITY_NORMAL: {
+        case RequestQueue.PRIORITY.HIGH: {
             this.executionQueue.enqueueLast(executionItem);
             break;
         }
-        case RequestQueue.PRIORITY_SUPER: {
+        case RequestQueue.PRIORITY.MEDIUM: {
+            this.executionQueue.enqueueFirst(executionItem);
+            break;
+        }
+        case RequestQueue.PRIORITY.LOW: {
             this.executionQueue.enqueueFirst(executionItem);
             break;
         }

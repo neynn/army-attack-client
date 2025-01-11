@@ -1,4 +1,4 @@
-import { ClientQueue } from "./action/clientQueue.js";
+import { RequestQueue } from "./action/requestQueue.js";
 import { ControllerManager } from "./controller/controllerManager.js";
 import { EntityManager } from "./entity/entityManager.js";
 import { EventEmitter } from "./events/eventEmitter.js";
@@ -8,7 +8,7 @@ import { QuestManager } from "./questManager.js";
 
 export const World = function() {
     this.config = {};
-    this.actionQueue = new ClientQueue();
+    this.actionQueue = new RequestQueue();
     this.mapManager = new MapManager();
     this.entityManager = new EntityManager();
     this.questManager = new QuestManager();

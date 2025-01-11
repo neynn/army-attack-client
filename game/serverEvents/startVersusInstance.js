@@ -12,7 +12,7 @@ export const startVersusInstance = function(gameContext, payload) {
     actionQueue.events.subscribe(RequestQueue.EVENT_EXECUTION_DEFER, contextID, (execution, original) => {
         const { priority } = execution;
 
-        if(priority === RequestQueue.PRIORITY_NORMAL) {
+        if(priority === RequestQueue.PRIORITY.LOW) {
             socket.messageRoom(GAME_EVENTS.ACTION, original);
         }
     });

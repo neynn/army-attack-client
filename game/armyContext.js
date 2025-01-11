@@ -48,9 +48,9 @@ ArmyContext.prototype.constructor = ArmyContext;
 ArmyContext.prototype.initialize = function() {
     this.updateConversions();
 
-    this.world.actionQueue.registerHandler(ACTION_TYPES.MOVE, new MoveAction());
-    this.world.actionQueue.registerHandler(ACTION_TYPES.ATTACK, new AttackAction());
-    this.world.actionQueue.registerHandler(ACTION_TYPES.CONSTRUCTION, new ConstructionAction());
+    this.world.actionQueue.registerActionHandler(ACTION_TYPES.MOVE, new MoveAction());
+    this.world.actionQueue.registerActionHandler(ACTION_TYPES.ATTACK, new AttackAction());
+    this.world.actionQueue.registerActionHandler(ACTION_TYPES.CONSTRUCTION, new ConstructionAction());
     
     this.world.entityManager.registerArchetype("Unit", Unit);
     this.world.entityManager.registerArchetype("Defense", Defense);
