@@ -87,9 +87,9 @@ ArmyContext.prototype.initialize = function() {
 
     this.client.soundPlayer.loadAllSounds();
     
-    this.world.actionQueue.events.subscribe(RequestQueue.EVENT_QUEUE_ERROR, "DEBUG", (error) => console.log(error));
-    this.world.actionQueue.events.subscribe(RequestQueue.EVENT_EXECUTION_RUNNING, "DEBUG", (item) => console.log(item, "IS PROCESSING"));
-    this.world.actionQueue.events.subscribe(RequestQueue.EVENT_EXECUTION_ERROR, "DEBUG",  (request, actionType) => {
+    this.world.actionQueue.events.subscribe(RequestQueue.EVENT.QUEUE_ERROR, "DEBUG", (error) => console.log(error));
+    this.world.actionQueue.events.subscribe(RequestQueue.EVENT.EXECUTION_RUNNING, "DEBUG", (item) => console.log(item, "IS PROCESSING"));
+    this.world.actionQueue.events.subscribe(RequestQueue.EVENT.EXECUTION_ERROR, "DEBUG",  (request, actionType) => {
         if(actionType.errorSound) {
             this.client.soundPlayer.playSound(actionType.errorSound, 0.5);
         }

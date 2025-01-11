@@ -17,7 +17,6 @@ import { MorphSystem } from "../../systems/morph.js";
 import { DirectionSystem } from "../../systems/direction.js";
 import { HealthComponent } from "../../components/health.js";
 import { MoveComponent } from "../../components/move.js";
-import { AttackComponent } from "../../components/attack.js";
 
 export const PlayerController = function(id) {
     EntityController.call(this, id);
@@ -115,14 +114,9 @@ PlayerController.prototype.updateAttackers = function(gameContext) {
 
 PlayerController.prototype.isEntityAttackable = function(gameContext, entity) {
     const teamComponent = entity.getComponent(TeamComponent);
+    const isEnemy = AllianceSystem.isEnemy(gameContext, this.teamID, teamComponent.teamID);
 
-    const alliance = AllianceSystem.getAlliance(gameContext, this.teamID, teamComponent.teamID);
-
-    if(!alliance) {
-        return false;
-    }
-
-    return alliance.isEnemy;
+    return isEnemy;
 }
 
 PlayerController.prototype.isCursorNodeValid = function() {

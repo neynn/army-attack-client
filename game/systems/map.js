@@ -122,9 +122,9 @@ MapSystem.updateBorder = function(gameContext, tileX, tileY, range = 0) {
             }
 
             const centerTeamID = activeMap.getTile(teamLayerID, j, i);
-            const alliance = AllianceSystem.getAlliance(gameContext, controllerFocus.teamID, teamMapping[centerTeamID]);
+            const isEnemy = AllianceSystem.isEnemy(gameContext, controllerFocus.teamID, teamMapping[centerTeamID]);
 
-            if(!alliance || alliance.isEnemy) {
+            if(isEnemy) {
                 continue;
             }
 
@@ -138,9 +138,9 @@ MapSystem.updateBorder = function(gameContext, tileX, tileY, range = 0) {
                 }
 
                 const neighborTeamID = activeMap.getTile(teamLayerID, x, y);
-                const alliance = AllianceSystem.getAlliance(gameContext, teamMapping[centerTeamID], teamMapping[neighborTeamID]);
+                const isEnemy = AllianceSystem.isEnemy(gameContext, teamMapping[centerTeamID], teamMapping[neighborTeamID]);
 
-                if(alliance && alliance.isEnemy) {
+                if(isEnemy) {
                     return 0;
                 }
     

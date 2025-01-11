@@ -15,9 +15,9 @@ export const AttackSystem = function() {
 }
 
 AttackSystem.OUTCOME_STATE = {
-    IDLE: 0,
-    DOWN: 1,
-    DEAD: 2
+    "IDLE": 0,
+    "DOWN": 1,
+    "DEAD": 2
 };
 
 AttackSystem.getOutcomeState = function(gameContext, damage, target, attackerIDs) {
@@ -102,10 +102,10 @@ AttackSystem.getMoveCounterAttackers = function(gameContext, target) {
         }
 
         const attackerTeamComponent = attacker.getComponent(TeamComponent);
-        const alliance = AllianceSystem.getAlliance(gameContext, attackerTeamComponent.teamID, targetTeamComponent.teamID);
+        const isEnemy = AllianceSystem.isEnemy(gameContext, attackerTeamComponent.teamID, targetTeamComponent.teamID);
         const hasRange = AttackSystem.isTargetInRange(target, attacker, attackComponent.range);
 
-        if(hasRange && (alliance && alliance.isEnemy)) {
+        if(hasRange && isEnemy) {
             return true;
         }
     });
@@ -129,10 +129,10 @@ AttackSystem.getActiveAttackers = function(gameContext, target) {
         }
 
         const attackerTeamComponent = attacker.getComponent(TeamComponent);
-        const alliance = AllianceSystem.getAlliance(gameContext, attackerTeamComponent.teamID, targetTeamComponent.teamID);
+        const isEnemy = AllianceSystem.isEnemy(gameContext, attackerTeamComponent.teamID, targetTeamComponent.teamID);
         const hasRange = AttackSystem.isTargetInRange(target, attacker, attackComponent.range);
 
-        if(hasRange && (alliance && alliance.isEnemy)) {
+        if(hasRange && isEnemy) {
             return true;
         }
     });

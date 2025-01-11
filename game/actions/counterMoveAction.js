@@ -88,7 +88,7 @@ CounterMoveAction.prototype.getValidated = function(gameContext, template, messe
         "attackers": attackers,
         "damage": damage,
         "state": state
-    };
+    }
 }
 
 CounterMoveAction.prototype.getTemplate = function(entityID) {

@@ -18,9 +18,9 @@ ConquerSystem.conquerTile = function(gameContext, tileX, tileY, entity) {
     const teamMapping = world.getConfig("TeamTypesMapping");
     const teamLayerID = layerTypes["Team"].layerID;
     const tileTeamID = activeMap.getTile(teamLayerID, tileX, tileY);
-    const alliance = AllianceSystem.getAlliance(gameContext, teamComponent.teamID, teamMapping[tileTeamID]);
+    const isEnemy = AllianceSystem.isEnemy(gameContext, teamComponent.teamID, teamMapping[tileTeamID]);
 
-    if(!alliance || !alliance.isEnemy) {
+    if(!isEnemy) {
         return;
     }
 

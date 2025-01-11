@@ -21,3 +21,13 @@ AllianceSystem.getAlliance = function(gameContext, actorTeamID, reactorTeamID) {
 
     return alliance;
 }
+
+AllianceSystem.isEnemy = function(gameContext, actorTeamID, reactorTeamID) {
+    const alliance = AllianceSystem.getAlliance(gameContext, actorTeamID, reactorTeamID);
+
+    if(alliance === null) {
+        return false;
+    }
+
+    return alliance.isEnemy;
+}
