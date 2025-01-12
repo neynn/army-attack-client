@@ -1,20 +1,20 @@
 import { RequestQueue } from "./action/requestQueue.js";
 import { ControllerManager } from "./controller/controllerManager.js";
 import { EntityManager } from "./entity/entityManager.js";
+import { EventManager } from "./eventManager.js";
 import { EventEmitter } from "./events/eventEmitter.js";
 import { Logger } from "./logger.js";
 import { MapManager } from "./map/mapManager.js";
-import { QuestManager } from "./questManager.js";
 
 export const World = function() {
     this.config = {};
     this.actionQueue = new RequestQueue();
     this.mapManager = new MapManager();
     this.entityManager = new EntityManager();
-    this.questManager = new QuestManager();
     this.controllerManager = new ControllerManager();
-    this.events = new EventEmitter();
+    this.eventManager = new EventManager();
 
+    this.events = new EventEmitter();
     this.events.listen(World.EVENT_MAP_LOAD);
     this.events.listen(World.EVENT_CONTROLLER_CREATE);
     this.events.listen(World.EVENT_CONTROLLER_DESTROY);

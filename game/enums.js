@@ -9,6 +9,16 @@ export const GAME_EVENTS = Object.freeze({
     "ACTION_BATCH": 7
 });
 
+export const EVENT_TYPES = Object.freeze({
+    "CLIENT": "Client",
+    "COUNTER": "Counter",
+    "CONTROL": "Control",
+    "RESOURCES_CONSUME": "ResourcesConsume",
+    "ITEMS_CONSUME": "ItemsConsume",
+    "ITEMS_OWN": "ItemsOwn",
+    "MILESTONE": "Milestone"
+});
+
 export const ACTION_TYPES = Object.freeze({
     "MOVE": "Move",
     "ATTACK": "Attack",

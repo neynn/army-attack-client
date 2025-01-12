@@ -10,6 +10,20 @@
         "height": 11,
         "author": "neyn",
         "type": "PVP",
+        "missions": {
+            "MISSION_1": {
+                "id": "MISSION_1",
+                "description": "Mission 1",
+                "narrator": null,
+                "requiredMissions": [],
+                "objectives": {
+
+                },
+                "rewards": {
+
+                }
+            }
+        },
         "layerConfig": {
             "ground": { "id": "ground", "opacity": 1, "autoGenerate": false, "isMeta": false },
             "border": { "id": "border", "opacity": 1, "autoGenerate": true, "isMeta": false },
