@@ -17,7 +17,7 @@ CounterMoveAction.prototype.onClear = function() {
     this.timePassed = 0;
 }
 
-CounterMoveAction.prototype.onStart = function(gameContext, request) {
+CounterMoveAction.prototype.onStart = function(gameContext, request, messengerID) {
     const { world } = gameContext;
     const { entityManager } = world;
     const { entityID, attackers, damage, state } = request;
@@ -33,7 +33,7 @@ CounterMoveAction.prototype.onStart = function(gameContext, request) {
     }
 }
 
-CounterMoveAction.prototype.onEnd = function(gameContext, request) {
+CounterMoveAction.prototype.onEnd = function(gameContext, request, messengerID) {
     const { world } = gameContext;
     const { entityManager } = world;
     const { entityID, attackers, damage, state } = request;
@@ -49,14 +49,14 @@ CounterMoveAction.prototype.onEnd = function(gameContext, request) {
     }
 }
 
-CounterMoveAction.prototype.onUpdate = function(gameContext, request) {
+CounterMoveAction.prototype.onUpdate = function(gameContext, request, messengerID) {
     const { timer } = gameContext;
     const deltaTime = timer.getFixedDeltaTime();
 
     this.timePassed += deltaTime;
 }
 
-CounterMoveAction.prototype.isFinished = function(gameContext, request) {
+CounterMoveAction.prototype.isFinished = function(gameContext, request, messengerID) {
     const { world } = gameContext;
     const settings = world.getConfig("Settings");
     const timeRequired = settings.hitDuration;

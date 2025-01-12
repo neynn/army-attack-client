@@ -13,14 +13,14 @@ CounterAttackAction.prototype.onClear = function() {
     this.timePassed = 0;
 }
 
-CounterAttackAction.prototype.onUpdate = function(gameContext, request) {
+CounterAttackAction.prototype.onUpdate = function(gameContext, request, messengerID) {
     const { timer } = gameContext;
     const deltaTime = timer.getFixedDeltaTime();
 
     this.timePassed += deltaTime;
 }
 
-CounterAttackAction.prototype.isFinished = function(gameContext, request) {
+CounterAttackAction.prototype.isFinished = function(gameContext, request, messengerID) {
     const { world } = gameContext;
     const settings = world.getConfig("Settings");
     const timeRequired = settings.hitDuration;

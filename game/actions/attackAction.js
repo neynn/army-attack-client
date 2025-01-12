@@ -17,7 +17,7 @@ AttackAction.prototype.onClear = function() {
     this.timePassed = 0;
 }
 
-AttackAction.prototype.onStart = function(gameContext, request) {
+AttackAction.prototype.onStart = function(gameContext, request, messengerID) {
     const { world } = gameContext;
     const { entityManager } = world;
     const { entityID, attackers, damage, state } = request;
@@ -33,7 +33,7 @@ AttackAction.prototype.onStart = function(gameContext, request) {
     }
 }
 
-AttackAction.prototype.onEnd = function(gameContext, request) {
+AttackAction.prototype.onEnd = function(gameContext, request, messengerID) {
     const { world } = gameContext;
     const { entityManager } = world;
     const { entityID, attackers, damage, state } = request;
@@ -49,14 +49,14 @@ AttackAction.prototype.onEnd = function(gameContext, request) {
     }
 }
 
-AttackAction.prototype.onUpdate = function(gameContext, request) {
+AttackAction.prototype.onUpdate = function(gameContext, request, messengerID) {
     const { timer } = gameContext;
     const deltaTime = timer.getFixedDeltaTime();
 
     this.timePassed += deltaTime;
 }
 
-AttackAction.prototype.isFinished = function(gameContext, request) {
+AttackAction.prototype.isFinished = function(gameContext, request, messengerID) {
     const { world } = gameContext;
     const settings = world.getConfig("Settings");
     const timeRequired = settings.hitDuration;

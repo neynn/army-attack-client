@@ -15,7 +15,7 @@ export const MoveAction = function() {}
 MoveAction.prototype = Object.create(Action.prototype);
 MoveAction.prototype.constructor = MoveAction;
 
-MoveAction.prototype.onStart = function(gameContext, request) {
+MoveAction.prototype.onStart = function(gameContext, request, messengerID) {
     const { targetX, targetY, entityID, path } = request;
     const { world } = gameContext;
     const { entityManager } = world;
@@ -27,7 +27,7 @@ MoveAction.prototype.onStart = function(gameContext, request) {
     PlaceSystem.removeEntity(gameContext, entity);
 }
 
-MoveAction.prototype.onEnd = function(gameContext, request) {
+MoveAction.prototype.onEnd = function(gameContext, request, messengerID) {
     const { targetX, targetY, entityID } = request;
     const { world } = gameContext;
     const { entityManager, actionQueue } = world;
@@ -40,7 +40,7 @@ MoveAction.prototype.onEnd = function(gameContext, request) {
     actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.COUNTER_MOVE, entityID));
 }
 
-MoveAction.prototype.onUpdate = function(gameContext, request) {
+MoveAction.prototype.onUpdate = function(gameContext, request, messengerID) {
     const { entityID } = request;
     const { world } = gameContext;
     const { entityManager } = world;
@@ -49,7 +49,7 @@ MoveAction.prototype.onUpdate = function(gameContext, request) {
     MoveSystem.updatePath(gameContext, entity);
 }
 
-MoveAction.prototype.isFinished = function(gameContext, request) {
+MoveAction.prototype.isFinished = function(gameContext, request, messengerID) {
     const { entityID } = request;
     const { world } = gameContext;
     const { entityManager } = world;

@@ -14,7 +14,7 @@ ConstructionAction.prototype.onClear = function() {
     this.timePassed = 0;
 }
 
-ConstructionAction.prototype.onStart = function(gameContext, request) {
+ConstructionAction.prototype.onStart = function(gameContext, request, messengerID) {
     const { world } = gameContext;
     const { entityManager } = world;
     const { entityID } = request;
@@ -23,7 +23,7 @@ ConstructionAction.prototype.onStart = function(gameContext, request) {
     AnimationSystem.playConstruction(gameContext, entity);
 }
 
-ConstructionAction.prototype.onEnd = function(gameContext, request) {
+ConstructionAction.prototype.onEnd = function(gameContext, request, messengerID) {
     const { world } = gameContext;
     const { entityManager } = world;
     const { entityID, deltaSteps } = request;
@@ -34,14 +34,14 @@ ConstructionAction.prototype.onEnd = function(gameContext, request) {
     AnimationSystem.setConstructionFrame(gameContext, entity);
 }
 
-ConstructionAction.prototype.onUpdate = function(gameContext, request) {
+ConstructionAction.prototype.onUpdate = function(gameContext, request, messengerID) {
     const { timer } = gameContext;
     const deltaTime = timer.getFixedDeltaTime();
 
     this.timePassed += deltaTime;
 }
 
-ConstructionAction.prototype.isFinished = function(gameContext, request) {
+ConstructionAction.prototype.isFinished = function(gameContext, request, messengerID) {
     const { world } = gameContext;
     const settings = world.getConfig("Settings");
     const constructionDuration = settings.iconDuration;

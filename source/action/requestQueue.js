@@ -86,13 +86,13 @@ RequestQueue.prototype.flushExecution = function(gameContext) {
         return;
     }
 
-    const { type, data } = next;
+    const { type, data, messengerID } = next;
     const actionType = this.actionHandlers.get(type);
 
     this.events.emit(RequestQueue.EVENT.EXECUTION_RUNNING, next);
     
-    actionType.onStart(gameContext, data);
-    actionType.onEnd(gameContext, data);
+    actionType.onStart(gameContext, data, messengerID);
+    actionType.onEnd(gameContext, data, messengerID);
     actionType.onClear();
 
     this.clearCurrent();
@@ -105,13 +105,13 @@ RequestQueue.prototype.startExecution = function(gameContext) {
         return;
     }
 
-    const { type, data } = next;
+    const { type, data, messengerID } = next;
     const actionType = this.actionHandlers.get(type);
 
     this.setState(RequestQueue.STATE.PROCESSING);
     this.events.emit(RequestQueue.EVENT.EXECUTION_RUNNING, next);
         
-    actionType.onStart(gameContext, data);
+    actionType.onStart(gameContext, data, messengerID);
 }
 
 RequestQueue.prototype.processExecution = function(gameContext) {
@@ -121,15 +121,15 @@ RequestQueue.prototype.processExecution = function(gameContext) {
         return;
     }
 
-    const { type, data } = current;
+    const { type, data, messengerID } = current;
     const actionType = this.actionHandlers.get(type);
 
-    actionType.onUpdate(gameContext, data);
+    actionType.onUpdate(gameContext, data, messengerID);
 
-    const isFinished = actionType.isFinished(gameContext, data);
+    const isFinished = actionType.isFinished(gameContext, data, messengerID);
 
     if(this.isSkipping || isFinished) {
-        actionType.onEnd(gameContext, data);
+        actionType.onEnd(gameContext, data, messengerID);
         actionType.onClear();
 
         this.clearCurrent();
@@ -219,7 +219,8 @@ RequestQueue.prototype.validateExecution = function(gameContext, element) {
     const executionItem = {
         "type": type,
         "data": validatedData,
-        "priority": priority
+        "priority": priority,
+        "messengerID": messengerID
     };
 
     switch(this.mode) {
