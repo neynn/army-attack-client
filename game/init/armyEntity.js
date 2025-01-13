@@ -8,6 +8,7 @@ import { SpriteComponent } from "../components/sprite.js";
 import { DirectionComponent } from "../components/direction.js";
 import { PositionComponent } from "../components/position.js";
 import { CAMERA_TYPES } from "../enums.js";
+import { ReviveableComponent } from "../components/reviveable.js";
 
 export const ArmyEntity = function(id, DEBUG_NAME) {
     Entity.call(this, id, DEBUG_NAME);
@@ -27,8 +28,9 @@ ArmyEntity.prototype.createDefaultSprite = function(gameContext, config) {
     const { spriteManager, renderer } = gameContext;
     const { tileX, tileY } = config;
 
+    const spriteType = this.config.sprites["idle"];
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
-    const sprite = spriteManager.createSprite(this.config.sprites["idle"], SpriteManager.LAYER_MIDDLE);
+    const sprite = spriteManager.createSprite(spriteType, SpriteManager.LAYER_MIDDLE);
     const { x, y } = camera.transformTileToPositionCenter(tileX, tileY);
 
     const positionComponent = this.getComponent(PositionComponent);
@@ -78,5 +80,13 @@ ArmyEntity.prototype.onCreate = function(gameContext, config) {
 }
 
 ArmyEntity.prototype.update = function(gameContext) {
-    
+    if(this.hasComponent(ReviveableComponent)) {
+        const reviveable = this.getComponent(ReviveableComponent);
+
+        reviveable.update(gameContext);
+
+        if(reviveable.isDead()) {
+            //REMOVE from game.
+        }
+    }
 }

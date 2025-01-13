@@ -14,7 +14,3 @@ Building.prototype.onCreate = function(gameContext, config) {
     this.createDefaultSprite(gameContext, config);
     this.loadDefaultTraits(gameContext, config);
 }
-
-Building.prototype.update = function(gameContext) {
-
-}

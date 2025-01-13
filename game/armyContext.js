@@ -24,7 +24,7 @@ import { EditorController } from "./init/controller/editor.js";
 import { AvianComponent } from "./components/avian.js";
 import { BulldozeComponent } from "./components/bulldoze.js";
 import { ConstructionAction } from "./actions/constructionAction.js";
-import { DecayComponent } from "./components/decay.js";
+import { ReviveableComponent } from "./components/reviveable.js";
 import { CounterComponent } from "./components/counter.js";
 import { ResourceComponent } from "./components/resource.js";
 import { ArmyCamera } from "./armyCamera.js";
@@ -67,7 +67,7 @@ ArmyContext.prototype.initialize = function() {
 
     this.world.entityManager.registerComponent("Health", HealthComponent);
     this.world.entityManager.registerComponent("Construction", ConstructionComponent);
-    this.world.entityManager.registerComponent("Decay", DecayComponent);
+    this.world.entityManager.registerComponent("Reviveable", ReviveableComponent);
     this.world.entityManager.registerComponent("Attack", AttackComponent);
     this.world.entityManager.registerComponent("Move", MoveComponent);
     this.world.entityManager.registerComponent("UnitSize", UnitSizeComponent);

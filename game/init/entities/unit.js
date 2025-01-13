@@ -10,10 +10,6 @@ export const Unit = function(id, DEBUG_NAME) {
 Unit.prototype = Object.create(ArmyEntity.prototype);
 Unit.prototype.constructor = Unit;
 
-Unit.prototype.onInteract = function(gameContext, controller) {
-    
-}
-
 Unit.prototype.onCreate = function(gameContext, config) {
     const { mode } = config;
 
@@ -24,10 +20,9 @@ Unit.prototype.onCreate = function(gameContext, config) {
     const moveComponent = MoveComponent.create(this.config.stats[mode], this.config);
     
     attackComponent.toActive();
-        
+
     this.addComponent(attackComponent);
     this.addComponent(moveComponent);
     this.getComponent(SpriteComponent).allowFlip();
-    //this.addComponent(ArmorComponent.create({"armor": 2}));
     this.loadDefaultTraits(gameContext, config);
 }

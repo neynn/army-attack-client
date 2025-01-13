@@ -6,9 +6,9 @@ import { BulldozeComponent } from "../components/bulldoze.js";
 import { CounterComponent } from "../components/counter.js";
 import { HealthComponent } from "../components/health.js";
 import { PositionComponent } from "../components/position.js";
+import { ReviveableComponent } from "../components/reviveable.js";
 import { TeamComponent } from "../components/team.js";
 import { AllianceSystem } from "./alliance.js";
-import { DecaySystem } from "./decay.js";
 
 export const AttackSystem = function() {
     this.id = "AttackSystem";
@@ -26,9 +26,9 @@ AttackSystem.getOutcomeState = function(gameContext, damage, target, attackerIDs
 
     if(remainder === 0) {
         const isBulldozed = AttackSystem.getBulldozed(gameContext, target, attackerIDs);
-        const isReviveable = DecaySystem.isReviveable(target);
+        const isReviveable = target.hasComponent(ReviveableComponent);
 
-        if(isReviveable && !isBulldozed) {
+        if(target.hasComponent(ReviveableComponent) && !isBulldozed) {
             return AttackSystem.OUTCOME_STATE.DOWN;
         }
 

@@ -74,14 +74,14 @@
         "id": "Elite",
         "description": "If an entity has the elite status.",
         "components": {
-            "Decay": { "isReviveable": true, "isElite": true }
+            "Reviveable": { "isElite": true }
         }
     },
     "Reviveable": {
         "id": "Reviveable",
         "description": "If an entity can be revived.",
         "components": {
-            "Decay": { "isReviveable": true }
+            "Reviveable": {}
         }
     },
     "Counter": {

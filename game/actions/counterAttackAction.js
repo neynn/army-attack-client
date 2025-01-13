@@ -18,10 +18,10 @@ CounterAttackAction.prototype.constructor = CounterAttackAction;
 CounterAttackAction.prototype.onStart = function(gameContext, request, messengerID) {
     const { world } = gameContext;
     const { entityManager } = world;
-    const { entityID, targetID, damage, state } = request;
+    const { attackers, targetID, damage, state } = request;
     const target = entityManager.getEntity(targetID);
 
-    AnimationSystem.playFire(gameContext, target, [entityID]);
+    AnimationSystem.playFire(gameContext, target, attackers);
     HealthSystem.reduceHealth(target, damage);
 
     if(state === AttackSystem.OUTCOME_STATE.DOWN) {
@@ -34,10 +34,10 @@ CounterAttackAction.prototype.onStart = function(gameContext, request, messenger
 CounterAttackAction.prototype.onEnd = function(gameContext, request, messengerID) {
     const { world } = gameContext;
     const { entityManager } = world;
-    const { entityID, targetID, damage, state } = request;
+    const { attackers, targetID, damage, state } = request;
     const target = entityManager.getEntity(targetID);
 
-    AnimationSystem.revertToIdle(gameContext, [entityID]);
+    AnimationSystem.revertToIdle(gameContext, attackers);
 
     if(state === AttackSystem.OUTCOME_STATE.DEAD) {
         AnimationSystem.playDeath(gameContext, target);
@@ -97,8 +97,8 @@ CounterAttackAction.prototype.getValidated = function(gameContext, template, mes
     const state = AttackSystem.getOutcomeState(gameContext, damage, target, [entityID]);
     
     return {
-        "entityID": entityID,
         "targetID": targetID,
+        "attackers": [entityID],
         "damage": damage,
         "state": state
     }

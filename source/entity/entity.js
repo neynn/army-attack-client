@@ -5,8 +5,6 @@ export const Entity = function(id = null, DEBUG_NAME = "") {
     this.components = new Map();
 }
 
-Entity.prototype.onInteract = function(gameContext, controller) {}
-
 Entity.prototype.onCreate = function(gameContext, config) {}
 
 Entity.prototype.update = function(gameContext) {}

@@ -1,6 +1,4 @@
 import { ConstructionComponent } from "../../components/construction.js";
-import { ACTION_TYPES } from "../../enums.js";
-import { ConstructionSystem } from "../../systems/construction.js";
 import { ArmyEntity } from "../armyEntity.js";
 
 export const Construction = function(id, DEBUG_NAME) {
@@ -9,21 +7,6 @@ export const Construction = function(id, DEBUG_NAME) {
 
 Construction.prototype = Object.create(ArmyEntity.prototype);
 Construction.prototype.constructor = Construction;
-
-Construction.prototype.onInteract = function(gameContext, controller) {
-    const { world } = gameContext;
-    const { actionQueue } = world;
-    const constructionComponent = this.getComponent(ConstructionComponent);
-    
-    if(!constructionComponent.isComplete()) {
-        actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.CONSTRUCTION, this.id));
-        return;
-    }
-
-    if(!actionQueue.isRunning()) {
-        ConstructionSystem.finishConstruction(gameContext, this, controller);
-    }
-}
 
 Construction.prototype.onCreate = function(gameContext, config) {
     this.createDefaultEntity(config);

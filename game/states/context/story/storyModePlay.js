@@ -36,7 +36,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
     uiManager.parseUI("STORY_MODE", gameContext);
     
     SpawnSystem.createEntity(gameContext, { 
-        "type": "blue_guardtower",
+        "type": "red_guardtower",
         "mode": "story",
         "tileX": 4,
         "tileY": 4,

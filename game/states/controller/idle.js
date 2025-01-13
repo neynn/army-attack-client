@@ -1,7 +1,9 @@
 import { State } from "../../../source/state/state.js";
+import { ConstructionComponent } from "../../components/construction.js";
 import { HealthComponent } from "../../components/health.js";
 
 import { ACTION_TYPES, CONTROLLER_STATES } from "../../enums.js";
+import { ConstructionSystem } from "../../systems/construction.js";
 
 export const ControllerIdleState = function() {}
 
@@ -18,6 +20,7 @@ ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext)
         return;
     }
 
+    const controllerID = controller.getID();
     const entityID = mouseEntity.getID();
     const isAttackable = controller.isEntityAttackable(gameContext, mouseEntity);
     const healthComponent = mouseEntity.getComponent(HealthComponent);
@@ -28,16 +31,20 @@ ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext)
         return;
     }
 
-    if(isControlled) {
-        mouseEntity.onInteract(gameContext, controller);
+    if(!isControlled) {
+        return;
+    }
 
-        if(!actionQueue.isRunning()) {
-            const isMoveable = controller.isEntityMoveable(mouseEntity);
-    
-            if(isMoveable) {
-                controller.showSelectEntity(gameContext, mouseEntity);
-                stateMachine.setNextState(CONTROLLER_STATES.SELECTED);
-            }
+    if(mouseEntity.hasComponent(ConstructionComponent)) {
+        ConstructionSystem.onInteract(gameContext, mouseEntity, controllerID);
+    }
+
+    if(!actionQueue.isRunning()) {
+        const isMoveable = controller.isEntityMoveable(mouseEntity);
+
+        if(isMoveable) {
+            controller.showSelectEntity(gameContext, mouseEntity);
+            stateMachine.setNextState(CONTROLLER_STATES.SELECTED);
         }
     }
 }
