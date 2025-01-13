@@ -3,13 +3,13 @@ import { Logger } from "../logger.js";
 import { Entity } from "./entity.js";
 
 export const EntityManager = function() {
-    this.selectedFactory = null;
-    this.factoryTypes = new Map();
-    this.componentTypes = new Map();
     this.entityTypes = {};
     this.traitTypes = {};
     this.idGenerator = new IDGenerator("@ENTITY");
+    this.factoryTypes = new Map();
+    this.componentTypes = new Map();
     this.entities = new Map();
+    this.selectedFactory = null;
 }
 
 EntityManager.prototype.load = function(entityTypes, traitTypes) {
@@ -49,10 +49,10 @@ EntityManager.prototype.end = function() {
     this.idGenerator.reset();
 }
 
-EntityManager.prototype.saveComponents = function(entity, list = []) {
+EntityManager.prototype.saveComponents = function(entity, componentIDList = []) {
     const savedComponents = {};
 
-    for(const componentID of list) {
+    for(const componentID of componentIDList) {
         const component = this.componentTypes.get(componentID);
 
         if(!component) {
@@ -86,12 +86,12 @@ EntityManager.prototype.loadComponents = function(entity, components = {}) {
     }
 }
 
-EntityManager.prototype.loadTraits = function(entity, traits = []) {
-    for(const traitID of traits) {
+EntityManager.prototype.loadTraits = function(entity, traitIDList = []) {
+    for(const traitID of traitIDList) {
         const traitType = this.traitTypes[traitID];
 
         if(!traitType) {
-            Logger.log(false, `TraitType does not exist!`, "EntityManager.prototype.loadTraits", { traitID }); 
+            Logger.log(false, "TraitType does not exist!", "EntityManager.prototype.loadTraits", { traitID }); 
             continue;
         }
 

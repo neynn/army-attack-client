@@ -1,6 +1,6 @@
-export const Entity = function(id = null, DEBUG_NAME = "") {
+export const Entity = function(DEBUG_NAME = "") {
     this.DEBUG_NAME = DEBUG_NAME;
-    this.id = id;
+    this.id = null;
     this.config = {};
     this.components = new Map();
 }

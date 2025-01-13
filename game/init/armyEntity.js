@@ -16,11 +16,18 @@ import { ProductionComponent } from "../components/production.js";
 import { EntityFactory } from "../../source/entity/factory.js";
 
 export const ArmyEntity = function(config, DEBUG_NAME) {
-    Entity.call(this, null, DEBUG_NAME);
+    Entity.call(this, DEBUG_NAME);
 
     this.events = new EventEmitter();
     this.setConfig(config);
 }
+
+ArmyEntity.ARCHETYPE = {
+    "UNIT": "Unit",
+    "DEFENSE": "Defense",
+    "CONSTRUCTION": "Construction",
+    "BUILDING": "Building"
+};
 
 ArmyEntity.EVENT = {
     "HEALTH_UPDATE": 0,
@@ -42,7 +49,13 @@ ArmyEntity.prototype.update = function(gameContext) {
     }
 
     if(this.hasComponent(ProductionComponent)) {
-        //TODO
+        const production = this.getComponent(ProductionComponent);
+
+        production.update(gameContext, this.config.collectableTimeSeconds);
+
+        if(production.isFinished()) {
+            console.error("TODO FINISH PRODUCTION");
+        }
     }
 }
 
@@ -107,16 +120,16 @@ ArmyEntityFactory.prototype.onCreate = function(gameContext, config) {
 
     const entity = new ArmyEntity(entityType, type);
     const { archetype, stats } = entityType;
-    const { traits } = stats[mode];
+    const statConfig = stats[mode];
 
     this.loadDefaultComponents(entity, config);
 
     const sprite = this.createDefaultSprite(gameContext, entity, config);
 
     switch(archetype) {
-        case "Unit": {
-            const attackComponent = AttackComponent.create(stats[mode]);
-            const moveComponent = MoveComponent.create(stats[mode], entityType);
+        case ArmyEntity.ARCHETYPE.UNIT: {
+            const attackComponent = AttackComponent.create(statConfig);
+            const moveComponent = MoveComponent.create(statConfig, entityType);
             
             attackComponent.toActive();
         
@@ -125,15 +138,15 @@ ArmyEntityFactory.prototype.onCreate = function(gameContext, config) {
             entity.getComponent(SpriteComponent).allowFlip();
             break;
         }
-        case "Defense": {
-            const attackComponent = AttackComponent.create(stats[mode]);
+        case ArmyEntity.ARCHETYPE.DEFENSE: {
+            const attackComponent = AttackComponent.create(statConfig);
     
             attackComponent.toPassive();
                 
             entity.addComponent(attackComponent);
             break;
         }
-        case "Construction": {
+        case ArmyEntity.ARCHETYPE.CONSTRUCTION: {
             const constructionComponent = ConstructionComponent.create(entityType);
 
             entity.addComponent(constructionComponent);
@@ -142,13 +155,21 @@ ArmyEntityFactory.prototype.onCreate = function(gameContext, config) {
             sprite.setFrame(0);
             break;
         }
+        case ArmyEntity.ARCHETYPE.BUILDING: {
+            const productionComponent = ProductionComponent.create(entityType);
+
+            productionComponent.state = ProductionComponent.STATE.PRODUCING;
+
+            entity.addComponent(productionComponent);
+            break;
+        }
         default: {
             console.warn(`Archetype ${archetype} is not defined!`);
             break;
         }
     }
 
-    entityManager.loadTraits(entity, traits);
+    entityManager.loadTraits(entity, statConfig.traits);
     entityManager.loadComponents(entity, components);
 
     return entity;
