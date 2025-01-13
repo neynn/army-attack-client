@@ -29,16 +29,9 @@ import { CounterComponent } from "./components/counter.js";
 import { ResourceComponent } from "./components/resource.js";
 import { ArmyCamera } from "./armyCamera.js";
 import { SpawnSystem } from "./systems/spawn.js";
-import { Unit } from "./init/entities/unit.js";
-import { Defense } from "./init/entities/defense.js";
-import { Deco } from "./init/entities/deco.js";
-import { Building } from "./init/entities/building.js";
-import { HFE } from "./init/entities/hfe.js";
-import { Town } from "./init/entities/town.js";
-import { Construction } from "./init/entities/construction.js";
-import { Debris } from "./init/entities/debris.js";
 import { CounterAttackAction } from "./actions/counterAttackAction.js";
 import { CounterMoveAction } from "./actions/counterMoveAction.js";
+import { ArmyEntityFactory } from "./init/armyEntity.js";
 
 export const ArmyContext = function() {
     GameContext.call(this, 60);
@@ -56,15 +49,6 @@ ArmyContext.prototype.initialize = function() {
     this.world.actionQueue.registerActionHandler(ACTION_TYPES.COUNTER_ATTACK, new CounterAttackAction());
     this.world.actionQueue.registerActionHandler(ACTION_TYPES.COUNTER_MOVE, new CounterMoveAction());
 
-    this.world.entityManager.registerArchetype("Unit", Unit);
-    this.world.entityManager.registerArchetype("Defense", Defense);
-    this.world.entityManager.registerArchetype("Deco", Deco);
-    this.world.entityManager.registerArchetype("Building", Building);
-    this.world.entityManager.registerArchetype("HFE", HFE);
-    this.world.entityManager.registerArchetype("Town", Town);
-    this.world.entityManager.registerArchetype("Construction", Construction);
-    this.world.entityManager.registerArchetype("Debris", Debris);
-
     this.world.entityManager.registerComponent("Health", HealthComponent);
     this.world.entityManager.registerComponent("Construction", ConstructionComponent);
     this.world.entityManager.registerComponent("Reviveable", ReviveableComponent);
@@ -77,6 +61,9 @@ ArmyContext.prototype.initialize = function() {
     this.world.entityManager.registerComponent("Counter", CounterComponent);
     this.world.entityManager.registerComponent("Resource", ResourceComponent);
 
+    this.world.entityManager.registerFactory("Army", new ArmyEntityFactory());
+    this.world.entityManager.selectFactory("Army");
+    
     this.world.controllerManager.registerController("Player", PlayerController);
     this.world.controllerManager.registerController("Editor", EditorController);
     

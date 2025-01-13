@@ -116,18 +116,22 @@ World.prototype.destroyController = function(controllerID) {
     this.events.emit(World.EVENT_CONTROLLER_DESTROY, controller);
 }
 
-World.prototype.createEntity = function(gameContext, setup) {
-    if(typeof setup !== "object") {
-        Logger.error(false, "Setup does not exist!", "World.prototype.createEntity", null);
+World.prototype.createEntity = function(gameContext, config) {
+    if(!config) {
+        Logger.error(false, "Config does not exist!", "World.prototype.createEntity", null);
         return null;
     }
 
-    const { type, owner, id } = setup;
-    const entity = this.entityManager.createEntity(type, id);
+    const { owner, id } = config;
+    const entity = this.entityManager.createEntity(gameContext, config, id);
+
+    if(!entity) {
+        Logger.error(false, "Entity creation failed!", "World.prototype.createEntity", null);
+        return null;
+    }
+
     const entityID = entity.getID();
 
-    entity.onCreate(gameContext, setup);
-    
     this.controllerManager.addEntity(owner, entityID);
     this.events.emit(World.EVENT_ENTITY_CREATE, entity);
 

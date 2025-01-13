@@ -5,8 +5,6 @@ export const ReviveableComponent = function() {
     this.maxTime = 0;
 }
 
-ReviveableComponent.REQUIRES_UPDATE = true;
-
 ReviveableComponent.STATE = {
     "NO_DECAY": 0,
     "DECAY": 1,

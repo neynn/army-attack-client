@@ -7,6 +7,10 @@ SpawnSystem.createEntity = function(gameContext, config) {
     const { world } = gameContext; 
     const entity = world.createEntity(gameContext, config);
 
+    if(!entity) {
+        return null;
+    }
+    
     PlaceSystem.placeEntity(gameContext, entity);
     CardSystem.generateStatCard(gameContext, entity);
 

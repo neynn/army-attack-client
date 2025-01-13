@@ -5,7 +5,25 @@ export const Entity = function(id = null, DEBUG_NAME = "") {
     this.components = new Map();
 }
 
-Entity.prototype.onCreate = function(gameContext, config) {}
+Entity.prototype.setID = function(id) {
+    if(id !== undefined) {
+        this.id = id;
+    }
+}
+
+Entity.prototype.getID = function() {
+    return this.id;
+}
+
+Entity.prototype.setConfig = function(config) {
+    if(config !== undefined) {
+        this.config = config;
+    }
+} 
+
+Entity.prototype.getConfig = function() {
+    return this.config;
+}
 
 Entity.prototype.update = function(gameContext) {}
 
@@ -46,10 +64,6 @@ Entity.prototype.saveComponent = function(type) {
     return componentData;
 }
 
-Entity.prototype.getID = function() {
-    return this.id;
-}
-
 Entity.prototype.hasComponent = function(component) {
     return this.components.has(component);
 }
@@ -68,14 +82,4 @@ Entity.prototype.removeComponent = function(component) {
     if(this.components.has(component)) {
         this.components.delete(component);
     }
-}
-
-Entity.prototype.setConfig = function(config) {
-    if(config !== undefined) {
-        this.config = config;
-    }
-} 
-
-Entity.prototype.getConfig = function() {
-    return this.config;
 }

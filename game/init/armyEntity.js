@@ -9,75 +9,26 @@ import { DirectionComponent } from "../components/direction.js";
 import { PositionComponent } from "../components/position.js";
 import { CAMERA_TYPES } from "../enums.js";
 import { ReviveableComponent } from "../components/reviveable.js";
+import { AttackComponent } from "../components/attack.js";
+import { MoveComponent } from "../components/move.js";
+import { ConstructionComponent } from "../components/construction.js";
+import { ProductionComponent } from "../components/production.js";
+import { EntityFactory } from "../../source/entity/factory.js";
 
-export const ArmyEntity = function(id, DEBUG_NAME) {
-    Entity.call(this, id, DEBUG_NAME);
+export const ArmyEntity = function(config, DEBUG_NAME) {
+    Entity.call(this, null, DEBUG_NAME);
 
     this.events = new EventEmitter();
+    this.setConfig(config);
 }
 
 ArmyEntity.EVENT = {
     "HEALTH_UPDATE": 0,
     "DAMAGE_UPDATE": 1
-}
+};
 
 ArmyEntity.prototype = Object.create(Entity.prototype);
 ArmyEntity.prototype.constructor = ArmyEntity;
-
-ArmyEntity.prototype.createDefaultSprite = function(gameContext, config) {
-    const { spriteManager, renderer } = gameContext;
-    const { tileX, tileY } = config;
-
-    const spriteType = this.config.sprites["idle"];
-    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
-    const sprite = spriteManager.createSprite(spriteType, SpriteManager.LAYER_MIDDLE);
-    const { x, y } = camera.transformTileToPositionCenter(tileX, tileY);
-
-    const positionComponent = this.getComponent(PositionComponent);
-    const spriteComponent = this.getComponent(SpriteComponent);
-
-    positionComponent.positionX = x;
-    positionComponent.positionY = y;
-
-    spriteComponent.spriteID = sprite.getID();
-
-    sprite.setPosition(positionComponent.positionX, positionComponent.positionY);
-
-    return sprite;
-}
-
-ArmyEntity.prototype.createDefaultEntity = function(config) {
-    const { mode, tileX, tileY } = config;
-
-    const positionComponent = PositionComponent.create();
-    const spriteComponent = SpriteComponent.create();
-    const directionComponent = DirectionComponent.create();
-    const teamComponent = TeamComponent.create(config);
-    const healthComponent = HealthComponent.create(this.config.stats[mode]);
-
-    positionComponent.tileX = tileX;
-    positionComponent.tileY = tileY;
-
-    this.addComponent(positionComponent);
-    this.addComponent(spriteComponent);
-    this.addComponent(directionComponent);
-    this.addComponent(healthComponent);
-    this.addComponent(teamComponent);
-}
-
-ArmyEntity.prototype.loadDefaultTraits = function(gameContext, config) {
-    const { world } = gameContext;
-    const { entityManager } = world;
-    const { mode, components } = config;
-    const { traits } = this.config.stats[mode];
-
-    entityManager.loadTraits(this, traits);
-    entityManager.loadComponents(this, components);
-}
-
-ArmyEntity.prototype.onCreate = function(gameContext, config) {
-    console.warn("OnCreate has not been defined!");
-}
 
 ArmyEntity.prototype.update = function(gameContext) {
     if(this.hasComponent(ReviveableComponent)) {
@@ -89,4 +40,116 @@ ArmyEntity.prototype.update = function(gameContext) {
             //REMOVE from game.
         }
     }
+
+    if(this.hasComponent(ProductionComponent)) {
+        //TODO
+    }
+}
+
+export const ArmyEntityFactory = function() {
+    EntityFactory.call(this);
+}
+
+ArmyEntityFactory.prototype = Object.create(EntityFactory.prototype);
+ArmyEntityFactory.prototype.constructor = ArmyEntityFactory;
+
+ArmyEntityFactory.prototype.loadDefaultComponents = function(entity, config) {
+    const { mode, tileX, tileY } = config;
+
+    const positionComponent = PositionComponent.create();
+    const spriteComponent = SpriteComponent.create();
+    const directionComponent = DirectionComponent.create();
+    const teamComponent = TeamComponent.create(config);
+    const healthComponent = HealthComponent.create(entity.config.stats[mode]);
+
+    positionComponent.tileX = tileX;
+    positionComponent.tileY = tileY;
+
+    entity.addComponent(positionComponent);
+    entity.addComponent(spriteComponent);
+    entity.addComponent(directionComponent);
+    entity.addComponent(healthComponent);
+    entity.addComponent(teamComponent);
+}
+
+ArmyEntityFactory.prototype.createDefaultSprite = function(gameContext, entity, config) {
+    const { spriteManager, renderer } = gameContext;
+    const { tileX, tileY } = config;
+
+    const spriteType = entity.config.sprites["idle"];
+    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
+    const sprite = spriteManager.createSprite(spriteType, SpriteManager.LAYER_MIDDLE);
+    const { x, y } = camera.transformTileToPositionCenter(tileX, tileY);
+
+    const positionComponent = entity.getComponent(PositionComponent);
+    const spriteComponent = entity.getComponent(SpriteComponent);
+
+    positionComponent.positionX = x;
+    positionComponent.positionY = y;
+
+    spriteComponent.spriteID = sprite.getID();
+
+    sprite.setPosition(positionComponent.positionX, positionComponent.positionY);
+
+    return sprite;
+}
+
+ArmyEntityFactory.prototype.onCreate = function(gameContext, config) {
+    const { world } = gameContext;
+    const { entityManager } = world;
+    const { mode, components, type } = config;
+
+    const entityType = entityManager.getType(type);
+
+    if(!entityType) {
+        return null;
+    }
+
+    const entity = new ArmyEntity(entityType, type);
+    const { archetype, stats } = entityType;
+    const { traits } = stats[mode];
+
+    this.loadDefaultComponents(entity, config);
+
+    const sprite = this.createDefaultSprite(gameContext, entity, config);
+
+    switch(archetype) {
+        case "Unit": {
+            const attackComponent = AttackComponent.create(stats[mode]);
+            const moveComponent = MoveComponent.create(stats[mode], entityType);
+            
+            attackComponent.toActive();
+        
+            entity.addComponent(attackComponent);
+            entity.addComponent(moveComponent);
+            entity.getComponent(SpriteComponent).allowFlip();
+            break;
+        }
+        case "Defense": {
+            const attackComponent = AttackComponent.create(stats[mode]);
+    
+            attackComponent.toPassive();
+                
+            entity.addComponent(attackComponent);
+            break;
+        }
+        case "Construction": {
+            const constructionComponent = ConstructionComponent.create(entityType);
+
+            entity.addComponent(constructionComponent);
+        
+            sprite.freeze();
+            sprite.setFrame(0);
+            break;
+        }
+        default: {
+            console.warn(`Archetype ${archetype} is not defined!`);
+            break;
+        }
+    }
+
+    entityManager.loadTraits(entity, traits);
+    entityManager.loadComponents(entity, components);
+
+    return entity;
 }

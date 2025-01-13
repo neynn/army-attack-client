@@ -3,11 +3,12 @@ import { Logger } from "../logger.js";
 import { Entity } from "./entity.js";
 
 export const EntityManager = function() {
+    this.selectedFactory = null;
+    this.factoryTypes = new Map();
     this.componentTypes = new Map();
     this.entityTypes = {};
     this.traitTypes = {};
     this.idGenerator = new IDGenerator("@ENTITY");
-    this.archetypes = new Map();
     this.entities = new Map();
 }
 
@@ -46,20 +47,6 @@ EntityManager.prototype.update = function(gameContext) {
 EntityManager.prototype.end = function() {
     this.entities.forEach(entity => this.destroyEntity(entity.id));
     this.idGenerator.reset();
-}
-
-EntityManager.prototype.registerArchetype = function(typeID, type) {
-    if(!typeID || !type) {
-        Logger.log(false, "Parameter is undefined!", "EntityManager.prototype.registerArchetype", {typeID, type});
-        return;
-    }
-
-    if(this.archetypes.has(typeID)) {
-        Logger.log(false, "Archetype already exists!", "EntityManager.prototype.registerArchetype", {typeID});
-        return;
-    }
-
-    this.archetypes.set(typeID, type);
 }
 
 EntityManager.prototype.saveComponents = function(entity, list = []) {
@@ -120,44 +107,33 @@ EntityManager.prototype.getEntity = function(entityID) {
     return this.entities.get(entityID);
 }
 
-EntityManager.prototype.createEntity = function(typeID, externalID) {    
-    const config = this.entityTypes[typeID];
-    const entityID = externalID || this.idGenerator.getID();
+EntityManager.prototype.registerFactory = function(factoryID, factory) {
+    this.factoryTypes.set(factoryID, factory);
+}
 
-    if(!config) {
-        Logger.log(false, "EntityType does not exist", "EntityManager.prototype.createEntity", { typeID, entityID, externalID });
-        const entity = new Entity(entityID, typeID);
-        return entity;
+EntityManager.prototype.selectFactory = function(factoryID) {
+    if(!this.factoryTypes.has(factoryID)) {
+        Logger.log(false, "Factory has not been registered!", "EntityManager.prototype.selectFactory", { factoryID });
+        return;
     }
 
-    const { archetype } = config;
-    const Type = this.archetypes.get(archetype);
-    const entity = new Type(entityID, typeID);
-   
-    entity.setConfig(config);
+    this.selectedFactory = factoryID;
+}
 
+EntityManager.prototype.createEntity = function(gameContext, config, externalID) {
+    const factory = this.factoryTypes.get(this.selectedFactory);
+    const entity = factory.createEntity(gameContext, config);
+
+    if(!(entity instanceof Entity)) {
+        Logger.log(false, "Factory has returned an invalid type!", "EntityManager.prototype.createEntity", { config, externalID });
+        return null;
+    }
+
+    const entityID = externalID || this.idGenerator.getID();
+    entity.setID(entityID);
     this.entities.set(entityID, entity);
 
     return entity;
-}
-
-EntityManager.prototype.getArchetype = function(typeID) {
-    const entityType = this.entityTypes[typeID];
-
-    if(!entityType) {
-        Logger.error(false, "EntityType does not exist!", "EntityManager.prototype.getArchetype", { typeID });
-        return null;
-    }
-
-    const archetypeID = entityType.archetype;
-    const archetype = this.archetypes.get(archetypeID);
-
-    if(!archetype) {
-        Logger.error(false, "Archetype does not exist!", "EntityManager.prototype.getArchetype", { archetypeID, typeID });
-        return null;
-    }
-
-    return archetype;
 }
 
 EntityManager.prototype.destroyEntity = function(entityID) {
@@ -167,4 +143,15 @@ EntityManager.prototype.destroyEntity = function(entityID) {
     }
     
     this.entities.delete(entityID);
+}
+
+EntityManager.prototype.getType = function(typeID) {
+    const type = this.entityTypes[typeID];
+
+    if(!type) {
+        Logger.log(false, "EntityType does not exist!", "EntityManager.prototype.getType", { typeID });
+        return null;
+    }
+
+    return type;
 }
