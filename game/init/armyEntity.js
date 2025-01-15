@@ -60,7 +60,7 @@ ArmyEntity.prototype.update = function(gameContext) {
 }
 
 export const ArmyEntityFactory = function() {
-    EntityFactory.call(this);
+    EntityFactory.call(this, "ARMY_ENTITY_FACTORY");
 }
 
 ArmyEntityFactory.prototype = Object.create(EntityFactory.prototype);
@@ -112,7 +112,7 @@ ArmyEntityFactory.prototype.onCreate = function(gameContext, config) {
     const { entityManager } = world;
     const { mode, components, type } = config;
 
-    const entityType = entityManager.getType(type);
+    const entityType = this.getEntityType(type);
 
     if(!entityType) {
         return null;

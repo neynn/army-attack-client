@@ -20,7 +20,7 @@ resourceManager.loadMain("assets", "assets.json").then(async files => {
     return files;
 }).then(resources => {
   gameContext.loadResources(resources);
-  gameContext.initialize();
+  gameContext.initialize(resources);
   gameContext.start();
   console.log(resources);
 });

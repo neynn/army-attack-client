@@ -1,7 +1,10 @@
 import { EventEmitter } from "../events/eventEmitter.js";
 import { Entity } from "./entity.js";
 
-export const EntityFactory = function() {
+export const EntityFactory = function(DEBUG_NAME) {
+    this.DEBUG_NAME = DEBUG_NAME;
+    this.entityTypes = {};
+
     this.failCount = 0;
     this.successCount = 0;
 
@@ -14,6 +17,24 @@ EntityFactory.EVENT = {
     "ENTITY_CREATE": "ENTITY_CREATE",
     "ENTITY_CREATE_FAILED": "ENTITY_CREATE_FAILED"
 };
+
+EntityFactory.prototype.load = function(entityTypes) {
+    if(entityTypes) {
+        this.entityTypes = entityTypes;
+    }
+
+    return this;
+}
+
+EntityFactory.prototype.getEntityType = function(typeID) {
+    const type = this.entityTypes[typeID];
+
+    if(!type) {
+        return null;
+    }
+
+    return type;
+}
 
 EntityFactory.prototype.onCreate = function(gameContext, config) {}
 

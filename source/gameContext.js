@@ -76,7 +76,7 @@ GameContext.prototype.loadResources = function(resources) {
     this.spriteManager.load(resources.sprites);
     this.tileManager.load(resources.tiles, resources.tileMeta);
     this.uiManager.load(resources.interfaces, resources.icons, resources.fonts);
-    this.world.entityManager.load(resources.entities, resources.traits);
+    this.world.entityManager.load(resources.traits);
     this.settings = resources.settings;
     this.world.config = resources.world;
 }

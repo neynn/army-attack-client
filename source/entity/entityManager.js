@@ -2,7 +2,6 @@ import { IDGenerator } from "../idGenerator.js";
 import { Logger } from "../logger.js";
 
 export const EntityManager = function() {
-    this.entityTypes = {};
     this.traitTypes = {};
     this.idGenerator = new IDGenerator("@ENTITY");
     this.factoryTypes = new Map();
@@ -11,13 +10,7 @@ export const EntityManager = function() {
     this.selectedFactory = null;
 }
 
-EntityManager.prototype.load = function(entityTypes, traitTypes) {
-    if(typeof entityTypes === "object") {
-        this.entityTypes = entityTypes;
-    } else {
-        Logger.log(false, "EntityTypes must be an object!", "EntityManager.prototype.load", null);
-    }
-
+EntityManager.prototype.load = function(traitTypes) {
     if(typeof traitTypes === "object") {
         this.traitTypes = traitTypes;
     } else {
@@ -150,15 +143,4 @@ EntityManager.prototype.destroyEntity = function(entityID) {
     }
     
     this.entities.delete(entityID);
-}
-
-EntityManager.prototype.getType = function(typeID) {
-    const type = this.entityTypes[typeID];
-
-    if(!type) {
-        Logger.log(false, "EntityType does not exist!", "EntityManager.prototype.getType", { typeID });
-        return null;
-    }
-
-    return type;
 }

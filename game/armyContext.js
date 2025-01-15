@@ -40,7 +40,7 @@ export const ArmyContext = function() {
 ArmyContext.prototype = Object.create(GameContext.prototype);
 ArmyContext.prototype.constructor = ArmyContext;
 
-ArmyContext.prototype.initialize = function() {
+ArmyContext.prototype.initialize = function(resources) {
     this.updateConversions();
 
     this.world.actionQueue.registerActionHandler(ACTION_TYPES.MOVE, new MoveAction());
@@ -61,7 +61,7 @@ ArmyContext.prototype.initialize = function() {
     this.world.entityManager.registerComponent("Counter", CounterComponent);
     this.world.entityManager.registerComponent("Resource", ResourceComponent);
 
-    this.world.entityManager.registerFactory("Army", new ArmyEntityFactory());
+    this.world.entityManager.registerFactory("Army", new ArmyEntityFactory().load(resources.entities));
     this.world.entityManager.selectFactory("Army");
     
     this.world.controllerManager.registerController("Player", PlayerController);
