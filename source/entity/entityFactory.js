@@ -1,4 +1,5 @@
 import { EventEmitter } from "../events/eventEmitter.js";
+import { Entity } from "./entity.js";
 
 export const EntityFactory = function() {
     this.failCount = 0;
@@ -19,7 +20,7 @@ EntityFactory.prototype.onCreate = function(gameContext, config) {}
 EntityFactory.prototype.createEntity = function(gameContext, config) {
     const entity = this.onCreate(gameContext, config);
 
-    if(!entity) {
+    if(!(entity instanceof Entity)) {
         this.failCount++;
         this.events.emit(EntityFactory.EVENT.ENTITY_CREATE_FAILED, config);
         return null;

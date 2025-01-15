@@ -13,7 +13,7 @@ import { AttackComponent } from "../components/attack.js";
 import { MoveComponent } from "../components/move.js";
 import { ConstructionComponent } from "../components/construction.js";
 import { ProductionComponent } from "../components/production.js";
-import { EntityFactory } from "../../source/entity/factory.js";
+import { EntityFactory } from "../../source/entity/entityFactory.js";
 
 export const ArmyEntity = function(config, DEBUG_NAME) {
     Entity.call(this, DEBUG_NAME);

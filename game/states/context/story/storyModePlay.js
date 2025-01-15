@@ -10,6 +10,7 @@ StoryModePlayState.prototype = Object.create(State.prototype);
 StoryModePlayState.prototype.constructor = StoryModePlayState;
 
 StoryModePlayState.prototype.onEnter = async function(stateMachine) {
+    console.time();
     const gameContext = stateMachine.getContext();
     const { uiManager, world, renderer } = gameContext;
     const { actionQueue } = world;
@@ -156,6 +157,8 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
 
     const s = gameContext.saveSnapshot();
     console.log(s, gameContext);
+
+    console.timeEnd();
 }
 
 StoryModePlayState.prototype.onExit = function(stateMachine) {

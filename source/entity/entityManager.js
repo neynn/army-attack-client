@@ -1,6 +1,5 @@
 import { IDGenerator } from "../idGenerator.js";
 import { Logger } from "../logger.js";
-import { Entity } from "./entity.js";
 
 export const EntityManager = function() {
     this.entityTypes = {};
@@ -122,15 +121,23 @@ EntityManager.prototype.selectFactory = function(factoryID) {
 
 EntityManager.prototype.createEntity = function(gameContext, config, externalID) {
     const factory = this.factoryTypes.get(this.selectedFactory);
+
+    if(!factory) {
+        Logger.log(false, "Factory does not exist!", "EntityManager.prototype.createEntity", { "factoryID": this.selectedFactory, config, externalID });
+        return null;
+    }
+
     const entity = factory.createEntity(gameContext, config);
 
-    if(!(entity instanceof Entity)) {
-        Logger.log(false, "Factory has returned an invalid type!", "EntityManager.prototype.createEntity", { config, externalID });
+    if(!entity) {
+        Logger.log(false, "Factory has not returned an entity!", "EntityManager.prototype.createEntity", { "factoryID": this.selectedFactory, config, externalID });
         return null;
     }
 
     const entityID = externalID || this.idGenerator.getID();
+
     entity.setID(entityID);
+    
     this.entities.set(entityID, entity);
 
     return entity;
