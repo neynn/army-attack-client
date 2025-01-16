@@ -88,9 +88,7 @@ ArmyCamera.prototype.update = function(gameContext) {
     
     this.drawOverlay(gameContext, ArmyCamera.OVERLAY_TYPE_MOVE);
     this.drawOverlay(gameContext, ArmyCamera.OVERLAY_TYPE_ATTACK);
-    this.drawSpriteLayer(gameContext, SpriteManager.LAYER_BOTTOM);
-    this.drawSpriteLayer(gameContext, SpriteManager.LAYER_MIDDLE);
-    this.drawSpriteLayer(gameContext, SpriteManager.LAYER_TOP);
+    this.drawSpriteLayers(gameContext, [SpriteManager.LAYER_BOTTOM, SpriteManager.LAYER_MIDDLE, SpriteManager.LAYER_TOP]);
     this.drawOverlay(gameContext, ArmyCamera.OVERLAY_TYPE_RANGE);
 
     for(const layerID of foreground) {
@@ -168,47 +166,50 @@ ArmyCamera.prototype.drawWithCallback = function(map2D, layerConfig, onDraw, vie
     }
 }
 
-ArmyCamera.prototype.drawSpriteLayer = function(gameContext, layerID) {
+ArmyCamera.prototype.drawSpriteLayers = function(gameContext, layerList) {
     const { timer, renderer, spriteManager } = gameContext;
-    const spriteLayer = spriteManager.getLayer(layerID);
-
-    if(!spriteLayer) {
-        return;
-    }
-
-    const visibleSprites = [];
+    const { x, y } = this.getViewportPosition(); 
+    const context = renderer.getContext();
+    const realTime = timer.getRealTime();
+    const deltaTime = timer.getDeltaTime();
     const viewportLeftEdge = this.viewportX;
     const viewportTopEdge = this.viewportY;
     const viewportRightEdge = viewportLeftEdge + this.getViewportWidth();
     const viewportBottomEdge = viewportTopEdge + this.getViewportHeight();
 
-    for(let i = 0; i < spriteLayer.length; i++) {
-        const sprite = spriteLayer[i];
-        const { x, y, w, h } = sprite.getBounds();
-        const inBounds = x < viewportRightEdge && x + w > viewportLeftEdge && y < viewportBottomEdge && y + h > viewportTopEdge;
+    for(let i = 0; i < layerList.length; i++) {
+        const visibleSprites = [];
+        const spriteLayer = spriteManager.getLayer(layerList[i]);
 
-        if(inBounds) {
-            visibleSprites.push(sprite);
+        if(!spriteLayer) {
+            continue;
         }
-    }
 
-    visibleSprites.sort((spriteA, spriteB) => (spriteA.position.y) - (spriteB.position.y));
-
-    const { x, y } = this.getViewportPosition(); 
-    const context = renderer.getContext();
-    const realTime = timer.getRealTime();
-    const deltaTime = timer.getDeltaTime();
-
-    for(let i = 0; i < visibleSprites.length; i++) {
-        const sprite = visibleSprites[i];
-
-        sprite.update(realTime, deltaTime);
-        sprite.draw(context, x, y);
-    }
-
-    if((Renderer.DEBUG & Renderer.DEBUG_SPRITES) !== 0) {
-        for(const sprite of visibleSprites) {
-            sprite.debug(context, x, y);
+        for(let j = 0; j < spriteLayer.length; j++) {
+            const sprite = spriteLayer[j];
+            const { x, y, w, h } = sprite.getBounds();
+            const inBounds = x < viewportRightEdge && x + w > viewportLeftEdge && y < viewportBottomEdge && y + h > viewportTopEdge;
+    
+            if(inBounds) {
+                visibleSprites.push(sprite);
+            }
+        }
+    
+        visibleSprites.sort((current, next) => current.position.y - next.position.y);
+    
+        for(let j = 0; j < visibleSprites.length; j++) {
+            const sprite = visibleSprites[j];
+    
+            sprite.update(realTime, deltaTime);
+            sprite.draw(context, x, y);
+        }
+    
+        if((Renderer.DEBUG & Renderer.DEBUG_SPRITES) !== 0) {
+            for(let j = 0; j < visibleSprites.length; j++) {
+                const sprite = visibleSprites[j];
+        
+                sprite.debug(context, x, y);
+            }
         }
     }
 }

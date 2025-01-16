@@ -52,7 +52,7 @@ Sprite.prototype.getDrawData = function() {
     return {
         "typeID": this.typeID,
         "animationID": this.animationID,
-        "frame": this.currentFrame,
+        "currentFrame": this.currentFrame,
         "isFlipped": this.isFlipped
     }
 }

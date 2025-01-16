@@ -89,12 +89,7 @@ SpriteManager.prototype.createSprite = function(typeID, layerID = null, animatio
     const spriteID = this.idGenerator.getID();
     const sprite = new Sprite(spriteID, typeID);
     
-    sprite.onDraw = (context, viewportX, viewportY, localX, localY) => {
-        const drawData = sprite.getDrawData();
-
-        this.drawSprite(drawData, context, viewportX, viewportY, localX, localY);
-    }
-
+    sprite.onDraw = (context, viewportX, viewportY, localX, localY) => this.drawSprite(sprite, context, viewportX, viewportY, localX, localY);
     sprite.setLastCallTime(this.timestamp);
     sprite.events.subscribe(Sprite.EVENT_TERMINATE, EventEmitter.SUPER_SUBSCRIBER_ID, (sprite) => this.destroySprite(sprite.id));
 
@@ -110,8 +105,8 @@ SpriteManager.prototype.createSprite = function(typeID, layerID = null, animatio
     return sprite;
 }
 
-SpriteManager.prototype.drawSprite = function(drawData, context, viewportX, viewportY, localX, localY) {
-    const { typeID, animationID, frame, isFlipped } = drawData;
+SpriteManager.prototype.drawSprite = function(sprite, context, viewportX, viewportY, localX, localY) {
+    const { typeID, animationID, currentFrame, isFlipped } = sprite;
     const spriteBuffer = this.resources.getImage(typeID);
 
     if(!spriteBuffer) {
@@ -121,7 +116,7 @@ SpriteManager.prototype.drawSprite = function(drawData, context, viewportX, view
     const spriteType = this.spriteTypes[typeID];
     const spriteBounds = spriteType.getBounds();
     const animationType = spriteType.getAnimation(animationID);
-    const animationFrame = animationType.getFrame(frame);
+    const animationFrame = animationType.getFrame(currentFrame);
 
     for(const component of animationFrame) {
         const { id, shiftX, shiftY } = component;
