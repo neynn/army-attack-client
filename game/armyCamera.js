@@ -80,10 +80,10 @@ ArmyCamera.prototype.update = function(gameContext) {
     }
 
     const { background, foreground, layerConfig } = activeMap.meta;
-    const viewportBounds = this.getWorldBounds();
+    const worldBounds = this.getWorldBounds();
 
     for(const layerID of background) {
-        this.drawTileLayer(gameContext, activeMap, layerConfig[layerID], viewportBounds);
+        this.drawLayer(gameContext, activeMap, layerConfig[layerID], worldBounds);
     }
     
     this.drawOverlay(gameContext, ArmyCamera.OVERLAY_TYPE_MOVE);
@@ -92,11 +92,10 @@ ArmyCamera.prototype.update = function(gameContext) {
     this.drawOverlay(gameContext, ArmyCamera.OVERLAY_TYPE_RANGE);
 
     for(const layerID of foreground) {
-        this.drawTileLayer(gameContext, activeMap, layerConfig[layerID], viewportBounds);
+        this.drawLayer(gameContext, activeMap, layerConfig[layerID], worldBounds);
     }
 
     if((Renderer.DEBUG & Renderer.DEBUG_MAP) !== 0) {
-        const { x, y } = this.getViewportPosition();
         const context = renderer.getContext();
         const typeLayer = layerConfig["type"];
         const teamLayer = layerConfig["team"];
@@ -106,16 +105,16 @@ ArmyCamera.prototype.update = function(gameContext) {
         context.textAlign = "center";
         context.fillStyle = "#ff0000";
 
-        this.drawWithCallback(activeMap, typeLayer, viewportBounds, (renderX, renderY, tileID) => {
-            const drawX = renderX - x + 16;
-            const drawY = renderY - y + 16;
+        this.drawWithCallback(activeMap, typeLayer, worldBounds, (tileID, renderX, renderY) => {
+            const drawX = renderX + 16;
+            const drawY = renderY + 16;
 
             context.fillText(tileID, drawX, drawY);
         });
 
-        this.drawWithCallback(activeMap, teamLayer, viewportBounds, (renderX, renderY, tileID) => {
-            const drawX = renderX - x - 16 + this.tileWidth;
-            const drawY = renderY - y + 16;
+        this.drawWithCallback(activeMap, teamLayer, worldBounds, (tileID, renderX, renderY) => {
+            const drawX = renderX - 16 + this.tileWidth;
+            const drawY = renderY + 16;
 
             context.fillText(tileID, drawX, drawY);
         });
@@ -125,7 +124,7 @@ ArmyCamera.prototype.update = function(gameContext) {
 }
 
 ArmyCamera.prototype.drawOverlay = function(gameContext, overlayID) {
-    const { x: vX, y: vY} = this.getViewportPosition();
+    const { x, y } = this.getViewportPosition();
     const overlay = this.overlays[overlayID];
 
     if(!overlay) {
@@ -133,89 +132,25 @@ ArmyCamera.prototype.drawOverlay = function(gameContext, overlayID) {
     }
 
     for(const [overlayKey, overlayData] of overlay) {
-        const { x, y, id } = overlayData;
-        const renderX = this.tileWidth * x - vX;
-        const renderY = this.tileHeight * y - vY;
+        const renderX = this.tileWidth * overlayData.x - x;
+        const renderY = this.tileHeight * overlayData.y - y;
 
-        this.drawTileGraphics(gameContext, id, renderX, renderY);
+        this.drawTileGraphics(gameContext, overlayData.id, renderX, renderY);
     }
 }
 
-ArmyCamera.prototype.drawWithCallback = function(map2D, layerConfig, onDraw, viewportBounds) {
-    const { startX, startY, endX, endY } = viewportBounds;
+ArmyCamera.prototype.drawWithCallback = function(map2D, layerConfig, worldBounds, onDraw) {
     const { id, opacity } = layerConfig;
 
     if(!opacity) {
         return;
     }
 
-    const width = map2D.width;
     const layer = map2D.getLayer(id);
-
-    for(let i = startY; i <= endY; i++) {
-        const renderY = i * this.tileHeight;
-        const row = i * width;
-
-        for(let j = startX; j <= endX; j++) {
-            const renderX = j * this.tileWidth;
-            const index = row + j;
-            const tileID = layer[index];
-
-            onDraw(renderX, renderY, tileID);
-        }
-    }
+    this.drawCustomLayer(layer, worldBounds, onDraw);
 }
 
-ArmyCamera.prototype.drawSpriteLayers = function(gameContext, layerList) {
-    const { timer, renderer, spriteManager } = gameContext;
-    const { x, y } = this.getViewportPosition(); 
-    const context = renderer.getContext();
-    const realTime = timer.getRealTime();
-    const deltaTime = timer.getDeltaTime();
-    const viewportLeftEdge = this.viewportX;
-    const viewportTopEdge = this.viewportY;
-    const viewportRightEdge = viewportLeftEdge + this.getViewportWidth();
-    const viewportBottomEdge = viewportTopEdge + this.getViewportHeight();
-
-    for(let i = 0; i < layerList.length; i++) {
-        const visibleSprites = [];
-        const spriteLayer = spriteManager.getLayer(layerList[i]);
-
-        if(!spriteLayer) {
-            continue;
-        }
-
-        for(let j = 0; j < spriteLayer.length; j++) {
-            const sprite = spriteLayer[j];
-            const { x, y, w, h } = sprite.getBounds();
-            const inBounds = x < viewportRightEdge && x + w > viewportLeftEdge && y < viewportBottomEdge && y + h > viewportTopEdge;
-    
-            if(inBounds) {
-                visibleSprites.push(sprite);
-            }
-        }
-    
-        visibleSprites.sort((current, next) => current.position.y - next.position.y);
-    
-        for(let j = 0; j < visibleSprites.length; j++) {
-            const sprite = visibleSprites[j];
-    
-            sprite.update(realTime, deltaTime);
-            sprite.draw(context, x, y);
-        }
-    
-        if((Renderer.DEBUG & Renderer.DEBUG_SPRITES) !== 0) {
-            for(let j = 0; j < visibleSprites.length; j++) {
-                const sprite = visibleSprites[j];
-        
-                sprite.debug(context, x, y);
-            }
-        }
-    }
-}
-
-ArmyCamera.prototype.drawTileLayer = function(gameContext, map2D, layerConfig, viewportBounds) {
-    const { startX, startY, endX, endY } = viewportBounds;
+ArmyCamera.prototype.drawLayer = function(gameContext, map2D, layerConfig, worldBounds) {
     const { id, opacity } = layerConfig;
 
     if(!opacity) {
@@ -223,30 +158,10 @@ ArmyCamera.prototype.drawTileLayer = function(gameContext, map2D, layerConfig, v
     }
 
     const { renderer } = gameContext;
-    const { x, y } = this.getViewportPosition();
     const context = renderer.getContext();
-    const width = map2D.width;
     const layer = map2D.getLayer(id);
 
     context.globalAlpha = opacity;
-
-    for(let i = startY; i <= endY; i++) {
-        const renderY = i * this.tileHeight - y;
-        const row = i * width;
-
-        for(let j = startX; j <= endX; j++) {
-            const index = row + j;
-            const tileID = layer[index];
-
-            if(tileID === 0) {
-                continue;
-            }
-            
-            const renderX = j * this.tileWidth - x;
-
-            this.drawTileGraphics(gameContext, tileID, renderX, renderY);
-        }
-    }
-
+    this.drawTileLayer(gameContext, layer, worldBounds);
     context.globalAlpha = 1;
 }

@@ -1,4 +1,5 @@
 import { clampValue } from "../../math/math.js";
+import { Renderer } from "../../renderer.js";
 import { MoveableCamera } from "./moveableCamera.js";
 
 export const OrthogonalCamera = function() {
@@ -17,6 +18,91 @@ OrthogonalCamera.prototype.constructor = OrthogonalCamera;
 
 OrthogonalCamera.MAP_OUTLINE_COLOR = "#dddddd";
 OrthogonalCamera.EMPTY_TILE_COLOR = { "FIRST": "#000000", "SECOND": "#701867" };
+
+OrthogonalCamera.prototype.drawCustomLayer = function(layer, worldBounds, onDraw) {
+    const { startX, startY, endX, endY } = worldBounds;
+    const { x, y } = this.getViewportPosition();
+
+    for(let i = startY; i <= endY; i++) {
+        const row = i * this.mapWidth;
+        const renderY = i * this.tileHeight - y;
+
+        for(let j = startX; j <= endX; j++) {
+            const index = row + j;
+            const id = layer[index];
+            const renderX = j * this.tileWidth - x;
+
+            onDraw(id, renderX, renderY);
+        }
+    }
+}
+
+OrthogonalCamera.prototype.drawTileLayer = function(gameContext, layer, worldBounds) {
+    const { startX, startY, endX, endY } = worldBounds;
+    const { x, y } = this.getViewportPosition();
+
+    for(let i = startY; i <= endY; i++) {
+        const row = i * this.mapWidth;
+        const renderY = i * this.tileHeight - y;
+
+        for(let j = startX; j <= endX; j++) {
+            const index = row + j;
+            const id = layer[index];
+
+            if(id === 0) {
+                continue;
+            }
+
+            const renderX = j * this.tileWidth - x;
+
+            this.drawTileGraphics(gameContext, id, renderX, renderY);
+        }
+    }
+}
+
+OrthogonalCamera.prototype.drawSpriteLayers = function(gameContext, layers) {
+    const { timer, renderer, spriteManager } = gameContext;
+    const { x, y } = this.getViewportPosition(); 
+    const context = renderer.getContext();
+    const realTime = timer.getRealTime();
+    const deltaTime = timer.getDeltaTime();
+    const viewportLeftEdge = this.viewportX;
+    const viewportTopEdge = this.viewportY;
+    const viewportRightEdge = viewportLeftEdge + this.getViewportWidth();
+    const viewportBottomEdge = viewportTopEdge + this.getViewportHeight();
+
+    for(let i = 0; i < layers.length; i++) {
+        const visibleSprites = [];
+        const spriteLayer = spriteManager.getLayer(layers[i]);
+
+        for(let j = 0; j < spriteLayer.length; j++) {
+            const sprite = spriteLayer[j];
+            const { x, y, w, h } = sprite.getBounds();
+            const inBounds = x < viewportRightEdge && x + w > viewportLeftEdge && y < viewportBottomEdge && y + h > viewportTopEdge;
+    
+            if(inBounds) {
+                visibleSprites.push(sprite);
+            }
+        }
+    
+        visibleSprites.sort((current, next) => current.position.y - next.position.y);
+    
+        for(let j = 0; j < visibleSprites.length; j++) {
+            const sprite = visibleSprites[j];
+    
+            sprite.update(realTime, deltaTime);
+            sprite.draw(context, x, y);
+        }
+    
+        if((Renderer.DEBUG & Renderer.DEBUG_SPRITES) !== 0) {
+            for(let j = 0; j < visibleSprites.length; j++) {
+                const sprite = visibleSprites[j];
+        
+                sprite.debug(context, x, y);
+            }
+        }
+    }
+}
 
 OrthogonalCamera.prototype.drawTileGraphics = function(gameContext, tileID, renderX, renderY, scaleX = 1, scaleY = 1) {
     const { tileManager, renderer } = gameContext;

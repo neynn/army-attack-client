@@ -27,7 +27,7 @@ export const Renderer = function() {
     });
 }
 
-Renderer.DEBUG = 0b00000001;
+Renderer.DEBUG = 0b00001111;
 Renderer.DEBUG_CAMERA = 1 << 0;
 Renderer.DEBUG_INTERFACE = 1 << 1;
 Renderer.DEBUG_SPRITES = 1 << 2;
