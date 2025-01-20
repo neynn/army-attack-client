@@ -8,14 +8,17 @@ export const MapEditor = function() {
     this.allSetElements = [];
     this.brushSetIndex = 0;
     this.brushSizeIndex = 0;
-    this.brushModeIndex = 0;
     this.pageIndex = 0;
     this.activityStack = [];
+    this.modes = [MapEditor.MODE.DRAW, MapEditor.MODE.ERASE, MapEditor.MODE.FILL];
+    this.modeIndex = 0;
 }
 
-MapEditor.MODE_DRAW = "DRAW";
-MapEditor.MODE_ERASE = "ERASE";
-MapEditor.MODE_FILL = "FILL";
+MapEditor.MODE = {
+    "DRAW": "DRAW",
+    "ERASE": "ERASE",
+    "FILL": "FILL"
+};
 
 MapEditor.prototype.scrollBrushSize = function(delta = 0) {    
     this.brushSizeIndex = clampValue(this.brushSizeIndex + delta, this.config.brushSizes.length - 1, 0);
@@ -26,12 +29,12 @@ MapEditor.prototype.getBrushSize = function() {
 }
 
 MapEditor.prototype.scrollBrushMode = function(delta = 0) {
-    this.brushModeIndex = loopValue(this.brushModeIndex + delta, this.config.brushModes.length - 1, 0);
+    this.modeIndex = loopValue(this.modeIndex + delta, this.modes.length - 1, 0);
     this.reloadAll();
 }
 
 MapEditor.prototype.getBrushMode = function() {
-    return this.config.brushModes[this.brushModeIndex];
+    return this.modes[this.modeIndex];
 }
 
 MapEditor.prototype.scrollBrushSet = function(delta) {
@@ -49,10 +52,9 @@ MapEditor.prototype.scrollPage = function(delta = 0) {
 
     if(maxPagesNeeded <= 0) {
         this.pageIndex = 0;
-        return;
+    } else {
+        this.pageIndex = loopValue(this.pageIndex + delta, maxPagesNeeded - 1, 0);
     }
-
-    this.pageIndex = loopValue(this.pageIndex + delta, maxPagesNeeded - 1, 0);
 }
 
 MapEditor.prototype.getPage = function() {
@@ -104,7 +106,7 @@ MapEditor.prototype.reloadAll = function() {
 
     const brushMode = this.getBrushMode();
 
-    if(brushMode === MapEditor.MODE_DRAW) {
+    if(brushMode === MapEditor.MODE.DRAW) {
         const brushSet = this.getBrushSet();
 
         if(!brushSet) {
@@ -177,56 +179,6 @@ MapEditor.prototype.undo = function(gameContext) {
     }
 }
 
-MapEditor.prototype.swapFlag = function(gameContext, mapID, layerID) {
-    const { world } = gameContext;
-    const { mapManager } = world;
-    const cursorTile = gameContext.getMouseTile();
-    const gameMap = mapManager.getLoadedMap(mapID);
-
-    if(!gameMap) {
-        return false;
-    }
-
-    const actionsTaken = [];
-    const brushSize = this.getBrushSize();
-    const startX = cursorTile.x - brushSize;
-    const startY = cursorTile.y - brushSize;
-    const endX = cursorTile.x + brushSize;
-    const endY = cursorTile.y + brushSize;
-
-    for(let i = startY; i <= endY; i++) {
-        for(let j = startX; j <= endX; j++) {
-            const flag = gameMap.getTile(layerID, j, i);
-
-            if(flag === null) {
-                continue;
-            }
-
-            const nextFlag = flag === 0 ? 1 : 0;
-            
-            gameMap.placeTile(nextFlag, layerID, j, i);
-
-            actionsTaken.push({
-                "layerID": layerID,
-                "tileX": j,
-                "tileY": i,
-                "oldID": flag,
-                "newID": nextFlag
-            });
-        }
-    }
-
-    if(actionsTaken.length !== 0) {
-        this.activityStack.push({
-            "mapID": mapID,
-            "mode": MapEditor.MODE_DRAW,
-            "actions": actionsTaken
-        });
-    }
-
-    return true;
-}
-
 MapEditor.prototype.paint = function(gameContext, mapID, layerID) {
     const { world } = gameContext;
     const { mapManager } = world;
@@ -269,7 +221,7 @@ MapEditor.prototype.paint = function(gameContext, mapID, layerID) {
     if(actionsTaken.length !== 0) {
         this.activityStack.push({
             "mapID": mapID,
-            "mode": MapEditor.MODE_DRAW,
+            "mode": MapEditor.MODE.DRAW,
             "actions": actionsTaken
         });
     }

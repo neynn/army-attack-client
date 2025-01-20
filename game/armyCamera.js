@@ -124,6 +124,8 @@ ArmyCamera.prototype.update = function(gameContext) {
 }
 
 ArmyCamera.prototype.drawOverlay = function(gameContext, overlayID) {
+    const { tileManager, renderer } = gameContext;
+    const context = renderer.getContext();
     const { x, y } = this.getViewportPosition();
     const overlay = this.overlays[overlayID];
 
@@ -135,7 +137,7 @@ ArmyCamera.prototype.drawOverlay = function(gameContext, overlayID) {
         const renderX = this.tileWidth * overlayData.x - x;
         const renderY = this.tileHeight * overlayData.y - y;
 
-        this.drawTileGraphics(gameContext, overlayData.id, renderX, renderY);
+        this.drawTileGraphics(tileManager, context, overlayData.id, renderX, renderY);
     }
 }
 

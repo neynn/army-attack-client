@@ -85,6 +85,16 @@ TileManager.prototype.loadTileTypes = function(tileTypes) {
     }
 }
 
+TileManager.prototype.getTileType = function(typeID) {
+    const type = this.tileTypes[typeID];
+
+    if(!type) {
+        return null;
+    }
+
+    return type;
+}
+
 TileManager.prototype.getTileMeta = function(tileID) {
     const meta = this.tileMeta.values[tileID];
 

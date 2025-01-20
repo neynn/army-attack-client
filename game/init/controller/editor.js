@@ -20,10 +20,9 @@ export const EditorController = function(id) {
 
 EditorController.GRAPHICS_BUTTON_SCALE = 50 / 96;
 
-EditorController.BUTTON_STATE_VISIBLE = "1";
-EditorController.BUTTON_STATE_EDIT = "2";
+EditorController.BUTTON_STATE_VISIBLE = "VISIBLE";
+EditorController.BUTTON_STATE_EDIT = "EDIT";
 
-EditorController.BUTTON_TYPE_BOOLEAN = "0";
 EditorController.BUTTON_TYPE_GRAPHICS = "1";
 EditorController.BUTTON_TYPE_TYPE = "2";
 
@@ -53,11 +52,11 @@ EditorController.prototype.updateLayerOpacity = function(gameContext) {
         return;
     }
 
-    const { layerButtons, layerButtonStates } = this.mapEditor.config.interface;
+    const { layerButtons, buttonStates } = this.mapEditor.config.interface;
 
     for(const buttonID in layerButtons) {
         const button = layerButtons[buttonID];
-        const state = layerButtonStates[button.state];
+        const state = buttonStates[button.state];
         const layerID = button.layer;
         const opacity = state.opacity;
 
@@ -75,9 +74,9 @@ EditorController.prototype.updateLayerOpacity = function(gameContext) {
 
 EditorController.prototype.scrollLayerButton = function(gameContext, buttonID) {
     const { uiManager } = gameContext;
-    const { layerButtons, layerButtonStates, id } = this.mapEditor.config.interface;
+    const { layerButtons, buttonStates, id } = this.mapEditor.config.interface;
     const button = layerButtons[buttonID];
-    const { nextState } = layerButtonStates[button.state];
+    const { nextState } = buttonStates[button.state];
 
     if(button.id === this.currentLayerButtonID) {
         this.currentLayerButtonID = null;
@@ -88,7 +87,7 @@ EditorController.prototype.scrollLayerButton = function(gameContext, buttonID) {
         if(this.currentLayerButtonID !== null) {
             const currentButton = layerButtons[this.currentLayerButtonID];
             const currentButtonText = uiManager.getElement(id, currentButton.text);
-            const currentButtonColor = layerButtonStates[EditorController.BUTTON_STATE_VISIBLE].textColor;
+            const currentButtonColor = buttonStates[EditorController.BUTTON_STATE_VISIBLE].textColor;
         
             currentButton.state = EditorController.BUTTON_STATE_VISIBLE;
             currentButtonText.style.setColorArray(currentButtonColor);
@@ -102,7 +101,7 @@ EditorController.prototype.scrollLayerButton = function(gameContext, buttonID) {
     }
 
     const buttonText = uiManager.getElement(id, button.text);
-    const buttonColor = layerButtonStates[nextState].textColor;
+    const buttonColor = buttonStates[nextState].textColor;
 
     buttonText.style.setColorArray(buttonColor);
     button.state = nextState;
@@ -111,7 +110,7 @@ EditorController.prototype.scrollLayerButton = function(gameContext, buttonID) {
 }
 
 EditorController.prototype.loadButtonEvents = function(gameContext) {
-    const { uiManager, renderer } = gameContext;
+    const { uiManager, renderer, tileManager } = gameContext;
     const { slots, id } = this.mapEditor.config.interface;
     const pageElements = this.mapEditor.getPage();
     const contextID = gameContext.getID();
@@ -136,7 +135,7 @@ EditorController.prototype.loadButtonEvents = function(gameContext) {
             if(tileID === 0) {
                 camera.drawEmptyTile(context, localX, localY, EditorController.GRAPHICS_BUTTON_SCALE, EditorController.GRAPHICS_BUTTON_SCALE);
             } else {
-                camera.drawTileGraphics(gameContext, tileID, localX, localY, EditorController.GRAPHICS_BUTTON_SCALE, EditorController.GRAPHICS_BUTTON_SCALE);
+                camera.drawTileGraphics(tileManager, context, tileID, localX, localY, EditorController.GRAPHICS_BUTTON_SCALE, EditorController.GRAPHICS_BUTTON_SCALE);
                 context.fillStyle = "#eeeeee";
                 context.textAlign = "center";
                 context.fillText(tileName, localX + 25, localY + 25);
@@ -174,11 +173,11 @@ EditorController.prototype.updateButtonText = function(gameContext) {
 }
 
 EditorController.prototype.initializeRenderEvents = function(gameContext) {
-    const { renderer } = gameContext;
+    const { renderer, tileManager } = gameContext;
     const { layerButtons } = this.mapEditor.config.interface;
     const contextID = gameContext.getID();
 
-    renderer.events.subscribe(Renderer.EVENT_CAMERA_FINISH, contextID, (camera) => {
+    renderer.events.subscribe(Renderer.EVENT.CAMERA_FINISH, contextID, (camera) => {
         const cursorTile = gameContext.getMouseTile();
         const brush = this.mapEditor.getBrush();
         const brushSize = this.mapEditor.getBrushSize();
@@ -215,7 +214,7 @@ EditorController.prototype.initializeRenderEvents = function(gameContext) {
                 if(tileID === 0) {
                     camera.drawEmptyTile(context, renderX, renderY);
                 } else {
-                    camera.drawTileGraphics(gameContext, tileID, renderX, renderY);
+                    camera.drawTileGraphics(tileManager, context, tileID, renderX, renderY);
                     context.fillStyle = "#eeeeee";
                     context.textAlign = "center";
                     context.fillText(tileName, renderX + halfWidth, renderY);  
@@ -265,15 +264,11 @@ EditorController.prototype.initializeCursorEvents = function(gameContext) {
 
         switch(type) {
             case EditorController.BUTTON_TYPE_GRAPHICS: {
-                this.mapEditor.paint(gameContext, this.currentMapID, this.currentLayer)
+                this.mapEditor.paint(gameContext, this.currentMapID, this.currentLayer);
                 break;
             }
             case EditorController.BUTTON_TYPE_TYPE: {
                 this.mapEditor.incrementTypeIndex(gameContext, this.currentMapID, "type", "TileTypes");
-                break;
-            }
-            case EditorController.BUTTON_TYPE_BOOLEAN: {
-                this.mapEditor.swapFlag(gameContext, this.currentMapID, this.currentLayer);
                 break;
             }
             default: {
@@ -295,7 +290,7 @@ EditorController.prototype.initializeCursorEvents = function(gameContext) {
 EditorController.prototype.initializeUIEvents = function(gameContext) {
     const { uiManager, world, renderer } = gameContext;
     const { mapManager } = world;
-    const { id, layerButtons, layerButtonStates } = this.mapEditor.config.interface;
+    const { id, layerButtons, buttonStates } = this.mapEditor.config.interface;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
 
     uiManager.addClick(id, "BUTTON_TILESET_MODE", () => {
@@ -403,7 +398,7 @@ EditorController.prototype.initializeUIEvents = function(gameContext) {
         for(const buttonID in layerButtons) {
             const button = layerButtons[buttonID];
             const buttonText = uiManager.getElement(id, button.text);
-            const buttonColor = layerButtonStates[EditorController.BUTTON_STATE_VISIBLE].textColor;
+            const buttonColor = buttonStates[EditorController.BUTTON_STATE_VISIBLE].textColor;
 
             button.state = EditorController.BUTTON_STATE_VISIBLE;
             buttonText.style.setColorArray(buttonColor);

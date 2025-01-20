@@ -5,35 +5,18 @@
         "maxMapHeight": 255,
         "overlayOpacity": 0.75,
         "brushSizes": [0, 1, 2, 3, 4],
-        "brushModes": ["DRAW", "ERASE"],
         "interface": {
             "id": "MAP_EDITOR",
-            "layerButtonStates": {
-                "0": { "id": "0", "description": "HIDDEN", "textColor": [207, 55, 35, 1], "opacity": 0, "nextState": "1" },
-                "1": { "id": "1", "description": "VISIBLE", "textColor": [238, 238, 238, 1], "opacity": 1, "nextState": "2" },
-                "2": { "id": "2", "description": "EDIT", "textColor": [252, 252, 63, 1], "opacity": 1, "nextState": "0" }
-            },
-            "layerButtonTypes": {
-                "0": { "id": "0", "description": "BOOLEAN" },
-                "1": { "id": "1", "description": "GRAPHICS" },
-                "2": { "id": "2", "description": "TYPE" }
+            "buttonStates": {
+                "HIDDEN": { "id": "HIDDEN", "description": "HIDDEN", "textColor": [207, 55, 35, 1], "opacity": 0, "nextState": "VISIBLE" },
+                "VISIBLE": { "id": "VISIBLE", "description": "VISIBLE", "textColor": [238, 238, 238, 1], "opacity": 1, "nextState": "EDIT" },
+                "EDIT": { "id": "EDIT", "description": "EDIT", "textColor": [252, 252, 63, 1], "opacity": 1, "nextState": "HIDDEN" }
             },
             "layerButtons": {
-                "L1": { "id": "L1", "layer": "ground", "text": "TEXT_L1", "state": "1", "type": "1" },
-                "L2": { "id": "L2", "layer": "decoration", "text": "TEXT_L2", "state": "1", "type": "1" },
-                "L3": { "id": "L3", "layer": "cloud", "text": "TEXT_L3", "state": "1", "type": "1" },
-                "LC": { "id": "LC", "layer": "type", "text": "TEXT_LC", "state": "1", "type": "2" }
-            },
-            "slotButtons": {
-                "BUTTON_0": { "id": "BUTTON_0" },
-                "BUTTON_1": { "id": "BUTTON_1" },
-                "BUTTON_2": { "id": "BUTTON_2" },
-                "BUTTON_3": { "id": "BUTTON_3" },
-                "BUTTON_4": { "id": "BUTTON_4" },
-                "BUTTON_5": { "id": "BUTTON_5" },
-                "BUTTON_6": { "id": "BUTTON_6" },
-                "BUTTON_7": { "id": "BUTTON_7" },
-                "BUTTON_8": { "id": "BUTTON_8" }
+                "L1": { "id": "L1", "layer": "ground", "text": "TEXT_L1", "state": "VISIBLE", "type": "1" },
+                "L2": { "id": "L2", "layer": "decoration", "text": "TEXT_L2", "state": "VISIBLE", "type": "1" },
+                "L3": { "id": "L3", "layer": "cloud", "text": "TEXT_L3", "state": "VISIBLE", "type": "1" },
+                "LC": { "id": "LC", "layer": "type", "text": "TEXT_LC", "state": "VISIBLE", "type": "2" }
             },
             "slots": ["BUTTON_0", "BUTTON_1", "BUTTON_2", "BUTTON_3", "BUTTON_4", "BUTTON_5", "BUTTON_6", "BUTTON_7", "BUTTON_8"]
         },
@@ -62,8 +45,8 @@
         },
         "hiddenSets": {
             "overlay": 1,
-            "border": 0,
-            "range": 0
+            "border": 1,
+            "range": 1
         }
     },
     "socket": {

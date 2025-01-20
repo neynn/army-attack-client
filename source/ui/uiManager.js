@@ -8,8 +8,8 @@ import { Container } from "./elements/container.js";
 import { DynamicTextElement } from "./elements/dynamicTextElement.js";
 import { Icon } from "./elements/icon.js";
 import { TextElement } from "./elements/textElement.js";
-import { TreeDescripton } from "./treeDescription.js";
 import { UIElement } from "./uiElement.js";
+import { UserInterface } from "./userInterface.js";
 
 export const UIManager = function() {
     this.resources = new ImageManager();
@@ -312,7 +312,7 @@ UIManager.prototype.addEffects = function(gameContext, element, effects = []) {
     }
 }
 
-UIManager.prototype.addElementAnchor = function(gameContext, element, originalPosition, anchorType = Renderer.ANCHOR_TYPE_TOP_LEFT) {
+UIManager.prototype.addElementAnchor = function(gameContext, element, originalPosition, anchorType = Renderer.ANCHOR_TYPE.TOP_LEFT) {
     const { renderer } = gameContext;
     const { bounds } = element;
     const { w, h } = bounds;
@@ -323,19 +323,11 @@ UIManager.prototype.addElementAnchor = function(gameContext, element, originalPo
             
     element.setPosition(anchor.x, anchor.y);
 
-    renderer.events.subscribe(Renderer.EVENT_SCREEN_RESIZE, elementUID, (width, height) => {
+    renderer.events.subscribe(Renderer.EVENT.SCREEN_RESIZE, elementUID, (width, height) => {
         const anchor = renderer.getAnchor(anchorType, x, y, w, h);
         
         element.setPosition(anchor.x, anchor.y);
     });    
-}
-
-UIManager.prototype.createEmptyInterface = function(id) {
-    return {
-        "id": id,
-        "elements": [],
-        "roots": []
-    }
 }
 
 UIManager.prototype.parseUI = function(userInterfaceID, gameContext) {
@@ -347,22 +339,22 @@ UIManager.prototype.parseUI = function(userInterfaceID, gameContext) {
     }
 
     const elements = this.createInterfaceElements(userInterfaceID);
-    const tree = new TreeDescripton(userInterfaceID);
+    const ui = new UserInterface(userInterfaceID);
 
     for(const [configID, element] of elements) {
         const { anchor, effects, position } = userInterface[configID];
         const uniqueID = element.getID();
 
         this.addEffects(gameContext, element, effects);
-        tree.addElement(uniqueID);
+        ui.addElement(uniqueID);
 
         if(!element.hasParent()) {
             this.addElementAnchor(gameContext, element, position, anchor);
-            tree.addRoot(uniqueID);
+            ui.addRoot(uniqueID);
         }
     }
 
-    this.interfaceStack.push(tree);
+    this.interfaceStack.push(ui);
 }
 
 UIManager.prototype.unparseUI = function(userInterfaceID, gameContext) {
@@ -374,12 +366,12 @@ UIManager.prototype.unparseUI = function(userInterfaceID, gameContext) {
         return;
     }
 
-    const tree = this.interfaceStack[interfaceIndex];
-    const elements = tree.getElements();
-    const roots = tree.getRoots();
+    const userInterface = this.interfaceStack[interfaceIndex];
+    const elements = userInterface.getElements();
+    const roots = userInterface.getRoots();
 
     for(const elementUID of roots) {
-        renderer.events.unsubscribe(Renderer.EVENT_SCREEN_RESIZE, elementUID);
+        renderer.events.unsubscribe(Renderer.EVENT.SCREEN_RESIZE, elementUID);
     }
     
     for(const elementUID of elements) {

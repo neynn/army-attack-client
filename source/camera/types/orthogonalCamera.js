@@ -38,8 +38,10 @@ OrthogonalCamera.prototype.drawCustomLayer = function(layer, worldBounds, onDraw
 }
 
 OrthogonalCamera.prototype.drawTileLayer = function(gameContext, layer, worldBounds) {
+    const { tileManager, renderer } = gameContext;
     const { startX, startY, endX, endY } = worldBounds;
     const { x, y } = this.getViewportPosition();
+    const context = renderer.getContext();
 
     for(let i = startY; i <= endY; i++) {
         const row = i * this.mapWidth;
@@ -55,7 +57,7 @@ OrthogonalCamera.prototype.drawTileLayer = function(gameContext, layer, worldBou
 
             const renderX = j * this.tileWidth - x;
 
-            this.drawTileGraphics(gameContext, id, renderX, renderY);
+            this.drawTileGraphics(tileManager, context, id, renderX, renderY);
         }
     }
 }
@@ -104,22 +106,21 @@ OrthogonalCamera.prototype.drawSpriteLayers = function(gameContext, layers) {
     }
 }
 
-OrthogonalCamera.prototype.drawTileGraphics = function(gameContext, tileID, renderX, renderY, scaleX = 1, scaleY = 1) {
-    const { tileManager, renderer } = gameContext;
-    const { resources } = tileManager;
-    const { set, animation } = tileManager.getTileMeta(tileID);
-    const tileBuffer = resources.getImage(set);
+OrthogonalCamera.prototype.drawTileGraphics = function(tileManager, context, tileID, renderX, renderY, scaleX = 1, scaleY = 1) {
+    const tileMeta = tileManager.getTileMeta(tileID);
+    const { set, animation } = tileMeta;
+    const tileBuffer = tileManager.resources.getImage(set);
 
     if(!tileBuffer) {
         return;
     }
 
-    const tileType = tileManager.tileTypes[set];
+    const tileType = tileManager.getTileType(set);
     const tileAnimation = tileType.getAnimation(animation);
     const currentFrame = tileAnimation.getCurrentFrame();
-    const context = renderer.getContext();
 
-    for(const component of currentFrame) {
+    for(let i = 0; i < currentFrame.length; i++) {
+        const component = currentFrame[i];
         const { id, shiftX, shiftY } = component;
         const { x, y, w, h } = tileType.getFrameByID(id);
         const drawX = renderX + shiftX * scaleX;

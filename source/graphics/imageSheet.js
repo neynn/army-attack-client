@@ -9,7 +9,6 @@ export const ImageSheet = function(id) {
     this.patterns = {};
     this.bounds = {"x":0,"y": 0,"w":0,"h":0};
     this.frameTime = 1;
-    this.allowFlip = false;
     this.loadedAnimations = new Map();
 }
 
@@ -32,15 +31,13 @@ ImageSheet.prototype.getAnimations = function() {
 }
 
 ImageSheet.prototype.load = function(config) {
-    const { id, directory, source, bounds, frameTime, frames, allowFlip, animations, patterns } = config;
+    const { id, directory, source, bounds, frameTime, frames, animations, patterns } = config;
 
     this.id = id;
     this.directory = directory;
     this.source = source;
     this.frameTime = frameTime;
-    this.allowFlip = allowFlip;
 
-    if(allowFlip) this.allowFlip = allowFlip;
     if(frameTime) this.frameTime = frameTime;
     if(frames) this.frames = frames;
     if(animations) this.animations = animations;

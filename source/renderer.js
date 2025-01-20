@@ -16,8 +16,8 @@ export const Renderer = function() {
     this.display.create(this.windowWidth, this.windowHeight, true);
 
     this.events = new EventEmitter();
-    this.events.listen(Renderer.EVENT_SCREEN_RESIZE);
-    this.events.listen(Renderer.EVENT_CAMERA_FINISH);
+    this.events.listen(Renderer.EVENT.SCREEN_RESIZE);
+    this.events.listen(Renderer.EVENT.CAMERA_FINISH);
 
     this.cameras = new Map();
     this.cameraStack = [];
@@ -27,22 +27,28 @@ export const Renderer = function() {
     });
 }
 
+Renderer.ANCHOR_TYPE = {
+    "TOP_CENTER": "TOP_CENTER",
+    "TOP_LEFT": "TOP_LEFT",
+    "TOP_RIGHT": "TOP_RIGHT",
+    "BOTTOM_CENTER": "BOTTOM_CENTER",
+    "BOTTOM_LEFT": "BOTTOM_LEFT",
+    "BOTTOM_RIGHT": "BOTTOM_RIGHT",
+    "CENTER": "CENTER",
+    "LEFT": "LEFT",
+    "RIGHT": "RIGHT"
+};
+
+Renderer.EVENT = {
+    "SCREEN_RESIZE": "SCREEN_RESIZE",
+    "CAMERA_FINISH": "CAMERA_FINISH"
+};
+
 Renderer.DEBUG = 0b00001111;
 Renderer.DEBUG_CAMERA = 1 << 0;
 Renderer.DEBUG_INTERFACE = 1 << 1;
 Renderer.DEBUG_SPRITES = 1 << 2;
 Renderer.DEBUG_MAP = 1 << 3;
-Renderer.EVENT_SCREEN_RESIZE = "EVENT_SCREEN_RESIZE";
-Renderer.EVENT_CAMERA_FINISH = "EVENT_CAMERA_FINISH";
-Renderer.ANCHOR_TYPE_TOP_CENTER = "TOP_CENTER";
-Renderer.ANCHOR_TYPE_TOP_LEFT = "TOP_LEFT";
-Renderer.ANCHOR_TYPE_TOP_RIGHT = "TOP_RIGHT";
-Renderer.ANCHOR_TYPE_BOTTOM_CENTER = "BOTTOM_CENTER";
-Renderer.ANCHOR_TYPE_BOTTOM_LEFT = "BOTTOM_LEFT";
-Renderer.ANCHOR_TYPE_BOTTOM_RIGHT = "BOTTOM_RIGHT";
-Renderer.ANCHOR_TYPE_CENTER = "CENTER";
-Renderer.ANCHOR_TYPE_LEFT = "LEFT";
-Renderer.ANCHOR_TYPE_RIGHT = "RIGHT";
 
 Renderer.prototype.getContext = function() {
     return this.display.context;
@@ -154,7 +160,7 @@ Renderer.prototype.update = function(gameContext) {
     this.cameras.forEach(camera => {
         context.save();
         camera.update(gameContext);
-        this.events.emit(Renderer.EVENT_CAMERA_FINISH, camera);
+        this.events.emit(Renderer.EVENT.CAMERA_FINISH, camera);
         context.restore();
     });
 
@@ -176,68 +182,24 @@ Renderer.prototype.resizeDisplay = function(width, height) {
     this.windowHeight = height;
     this.display.resize(width, height);
     this.cameras.forEach(camera => camera.onWindowResize(width, height));
-    this.events.emit(Renderer.EVENT_SCREEN_RESIZE, width, height);
+    this.events.emit(Renderer.EVENT.SCREEN_RESIZE, width, height);
 }
 
 Renderer.prototype.getAnchor = function(type, originX, originY, width, height) {
-    let x = originX;
-    let y = originY;
-
     switch(type) {
-        case Renderer.ANCHOR_TYPE_TOP_LEFT: {
-            x = originX;
-            y = originY;
-            break;
-        }
-        case Renderer.ANCHOR_TYPE_TOP_CENTER: {
-            x = this.windowWidth / 2 - originX - width / 2;
-            y = originY;
-            break;
-        }
-        case Renderer.ANCHOR_TYPE_TOP_RIGHT: {
-            x = this.windowWidth - originX - width;
-            y = originY;
-            break;
-        }
-        case Renderer.ANCHOR_TYPE_BOTTOM_LEFT: {
-            x = originX;
-            y = this.windowHeight - originY - height;
-            break;
-        }
-        case Renderer.ANCHOR_TYPE_BOTTOM_CENTER: {
-            x = this.windowWidth / 2 - originX - width / 2;
-            y = this.windowHeight - originY - height;
-            break;
-        }
-        case Renderer.ANCHOR_TYPE_BOTTOM_RIGHT: {
-            x = this.windowWidth - originX - width;
-            y = this.windowHeight - originY - height;
-            break;
-        }
-        case Renderer.ANCHOR_TYPE_LEFT: {
-            x = originX;
-            y = this.windowHeight / 2 - originY - height / 2;
-            break;
-        }
-        case Renderer.ANCHOR_TYPE_CENTER: {
-            x = this.windowWidth / 2 - originX - width / 2;
-            y = this.windowHeight / 2 - originY - height / 2;
-            break;
-        }
-        case Renderer.ANCHOR_TYPE_RIGHT: {
-            x = this.windowWidth - originX - width;
-            y = this.windowHeight / 2 - originY - height / 2;
-            break;
-        }
+        case Renderer.ANCHOR_TYPE.TOP_LEFT: return { "x": originX, "y": originY };
+        case Renderer.ANCHOR_TYPE.TOP_CENTER: return { "x": this.windowWidth / 2 - originX - width / 2, "y": originY };
+        case Renderer.ANCHOR_TYPE.TOP_RIGHT: return { "x": this.windowWidth - originX - width, "y": originY };
+        case Renderer.ANCHOR_TYPE.BOTTOM_LEFT: return { "x": originX, "y": this.windowHeight - originY - height };
+        case Renderer.ANCHOR_TYPE.BOTTOM_CENTER: return { "x": this.windowWidth / 2 - originX - width / 2, "y": this.windowHeight - originY - height };
+        case Renderer.ANCHOR_TYPE.BOTTOM_RIGHT: return { "x": this.windowWidth - originX - width, "y": this.windowHeight - originY - height };
+        case Renderer.ANCHOR_TYPE.LEFT: return { "x": originX, "y": this.windowHeight / 2 - originY - height / 2 };
+        case Renderer.ANCHOR_TYPE.CENTER: return { "x": this.windowWidth / 2 - originX - width / 2, "y": this.windowHeight / 2 - originY - height / 2 };
+        case Renderer.ANCHOR_TYPE.RIGHT: return { "x": this.windowWidth - originX - width, "y": this.windowHeight / 2 - originY - height / 2 };
         default: {
             console.warn(`Anchor Type ${type} does not exist!`);
-            break;
+            return { "x": originX, "y": originY };
         }
-    }
-
-    return {
-        "x": x,
-        "y": y
     }
 }
 
