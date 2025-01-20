@@ -4,6 +4,7 @@
         "maxMapWidth": 255,
         "maxMapHeight": 255,
         "overlayOpacity": 0.75,
+        "overlayTextColor": "#eeeeee",
         "brushSizes": [0, 1, 2, 3, 4],
         "interface": {
             "id": "MAP_EDITOR",

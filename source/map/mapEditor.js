@@ -242,7 +242,7 @@ MapEditor.prototype.resizeMap = function(gameMap, width, height) {
     gameMap.setHeight(height);
 }
 
-MapEditor.prototype.incrementTypeIndex = function(gameContext, mapID, layerID, typeID) {
+MapEditor.prototype.incrementTypeIndex = function(gameContext, types, mapID, layerID) {
     const { world } = gameContext;
     const { mapManager } = world;
     const worldMap = mapManager.getLoadedMap(mapID);
@@ -252,7 +252,6 @@ MapEditor.prototype.incrementTypeIndex = function(gameContext, mapID, layerID, t
     }
 
     const { x, y } = gameContext.getMouseTile();
-    const types = world.getConfig(typeID);
     const tileTypeIDs = [];
 
     for(const typeID of Object.keys(types)) {

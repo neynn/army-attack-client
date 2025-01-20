@@ -215,7 +215,7 @@ EditorController.prototype.initializeRenderEvents = function(gameContext) {
                     camera.drawEmptyTile(context, renderX, renderY);
                 } else {
                     camera.drawTileGraphics(tileManager, context, tileID, renderX, renderY);
-                    context.fillStyle = "#eeeeee";
+                    context.fillStyle = this.mapEditor.config.overlayTextColor;
                     context.textAlign = "center";
                     context.fillText(tileName, renderX + halfWidth, renderY);  
                 } 
@@ -224,6 +224,35 @@ EditorController.prototype.initializeRenderEvents = function(gameContext) {
 
         context.globalAlpha = 1;
     });
+}
+
+EditorController.prototype.paint = function(gameContext) {
+    const { world } = gameContext;
+
+    if(this.currentLayerButtonID === null) {
+        return;
+    }
+
+    const { layerButtons } = this.mapEditor.config.interface;
+    const { type } = layerButtons[this.currentLayerButtonID];
+
+    switch(type) {
+        case EditorController.BUTTON_TYPE_GRAPHICS: {
+            this.mapEditor.paint(gameContext, this.currentMapID, this.currentLayer);
+            break;
+        }
+        case EditorController.BUTTON_TYPE_TYPE: {
+            const types = world.getConfig("TileTypes");
+            const layerID = "type";
+
+            this.mapEditor.incrementTypeIndex(gameContext, types, this.currentMapID, layerID);
+            break;
+        }
+        default: {
+            console.warn(`Button type ${type} does not exist!`);
+            break;
+        }
+    }
 }
 
 EditorController.prototype.initializeCursorEvents = function(gameContext) {
@@ -242,40 +271,11 @@ EditorController.prototype.initializeCursorEvents = function(gameContext) {
     });
 
     cursor.events.subscribe(Cursor.RIGHT_MOUSE_DRAG, contextID, () => {
-        if(this.currentLayerButtonID === null) {
-            return;
-        }
-
-        const { layerButtons } = this.mapEditor.config.interface;
-        const { type } = layerButtons[this.currentLayerButtonID];
-
-        if(type === EditorController.BUTTON_TYPE_GRAPHICS) {
-            this.mapEditor.paint(gameContext, this.currentMapID, this.currentLayer);
-        }
+        this.paint(gameContext);
     });
 
     cursor.events.subscribe(Cursor.RIGHT_MOUSE_CLICK, contextID, () => {
-        if(this.currentLayerButtonID === null) {
-            return;
-        }
-
-        const { layerButtons } = this.mapEditor.config.interface;
-        const { type } = layerButtons[this.currentLayerButtonID];
-
-        switch(type) {
-            case EditorController.BUTTON_TYPE_GRAPHICS: {
-                this.mapEditor.paint(gameContext, this.currentMapID, this.currentLayer);
-                break;
-            }
-            case EditorController.BUTTON_TYPE_TYPE: {
-                this.mapEditor.incrementTypeIndex(gameContext, this.currentMapID, "type", "TileTypes");
-                break;
-            }
-            default: {
-                console.warn(`Button type ${type} does not exist!`);
-                break;
-            }
-        }
+        this.paint(gameContext);
     });
 
     cursor.events.subscribe(Cursor.LEFT_MOUSE_DRAG, contextID, (deltaX, deltaY) => {
@@ -287,11 +287,49 @@ EditorController.prototype.initializeCursorEvents = function(gameContext) {
     });
 }
 
+EditorController.prototype.createNewMap = function(gameContext) {
+    const createNew = confirm("This will create and load a brand new map! Proceed?");
+
+    if(!createNew) {
+        return;
+    }
+
+    const mapID = `${Date.now()}`;
+    const mapData = this.mapEditor.getDefaultMapData();
+    
+    MapSystem.loadEmptyMapByData(gameContext, mapID, mapData);
+    
+    this.currentMapID = mapID;
+}
+
+EditorController.prototype.resizeMap = function(gameContext) {
+    const { world, renderer } = gameContext;
+    const { mapManager } = world;
+    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
+
+    const gameMap = mapManager.getLoadedMap(this.currentMapID);
+    const { maxMapWidth, maxMapHeight } = this.mapEditor.config;
+
+    if(!gameMap) {
+        console.warn(`GameMap cannot be undefined! Returning...`);
+        return;
+    }
+
+    const parsedWidth = parseInt(prompt("MAP_WIDTH"));
+    const parsedHeight = parseInt(prompt("MAP_HEIGHT"));
+    const newWidth = clampValue(parsedWidth, maxMapWidth, 1);
+    const newHeight = clampValue(parsedHeight, maxMapHeight, 1);
+  
+    this.mapEditor.resizeMap(gameMap, newWidth, newHeight);
+
+    camera.loadWorld(newWidth, newHeight);
+    renderer.reloadCamera(CAMERA_TYPES.ARMY_CAMERA);
+}
+
 EditorController.prototype.initializeUIEvents = function(gameContext) {
-    const { uiManager, world, renderer } = gameContext;
+    const { uiManager, world } = gameContext;
     const { mapManager } = world;
     const { id, layerButtons, buttonStates } = this.mapEditor.config.interface;
-    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
 
     uiManager.addClick(id, "BUTTON_TILESET_MODE", () => {
         this.mapEditor.scrollBrushMode(1);
@@ -351,18 +389,7 @@ EditorController.prototype.initializeUIEvents = function(gameContext) {
     });
 
     uiManager.addClick(id, "BUTTON_CREATE", () => {
-        const createNew = confirm("This will create and load a brand new map! Proceed?");
-
-        if(!createNew) {
-            return;
-        }
-
-        const mapID = `${Date.now()}`;
-        const mapData = this.mapEditor.getDefaultMapData();
-        
-        MapSystem.loadEmptyMapByData(gameContext, mapID, mapData);
-        
-        this.currentMapID = mapID;
+        this.createNewMap(gameContext);
     });
 
     uiManager.addClick(id, "BUTTON_LOAD", async () => {
@@ -375,23 +402,11 @@ EditorController.prototype.initializeUIEvents = function(gameContext) {
     });
 
     uiManager.addClick(id, "BUTTON_RESIZE", () => {
-        const gameMap = mapManager.getLoadedMap(this.currentMapID);
-        const { maxMapWidth, maxMapHeight } = this.mapEditor.config;
+        this.resizeMap(gameContext);
+    }); 
 
-        if(!gameMap) {
-            console.warn(`GameMap cannot be undefined! Returning...`);
-            return;
-        }
-
-        const parsedWidth = parseInt(prompt("MAP_WIDTH"));
-        const parsedHeight = parseInt(prompt("MAP_HEIGHT"));
-        const newWidth = clampValue(parsedWidth, maxMapWidth, 1);
-        const newHeight = clampValue(parsedHeight, maxMapHeight, 1);
-      
-        this.mapEditor.resizeMap(gameMap, newWidth, newHeight);
-
-        camera.loadWorld(newWidth, newHeight);
-        renderer.reloadCamera(CAMERA_TYPES.ARMY_CAMERA);
+    uiManager.addClick(id, "BUTTON_UNDO", () => {
+        this.mapEditor.undo(gameContext);
     }); 
 
     uiManager.addClick(id, "BUTTON_VIEW_ALL", () => {
