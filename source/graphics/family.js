@@ -10,7 +10,7 @@ Family.prototype.getID = function() {
     return this.id;
 }
 
-Family.prototype.overwriteName = function(name) {
+Family.prototype.setName = function(name) {
     this.name = name;
 }
 
@@ -21,6 +21,7 @@ Family.prototype.setParent = function(parent) {
 
     if(this.parent !== null) {
         this.parent.removeChild(this);
+        this.parent = null;
     }
 
     this.parent = parent;
@@ -38,16 +39,12 @@ Family.prototype.addChild = function(child) {
     }
 
     this.children.push(child);
-    child.setParent(this);
 }
 
 Family.prototype.removeChild = function(child) {
     for(let i = 0; i < this.children.length; i++) {
         if(this.children[i].id === child.id) {
             this.children.splice(i, 1);
-
-            child.parent = null;
-
             return;
         }
     }
@@ -56,6 +53,7 @@ Family.prototype.removeChild = function(child) {
 Family.prototype.onRemove = function() {
     if(this.parent !== null) {
         this.parent.removeChild(this);
+        this.parent = null;
     }
 
     for(const child of this.children) {

@@ -243,7 +243,7 @@ PlayerController.prototype.addClickEvent = function(gameContext) {
 PlayerController.prototype.onCreate = function(gameContext, payload) {
     const { spriteManager, renderer } = gameContext;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
-    const controllerSprite = spriteManager.createSprite("cursor_attack_1x1", SpriteManager.LAYER_TOP);
+    const controllerSprite = spriteManager.createSprite("cursor_attack_1x1", SpriteManager.LAYER.TOP);
     const { x, y } = camera.transformTileToPositionCenter(0, 0);
     const spriteID = controllerSprite.getID();
     controllerSprite.setPosition(x, y);

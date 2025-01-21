@@ -255,12 +255,13 @@ Drawable.prototype.addChild = function(drawable, name) {
     }
 
     if(drawable.hasFamily()) {
-        drawable.family.overwriteName(name);
+        drawable.family.setName(name);
     } else {
         drawable.openFamily(name);
     }
 
     this.family.addChild(drawable.family);
+    drawable.family.setParent(this.family);
 }
 
 Drawable.prototype.removeChild = function(name) {

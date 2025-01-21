@@ -19,7 +19,7 @@ OrthogonalCamera.prototype.constructor = OrthogonalCamera;
 OrthogonalCamera.MAP_OUTLINE_COLOR = "#dddddd";
 OrthogonalCamera.EMPTY_TILE_COLOR = { "FIRST": "#000000", "SECOND": "#701867" };
 
-OrthogonalCamera.prototype.drawCustomLayer = function(layer, worldBounds, onDraw) {
+OrthogonalCamera.prototype.drawCustom = function(worldBounds, onDraw) {
     const { startX, startY, endX, endY } = worldBounds;
     const { x, y } = this.getViewportPosition();
 
@@ -29,10 +29,9 @@ OrthogonalCamera.prototype.drawCustomLayer = function(layer, worldBounds, onDraw
 
         for(let j = startX; j <= endX; j++) {
             const index = row + j;
-            const id = layer[index];
             const renderX = j * this.tileWidth - x;
 
-            onDraw(id, renderX, renderY);
+            onDraw(index, renderX, renderY);
         }
     }
 }
@@ -149,22 +148,23 @@ OrthogonalCamera.prototype.drawEmptyTile = function(context, renderX, renderY, s
     context.fillRect(renderX, renderY + scaledY, scaledX, scaledY);
 }
 
-OrthogonalCamera.prototype.drawTileOutlines = function(context) {
+OrthogonalCamera.prototype.drawTileOutlines = function(context, worldBounds) {
+    const { startX, startY, endX, endY } = worldBounds;
     const { x, y } = this.getViewportPosition();
     const viewportWidth = this.getViewportWidth();
     const viewportHeight = this.getViewportHeight();
-    const lineSize = 1 / this.scale;
+    const LINE_SIZE = 2;
 
     context.fillStyle = OrthogonalCamera.MAP_OUTLINE_COLOR;
 
-    for(let i = 0; i <= this.mapHeight; i++) {
+    for(let i = startY; i <= endY + 1; i++) {
         const renderY = i * this.tileHeight - y;
-        context.fillRect(0, renderY, viewportWidth + this.tileHeight, lineSize);
+        context.fillRect(this.position.x, renderY, viewportWidth, LINE_SIZE);
     }
 
-    for (let j = 0; j <= this.mapWidth; j++) {
+    for (let j = startX; j <= endX + 1; j++) {
         const renderX = j * this.tileWidth - x;
-        context.fillRect(renderX, 0, lineSize, viewportHeight + this.tileHeight);
+        context.fillRect(renderX, this.position.y, LINE_SIZE, viewportHeight);
     }
 }
 
@@ -238,8 +238,8 @@ OrthogonalCamera.prototype.transformTileToPosition = function(tileX, tileY) {
 }
 
 OrthogonalCamera.prototype.transformPositionToTile = function(positionX, positionY) {
-    const tileX = Math.trunc(positionX / this.tileWidth);
-	const tileY = Math.trunc(positionY / this.tileHeight);
+    const tileX = Math.floor(positionX / this.tileWidth);
+	const tileY = Math.floor(positionY / this.tileHeight);
 
 	return {
 		"x": tileX,

@@ -91,7 +91,7 @@ ArmyEntityFactory.prototype.createDefaultSprite = function(gameContext, entity, 
 
     const spriteType = entity.config.sprites["idle"];
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
-    const sprite = spriteManager.createSprite(spriteType, SpriteManager.LAYER_MIDDLE);
+    const sprite = spriteManager.createSprite(spriteType, SpriteManager.LAYER.MIDDLE);
     const { x, y } = camera.transformTileToPositionCenter(tileX, tileY);
 
     const positionComponent = entity.getComponent(PositionComponent);

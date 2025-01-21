@@ -12,15 +12,17 @@ export const SpriteManager = function() {
     this.spriteTypes = {};
     this.timestamp = 0;
     this.layers = {
-        [SpriteManager.LAYER_BOTTOM]: [],
-        [SpriteManager.LAYER_MIDDLE]: [],
-        [SpriteManager.LAYER_TOP]: []
+        [SpriteManager.LAYER.BOTTOM]: [],
+        [SpriteManager.LAYER.MIDDLE]: [],
+        [SpriteManager.LAYER.TOP]: []
     };
 }
 
-SpriteManager.LAYER_BOTTOM = 0;
-SpriteManager.LAYER_MIDDLE = 1;
-SpriteManager.LAYER_TOP = 2;
+SpriteManager.LAYER = {
+    "BOTTOM": 0,
+    "MIDDLE": 1,
+    "TOP": 2
+};
 
 SpriteManager.prototype.getLayer = function(layerID) {
     return this.layers[layerID];

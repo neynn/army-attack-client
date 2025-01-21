@@ -73,54 +73,68 @@ ArmyCamera.prototype.clearOverlay = function(overlayID) {
 ArmyCamera.prototype.update = function(gameContext) {
     const { world, renderer } = gameContext;
     const { mapManager } = world;
-    const activeMap = mapManager.getActiveMap();
+    const worldMap = mapManager.getActiveMap();
 
-    if(!activeMap) {
+    if(!worldMap) {
         return;
     }
 
-    const { background, foreground, layerConfig } = activeMap.meta;
+    const { background, foreground, layerConfig } = worldMap.meta;
     const worldBounds = this.getWorldBounds();
 
     for(const layerID of background) {
-        this.drawLayer(gameContext, activeMap, layerConfig[layerID], worldBounds);
+        this.drawLayer(gameContext, worldMap, layerConfig[layerID], worldBounds);
     }
     
     this.drawOverlay(gameContext, ArmyCamera.OVERLAY_TYPE_MOVE);
     this.drawOverlay(gameContext, ArmyCamera.OVERLAY_TYPE_ATTACK);
-    this.drawSpriteLayers(gameContext, [SpriteManager.LAYER_BOTTOM, SpriteManager.LAYER_MIDDLE, SpriteManager.LAYER_TOP]);
+    this.drawSpriteLayers(gameContext, [SpriteManager.LAYER.BOTTOM, SpriteManager.LAYER.MIDDLE, SpriteManager.LAYER.TOP]);
     this.drawOverlay(gameContext, ArmyCamera.OVERLAY_TYPE_RANGE);
 
     for(const layerID of foreground) {
-        this.drawLayer(gameContext, activeMap, layerConfig[layerID], worldBounds);
+        this.drawLayer(gameContext, worldMap, layerConfig[layerID], worldBounds);
     }
 
     if((Renderer.DEBUG & Renderer.DEBUG_MAP) !== 0) {
         const context = renderer.getContext();
-        const typeLayer = layerConfig["type"];
-        const teamLayer = layerConfig["team"];
 
         context.font = "16px Arial";
         context.textBaseline = "middle";
         context.textAlign = "center";
+
         context.fillStyle = "#ff0000";
+        this.drawLayerData(context, worldBounds, worldMap, "type", 16, 16);
 
-        this.drawWithCallback(activeMap, typeLayer, worldBounds, (tileID, renderX, renderY) => {
-            const drawX = renderX + 16;
-            const drawY = renderY + 16;
+        context.fillStyle = "#00ff00";
+        this.drawLayerData(context, worldBounds, worldMap, "team", this.tileWidth - 16, 16);
 
-            context.fillText(tileID, drawX, drawY);
-        });
+        context.fillStyle = "#0000ff";
+        this.drawLayerData(context, worldBounds, worldMap, "border", 16, this.tileHeight - 16);
 
-        this.drawWithCallback(activeMap, teamLayer, worldBounds, (tileID, renderX, renderY) => {
-            const drawX = renderX - 16 + this.tileWidth;
-            const drawY = renderY + 16;
+        context.fillStyle = "#ffff00";
+        this.drawLayerData(context, worldBounds, worldMap, "ground", this.tileWidth - 16, this.tileHeight - 16);
 
-            context.fillText(tileID, drawX, drawY);
-        });
-        
-        this.drawTileOutlines(context);
+        this.drawTileOutlines(context, worldBounds);
     }
+}
+
+ArmyCamera.prototype.drawLayerData = function(context, worldBounds, worldMap, layerID, offsetX, offsetY) {
+    const layerConfig = worldMap.meta.layerConfig[layerID];
+    const { id, opacity } = layerConfig;
+
+    if(!opacity) {
+        return;
+    }
+
+    const layer = worldMap.getLayer(id);
+
+    this.drawCustom(worldBounds, (index, renderX, renderY) => {
+        const tileID = layer[index];
+        const drawX = renderX + offsetX;
+        const drawY = renderY + offsetY;
+
+        context.fillText(tileID, drawX, drawY);
+    });
 }
 
 ArmyCamera.prototype.drawOverlay = function(gameContext, overlayID) {
@@ -139,17 +153,6 @@ ArmyCamera.prototype.drawOverlay = function(gameContext, overlayID) {
 
         this.drawTileGraphics(tileManager, context, overlayData.id, renderX, renderY);
     }
-}
-
-ArmyCamera.prototype.drawWithCallback = function(map2D, layerConfig, worldBounds, onDraw) {
-    const { id, opacity } = layerConfig;
-
-    if(!opacity) {
-        return;
-    }
-
-    const layer = map2D.getLayer(id);
-    this.drawCustomLayer(layer, worldBounds, onDraw);
 }
 
 ArmyCamera.prototype.drawLayer = function(gameContext, map2D, layerConfig, worldBounds) {
