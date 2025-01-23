@@ -1,1 +1,1 @@
-- Work on attack countering 
+- World manages map creation, not mapSystem.js

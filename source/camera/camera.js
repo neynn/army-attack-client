@@ -107,4 +107,4 @@ Camera.prototype.reloadViewport = function() {}
 
 Camera.prototype.cutViewport = function(windowWidth, windowHeight) {}
 
-Camera.prototype.update = function(gameContext) {}
+Camera.prototype.update = function(gameContext, renderContext) {}

@@ -70,8 +70,8 @@ ArmyCamera.prototype.clearOverlay = function(overlayID) {
     overlayType.clear();
 }
 
-ArmyCamera.prototype.update = function(gameContext) {
-    const { world, renderer } = gameContext;
+ArmyCamera.prototype.update = function(gameContext, renderContext) {
+    const { world } = gameContext;
     const { mapManager } = world;
     const worldMap = mapManager.getActiveMap();
 
@@ -83,38 +83,36 @@ ArmyCamera.prototype.update = function(gameContext) {
     const worldBounds = this.getWorldBounds();
 
     for(const layerID of background) {
-        this.drawLayer(gameContext, worldMap, layerConfig[layerID], worldBounds);
+        this.drawLayer(gameContext, renderContext, worldMap, layerConfig[layerID], worldBounds);
     }
     
-    this.drawOverlay(gameContext, ArmyCamera.OVERLAY_TYPE_MOVE);
-    this.drawOverlay(gameContext, ArmyCamera.OVERLAY_TYPE_ATTACK);
-    this.drawSpriteLayers(gameContext, [SpriteManager.LAYER.BOTTOM, SpriteManager.LAYER.MIDDLE, SpriteManager.LAYER.TOP]);
-    this.drawOverlay(gameContext, ArmyCamera.OVERLAY_TYPE_RANGE);
+    this.drawOverlay(gameContext, renderContext, ArmyCamera.OVERLAY_TYPE_MOVE);
+    this.drawOverlay(gameContext, renderContext, ArmyCamera.OVERLAY_TYPE_ATTACK);
+    this.drawSpriteLayers(gameContext, renderContext, [SpriteManager.LAYER.BOTTOM, SpriteManager.LAYER.MIDDLE, SpriteManager.LAYER.TOP]);
+    this.drawOverlay(gameContext, renderContext, ArmyCamera.OVERLAY_TYPE_RANGE);
 
     for(const layerID of foreground) {
-        this.drawLayer(gameContext, worldMap, layerConfig[layerID], worldBounds);
+        this.drawLayer(gameContext, renderContext, worldMap, layerConfig[layerID], worldBounds);
     }
 
     if((Renderer.DEBUG & Renderer.DEBUG_MAP) !== 0) {
-        const context = renderer.getContext();
+        renderContext.font = "16px Arial";
+        renderContext.textBaseline = "middle";
+        renderContext.textAlign = "center";
 
-        context.font = "16px Arial";
-        context.textBaseline = "middle";
-        context.textAlign = "center";
+        renderContext.fillStyle = "#ff0000";
+        this.drawLayerData(renderContext, worldBounds, worldMap, "type", 16, 16);
 
-        context.fillStyle = "#ff0000";
-        this.drawLayerData(context, worldBounds, worldMap, "type", 16, 16);
+        renderContext.fillStyle = "#00ff00";
+        this.drawLayerData(renderContext, worldBounds, worldMap, "team", this.tileWidth - 16, 16);
 
-        context.fillStyle = "#00ff00";
-        this.drawLayerData(context, worldBounds, worldMap, "team", this.tileWidth - 16, 16);
+        renderContext.fillStyle = "#0000ff";
+        this.drawLayerData(renderContext, worldBounds, worldMap, "border", 16, this.tileHeight - 16);
 
-        context.fillStyle = "#0000ff";
-        this.drawLayerData(context, worldBounds, worldMap, "border", 16, this.tileHeight - 16);
+        renderContext.fillStyle = "#ffff00";
+        this.drawLayerData(renderContext, worldBounds, worldMap, "ground", this.tileWidth - 16, this.tileHeight - 16);
 
-        context.fillStyle = "#ffff00";
-        this.drawLayerData(context, worldBounds, worldMap, "ground", this.tileWidth - 16, this.tileHeight - 16);
-
-        this.drawTileOutlines(context, worldBounds);
+        this.drawTileOutlines(renderContext, worldBounds);
     }
 }
 
@@ -137,9 +135,8 @@ ArmyCamera.prototype.drawLayerData = function(context, worldBounds, worldMap, la
     });
 }
 
-ArmyCamera.prototype.drawOverlay = function(gameContext, overlayID) {
-    const { tileManager, renderer } = gameContext;
-    const context = renderer.getContext();
+ArmyCamera.prototype.drawOverlay = function(gameContext, renderContext, overlayID) {
+    const { tileManager } = gameContext;
     const { x, y } = this.getViewportPosition();
     const overlay = this.overlays[overlayID];
 
@@ -151,22 +148,20 @@ ArmyCamera.prototype.drawOverlay = function(gameContext, overlayID) {
         const renderX = this.tileWidth * overlayData.x - x;
         const renderY = this.tileHeight * overlayData.y - y;
 
-        this.drawTileGraphics(tileManager, context, overlayData.id, renderX, renderY);
+        this.drawTileGraphics(tileManager, renderContext, overlayData.id, renderX, renderY);
     }
 }
 
-ArmyCamera.prototype.drawLayer = function(gameContext, map2D, layerConfig, worldBounds) {
+ArmyCamera.prototype.drawLayer = function(gameContext, renderContext, map2D, layerConfig, worldBounds) {
     const { id, opacity } = layerConfig;
 
     if(!opacity) {
         return;
     }
 
-    const { renderer } = gameContext;
-    const context = renderer.getContext();
     const layer = map2D.getLayer(id);
 
-    context.globalAlpha = opacity;
+    renderContext.globalAlpha = opacity;
     this.drawTileLayer(gameContext, layer, worldBounds);
-    context.globalAlpha = 1;
+    renderContext.globalAlpha = 1;
 }

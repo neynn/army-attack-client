@@ -61,10 +61,9 @@ OrthogonalCamera.prototype.drawTileLayer = function(gameContext, layer, worldBou
     }
 }
 
-OrthogonalCamera.prototype.drawSpriteLayers = function(gameContext, layers) {
-    const { timer, renderer, spriteManager } = gameContext;
+OrthogonalCamera.prototype.drawSpriteLayers = function(gameContext, renderContext, layers) {
+    const { timer, spriteManager } = gameContext;
     const { x, y } = this.getViewportPosition(); 
-    const context = renderer.getContext();
     const realTime = timer.getRealTime();
     const deltaTime = timer.getDeltaTime();
     const viewportLeftEdge = this.viewportX;
@@ -92,14 +91,14 @@ OrthogonalCamera.prototype.drawSpriteLayers = function(gameContext, layers) {
             const sprite = visibleSprites[j];
     
             sprite.update(realTime, deltaTime);
-            sprite.draw(context, x, y);
+            sprite.draw(renderContext, x, y);
         }
     
         if((Renderer.DEBUG & Renderer.DEBUG_SPRITES) !== 0) {
             for(let j = 0; j < visibleSprites.length; j++) {
                 const sprite = visibleSprites[j];
         
-                sprite.debug(context, x, y);
+                sprite.debug(renderContext, x, y);
             }
         }
     }

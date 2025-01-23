@@ -1,5 +1,5 @@
 import { Camera } from "./camera/camera.js";
-import { Canvas } from "./camera/canvas.js";
+import { RenderContext } from "./camera/renderContext.js";
 import { FPSCounter } from "./camera/fpsCounter.js";
 import { EffectManager } from "./effects/effectManager.js";
 import { EventEmitter } from "./events/eventEmitter.js";
@@ -11,9 +11,8 @@ export const Renderer = function() {
 
     this.effects = new EffectManager();
     this.fpsCounter = new FPSCounter();
-
-    this.display = new Canvas();
-    this.display.create(this.windowWidth, this.windowHeight, true);
+    this.display = new RenderContext();
+    this.display.init(this.windowWidth, this.windowHeight, true);
 
     this.events = new EventEmitter();
     this.events.listen(Renderer.EVENT.SCREEN_RESIZE);
@@ -22,9 +21,7 @@ export const Renderer = function() {
     this.cameras = new Map();
     this.cameraStack = [];
 
-    window.addEventListener("resize", () => {
-        this.resizeDisplay(window.innerWidth, window.innerHeight);
-    });
+    window.addEventListener("resize", () => this.resizeDisplay(window.innerWidth, window.innerHeight));
 }
 
 Renderer.ANCHOR_TYPE = {
@@ -49,6 +46,22 @@ Renderer.DEBUG_CAMERA = 1 << 0;
 Renderer.DEBUG_INTERFACE = 1 << 1;
 Renderer.DEBUG_SPRITES = 1 << 2;
 Renderer.DEBUG_MAP = 1 << 3;
+
+Renderer.prototype.getContextOf = function(cameraID) {
+    const camera = this.cameras.get(cameraID);
+
+    if(!camera) {
+        return this.display.context;
+    }
+
+    const context = camera.getContext();
+
+    if(!context) {
+        return this.display.context;
+    }
+
+    return context;
+}
 
 Renderer.prototype.getContext = function() {
     return this.display.context;
@@ -159,7 +172,7 @@ Renderer.prototype.update = function(gameContext) {
 
     this.cameras.forEach(camera => {
         context.save();
-        camera.update(gameContext);
+        camera.update(gameContext, context);
         this.events.emit(Renderer.EVENT.CAMERA_FINISH, camera);
         context.restore();
     });

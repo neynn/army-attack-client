@@ -20,7 +20,6 @@ import { MapEditorState } from "./states/context/mapEditor.js";
 import { StoryModeState } from "./states/context/storyMode.js";
 import { VersusModeState } from "./states/context/versusMode.js";
 import { PlayerController } from "./init/controller/player.js";
-import { EditorController } from "./init/controller/editor.js";
 import { AvianComponent } from "./components/avian.js";
 import { BulldozeComponent } from "./components/bulldoze.js";
 import { ConstructionAction } from "./actions/constructionAction.js";
@@ -65,7 +64,6 @@ ArmyContext.prototype.initialize = function(resources) {
     this.world.entityManager.selectFactory("Army");
     
     this.world.controllerManager.registerController("Player", PlayerController);
-    this.world.controllerManager.registerController("Editor", EditorController);
     
     this.states.addState(CONTEXT_STATES.MAIN_MENU, new MainMenuState());
     this.states.addState(CONTEXT_STATES.STORY_MODE, new StoryModeState());

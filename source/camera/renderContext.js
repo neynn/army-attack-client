@@ -1,4 +1,4 @@
-export const Canvas = function() {
+export const RenderContext = function() {
     this.canvas = null;
     this.context = null;
     this.width = null;
@@ -8,13 +8,12 @@ export const Canvas = function() {
     this.imageData = null;
 }
 
-Canvas.prototype.clear = function() {
+RenderContext.prototype.clear = function() {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 }
 
-Canvas.prototype.resize = function(width, height) {
+RenderContext.prototype.resize = function(width, height) {
     this.clear();
-    
     this.canvas.width = width;
     this.canvas.height = height;
     this.width = width;
@@ -24,7 +23,7 @@ Canvas.prototype.resize = function(width, height) {
     this.context.imageSmoothingEnabled = false;
 }
 
-Canvas.prototype.create = function(width, height, isDisplay) {
+RenderContext.prototype.init = function(width, height, isDisplay) {
     this.canvas = document.createElement("canvas");
 
     if(isDisplay) {
@@ -42,7 +41,7 @@ Canvas.prototype.create = function(width, height, isDisplay) {
     this.resize(width, height);
 }
 
-Canvas.prototype.getImageData = function() {
+RenderContext.prototype.getImageData = function() {
     if(!this.canvas) {
         return null;
     }
