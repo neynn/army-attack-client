@@ -15,8 +15,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
     const { uiManager, world, renderer } = gameContext;
     const { actionQueue } = world;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
-    const MAP = "pvp_valleys";
-    const worldMap = await MapSystem.loadMapByID(gameContext, MAP);
+    const worldMap = await world.loadMapByID("pvp_valleys");
 
     if(!worldMap) {
         return;

@@ -1,11 +1,10 @@
 import { GAME_EVENTS } from "../enums.js";
-import { MapSystem } from "../systems/map.js";
 
 export const instanceMapFromID = async function(gameContext, payload) {
-    const { client } = gameContext;
+    const { client, world } = gameContext;
     const { socket } = client;
     const { id } = payload;
-    const worldMap = MapSystem.loadMapByID(gameContext, id);
+    const worldMap = await world.loadMapByID(id);
 
     if(!worldMap) {
         socket.messageRoom(GAME_EVENTS.INSTANCE_MAP, {

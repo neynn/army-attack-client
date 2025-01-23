@@ -8,7 +8,6 @@ import { Button } from "../../../source/ui/elements/button.js";
 
 import { CAMERA_TYPES } from "../../enums.js";
 import { saveMap } from "../../../helpers.js";
-import { MapSystem } from "../../systems/map.js";
 
 export const MapEditorState = function() {
     this.mapEditor = new MapEditor();
@@ -302,6 +301,7 @@ MapEditorState.prototype.initializeCursorEvents = function(gameContext) {
 }
 
 MapEditorState.prototype.createNewMap = function(gameContext) {
+    const { world } = gameContext;
     const createNew = confirm("This will create and load a brand new map! Proceed?");
 
     if(!createNew) {
@@ -311,7 +311,7 @@ MapEditorState.prototype.createNewMap = function(gameContext) {
     const mapID = `${Date.now()}`;
     const mapData = this.mapEditor.getDefaultMapData();
     
-    MapSystem.loadEmptyMapByData(gameContext, mapID, mapData);
+    world.loadEmptyMapByData(mapID, mapData);
     
     this.currentMapID = mapID;
 }
@@ -408,7 +408,7 @@ MapEditorState.prototype.initializeUIEvents = function(gameContext) {
 
     uiManager.addClick(id, "BUTTON_LOAD", async () => {
         const mapID = prompt("MAP-ID?");
-        const worldMap = await MapSystem.loadMapByID(gameContext, mapID);
+        const worldMap = await world.loadMapByID(mapID);
 
         if(worldMap) {
             this.currentMapID = mapID;

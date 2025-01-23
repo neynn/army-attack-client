@@ -5,6 +5,7 @@ import { EventManager } from "./eventManager.js";
 import { EventEmitter } from "./events/eventEmitter.js";
 import { Logger } from "./logger.js";
 import { MapManager } from "./map/mapManager.js";
+import { MapParser } from "./map/mapParser.js";
 
 export const World = function() {
     this.config = {};
@@ -34,6 +35,36 @@ World.prototype.update = function(gameContext) {
     this.actionQueue.update(gameContext);
     this.controllerManager.update(gameContext);
     this.entityManager.update(gameContext);
+}
+
+World.prototype.loadMapByID = async function(mapID) {
+    const worldMap = await this.parseMap(mapID, MapParser.parseMap2D);
+
+    if(!worldMap) {
+        return null;
+    }
+
+    this.loadMap(mapID, worldMap);
+
+    return worldMap;
+}
+
+World.prototype.loadEmptyMapByData = function(mapID, mapData) {
+    const { layers, meta } = mapData;
+    const worldMap = MapParser.parseMap2DEmpty(mapID, layers, meta);
+
+    this.loadMap(mapID, worldMap);
+
+    return worldMap;
+}
+
+World.prototype.loadMapByData = function(mapID, mapData) {
+    const { layers, meta } = mapData;
+    const worldMap = MapParser.parseMap2D(mapID, layers, meta);
+
+    this.loadMap(mapID, worldMap);
+
+    return worldMap;
 }
 
 World.prototype.parseMap = async function(mapID, onParse) {

@@ -31,6 +31,7 @@ import { SpawnSystem } from "./systems/spawn.js";
 import { CounterAttackAction } from "./actions/counterAttackAction.js";
 import { CounterMoveAction } from "./actions/counterMoveAction.js";
 import { ArmyEntityFactory } from "./init/armyEntity.js";
+import { MapSystem } from "./systems/map.js";
 
 export const ArmyContext = function() {
     GameContext.call(this, 60);
@@ -203,10 +204,15 @@ ArmyContext.prototype.createArmyCamera = function() {
     
     camera.loadTileDimensions(settings.tileWidth, settings.tileHeight);
     this.renderer.addCamera(CAMERA_TYPES.ARMY_CAMERA, camera);
+    this.world.events.subscribe(World.EVENT_MAP_LOAD, CAMERA_TYPES.ARMY_CAMERA, (worldMap) => {
+        MapSystem.initializeMap(this, worldMap, camera);
+        this.renderer.reloadCamera(CAMERA_TYPES.ARMY_CAMERA);
+    });
 
     return camera;
 }
 
 ArmyContext.prototype.destroyArmyCamera = function() {
     this.renderer.removeCamera(CAMERA_TYPES.ARMY_CAMERA);
+    this.world.events.unsubscribe(World.EVENT_MAP_LOAD, CAMERA_TYPES.ARMY_CAMERA);
 }
