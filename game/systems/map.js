@@ -6,19 +6,6 @@ import { AllianceSystem } from "./alliance.js";
 
 export const MapSystem = function() {}
 
-MapSystem.initializeMap = function(gameContext, worldMap, camera) {
-    const { client } = gameContext;
-    const { width, height, meta } = worldMap;
-    const { music } = meta;
-
-    camera.loadWorld(width, height);
-
-    if(music) {
-        client.musicPlayer.loadTrack(music);
-        client.musicPlayer.swapTrack(music);
-    }
-}
-
 MapSystem.reloadGraphics = function(gameContext) {
     const { world } = gameContext;
     const { mapManager } = world;

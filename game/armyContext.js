@@ -4,7 +4,7 @@ import { Socket } from "../source/network/socket.js";
 import { World } from "../source/world.js";
 import { NETWORK_EVENTS } from "../source/network/events.js";
 
-import { ACTION_TYPES, CAMERA_TYPES, CONTEXT_STATES } from "./enums.js";
+import { ACTION_TYPES, CONTEXT_STATES } from "./enums.js";
 import { AttackAction } from "./actions/attackAction.js";
 import { MoveAction } from "./actions/moveAction.js";
 import { ArmorComponent } from "./components/armor.js";
@@ -31,7 +31,6 @@ import { SpawnSystem } from "./systems/spawn.js";
 import { CounterAttackAction } from "./actions/counterAttackAction.js";
 import { CounterMoveAction } from "./actions/counterMoveAction.js";
 import { ArmyEntityFactory } from "./init/armyEntity.js";
-import { MapSystem } from "./systems/map.js";
 
 export const ArmyContext = function() {
     GameContext.call(this, 60);
@@ -198,21 +197,30 @@ ArmyContext.prototype.getCameraControllerFocus = function(cameraID) {
     return controller;
 }
 
-ArmyContext.prototype.createArmyCamera = function() {
+ArmyContext.prototype.createCamera = function(cameraID) {
     const camera = new ArmyCamera();
     const settings = this.world.getConfig("Settings");
     
     camera.loadTileDimensions(settings.tileWidth, settings.tileHeight);
-    this.renderer.addCamera(CAMERA_TYPES.ARMY_CAMERA, camera);
-    this.world.events.subscribe(World.EVENT_MAP_LOAD, CAMERA_TYPES.ARMY_CAMERA, (worldMap) => {
-        MapSystem.initializeMap(this, worldMap, camera);
-        this.renderer.reloadCamera(CAMERA_TYPES.ARMY_CAMERA);
+    this.renderer.addCamera(cameraID, camera);
+    this.world.events.subscribe(World.EVENT_MAP_LOAD, cameraID, (worldMap) => {
+        const { width, height, meta } = worldMap;
+        const { music } = meta;
+    
+        camera.loadWorld(width, height);
+    
+        if(music) {
+            this.client.musicPlayer.loadTrack(music);
+            this.client.musicPlayer.swapTrack(music);
+        }
+
+        this.renderer.reloadCamera(cameraID);
     });
 
     return camera;
 }
 
-ArmyContext.prototype.destroyArmyCamera = function() {
-    this.renderer.removeCamera(CAMERA_TYPES.ARMY_CAMERA);
-    this.world.events.unsubscribe(World.EVENT_MAP_LOAD, CAMERA_TYPES.ARMY_CAMERA);
+ArmyContext.prototype.destroyCamera = function(cameraID) {
+    this.renderer.removeCamera(cameraID);
+    this.world.events.unsubscribe(World.EVENT_MAP_LOAD, cameraID);
 }
