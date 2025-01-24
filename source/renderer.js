@@ -17,7 +17,6 @@ export const Renderer = function() {
 
     this.events = new EventEmitter();
     this.events.listen(Renderer.EVENT.SCREEN_RESIZE);
-    this.events.listen(Renderer.EVENT.CONTEXT_FINISH);
 
     this.contexts = new Map();
     this.contextStack = [];
@@ -38,8 +37,7 @@ Renderer.ANCHOR_TYPE = {
 };
 
 Renderer.EVENT = {
-    "SCREEN_RESIZE": "SCREEN_RESIZE",
-    "CONTEXT_FINISH": "CONTEXT_FINISH"
+    SCREEN_RESIZE: 0
 };
 
 Renderer.DEBUG = 0b00000001;
@@ -48,8 +46,18 @@ Renderer.DEBUG_INTERFACE = 1 << 1;
 Renderer.DEBUG_SPRITES = 1 << 2;
 Renderer.DEBUG_MAP = 1 << 3;
 
-Renderer.prototype.getContext = function() {
+Renderer.prototype.getDrawingContext = function() {
     return this.display.context;
+}
+
+Renderer.prototype.getContext = function(contextID) {
+    const context = this.contexts.get(contextID);
+
+    if(!context) {
+        return null;
+    }
+
+    return context;
 }
 
 Renderer.prototype.getWidth = function() {
@@ -155,7 +163,7 @@ Renderer.prototype.drawCameraDebug = function() {
 
 Renderer.prototype.update = function(gameContext) {
     const { timer } = gameContext; 
-    const renderContext = this.getContext();
+    const renderContext = this.getDrawingContext();
     const deltaTime = timer.getDeltaTime();
 
     this.display.clear();
@@ -164,7 +172,6 @@ Renderer.prototype.update = function(gameContext) {
     this.contexts.forEach(context => {
         renderContext.save();
         context.update(gameContext, renderContext);
-        this.events.emit(Renderer.EVENT.CONTEXT_FINISH, context);
         renderContext.restore();
     });
 

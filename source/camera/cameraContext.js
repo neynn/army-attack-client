@@ -1,5 +1,6 @@
-import { Vec2 } from "../math/vec2.js";
+import { EventEmitter } from "../events/eventEmitter.js";
 import { RenderContext } from "./renderContext.js";
+import { Vec2 } from "../math/vec2.js";
 
 export const CameraContext = function(id, camera) {
     this.id = id;
@@ -8,7 +9,14 @@ export const CameraContext = function(id, camera) {
     this.displayMode = CameraContext.DISPLAY_MODE.RESOLUTION_DEPENDENT;
     this.camera = camera;
     this.context = null;
+
+    this.events = new EventEmitter();
+    this.events.listen(CameraContext.EVENT.RENDER_COMPLETE);
 }
+
+CameraContext.EVENT = {
+    RENDER_COMPLETE: 0
+};
 
 CameraContext.POSITION_MODE = {
     AUTO_CENTER: 0,
@@ -51,7 +59,7 @@ CameraContext.prototype.setDisplayMode = function(modeID) {
             if(this.context) {
                 this.camera.setViewport(this.context.width, this.context.height);
                 this.camera.reloadViewport();
-                this.displayMode = CameraContext.DISPLAY_MODE.RESOLUTION_FIXED;
+                this.displayMode = modeID;
             }
             break;
         }    
@@ -83,21 +91,13 @@ CameraContext.prototype.getBounds = function() {
     return {
         "x": this.position.x,
         "y": this.position.y,
-        "w": this.camera.getViewportWidth(),
-        "h": this.camera.getViewportHeight()
+        "w": this.camera.viewportWidth,
+        "h": this.camera.viewportHeight
     }
 }
 
 CameraContext.prototype.getCamera = function() {
     return this.camera;
-}
-
-CameraContext.prototype.getContext = function() {
-    if(!this.context) {
-        return null;
-    }
-
-    return this.context;
 }
 
 CameraContext.prototype.reloadCamera = function(windowWidth, windowHeight) {
@@ -146,10 +146,13 @@ CameraContext.prototype.update = function(gameContext, context) {
         case CameraContext.DISPLAY_MODE.RESOLUTION_DEPENDENT: {
             context.translate(this.position.x, this.position.y);
             this.camera.update(gameContext, context);
+            this.events.emit(CameraContext.EVENT.RENDER_COMPLETE, context);
             break;
         }
         case CameraContext.DISPLAY_MODE.RESOLUTION_FIXED: {
+            this.context.clear();
             this.camera.update(gameContext, this.context.context);
+            this.events.emit(CameraContext.EVENT.RENDER_COMPLETE, this.context.context);
             context.drawImage(
                 this.context.canvas, 0, 0, this.context.width, this.context.height,
                 this.position.x, this.position.y, this.context.width, this.context.height

@@ -9,7 +9,7 @@ export const EffectManager = function() {
 EffectManager.prototype.update = function(gameContext) {
     const { renderer, timer } = gameContext;
     const deleteable = [];
-    const context = renderer.getContext();
+    const context = renderer.getDrawingContext();
     const deltaTime = timer.getDeltaTime();
 
     this.activeEffects.forEach(effect => {

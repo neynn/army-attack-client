@@ -190,12 +190,13 @@ MapEditorState.prototype.initializeRenderEvents = function(gameContext) {
     const { renderer, tileManager } = gameContext;
     const { layerButtons } = this.mapEditor.config.interface;
     const contextID = gameContext.getID();
+    const cameraContext = renderer.getContext(CAMERA_TYPES.ARMY_CAMERA);
+    const camera = cameraContext.getCamera();
 
-    renderer.events.subscribe(Renderer.EVENT.CONTEXT_FINISH, contextID, (cameraContext) => {
-        const camera = cameraContext.getCamera();
+    cameraContext.events.subscribe(CameraContext.EVENT.RENDER_COMPLETE, contextID, (context) => {
         const cursorTile = gameContext.getMouseTile();
-        const brush = this.mapEditor.getBrush();
         const brushSize = this.mapEditor.getBrushSize();
+        const brush = this.mapEditor.getBrush();
     
         if(!brush) {
             return;
@@ -212,7 +213,6 @@ MapEditorState.prototype.initializeRenderEvents = function(gameContext) {
         const { tileName, tileID } = brush;
         const { x, y } = camera.getViewportPosition();
         const { width, height, halfWidth } = camera.getTileDimensions();
-        const context = renderer.getContext();
         const startX = cursorTile.x - brushSize;
         const startY = cursorTile.y - brushSize;
         const endX = cursorTile.x + brushSize;
