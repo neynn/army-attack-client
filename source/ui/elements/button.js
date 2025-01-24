@@ -94,9 +94,10 @@ Button.prototype.isColliding = function(mouseX, mouseY, mouseRange) {
 }
 
 Button.prototype.onDraw = function(context, viewportX, viewportY, localX, localY) {
+    const { w, h } = this.bounds;
+    
     this.events.emit(Button.EVENT_DEFER_DRAW, this, context, localX, localY);
     
-    const { w, h } = this.bounds;
     const isHighlightActive = this.highlight.isActive();
     const isOutlineActive = this.outline.isActive();
 

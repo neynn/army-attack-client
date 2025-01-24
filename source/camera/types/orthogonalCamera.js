@@ -186,17 +186,6 @@ OrthogonalCamera.prototype.loadWorld = function(mapWidth, mapHeight) {
     this.reloadViewport();
 }
 
-OrthogonalCamera.prototype.screenToWorldTile = function(screenX, screenY) {
-    const { x, y } = this.getViewportPosition();
-    const worldTileX = Math.floor((screenX / this.scale + x) / this.tileWidth);
-    const worldTileY = Math.floor((screenY / this.scale + y) / this.tileHeight);
-
-    return {
-        "x": worldTileX,
-        "y": worldTileY
-    }
-}
-
 OrthogonalCamera.prototype.getWorldBounds = function() {
     const offsetX = 0;
     const offsetY = 1;
@@ -223,6 +212,16 @@ OrthogonalCamera.prototype.getTileDimensions = function() {
         "height": this.tileHeight,
         "halfWidth": this.halfTileWidth,
         "halfHeight": this.halfTileHeight
+    }
+}
+
+OrthogonalCamera.prototype.screenToWorldTile = function(viewportX, viewportY, screenX, screenY) {
+    const worldTileX = Math.floor((screenX / this.scale + viewportX) / this.tileWidth);
+    const worldTileY = Math.floor((screenY / this.scale + viewportY) / this.tileHeight);
+
+    return {
+        "x": worldTileX,
+        "y": worldTileY
     }
 }
 

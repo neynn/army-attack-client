@@ -99,7 +99,8 @@ GameContext.prototype.getMouseTile = function() {
         }
     }
 
-    const mouseTile = camera.screenToWorldTile(this.client.cursor.position.x, this.client.cursor.position.y);
+    const { x, y } = camera.getViewportPosition();
+    const mouseTile = camera.screenToWorldTile(x, y, this.client.cursor.position.x, this.client.cursor.position.y);
 
     return mouseTile;
 }

@@ -41,7 +41,7 @@ Renderer.EVENT = {
     "CAMERA_FINISH": "CAMERA_FINISH"
 };
 
-Renderer.DEBUG = 0b00001111;
+Renderer.DEBUG = 0b00000000;
 Renderer.DEBUG_CAMERA = 1 << 0;
 Renderer.DEBUG_INTERFACE = 1 << 1;
 Renderer.DEBUG_SPRITES = 1 << 2;

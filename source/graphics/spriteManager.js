@@ -7,7 +7,7 @@ import { ImageManager } from "../resources/imageManager.js";
 
 export const SpriteManager = function() {
     this.resources = new ImageManager();
-    this.idGenerator = new IDGenerator("@SPRITE");
+    this.idGenerator = new IDGenerator();
     this.sprites = new Map();
     this.spriteTypes = {};
     this.timestamp = 0;

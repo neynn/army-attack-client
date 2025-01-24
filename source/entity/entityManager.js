@@ -3,7 +3,7 @@ import { Logger } from "../logger.js";
 
 export const EntityManager = function() {
     this.traitTypes = {};
-    this.idGenerator = new IDGenerator("@ENTITY");
+    this.idGenerator = new IDGenerator();
     this.factoryTypes = new Map();
     this.componentTypes = new Map();
     this.entities = new Map();
