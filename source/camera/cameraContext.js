@@ -88,7 +88,7 @@ CameraContext.prototype.getCamera = function() {
 CameraContext.prototype.reloadCamera = function(windowWidth, windowHeight) {
     if(this.positionMode === CameraContext.POSITION_MODE.AUTO_CENTER) {
         if(this.displayMode !== CameraContext.DISPLAY_MODE.RESOLUTION_FIXED) {
-            this.camera.cutViewport(windowWidth, windowHeight);
+            this.camera.alignViewport();
         }
 
         const { x, y } = this.camera.getCenterOffset(windowWidth, windowHeight);

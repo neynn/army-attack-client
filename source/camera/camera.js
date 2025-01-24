@@ -78,12 +78,12 @@ Camera.prototype.reloadViewport = function() {
     this.limitViewport();
 }
 
-Camera.prototype.cutViewport = function(windowWidth, windowHeight) {
-    if(this.worldWidth < windowWidth) {
+Camera.prototype.alignViewport = function() {
+    if(this.worldWidth < this.viewportWidth) {
         this.viewportWidth = this.worldWidth;
     }
 
-    if(this.worldHeight < windowHeight) {
+    if(this.worldHeight < this.viewportHeight) {
         this.viewportHeight = this.worldHeight;
     }
 }
