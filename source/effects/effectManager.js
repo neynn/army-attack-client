@@ -2,18 +2,15 @@ import { IDGenerator } from "../idGenerator.js";
 import { Effect } from "./effect.js";
 
 export const EffectManager = function() {
-    this.idGenerator = new IDGenerator("@EFFECT");
+    this.idGenerator = new IDGenerator();
     this.activeEffects = new Map();
 }
 
-EffectManager.prototype.update = function(gameContext) {
-    const { renderer, timer } = gameContext;
+EffectManager.prototype.update = function(renderContext, deltaTime) {
     const deleteable = [];
-    const context = renderer.getDrawingContext();
-    const deltaTime = timer.getDeltaTime();
 
     this.activeEffects.forEach(effect => {
-        effect.update(context, deltaTime);
+        effect.update(renderContext, deltaTime);
 
         const effectID = effect.getID();
         const isFinished = effect.isFinished();

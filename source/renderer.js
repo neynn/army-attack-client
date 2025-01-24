@@ -40,11 +40,13 @@ Renderer.EVENT = {
     SCREEN_RESIZE: 0
 };
 
-Renderer.DEBUG = 0b00000001;
-Renderer.DEBUG_CAMERA = 1 << 0;
-Renderer.DEBUG_INTERFACE = 1 << 1;
-Renderer.DEBUG_SPRITES = 1 << 2;
-Renderer.DEBUG_MAP = 1 << 3;
+Renderer.DEBUG = {
+    VALUE: 0b00000001,
+    CAMERA: 1 << 0,
+    INTERFACE: 1 << 1,
+    SPRITES: 1 << 2,
+    MAP: 1 << 3
+};
 
 Renderer.prototype.getDrawingContext = function() {
     return this.display.context;
@@ -90,7 +92,7 @@ Renderer.prototype.reloadCamera = function(cameraID) {
 
 Renderer.prototype.addCamera = function(cameraID, camera) {
     if(!(camera instanceof Camera) || this.contexts.has(cameraID)) {
-        return;
+        return null;
     }
 
     const context = new CameraContext(cameraID, camera);
@@ -158,7 +160,10 @@ Renderer.prototype.drawUIDebug = function(gameContext) {
 Renderer.prototype.drawCameraDebug = function() {
     this.display.context.strokeStyle = "#eeeeee";
     this.display.context.lineWidth = 3;
-    this.contexts.forEach(context => this.display.context.strokeRect(context.position.x, context.position.y, context.camera.viewportWidth, context.camera.viewportHeight));
+    this.contexts.forEach(context => {
+        const { x, y, w, h } = context.getBounds();
+        this.display.context.strokeRect(x, y, w, h);
+    });
 }
 
 Renderer.prototype.update = function(gameContext) {
@@ -175,15 +180,15 @@ Renderer.prototype.update = function(gameContext) {
         renderContext.restore();
     });
 
-    this.effects.update(gameContext);
+    this.effects.update(renderContext, deltaTime);
 
-    if((Renderer.DEBUG & Renderer.DEBUG_CAMERA) !== 0) {
+    if((Renderer.DEBUG.VALUE & Renderer.DEBUG.CAMERA) !== 0) {
         this.drawCameraDebug();
     }
 
     this.drawUI(gameContext);
 
-    if((Renderer.DEBUG & Renderer.DEBUG_INTERFACE) !== 0) {
+    if((Renderer.DEBUG.VALUE & Renderer.DEBUG.INTERFACE) !== 0) {
         this.drawUIDebug(gameContext);
     }
 }
@@ -196,8 +201,13 @@ Renderer.prototype.resizeDisplay = function(width, height) {
     this.events.emit(Renderer.EVENT.SCREEN_RESIZE, width, height);
 }
 
-Renderer.prototype.getAnchor = function(type, originX, originY, width, height) {
-    switch(type) {
+Renderer.prototype.getAnchor = function(typeID, originX, originY, width, height) {
+    if(Renderer.ANCHOR_TYPE[typeID] === undefined) {
+        console.warn(`Anchor Type ${typeID} does not exist!`);
+        return { "x": originX, "y": originY };
+    }
+
+    switch(typeID) {
         case Renderer.ANCHOR_TYPE.TOP_LEFT: return { "x": originX, "y": originY };
         case Renderer.ANCHOR_TYPE.TOP_CENTER: return { "x": this.windowWidth / 2 - originX - width / 2, "y": originY };
         case Renderer.ANCHOR_TYPE.TOP_RIGHT: return { "x": this.windowWidth - originX - width, "y": originY };
@@ -207,14 +217,10 @@ Renderer.prototype.getAnchor = function(type, originX, originY, width, height) {
         case Renderer.ANCHOR_TYPE.LEFT: return { "x": originX, "y": this.windowHeight / 2 - originY - height / 2 };
         case Renderer.ANCHOR_TYPE.CENTER: return { "x": this.windowWidth / 2 - originX - width / 2, "y": this.windowHeight / 2 - originY - height / 2 };
         case Renderer.ANCHOR_TYPE.RIGHT: return { "x": this.windowWidth - originX - width, "y": this.windowHeight / 2 - originY - height / 2 };
-        default: {
-            console.warn(`Anchor Type ${type} does not exist!`);
-            return { "x": originX, "y": originY };
-        }
     }
 }
 
-Renderer.prototype.getCollidedCamera = function(mouseX, mouseY, mouseRange) {
+Renderer.prototype.getCollidedContext = function(mouseX, mouseY, mouseRange) {
     for(let i = this.contextStack.length - 1; i >= 0; i--) {
         const contextID = this.contextStack[i];
         const context = this.contexts.get(contextID);
