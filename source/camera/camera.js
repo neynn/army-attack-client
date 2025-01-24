@@ -4,35 +4,37 @@ export const Camera = function() {
     this.position = new Vec2(0, 0);
     this.viewportWidth = 0;
     this.viewportHeight = 0;
-    this.viewportMode = Camera.VIEWPORT_MODE.FILL_WINDOW_AUTO;
+    this.positionMode = Camera.POSITION_MODE.AUTO_CENTER;
+    this.displayMode = Camera.DISPLAY_MODE.RESOLUTION_DEPENDENT;
     this.scale = 1;
 }
 
 /**
- * VIEWPORT_MODE.FILL_WINDOW_AUTO
+ * POSITION_MODE.AUTO_CENTER
  *  - Camera spans entire window.
  *  - Camera automatically centers on world screen.
  * 
- * VIEWPORT_MODE.FILL_WINDOW_FIXED
+ * POSITION_MODE.FIXED
  *  - Camera spans entire window.
  *  - Camera is fixed on 0, 0.
  */
-Camera.VIEWPORT_MODE = {
-    FILL_WINDOW_AUTO: 0,
-    FILL_WINDOW_FIXED: 1
+Camera.POSITION_MODE = {
+    AUTO_CENTER: 0,
+    FIXED: 1
 };
 
-Camera.prototype.setMode = function(modeID = Camera.VIEWPORT_MODE.FILL_WINDOW_AUTO) {
-    this.viewportMode = modeID;
+Camera.DISPLAY_MODE = {
+    RESOLUTION_DEPENDENT: 0,
+    RESOLUTION_FIXED: 1
+};
+
+Camera.prototype.setPositionMode = function(modeID) {
+    this.positionMode = modeID;
 }
 
-Camera.prototype.getMode = function() {
-    return this.viewportMode;
-}
-
-Camera.prototype.setViewport = function(viewportWidth = 0, viewportHeight = 0) {
-    this.viewportWidth = viewportWidth;
-    this.viewportHeight = viewportHeight;
+Camera.prototype.setViewport = function(width, height) {
+    this.viewportWidth = width;
+    this.viewportHeight = height;
 }
 
 Camera.prototype.getBounds = function() {
@@ -52,19 +54,19 @@ Camera.prototype.centerInWindow = function(windowWidth, windowHeight) {
 }
 
 Camera.prototype.setPosition = function(x = 0, y = 0) {
-    switch(this.viewportMode) {
-        case Camera.VIEWPORT_MODE.FILL_WINDOW_AUTO: {
+    switch(this.positionMode) {
+        case Camera.POSITION_MODE.AUTO_CENTER: {
             this.position.x = Math.floor(x);
             this.position.y = Math.floor(y);
             break;
         }
-        case Camera.VIEWPORT_MODE.FILL_WINDOW_FIXED: {
+        case Camera.POSITION_MODE.FIXED: {
             this.position.x = 0;
             this.position.y = 0;
             break;
         }
         default: {
-            //TODO
+            console.warn(`Viewport mode is not supported! ${this.positionMode}`);
             break;
         }
     }
@@ -83,28 +85,29 @@ Camera.prototype.getViewportHeight = function() {
 }
 
 Camera.prototype.onWindowResize = function(width, height) {
-    switch(this.viewportMode) {
-        case Camera.VIEWPORT_MODE.FILL_WINDOW_AUTO: {
-            this.setViewport(width, height);
-            this.cutViewport(width, height);
-            this.centerInWindow(width, height);
-            break;
-        }
-        case Camera.VIEWPORT_MODE.FILL_WINDOW_FIXED: {
-            this.setViewport(width, height);
-            break;
-        }
-        default: {
-            //TODO
-            break;
-        }
+    if(this.displayMode === Camera.DISPLAY_MODE.RESOLUTION_DEPENDENT) {
+        this.setViewport(width, height);
+    }
+
+    if(this.positionMode === Camera.POSITION_MODE.AUTO_CENTER) {
+        this.cutViewport(width, height);
+        this.centerInWindow(width, height);
     }
 
     this.reloadViewport();
 }
 
+/**
+ * @override
+ */
 Camera.prototype.reloadViewport = function() {} 
 
+/**
+ * @override
+ */
 Camera.prototype.cutViewport = function(windowWidth, windowHeight) {}
 
-Camera.prototype.update = function(gameContext, renderContext) {}
+/**
+ * @override
+ */
+Camera.prototype.update = function(gameContext, context) {}

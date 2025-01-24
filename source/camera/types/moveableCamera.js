@@ -12,11 +12,20 @@ export const MoveableCamera = function() {
     this.worldWidth = 0;
     this.worldHeight = 0;
 
-    this.isBound = false;
-    this.isFixed = false;
-    this.isFollowing = false;
-    this.isDragging = true;
+    this.viewportMode = MoveableCamera.VIEWPORT_MODE.DRAG;
+    this.viewportType = MoveableCamera.VIEWPORT_TYPE.BOUND;
 }
+
+MoveableCamera.VIEWPORT_TYPE = {
+    FREE: 0,
+    BOUND: 1
+};
+
+MoveableCamera.VIEWPORT_MODE = {
+    FIXED: 0,
+    FOLLOW: 1,
+    DRAG: 2
+};
 
 MoveableCamera.prototype = Object.create(Camera.prototype);
 MoveableCamera.prototype.constructor = MoveableCamera;
@@ -63,7 +72,7 @@ MoveableCamera.prototype.cutViewport = function(windowWidth, windowHeight) {
 }
 
 MoveableCamera.prototype.limitViewport = function() {
-    if(!this.isBound) {
+    if(this.viewportType !== MoveableCamera.VIEWPORT_TYPE.BOUND) {
         return;
     }
 
@@ -81,7 +90,7 @@ MoveableCamera.prototype.limitViewport = function() {
 }
 
 MoveableCamera.prototype.moveViewport = function(viewportX, viewportY) {
-    if(this.isFixed) {
+    if(this.viewportMode === MoveableCamera.VIEWPORT_MODE.FIXED) {
         return;
     }
 
@@ -92,7 +101,7 @@ MoveableCamera.prototype.moveViewport = function(viewportX, viewportY) {
 }
 
 MoveableCamera.prototype.dragViewport = function(param_dragX, param_dragY) {
-    if(!this.isDragging) {
+    if(this.viewportMode !== MoveableCamera.VIEWPORT_MODE.DRAG) {
         return;
     }
 
@@ -110,12 +119,12 @@ MoveableCamera.prototype.centerViewport = function(positionX, positionY) {
 }
 
 MoveableCamera.prototype.bindViewport = function() {
-    this.isBound = true;
+    this.viewportType = MoveableCamera.VIEWPORT_TYPE.BOUND;
     this.limitViewport();
 }
 
 MoveableCamera.prototype.unbindViewport = function() {
-    this.isBound = false;
+    this.viewportType = MoveableCamera.VIEWPORT_TYPE.FREE;
     this.limitViewport();
 }
 
@@ -138,16 +147,15 @@ MoveableCamera.prototype.getViewportPosition = function() {
 }
 
 MoveableCamera.prototype.addTarget = function(targetX = 0, targetY = 0, factor = 0) {
-    if(!this.isFollowing) {
+    if(this.viewportMode !== MoveableCamera.VIEWPORT_MODE.FOLLOW) {
         return;
     }
 
-    this.isDragging = false;
     this.targets.push([targetX, targetY, factor]);
 }
 
 MoveableCamera.prototype.followTargets = function(deltaTime) {
-    if(!this.isFollowing || this.targets.length === 0) {
+    if(this.viewportMode !== MoveableCamera.VIEWPORT_MODE.FOLLOW || this.targets.length === 0) {
         return;
     }
 
@@ -166,7 +174,8 @@ MoveableCamera.prototype.followTargets = function(deltaTime) {
         this.targets.shift();
         
         if(this.targets.length === 0) {
-            this.isDragging = true;
+            //TODO: When all targets are reached: emit an "ALL_TARGETS_REACHED" event
+            //THEN: Allow draggin again?
         }
 
         return;

@@ -3,12 +3,12 @@ import { RenderContext } from "./renderContext.js";
 export const CameraContext = function(camera) {
     this.camera = camera;
     this.context = null;
-    this.type = CameraContext.RENDER_TYPE.DEFAULT;
+    this.type = CameraContext.DISPLAY_MODE.DEFAULT;
 }
 
-CameraContext.RENDER_TYPE = {
-    "DEFAULT": 0,
-    "CUSTOM": 1
+CameraContext.DISPLAY_MODE = {
+    RESOLUTION_DEPENDENT: 0,
+    RESOLUTION_FIXED: 1
 };
 
 CameraContext.prototype.resize = function(width, height) {
@@ -41,25 +41,22 @@ CameraContext.prototype.destroyRenderer = function() {
 
 CameraContext.prototype.useCustom = function() {
     if(this.context) {
-        this.type = CameraContext.RENDER_TYPE.CUSTOM;
+        this.type = CameraContext.DISPLAY_MODE.RESOLUTION_FIXED;
     }
 }
 
 CameraContext.prototype.useDefault = function() {
-    this.type = CameraContext.RENDER_TYPE.DEFAULT;
+    this.type = CameraContext.DISPLAY_MODE.RESOLUTION_DEPENDENT;
 }
 
 CameraContext.prototype.update = function(gameContext, context) {
     switch(this.type) { 
-        case CameraContext.RENDER_TYPE.DEFAULT: {
+        case CameraContext.DISPLAY_MODE.RESOLUTION_DEPENDENT: {
             this.camera.update(gameContext, context);
             break;
         }
-        case CameraContext.RENDER_TYPE.CUSTOM: {
+        case CameraContext.DISPLAY_MODE.RESOLUTION_FIXED: {
             this.camera.update(gameContext, this.context);
-            break;
-        }
-        default: {
             break;
         }
     }
