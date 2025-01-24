@@ -1,9 +1,9 @@
 import { clampValue } from "../../math/math.js";
 import { Renderer } from "../../renderer.js";
-import { MoveableCamera } from "./moveableCamera.js";
+import { Camera } from "../camera.js";
 
 export const OrthogonalCamera = function() {
-    MoveableCamera.call(this);
+    Camera.call(this);
 
     this.tileWidth = 0;
     this.tileHeight = 0;
@@ -13,7 +13,7 @@ export const OrthogonalCamera = function() {
     this.mapHeight = 0;
 }
 
-OrthogonalCamera.prototype = Object.create(MoveableCamera.prototype);
+OrthogonalCamera.prototype = Object.create(Camera.prototype);
 OrthogonalCamera.prototype.constructor = OrthogonalCamera;
 
 OrthogonalCamera.MAP_OUTLINE_COLOR = "#dddddd";
@@ -21,30 +21,27 @@ OrthogonalCamera.EMPTY_TILE_COLOR = { "FIRST": "#000000", "SECOND": "#701867" };
 
 OrthogonalCamera.prototype.drawCustom = function(worldBounds, onDraw) {
     const { startX, startY, endX, endY } = worldBounds;
-    const { x, y } = this.getViewportPosition();
 
     for(let i = startY; i <= endY; i++) {
         const row = i * this.mapWidth;
-        const renderY = i * this.tileHeight - y;
+        const renderY = i * this.tileHeight - this.viewportY;
 
         for(let j = startX; j <= endX; j++) {
             const index = row + j;
-            const renderX = j * this.tileWidth - x;
+            const renderX = j * this.tileWidth - this.viewportX;
 
             onDraw(index, renderX, renderY);
         }
     }
 }
 
-OrthogonalCamera.prototype.drawTileLayer = function(gameContext, layer, worldBounds) {
-    const { tileManager, renderer } = gameContext;
+OrthogonalCamera.prototype.drawTileLayer = function(gameContext, renderContext, layer, worldBounds) {
+    const { tileManager } = gameContext;
     const { startX, startY, endX, endY } = worldBounds;
-    const { x, y } = this.getViewportPosition();
-    const context = renderer.getContext();
 
     for(let i = startY; i <= endY; i++) {
         const row = i * this.mapWidth;
-        const renderY = i * this.tileHeight - y;
+        const renderY = i * this.tileHeight - this.viewportY;
 
         for(let j = startX; j <= endX; j++) {
             const index = row + j;
@@ -54,16 +51,15 @@ OrthogonalCamera.prototype.drawTileLayer = function(gameContext, layer, worldBou
                 continue;
             }
 
-            const renderX = j * this.tileWidth - x;
+            const renderX = j * this.tileWidth - this.viewportX;
 
-            this.drawTileGraphics(tileManager, context, id, renderX, renderY);
+            this.drawTileGraphics(tileManager, renderContext, id, renderX, renderY);
         }
     }
 }
 
 OrthogonalCamera.prototype.drawSpriteLayers = function(gameContext, renderContext, layers) {
     const { timer, spriteManager } = gameContext;
-    const { x, y } = this.getViewportPosition(); 
     const realTime = timer.getRealTime();
     const deltaTime = timer.getDeltaTime();
     const viewportLeftEdge = this.viewportX;
@@ -91,14 +87,14 @@ OrthogonalCamera.prototype.drawSpriteLayers = function(gameContext, renderContex
             const sprite = visibleSprites[j];
     
             sprite.update(realTime, deltaTime);
-            sprite.draw(renderContext, x, y);
+            sprite.draw(renderContext, viewportLeftEdge, viewportTopEdge);
         }
     
         if((Renderer.DEBUG & Renderer.DEBUG_SPRITES) !== 0) {
             for(let j = 0; j < visibleSprites.length; j++) {
                 const sprite = visibleSprites[j];
         
-                sprite.debug(renderContext, x, y);
+                sprite.debug(renderContext, viewportLeftEdge, viewportTopEdge);
             }
         }
     }
@@ -149,7 +145,6 @@ OrthogonalCamera.prototype.drawEmptyTile = function(context, renderX, renderY, s
 
 OrthogonalCamera.prototype.drawTileOutlines = function(context, worldBounds) {
     const { startX, startY, endX, endY } = worldBounds;
-    const { x, y } = this.getViewportPosition();
     const viewportWidth = this.getViewportWidth();
     const viewportHeight = this.getViewportHeight();
     const LINE_SIZE = 2;
@@ -157,13 +152,13 @@ OrthogonalCamera.prototype.drawTileOutlines = function(context, worldBounds) {
     context.fillStyle = OrthogonalCamera.MAP_OUTLINE_COLOR;
 
     for(let i = startY; i <= endY + 1; i++) {
-        const renderY = i * this.tileHeight - y;
-        context.fillRect(this.position.x, renderY, viewportWidth, LINE_SIZE);
+        const renderY = i * this.tileHeight - this.viewportY;
+        context.fillRect(0, renderY, viewportWidth, LINE_SIZE);
     }
 
     for (let j = startX; j <= endX + 1; j++) {
-        const renderX = j * this.tileWidth - x;
-        context.fillRect(renderX, this.position.y, LINE_SIZE, viewportHeight);
+        const renderX = j * this.tileWidth - this.viewportX;
+        context.fillRect(renderX, 0, LINE_SIZE, viewportHeight);
     }
 }
 

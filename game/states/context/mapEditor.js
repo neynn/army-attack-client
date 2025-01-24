@@ -1,6 +1,6 @@
 import { State } from "../../../source/state/state.js";
 import { Cursor } from "../../../source/client/cursor.js";
-import { Camera } from "../../../source/camera/camera.js";
+import { CameraContext } from "../../../source/camera/cameraContext.js";
 import { MapEditor } from "../../../source/map/mapEditor.js";
 import { clampValue } from "../../../source/math/math.js";
 import { Renderer } from "../../../source/renderer.js";
@@ -30,9 +30,10 @@ MapEditorState.prototype.constructor = MapEditorState;
 MapEditorState.prototype.onEnter = function(stateMachine) {
     const gameContext = stateMachine.getContext();
     const { uiManager, tileManager, settings } = gameContext;
-    const camera = gameContext.createCamera(CAMERA_TYPES.ARMY_CAMERA);
+    const context = gameContext.createCamera(CAMERA_TYPES.ARMY_CAMERA);
+    const camera = context.getCamera();
 
-    camera.setPositionMode(Camera.POSITION_MODE.FIXED);
+    context.setPositionMode(CameraContext.POSITION_MODE.FIXED);
     camera.unbindViewport();
 
     uiManager.parseUI("MAP_EDITOR", gameContext);
@@ -190,7 +191,8 @@ MapEditorState.prototype.initializeRenderEvents = function(gameContext) {
     const { layerButtons } = this.mapEditor.config.interface;
     const contextID = gameContext.getID();
 
-    renderer.events.subscribe(Renderer.EVENT.CAMERA_FINISH, contextID, (camera) => {
+    renderer.events.subscribe(Renderer.EVENT.CONTEXT_FINISH, contextID, (cameraContext) => {
+        const camera = cameraContext.getCamera();
         const cursorTile = gameContext.getMouseTile();
         const brush = this.mapEditor.getBrush();
         const brushSize = this.mapEditor.getBrushSize();
@@ -292,10 +294,10 @@ MapEditorState.prototype.initializeCursorEvents = function(gameContext) {
     });
 
     cursor.events.subscribe(Cursor.LEFT_MOUSE_DRAG, contextID, (deltaX, deltaY) => {
-        const camera = gameContext.getCameraAtMouse();
+        const context = gameContext.getCameraAtMouse();
 
-        if(camera) {
-            camera.dragViewport(deltaX, deltaY);
+        if(context) {
+            context.getCamera().dragViewport(deltaX, deltaY);
         }
     });
 }

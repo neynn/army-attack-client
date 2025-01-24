@@ -219,10 +219,10 @@ PlayerController.prototype.addDragEvent = function(gameContext) {
     const { cursor } = client;
 
     cursor.events.subscribe(Cursor.LEFT_MOUSE_DRAG, this.id, (deltaX, deltaY) => {
-        const camera = gameContext.getCameraAtMouse();
+        const context = gameContext.getCameraAtMouse();
 
-        if(camera) {
-            camera.dragViewport(deltaX, deltaY);
+        if(context) {
+            context.getCamera().dragViewport(deltaX, deltaY);
         }
     });
 }

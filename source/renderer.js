@@ -4,6 +4,7 @@ import { FPSCounter } from "./camera/fpsCounter.js";
 import { EffectManager } from "./effects/effectManager.js";
 import { EventEmitter } from "./events/eventEmitter.js";
 import { isRectangleRectangleIntersect } from "./math/math.js";
+import { CameraContext } from "./camera/cameraContext.js";
 
 export const Renderer = function() {
     this.windowWidth = window.innerWidth;
@@ -16,10 +17,10 @@ export const Renderer = function() {
 
     this.events = new EventEmitter();
     this.events.listen(Renderer.EVENT.SCREEN_RESIZE);
-    this.events.listen(Renderer.EVENT.CAMERA_FINISH);
+    this.events.listen(Renderer.EVENT.CONTEXT_FINISH);
 
-    this.cameras = new Map();
-    this.cameraStack = [];
+    this.contexts = new Map();
+    this.contextStack = [];
 
     window.addEventListener("resize", () => this.resizeDisplay(window.innerWidth, window.innerHeight));
 }
@@ -38,30 +39,14 @@ Renderer.ANCHOR_TYPE = {
 
 Renderer.EVENT = {
     "SCREEN_RESIZE": "SCREEN_RESIZE",
-    "CAMERA_FINISH": "CAMERA_FINISH"
+    "CONTEXT_FINISH": "CONTEXT_FINISH"
 };
 
-Renderer.DEBUG = 0b00000000;
+Renderer.DEBUG = 0b00000001;
 Renderer.DEBUG_CAMERA = 1 << 0;
 Renderer.DEBUG_INTERFACE = 1 << 1;
 Renderer.DEBUG_SPRITES = 1 << 2;
 Renderer.DEBUG_MAP = 1 << 3;
-
-Renderer.prototype.getContextOf = function(cameraID) {
-    const camera = this.cameras.get(cameraID);
-
-    if(!camera) {
-        return this.display.context;
-    }
-
-    const context = camera.getContext();
-
-    if(!context) {
-        return this.display.context;
-    }
-
-    return context;
-}
 
 Renderer.prototype.getContext = function() {
     return this.display.context;
@@ -76,46 +61,52 @@ Renderer.prototype.getHeight = function() {
 }
 
 Renderer.prototype.getCamera = function(cameraID) {
-    const camera = this.cameras.get(cameraID);
+    const context = this.contexts.get(cameraID);
 
-    if(!camera) {
+    if(!context) {
         return null;
     }
 
-    return camera;
+    return context.getCamera();
 }
 
 Renderer.prototype.reloadCamera = function(cameraID) {
-    const camera = this.cameras.get(cameraID);
+    const context = this.contexts.get(cameraID);
 
-    if(!camera) {
+    if(!context) {
         return;
     }
 
-    camera.onWindowResize(this.windowWidth, this.windowHeight);
+    context.reloadCamera(this.windowWidth, this.windowHeight);
 }
 
 Renderer.prototype.addCamera = function(cameraID, camera) {
-    if(!(camera instanceof Camera) || this.cameras.has(cameraID)) {
+    if(!(camera instanceof Camera) || this.contexts.has(cameraID)) {
         return;
     }
 
-    this.cameras.set(cameraID, camera);
-    this.cameraStack.push(cameraID);
+    const context = new CameraContext(cameraID, camera);
+
+    context.forceResize(this.windowWidth, this.windowHeight);
+
+    this.contexts.set(cameraID, context);
+    this.contextStack.push(cameraID);
+
+    return context;
 }
 
 Renderer.prototype.removeCamera = function(cameraID) {
-    if(!this.cameras.has(cameraID)) {
+    if(!this.contexts.has(cameraID)) {
         return;
     }
 
-    this.cameras.delete(cameraID);
+    this.contexts.delete(cameraID);
 
-    for(let i = 0; i < this.cameraStack.length; i++) {
-        const stackedCameraID = this.cameraStack[i];
+    for(let i = 0; i < this.contextStack.length; i++) {
+        const stackedCameraID = this.contextStack[i];
 
         if(stackedCameraID === cameraID) {
-            this.cameraStack.splice(i, 1);
+            this.contextStack.splice(i, 1);
             break;
         }
     }
@@ -156,25 +147,26 @@ Renderer.prototype.drawUIDebug = function(gameContext) {
     }
 }
 
+//TODO: DEBUG IN CONTEXT
 Renderer.prototype.drawCameraDebug = function() {
     this.display.context.strokeStyle = "#eeeeee";
     this.display.context.lineWidth = 3;
-    this.cameras.forEach(camera => this.display.context.strokeRect(camera.position.x, camera.position.y, camera.viewportWidth, camera.viewportHeight));
+    this.contexts.forEach(context => this.display.context.strokeRect(context.position.x, context.position.y, context.camera.viewportWidth, context.camera.viewportHeight));
 }
 
 Renderer.prototype.update = function(gameContext) {
     const { timer } = gameContext; 
-    const context = this.getContext();
+    const renderContext = this.getContext();
     const deltaTime = timer.getDeltaTime();
 
     this.display.clear();
     this.fpsCounter.update(deltaTime);
 
-    this.cameras.forEach(camera => {
-        context.save();
-        camera.update(gameContext, context);
-        this.events.emit(Renderer.EVENT.CAMERA_FINISH, camera);
-        context.restore();
+    this.contexts.forEach(context => {
+        renderContext.save();
+        context.update(gameContext, renderContext);
+        this.events.emit(Renderer.EVENT.CONTEXT_FINISH, context);
+        renderContext.restore();
     });
 
     this.effects.update(gameContext);
@@ -194,7 +186,7 @@ Renderer.prototype.resizeDisplay = function(width, height) {
     this.windowWidth = width;
     this.windowHeight = height;
     this.display.resize(width, height);
-    this.cameras.forEach(camera => camera.onWindowResize(width, height));
+    this.contexts.forEach(context => context.onWindowResize(width, height));
     this.events.emit(Renderer.EVENT.SCREEN_RESIZE, width, height);
 }
 
@@ -217,17 +209,17 @@ Renderer.prototype.getAnchor = function(type, originX, originY, width, height) {
 }
 
 Renderer.prototype.getCollidedCamera = function(mouseX, mouseY, mouseRange) {
-    for(let i = this.cameraStack.length - 1; i >= 0; i--) {
-        const cameraID = this.cameraStack[i];
-        const camera = this.getCamera(cameraID);
-        const { x, y, w, h } = camera.getBounds();
+    for(let i = this.contextStack.length - 1; i >= 0; i--) {
+        const contextID = this.contextStack[i];
+        const context = this.contexts.get(contextID);
+        const { x, y, w, h } = context.getBounds();
         const isColliding = isRectangleRectangleIntersect(
             x, y, w, h,
             mouseX, mouseY, mouseRange, mouseRange
         );
 
         if(isColliding) {
-            return camera;
+            return context;
         }
     }
 

@@ -84,23 +84,31 @@ GameContext.prototype.loadResources = function(resources) {
 GameContext.prototype.initialize = function() {}
 
 GameContext.prototype.getCameraAtMouse = function() {
-    const camera = this.renderer.getCollidedCamera(this.client.cursor.position.x, this.client.cursor.position.y, this.client.cursor.radius);
+    const context = this.renderer.getCollidedCamera(this.client.cursor.position.x, this.client.cursor.position.y, this.client.cursor.radius);
 
-    return camera;
+    if(!context) {
+        return null;
+    }
+
+    return context;
 }
 
 GameContext.prototype.getMouseTile = function() {
-    const camera = this.getCameraAtMouse();
+    const context = this.getCameraAtMouse();
 
-    if(!camera) {
+    if(!context) {
         return {
             "x": -1,
             "y": -1
         }
     }
 
-    const { x, y } = camera.getViewportPosition();
-    const mouseTile = camera.screenToWorldTile(x, y, this.client.cursor.position.x, this.client.cursor.position.y);
+    const camera = context.getCamera();
+    const position = context.getPosition();
+    const viewport = camera.getViewportPosition();
+    const screenX = viewport.x - position.x;
+    const screenY = viewport.y - position.y;
+    const mouseTile = camera.screenToWorldTile(screenX, screenY, this.client.cursor.position.x, this.client.cursor.position.y);
 
     return mouseTile;
 }

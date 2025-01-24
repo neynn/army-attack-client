@@ -137,7 +137,6 @@ ArmyCamera.prototype.drawLayerData = function(context, worldBounds, worldMap, la
 
 ArmyCamera.prototype.drawOverlay = function(gameContext, renderContext, overlayID) {
     const { tileManager } = gameContext;
-    const { x, y } = this.getViewportPosition();
     const overlay = this.overlays[overlayID];
 
     if(!overlay) {
@@ -145,8 +144,8 @@ ArmyCamera.prototype.drawOverlay = function(gameContext, renderContext, overlayI
     }
 
     for(const [overlayKey, overlayData] of overlay) {
-        const renderX = this.tileWidth * overlayData.x - x;
-        const renderY = this.tileHeight * overlayData.y - y;
+        const renderX = this.tileWidth * overlayData.x - this.viewportX;
+        const renderY = this.tileHeight * overlayData.y - this.viewportY;
 
         this.drawTileGraphics(tileManager, renderContext, overlayData.id, renderX, renderY);
     }
@@ -162,6 +161,6 @@ ArmyCamera.prototype.drawLayer = function(gameContext, renderContext, map2D, lay
     const layer = map2D.getLayer(id);
 
     renderContext.globalAlpha = opacity;
-    this.drawTileLayer(gameContext, layer, worldBounds);
+    this.drawTileLayer(gameContext, renderContext, layer, worldBounds);
     renderContext.globalAlpha = 1;
 }

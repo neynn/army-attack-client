@@ -31,6 +31,7 @@ import { SpawnSystem } from "./systems/spawn.js";
 import { CounterAttackAction } from "./actions/counterAttackAction.js";
 import { CounterMoveAction } from "./actions/counterMoveAction.js";
 import { ArmyEntityFactory } from "./init/armyEntity.js";
+import { CameraContext } from "../source/camera/cameraContext.js";
 
 export const ArmyContext = function() {
     GameContext.call(this, 60);
@@ -200,9 +201,12 @@ ArmyContext.prototype.getCameraControllerFocus = function(cameraID) {
 ArmyContext.prototype.createCamera = function(cameraID) {
     const camera = new ArmyCamera();
     const settings = this.world.getConfig("Settings");
-    
+    const context = this.renderer.addCamera(cameraID, camera);
+
     camera.loadTileDimensions(settings.tileWidth, settings.tileHeight);
-    this.renderer.addCamera(cameraID, camera);
+    //context.initRenderer(640, 360);
+    //context.setDisplayMode(CameraContext.DISPLAY_MODE.RESOLUTION_FIXED);
+    
     this.world.events.subscribe(World.EVENT_MAP_LOAD, cameraID, (worldMap) => {
         const { width, height, meta } = worldMap;
         const { music } = meta;
@@ -217,7 +221,7 @@ ArmyContext.prototype.createCamera = function(cameraID) {
         this.renderer.reloadCamera(cameraID);
     });
 
-    return camera;
+    return context;
 }
 
 ArmyContext.prototype.destroyCamera = function(cameraID) {
