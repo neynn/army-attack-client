@@ -33,41 +33,26 @@ CameraContext.prototype.getPosition = function() {
 }
 
 CameraContext.prototype.setPositionMode = function(modeID) {
-    switch(modeID) {
-        case CameraContext.POSITION_MODE.AUTO_CENTER: {
-            this.positionMode = modeID;
-            break;
-        }
-        case CameraContext.POSITION_MODE.FIXED: {
-            this.positionMode = modeID;
-            break;
-        }
-        default: {
-            console.warn(`Position mode is not supported! ${modeID}`);
-            break;
-        }  
+    if(CameraContext.POSITION_MODE[modeID] === undefined) {
+        console.warn(`Position mode is not supported! ${modeID}`);
+        return;
     }
+
+    this.positionMode = modeID;
 }
 
 CameraContext.prototype.setDisplayMode = function(modeID) {
-    switch(modeID) {
-        case CameraContext.DISPLAY_MODE.RESOLUTION_DEPENDENT: {
-            this.displayMode = modeID;
-            break;
-        }
-        case CameraContext.DISPLAY_MODE.RESOLUTION_FIXED: {
-            if(this.context) {
-                this.camera.setViewport(this.context.width, this.context.height);
-                this.camera.reloadViewport();
-                this.displayMode = modeID;
-            }
-            break;
-        }    
-        default: {
-            console.warn(`Display mode is not supported! ${modeID}`);
-            break;
-        }    
+    if(CameraContext.DISPLAY_MODE[modeID] === undefined) {
+        console.warn(`Display mode is not supported! ${modeID}`);
+        return;
     }
+
+    if(modeID === CameraContext.DISPLAY_MODE.RESOLUTION_FIXED && this.context) {
+        this.camera.setViewport(this.context.width, this.context.height);
+        this.camera.reloadViewport();
+    }
+
+    this.displayMode = modeID;
 }
 
 CameraContext.prototype.setPosition = function(x = 0, y = 0) {
