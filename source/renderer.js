@@ -147,7 +147,6 @@ Renderer.prototype.drawUIDebug = function(gameContext) {
     }
 }
 
-//TODO: DEBUG IN CONTEXT
 Renderer.prototype.drawCameraDebug = function() {
     this.display.context.strokeStyle = "#eeeeee";
     this.display.context.lineWidth = 3;

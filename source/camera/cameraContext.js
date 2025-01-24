@@ -25,7 +25,20 @@ CameraContext.prototype.getPosition = function() {
 }
 
 CameraContext.prototype.setPositionMode = function(modeID) {
-    this.positionMode = modeID;
+    switch(modeID) {
+        case CameraContext.POSITION_MODE.AUTO_CENTER: {
+            this.positionMode = modeID;
+            break;
+        }
+        case CameraContext.POSITION_MODE.FIXED: {
+            this.positionMode = modeID;
+            break;
+        }
+        default: {
+            console.warn(`Position mode is not supported! ${modeID}`);
+            break;
+        }  
+    }
 }
 
 CameraContext.prototype.setDisplayMode = function(modeID) {
@@ -92,7 +105,7 @@ CameraContext.prototype.reloadCamera = function(windowWidth, windowHeight) {
         if(this.displayMode !== CameraContext.DISPLAY_MODE.RESOLUTION_FIXED) {
             this.camera.cutViewport(windowWidth, windowHeight);
         }
-        
+
         const { x, y } = this.camera.getCenterOffset(windowWidth, windowHeight);
         this.setPosition(x, y);
     }
