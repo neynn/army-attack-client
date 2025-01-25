@@ -111,7 +111,12 @@ CameraContext.prototype.refresh = function(windowWidth, windowHeight) {
 
 CameraContext.prototype.onWindowResize = function(windowWidth, windowHeight) {
     if(this.displayMode !== CameraContext.DISPLAY_MODE.RESOLUTION_FIXED) {
-        this.resize(windowWidth, windowHeight);
+        this.camera.setViewport(width, height);
+
+        if(this.context) {
+            this.context.resize(width, height);
+            this.reloadScale(width, height);
+        }
     }
 
     this.refresh(windowWidth, windowHeight);
@@ -135,15 +140,6 @@ CameraContext.prototype.reloadScale = function(windowWidth, windowHeight) {
         } else {
             this.scale = CameraContext.BASE_SCALE;
         }
-    }
-}
-
-CameraContext.prototype.resize = function(width, height) {
-    this.camera.setViewport(width, height);
-
-    if(this.context) {
-        this.context.resize(width, height);
-        this.reloadScale(width, height);
     }
 }
 

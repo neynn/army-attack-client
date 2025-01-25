@@ -97,7 +97,7 @@ Renderer.prototype.addCamera = function(cameraID, camera) {
 
     const context = new CameraContext(cameraID, camera);
 
-    context.resize(this.windowWidth, this.windowHeight);
+    camera.setViewport(this.windowWidth, this.windowHeight);
 
     this.contexts.set(cameraID, context);
     this.contextStack.push(cameraID);
