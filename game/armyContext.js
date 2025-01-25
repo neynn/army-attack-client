@@ -204,8 +204,8 @@ ArmyContext.prototype.createCamera = function(cameraID) {
     const context = this.renderer.addCamera(cameraID, camera);
 
     camera.loadTileDimensions(settings.tileWidth, settings.tileHeight);
-    //context.initRenderer(320, 180);
-    //context.setDisplayMode(CameraContext.DISPLAY_MODE.RESOLUTION_FIXED);
+    context.initRenderer(640, 360);
+    context.setDisplayMode(CameraContext.DISPLAY_MODE.RESOLUTION_FIXED);
     
     this.world.events.subscribe(World.EVENT_MAP_LOAD, cameraID, (worldMap) => {
         const { width, height, meta } = worldMap;
@@ -218,7 +218,7 @@ ArmyContext.prototype.createCamera = function(cameraID) {
             this.client.musicPlayer.swapTrack(music);
         }
 
-        this.renderer.reloadCamera(cameraID);
+        this.renderer.refreshCamera(cameraID);
     });
 
     return context;

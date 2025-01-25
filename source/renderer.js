@@ -80,14 +80,14 @@ Renderer.prototype.getCamera = function(cameraID) {
     return context.getCamera();
 }
 
-Renderer.prototype.reloadCamera = function(cameraID) {
+Renderer.prototype.refreshCamera = function(cameraID) {
     const context = this.contexts.get(cameraID);
 
     if(!context) {
         return;
     }
 
-    context.reloadCamera(this.windowWidth, this.windowHeight);
+    context.refresh(this.windowWidth, this.windowHeight);
 }
 
 Renderer.prototype.addCamera = function(cameraID, camera) {
@@ -97,7 +97,7 @@ Renderer.prototype.addCamera = function(cameraID, camera) {
 
     const context = new CameraContext(cameraID, camera);
 
-    context.forceResize(this.windowWidth, this.windowHeight);
+    context.resize(this.windowWidth, this.windowHeight);
 
     this.contexts.set(cameraID, context);
     this.contextStack.push(cameraID);

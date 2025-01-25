@@ -339,7 +339,7 @@ MapEditorState.prototype.resizeMap = function(gameContext) {
     this.mapEditor.resizeMap(gameMap, newWidth, newHeight);
 
     camera.loadWorld(newWidth, newHeight);
-    renderer.reloadCamera(CAMERA_TYPES.ARMY_CAMERA);
+    renderer.refreshCamera(CAMERA_TYPES.ARMY_CAMERA);
 }
 
 MapEditorState.prototype.initializeUIEvents = function(gameContext) {
