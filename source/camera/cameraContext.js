@@ -9,6 +9,7 @@ export const CameraContext = function(id, camera) {
     this.displayMode = CameraContext.DISPLAY_MODE.RESOLUTION_DEPENDENT;
     this.camera = camera;
     this.context = null;
+    this.scale = 1;
 
     this.events = new EventEmitter();
     this.events.listen(CameraContext.EVENT.RENDER_COMPLETE);
@@ -33,7 +34,7 @@ CameraContext.prototype.getPosition = function() {
 }
 
 CameraContext.prototype.setPositionMode = function(modeID) {
-    if(CameraContext.POSITION_MODE[modeID] === undefined) {
+    if(!Object.values(CameraContext.POSITION_MODE).includes(modeID)) {
         console.warn(`Position mode is not supported! ${modeID}`);
         return;
     }
@@ -42,7 +43,7 @@ CameraContext.prototype.setPositionMode = function(modeID) {
 }
 
 CameraContext.prototype.setDisplayMode = function(modeID) {
-    if(CameraContext.DISPLAY_MODE[modeID] === undefined) {
+    if(!Object.values(CameraContext.DISPLAY_MODE).includes(modeID)) {
         console.warn(`Display mode is not supported! ${modeID}`);
         return;
     }
@@ -72,12 +73,37 @@ CameraContext.prototype.setPosition = function(x = 0, y = 0) {
     }
 }
 
-CameraContext.prototype.getBounds = function() {
+CameraContext.prototype.dragCamera = function(deltaX, deltaY) {
+    if(this.scale === 1) {
+        this.camera.dragViewport(deltaX, deltaY);
+        return;
+    }
+
+    const dragX = deltaX * ((this.scale - 1) * 0.5);
+    const dragY = deltaY * ((this.scale - 1)* 0.5);
+
+    this.camera.dragViewport(dragX, dragY);
+}
+
+//TODO add scale to this mess.
+CameraContext.prototype.getViewportPosition = function(pointX, pointY) {
     return {
-        "x": this.position.x,
-        "y": this.position.y,
-        "w": this.camera.viewportWidth,
-        "h": this.camera.viewportHeight
+        "x": this.camera.viewportX - this.position.x + pointX,
+        "y": this.camera.viewportY - this.position.y + pointY
+    }
+}
+
+CameraContext.prototype.getBounds = function() {
+    const startX = this.position.x - (this.scale - 1) * this.camera.viewportWidth * 0.5;
+    const startY = this.position.y - (this.scale - 1) * this.camera.viewportHeight * 0.5;
+    const width = this.camera.viewportWidth * this.scale;
+    const height = this.camera.viewportHeight * this.scale;
+
+    return {
+        "x": startX,
+        "y": startY,
+        "w": width,
+        "h": height
     }
 }
 
@@ -86,6 +112,10 @@ CameraContext.prototype.getCamera = function() {
 }
 
 CameraContext.prototype.reloadCamera = function(windowWidth, windowHeight) {
+    if(this.displayMode === CameraContext.DISPLAY_MODE.RESOLUTION_FIXED) {
+        this.adjustContextScale(windowWidth, windowHeight);
+    }
+
     if(this.positionMode === CameraContext.POSITION_MODE.AUTO_CENTER) {
         if(this.displayMode !== CameraContext.DISPLAY_MODE.RESOLUTION_FIXED) {
             this.camera.alignViewport();
@@ -96,6 +126,16 @@ CameraContext.prototype.reloadCamera = function(windowWidth, windowHeight) {
     }
 
     this.camera.reloadViewport();
+}
+
+CameraContext.prototype.adjustContextScale = function(width, height) {
+    if(this.context) {
+        const scaleX = Math.floor(width / this.context.width);
+        const scaleY = Math.floor(height / this.context.height);
+        const scale = Math.min(scaleX, scaleY);
+    
+        this.scale = scale;
+    }
 }
 
 CameraContext.prototype.onWindowResize = function(windowWidth, windowHeight) {
@@ -111,6 +151,7 @@ CameraContext.prototype.forceResize = function(width, height) {
 
     if(this.context) {
         this.context.resize(width, height);
+        this.adjustContextScale(width, height);
     }
 }
 
@@ -126,22 +167,22 @@ CameraContext.prototype.destroyRenderer = function() {
     this.setDisplayMode(CameraContext.DISPLAY_MODE.RESOLUTION_DEPENDENT);
 }
 
-CameraContext.prototype.update = function(gameContext, context) {
+CameraContext.prototype.update = function(gameContext, mainContext) {
     switch(this.displayMode) { 
         case CameraContext.DISPLAY_MODE.RESOLUTION_DEPENDENT: {
-            context.translate(this.position.x, this.position.y);
-            this.camera.update(gameContext, context);
-            this.events.emit(CameraContext.EVENT.RENDER_COMPLETE, context);
+            mainContext.translate(this.position.x, this.position.y);
+            this.camera.update(gameContext, mainContext);
+            this.events.emit(CameraContext.EVENT.RENDER_COMPLETE, mainContext);
             break;
         }
         case CameraContext.DISPLAY_MODE.RESOLUTION_FIXED: {
+            const { canvas, context } = this.context;
+            const { x, y, w, h } = this.getBounds();
+
             this.context.clear();
-            this.camera.update(gameContext, this.context.context);
-            this.events.emit(CameraContext.EVENT.RENDER_COMPLETE, this.context.context);
-            context.drawImage(
-                this.context.canvas, 0, 0, this.context.width, this.context.height,
-                this.position.x, this.position.y, this.context.width, this.context.height
-            );
+            this.camera.update(gameContext, context);
+            this.events.emit(CameraContext.EVENT.RENDER_COMPLETE, context);
+            mainContext.drawImage(canvas, 0, 0, this.camera.viewportWidth, this.camera.viewportHeight, x, y, w, h);
             break;
         }
     }

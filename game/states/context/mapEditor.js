@@ -297,7 +297,7 @@ MapEditorState.prototype.initializeCursorEvents = function(gameContext) {
         const context = gameContext.getCameraAtMouse();
 
         if(context) {
-            context.getCamera().dragViewport(deltaX, deltaY);
+            context.dragCamera(deltaX, deltaY);
         }
     });
 }

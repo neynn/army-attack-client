@@ -210,16 +210,6 @@ OrthogonalCamera.prototype.getTileDimensions = function() {
     }
 }
 
-OrthogonalCamera.prototype.screenToWorldTile = function(viewportX, viewportY, screenX, screenY) {
-    const worldTileX = Math.floor((screenX / this.scale + viewportX) / this.tileWidth);
-    const worldTileY = Math.floor((screenY / this.scale + viewportY) / this.tileHeight);
-
-    return {
-        "x": worldTileX,
-        "y": worldTileY
-    }
-}
-
 OrthogonalCamera.prototype.transformTileToPosition = function(tileX, tileY) {
 	const positionX = tileX * this.tileWidth;
 	const positionY = tileY * this.tileHeight;

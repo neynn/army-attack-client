@@ -104,11 +104,8 @@ GameContext.prototype.getMouseTile = function() {
     }
 
     const camera = context.getCamera();
-    const position = context.getPosition();
-    const viewport = camera.getViewportPosition();
-    const screenX = viewport.x - position.x;
-    const screenY = viewport.y - position.y;
-    const mouseTile = camera.screenToWorldTile(screenX, screenY, this.client.cursor.position.x, this.client.cursor.position.y);
+    const { x, y } = context.getViewportPosition(this.client.cursor.position.x, this.client.cursor.position.y);
+    const mouseTile = camera.transformPositionToTile(x, y);
 
     return mouseTile;
 }

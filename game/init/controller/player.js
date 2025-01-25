@@ -179,7 +179,7 @@ PlayerController.prototype.updateHoverSprite = function(gameContext) {
     const { entityManager } = world;
     const sprite = spriteManager.getSprite(this.spriteID);
 
-    if(!this.hoveredEntity) {
+    if(this.hoveredEntity === null) {
         sprite.hide();
         return;
     }
@@ -222,7 +222,7 @@ PlayerController.prototype.addDragEvent = function(gameContext) {
         const context = gameContext.getCameraAtMouse();
 
         if(context) {
-            context.getCamera().dragViewport(deltaX, deltaY);
+            context.dragCamera(deltaX, deltaY);
         }
     });
 }

@@ -8,7 +8,6 @@ export const Camera = function() {
     this.viewportWidth = 0;
     this.viewportHeight = 0;
 
-    this.scale = 1;
     this.worldWidth = 0;
     this.worldHeight = 0;
 
@@ -30,11 +29,11 @@ Camera.VIEWPORT_MODE = {
 Camera.prototype.update = function(gameContext, renderContext) {}
 
 Camera.prototype.getViewportWidth = function() {
-    return this.viewportWidth / this.scale;
+    return this.viewportWidth;
 }
 
 Camera.prototype.getViewportHeight = function() {
-    return this.viewportHeight / this.scale;
+    return this.viewportHeight;
 }
 
 Camera.prototype.getCenterOffset = function(windowWidth, windowHeight) {
@@ -122,15 +121,15 @@ Camera.prototype.setViewport = function(width, height) {
     this.viewportHeight = height;
 }
 
-Camera.prototype.dragViewport = function(param_dragX, param_dragY) {
+Camera.prototype.dragViewport = function(dragX, dragY) {
     if(this.viewportMode !== Camera.VIEWPORT_MODE.DRAG) {
         return;
     }
 
-    const viewportX = this.viewportX + param_dragX / this.scale;
-    const viewportY = this.viewportY + param_dragY / this.scale;
+    const positionX = this.viewportX + dragX;
+    const positionY = this.viewportY + dragY;
     
-    this.moveViewport(viewportX, viewportY);
+    this.moveViewport(positionX, positionY);
 }
 
 Camera.prototype.centerViewport = function(positionX, positionY) {
@@ -148,16 +147,6 @@ Camera.prototype.bindViewport = function() {
 Camera.prototype.unbindViewport = function() {
     this.viewportType = Camera.VIEWPORT_TYPE.FREE;
     this.limitViewport();
-}
-
-Camera.prototype.screenToWorld = function(viewportX, viewportY, screenX, screenY) {
-    const worldX = Math.floor(screenX / this.scale + viewportX);
-    const worldY = Math.floor(screenY / this.scale + viewportY);
-
-    return {
-        "x": worldX,
-        "y": worldY
-    }
 }
 
 Camera.prototype.getViewportPosition = function() {
