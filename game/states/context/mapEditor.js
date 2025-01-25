@@ -211,7 +211,7 @@ MapEditorState.prototype.initializeRenderEvents = function(gameContext) {
         }
     
         const { tileName, tileID } = brush;
-        const { x, y } = camera.getViewportPosition();
+        const { x, y } = camera.getViewport();
         const { width, height, halfWidth } = camera.getTileDimensions();
         const startX = cursorTile.x - brushSize;
         const startY = cursorTile.y - brushSize;

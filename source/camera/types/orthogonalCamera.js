@@ -64,8 +64,8 @@ OrthogonalCamera.prototype.drawSpriteLayers = function(gameContext, renderContex
     const deltaTime = timer.getDeltaTime();
     const viewportLeftEdge = this.viewportX;
     const viewportTopEdge = this.viewportY;
-    const viewportRightEdge = viewportLeftEdge + this.getViewportWidth();
-    const viewportBottomEdge = viewportTopEdge + this.getViewportHeight();
+    const viewportRightEdge = viewportLeftEdge + this.viewportWidth;
+    const viewportBottomEdge = viewportTopEdge + this.viewportHeight;
 
     for(let i = 0; i < layers.length; i++) {
         const visibleSprites = [];
@@ -145,20 +145,18 @@ OrthogonalCamera.prototype.drawEmptyTile = function(context, renderX, renderY, s
 
 OrthogonalCamera.prototype.drawTileOutlines = function(context, worldBounds) {
     const { startX, startY, endX, endY } = worldBounds;
-    const viewportWidth = this.getViewportWidth();
-    const viewportHeight = this.getViewportHeight();
     const LINE_SIZE = 2;
 
     context.fillStyle = OrthogonalCamera.MAP_OUTLINE_COLOR;
 
     for(let i = startY; i <= endY + 1; i++) {
         const renderY = i * this.tileHeight - this.viewportY;
-        context.fillRect(0, renderY, viewportWidth, LINE_SIZE);
+        context.fillRect(0, renderY, this.viewportWidth, LINE_SIZE);
     }
 
     for (let j = startX; j <= endX + 1; j++) {
         const renderX = j * this.tileWidth - this.viewportX;
-        context.fillRect(renderX, 0, LINE_SIZE, viewportHeight);
+        context.fillRect(renderX, 0, LINE_SIZE, this.viewportHeight);
     }
 }
 
@@ -186,8 +184,8 @@ OrthogonalCamera.prototype.getWorldBounds = function() {
     const offsetY = 1;
     const startX = Math.floor(this.viewportX / this.tileWidth);
     const startY = Math.floor(this.viewportY / this.tileHeight);
-    const endX = Math.floor((this.viewportX + this.getViewportWidth()) / this.tileWidth) + offsetX;
-    const endY = Math.floor((this.viewportY + this.getViewportHeight()) / this.tileHeight) + offsetY;
+    const endX = Math.floor((this.viewportX + this.viewportWidth) / this.tileWidth) + offsetX;
+    const endY = Math.floor((this.viewportY + this.viewportHeight) / this.tileHeight) + offsetY;
     const clampedStartX = clampValue(startX, this.mapWidth - 1, 0);
     const clampedStartY = clampValue(startY, this.mapHeight - 1, 0);
     const clampedEndX = clampValue(endX, this.mapWidth - 1, 0);

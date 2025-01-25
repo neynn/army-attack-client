@@ -28,24 +28,6 @@ Camera.VIEWPORT_MODE = {
 
 Camera.prototype.update = function(gameContext, renderContext) {}
 
-Camera.prototype.getViewportWidth = function() {
-    return this.viewportWidth;
-}
-
-Camera.prototype.getViewportHeight = function() {
-    return this.viewportHeight;
-}
-
-Camera.prototype.getCenterOffset = function(windowWidth, windowHeight) {
-    const offsetX = (windowWidth - this.viewportWidth) / 2;
-    const offsetY = (windowHeight - this.viewportHeight) / 2;
-
-    return {
-        "x": offsetX,
-        "y": offsetY
-    }
-}
-
 Camera.prototype.loadWorld = function(worldWidth, worldHeight) {
     this.worldWidth = worldWidth;
     this.worldHeight = worldHeight;
@@ -59,19 +41,16 @@ Camera.prototype.centerWorld = function() {
 }
 
 Camera.prototype.reloadViewport = function() {
-    const viewportWidth = this.getViewportWidth();
-    const viewportHeight = this.getViewportHeight();
-
-    if(this.worldWidth <= viewportWidth) {
+    if(this.worldWidth <= this.viewportWidth) {
         this.viewportX_limit = 0;
     } else {
-        this.viewportX_limit = this.worldWidth - viewportWidth;
+        this.viewportX_limit = this.worldWidth - this.viewportWidth;
     }
 
-    if(this.worldHeight <= viewportHeight) {
+    if(this.worldHeight <= this.viewportHeight) {
         this.viewportY_limit = 0;
     } else {
-        this.viewportY_limit = this.worldHeight - viewportHeight;
+        this.viewportY_limit = this.worldHeight - this.viewportHeight;
     }
 
     this.limitViewport();
@@ -133,8 +112,8 @@ Camera.prototype.dragViewport = function(dragX, dragY) {
 }
 
 Camera.prototype.centerViewport = function(positionX, positionY) {
-    const viewportX = positionX - this.getViewportWidth() / 2;
-    const viewportY = positionY - this.getViewportHeight() / 2;
+    const viewportX = positionX - this.viewportWidth / 2;
+    const viewportY = positionY - this.viewportHeight / 2;
 
     this.moveViewport(viewportX, viewportY);
 }
@@ -149,10 +128,12 @@ Camera.prototype.unbindViewport = function() {
     this.limitViewport();
 }
 
-Camera.prototype.getViewportPosition = function() {
+Camera.prototype.getViewport = function() {
     return {
         "x": this.viewportX,
-        "y": this.viewportY
+        "y": this.viewportY,
+        "w": this.viewportWidth,
+        "h": this.viewportHeight
     }
 }
 
@@ -173,8 +154,8 @@ Camera.prototype.followTargets = function(deltaTime) {
     const [positionX, positionY, factor] = this.targets[0];
     const smoothingFactor = factor * deltaTime;
 
-    const targetX = positionX - this.getViewportWidth() / 2;
-    const targetY = positionY - this.getViewportHeight() / 2;
+    const targetX = positionX - this.viewportWidth / 2;
+    const targetY = positionY - this.viewportHeight / 2;
 
     const distanceX = targetX - this.viewportX;
     const distanceY = targetY - this.viewportY;
