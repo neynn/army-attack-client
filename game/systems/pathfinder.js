@@ -43,9 +43,9 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
     const moveComponent = entity.getComponent(MoveComponent);
     const teamComponent = entity.getComponent(TeamComponent);
 
-    const teamMapping = world.getConfig("TeamTypesMapping");
-    const layerTypes = world.getConfig("LayerTypes");
-    const tileTypes = world.getConfig("TileTypes");
+    const teamMapping = world.getConfig("TeamTypeMapping");
+    const layerTypes = world.getConfig("LayerType");
+    const tileTypes = world.getConfig("TileType");
 
     const teamLayerID = layerTypes["Team"].layerID;
     const typeLayerID = layerTypes["Type"].layerID;

@@ -2,8 +2,8 @@ export const AllianceSystem = function() {}
 
 AllianceSystem.getAlliance = function(gameContext, actorTeamID, reactorTeamID) {
     const { world } = gameContext;
-    const teamTypes = world.getConfig("TeamTypes");
-    const allianceTypes = world.getConfig("AllianceTypes"); 
+    const teamTypes = world.getConfig("TeamType");
+    const allianceTypes = world.getConfig("AllianceType"); 
     const actorTeam = teamTypes[actorTeamID];
 
     if(!actorTeam) {

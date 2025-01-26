@@ -79,7 +79,10 @@ CameraContext.prototype.setDisplayMode = function(modeID) {
         case CameraContext.DISPLAY_MODE.RESOLUTION_DEPENDENT: {
             this.displayMode = modeID;
             this.scale = CameraContext.BASE_SCALE;
-            this.events.emit(CameraContext.EVENT.REQUEST_WINDOW, (width, height) => this.onWindowResize(width, height));
+            this.events.emit(CameraContext.EVENT.REQUEST_WINDOW, (width, height) => {
+                this.camera.setViewport(width, height);
+                this.refresh(width, height);
+            });
             break;
         }
         case CameraContext.DISPLAY_MODE.RESOLUTION_FIXED: {

@@ -16,7 +16,7 @@ MapSystem.reloadGraphics = function(gameContext) {
     }
 
     const BORDER_RANGE = 0;
-    const layerTypes = world.getConfig("LayerTypes");
+    const layerTypes = world.getConfig("LayerType");
     const teamLayerID = layerTypes["Team"].layerID;
 
     worldMap.updateTiles((index, tileX, tileY) => {
@@ -43,10 +43,10 @@ MapSystem.updateBorder = function(gameContext, tileX, tileY, range = 0) {
         return;
     }
 
-    const teamMapping = world.getConfig("TeamTypesMapping");
-    const autotilerTypes = world.getConfig("AutotilerTypes");
-    const layerTypes = world.getConfig("LayerTypes");
-    const tileTypes = world.getConfig("TileTypes");
+    const teamMapping = world.getConfig("TeamTypeMapping");
+    const autotilerTypes = world.getConfig("AutotilerType");
+    const layerTypes = world.getConfig("LayerType");
+    const tileTypes = world.getConfig("TileType");
 
     const typeLayerID = layerTypes["Type"].layerID;
     const borderLayerID = layerTypes["Border"].layerID;

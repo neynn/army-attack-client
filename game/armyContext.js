@@ -103,7 +103,7 @@ ArmyContext.prototype.initialize = function(resources) {
 }
 
 ArmyContext.prototype.updateConversions = function() {
-    const conversions = this.world.getConfig("TileConversions");
+    const conversions = this.world.getConfig("TileTeamConversion");
     const newConversions = {};
 
     for(const setID in conversions) {
@@ -132,7 +132,7 @@ ArmyContext.prototype.updateConversions = function() {
         }
     }
 
-    this.world.config["TileConversions"] = newConversions;
+    this.world.config["TileTeamConversion"] = newConversions;
 }
 
 ArmyContext.prototype.saveSnapshot = function() {

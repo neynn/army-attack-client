@@ -14,8 +14,8 @@ ConquerSystem.conquerTile = function(gameContext, tileX, tileY, entity) {
     }
 
     const teamComponent = entity.getComponent(TeamComponent);
-    const layerTypes = world.getConfig("LayerTypes");
-    const teamMapping = world.getConfig("TeamTypesMapping");
+    const layerTypes = world.getConfig("LayerType");
+    const teamMapping = world.getConfig("TeamTypeMapping");
     const teamLayerID = layerTypes["Team"].layerID;
     const tileTeamID = activeMap.getTile(teamLayerID, tileX, tileY);
     const isEnemy = AllianceSystem.isEnemy(gameContext, teamComponent.teamID, teamMapping[tileTeamID]);
@@ -25,7 +25,7 @@ ConquerSystem.conquerTile = function(gameContext, tileX, tileY, entity) {
     }
 
     const BORDER_RANGE = 1;
-    const teamTypes = world.getConfig("TeamTypes");
+    const teamTypes = world.getConfig("TeamType");
     const worldID = teamTypes[teamComponent.teamID].worldID;
 
     activeMap.placeTile(worldID, teamLayerID, tileX, tileY);
@@ -42,8 +42,10 @@ ConquerSystem.convertTileGraphics = function(gameContext, tileX, tileY, teamID) 
         return;
     }
 
-    const layerTypes = world.getConfig("LayerTypes");
-    const tileConversions = world.getConfig("TileConversions");
+    const layerTypes = world.getConfig("LayerType");
+    const teamMapping = world.getConfig("TeamTypeMapping");
+    const tileConversions = world.getConfig("TileTeamConversion");
+    const teamTypeID = teamMapping[teamID];
 
     for(const layerTypeID in layerTypes) {
         const layerType = layerTypes[layerTypeID];
@@ -60,7 +62,7 @@ ConquerSystem.convertTileGraphics = function(gameContext, tileX, tileY, teamID) 
             continue;
         }
 
-        const convertedTileID = conversion[teamID];
+        const convertedTileID = conversion[teamTypeID];
 
         if(!tileManager.hasTileMeta(convertedTileID)) {
             continue;

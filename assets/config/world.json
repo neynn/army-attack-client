@@ -17,12 +17,12 @@
             "english": { "id": "english", "directory": "assets/config/language", "source": "en.json" }
         }
     },
-    "AutotilerTypes": {
+    "AutotilerType": {
         "Border": { "id": "Border", "autotilerID": "border" },
         "Cloud": { "id": "Cloud", "autotilerID": "cloud" },
         "Range": { "id": "Range", "autotilerID": "range" }
     },
-    "LayerTypes": {
+    "LayerType": {
         "Ground": { "id": "Ground", "layerID": "ground", "isConvertable": true },
         "Decoration": { "id": "Decoration", "layerID": "decoration", "isConvertable": true },
         "Border": { "id": "Border", "layerID": "border", "isConvertable": false },
@@ -62,7 +62,7 @@
             }
         }
     },
-    "EntityTypes": {
+    "EntityType": {
         "Building": { "id": "Building", "disableCard": false },
         "Construction": { "id": "Construction", "disableCard": false },
         "Deco": { "id": "Deco", "disableCard": false },
@@ -71,12 +71,12 @@
         "Town": { "id": "Town", "disableCard": false },
         "Unit": { "id": "Unit", "disableCard": false }
     },
-    "UnitTypes": {
+    "UnitType": {
         "Armor": { "id": "Armor" },
         "Artillery": { "id": "Artillery" },
         "Infantry": { "id": "Infantry" }
     },
-    "ResourceTypes": {
+    "ResourceType": {
         "Money": { "id": "Money", "maxDrop": 50, "icon": "resource_icon_cash" },
         "Gold": { "id": "Gold", "maxDrop": 1, "icon": "resource_icon_credits" },
         "Energy": { "id": "Energy", "maxDrop": 1, "icon": "resource_icon_energy" },
@@ -89,30 +89,30 @@
         "Dollor": { "id": "Dollor", "maxDrop": 1, "icon": "icon_dollor" },
         "BackgroundEnergy": { "id": "BackgroundEnergy", "maxDrop": 0, "icon": null }
     },
-    "TileTypes": {
+    "TileType": {
         "0": { "id": 0, "color": "#000000", "name": "Ground", "passability": "Land", "autoCapture": false, "hasBorder": true },
         "1": { "id": 1, "color": "#ff0000", "name": "Mountain", "passability": "Mountain", "autoCapture": false, "hasBorder": false },
         "2": { "id": 2, "color": "#0000ff", "name": "Sea", "passability": "Sea", "autoCapture": false, "hasBorder": false },
         "3": { "id": 3, "color": "#0000ff", "name": "Shore", "passability": "Shore", "autoCapture": true, "hasBorder": false }
     },
-    "PassabilityTypes": {
+    "PassabilityType": {
         "Land": { "id": "Land" },
         "Mountain": { "id": "Mountain" },
         "Sea": { "id": "Sea" },
         "Shore": { "id": "Shore" }
     },
-    "TeamTypesMapping": {
+    "AllianceType": {
+        "Enemy": { "id": "Enemy", "isWalkable": false, "isEntityPassingAllowed": false, "isEnemy": true },
+        "Ally": { "id": "Ally", "isWalkable": true, "isEntityPassingAllowed": true, "isEnemy": false },
+        "Neutral": { "id": "Neutral", "isWalkable": true, "isEntityPassingAllowed": true, "isEnemy": false }
+    },
+    "TeamTypeMapping": {
         "0": "Crimson",
         "1": "Allies",
         "2": "Neutral",
         "3": "Wrath"
     },
-    "AllianceTypes": {
-        "Enemy": { "id": "Enemy", "isWalkable": false, "isEntityPassingAllowed": false, "isEnemy": true },
-        "Ally": { "id": "Ally", "isWalkable": true, "isEntityPassingAllowed": true, "isEnemy": false },
-        "Neutral": { "id": "Neutral", "isWalkable": true, "isEntityPassingAllowed": true, "isEnemy": false }
-    },
-    "TeamTypes": {
+    "TeamType": {
         "Crimson": {
             "id": "Crimson",
             "name": "Crimson Skies Empire",
@@ -220,119 +220,119 @@
         "OpenItemTab": { "ID":"OpenItemTab", "Type":"Client" },
         "OpenBuilding": { "ID":"OpenBuilding", "Type":"Client" }
     },
-    "TileConversions": {
+    "TileTeamConversion": {
         "ground": {
-            "Bg_BadTile_01": {"0": ["ground", "Bg_BadTile_01"], "1": ["ground", "Bg_GoodTile_01"]},
-            "Bg_BadTile_01_desert": {"0": ["ground", "Bg_BadTile_01_desert"], "1": ["ground", "Bg_GoodTile_01_desert"]},
-            "Bg_BadTile_02": {"0": ["ground", "Bg_BadTile_02"], "1": ["ground", "Bg_GoodTile_02"]},
-            "Bg_GoodTile_01": {"0": ["ground", "Bg_BadTile_01"], "1": ["ground", "Bg_GoodTile_01"]},
-            "Bg_GoodTile_01_desert": {"0": ["ground", "Bg_BadTile_01_desert"], "1": ["ground", "Bg_GoodTile_01_desert"]},
-            "Bg_GoodTile_02": {"0": ["ground", "Bg_BadTile_02"], "1": ["ground", "Bg_GoodTile_02"]}
+            "Bg_BadTile_01": {"Crimson": ["ground", "Bg_BadTile_01"], "Allies": ["ground", "Bg_GoodTile_01"]},
+            "Bg_BadTile_01_desert": {"Crimson": ["ground", "Bg_BadTile_01_desert"], "Allies": ["ground", "Bg_GoodTile_01_desert"]},
+            "Bg_BadTile_02": {"Crimson": ["ground", "Bg_BadTile_02"], "Allies": ["ground", "Bg_GoodTile_02"]},
+            "Bg_GoodTile_01": {"Crimson": ["ground", "Bg_BadTile_01"], "Allies": ["ground", "Bg_GoodTile_01"]},
+            "Bg_GoodTile_01_desert": {"Crimson": ["ground", "Bg_BadTile_01_desert"], "Allies": ["ground", "Bg_GoodTile_01_desert"]},
+            "Bg_GoodTile_02": {"Crimson": ["ground", "Bg_BadTile_02"], "Allies": ["ground", "Bg_GoodTile_02"]}
         },
         "coast": {
-            "Bg_CoastTile_ne_01": {"0": ["coast", "Bg_CoastTile_ne_02"], "1": ["coast", "Bg_CoastTile_ne_01"]},
-            "Bg_CoastTile_ne_02": {"0": ["coast", "Bg_CoastTile_ne_02"], "1": ["coast", "Bg_CoastTile_ne_01"]},
-            "Bg_CoastTile_w_01": {"0": ["coast", "Bg_CoastTile_w_02"], "1": ["coast", "Bg_CoastTile_w_01"]},
-            "Bg_CoastTile_w_02": {"0": ["coast", "Bg_CoastTile_w_02"], "1": ["coast", "Bg_CoastTile_w_01"]},
-            "Bg_CoastTile_nw_inside_01": {"0": ["coast", "Bg_CoastTile_nw_inside_02"], "1": ["coast", "Bg_CoastTile_nw_inside_01"]},
-            "Bg_CoastTile_nw_inside_02": {"0": ["coast", "Bg_CoastTile_nw_inside_02"], "1": ["coast", "Bg_CoastTile_nw_inside_01"]},
-            "Bg_CoastTile_ne_inside_02": {"0": ["coast", "Bg_CoastTile_ne_inside_02"], "1": ["coast", "Bg_CoastTile_ne_inside_01"]},
-            "Bg_CoastTile_ne_inside_01": {"0": ["coast", "Bg_CoastTile_ne_inside_02"], "1": ["coast", "Bg_CoastTile_ne_inside_01"]},
-            "Bg_CoastTile_sw_01": {"0": ["coast", "Bg_CoastTile_sw_02"], "1": ["coast", "Bg_CoastTile_sw_01"]},
-            "Bg_CoastTile_sw_02": {"0": ["coast", "Bg_CoastTile_sw_02"], "1": ["coast", "Bg_CoastTile_sw_01"]},
-            "Bg_CoastTile_e_01": {"0": ["coast", "Bg_CoastTile_e_02"], "1": ["coast", "Bg_CoastTile_e_01"]},
-            "Bg_CoastTile_e_02": {"0": ["coast", "Bg_CoastTile_e_02"], "1": ["coast", "Bg_CoastTile_e_01"]},
-            "Bg_CoastTile_sw_inside_01": {"0": ["coast", "Bg_CoastTile_sw_inside_02"], "1": ["coast", "Bg_CoastTile_sw_inside_01"]},
-            "Bg_CoastTile_sw_inside_02": {"0": ["coast", "Bg_CoastTile_sw_inside_02"], "1": ["coast", "Bg_CoastTile_sw_inside_01"]},
-            "Bg_CoastTile_s_01": {"0": ["coast", "Bg_CoastTile_s_02"], "1": ["coast", "Bg_CoastTile_s_01"]},
-            "Bg_CoastTile_s_02": {"0": ["coast", "Bg_CoastTile_s_02"], "1": ["coast", "Bg_CoastTile_s_01"]},
-            "Bg_CoastTile_se_inside_01": {"0": ["coast", "Bg_CoastTile_se_inside_02"], "1": ["coast", "Bg_CoastTile_se_inside_01"]},
-            "Bg_CoastTile_se_inside_02": {"0": ["coast", "Bg_CoastTile_se_inside_02"], "1": ["coast", "Bg_CoastTile_se_inside_01"]},
-            "Bg_CoastTile_n_01": {"0": ["coast", "Bg_CoastTile_n_02"], "1": ["coast", "Bg_CoastTile_n_01"]},
-            "Bg_CoastTile_n_02": {"0": ["coast", "Bg_CoastTile_n_02"], "1": ["coast", "Bg_CoastTile_n_01"]},
-            "Bg_CoastTile_nw_01": {"0": ["coast", "Bg_CoastTile_nw_02"], "1": ["coast", "Bg_CoastTile_nw_01"]},
-            "Bg_CoastTile_nw_02": {"0": ["coast", "Bg_CoastTile_nw_02"], "1": ["coast", "Bg_CoastTile_nw_01"]},
-            "Bg_CoastTile_se_01": {"0": ["coast", "Bg_CoastTile_se_02"], "1": ["coast", "Bg_CoastTile_se_01"]},
-            "Bg_CoastTile_se_02": {"0": ["coast", "Bg_CoastTile_se_02"], "1": ["coast", "Bg_CoastTile_se_01"]}
+            "Bg_CoastTile_ne_01": {"Crimson": ["coast", "Bg_CoastTile_ne_02"], "Allies": ["coast", "Bg_CoastTile_ne_01"]},
+            "Bg_CoastTile_ne_02": {"Crimson": ["coast", "Bg_CoastTile_ne_02"], "Allies": ["coast", "Bg_CoastTile_ne_01"]},
+            "Bg_CoastTile_w_01": {"Crimson": ["coast", "Bg_CoastTile_w_02"], "Allies": ["coast", "Bg_CoastTile_w_01"]},
+            "Bg_CoastTile_w_02": {"Crimson": ["coast", "Bg_CoastTile_w_02"], "Allies": ["coast", "Bg_CoastTile_w_01"]},
+            "Bg_CoastTile_nw_inside_01": {"Crimson": ["coast", "Bg_CoastTile_nw_inside_02"], "Allies": ["coast", "Bg_CoastTile_nw_inside_01"]},
+            "Bg_CoastTile_nw_inside_02": {"Crimson": ["coast", "Bg_CoastTile_nw_inside_02"], "Allies": ["coast", "Bg_CoastTile_nw_inside_01"]},
+            "Bg_CoastTile_ne_inside_02": {"Crimson": ["coast", "Bg_CoastTile_ne_inside_02"], "Allies": ["coast", "Bg_CoastTile_ne_inside_01"]},
+            "Bg_CoastTile_ne_inside_01": {"Crimson": ["coast", "Bg_CoastTile_ne_inside_02"], "Allies": ["coast", "Bg_CoastTile_ne_inside_01"]},
+            "Bg_CoastTile_sw_01": {"Crimson": ["coast", "Bg_CoastTile_sw_02"], "Allies": ["coast", "Bg_CoastTile_sw_01"]},
+            "Bg_CoastTile_sw_02": {"Crimson": ["coast", "Bg_CoastTile_sw_02"], "Allies": ["coast", "Bg_CoastTile_sw_01"]},
+            "Bg_CoastTile_e_01": {"Crimson": ["coast", "Bg_CoastTile_e_02"], "Allies": ["coast", "Bg_CoastTile_e_01"]},
+            "Bg_CoastTile_e_02": {"Crimson": ["coast", "Bg_CoastTile_e_02"], "Allies": ["coast", "Bg_CoastTile_e_01"]},
+            "Bg_CoastTile_sw_inside_01": {"Crimson": ["coast", "Bg_CoastTile_sw_inside_02"], "Allies": ["coast", "Bg_CoastTile_sw_inside_01"]},
+            "Bg_CoastTile_sw_inside_02": {"Crimson": ["coast", "Bg_CoastTile_sw_inside_02"], "Allies": ["coast", "Bg_CoastTile_sw_inside_01"]},
+            "Bg_CoastTile_s_01": {"Crimson": ["coast", "Bg_CoastTile_s_02"], "Allies": ["coast", "Bg_CoastTile_s_01"]},
+            "Bg_CoastTile_s_02": {"Crimson": ["coast", "Bg_CoastTile_s_02"], "Allies": ["coast", "Bg_CoastTile_s_01"]},
+            "Bg_CoastTile_se_inside_01": {"Crimson": ["coast", "Bg_CoastTile_se_inside_02"], "Allies": ["coast", "Bg_CoastTile_se_inside_01"]},
+            "Bg_CoastTile_se_inside_02": {"Crimson": ["coast", "Bg_CoastTile_se_inside_02"], "Allies": ["coast", "Bg_CoastTile_se_inside_01"]},
+            "Bg_CoastTile_n_01": {"Crimson": ["coast", "Bg_CoastTile_n_02"], "Allies": ["coast", "Bg_CoastTile_n_01"]},
+            "Bg_CoastTile_n_02": {"Crimson": ["coast", "Bg_CoastTile_n_02"], "Allies": ["coast", "Bg_CoastTile_n_01"]},
+            "Bg_CoastTile_nw_01": {"Crimson": ["coast", "Bg_CoastTile_nw_02"], "Allies": ["coast", "Bg_CoastTile_nw_01"]},
+            "Bg_CoastTile_nw_02": {"Crimson": ["coast", "Bg_CoastTile_nw_02"], "Allies": ["coast", "Bg_CoastTile_nw_01"]},
+            "Bg_CoastTile_se_01": {"Crimson": ["coast", "Bg_CoastTile_se_02"], "Allies": ["coast", "Bg_CoastTile_se_01"]},
+            "Bg_CoastTile_se_02": {"Crimson": ["coast", "Bg_CoastTile_se_02"], "Allies": ["coast", "Bg_CoastTile_se_01"]}
         },
         "deco_bad": {
-            "Bg_DeadTrees_01": {"0": ["deco_bad", "Bg_DeadTrees_01"], "1": ["deco_good", "Bg_Trees_01"]},
-            "Bg_BadTile_Deco_01": {"0": ["deco_bad", "Bg_BadTile_Deco_01"], "1": ["deco_good", "Bg_GoodTile_Deco_01"]},
-            "Bg_BadTile_Deco_02": {"0": ["deco_bad", "Bg_BadTile_Deco_02"], "1": ["deco_good", "Bg_GoodTile_Deco_02"]},
-            "Bg_BadTile_Deco_03": {"0": ["deco_bad", "Bg_BadTile_Deco_03"], "1": ["deco_good", "Bg_GoodTile_Deco_03"]},
-            "Bg_BadTile_Deco_04": {"0": ["deco_bad", "Bg_BadTile_Deco_04"], "1": ["deco_good", "Bg_GoodTile_Deco_04"]},
-            "Bg_BadTile_Deco_05": {"0": ["deco_bad", "Bg_BadTile_Deco_05"], "1": ["deco_good", "Bg_GoodTile_Deco_05"]},
-            "Bg_BadTile_Deco_06": {"0": ["deco_bad", "Bg_BadTile_Deco_06"], "1": ["deco_good", "Bg_GoodTile_Deco_06"]},
-            "Bg_BadTile_Deco_07": {"0": ["deco_bad", "Bg_BadTile_Deco_07"], "1": ["deco_good", "Bg_GoodTile_Deco_07"]},
-            "Bg_BadTile_Deco_08": {"0": ["deco_bad", "Bg_BadTile_Deco_08"], "1": ["deco_good", "Bg_GoodTile_Deco_08"]},
-            "Bg_BadTile_Deco_09": {"0": ["deco_bad", "Bg_BadTile_Deco_09"], "1": ["deco_good", "Bg_GoodTile_Deco_09"]},
-            "Bg_BadTile_Deco_10": {"0": ["deco_bad", "Bg_BadTile_Deco_10"], "1": ["deco_good", "Bg_GoodTile_Deco_10"]},
-            "Bg_BadTile_Deco_11": {"0": ["deco_bad", "Bg_BadTile_Deco_11"], "1": ["deco_good", "Bg_GoodTile_Deco_11"]},
-            "Bg_BadTile_Deco_12": {"0": ["deco_bad", "Bg_BadTile_Deco_12"], "1": ["deco_good", "Bg_GoodTile_Deco_12"]},
-            "Bg_BadTile_Deco_13": {"0": ["deco_bad", "Bg_BadTile_Deco_13"], "1": ["deco_good", "Bg_GoodTile_Deco_13"]},
-            "Bg_BadTile_Deco_14": {"0": ["deco_bad", "Bg_BadTile_Deco_14"], "1": ["deco_good", "Bg_GoodTile_Deco_14"]},
-            "Bg_BadTile_Deco_15": {"0": ["deco_bad", "Bg_BadTile_Deco_15"], "1": ["deco_good", "Bg_GoodTile_Deco_15"]},
-            "Bg_BadTile_Deco_16": {"0": ["deco_bad", "Bg_BadTile_Deco_16"], "1": ["deco_good", "Bg_GoodTile_Deco_16"]},
-            "Bg_BadTile_Deco_17": {"0": ["deco_bad", "Bg_BadTile_Deco_17"], "1": ["deco_good", "Bg_GoodTile_Deco_17"]},
-            "Bg_BadTile_Deco_18": {"0": ["deco_bad", "Bg_BadTile_Deco_18"], "1": ["deco_good", "Bg_GoodTile_Deco_18"]},
-            "Bg_BadTile_Deco_19": {"0": ["deco_bad", "Bg_BadTile_Deco_19"], "1": ["deco_good", "Bg_GoodTile_Deco_19"]},
-            "Bg_BadTile_Deco_20": {"0": ["deco_bad", "Bg_BadTile_Deco_20"], "1": ["deco_good", "Bg_GoodTile_Deco_20"]},
-            "Bg_BadTile_Deco_21": {"0": ["deco_bad", "Bg_BadTile_Deco_21"], "1": ["deco_good", "Bg_GoodTile_Deco_21"]},
-            "Bg_BadTile_Deco_22": {"0": ["deco_bad", "Bg_BadTile_Deco_22"], "1": ["deco_good", "Bg_GoodTile_Deco_22"]},
-            "Bg_BadTile_Deco_23": {"0": ["deco_bad", "Bg_BadTile_Deco_23"], "1": ["deco_good", "Bg_GoodTile_Deco_23"]},
-            "Bg_BadTile_Deco_24": {"0": ["deco_bad", "Bg_BadTile_Deco_24"], "1": ["deco_good", "Bg_GoodTile_Deco_24"]},
-            "Bg_BadTile_Deco_25": {"0": ["deco_bad", "Bg_BadTile_Deco_25"], "1": ["deco_good", "Bg_GoodTile_Deco_25"]},
-            "Bg_BadTile_Deco_26": {"0": ["deco_bad", "Bg_BadTile_Deco_26"], "1": ["deco_good", "Bg_GoodTile_Deco_26"]}
+            "Bg_DeadTrees_01": {"Crimson": ["deco_bad", "Bg_DeadTrees_01"], "Allies": ["deco_good", "Bg_Trees_01"]},
+            "Bg_BadTile_Deco_01": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_01"], "Allies": ["deco_good", "Bg_GoodTile_Deco_01"]},
+            "Bg_BadTile_Deco_02": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_02"], "Allies": ["deco_good", "Bg_GoodTile_Deco_02"]},
+            "Bg_BadTile_Deco_03": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_03"], "Allies": ["deco_good", "Bg_GoodTile_Deco_03"]},
+            "Bg_BadTile_Deco_04": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_04"], "Allies": ["deco_good", "Bg_GoodTile_Deco_04"]},
+            "Bg_BadTile_Deco_05": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_05"], "Allies": ["deco_good", "Bg_GoodTile_Deco_05"]},
+            "Bg_BadTile_Deco_06": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_06"], "Allies": ["deco_good", "Bg_GoodTile_Deco_06"]},
+            "Bg_BadTile_Deco_07": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_07"], "Allies": ["deco_good", "Bg_GoodTile_Deco_07"]},
+            "Bg_BadTile_Deco_08": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_08"], "Allies": ["deco_good", "Bg_GoodTile_Deco_08"]},
+            "Bg_BadTile_Deco_09": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_09"], "Allies": ["deco_good", "Bg_GoodTile_Deco_09"]},
+            "Bg_BadTile_Deco_10": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_10"], "Allies": ["deco_good", "Bg_GoodTile_Deco_10"]},
+            "Bg_BadTile_Deco_11": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_11"], "Allies": ["deco_good", "Bg_GoodTile_Deco_11"]},
+            "Bg_BadTile_Deco_12": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_12"], "Allies": ["deco_good", "Bg_GoodTile_Deco_12"]},
+            "Bg_BadTile_Deco_13": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_13"], "Allies": ["deco_good", "Bg_GoodTile_Deco_13"]},
+            "Bg_BadTile_Deco_14": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_14"], "Allies": ["deco_good", "Bg_GoodTile_Deco_14"]},
+            "Bg_BadTile_Deco_15": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_15"], "Allies": ["deco_good", "Bg_GoodTile_Deco_15"]},
+            "Bg_BadTile_Deco_16": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_16"], "Allies": ["deco_good", "Bg_GoodTile_Deco_16"]},
+            "Bg_BadTile_Deco_17": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_17"], "Allies": ["deco_good", "Bg_GoodTile_Deco_17"]},
+            "Bg_BadTile_Deco_18": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_18"], "Allies": ["deco_good", "Bg_GoodTile_Deco_18"]},
+            "Bg_BadTile_Deco_19": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_19"], "Allies": ["deco_good", "Bg_GoodTile_Deco_19"]},
+            "Bg_BadTile_Deco_20": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_20"], "Allies": ["deco_good", "Bg_GoodTile_Deco_20"]},
+            "Bg_BadTile_Deco_21": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_21"], "Allies": ["deco_good", "Bg_GoodTile_Deco_21"]},
+            "Bg_BadTile_Deco_22": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_22"], "Allies": ["deco_good", "Bg_GoodTile_Deco_22"]},
+            "Bg_BadTile_Deco_23": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_23"], "Allies": ["deco_good", "Bg_GoodTile_Deco_23"]},
+            "Bg_BadTile_Deco_24": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_24"], "Allies": ["deco_good", "Bg_GoodTile_Deco_24"]},
+            "Bg_BadTile_Deco_25": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_25"], "Allies": ["deco_good", "Bg_GoodTile_Deco_25"]},
+            "Bg_BadTile_Deco_26": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_26"], "Allies": ["deco_good", "Bg_GoodTile_Deco_26"]}
         },
         "deco_good": {
-            "Bg_Trees_01": {"0": ["deco_bad", "Bg_DeadTrees_01"], "1": ["deco_good", "Bg_Trees_01"]},
-            "Bg_GoodTile_Deco_01": {"0": ["deco_bad", "Bg_BadTile_Deco_01"], "1": ["deco_good", "Bg_GoodTile_Deco_01"]},
-            "Bg_GoodTile_Deco_02": {"0": ["deco_bad", "Bg_BadTile_Deco_02"], "1": ["deco_good", "Bg_GoodTile_Deco_02"]},
-            "Bg_GoodTile_Deco_03": {"0": ["deco_bad", "Bg_BadTile_Deco_03"], "1": ["deco_good", "Bg_GoodTile_Deco_03"]},
-            "Bg_GoodTile_Deco_04": {"0": ["deco_bad", "Bg_BadTile_Deco_04"], "1": ["deco_good", "Bg_GoodTile_Deco_04"]},
-            "Bg_GoodTile_Deco_05": {"0": ["deco_bad", "Bg_BadTile_Deco_05"], "1": ["deco_good", "Bg_GoodTile_Deco_05"]},
-            "Bg_GoodTile_Deco_06": {"0": ["deco_bad", "Bg_BadTile_Deco_06"], "1": ["deco_good", "Bg_GoodTile_Deco_06"]},
-            "Bg_GoodTile_Deco_07": {"0": ["deco_bad", "Bg_BadTile_Deco_07"], "1": ["deco_good", "Bg_GoodTile_Deco_07"]},
-            "Bg_GoodTile_Deco_08": {"0": ["deco_bad", "Bg_BadTile_Deco_08"], "1": ["deco_good", "Bg_GoodTile_Deco_08"]},
-            "Bg_GoodTile_Deco_09": {"0": ["deco_bad", "Bg_BadTile_Deco_09"], "1": ["deco_good", "Bg_GoodTile_Deco_09"]},
-            "Bg_GoodTile_Deco_10": {"0": ["deco_bad", "Bg_BadTile_Deco_10"], "1": ["deco_good", "Bg_GoodTile_Deco_10"]},
-            "Bg_GoodTile_Deco_11": {"0": ["deco_bad", "Bg_BadTile_Deco_11"], "1": ["deco_good", "Bg_GoodTile_Deco_11"]},
-            "Bg_GoodTile_Deco_12": {"0": ["deco_bad", "Bg_BadTile_Deco_12"], "1": ["deco_good", "Bg_GoodTile_Deco_12"]},
-            "Bg_GoodTile_Deco_13": {"0": ["deco_bad", "Bg_BadTile_Deco_13"], "1": ["deco_good", "Bg_GoodTile_Deco_13"]},
-            "Bg_GoodTile_Deco_14": {"0": ["deco_bad", "Bg_BadTile_Deco_14"], "1": ["deco_good", "Bg_GoodTile_Deco_14"]},
-            "Bg_GoodTile_Deco_15": {"0": ["deco_bad", "Bg_BadTile_Deco_15"], "1": ["deco_good", "Bg_GoodTile_Deco_15"]},
-            "Bg_GoodTile_Deco_16": {"0": ["deco_bad", "Bg_BadTile_Deco_16"], "1": ["deco_good", "Bg_GoodTile_Deco_16"]},
-            "Bg_GoodTile_Deco_17": {"0": ["deco_bad", "Bg_BadTile_Deco_17"], "1": ["deco_good", "Bg_GoodTile_Deco_17"]},
-            "Bg_GoodTile_Deco_18": {"0": ["deco_bad", "Bg_BadTile_Deco_18"], "1": ["deco_good", "Bg_GoodTile_Deco_18"]},
-            "Bg_GoodTile_Deco_19": {"0": ["deco_bad", "Bg_BadTile_Deco_19"], "1": ["deco_good", "Bg_GoodTile_Deco_19"]},
-            "Bg_GoodTile_Deco_20": {"0": ["deco_bad", "Bg_BadTile_Deco_20"], "1": ["deco_good", "Bg_GoodTile_Deco_20"]},
-            "Bg_GoodTile_Deco_21": {"0": ["deco_bad", "Bg_BadTile_Deco_21"], "1": ["deco_good", "Bg_GoodTile_Deco_21"]},
-            "Bg_GoodTile_Deco_22": {"0": ["deco_bad", "Bg_BadTile_Deco_22"], "1": ["deco_good", "Bg_GoodTile_Deco_22"]},
-            "Bg_GoodTile_Deco_23": {"0": ["deco_bad", "Bg_BadTile_Deco_23"], "1": ["deco_good", "Bg_GoodTile_Deco_23"]},
-            "Bg_GoodTile_Deco_24": {"0": ["deco_bad", "Bg_BadTile_Deco_24"], "1": ["deco_good", "Bg_GoodTile_Deco_24"]},
-            "Bg_GoodTile_Deco_25": {"0": ["deco_bad", "Bg_BadTile_Deco_25"], "1": ["deco_good", "Bg_GoodTile_Deco_25"]},
-            "Bg_GoodTile_Deco_26": {"0": ["deco_bad", "Bg_BadTile_Deco_26"], "1": ["deco_good", "Bg_GoodTile_Deco_26"]}
+            "Bg_Trees_01": {"Crimson": ["deco_bad", "Bg_DeadTrees_01"], "Allies": ["deco_good", "Bg_Trees_01"]},
+            "Bg_GoodTile_Deco_01": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_01"], "Allies": ["deco_good", "Bg_GoodTile_Deco_01"]},
+            "Bg_GoodTile_Deco_02": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_02"], "Allies": ["deco_good", "Bg_GoodTile_Deco_02"]},
+            "Bg_GoodTile_Deco_03": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_03"], "Allies": ["deco_good", "Bg_GoodTile_Deco_03"]},
+            "Bg_GoodTile_Deco_04": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_04"], "Allies": ["deco_good", "Bg_GoodTile_Deco_04"]},
+            "Bg_GoodTile_Deco_05": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_05"], "Allies": ["deco_good", "Bg_GoodTile_Deco_05"]},
+            "Bg_GoodTile_Deco_06": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_06"], "Allies": ["deco_good", "Bg_GoodTile_Deco_06"]},
+            "Bg_GoodTile_Deco_07": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_07"], "Allies": ["deco_good", "Bg_GoodTile_Deco_07"]},
+            "Bg_GoodTile_Deco_08": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_08"], "Allies": ["deco_good", "Bg_GoodTile_Deco_08"]},
+            "Bg_GoodTile_Deco_09": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_09"], "Allies": ["deco_good", "Bg_GoodTile_Deco_09"]},
+            "Bg_GoodTile_Deco_10": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_10"], "Allies": ["deco_good", "Bg_GoodTile_Deco_10"]},
+            "Bg_GoodTile_Deco_11": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_11"], "Allies": ["deco_good", "Bg_GoodTile_Deco_11"]},
+            "Bg_GoodTile_Deco_12": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_12"], "Allies": ["deco_good", "Bg_GoodTile_Deco_12"]},
+            "Bg_GoodTile_Deco_13": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_13"], "Allies": ["deco_good", "Bg_GoodTile_Deco_13"]},
+            "Bg_GoodTile_Deco_14": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_14"], "Allies": ["deco_good", "Bg_GoodTile_Deco_14"]},
+            "Bg_GoodTile_Deco_15": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_15"], "Allies": ["deco_good", "Bg_GoodTile_Deco_15"]},
+            "Bg_GoodTile_Deco_16": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_16"], "Allies": ["deco_good", "Bg_GoodTile_Deco_16"]},
+            "Bg_GoodTile_Deco_17": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_17"], "Allies": ["deco_good", "Bg_GoodTile_Deco_17"]},
+            "Bg_GoodTile_Deco_18": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_18"], "Allies": ["deco_good", "Bg_GoodTile_Deco_18"]},
+            "Bg_GoodTile_Deco_19": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_19"], "Allies": ["deco_good", "Bg_GoodTile_Deco_19"]},
+            "Bg_GoodTile_Deco_20": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_20"], "Allies": ["deco_good", "Bg_GoodTile_Deco_20"]},
+            "Bg_GoodTile_Deco_21": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_21"], "Allies": ["deco_good", "Bg_GoodTile_Deco_21"]},
+            "Bg_GoodTile_Deco_22": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_22"], "Allies": ["deco_good", "Bg_GoodTile_Deco_22"]},
+            "Bg_GoodTile_Deco_23": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_23"], "Allies": ["deco_good", "Bg_GoodTile_Deco_23"]},
+            "Bg_GoodTile_Deco_24": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_24"], "Allies": ["deco_good", "Bg_GoodTile_Deco_24"]},
+            "Bg_GoodTile_Deco_25": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_25"], "Allies": ["deco_good", "Bg_GoodTile_Deco_25"]},
+            "Bg_GoodTile_Deco_26": {"Crimson": ["deco_bad", "Bg_BadTile_Deco_26"], "Allies": ["deco_good", "Bg_GoodTile_Deco_26"]}
         },
         "river_bad": {
-            "Bg_BadRiverTile_01": {"0": ["river_bad", "Bg_BadRiverTile_01"], "1": ["river_good", "Bg_RiverTile_01"]},
-            "Bg_BadRiverTile_02": {"0": ["river_bad", "Bg_BadRiverTile_02"], "1": ["river_good", "Bg_RiverTile_02"]},
-            "Bg_BadRiverTile_03": {"0": ["river_bad", "Bg_BadRiverTile_03"], "1": ["river_good", "Bg_RiverTile_03"]},
-            "Bg_BadRiverTile_04": {"0": ["river_bad", "Bg_BadRiverTile_04"], "1": ["river_good", "Bg_RiverTile_04"]},
-            "Bg_BadRiverTile_05": {"0": ["river_bad", "Bg_BadRiverTile_05"], "1": ["river_good", "Bg_RiverTile_05"]}
+            "Bg_BadRiverTile_01": {"Crimson": ["river_bad", "Bg_BadRiverTile_01"], "Allies": ["river_good", "Bg_RiverTile_01"]},
+            "Bg_BadRiverTile_02": {"Crimson": ["river_bad", "Bg_BadRiverTile_02"], "Allies": ["river_good", "Bg_RiverTile_02"]},
+            "Bg_BadRiverTile_03": {"Crimson": ["river_bad", "Bg_BadRiverTile_03"], "Allies": ["river_good", "Bg_RiverTile_03"]},
+            "Bg_BadRiverTile_04": {"Crimson": ["river_bad", "Bg_BadRiverTile_04"], "Allies": ["river_good", "Bg_RiverTile_04"]},
+            "Bg_BadRiverTile_05": {"Crimson": ["river_bad", "Bg_BadRiverTile_05"], "Allies": ["river_good", "Bg_RiverTile_05"]}
         },
         "river_good": {
-            "Bg_RiverTile_01": {"0": ["river_bad", "Bg_BadRiverTile_01"], "1": ["river_good", "Bg_RiverTile_01"]},
-            "Bg_RiverTile_02": {"0": ["river_bad", "Bg_BadRiverTile_02"], "1": ["river_good", "Bg_RiverTile_02"]},
-            "Bg_RiverTile_03": {"0": ["river_bad", "Bg_BadRiverTile_03"], "1": ["river_good", "Bg_RiverTile_03"]},
-            "Bg_RiverTile_04": {"0": ["river_bad", "Bg_BadRiverTile_04"], "1": ["river_good", "Bg_RiverTile_04"]},
-            "Bg_RiverTile_05": {"0": ["river_bad", "Bg_BadRiverTile_05"], "1": ["river_good", "Bg_RiverTile_05"]}
+            "Bg_RiverTile_01": {"Crimson": ["river_bad", "Bg_BadRiverTile_01"], "Allies": ["river_good", "Bg_RiverTile_01"]},
+            "Bg_RiverTile_02": {"Crimson": ["river_bad", "Bg_BadRiverTile_02"], "Allies": ["river_good", "Bg_RiverTile_02"]},
+            "Bg_RiverTile_03": {"Crimson": ["river_bad", "Bg_BadRiverTile_03"], "Allies": ["river_good", "Bg_RiverTile_03"]},
+            "Bg_RiverTile_04": {"Crimson": ["river_bad", "Bg_BadRiverTile_04"], "Allies": ["river_good", "Bg_RiverTile_04"]},
+            "Bg_RiverTile_05": {"Crimson": ["river_bad", "Bg_BadRiverTile_05"], "Allies": ["river_good", "Bg_RiverTile_05"]}
         }
     },
-    "RewardTypes": {
-        "Resource": { "id": "Resource", "reference": "ResourceTypes" },
-        "Item": { "id": "Item", "reference": "ItemTypes" }
+    "RewardType": {
+        "Resource": { "id": "Resource", "reference": "ResourceType" },
+        "Item": { "id": "Item", "reference": "ItemType" }
     },
-    "CollectionTypes": {
+    "CollectionType": {
         "Scout": {
             "id": "Scout",
             "name": "#CONFIG_COLLECTION_SCOUT",
@@ -451,7 +451,7 @@
             "rewards": []
         }
     },
-    "ItemTypes": {
+    "ItemType": {
         "apc_ammo_shells": { "id": "apc_ammo_shells", "icon": "apc_ammo_shells", "collection": "APC", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
         "apc_blueprints": { "id": "apc_blueprints", "icon": "apc_blueprints", "collection": "APC", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
         "apc_duct_tape": { "id": "apc_duct_tape", "icon": "apc_duct_tape", "collection": "APC", "maxStack": 9999, "maxDrop": 1, "isVisible": false },
@@ -528,7 +528,7 @@
         "medal_silverstar": { "id": "medal_silverstar", "icon": "icon_item_medal_silverstar", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true },
         "medal_goldstar": { "id": "medal_goldstar", "icon": "icon_item_medal_goldstar", "collection": null, "maxStack": 9999, "maxDrop": 1, "isVisible": true }
     },
-    "ShopTabTypes": {
+    "ShopTabType": {
         "Specials": {
             "id": "Specials",
             "name": null,
@@ -610,7 +610,7 @@
             ]
         }
     },
-    "ShopItemTypes": {
+    "ShopItemType": {
         "blue_infantry": { "id": "blue_infantry", "type": "Entity", "icon": "icon_units_infantry", "buyResource": "Money", "buyValue": 1500, "sellResouce": "Money", "sellValue": 150 },
         "blue_elite_infantry": { "id": "blue_elite_infantry", "type": "Entity", "icon": "icon_units_premium_infantry", "buyResource": "Gold", "buyValue": 30, "sellResouce": "Money", "sellValue": 3000 },
         "blue_tank": { "id": "blue_tank", "type": "Entity", "icon": "icon_units_apc", "buyResource": "Money", "buyValue": 5000, "sellResouce": "Money", "sellValue": 500 },
@@ -622,7 +622,7 @@
         "blue_battery": { "id": "blue_battery", "type": "Entity", "icon": "icon_units_rocket_battery", "buyResource": "Money", "buyValue": 30000, "sellResouce": "Money", "sellValue": 3000 },
         "blue_elite_battery": { "id": "blue_elite_battery", "type": "Entity", "icon": "icon_units_premium_rocket_battery", "buyResource": "Gold", "buyValue": 200, "sellResouce": "Money", "sellValue": 20000 }
     },
-    "FireCallTypes": {
+    "FireCallType": {
         "Mortar": { 
             "id": "Mortar",
             "dimX": 1, "dimY": 1, "dimZ": 1,

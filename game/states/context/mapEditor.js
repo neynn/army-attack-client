@@ -257,7 +257,7 @@ MapEditorState.prototype.paint = function(gameContext) {
             break;
         }
         case MapEditorState.BUTTON_TYPE_TYPE: {
-            const types = world.getConfig("TileTypes");
+            const types = world.getConfig("TileType");
             const layerID = "type";
 
             this.mapEditor.incrementTypeIndex(gameContext, types, this.currentMapID, layerID);

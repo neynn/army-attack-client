@@ -53,7 +53,7 @@ CardSystem.addDamageText = function(entity, statCard) {
 CardSystem.createStatCard = function(gameContext, entity) {
     const { spriteManager, renderer, world } = gameContext;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
-    const teamTypes = world.getConfig("TeamTypes");
+    const teamTypes = world.getConfig("TeamType");
     const teamComponent = entity.getComponent(TeamComponent);
     const { x, y } = camera.transformSizeToPositionOffset(entity.config.dimX, entity.config.dimY);
     const positionX = x - 48;
@@ -93,7 +93,7 @@ CardSystem.createStatCard = function(gameContext, entity) {
 
 CardSystem.generateStatCard = function(gameContext, entity) {
     const { spriteManager, world } = gameContext;
-    const entityTypes = world.getConfig("EntityTypes");
+    const entityTypes = world.getConfig("EntityType");
     const entityType = entityTypes[entity.config.archetype];
 
     if(entityType.disableCard || entity.config.disableCard) {
