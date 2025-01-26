@@ -58,7 +58,7 @@ CameraContext.prototype.setDisplayMode = function(modeID) {
     this.displayMode = modeID;
 }
 
-CameraContext.prototype.setPosition = function(x = 0, y = 0) {    
+CameraContext.prototype.setPosition = function(x, y) {    
     this.position.x = Math.floor(x);
     this.position.y = Math.floor(y);
 }
@@ -71,21 +71,22 @@ CameraContext.prototype.dragCamera = function(deltaX, deltaY) {
 }
 
 CameraContext.prototype.getWorldPosition = function(screenX, screenY) {
+    const { x, y } = this.camera.getViewport();
+
     return {
-        "x": (screenX / this.scale) + this.camera.viewportX - (this.position.x / this.scale),
-        "y": (screenY / this.scale) + this.camera.viewportY - (this.position.y / this.scale)
+        "x": (screenX - this.position.x) / this.scale + x,
+        "y": (screenY - this.position.y) / this.scale + y
     }
 }
 
 CameraContext.prototype.getBounds = function() {
-    const width = this.camera.viewportWidth * this.scale;
-    const height = this.camera.viewportHeight * this.scale;
+    const { w, h } = this.camera.getViewport();
 
     return {
         "x": this.position.x,
         "y": this.position.y,
-        "w": width,
-        "h": height
+        "w": w * this.scale,
+        "h": h * this.scale
     }
 }
 
@@ -94,9 +95,7 @@ CameraContext.prototype.getCamera = function() {
 }
 
 CameraContext.prototype.refresh = function(windowWidth, windowHeight) {
-    if(this.displayMode === CameraContext.DISPLAY_MODE.RESOLUTION_FIXED) {
-        this.reloadScale(windowWidth, windowHeight);
-    }
+    this.reloadFixedScale(windowWidth, windowHeight);
 
     if(this.positionMode === CameraContext.POSITION_MODE.AUTO_CENTER) {
         if(this.displayMode !== CameraContext.DISPLAY_MODE.RESOLUTION_FIXED) {
@@ -115,7 +114,6 @@ CameraContext.prototype.onWindowResize = function(windowWidth, windowHeight) {
 
         if(this.context) {
             this.context.resize(width, height);
-            this.reloadScale(width, height);
         }
     }
 
@@ -123,23 +121,35 @@ CameraContext.prototype.onWindowResize = function(windowWidth, windowHeight) {
 }
 
 CameraContext.prototype.centerCamera = function(windowWidth, windowHeight) {
-    const positionX = (windowWidth - this.scale * this.camera.viewportWidth) * 0.5;
-    const positionY = (windowHeight - this.scale * this.camera.viewportHeight) * 0.5;
+    const { w, h } = this.camera.getViewport();
+    const positionX = (windowWidth - this.scale * w) * 0.5;
+    const positionY = (windowHeight - this.scale * h) * 0.5;
 
     this.setPosition(positionX, positionY);
 }
 
-CameraContext.prototype.reloadScale = function(windowWidth, windowHeight) {
-    if(this.context) {
-        const scaleX = Math.floor(windowWidth / this.context.width);
-        const scaleY = Math.floor(windowHeight / this.context.height);
-        const scale = Math.min(scaleX, scaleY);
-    
-        if(scale >= CameraContext.BASE_SCALE) {
-            this.scale = scale;
-        } else {
-            this.scale = CameraContext.BASE_SCALE;
-        }
+CameraContext.prototype.reloadFixedScale = function(windowWidth, windowHeight) {
+    if(this.displayMode !== CameraContext.DISPLAY_MODE.RESOLUTION_FIXED) {
+        return;
+    }
+
+    if(!this.context) {
+        return;
+    }
+
+    if(this.positionMode === CameraContext.POSITION_MODE.FIXED) {
+        windowWidth -= this.position.x;
+        windowHeight -= this.position.y;
+    }
+
+    const scaleX = Math.floor(windowWidth / this.context.width);
+    const scaleY = Math.floor(windowHeight / this.context.height);
+    const scale = Math.min(scaleX, scaleY);
+
+    if(scale >= CameraContext.BASE_SCALE) {
+        this.scale = scale;
+    } else {
+        this.scale = CameraContext.BASE_SCALE;
     }
 }
 
@@ -167,7 +177,6 @@ CameraContext.prototype.update = function(gameContext, mainContext) {
             const { canvas, context, width, height } = this.context;
             const { x, y, w, h } = this.getBounds();
 
-            this.context.clear();
             this.camera.update(gameContext, context);
             this.events.emit(CameraContext.EVENT.RENDER_COMPLETE, context);
             mainContext.drawImage(canvas, 0, 0, width, height, x, y, w, h);
