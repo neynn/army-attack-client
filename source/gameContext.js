@@ -44,7 +44,7 @@ export const GameContext = function(fps = 60) {
 GameContext.prototype.addClickEvent = function() {
     const { cursor } = this.client;
 
-    cursor.events.subscribe(Cursor.LEFT_MOUSE_CLICK, EventEmitter.SUPER_SUBSCRIBER_ID, () => {
+    cursor.events.subscribe(Cursor.LEFT_MOUSE_CLICK, EventEmitter.SUPER_ID, () => {
         const clickedElements = this.uiManager.getCollidedElements(cursor.position.x, cursor.position.y, cursor.radius);
 
         for(const element of clickedElements) {

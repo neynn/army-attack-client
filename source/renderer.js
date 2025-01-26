@@ -98,6 +98,7 @@ Renderer.prototype.addCamera = function(cameraID, camera) {
     const context = new CameraContext(cameraID, camera);
 
     camera.setViewport(this.windowWidth, this.windowHeight);
+    context.events.subscribe(CameraContext.EVENT.REQUEST_WINDOW, EventEmitter.SUPER_ID, (onRequest) => onRequest(this.windowWidth, this.windowHeight));
 
     this.contexts.set(cameraID, context);
     this.contextStack.push(cameraID);

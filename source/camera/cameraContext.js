@@ -1,29 +1,34 @@
 import { EventEmitter } from "../events/eventEmitter.js";
 import { RenderContext } from "./renderContext.js";
 import { Vec2 } from "../math/vec2.js";
+import { clampValue } from "../math/math.js";
 
 export const CameraContext = function(id, camera) {
     this.id = id;
     this.position = new Vec2(0, 0);
-    this.positionMode = CameraContext.POSITION_MODE.AUTO_CENTER;
-    this.displayMode = CameraContext.DISPLAY_MODE.RESOLUTION_DEPENDENT;
     this.camera = camera;
     this.context = null;
     this.scale = CameraContext.BASE_SCALE;
+    this.scaleMode = CameraContext.SCALE_MODE.WHOLE;
+    this.positionMode = CameraContext.POSITION_MODE.AUTO_CENTER;
+    this.displayMode = CameraContext.DISPLAY_MODE.RESOLUTION_DEPENDENT;
 
     this.events = new EventEmitter();
     this.events.listen(CameraContext.EVENT.RENDER_COMPLETE);
+    this.events.listen(CameraContext.EVENT.REQUEST_WINDOW);
 }
 
 CameraContext.BASE_SCALE = 1;
 
 CameraContext.EVENT = {
-    RENDER_COMPLETE: 0
+    RENDER_COMPLETE: 0,
+    REQUEST_WINDOW: 1
 };
 
 CameraContext.POSITION_MODE = {
     AUTO_CENTER: 0,
-    FIXED: 1
+    FIXED: 1,
+    FIXED_ORIGIN: 2
 };
 
 CameraContext.DISPLAY_MODE = {
@@ -31,8 +36,23 @@ CameraContext.DISPLAY_MODE = {
     RESOLUTION_FIXED: 1
 };
 
+CameraContext.SCALE_MODE = {
+    WHOLE: 0,
+    FRACTURED: 1
+};
+
 CameraContext.prototype.getPosition = function() {
     return this.position;
+}
+
+CameraContext.prototype.setScaleMode = function(modeID) {
+    if(!Object.values(CameraContext.SCALE_MODE).includes(modeID)) {
+        console.warn(`Scale mode is not supported! ${modeID}`);
+        return;
+    }
+
+    this.scaleMode = modeID;
+    this.events.emit(CameraContext.EVENT.REQUEST_WINDOW, (width, height) => this.refresh(width, height));
 }
 
 CameraContext.prototype.setPositionMode = function(modeID) {
@@ -41,7 +61,12 @@ CameraContext.prototype.setPositionMode = function(modeID) {
         return;
     }
 
+    if(modeID === CameraContext.POSITION_MODE.FIXED_ORIGIN) {
+        this.setPosition(0, 0);
+    }
+
     this.positionMode = modeID;
+    this.events.emit(CameraContext.EVENT.REQUEST_WINDOW, (width, height) => this.refresh(width, height));
 }
 
 CameraContext.prototype.setDisplayMode = function(modeID) {
@@ -50,15 +75,25 @@ CameraContext.prototype.setDisplayMode = function(modeID) {
         return;
     }
 
-    if(modeID === CameraContext.DISPLAY_MODE.RESOLUTION_FIXED && this.context) {
-        this.camera.setViewport(this.context.width, this.context.height);
-        this.camera.reloadViewport();
+    switch(modeID) {
+        case CameraContext.DISPLAY_MODE.RESOLUTION_DEPENDENT: {
+            this.displayMode = modeID;
+            this.scale = CameraContext.BASE_SCALE;
+            this.events.emit(CameraContext.EVENT.REQUEST_WINDOW, (width, height) => this.onWindowResize(width, height));
+            break;
+        }
+        case CameraContext.DISPLAY_MODE.RESOLUTION_FIXED: {
+            if(this.context) {
+                this.displayMode = modeID;
+                this.camera.setViewport(this.context.width, this.context.height);
+                this.events.emit(CameraContext.EVENT.REQUEST_WINDOW, (width, height) => this.refresh(width, height));
+            }
+            break;
+        }
     }
-
-    this.displayMode = modeID;
 }
 
-CameraContext.prototype.setPosition = function(x, y) {    
+CameraContext.prototype.setPosition = function(x, y) {
     this.position.x = Math.floor(x);
     this.position.y = Math.floor(y);
 }
@@ -110,11 +145,7 @@ CameraContext.prototype.refresh = function(windowWidth, windowHeight) {
 
 CameraContext.prototype.onWindowResize = function(windowWidth, windowHeight) {
     if(this.displayMode !== CameraContext.DISPLAY_MODE.RESOLUTION_FIXED) {
-        this.camera.setViewport(width, height);
-
-        if(this.context) {
-            this.context.resize(width, height);
-        }
+        this.camera.setViewport(windowWidth, windowHeight);
     }
 
     this.refresh(windowWidth, windowHeight);
@@ -128,12 +159,38 @@ CameraContext.prototype.centerCamera = function(windowWidth, windowHeight) {
     this.setPosition(positionX, positionY);
 }
 
-CameraContext.prototype.reloadFixedScale = function(windowWidth, windowHeight) {
-    if(this.displayMode !== CameraContext.DISPLAY_MODE.RESOLUTION_FIXED) {
-        return;
+CameraContext.prototype.getScale = function(windowWidth, windowHeight) {
+    if(!this.context) {
+        return {
+            "x": CameraContext.BASE_SCALE,
+            "y": CameraContext.BASE_SCALE
+        }
     }
 
-    if(!this.context) {
+    switch(this.scaleMode) {
+        case CameraContext.SCALE_MODE.FRACTURED: {
+            return {
+                "x": windowWidth / this.context.width,
+                "y": windowHeight / this.context.height
+            }
+        }
+        case CameraContext.SCALE_MODE.WHOLE: {
+            return {
+                "x": Math.floor(windowWidth / this.context.width),
+                "y": Math.floor(windowHeight / this.context.height)
+            }
+        }
+        default: {
+            return {
+                "x": CameraContext.BASE_SCALE,
+                "y": CameraContext.BASE_SCALE
+            }
+        }
+    }
+}
+
+CameraContext.prototype.reloadFixedScale = function(windowWidth, windowHeight) {
+    if(this.displayMode !== CameraContext.DISPLAY_MODE.RESOLUTION_FIXED) {
         return;
     }
 
@@ -142,21 +199,26 @@ CameraContext.prototype.reloadFixedScale = function(windowWidth, windowHeight) {
         windowHeight -= this.position.y;
     }
 
-    const scaleX = Math.floor(windowWidth / this.context.width);
-    const scaleY = Math.floor(windowHeight / this.context.height);
-    const scale = Math.min(scaleX, scaleY);
+    const { x, y } = this.getScale(windowWidth, windowHeight);
+    const scale = Math.min(x, y);
 
-    if(scale >= CameraContext.BASE_SCALE) {
-        this.scale = scale;
-    } else {
-        this.scale = CameraContext.BASE_SCALE;
-    }
+    this.scale = clampValue(scale, Infinity, CameraContext.BASE_SCALE);
 }
 
 CameraContext.prototype.initRenderer = function(width, height) {
     if(!this.context) {
         this.context = new RenderContext();
         this.context.init(width, height, false);
+    }
+}
+
+CameraContext.prototype.setResolution = function(width, height) {
+    if(this.context) {
+        this.context.resize(width, height);
+
+        if(this.displayMode === CameraContext.DISPLAY_MODE.RESOLUTION_FIXED) {
+            this.setDisplayMode(CameraContext.DISPLAY_MODE.RESOLUTION_FIXED);
+        }
     }
 }
 
@@ -177,6 +239,7 @@ CameraContext.prototype.update = function(gameContext, mainContext) {
             const { canvas, context, width, height } = this.context;
             const { x, y, w, h } = this.getBounds();
 
+            this.context.clear();
             this.camera.update(gameContext, context);
             this.events.emit(CameraContext.EVENT.RENDER_COMPLETE, context);
             mainContext.drawImage(canvas, 0, 0, width, height, x, y, w, h);

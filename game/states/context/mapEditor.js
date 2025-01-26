@@ -33,7 +33,7 @@ MapEditorState.prototype.onEnter = function(stateMachine) {
     const context = gameContext.createCamera(CAMERA_TYPES.ARMY_CAMERA);
     const camera = context.getCamera();
 
-    context.setPositionMode(CameraContext.POSITION_MODE.FIXED);
+    context.setPositionMode(CameraContext.POSITION_MODE.FIXED_ORIGIN);
     camera.unbindViewport();
 
     uiManager.parseUI("MAP_EDITOR", gameContext);

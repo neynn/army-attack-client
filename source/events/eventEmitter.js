@@ -4,7 +4,7 @@ export const EventEmitter = function() {
     this.listeners = new Map();
 }
 
-EventEmitter.SUPER_SUBSCRIBER_ID = "#";
+EventEmitter.SUPER_ID = "#";
 
 EventEmitter.prototype.listen = function(eventType) {
     if(this.listeners.has(eventType)) {
@@ -43,7 +43,7 @@ EventEmitter.prototype.subscribe = function(eventType, subscriberID, onCall) {
 }
 
 EventEmitter.prototype.unsubscribeAll = function(subscriberID) {
-    if(subscriberID === EventEmitter.SUPER_SUBSCRIBER_ID) {
+    if(subscriberID === EventEmitter.SUPER_ID) {
         return;
     }
 
@@ -68,7 +68,7 @@ EventEmitter.prototype.unsubscribe = function(eventType, subscriberID) {
         return;
     }
 
-    if(subscriberID === EventEmitter.SUPER_SUBSCRIBER_ID) {
+    if(subscriberID === EventEmitter.SUPER_ID) {
         return;
     }
 
@@ -106,7 +106,7 @@ EventEmitter.prototype.muteAll = function() {
         for(const observer of observers) {
             const { subscriber } = observer;
 
-            if(subscriber === EventEmitter.SUPER_SUBSCRIBER_ID) {
+            if(subscriber === EventEmitter.SUPER_ID) {
                 remainingObservers.push(observer);
             }
         }
@@ -126,7 +126,7 @@ EventEmitter.prototype.mute = function(eventType) {
     for(const observer of listener.observers) {
         const { subscriber } = observer;
 
-        if(subscriber === EventEmitter.SUPER_SUBSCRIBER_ID) {
+        if(subscriber === EventEmitter.SUPER_ID) {
             remainingObservers.push(observer);
         }
     }

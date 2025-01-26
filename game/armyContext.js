@@ -32,6 +32,7 @@ import { CounterAttackAction } from "./actions/counterAttackAction.js";
 import { CounterMoveAction } from "./actions/counterMoveAction.js";
 import { ArmyEntityFactory } from "./init/armyEntity.js";
 import { CameraContext } from "../source/camera/cameraContext.js";
+import { Cursor } from "../source/client/cursor.js";
 
 export const ArmyContext = function() {
     GameContext.call(this, 60);
@@ -221,6 +222,15 @@ ArmyContext.prototype.createCamera = function(cameraID) {
         this.renderer.refreshCamera(cameraID);
     });
 
+    /*
+    let x = false;
+
+    this.client.cursor.events.subscribe(Cursor.LEFT_MOUSE_CLICK, "HI", () => {
+        x = !x;
+        let mode = x ? CameraContext.DISPLAY_MODE.RESOLUTION_DEPENDENT : CameraContext.DISPLAY_MODE.RESOLUTION_FIXED;
+        this.renderer.getContext(cameraID).setDisplayMode(mode);
+    });
+    */
     return context;
 }
 

@@ -93,7 +93,7 @@ SpriteManager.prototype.createSprite = function(typeID, layerID = null, animatio
     
     sprite.onDraw = (context, viewportX, viewportY, localX, localY) => this.drawSprite(sprite, context, viewportX, viewportY, localX, localY);
     sprite.setLastCallTime(this.timestamp);
-    sprite.events.subscribe(Sprite.EVENT_TERMINATE, EventEmitter.SUPER_SUBSCRIBER_ID, (sprite) => this.destroySprite(sprite.id));
+    sprite.events.subscribe(Sprite.EVENT_TERMINATE, EventEmitter.SUPER_ID, (sprite) => this.destroySprite(sprite.id));
 
     this.sprites.set(sprite.id, sprite);
 
