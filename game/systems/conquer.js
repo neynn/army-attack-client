@@ -64,10 +64,8 @@ ConquerSystem.convertTileGraphics = function(gameContext, tileX, tileY, teamID) 
 
         const convertedTileID = conversion[teamTypeID];
 
-        if(!tileManager.hasTileMeta(convertedTileID)) {
-            continue;
+        if(tileManager.hasTileMeta(convertedTileID)) {
+            activeMap.placeTile(convertedTileID, layerID, tileX, tileY);
         }
-
-        activeMap.placeTile(convertedTileID, layerID, tileX, tileY);
     }
 }

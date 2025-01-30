@@ -2,9 +2,9 @@ import { WorldMap } from "./worldMap.js";
 
 export const MapParser = function() {}
 
-MapParser.createUint16Layer = function(layerData, width, height) {
+MapParser.createUint8Layer = function(layerData, width = 0, height = 0) {
     const layerSize = width * height;
-    const layerBuffer = new Uint16Array(layerSize);
+    const layerBuffer = new Uint8Array(layerSize);
 
     if(!layerData) {
         return layerBuffer;
@@ -22,38 +22,6 @@ MapParser.createUint16Layer = function(layerData, width, height) {
     for(let i = 0; i < layerSize; i++) {
         const tileID = layerData[i];
         layerBuffer[i] = tileID;
-    }
-
-    return layerBuffer;
-}
-
-MapParser.createUint8Layer = function(layerData, width = 0, height = 0) {
-    const layerSize = width * height;
-    const layerBuffer = new Uint8Array(layerSize);
-
-    if(layerData.length < layerSize) {
-        for(let i = 0; i < layerData.length; i++) {
-            const tileID = layerData[i];
-            layerBuffer[i] = tileID;
-        }
-
-        return layerBuffer;
-    }
-
-    for(let i = 0; i < layerSize; i++) {
-        const tileID = layerData[i];
-        layerBuffer[i] = tileID;
-    }
-
-    return layerBuffer;
-}
-
-MapParser.createUint16LayerEmpty = function(fill = 0, width, height) {
-    const layerSize = width * height;
-    const layerBuffer = new Uint16Array(layerSize);
-
-    for(let i = 0; i < layerSize; i++) {
-        layerBuffer[i] = fill;
     }
 
     return layerBuffer;
@@ -83,7 +51,7 @@ MapParser.parseMap2D = function(mapID, layers, meta) {
     for(const layerID in layerConfig) {
         const { id } = layerConfig[layerID];
         const layerData = layers[id];
-        const parsedLayerData = MapParser.createUint16Layer(layerData, width, height);
+        const parsedLayerData = MapParser.createUint8Layer(layerData, width, height);
 
         parsedLayers[id] = parsedLayerData;
     }
@@ -109,7 +77,7 @@ MapParser.parseMap2DEmpty = function(mapID, layers, meta) {
     for(const layerID in layerConfig) {
         const { id } = layerConfig[layerID];
         const { fill } = layers[id];
-        const parsedLayerData = MapParser.createUint16LayerEmpty(fill, width, height);
+        const parsedLayerData = MapParser.createUint8LayerEmpty(fill, width, height);
 
         parsedLayers[id] = parsedLayerData;
     }

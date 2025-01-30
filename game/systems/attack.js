@@ -28,7 +28,7 @@ AttackSystem.getOutcomeState = function(gameContext, damage, target, attackerIDs
         const isBulldozed = AttackSystem.getBulldozed(gameContext, target, attackerIDs);
         const isReviveable = target.hasComponent(ReviveableComponent);
 
-        if(target.hasComponent(ReviveableComponent) && !isBulldozed) {
+        if(isReviveable && !isBulldozed) {
             return AttackSystem.OUTCOME_STATE.DOWN;
         }
 
@@ -40,6 +40,7 @@ AttackSystem.getOutcomeState = function(gameContext, damage, target, attackerIDs
 
 AttackSystem.getUniqueEntitiesInRangeOfEntity = function(gameContext, entity, range = 0) {
     const { world } = gameContext;
+
     const positionComponent = entity.getComponent(PositionComponent);
     const startX = positionComponent.tileX - range;
     const startY = positionComponent.tileY - range;
@@ -47,7 +48,6 @@ AttackSystem.getUniqueEntitiesInRangeOfEntity = function(gameContext, entity, ra
     const endY = positionComponent.tileY + entity.config.dimY + range;
     const entities = world.getEntitiesInRange(startX, startY, endX, endY);
 
-    console.log(entities);
     return entities;
 }
 

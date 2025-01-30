@@ -1,4 +1,5 @@
 import { Action } from "../../source/action/action.js";
+
 import { AnimationSystem } from "../systems/animation.js";
 import { AttackSystem } from "../systems/attack.js";
 import { DeathSystem } from "../systems/death.js";

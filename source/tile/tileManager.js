@@ -40,7 +40,7 @@ TileManager.prototype.load = function(tileTypes, tileMeta) {
 
     if(typeof tileMeta === "object") {
         this.tileMeta = tileMeta;
-        this.invertTileMeta();
+        this.tileMeta.inversion = this.getTileInversion();
     } else {
         Logger.log(false, "TileMeta cannot be undefined!", "TileManager.prototype.load", null);
     }
@@ -69,17 +69,41 @@ TileManager.prototype.updateDynamicAnimations = function(timestamp) {
     }
 }
 
-TileManager.prototype.invertTileMeta = function() {
-    for(const tileID in this.tileMeta.values) {
-        const { id, set, animation } = this.tileMeta.values[tileID];
+TileManager.prototype.getTileInversion = function() {
+    const inversion = {};
 
-        if(this.tileMeta.inversion[set] === undefined) {
-            this.tileMeta.inversion[set] = {};
+    for(let i = 0; i < this.tileMeta.values.length; i++) {
+        const { set, animation } = this.tileMeta.values[i];
+
+        if(!inversion[set]) {
+            inversion[set] = {};
         }
 
-        this.tileMeta.inversion[set][animation] = id;
+        inversion[set][animation] = i + 1;
     }
+
+    return inversion;
 }
+
+TileManager.prototype.getTileMeta = function(tileID) {
+    const tileIndex = tileID - 1;
+
+    if(tileIndex < 0 || tileIndex >= this.tileMeta.values.length) {
+        return {
+            "set": null,
+            "animation": null
+        };
+    }
+
+    return this.tileMeta.values[tileIndex];
+}
+
+TileManager.prototype.hasTileMeta = function(tileID) {
+    const tileIndex = tileID - 1;
+
+    return tileIndex >= 0 && tileIndex < this.tileMeta.values.length;
+}
+
 
 TileManager.prototype.loadTileTypes = function(tileTypes) {
     for(const typeID in tileTypes) {
@@ -118,16 +142,6 @@ TileManager.prototype.getTileType = function(typeID) {
     return type;
 }
 
-TileManager.prototype.getTileMeta = function(tileID) {
-    const meta = this.tileMeta.values[tileID];
-
-    if(!meta) {
-        return null;
-    }
-
-    return meta;
-}
-
 TileManager.prototype.getTileID = function(setID, animationID) {
     const metaSet = this.tileMeta.inversion[setID];
 
@@ -142,10 +156,6 @@ TileManager.prototype.getTileID = function(setID, animationID) {
     }
 
     return metaID;
-}
-
-TileManager.prototype.hasTileMeta = function(tileID) {
-    return this.tileMeta.values[tileID] !== undefined;
 }
 
 TileManager.prototype.getAutotilerID = function(autotilerID, autoIndex) {
