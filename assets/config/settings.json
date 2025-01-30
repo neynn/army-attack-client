@@ -1,8 +1,8 @@
 {
     "mapEditor": {
         "id": "MAP_EDITOR",
-        "maxMapWidth": 255,
-        "maxMapHeight": 255,
+        "maxMapWidth": 800,
+        "maxMapHeight": 800,
         "overlayOpacity": 0.75,
         "overlayTextColor": "#eeeeee",
         "brushSizes": [0, 1, 2, 3, 4],
@@ -34,12 +34,12 @@
             "width": 20,
             "height": 20,
             "layerConfig": {
-                "ground": { "id": "ground", "opacity": 1, "autoGenerate": false, "isMeta": false },
-                "border": { "id": "border", "opacity": 1, "autoGenerate": true, "isMeta": false },
-                "decoration": { "id": "decoration", "opacity": 1, "autoGenerate": false, "isMeta": false },
-                "cloud": { "id": "cloud", "opacity": 1, "autoGenerate": false, "isMeta": false },
-                "type": { "id": "type", "opacity": 1, "autoGenerate": false, "isMeta": true },
-                "team": { "id": "team", "opacity": 1, "autoGenerate": false, "isMeta": true }
+                "ground": { "id": "ground", "opacity": 1, "autoGenerate": false },
+                "border": { "id": "border", "opacity": 1, "autoGenerate": true },
+                "decoration": { "id": "decoration", "opacity": 1, "autoGenerate": false },
+                "cloud": { "id": "cloud", "opacity": 1, "autoGenerate": true },
+                "type": { "id": "type", "opacity": 1, "autoGenerate": false },
+                "team": { "id": "team", "opacity": 1, "autoGenerate": false }
             },
             "background": ["ground", "border", "decoration"],
             "foreground": ["cloud"]

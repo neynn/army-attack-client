@@ -78,7 +78,7 @@ export const saveMap = function(mapID, map2D) {
     for(const layerID in map2D.meta.layerConfig) {
         const layerConfig = map2D.meta.layerConfig[layerID];
 
-        formattedConfig.push(`"${layerConfig.id}": { "id": "${layerConfig.id}", "opacity": ${layerConfig.opacity}, "autoGenerate": ${layerConfig.autoGenerate}, "isMeta": ${layerConfig.isMeta} }`);
+        formattedConfig.push(`"${layerConfig.id}": { "id": "${layerConfig.id}", "opacity": ${layerConfig.opacity}, "autoGenerate": ${layerConfig.autoGenerate} }`);
     }
 
 	const formattedLayers = [];

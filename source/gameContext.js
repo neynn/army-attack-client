@@ -58,12 +58,11 @@ GameContext.prototype.start = function() {
     this.timer.start();
 }
 
-GameContext.prototype.end = function() {
-    this.world.actionQueue.end();
-    this.world.entityManager.end();
+GameContext.prototype.exit = function() {
+    this.world.exit();
     this.spriteManager.clear();
-    this.tileManager.end();
-    this.uiManager.end();
+    this.tileManager.exit();
+    this.uiManager.exit();
 }
 
 GameContext.prototype.loadResources = function(resources) {

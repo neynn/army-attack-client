@@ -3,6 +3,7 @@ export const Entity = function(DEBUG_NAME = "") {
     this.id = null;
     this.config = {};
     this.components = new Map();
+    this.updateComponents = new Map();
 }
 
 Entity.prototype.setID = function(id) {
@@ -25,7 +26,9 @@ Entity.prototype.getConfig = function() {
     return this.config;
 }
 
-Entity.prototype.update = function(gameContext) {}
+Entity.prototype.update = function(gameContext) {
+    this.updateComponents.forEach(component => component.update(gameContext, this));
+}
 
 Entity.prototype.loadComponent = function(type, data = {}) {
     if(!this.hasComponent(type)) {
@@ -69,8 +72,14 @@ Entity.prototype.hasComponent = function(component) {
 }
 
 Entity.prototype.addComponent = function(component) {
-    if(!this.components.has(component.constructor)) {
-        this.components.set(component.constructor, component);
+    if(this.components.has(component.constructor)) {
+        return;
+    }
+
+    this.components.set(component.constructor, component);
+
+    if(typeof component.update === "function") {
+        this.updateComponents.set(component.constructor, component);
     }
 }
 
@@ -81,5 +90,9 @@ Entity.prototype.getComponent = function(component) {
 Entity.prototype.removeComponent = function(component) {
     if(this.components.has(component)) {
         this.components.delete(component);
+    }
+
+    if(this.updateComponents.has(component)) {
+        this.updateComponents.delete(component);
     }
 }

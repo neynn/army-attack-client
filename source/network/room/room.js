@@ -136,6 +136,6 @@ Room.prototype.start = function() {
     this.isStarted = true;
 }
 
-Room.prototype.end = function() {
+Room.prototype.exit = function() {
     this.isStarted = false;
 }

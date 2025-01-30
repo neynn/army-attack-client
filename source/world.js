@@ -31,6 +31,11 @@ World.EVENT_CONTROLLER_DESTROY = "EVENT_CONTROLLER_DESTROY";
 World.EVENT_ENTITY_CREATE = "EVENT_ENTITY_CREATE";
 World.EVENT_ENTITY_DESTROY = "EVENT_ENTITY_DESTROY";
 
+World.prototype.exit = function() {
+    this.actionQueue.exit();
+    this.entityManager.exit();
+}
+
 World.prototype.update = function(gameContext) {
     this.actionQueue.update(gameContext);
     this.controllerManager.update(gameContext);

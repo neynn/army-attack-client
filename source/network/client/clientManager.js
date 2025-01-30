@@ -18,8 +18,9 @@ ClientManager.prototype.start = function() {
     
 }
 
-ClientManager.prototype.end = function() {
+ClientManager.prototype.exit = function() {
     this.clients.clear();
+    this.events.kill();
 }
 
 ClientManager.prototype.destroyClient = function(clientID) {

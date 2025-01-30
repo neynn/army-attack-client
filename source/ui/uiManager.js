@@ -140,9 +140,9 @@ UIManager.prototype.update = function(gameContext) {
     this.updateElementCollisions(cursor.position.x, cursor.position.y, cursor.radius);
 }
 
-UIManager.prototype.end = function() {
-    this.elements.clear();
+UIManager.prototype.exit = function() {
     this.interfaceStack = [];
+    this.elements.clear();
 }
 
 UIManager.prototype.updateElementCollisions = function(mouseX, mouseY, mouseRange) {

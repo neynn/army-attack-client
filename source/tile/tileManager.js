@@ -36,7 +36,9 @@ TileManager.prototype.update = function(gameContext) {
     this.updateDynamicTileTypes(realTime);
 }
 
-TileManager.prototype.end = function() {}
+TileManager.prototype.exit = function() {
+    
+}
 
 TileManager.prototype.updateDynamicTileTypes = function(timestamp) {
     for(const typeID in this.dynamicTileTypes) {

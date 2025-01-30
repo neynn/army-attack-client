@@ -6,16 +6,22 @@ export const EntityManager = function() {
     this.idGenerator = new IDGenerator();
     this.factoryTypes = new Map();
     this.componentTypes = new Map();
-    this.entities = new Map();
+    this.entities = [];
     this.selectedFactory = null;
 }
 
 EntityManager.prototype.load = function(traitTypes) {
-    if(typeof traitTypes === "object") {
-        this.traitTypes = traitTypes;
-    } else {
+    if(!typeof traitTypes === "object") {
         Logger.log(false, "TraitTypes must be an object!", "EntityManager.prototype.load", null);
+        return;
     }
+
+    this.traitTypes = traitTypes;
+}
+
+EntityManager.prototype.exit = function() {
+    this.entities = [];
+    this.idGenerator.reset();
 }
 
 EntityManager.prototype.registerComponent = function(componentID, component) {
@@ -33,12 +39,11 @@ EntityManager.prototype.registerComponent = function(componentID, component) {
 }
 
 EntityManager.prototype.update = function(gameContext) {
-    this.entities.forEach(entity => entity.update(gameContext));
-}
+    for(let i = 0; i < this.entities.length; i++) {
+        const entity = this.entities[i];
 
-EntityManager.prototype.end = function() {
-    this.entities.forEach(entity => this.destroyEntity(entity.id));
-    this.idGenerator.reset();
+        entity.update(gameContext);
+    }
 }
 
 EntityManager.prototype.saveComponents = function(entity, componentIDList = []) {
@@ -92,11 +97,16 @@ EntityManager.prototype.loadTraits = function(entity, traitIDList = []) {
 }
 
 EntityManager.prototype.getEntity = function(entityID) {
-    if(!this.entities.has(entityID)) {
-        return null;
+    for(let i = 0; i < this.entities.length; i++) {
+        const entity = this.entities[i];
+        const currentID = entity.getID();
+
+        if(currentID === entityID) {
+            return entity;
+        }
     }
 
-    return this.entities.get(entityID);
+    return null;
 }
 
 EntityManager.prototype.registerFactory = function(factoryID, factory) {
@@ -131,16 +141,25 @@ EntityManager.prototype.createEntity = function(gameContext, config, externalID)
 
     entity.setID(entityID);
     
-    this.entities.set(entityID, entity);
+    this.entities.push(entity);
 
     return entity;
 }
 
 EntityManager.prototype.destroyEntity = function(entityID) {
-    if(!this.entities.has(entityID)) {
-        Logger.log(false, "Entity does not exist!", "EntityManager.prototype.destroyEntity", { entityID });
-        return;
+    for(let i = 0; i < this.entities.length; i++) {
+        const entity = this.entities[i];
+        const currentID = entity.getID();
+
+        if(currentID === entityID) {
+            this.entities[i] = this.entities[this.entities.length - 1];
+            this.entities.pop();
+
+            return true;
+        }
     }
-    
-    this.entities.delete(entityID);
+
+    Logger.log(false, "Entity does not exist!", "EntityManager.prototype.destroyEntity", { entityID });
+
+    return false;
 }
