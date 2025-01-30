@@ -15,10 +15,6 @@ ImageManager.prototype.getPath = function(directory, source) {
 }
 
 ImageManager.prototype.addImage = function(id, image) {
-    if(this.images.has(id)) {
-        return null;
-    }
-
     const sheet = new Sheet(id, image);
 
     this.images.set(id, sheet);
@@ -45,10 +41,17 @@ ImageManager.prototype.loadImages = function(imageMeta, onLoad, onError) {
         const fileName = source ? source : `${imageID}${ImageManager.DEFAULT_IMAGE_TYPE}`;
         const imagePath = this.getPath(directory, fileName);
 
+        if(this.images.has(imageID)) {
+            continue;
+        }
+
         this.promiseHTMLImage(imagePath)
         .then(image => {
             const sheet = this.addImage(imageID, image);
-            onLoad(imageID, image, sheet);
+
+            if(sheet) {
+                onLoad(imageID, image, sheet);
+            }
         })
         .catch(error => onError(imageID, error));
     }

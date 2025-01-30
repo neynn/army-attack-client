@@ -40,30 +40,14 @@ AttackSystem.getOutcomeState = function(gameContext, damage, target, attackerIDs
 
 AttackSystem.getUniqueEntitiesInRangeOfEntity = function(gameContext, entity, range = 0) {
     const { world } = gameContext;
-    const { mapManager } = world;
-    const activeMap = mapManager.getActiveMap();
-    const entities = new Set();
-
-    if(!activeMap) {
-        return entities;
-    }
-
     const positionComponent = entity.getComponent(PositionComponent);
     const startX = positionComponent.tileX - range;
     const startY = positionComponent.tileY - range;
     const endX = positionComponent.tileX + entity.config.dimX + range;
     const endY = positionComponent.tileY + entity.config.dimY + range;
+    const entities = world.getEntitiesInRange(startX, startY, endX, endY);
 
-    for(let i = startY; i < endY; i++) {
-        for(let j = startX; j < endX; j++) {
-            const entityID = activeMap.getTopEntity(j, i);
-
-            if(entityID) {
-                entities.add(entityID);
-            }
-        }
-    }
-
+    console.log(entities);
     return entities;
 }
 
@@ -174,7 +158,6 @@ AttackSystem.getActiveAttackers = function(gameContext, target) {
 
 AttackSystem.findTargetsInMaxRange = function(gameContext, attacker, onCheck) {
     const { world } = gameContext;
-    const { entityManager } = world;
     const targets = [];
     const healthComponent = attacker.getComponent(HealthComponent);
 
@@ -185,15 +168,11 @@ AttackSystem.findTargetsInMaxRange = function(gameContext, attacker, onCheck) {
     const settings = world.getConfig("Settings");
     const nearbyEntities = AttackSystem.getUniqueEntitiesInRangeOfEntity(gameContext, attacker, settings.maxAttackRange);
 
-    for(const targetID of nearbyEntities) {
-        const target = entityManager.getEntity(targetID);
+    for(const entity of nearbyEntities) {
+        if(onCheck(entity)) {
+            const id = entity.getID();
 
-        if(!target) {
-            continue;
-        }
-
-        if(onCheck(target)) {
-            targets.push(targetID);
+            targets.push(id);
         }
     }
 
@@ -202,9 +181,8 @@ AttackSystem.findTargetsInMaxRange = function(gameContext, attacker, onCheck) {
 
 AttackSystem.findAttackersInMaxRange = function(gameContext, target, onCheck) {
     const { world } = gameContext;
-    const { entityManager } = world;
-    const attackers = [];
     const healthComponent = target.getComponent(HealthComponent);
+    const attackers = [];
 
     if(!healthComponent.isAlive()) {
         return attackers;
@@ -213,15 +191,11 @@ AttackSystem.findAttackersInMaxRange = function(gameContext, target, onCheck) {
     const settings = world.getConfig("Settings");
     const nearbyEntities = AttackSystem.getUniqueEntitiesInRangeOfEntity(gameContext, target, settings.maxAttackRange);
 
-    for(const attackerID of nearbyEntities) {
-        const attacker = entityManager.getEntity(attackerID);
+    for(const entity of nearbyEntities) {
+        if(onCheck(entity)) {
+            const id = entity.getID();
 
-        if(!attacker) {
-            continue;
-        }
-
-        if(onCheck(attacker)) {
-            attackers.push(attackerID);
+            attackers.push(id);
         }
     }
 

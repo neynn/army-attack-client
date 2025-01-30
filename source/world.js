@@ -199,3 +199,31 @@ World.prototype.getConfig = function(elementID) {
 
     return null;
 }
+
+World.prototype.getEntitiesInRange = function(startX, startY, endX, endY) {
+    const worldMap = this.mapManager.getActiveMap();
+
+    if(!worldMap) {
+        return [];
+    }
+
+    const entities = [];
+    const addedEntities = new Set();
+
+    for(let i = startY; i < endY; i++) {
+        for(let j = startX; j < endX; j++) {
+            const entityID = worldMap.getTopEntity(j, i);
+
+            if(!addedEntities.has(entityID)) {
+                const entity = this.entityManager.getEntity(entityID);
+
+                if(entity) {
+                    entities.push(entity);
+                    addedEntities.add(entityID);
+                }
+            }
+        }
+    }
+
+    return entities;
+}
