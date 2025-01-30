@@ -115,8 +115,8 @@ OrthogonalCamera.prototype.drawTileGraphics = function(tileManager, context, til
 
     for(let i = 0; i < currentFrame.length; i++) {
         const component = currentFrame[i];
-        const { id, shiftX, shiftY } = component;
-        const { x, y, w, h } = tileType.getFrameByID(id);
+        const { shiftX, shiftY, frame } = component;
+        const { x, y, w, h } = frame;
         const drawX = renderX + shiftX * scaleX;
         const drawY = renderY + shiftY * scaleY;
         const drawWidth = w * scaleX;

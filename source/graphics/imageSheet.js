@@ -18,14 +18,6 @@ ImageSheet.prototype.getBounds = function() {
     return this.bounds;
 }
 
-ImageSheet.prototype.hasAnimation = function(animationID) {
-    return this.loadedAnimations.has(animationID);
-}
-
-ImageSheet.prototype.hasFrame = function(frameID) {
-    return this.frames[frameID] !== undefined;
-}
-
 ImageSheet.prototype.getAnimations = function() {
     return this.loadedAnimations;
 }
@@ -48,10 +40,6 @@ ImageSheet.prototype.load = function(config) {
         this.bounds.w = bounds.w;
         this.bounds.h = bounds.h;
     }
-}
-
-ImageSheet.prototype.getFrameByID = function(frameID) {
-    return this.frames[frameID];
 }
 
 ImageSheet.prototype.defineDefaultAnimation = function() {
@@ -81,7 +69,7 @@ ImageSheet.prototype.createFrame = function(frameID) {
     const { x, y } = offset;
 
     const component = {
-        "id": frameID,
+        "frame": frameData,
         "shiftX": x,
         "shiftY": y
     };
@@ -113,7 +101,7 @@ ImageSheet.prototype.createPatternFrame = function(patternID) {
         const { x, y } = offset;
 
         const component = {
-            "id": id,
+            "frame": frameData,
             "shiftX": x + (shiftX ?? 0),
             "shiftY": y + (shiftY ?? 0)
         };

@@ -121,8 +121,8 @@ SpriteManager.prototype.drawSprite = function(sprite, context, viewportX, viewpo
     const animationFrame = animationType.getFrame(currentFrame);
 
     for(const component of animationFrame) {
-        const { id, shiftX, shiftY } = component;
-        const { x, y, w, h, offset } = spriteType.getFrameByID(id);
+        const { shiftX, shiftY, frame } = component;
+        const { x, y, w, h, offset } = frame;
         const renderX = localX - viewportX + offset.x + shiftX;
         const renderY = localY - viewportY + offset.y + shiftY;
 
