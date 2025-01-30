@@ -51,9 +51,7 @@ ImageSheet.prototype.load = function(config) {
 }
 
 ImageSheet.prototype.getFrameByID = function(frameID) {
-    const frame = this.frames[frameID];
-
-    return frame;
+    return this.frames[frameID];
 }
 
 ImageSheet.prototype.defineDefaultAnimation = function() {

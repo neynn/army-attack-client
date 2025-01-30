@@ -16,7 +16,7 @@ Sheet.prototype.removeReference = function() {
 
 Sheet.prototype.toBuffer = function() {
     if(this.isBuffered || !this.image) {
-        return false;
+        return;
     }
 
     const canvas = document.createElement("canvas");
@@ -38,8 +38,6 @@ Sheet.prototype.toBuffer = function() {
 
     this.buffer = canvas;
     this.isBuffered = true;
-
-    return true;
 }
 
 Sheet.prototype.getBuffer = function() {

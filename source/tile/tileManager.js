@@ -4,17 +4,34 @@ import { ImageManager } from "../resources/imageManager.js";
 
 export const TileManager = function() {
     this.resources = new ImageManager();
-    this.dynamicTileTypes = {};
+    this.dynamicAnimations = {};
     this.tileTypes = {};
     this.tileMeta = {};
+}
+
+TileManager.prototype.getTileFrame = function(tileID) {
+    const { set, animation } = this.getTileMeta(tileID);
+    const tileBuffer = this.resources.getImage(set);
+
+    if(!tileBuffer) {
+        return [];
+    }
+
+    const tileType = this.getTileType(set);
+    const tileAnimation = tileType.getAnimation(animation);
+    const currentFrame = tileAnimation.getCurrentFrame();
+
+    return currentFrame;
 }
 
 TileManager.prototype.load = function(tileTypes, tileMeta) {
     if(typeof tileTypes === "object") {
         this.loadTileTypes(tileTypes);
 
-        this.resources.loadImages(tileTypes,
-        (key, image) => this.resources.addReference(key),
+        this.resources.loadImages(tileTypes, (key, image, sheet) => {
+            sheet.toBuffer();
+            this.resources.addReference(key);
+        },
         (key, error) => console.error(key, error));
 
     } else {
@@ -33,20 +50,20 @@ TileManager.prototype.update = function(gameContext) {
     const { timer } = gameContext;
     const realTime = timer.getRealTime();
 
-    this.updateDynamicTileTypes(realTime);
+    this.updateDynamicAnimations(realTime);
 }
 
 TileManager.prototype.exit = function() {
     
 }
 
-TileManager.prototype.updateDynamicTileTypes = function(timestamp) {
-    for(const typeID in this.dynamicTileTypes) {
-        const dynamicTileType = this.tileTypes[typeID];
-        const dynamicAnimationList = this.dynamicTileTypes[typeID];
+TileManager.prototype.updateDynamicAnimations = function(timestamp) {
+    for(const typeID in this.dynamicAnimations) {
+        const tileType = this.tileTypes[typeID];
+        const animationIDs = this.dynamicAnimations[typeID];
 
-        for(const animationID of dynamicAnimationList) {
-            const animation = dynamicTileType.getAnimation(animationID);
+        for(const animationID of animationIDs) {
+            const animation = tileType.getAnimation(animationID);
             animation.updateFrameIndex(timestamp);
         }
     }
@@ -66,21 +83,25 @@ TileManager.prototype.invertTileMeta = function() {
 
 TileManager.prototype.loadTileTypes = function(tileTypes) {
     for(const typeID in tileTypes) {
-        this.dynamicTileTypes[typeID] = [];
-
         const tileType = tileTypes[typeID];
         const imageSheet = new ImageSheet(typeID);
 
         imageSheet.load(tileType);
         imageSheet.defineAnimations();
-        imageSheet.defineDefaultAnimation();
+        //imageSheet.defineDefaultAnimation();
 
         const animations = imageSheet.getAnimations();
 
         for(const [animationID, animation] of animations) {
-            if(animation.frameCount > 1) {
-                this.dynamicTileTypes[typeID].push(animationID);
+            if(animation.frameCount <= 1) {
+                continue;
             }
+
+            if(!this.dynamicAnimations[typeID]) {
+                this.dynamicAnimations[typeID] = [];
+            }
+
+            this.dynamicAnimations[typeID].push(animationID);
         }
 
         this.tileTypes[typeID] = imageSheet;

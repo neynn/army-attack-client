@@ -16,14 +16,14 @@ ImageManager.prototype.getPath = function(directory, source) {
 
 ImageManager.prototype.addImage = function(id, image) {
     if(this.images.has(id)) {
-        return false;
+        return null;
     }
 
     const sheet = new Sheet(id, image);
 
     this.images.set(id, sheet);
 
-    return true;
+    return sheet;
 }
 
 ImageManager.prototype.promiseHTMLImage = function(path) {
@@ -47,8 +47,8 @@ ImageManager.prototype.loadImages = function(imageMeta, onLoad, onError) {
 
         this.promiseHTMLImage(imagePath)
         .then(image => {
-            this.addImage(imageID, image);
-            onLoad(imageID, image);
+            const sheet = this.addImage(imageID, image);
+            onLoad(imageID, image, sheet);
         })
         .catch(error => onError(imageID, error));
     }
