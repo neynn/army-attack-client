@@ -1,8 +1,15 @@
 export const JSONManager = function() {
     this.files = new Map();
+    this.cacheEnabled = false;
 }
 
-JSONManager.FILE_CACHE_ENABLED = 1;
+JSONManager.prototype.enableCache = function() {
+    this.cacheEnabled = true;
+}
+
+JSONManager.prototype.disableCache = function() {
+    this.cacheEnabled = false;
+}
 
 JSONManager.prototype.getPath = function(directory, source) {
     const path = `${directory}/${source}`;
@@ -16,7 +23,7 @@ JSONManager.prototype.promiseJSON = function(path) {
 JSONManager.prototype.loadFileData = async function(meta) {
     const { id, directory, source } = meta;
 
-    if(JSONManager.FILE_CACHE_ENABLED) {
+    if(this.cacheEnabled) {
         const cachedMap = this.files.get(id);
 
         if(cachedMap) {
@@ -31,7 +38,7 @@ JSONManager.prototype.loadFileData = async function(meta) {
         return null;
     }
 
-    if(JSONManager.FILE_CACHE_ENABLED) {
+    if(this.cacheEnabled) {
         this.files.set(id, fileData);
     }
 

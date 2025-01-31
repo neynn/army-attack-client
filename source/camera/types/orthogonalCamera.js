@@ -145,16 +145,18 @@ OrthogonalCamera.prototype.drawEmptyTile = function(context, renderX, renderY, s
 
 OrthogonalCamera.prototype.drawTileOutlines = function(context, worldBounds) {
     const { startX, startY, endX, endY } = worldBounds;
+    const adjustedEndX = endX + 1;
+    const adjustedEndY = endY + 1;
     const LINE_SIZE = 2;
 
     context.fillStyle = OrthogonalCamera.MAP_OUTLINE_COLOR;
 
-    for(let i = startY; i <= endY + 1; i++) {
+    for(let i = startY; i <= adjustedEndY; i++) {
         const renderY = i * this.tileHeight - this.viewportY;
         context.fillRect(0, renderY, this.viewportWidth, LINE_SIZE);
     }
 
-    for (let j = startX; j <= endX + 1; j++) {
+    for (let j = startX; j <= adjustedEndX; j++) {
         const renderX = j * this.tileWidth - this.viewportX;
         context.fillRect(renderX, 0, LINE_SIZE, this.viewportHeight);
     }

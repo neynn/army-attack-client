@@ -9,6 +9,10 @@ export const WorldMap = function(id) {
     this.entities = new Map();
 }
 
+WorldMap.prototype.getGraphicsSettings = function() {
+    return this.meta.graphics;
+}
+
 WorldMap.prototype.setWidth = function(width) {
     this.width = width;
 }
@@ -127,9 +131,9 @@ WorldMap.prototype.setLayerOpacity = function(layerID, opacity) {
     }
 
     const clampedOpacity = clampValue(opacity, 1, 0);
-    const layerConfig = this.meta.layerConfig[layerID];
+    const layer = this.meta.graphics.layers[layerID];
 
-    layerConfig.opacity = clampedOpacity;
+    layer.opacity = clampedOpacity;
 } 
 
 WorldMap.prototype.resize = function(width, height) {

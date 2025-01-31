@@ -38,20 +38,23 @@ MapParser.createUint8LayerEmpty = function(fill = 0, width, height) {
     return layerBuffer;
 }
 
-MapParser.parseMap2D = function(mapID, layers, meta) {
+MapParser.parseMap2D = function(mapID, layerData, meta) {
     const map2D = new WorldMap(mapID);
     const parsedLayers = {};
 
     const { 
         width = 0,
         height = 0,
-        layerConfig = {}
+        graphics = {}
     } = meta;
 
-    for(const layerID in layerConfig) {
-        const { id } = layerConfig[layerID];
-        const layerData = layers[id];
-        const parsedLayerData = MapParser.createUint8Layer(layerData, width, height);
+    const { 
+        layers = {}
+    } = graphics;
+
+    for(const layerID in layers) {
+        const { id } = layers[layerID];
+        const parsedLayerData = MapParser.createUint8Layer(layerData[id], width, height);
 
         parsedLayers[id] = parsedLayerData;
     }
@@ -64,19 +67,23 @@ MapParser.parseMap2D = function(mapID, layers, meta) {
     return map2D;
 }
 
-MapParser.parseMap2DEmpty = function(mapID, layers, meta) {
+MapParser.parseMap2DEmpty = function(mapID, layerData, meta) {
     const map2D = new WorldMap(mapID);
     const parsedLayers = {};
 
     const { 
         width = 0,
         height = 0,
-        layerConfig = {},
+        graphics = {},
     } = meta;
 
-    for(const layerID in layerConfig) {
-        const { id } = layerConfig[layerID];
-        const { fill } = layers[id];
+    const {
+        layers = {}
+    } = graphics;
+
+    for(const layerID in layers) {
+        const { id } = layers[layerID];
+        const { fill } = layerData[id];
         const parsedLayerData = MapParser.createUint8LayerEmpty(fill, width, height);
 
         parsedLayers[id] = parsedLayerData;

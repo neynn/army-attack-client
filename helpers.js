@@ -39,6 +39,38 @@ export const packerToJSON = (id, packerFile) => {
   saveTemplateAsFile(`${id}.json`, meta);
 }
 
+const formatLayers = function(worldMap, onSave) {
+    const formattedLayers = [];
+    const layers = worldMap.getLayers();
+    const graphics = worldMap.getGraphicsSettings();
+
+	for(const layerID in layers) {
+        const layer = graphics.layers[layerID];
+
+		if(layer && layer.autoGenerate) {
+			continue;
+		}
+
+		formattedLayers.push(`"${layerID}": ${onSave(layers[layerID])}`);
+	}
+
+    return formattedLayers;
+}
+
+const formatLayerSettings = function(worldMap) {
+    const formattedConfig = [];
+    const { layers } = worldMap.getGraphicsSettings();
+
+    for(const layerID in layers) {
+        const layer = layers[layerID];
+        const { id, opacity, autoGenerate } = layer;
+
+        formattedConfig.push(`"${id}": { "id": "${id}", "opacity": ${opacity}, "autoGenerate": ${autoGenerate} }`);
+    }
+
+    return formattedConfig;
+}
+
 export const saveMap = function(mapID, map2D) {
     if(!map2D) {
         return `{ "ERROR": "MAP NOT LOADED! USE CREATE OR LOAD!" }`;
@@ -73,37 +105,21 @@ export const saveMap = function(mapID, map2D) {
         return result;
     }
 
-    const formattedConfig = [];
-
-    for(const layerID in map2D.meta.layerConfig) {
-        const layerConfig = map2D.meta.layerConfig[layerID];
-
-        formattedConfig.push(`"${layerConfig.id}": { "id": "${layerConfig.id}", "opacity": ${layerConfig.opacity}, "autoGenerate": ${layerConfig.autoGenerate} }`);
-    }
-
-	const formattedLayers = [];
-    const graphics = map2D.getLayers();
-
-	for(const layerID in graphics) {
-        const layerConfig = map2D.meta.layerConfig[layerID];
-
-		if(layerConfig && layerConfig.autoGenerate) {
-			continue;
-		}
-
-		formattedLayers.push(`"${layerID}": ${stringifyArray(graphics[layerID])}`);
-	}
+    const formattedConfig = formatLayerSettings(map2D);
+	const formattedLayers = formatLayers(map2D, stringifyArray);
       
     const downloadableString = 
 `{
     "music": "${map2D.meta.music}",
     "width": ${map2D.width},
     "height": ${map2D.height},
-    "layerConfig": {
-        ${formattedConfig.join(",\n        ")}
-    },
-    "background": ${JSON.stringify(map2D.meta.background)},
-    "foreground": ${JSON.stringify(map2D.meta.foreground)}
+    "graphics": {
+        "layers": {
+            ${formattedConfig.join(",\n            ")}
+        },
+        "background": ${JSON.stringify(map2D.meta.graphics.background)},
+        "foreground": ${JSON.stringify(map2D.meta.graphics.foreground)}
+    }
 }`;
 
     const downloadableLayers = 

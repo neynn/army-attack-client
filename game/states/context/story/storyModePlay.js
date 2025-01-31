@@ -3,6 +3,7 @@ import { State } from "../../../../source/state/state.js";
 import { ACTION_TYPES, CAMERA_TYPES } from "../../../enums.js";
 import { MapSystem } from "../../../systems/map.js";
 import { SpawnSystem } from "../../../systems/spawn.js";
+import { VersusSystem } from "../../../systems/versus.js";
 
 export const StoryModePlayState = function() {}
 
@@ -21,6 +22,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         return;
     }
 
+    console.log(VersusSystem.pickRandomMap(gameContext, 2));
     const controller = world.createController(gameContext, {
         "type": "Player",
         "team": "Allies",

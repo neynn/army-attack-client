@@ -79,11 +79,11 @@ ArmyCamera.prototype.update = function(gameContext, renderContext) {
         return;
     }
 
-    const { background, foreground, layerConfig } = worldMap.meta;
+    const { background, foreground, layers } = worldMap.getGraphicsSettings();
     const worldBounds = this.getWorldBounds();
 
     for(const layerID of background) {
-        this.drawLayer(gameContext, renderContext, worldMap, layerConfig[layerID], worldBounds);
+        this.drawLayer(gameContext, renderContext, worldMap, layers[layerID], worldBounds);
     }
     
     this.drawOverlay(gameContext, renderContext, ArmyCamera.OVERLAY_TYPE_MOVE);
@@ -92,7 +92,7 @@ ArmyCamera.prototype.update = function(gameContext, renderContext) {
     this.drawOverlay(gameContext, renderContext, ArmyCamera.OVERLAY_TYPE_RANGE);
 
     for(const layerID of foreground) {
-        this.drawLayer(gameContext, renderContext, worldMap, layerConfig[layerID], worldBounds);
+        this.drawLayer(gameContext, renderContext, worldMap, layers[layerID], worldBounds);
     }
 
     if((Renderer.DEBUG.VALUE & Renderer.DEBUG.MAP) !== 0) {
@@ -117,8 +117,8 @@ ArmyCamera.prototype.update = function(gameContext, renderContext) {
 }
 
 ArmyCamera.prototype.drawLayerData = function(context, worldBounds, worldMap, layerID, offsetX, offsetY) {
-    const layerConfig = worldMap.meta.layerConfig[layerID];
-    const { id, opacity } = layerConfig;
+    const { layers } = worldMap.getGraphicsSettings();
+    const { id, opacity } = layers[layerID];
 
     if(!opacity) {
         return;
@@ -151,8 +151,8 @@ ArmyCamera.prototype.drawOverlay = function(gameContext, renderContext, overlayI
     }
 }
 
-ArmyCamera.prototype.drawLayer = function(gameContext, renderContext, map2D, layerConfig, worldBounds) {
-    const { id, opacity } = layerConfig;
+ArmyCamera.prototype.drawLayer = function(gameContext, renderContext, map2D, layerSettings, worldBounds) {
+    const { id, opacity } = layerSettings;
 
     if(!opacity) {
         return;
