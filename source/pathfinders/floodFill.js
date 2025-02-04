@@ -21,49 +21,48 @@ FloodFill.getPositionKey = function(positionX, positionY) {
     return `${positionX}-${positionY}`;
 }
 
-FloodFill.getFirstEntry = function(map) {
-    return map.entries().next().value;
-}
-
 FloodFill.search = function(startX, startY, gLimit, mapWidth, mapHeight, onCheck) {
-    const openNodes = new Map();
-    const visitedNodes = new Set();
-    const startNode = FloodFill.createNode(0, startX, startY, null);
+    const queue = [];
     const allNodes = [];
+    const visitedNodes = new Set();
 
-    openNodes.set(FloodFill.getPositionKey(startNode.positionX, startNode.positionY), startNode);
+    const startNode = FloodFill.createNode(0, startX, startY, null);
+    const startKey = FloodFill.getPositionKey(startX, startY);
 
-    while(openNodes.size !== 0) {
-        const [nodeID, node] = FloodFill.getFirstEntry(openNodes);
+    queue.push(startNode);
+    visitedNodes.add(startKey);
+
+    while(queue.length !== 0) {
+        const node = queue.shift();
         const { g, positionX, positionY } = node;
 
-        openNodes.delete(nodeID);
-        visitedNodes.add(nodeID);
-
         if(g >= gLimit) {
-            return allNodes;
+            break;
         }
 
-        const children = [
-            FloodFill.createNode(g + 1, positionX, positionY - 1, node),
-            FloodFill.createNode(g + 1, positionX + 1, positionY, node),
-            FloodFill.createNode(g + 1, positionX, positionY + 1, node),
-            FloodFill.createNode(g + 1, positionX - 1, positionY, node),
+        const neighbors = [
+            { x: positionX, y: positionY - 1 },
+            { x: positionX + 1, y: positionY },
+            { x: positionX, y: positionY + 1 },
+            { x: positionX - 1, y: positionY }
         ];
 
-        for(const childNode of children) {
-            const { positionX, positionY } = childNode;
-            const isChildInBounds = FloodFill.isNodeInBounds(positionX, positionY, mapWidth, mapHeight);
-            const childKey = FloodFill.getPositionKey(positionX, positionY);
+        for(let i = 0; i < neighbors.length; i++) {
+            const neighbor = neighbors[i];
+            const { x, y } = neighbor;
+            const key = FloodFill.getPositionKey(x, y);
 
-            if(!isChildInBounds || visitedNodes.has(childKey) || openNodes.has(childKey)) {
+            if (!FloodFill.isNodeInBounds(x, y, mapWidth, mapHeight) || visitedNodes.has(key)) {
                 continue;
             }
 
+            const childNode = FloodFill.createNode(g + 1, x, y, node);
+
             allNodes.push(childNode);
+            visitedNodes.add(key);
 
             if(onCheck(childNode, node) === FloodFill.USE_NEXT) {
-                openNodes.set(childKey, childNode);
+                queue.push(childNode);
             }
         }
     }
@@ -83,6 +82,7 @@ FloodFill.walkTree = function(node, walkedNodes) {
 
 FloodFill.flatten = function(mainNode) {
     const walkedNodes = [];
+    
     return FloodFill.walkTree(mainNode, walkedNodes);
 }
 
