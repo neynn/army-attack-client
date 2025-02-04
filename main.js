@@ -5,24 +5,13 @@ import { ArmyContext } from "./game/armyContext.js";
 const gameContext = new ArmyContext();
 const resourceManager = new ResourceManager();
 
-resourceManager.loadMain("assets", "assets.json").then(async files => {
-    const fontPromises = [];
+const files = await resourceManager.promiseJSON("assets/assets.json");
+const resources = await resourceManager.loadJSONList(files);
 
-    for(const fontID in files.fonts) {
-		const fontMeta = files.fonts[fontID];
-		const fontPromise = resourceManager.loadCSSFont(fontMeta);
-
-		fontPromises.push(fontPromise);
-    }
-
-    await Promise.allSettled(fontPromises);
-    
-    return files;
-}).then(resources => {
-  gameContext.loadResources(resources);
-  gameContext.initialize(resources);
-  gameContext.start();
-  console.log(resources);
+resourceManager.loadFontList(resources.fonts).then(() => {
+	gameContext.loadResources(resources);
+	gameContext.initialize(resources);
+	gameContext.start();
 });
 
-console.log(gameContext);
+console.log(files, resources, gameContext, resourceManager);

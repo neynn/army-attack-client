@@ -12,43 +12,51 @@ ResourceManager.prototype.promiseJSON = function(path) {
     return fetch(path).then(response => response.json()).catch(error => null);
 }
 
+ResourceManager.prototype.addFont = function(id, font) {
+    if(this.fonts.has(id)) {
+        return;
+    }
+
+    this.fonts.set(id, font);
+
+    document.fonts.add(font);
+}
+
 ResourceManager.prototype.loadCSSFont = function(meta) {
     const { id, directory, source } = meta;
     const path = this.getPath(directory, source);
     const fontFace = new FontFace(id, `url(${path})`);
 
-    return fontFace.load().then(font => {
-        this.fonts.set(id, font);
-
-        document.fonts.add(font);
-    });
+    return fontFace.load().then(font => this.addFont(id, font));
 }
 
-ResourceManager.prototype.loadMain = async function(directory, source) {
-    const promises = [];
-    const fileIDs = [];
-    const mainPath = this.getPath(directory, source);
-    const mainFile = await this.promiseJSON(mainPath);
+ResourceManager.prototype.loadFontList = async function(fontList) {
+	const promises = [];
 
-    for(const fileID in mainFile) {
-        const fileMeta = mainFile[fileID];
+	for(const fontID in fontList) {
+		const fontMeta = fontList[fontID];
+        const promise = this.loadCSSFont(fontMeta)
+
+		promises.push(promise);
+	}
+
+	await Promise.allSettled(promises);
+}
+
+ResourceManager.prototype.loadJSONList = async function(fileList) {
+    const files = {};
+    const promises = [];
+
+    for(const fileID in fileList) {
+        const fileMeta = fileList[fileID];
         const { id, directory, source } = fileMeta;
         const path = this.getPath(directory, source);
-        const file = this.promiseJSON(path);
+        const promise = this.promiseJSON(path).then(file => files[id] = file);
 
-        fileIDs.push(id);
-        promises.push(file);
+        promises.push(promise);
     }
 
-    const files = {};
-    const results = await Promise.allSettled(promises);
-
-    for(let i = 0; i < results.length; i++) {
-        const result = results[i];
-        const fileID = fileIDs[i];
-
-        files[fileID] = result.value;
-    }
+    await Promise.allSettled(promises);
 
     return files;
 }

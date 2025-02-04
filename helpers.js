@@ -51,7 +51,7 @@ const formatLayers = function(worldMap, onSave) {
 			continue;
 		}
 
-		formattedLayers.push(`"${layerID}": ${onSave(layers[layerID])}`);
+		formattedLayers.push(`"${layerID}": ${onSave(worldMap.width, worldMap.height, layers[layerID])}`);
 	}
 
     return formattedLayers;
@@ -71,38 +71,38 @@ const formatLayerSettings = function(worldMap) {
     return formattedConfig;
 }
 
-export const saveMap = function(mapID, map2D) {
-    if(!map2D) {
-        return `{ "ERROR": "MAP NOT LOADED! USE CREATE OR LOAD!" }`;
-    }
-  
-    const stringifyArray = (array) => {
-        let result = `[\n        `;
+const stringifyArray = (width, height, array) => {
+    let result = `[\n        `;
 
-        for (let i = 0; i < map2D.height; i++) {
-            let row = ``;
+    for (let i = 0; i < height; i++) {
+        let row = ``;
 
-            for (let j = 0; j < map2D.width; j++) {
-                const element = array[i * map2D.width + j];
-                const jsonElement = JSON.stringify(element);
-                
-                row += jsonElement;
+        for (let j = 0; j < width; j++) {
+            const element = array[i * width + j];
+            const jsonElement = JSON.stringify(element);
+            
+            row += jsonElement;
 
-                if(j < map2D.width - 1) {
-                    row += `,`
-                }
-            }
-
-            result += row;
-
-            if (i < map2D.height - 1) {
-                result += `,\n        `;
+            if(j < width - 1) {
+                row += `,`
             }
         }
 
-        result += `\n    ]`;
-        
-        return result;
+        result += row;
+
+        if (i < height - 1) {
+            result += `,\n        `;
+        }
+    }
+
+    result += `\n    ]`;
+    
+    return result;
+}
+
+export const saveMap = function(mapID, map2D) {
+    if(!map2D) {
+        return `{ "ERROR": "MAP NOT LOADED! USE CREATE OR LOAD!" }`;
     }
 
     const formattedConfig = formatLayerSettings(map2D);

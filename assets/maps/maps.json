@@ -3,7 +3,7 @@
         "id": "pvp_valleys",
         "directory": "assets/maps/pvp",
         "source": "valleys.json",
-        "music": "music_desertscorpion",
+        "music": "music_polarbear",
         "disablePassing": false,
         "disableBorder": false,
         "width": 11,
