@@ -151,7 +151,7 @@
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
         "stats": {
-            "story": { "health": 15, "damage": 3, "attackRange": 1, "moveRange": 5, "traits": ["Armor"] }, 
+            "story": { "health": 15, "damage": 3, "attackRange": 1, "moveRange": 6, "traits": ["Armor"] }, 
             "versus": { "health": 15, "damage": 3, "attackRange": 1, "moveRange": 5, "traits": ["Armor"] }
         },
         "sprites": {
@@ -2903,7 +2903,7 @@
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
         "stats": {
-            "story": { "health": 20, "damage": 3, "attackRange": 1, "moveRange": 5, "traits": ["Armor"] }, 
+            "story": { "health": 20, "damage": 3, "attackRange": 1, "moveRange": 4, "traits": ["Armor"] }, 
             "versus": { "health": 20, "damage": 3, "attackRange": 1, "moveRange": 5, "traits": ["Armor"] }
         },
         "sprites": {
