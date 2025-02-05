@@ -130,7 +130,8 @@ PathfinderSystem.generateMovePath = function(nodeList, targetX, targetY) {
             const deltaY = flatTree[i - 1].positionY - flatTree[i].positionY;
             const direction = {
                 "deltaX": deltaX,
-                "deltaY": deltaY
+                "deltaY": deltaY,
+                "speed": Math.sqrt(deltaX * deltaX + deltaY * deltaY)
             };
     
             path.push(direction);
