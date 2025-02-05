@@ -154,9 +154,9 @@ UIManager.prototype.updateElementCollisions = function(mouseX, mouseY, mouseRang
         const isPreviousCollision = this.previousCollisions.has(elementUID);
 
         if(isPreviousCollision) {
-            element.events.emit(UIElement.EVENT_COLLISION, mouseX, mouseY, mouseRange);
+            element.events.emit(UIElement.EVENT.COLLISION, mouseX, mouseY, mouseRange);
         } else {
-            element.events.emit(UIElement.EVENT_FIRST_COLLISION, mouseX, mouseY, mouseRange);
+            element.events.emit(UIElement.EVENT.FIRST_COLLISION, mouseX, mouseY, mouseRange);
         }
 
         currentCollisions.add(elementUID);
@@ -168,7 +168,7 @@ UIManager.prototype.updateElementCollisions = function(mouseX, mouseY, mouseRang
         if(!isCurrentCollision) {
             const element = this.getElementByID(elementUID);
 
-            element.events.emit(UIElement.EVENT_FINAL_COLLISION, mouseX, mouseY, mouseRange);
+            element.events.emit(UIElement.EVENT.FINAL_COLLISION, mouseX, mouseY, mouseRange);
         }
     }
 

@@ -1,4 +1,3 @@
-import { EventEmitter } from "../events/eventEmitter.js";
 import { clampValue } from "../math/math.js";
 import { Rectangle } from "../math/rect.js";
 import { Vec2 } from "../math/vec2.js";
@@ -12,7 +11,6 @@ export const Drawable = function(id = null, DEBUG_NAME = "Drawable") {
     this.isVisible = true;
     this.position = new Vec2(0, 0);
     this.bounds = new Rectangle(0, 0, 0, 0);
-    this.events = new EventEmitter();
 
     if(id === null) {
         console.warn(`Drawable (${DEBUG_NAME}) has no id!`);
@@ -30,7 +28,7 @@ Drawable.prototype.onDebug = function(context, viewportX, viewportY, localX, loc
 Drawable.prototype.update = function(timestamp, deltaTime) {
     const updateStack = [this];
 
-    while(updateStack.length > 0) {
+    while(updateStack.length !== 0) {
         const drawable = updateStack.pop();
         const children = drawable.getChildren();
 
@@ -51,7 +49,7 @@ Drawable.prototype.debug = function(context, viewportX, viewportY) {
         "localY": this.position.y
     }];
 
-    while(debugStack.length > 0) {
+    while(debugStack.length !== 0) {
         const { drawable, localX, localY } = debugStack.pop();
         const children = drawable.getChildren();
 
@@ -83,7 +81,7 @@ Drawable.prototype.draw = function(context, viewportX, viewportY) {
         "localY": this.position.y
     }];
 
-    while(drawStack.length > 0) {
+    while(drawStack.length !== 0) {
         const { drawable, localX, localY } = drawStack.pop();
         const children = drawable.getChildren();
 
@@ -110,7 +108,7 @@ Drawable.prototype.getFamilyStack = function() {
     const familyStack = [];
     const stack = [this];
 
-    while(stack.length > 0) {
+    while(stack.length !== 0) {
         const drawable = stack.pop();
         const drawableID = drawable.getID();
         const children = drawable.getChildren();

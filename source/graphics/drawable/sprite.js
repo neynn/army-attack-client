@@ -15,16 +15,14 @@ export const Sprite = function(id, DEBUG_NAME) {
     this.isRepeating = true;
     this.isStatic = false;
     this.isFlipped = false;
-
-    this.events.listen(Sprite.EVENT_TERMINATE);
-    this.events.listen(Sprite.EVENT_LOOP_COMPLETE);
 }
-
-Sprite.EVENT_TERMINATE = "EVENT_TERMINATE";
-Sprite.EVENT_LOOP_COMPLETE = "EVENT_LOOP_COMPLETE";
 
 Sprite.prototype = Object.create(Drawable.prototype);
 Sprite.prototype.constructor = Sprite;
+
+Sprite.prototype.onTerminate = function() {
+    console.warn(`Method onTerminate has not been implemented by sprite ${this.id}`);
+}
 
 Sprite.prototype.initialize = function(typeID, animationID, frameCount, frameTime) {
     this.typeID = typeID;
@@ -113,7 +111,7 @@ Sprite.prototype.setFrame = function(frameIndex = this.currentFrame) {
 Sprite.prototype.terminate = function() {
     this.hide();
     this.freeze();
-    this.events.emit(Sprite.EVENT_TERMINATE, this);
+    this.onTerminate();
 }
 
 Sprite.prototype.repeat = function() {
@@ -155,9 +153,9 @@ Sprite.prototype.updateFrame = function(floatFrames = 0) {
 
     if(this.floatFrame >= this.frameCount) {
         const skippedLoops = Math.floor(this.floatFrame / this.frameCount);
+
         this.floatFrame -= this.frameCount * skippedLoops;
         this.loopCount += skippedLoops;
-        this.events.emit(Sprite.EVENT_LOOP_COMPLETE, this, skippedLoops);
     }
 
     if(this.loopCount > this.loopLimit && !this.isRepeating) {

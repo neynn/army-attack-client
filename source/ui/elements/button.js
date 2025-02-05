@@ -40,8 +40,8 @@ Button.prototype.loadFromConfig = function(config) {
     this.setPosition(x, y);
     this.setOpacity(opacity);
 
-    this.events.subscribe(UIElement.EVENT_FIRST_COLLISION, this.DEBUG_NAME, () => this.highlight.enable());
-    this.events.subscribe(UIElement.EVENT_FINAL_COLLISION, this.DEBUG_NAME, () => this.highlight.disable());
+    this.events.subscribe(UIElement.EVENT.FIRST_COLLISION, this.DEBUG_NAME, () => this.highlight.enable());
+    this.events.subscribe(UIElement.EVENT.FINAL_COLLISION, this.DEBUG_NAME, () => this.highlight.disable());
 
     switch(shape) {
         case Button.SHAPE_RECTANGLE: {

@@ -2,7 +2,6 @@ import { IDGenerator } from "../idGenerator.js";
 import { Logger } from "../logger.js";
 import { ImageSheet } from "./imageSheet.js";
 import { Sprite } from "./drawable/sprite.js";
-import { EventEmitter } from "../events/eventEmitter.js";
 import { ImageManager } from "../resources/imageManager.js";
 
 export const SpriteManager = function() {
@@ -92,8 +91,8 @@ SpriteManager.prototype.createSprite = function(typeID, layerID = null, animatio
     const sprite = new Sprite(spriteID, typeID);
     
     sprite.onDraw = (context, viewportX, viewportY, localX, localY) => this.drawSprite(sprite, context, viewportX, viewportY, localX, localY);
+    sprite.onTerminate = () => this.destroySprite(spriteID);
     sprite.setLastCallTime(this.timestamp);
-    sprite.events.subscribe(Sprite.EVENT_TERMINATE, EventEmitter.SUPER_ID, (sprite) => this.destroySprite(sprite.id));
 
     this.sprites.set(sprite.id, sprite);
 
@@ -144,34 +143,31 @@ SpriteManager.prototype.drawSprite = function(sprite, context, viewportX, viewpo
 
 SpriteManager.prototype.destroySprite = function(spriteID) {
     const sprite = this.sprites.get(spriteID);
-    const otherDrawables = [];
+    const unknownElements = [];
 
     if(!sprite) {
         Logger.log(false, "Sprite does not exist!", "SpriteManager.prototype.destroySprite", { spriteID });
-        return otherDrawables;
+        return unknownElements;
     }
     
     const familyStack = sprite.getFamilyStack();
 
     for(let i = familyStack.length - 1; i >= 0; i--) {
-        const drawableID = familyStack[i];
-        const sprite = this.sprites.get(drawableID);
+        const id = familyStack[i];
+        const sprite = this.sprites.get(id);
 
         if(!sprite) {
-            otherDrawables.push(drawableID);
+            unknownElements.push(id);
             continue;
         }
 
         sprite.closeFamily();
 
-        for(const layerID in this.layers) {
-            this.removeFromLayer(sprite, layerID);
-        }
-
-        this.sprites.delete(drawableID);
+        this.removeSpriteFromLayers(sprite);
+        this.sprites.delete(id);
     }
 
-    return otherDrawables;
+    return unknownElements;
 }
 
 SpriteManager.prototype.getSprite = function(spriteID) {
@@ -202,22 +198,16 @@ SpriteManager.prototype.addToLayer = function(layerID, sprite) {
     layer.push(sprite);
 }
 
-SpriteManager.prototype.removeFromLayer = function(sprite, layerID) {
-    const layer = this.layers[layerID];
+SpriteManager.prototype.removeSpriteFromLayers = function(sprite) {
+    for(const layerID in this.layers) {
+        const layer = this.layers[layerID];
+        const index = layer.findIndex(member => member.id === sprite.id);
 
-    if(!layer) {
-        Logger.log(false, "Layer does not exist!", "SpriteManager.prototype.removeFromLayer", { layerID });
-        return;
+        if(index !== -1) {
+            layer[index] = layer[layer.length - 1];
+            layer.pop();
+        }
     }
-
-    const index = layer.findIndex(member => member.id === sprite.id);
-
-    if(index === -1) {
-        Logger.log(false, "Sprite does not exist on layer!", "SpriteManager.prototype.removeFromLayer", { layerID });
-        return;
-    }
-
-    layer.splice(index, 1);
 }
 
 SpriteManager.prototype.updateSprite = function(spriteID, typeID, animationID = ImageSheet.DEFAULT_ANIMATION_ID) {

@@ -1,16 +1,20 @@
+import { EventEmitter } from "../events/eventEmitter.js";
 import { Drawable } from "../graphics/drawable.js";
 
 export const UIElement = function(id, DEBUG_NAME) {
     Drawable.call(this, id, DEBUG_NAME);
     
-    this.events.listen(UIElement.EVENT_FIRST_COLLISION);
-    this.events.listen(UIElement.EVENT_FINAL_COLLISION);
-    this.events.listen(UIElement.EVENT_COLLISION);
+    this.events = new EventEmitter();
+    this.events.listen(UIElement.EVENT.FIRST_COLLISION);
+    this.events.listen(UIElement.EVENT.FINAL_COLLISION);
+    this.events.listen(UIElement.EVENT.COLLISION);
 }
 
-UIElement.EVENT_FINAL_COLLISION = "EVENT_FINAL_COLLISION";
-UIElement.EVENT_FIRST_COLLISION = "EVENT_FIRST_COLLISION";
-UIElement.EVENT_COLLISION = "EVENT_COLLISION";
+UIElement.EVENT = {
+    "FINAL_COLLISION": "FINAL_COLLISION",
+    "FIRST_COLLISION": "FIRST_COLLISION",
+    "COLLISION": "COLLISION"
+};
 
 UIElement.prototype = Object.create(Drawable.prototype);
 UIElement.prototype.constructor = UIElement;
@@ -33,7 +37,7 @@ UIElement.prototype.getCollisions = function(mouseX, mouseY, mouseRange) {
         "localY": mouseY
     });
 
-    while(uncheckedElements.length > 0) {
+    while(uncheckedElements.length !== 0) {
         const { element, localX, localY } = uncheckedElements.pop();
         const isColliding = element.isColliding(localX, localY, mouseRange);
 

@@ -40,14 +40,14 @@ MainMenuState.prototype.onEnter = function(stateMachine) {
     buttonVersus.addChild(spriteVersus, "TEST");
     buttonEdit.addChild(spriteEdit, "TEST")
 
-    buttonPlay.events.subscribe(UIElement.EVENT_FIRST_COLLISION, "TEST", () => spriteManager.updateSprite(spritePlay.getID(), "blue_battletank_aim"));
-    buttonPlay.events.subscribe(UIElement.EVENT_FINAL_COLLISION, "TEST", () => spriteManager.updateSprite(spritePlay.getID(), "blue_battletank_idle"));
+    buttonPlay.events.subscribe(UIElement.EVENT.FIRST_COLLISION, "TEST", () => spriteManager.updateSprite(spritePlay.getID(), "blue_battletank_aim"));
+    buttonPlay.events.subscribe(UIElement.EVENT.FINAL_COLLISION, "TEST", () => spriteManager.updateSprite(spritePlay.getID(), "blue_battletank_idle"));
 
-    buttonVersus.events.subscribe(UIElement.EVENT_FIRST_COLLISION, "TEST", () => spriteManager.updateSprite(spriteVersus.getID(), "red_battletank_aim"));
-    buttonVersus.events.subscribe(UIElement.EVENT_FINAL_COLLISION, "TEST", () => spriteManager.updateSprite(spriteVersus.getID(), "red_battletank_idle"));
+    buttonVersus.events.subscribe(UIElement.EVENT.FIRST_COLLISION, "TEST", () => spriteManager.updateSprite(spriteVersus.getID(), "red_battletank_aim"));
+    buttonVersus.events.subscribe(UIElement.EVENT.FINAL_COLLISION, "TEST", () => spriteManager.updateSprite(spriteVersus.getID(), "red_battletank_idle"));
 
-    buttonEdit.events.subscribe(UIElement.EVENT_FIRST_COLLISION, "TEST", () => spriteManager.updateSprite(spriteEdit.getID(), "blue_elite_battery_aim"));
-    buttonEdit.events.subscribe(UIElement.EVENT_FINAL_COLLISION, "TEST", () => spriteManager.updateSprite(spriteEdit.getID(), "blue_elite_battery_idle"));
+    buttonEdit.events.subscribe(UIElement.EVENT.FIRST_COLLISION, "TEST", () => spriteManager.updateSprite(spriteEdit.getID(), "blue_elite_battery_aim"));
+    buttonEdit.events.subscribe(UIElement.EVENT.FINAL_COLLISION, "TEST", () => spriteManager.updateSprite(spriteEdit.getID(), "blue_elite_battery_idle"));
 }
 
 MainMenuState.prototype.onExit = function(stateMachine) {
