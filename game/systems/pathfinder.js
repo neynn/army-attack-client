@@ -50,7 +50,7 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
     const teamLayerID = layerTypes["Team"].layerID;
     const typeLayerID = layerTypes["Type"].layerID;
 
-    const nodeList = FloodFill.search(positionComponent.tileX, positionComponent.tileY, moveComponent.range, activeMap.width, activeMap.height, (next, current) => {
+    const nodeList = FloodFill.search_cross(positionComponent.tileX, positionComponent.tileY, moveComponent.range, activeMap.width, activeMap.height, (next, current) => {
         const nextTypeID = activeMap.getTile(typeLayerID, next.positionX, next.positionY);
         const nextTileType = tileTypes[nextTypeID];
         const isNextPassable = moveComponent.hasPassability(nextTileType.passability);

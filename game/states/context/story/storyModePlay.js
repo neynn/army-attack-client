@@ -16,7 +16,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
     const { uiManager, world, renderer } = gameContext;
     const { actionQueue } = world;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
-    const worldMap = await world.loadMapByID("pvp_valleys");
+    const worldMap = await world.loadMapByID("mtn");
 
     if(!worldMap) {
         return;
@@ -29,7 +29,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "id": "neyn"
     });
 
-    camera.centerWorld();
+    //camera.centerWorld();
     camera.bindViewport();
     camera.focusOn(controller.getID());
 
@@ -47,7 +47,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
     });
 
     SpawnSystem.createEntity(gameContext, { 
-        "type": "neyn_war_machine",
+        "type": "blue_elite_commando",
         "mode": "story",
         "tileX": 6,
         "tileY": 5,
