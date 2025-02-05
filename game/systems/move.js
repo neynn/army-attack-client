@@ -16,7 +16,8 @@ MoveSystem.updatePath = function(gameContext, entity) {
 
     if(!moveComponent.isPathEmpty()) {
         const { deltaX, deltaY } = moveComponent.getCurrentStep();
-        const moveSpeed = moveComponent.speed * deltaTime;
+        const speedScale = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        const moveSpeed = moveComponent.speed * deltaTime / speedScale;
 
         positionComponent.positionX += deltaX * moveSpeed;
         positionComponent.positionY += deltaY * moveSpeed;

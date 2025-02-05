@@ -5,7 +5,7 @@ FloodFill.USE_NEXT = 1;
 
 FloodFill.NEIGHBOR_COST = {
     "STRAIGHT": 1,
-    "CROSS": 2
+    "CROSS": 1.5
 };
 
 FloodFill.createNode = function(cost, positionX, positionY, parent) {
