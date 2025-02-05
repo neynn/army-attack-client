@@ -52,17 +52,15 @@ FloodFill.search = function(startX, startY, gLimit, mapWidth, mapHeight, onCheck
             const { x, y } = neighbor;
             const key = FloodFill.getPositionKey(x, y);
 
-            if (!FloodFill.isNodeInBounds(x, y, mapWidth, mapHeight) || visitedNodes.has(key)) {
-                continue;
-            }
+            if(!visitedNodes.has(key) && FloodFill.isNodeInBounds(x, y, mapWidth, mapHeight)) {
+                const childNode = FloodFill.createNode(g + 1, x, y, node);
 
-            const childNode = FloodFill.createNode(g + 1, x, y, node);
-
-            allNodes.push(childNode);
-            visitedNodes.add(key);
-
-            if(onCheck(childNode, node) === FloodFill.USE_NEXT) {
-                queue.push(childNode);
+                allNodes.push(childNode);
+                visitedNodes.add(key);
+    
+                if(onCheck(childNode, node) === FloodFill.USE_NEXT) {
+                    queue.push(childNode);
+                }
             }
         }
     }
@@ -70,28 +68,22 @@ FloodFill.search = function(startX, startY, gLimit, mapWidth, mapHeight, onCheck
     return allNodes;
 }
 
-FloodFill.walkTree = function(node, walkedNodes) {
-    walkedNodes.push(node);
-
-    if(node.parent === null) {
-        return walkedNodes;
-    }
-
-    return FloodFill.walkTree(node.parent, walkedNodes);
-}
-
-FloodFill.flatten = function(mainNode) {
+FloodFill.walkTree = function(startNode) {
+    const nodeStack = [startNode];
     const walkedNodes = [];
-    
-    return FloodFill.walkTree(mainNode, walkedNodes);
-}
 
-FloodFill.reverse = function(flatTree) {
-    const list = [];
+    while(nodeStack.length !== 0) {
+        const node = nodeStack.pop();
+        const { parent } = node;
 
-    for(let i = flatTree.length - 1; i >= 0; i--) {
-        list.push(flatTree[i]);
+        walkedNodes.push(node);
+
+        if(parent === null) {
+            break;
+        }
+
+        nodeStack.push(parent);
     }
 
-    return list;
+    return walkedNodes;
 }

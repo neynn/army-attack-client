@@ -122,7 +122,7 @@ PathfinderSystem.generateMovePath = function(nodeList, targetX, targetY) {
         }
 
         const path = [];
-        const flatTree = FloodFill.flatten(targetNode);
+        const flatTree = FloodFill.walkTree(targetNode);
 
         // i = 1 to exclude the origin point!
         for(let i = 1; i < flatTree.length; i++) {
