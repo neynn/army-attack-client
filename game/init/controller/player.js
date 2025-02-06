@@ -17,17 +17,15 @@ import { MorphSystem } from "../../systems/morph.js";
 import { DirectionSystem } from "../../systems/direction.js";
 import { HealthComponent } from "../../components/health.js";
 import { MoveComponent } from "../../components/move.js";
+import { ControllerHover } from "./hover.js";
 
 export const PlayerController = function(id) {
     EntityController.call(this, id);
 
     this.spriteID = null;
     this.teamID = null;
-    this.hoveredEntity = null;
-    this.nodeList = new Map();
     this.attackers = new Set();
-    this.tileX = -1;
-    this.tileY = -1;
+    this.hover = new ControllerHover();
 }
 
 PlayerController.prototype = Object.create(EntityController.prototype);
@@ -119,73 +117,69 @@ PlayerController.prototype.isEntityAttackable = function(gameContext, entity) {
     return isEnemy;
 }
 
-PlayerController.prototype.isCursorNodeValid = function() {
-    const nodeKey = `${this.tileX}-${this.tileY}`;
-    const hasNode =  this.nodeList.has(nodeKey);
-
-    return hasNode;
-}
-
-PlayerController.prototype.showSelectEntity = function(gameContext, entity) {
+PlayerController.prototype.addNodeOverlays = function(gameContext, nodeList) {
     const { tileManager, world, renderer } = gameContext;
     const DEBUG = world.getConfig("DEBUG");
-    const nodeList = new Map();
-    const entityID = entity.getID();
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
-    const nodes = PathfinderSystem.generateNodeList(gameContext, entity);
     const enableTileID = tileManager.getTileID("overlay", "grid_enabled_1x1");
     const attackTileID = tileManager.getTileID("overlay", "grid_attack_1x1");
 
-    for(const node of nodes) {
+    for(const node of nodeList) {
         const { positionX, positionY, state } = node;
-        const nodeKey = `${positionX}-${positionY}`;
 
         if(state !== PathfinderSystem.NODE_STATE.VALID) {
             if(DEBUG["SHOW_INVALID_MOVE_TILES"]) {
                 camera.addOverlay(ArmyCamera.OVERLAY_TYPE_MOVE, positionX, positionY, attackTileID);
             }
-            continue;
+
+        } else {
+            const tileEntity = world.getTileEntity(positionX, positionY);
+
+            if(!tileEntity) {
+                camera.addOverlay(ArmyCamera.OVERLAY_TYPE_MOVE, positionX, positionY, enableTileID);
+            }
         } 
-
-        const tileEntity = world.getTileEntity(positionX, positionY);
-
-        if(!tileEntity) {
-            camera.addOverlay(ArmyCamera.OVERLAY_TYPE_MOVE, positionX, positionY, enableTileID);
-            nodeList.set(nodeKey, node);
-            continue;
-        }
     }
+}
 
-    this.nodeList = nodeList;
+PlayerController.prototype.onClick = function(gameContext) {
+    this.states.eventEnter(gameContext);
+}
+
+PlayerController.prototype.onSelectEntity = function(gameContext, entity) {
+    const entityID = entity.getID();
+    const nodeList = PathfinderSystem.generateNodeList(gameContext, entity);
+
+    this.hover.updateNodes(gameContext, nodeList);
+    this.addNodeOverlays(gameContext, nodeList);
     this.selectSingle(entityID);
-
+    
     AnimationSystem.playSelect(gameContext, entity);
 }
 
-PlayerController.prototype.undoShowSelectEntity = function(gameContext, entity) {
+PlayerController.prototype.onDeselectEntity = function(gameContext, entity) {
     const { renderer } = gameContext;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
 
     camera.clearOverlay(ArmyCamera.OVERLAY_TYPE_MOVE);
 
     this.deselectAll();
-    this.nodeList.clear();
+    this.hover.clearNodes();
 
     AnimationSystem.stopSelect(gameContext, entity);
 }
 
 PlayerController.prototype.updateHoverSprite = function(gameContext) {
-    const { spriteManager, world } = gameContext;
-    const { entityManager } = world;
+    const { spriteManager } = gameContext;
     const sprite = spriteManager.getSprite(this.spriteID);
 
-    if(this.hoveredEntity === null) {
+    if(!this.hover.isHoveringOnEntity()) {
         sprite.hide();
         return;
     }
 
-    const hoverEntity = entityManager.getEntity(this.hoveredEntity);
-    const spriteKey = `${hoverEntity.config.dimX}-${hoverEntity.config.dimY}`;
+    const hoveredEntity = this.hover.getEntity(gameContext);
+    const spriteKey = `${hoveredEntity.config.dimX}-${hoveredEntity.config.dimY}`;
     const spriteTypeID = this.attackers.size > 0 ? "attack" : "select"; 
     const spriteType = this.config.sprites[spriteTypeID][spriteKey];
 
@@ -196,22 +190,23 @@ PlayerController.prototype.updateHoverSprite = function(gameContext) {
 }
 
 PlayerController.prototype.regulateSpritePosition = function(gameContext) {
-    const { spriteManager, renderer, world } = gameContext;
-    const { entityManager } = world;
+    const { spriteManager, renderer } = gameContext;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
     const sprite = spriteManager.getSprite(this.spriteID);
 
-    if(this.hoveredEntity !== null) {
-        const entity = entityManager.getEntity(this.hoveredEntity);
-        const positionComponent = entity.getComponent(PositionComponent);
-        const centerPosition = camera.transformTileToPositionCenter(positionComponent.tileX, positionComponent.tileY);
-
-        sprite.setPosition(centerPosition.x, centerPosition.y);
-    } else {
-        const centerPosition = camera.transformTileToPositionCenter(this.tileX, this.tileY);
+    if(!this.hover.isHoveringOnEntity()) {
+        const centerPosition = camera.transformTileToPositionCenter(this.hover.tileX, this.hover.tileY);
 
         sprite.setPosition(centerPosition.x, centerPosition.y); 
+        
+        return;
     }
+
+    const hoverEntity = this.hover.getEntity(gameContext);
+    const positionComponent = hoverEntity.getComponent(PositionComponent);
+    const centerPosition = camera.transformTileToPositionCenter(positionComponent.tileX, positionComponent.tileY);
+
+    sprite.setPosition(centerPosition.x, centerPosition.y);
 }
 
 PlayerController.prototype.addDragEvent = function(gameContext) {
@@ -235,7 +230,7 @@ PlayerController.prototype.addClickEvent = function(gameContext) {
         const clickedElements = uiManager.getCollidedElements(cursor.position.x, cursor.position.y, cursor.radius);
 
         if(clickedElements.length === 0) {
-            this.states.eventEnter(gameContext);
+            this.onClick(gameContext);
         }
     });
 }
@@ -261,18 +256,6 @@ PlayerController.prototype.onCreate = function(gameContext, payload) {
 }
 
 PlayerController.prototype.update = function(gameContext) {
-    const { world } = gameContext;
-    const { x, y } = gameContext.getMouseTile();
-    const mouseEntity = world.getTileEntity(x, y);
-
-    if(!mouseEntity) {
-        this.hoveredEntity = null;
-    } else {
-        const mouseEntityID = mouseEntity.getID();
-        this.hoveredEntity = mouseEntityID;
-    }
-
-    this.tileX = x;
-    this.tileY = y;
+    this.hover.update(gameContext);
     this.states.update(gameContext);
 }

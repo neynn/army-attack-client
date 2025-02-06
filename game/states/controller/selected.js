@@ -14,12 +14,12 @@ ControllerSelectedState.prototype.updateCursorSprite = function(gameContext, con
     const { spriteManager } = gameContext;
     const sprite = spriteManager.getSprite(controller.spriteID);
 
-    if(controller.hoveredEntity) {
+    if(controller.hover.isHoveringOnEntity()) {
         controller.updateHoverSprite(gameContext);
         return;
     }
 
-    if(!controller.isCursorNodeValid()) {
+    if(!controller.hover.isHoveringOnNode()) {
         sprite.hide();
         return;
     }
@@ -40,8 +40,8 @@ ControllerSelectedState.prototype.updateEntity = function(gameContext, controlle
 
     const positionComponent = selectedEntity.getComponent(PositionComponent);
     
-    if(controller.tileX !== positionComponent.tileX) {
-        DirectionSystem.lookHorizontal(selectedEntity, controller.tileX < positionComponent.tileX);
+    if(controller.hover.tileX !== positionComponent.tileX) {
+        DirectionSystem.lookHorizontal(selectedEntity, controller.hover.tileX < positionComponent.tileX);
         MorphSystem.morphHorizontal(gameContext, selectedEntity);
     }
 }
@@ -70,7 +70,7 @@ ControllerSelectedState.prototype.onEventEnter = function(stateMachine, gameCont
         actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.MOVE, selectedEntityID, x, y));
     }
 
-    controller.undoShowSelectEntity(gameContext, selectedEntity);
+    controller.onDeselectEntity(gameContext, selectedEntity);
     stateMachine.setNextState(CONTROLLER_STATES.IDLE);
 }
 
