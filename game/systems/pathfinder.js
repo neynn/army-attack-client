@@ -29,6 +29,7 @@ PathfinderSystem.isTileFree = function(gameContext, targetX, targetY) {
     return isEmpty;
 }
 
+//maybe add a "origin-walkable" flag?
 PathfinderSystem.generateNodeList = function(gameContext, entity) {
     const { world } = gameContext;
     const { mapManager, entityManager } = world;
@@ -50,6 +51,10 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
     const teamLayerID = layerTypes["Team"].layerID;
     const typeLayerID = layerTypes["Type"].layerID;
 
+    const originTeamID = activeMap.getTile(teamLayerID, positionComponent.tileX, positionComponent.tileY);
+    const originAlliance = AllianceSystem.getAlliance(gameContext, teamComponent.teamID, teamMapping[originTeamID]);
+    const isOriginWalkable = originAlliance.isWalkable || moveComponent.isStealth;
+
     const nodeList = FloodFill.search_cross(positionComponent.tileX, positionComponent.tileY, moveComponent.range, activeMap.width, activeMap.height, (next, current) => {
         const nextTypeID = activeMap.getTile(typeLayerID, next.positionX, next.positionY);
         const nextTileType = tileTypes[nextTypeID];
@@ -62,7 +67,7 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
 
         const entityID = activeMap.getTopEntity(next.positionX, next.positionY);
 
-        if(entityID) {
+        if(entityID !== null) {
             if(activeMap.meta.disablePassing) {
                 next.state = PathfinderSystem.NODE_STATE.INVALID_OCCUPIED;
                 return FloodFill.IGNORE_NEXT;
@@ -86,26 +91,37 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
 
         const nextTeamID = activeMap.getTile(teamLayerID, next.positionX, next.positionY);
         const nextAlliance = AllianceSystem.getAlliance(gameContext, teamComponent.teamID, teamMapping[nextTeamID]);
-        const isNextWalkable = nextAlliance.isWalkable || moveComponent.isStealth && !moveComponent.isCoward;
-        
-        const currentTeamID = activeMap.getTile(teamLayerID, current.positionX, current.positionY);
-        const currentAlliance =  AllianceSystem.getAlliance(gameContext, teamComponent.teamID, teamMapping[currentTeamID]);
-        const isCurrentWalkable = currentAlliance.isWalkable || moveComponent.isStealth;
+        const isNextWalkable = nextAlliance.isWalkable || moveComponent.isStealth;
 
-        next.state = PathfinderSystem.NODE_STATE.VALID;
+        /**
+         * RESCUE: Allows units to move on nearby conquered tiles if they are stranded,
+         * but disallows them from capturing.
+         */
+        if(!isOriginWalkable) {
+            if(!isNextWalkable) {
+                next.state = PathfinderSystem.NODE_STATE.INVALID_WALKABILITY;
+                return FloodFill.IGNORE_NEXT;
+            } else {
+                next.state = PathfinderSystem.NODE_STATE.VALID;
+                return FloodFill.USE_NEXT;
+            }
+        }
 
+        /**
+         * CAPTURE: Allows units to move on nearby enemy tiles and capture them, but once.
+         * Assumes that the unit is not stranded.
+         */
         if(!isNextWalkable) {
-            if(!isCurrentWalkable || moveComponent.isCoward) {
+            if(!moveComponent.isCoward) {
+                next.state = PathfinderSystem.NODE_STATE.VALID;
+            } else {
                 next.state = PathfinderSystem.NODE_STATE.INVALID_WALKABILITY;
             }
 
             return FloodFill.IGNORE_NEXT;
         }
 
-        if(!isCurrentWalkable && moveComponent.isCoward) {
-            return FloodFill.IGNORE_NEXT;
-        }
-
+        next.state = PathfinderSystem.NODE_STATE.VALID;
         return FloodFill.USE_NEXT;
     });
 
