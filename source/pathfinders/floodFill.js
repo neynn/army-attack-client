@@ -5,7 +5,7 @@ FloodFill.USE_NEXT = 1;
 
 FloodFill.NEIGHBOR_COST = {
     "STRAIGHT": 1,
-    "CROSS": Math.SQRT2
+    "CROSS": 1.5
 };
 
 FloodFill.CROSS_REQUIREMENT = [
@@ -136,7 +136,10 @@ FloodFill.search_cross = function(startX, startY, gLimit, mapWidth, mapHeight, o
             visitedNodes.add(key);
 
             if(onCheck(childNode, node) === FloodFill.USE_NEXT) {
-                validStraights.add(i);
+                if(neighbor_cost <= gLimit) {
+                    validStraights.add(i);
+                }
+
                 queue.push(childNode);
             }
         }

@@ -76,8 +76,8 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
     SpawnSystem.createEntity(gameContext, { 
         "type": "blue_commando",
         "mode": "story",
-        "tileX": 1,
-        "tileY": 3,
+        "tileX": 13,
+        "tileY": 10,
         "team": "Allies",
         "owner": "neyn"
     });
