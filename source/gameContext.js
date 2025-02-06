@@ -71,7 +71,6 @@ GameContext.prototype.loadResources = function(resources) {
     this.client.socket.load(resources.settings.socket);
     this.world.actionQueue.load(resources.actions);
     this.world.mapManager.load(resources.maps);
-    this.world.controllerManager.load(resources.controllers);
     this.spriteManager.load(resources.sprites);
     this.tileManager.load(resources.tiles, resources.tileMeta);
     this.uiManager.load(resources.interfaces, resources.icons, resources.fonts);

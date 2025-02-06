@@ -2,7 +2,8 @@ import { State } from "../../../source/state/state.js";
 import { ConstructionComponent } from "../../components/construction.js";
 import { HealthComponent } from "../../components/health.js";
 
-import { ACTION_TYPES, CONTROLLER_STATES } from "../../enums.js";
+import { ACTION_TYPES } from "../../enums.js";
+import { PlayerController } from "../../init/controller/player.js";
 import { ConstructionSystem } from "../../systems/construction.js";
 
 export const ControllerIdleState = function() {}
@@ -44,7 +45,7 @@ ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext)
 
         if(isMoveable) {
             controller.onSelectEntity(gameContext, mouseEntity);
-            stateMachine.setNextState(CONTROLLER_STATES.SELECTED);
+            stateMachine.setNextState(PlayerController.STATE.SELECTED);
         }
     }
 }

@@ -130,7 +130,7 @@ EntityManager.prototype.createEntity = function(gameContext, config, externalID)
         return null;
     }
 
-    const entity = factory.createEntity(gameContext, config);
+    const entity = factory.create(gameContext, config);
 
     if(!entity) {
         Logger.log(false, "Factory has not returned an entity!", "EntityManager.prototype.createEntity", { "factoryID": this.selectedFactory, config, externalID });

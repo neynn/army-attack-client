@@ -1,18 +1,22 @@
 import { Logger } from "../logger.js";
 
 export const ControllerManager = function() {
-    this.controllerTypes = {};
-    this.registry = new Map();
     this.controllers = new Map();
+    this.factoryTypes = new Map();
+    this.selectedFactory = null;
 }
 
-ControllerManager.prototype.load = function(controllerTypes) {
-    if(typeof controllerTypes !== "object") {
-        Logger.log(false, "ControllerTypes cannot be undefined!", "ControllerManager.prototype.load", null);
+ControllerManager.prototype.registerFactory = function(factoryID, factory) {
+    this.factoryTypes.set(factoryID, factory);
+}
+
+ControllerManager.prototype.selectFactory = function(factoryID) {
+    if(!this.factoryTypes.has(factoryID)) {
+        Logger.log(false, "Factory has not been registered!", "ControllerManager.prototype.selectFactory", { factoryID });
         return;
     }
 
-    this.controllerTypes = controllerTypes;
+    this.selectedFactory = factoryID;
 }
 
 ControllerManager.prototype.getOwnerOf = function(entityID) {
@@ -25,36 +29,26 @@ ControllerManager.prototype.getOwnerOf = function(entityID) {
     return null;
 }
 
-ControllerManager.prototype.registerController = function(typeID, type) {
-    if(!typeID || !type) {
-        Logger.log(false, "Parameter is undefined!", "ControllerManager.prototype.registerController", {typeID, type});
-        return;
-    }
-
-    if(this.registry.has(typeID)) {
-        Logger.log(false, "ControllerType is already registered!", "ControllerManager.prototype.registerController", {typeID});
-        return;
-    }
-
-    this.registry.set(typeID, type);
-}
-
-ControllerManager.prototype.createController = function(typeID, controllerID) {
-    if(!this.registry.has(typeID) || this.controllers.has(controllerID)) {
-        Logger.log(false, "ControllerType does not exist or controllerID is already reserved!", "ControllerManager.prototype.createController", {typeID, controllerID});
+ControllerManager.prototype.createController = function(gameContext, config, controllerID) {
+    if(this.controllers.has(controllerID)) {
+        Logger.log(false, "ControllerID is already taken!", "ControllerManager.prototype.createController", { controllerID });
         return null;
     }
 
-    const controllerConfig = this.controllerTypes[typeID];
-    const ControllerType = this.registry.get(typeID);
-    const controller = new ControllerType(controllerID);
+    const factory = this.factoryTypes.get(this.selectedFactory);
 
-    if(controllerConfig) {
-        controller.setConfig(controllerConfig);
-    } else {
-        Logger.log(false, "ControllerType does not exist!", "ControllerManager.prototype.createController", { typeID });
+    if(!factory) {
+        Logger.log(false, "Factory does not exist!", "ControllerManager.prototype.createController", { "factoryID": this.selectedFactory, config, controllerID });
+        return null;
     }
 
+    const controller = factory.create(gameContext, config);
+
+    if(!controller) {
+        Logger.log(false, "Factory has not returned a controller!", "ControllerManager.prototype.createController", { "factoryID": this.selectedFactory, config, controllerID });
+        return null;
+    }
+    
     this.controllers.set(controllerID, controller);
 
     return controller;

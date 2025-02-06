@@ -19,7 +19,6 @@ import { MainMenuState } from "./states/context/mainMenu.js";
 import { MapEditorState } from "./states/context/mapEditor.js";
 import { StoryModeState } from "./states/context/storyMode.js";
 import { VersusModeState } from "./states/context/versusMode.js";
-import { PlayerController } from "./init/controller/player.js";
 import { AvianComponent } from "./components/avian.js";
 import { BulldozeComponent } from "./components/bulldoze.js";
 import { ConstructionAction } from "./actions/constructionAction.js";
@@ -30,9 +29,8 @@ import { ArmyCamera } from "./armyCamera.js";
 import { SpawnSystem } from "./systems/spawn.js";
 import { CounterAttackAction } from "./actions/counterAttackAction.js";
 import { CounterMoveAction } from "./actions/counterMoveAction.js";
-import { ArmyEntityFactory } from "./init/armyEntity.js";
-import { CameraContext } from "../source/camera/cameraContext.js";
-import { Cursor } from "../source/client/cursor.js";
+import { ArmyEntityFactory } from "./init/armyEntityFactory.js";
+import { ArmyControllerFactory } from "./init/armyControllerFactory.js";
 
 export const ArmyContext = function() {
     GameContext.call(this, 60);
@@ -65,7 +63,8 @@ ArmyContext.prototype.initialize = function(resources) {
     this.world.entityManager.registerFactory("Army", new ArmyEntityFactory().load(resources.entities));
     this.world.entityManager.selectFactory("Army");
     
-    this.world.controllerManager.registerController("Player", PlayerController);
+    this.world.controllerManager.registerFactory("Army", new ArmyControllerFactory().load(resources.controllers));
+    this.world.controllerManager.selectFactory("Army");
     
     this.states.addState(CONTEXT_STATES.MAIN_MENU, new MainMenuState());
     this.states.addState(CONTEXT_STATES.STORY_MODE, new StoryModeState());

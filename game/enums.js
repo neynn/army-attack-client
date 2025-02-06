@@ -27,12 +27,6 @@ export const ACTION_TYPES = Object.freeze({
     "COUNTER_MOVE": "CounterMove"
 });
 
-export const CONTROLLER_STATES = Object.freeze({
-    "IDLE": "IDLE",
-    "BUILD": "BUILD",
-    "SELECTED": "SELECTED"
-});
-
 export const CONTEXT_STATES = Object.freeze({
     "MAIN_MENU": "MAIN_MENU",
     "STORY_MODE": "STORY_MODE",

@@ -126,15 +126,14 @@ World.prototype.createController = function(gameContext, config) {
         return null;
     }
 
-    const { type, id } = config;
-    const controller = this.controllerManager.createController(type, id);
+    const { id } = config;
+    const controller = this.controllerManager.createController(gameContext, config, id);
 
     if(!controller) {
         return null;
     }
 
     this.events.emit(World.EVENT_CONTROLLER_CREATE, controller);
-    controller.onCreate(gameContext, config);
 
     return controller;
 }

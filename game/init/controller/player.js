@@ -1,11 +1,7 @@
 import { Cursor } from "../../../source/client/cursor.js";
-import { SpriteManager } from "../../../source/graphics/spriteManager.js";
 import { EntityController } from "../../../source/controller/entityController.js";
 
-import { CAMERA_TYPES, CONTROLLER_STATES } from "../../enums.js";
-import { ControllerBuildState } from "../../states/controller/build.js";
-import { ControllerSelectedState } from "../../states/controller/selected.js";
-import { ControllerIdleState } from "../../states/controller/idle.js";
+import { CAMERA_TYPES } from "../../enums.js";
 import { PositionComponent } from "../../components/position.js";
 import { ArmyCamera } from "../../armyCamera.js";
 import { AnimationSystem } from "../../systems/animation.js";
@@ -27,6 +23,12 @@ export const PlayerController = function(id) {
     this.attackers = new Set();
     this.hover = new ControllerHover();
 }
+
+PlayerController.STATE = {
+    "IDLE": "IDLE",
+    "SELECTED": "SELECTED",
+    "BUILD": "BUILD"
+};
 
 PlayerController.prototype = Object.create(EntityController.prototype);
 PlayerController.prototype.constructor = PlayerController;
@@ -198,7 +200,7 @@ PlayerController.prototype.regulateSpritePosition = function(gameContext) {
         const centerPosition = camera.transformTileToPositionCenter(this.hover.tileX, this.hover.tileY);
 
         sprite.setPosition(centerPosition.x, centerPosition.y); 
-        
+
         return;
     }
 
@@ -233,26 +235,6 @@ PlayerController.prototype.addClickEvent = function(gameContext) {
             this.onClick(gameContext);
         }
     });
-}
-
-PlayerController.prototype.onCreate = function(gameContext, payload) {
-    const { spriteManager, renderer } = gameContext;
-    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
-    const controllerSprite = spriteManager.createSprite("cursor_attack_1x1", SpriteManager.LAYER.TOP);
-    const { x, y } = camera.transformTileToPositionCenter(0, 0);
-    const spriteID = controllerSprite.getID();
-    controllerSprite.setPosition(x, y);
-
-    this.spriteID = spriteID;
-    this.teamID = payload.team ?? null;
-    this.addClickEvent(gameContext);
-    this.addDragEvent(gameContext);
-
-    this.states.addState(CONTROLLER_STATES.IDLE, new ControllerIdleState());
-    this.states.addState(CONTROLLER_STATES.BUILD, new ControllerBuildState());
-    this.states.addState(CONTROLLER_STATES.SELECTED, new ControllerSelectedState());
-
-    this.states.setNextState(CONTROLLER_STATES.IDLE);
 }
 
 PlayerController.prototype.update = function(gameContext) {

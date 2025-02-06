@@ -1,9 +1,10 @@
 import { State } from "../../../source/state/state.js";
 
-import { ACTION_TYPES, CONTROLLER_STATES } from "../../enums.js";
+import { ACTION_TYPES } from "../../enums.js";
 import { PositionComponent } from "../../components/position.js";
 import { DirectionSystem } from "../../systems/direction.js";
 import { MorphSystem } from "../../systems/morph.js";
+import { PlayerController } from "../../init/controller/player.js";
 
 export const ControllerSelectedState = function() {}
 
@@ -71,7 +72,7 @@ ControllerSelectedState.prototype.onEventEnter = function(stateMachine, gameCont
     }
 
     controller.onDeselectEntity(gameContext, selectedEntity);
-    stateMachine.setNextState(CONTROLLER_STATES.IDLE);
+    stateMachine.setNextState(PlayerController.STATE.IDLE);
 }
 
 ControllerSelectedState.prototype.onUpdate = function(stateMachine, gameContext) {
