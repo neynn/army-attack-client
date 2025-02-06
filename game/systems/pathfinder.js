@@ -29,7 +29,6 @@ PathfinderSystem.isTileFree = function(gameContext, targetX, targetY) {
     return isEmpty;
 }
 
-//maybe add a "origin-walkable" flag?
 PathfinderSystem.generateNodeList = function(gameContext, entity) {
     const { world } = gameContext;
     const { mapManager, entityManager } = world;
