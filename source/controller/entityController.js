@@ -18,16 +18,6 @@ EntityController.prototype.save = function() {}
 
 EntityController.prototype.load = function() {}
 
-EntityController.prototype.setConfig = function(config) {
-    if(config !== undefined) {
-        this.config = config;
-    }
-} 
-
-EntityController.prototype.getConfig = function() {
-    return this.config;
-}
-
 EntityController.prototype.update = function(gameContext) {
     this.states.update(gameContext);
 }
@@ -92,5 +82,3 @@ EntityController.prototype.hasSelected = function(entityID) {
 EntityController.prototype.hasEntity = function(entityID) {
     return this.availableEntities.has(entityID);
 }
-
-EntityController.prototype.onCreate = function(gameContext, payload) {}

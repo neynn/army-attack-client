@@ -7,13 +7,7 @@ Controller.prototype.getID = function() {
     return this.id;
 }
 
-Controller.prototype.update = function(gameContext) {
-
-}
-
-Controller.prototype.onCreate = function(gameContext, config) {
-
-}
+Controller.prototype.update = function(gameContext) {}
 
 Controller.prototype.setConfig = function(config) {
     if(config !== undefined) {
