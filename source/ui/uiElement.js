@@ -4,6 +4,9 @@ import { Drawable } from "../graphics/drawable.js";
 export const UIElement = function(id, DEBUG_NAME) {
     Drawable.call(this, id, DEBUG_NAME);
     
+    this.width = 0;
+    this.height = 0;
+    
     this.events = new EventEmitter();
     this.events.listen(UIElement.EVENT.FIRST_COLLISION);
     this.events.listen(UIElement.EVENT.FINAL_COLLISION);

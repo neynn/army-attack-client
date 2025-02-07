@@ -33,7 +33,7 @@ import { ArmyEntityFactory } from "./init/armyEntityFactory.js";
 import { ArmyControllerFactory } from "./init/armyControllerFactory.js";
 
 export const ArmyContext = function() {
-    GameContext.call(this, 60);
+    GameContext.call(this);
 }
 
 ArmyContext.prototype = Object.create(GameContext.prototype);

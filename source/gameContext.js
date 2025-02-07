@@ -10,28 +10,28 @@ import { Renderer } from "./renderer.js";
 import { World } from "./world.js";
 import { Button } from "./ui/elements/button.js";
 
-export const GameContext = function(fps = 60) {
+export const GameContext = function() {
     this.id = "GAME_CONTEXT";
     this.settings = {};
     this.client = new Client();
     this.renderer = new Renderer();
-    this.timer = new Timer(fps);
+    this.timer = new Timer();
     this.tileManager = new TileManager();
     this.spriteManager = new SpriteManager();
     this.uiManager = new UIManager();
     this.world = new World();
     this.states = new StateMachine(this);
 
-    this.timer.input = (realTime, deltaTime) => {
+    this.timer.input = () => {
         this.client.update();
     }
 
-    this.timer.update = (gameTime, fixedDeltaTime) => {
+    this.timer.update = () => {
         this.states.update(this);
         this.world.update(this);
     }
 
-    this.timer.render = (realTime, deltaTime) => {
+    this.timer.render = () => {
         this.spriteManager.update(this);
         this.tileManager.update(this);
         this.uiManager.update(this);
@@ -45,7 +45,7 @@ GameContext.prototype.addClickEvent = function() {
     const { cursor } = this.client;
 
     cursor.events.subscribe(Cursor.LEFT_MOUSE_CLICK, EventEmitter.SUPER_ID, () => {
-        const clickedElements = this.uiManager.getCollidedElements(cursor.position.x, cursor.position.y, cursor.radius);
+        const clickedElements = this.uiManager.getCollidedElements(cursor.positionX, cursor.positionY, cursor.radius);
 
         for(const element of clickedElements) {
             element.events.emit(Button.EVENT_CLICKED);
@@ -82,7 +82,7 @@ GameContext.prototype.loadResources = function(resources) {
 GameContext.prototype.initialize = function() {}
 
 GameContext.prototype.getCameraAtMouse = function() {
-    const context = this.renderer.getCollidedContext(this.client.cursor.position.x, this.client.cursor.position.y, this.client.cursor.radius);
+    const context = this.renderer.getCollidedContext(this.client.cursor.positionX, this.client.cursor.positionY, this.client.cursor.radius);
 
     if(!context) {
         return null;
@@ -102,7 +102,7 @@ GameContext.prototype.getMouseTile = function() {
     }
 
     const camera = context.getCamera();
-    const { x, y } = context.getWorldPosition(this.client.cursor.position.x, this.client.cursor.position.y);
+    const { x, y } = context.getWorldPosition(this.client.cursor.positionX, this.client.cursor.positionY);
     const mouseTile = camera.transformPositionToTile(x, y);
 
     return mouseTile;

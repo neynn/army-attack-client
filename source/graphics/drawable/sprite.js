@@ -1,8 +1,10 @@
+import { Rectangle } from "../../math/rect.js";
 import { Drawable } from "../drawable.js";
 
 export const Sprite = function(id, DEBUG_NAME) {
     Drawable.call(this, id, DEBUG_NAME);
     
+    this.bounds = new Rectangle();
     this.typeID = null;
     this.animationID = null;
     this.lastCallTime = 0;

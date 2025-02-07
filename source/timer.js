@@ -1,33 +1,32 @@
-export const Timer = function(timeStep) {
-    this.FIXED_FRAMES_PER_SECOND = timeStep;
-    this.FIXED_SECONDS_PER_FRAME = 1 / timeStep;
+export const Timer = function() {
     this.tick = 0;
-    this.totalFixedTime = 0;
-    this.accumulatedTime = 0;
-    this.lastTime = 0;
     this.realTime = 0;
+    this.lastTime = 0;
     this.deltaTime = 0;
+    this.accumulatedTime = 0;
 
     this.updateProxy = (timestamp) => {
         this.realTime = timestamp / 1000;
         this.deltaTime = this.realTime - this.lastTime;
         this.accumulatedTime += this.deltaTime;
         
-        this.input(this.realTime, this.deltaTime);
+        this.input();
     
-        while(this.accumulatedTime > this.FIXED_SECONDS_PER_FRAME) {
-            this.tick = (this.tick + 1) % this.FIXED_FRAMES_PER_SECOND;
-            this.totalFixedTime += this.FIXED_SECONDS_PER_FRAME;
-            this.update(this.totalFixedTime, this.FIXED_SECONDS_PER_FRAME);
-            this.accumulatedTime -= this.FIXED_SECONDS_PER_FRAME;
+        while(this.accumulatedTime > Timer.FIXED_SECONDS_PER_FRAME) {
+            this.tick = (this.tick + 1) % Timer.FIXED_FRAMES_PER_SECOND;
+            this.update();
+            this.accumulatedTime -= Timer.FIXED_SECONDS_PER_FRAME;
         }
     
-        this.render(this.realTime, this.deltaTime);
+        this.render();
     
         this.lastTime = this.realTime;
         this.queue();
     }
 }
+
+Timer.FIXED_FRAMES_PER_SECOND = 60;
+Timer.FIXED_SECONDS_PER_FRAME = 1 / Timer.FIXED_FRAMES_PER_SECOND;
 
 Timer.prototype.input = function(realTime, deltaTime) {}
 
@@ -52,7 +51,7 @@ Timer.prototype.getRealTime = function() {
 }
 
 Timer.prototype.getFixedDeltaTime = function() {
-    return this.FIXED_SECONDS_PER_FRAME;
+    return Timer.FIXED_SECONDS_PER_FRAME;
 }
 
 Timer.prototype.getDeltaTime = function() {

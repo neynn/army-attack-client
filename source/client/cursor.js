@@ -1,8 +1,8 @@
 import { EventEmitter } from "../events/eventEmitter.js";
-import { Vec2 } from "../math/vec2.js";
 
 export const Cursor = function() {
-    this.position = new Vec2(0, 0);
+    this.positionX = 0;
+    this.positionY = 0;
     this.radius = 0;
     this.isLocked = false;
 
@@ -64,8 +64,8 @@ Cursor.prototype.addEventHandler = function(type, onEvent) {
 
 Cursor.prototype.eventMouseMove = function(event) {
     const { pageX, pageY, movementX, movementY } = event;
-    const deltaX = this.isLocked ? - movementX : this.position.x - pageX;
-    const deltaY = this.isLocked ? - movementY : this.position.y - pageY;
+    const deltaX = this.isLocked ? - movementX : this.positionX - pageX;
+    const deltaY = this.isLocked ? - movementY : this.positionY - pageY;
 
     if(this.isLeftMouseDown) {
         const elapsedTime = Date.now() - this.leftMouseDownTime;
@@ -87,8 +87,8 @@ Cursor.prototype.eventMouseMove = function(event) {
         }
     }
 
-    this.position.x = pageX;
-    this.position.y = pageY;
+    this.positionX = pageX;
+    this.positionY = pageY;
     this.events.emit(Cursor.MOVE, deltaX, deltaY);
 }
 

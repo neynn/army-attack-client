@@ -137,7 +137,7 @@ UIManager.prototype.update = function(gameContext) {
     const { client } = gameContext;
     const { cursor } = client;
 
-    this.updateElementCollisions(cursor.position.x, cursor.position.y, cursor.radius);
+    this.updateElementCollisions(cursor.positionX, cursor.positionY, cursor.radius);
 }
 
 UIManager.prototype.exit = function() {
@@ -314,17 +314,15 @@ UIManager.prototype.addEffects = function(gameContext, element, effects = []) {
 
 UIManager.prototype.addElementAnchor = function(gameContext, element, originalPosition, anchorType = Renderer.ANCHOR_TYPE.TOP_LEFT) {
     const { renderer } = gameContext;
-    const { bounds } = element;
-    const { w, h } = bounds;
     const { x, y } = originalPosition;
 
     const elementUID = element.getID();
-    const anchor = renderer.getAnchor(anchorType, x, y, w, h);
+    const anchor = renderer.getAnchor(anchorType, x, y, element.width, element.height);
             
     element.setPosition(anchor.x, anchor.y);
 
     renderer.events.subscribe(Renderer.EVENT.SCREEN_RESIZE, elementUID, (width, height) => {
-        const anchor = renderer.getAnchor(anchorType, x, y, w, h);
+        const anchor = renderer.getAnchor(anchorType, x, y, element.width, element.height);
         
         element.setPosition(anchor.x, anchor.y);
     });    

@@ -11,7 +11,7 @@ export const ControllerIdleState = function() {}
 ControllerIdleState.prototype = Object.create(State.prototype);
 ControllerIdleState.prototype.constructor = ControllerIdleState;
 
-ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext) {
+ControllerIdleState.prototype.onEvent = function(stateMachine, gameContext) {
     const { world } = gameContext;
     const { actionQueue } = world;
     const controller = stateMachine.getContext();
@@ -50,7 +50,7 @@ ControllerIdleState.prototype.onEventEnter = function(stateMachine, gameContext)
     }
 }
 
-ControllerIdleState.prototype.onUpdate = function(stateMachine, gameContext) {
+ControllerIdleState.prototype.onUpdate = function(gameContext, stateMachine) {
     const { world } = gameContext;
     const { actionQueue } = world;
     const controller = stateMachine.getContext();
@@ -58,7 +58,7 @@ ControllerIdleState.prototype.onUpdate = function(stateMachine, gameContext) {
     controller.regulateSpritePosition(gameContext);
 
     if(actionQueue.isRunning()) {
-        controller.resetAllAttackers(gameContext, controller);
+        controller.resetAllAttackers(gameContext);
     } else {
         controller.updateAttackers(gameContext);   
     }

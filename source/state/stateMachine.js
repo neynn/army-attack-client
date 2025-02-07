@@ -36,7 +36,7 @@ StateMachine.prototype.setNextState = function(stateID) {
 
 StateMachine.prototype.update = function(gameContext) {
     if(this.currentState !== null) {
-        this.currentState.onUpdate(this, gameContext);
+        this.currentState.onUpdate(gameContext, this);
 
         if(this.currentState.update) {
             this.currentState.update(gameContext);
@@ -46,7 +46,7 @@ StateMachine.prototype.update = function(gameContext) {
 
 StateMachine.prototype.eventEnter = function(...event) {
     if(this.currentState !== null) {
-        this.currentState.onEventEnter(this, ...event);
+        this.currentState.onEvent(this, ...event);
     }
 }
 

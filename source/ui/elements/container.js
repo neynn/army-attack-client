@@ -18,30 +18,30 @@ Container.prototype.loadFromConfig = function(config) {
     const { x, y } = position;
 
     this.DEBUG_NAME = id;
-    this.bounds.set(0, 0, width, height);
+
+    this.width = width;
+    this.height = height;
     this.setPosition(x, y);
     this.setOpacity(opacity);
 }
 
 Container.prototype.isColliding = function(mouseX, mouseY, mouseRange) {
-    const { w, h } = this.bounds;
-    const isIntersection = isRectangleRectangleIntersect(this.position.x, this.position.y, w, h, mouseX, mouseY, mouseRange, mouseRange);
+    const isIntersection = isRectangleRectangleIntersect(this.position.x, this.position.y, this.width, this.height, mouseX, mouseY, mouseRange, mouseRange);
     
     return isIntersection;
 }
 
 Container.prototype.onDebug = function(context, viewportX, viewportY,localX, localY) {
-    const { w, h } = this.bounds;
     context.globalAlpha = 0.2;
     context.fillStyle = "#0000ff";
-    context.fillRect(localX, localY, w, h);
+    context.fillRect(localX, localY, this.width, this.height);
 }
 
 Container.prototype.onDraw = function(context, viewportX, viewportY, localX, localY) {
     if(this.outline.isActive()) {
         this.outline.apply(context);
     
-        context.strokeRect(localX, localY, this.bounds.w, this.bounds.h);
+        context.strokeRect(localX, localY, this.width, this.height);
     }
 }
 

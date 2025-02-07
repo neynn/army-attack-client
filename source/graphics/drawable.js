@@ -1,5 +1,4 @@
 import { clampValue } from "../math/math.js";
-import { Rectangle } from "../math/rect.js";
 import { Vec2 } from "../math/vec2.js";
 import { Family } from "./family.js";
 
@@ -10,7 +9,6 @@ export const Drawable = function(id = null, DEBUG_NAME = "Drawable") {
     this.opacity = 1;
     this.isVisible = true;
     this.position = new Vec2(0, 0);
-    this.bounds = new Rectangle(0, 0, 0, 0);
 
     if(id === null) {
         console.warn(`Drawable (${DEBUG_NAME}) has no id!`);
@@ -128,14 +126,6 @@ Drawable.prototype.getFamilyStack = function() {
 
 Drawable.prototype.getID = function() {
     return this.id;
-}
-
-Drawable.prototype.getBounds = function() {
-    const { x, y, w, h } = this.bounds;
-    const boundsX = this.position.x + x;
-    const boundsY = this.position.y + y;
-
-    return { "x": boundsX, "y": boundsY, "w": w, "h": h };
 }
 
 Drawable.prototype.setPosition = function(positionX, positionY) {

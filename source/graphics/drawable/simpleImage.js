@@ -13,14 +13,13 @@ SimpleImage.prototype.onDraw = function(context, viewportX, viewportY, localX, l
         return;
     }
 
-    const { w, h } = this.bounds;
     const drawX = viewportX - localX;
     const drawY = viewportY - localY;
 
     context.drawImage(
         this.image,
-        0, 0, w, h,
-        drawX, drawY, w, h
+        0, 0, this.image.width, this.image.height,
+        drawX, drawY, this.image.width, this.image.height
     );
 }
 

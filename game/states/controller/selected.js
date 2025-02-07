@@ -47,7 +47,7 @@ ControllerSelectedState.prototype.updateEntity = function(gameContext, controlle
     }
 }
 
-ControllerSelectedState.prototype.onEventEnter = function(stateMachine, gameContext) {
+ControllerSelectedState.prototype.onEvent = function(stateMachine, gameContext) {
     const { client, world } = gameContext;
     const { actionQueue, entityManager } = world;
     const { soundPlayer } = client;
@@ -75,7 +75,7 @@ ControllerSelectedState.prototype.onEventEnter = function(stateMachine, gameCont
     stateMachine.setNextState(PlayerController.STATE.IDLE);
 }
 
-ControllerSelectedState.prototype.onUpdate = function(stateMachine, gameContext) {
+ControllerSelectedState.prototype.onUpdate = function(gameContext, stateMachine) {
     const controller = stateMachine.getContext();
 
     controller.regulateSpritePosition(gameContext);

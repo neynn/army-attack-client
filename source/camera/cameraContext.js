@@ -1,11 +1,10 @@
 import { EventEmitter } from "../events/eventEmitter.js";
 import { RenderContext } from "./renderContext.js";
-import { Vec2 } from "../math/vec2.js";
-import { clampValue } from "../math/math.js";
 
 export const CameraContext = function(id, camera) {
     this.id = id;
-    this.position = new Vec2(0, 0);
+    this.positionX = 0;
+    this.positionY = 0;
     this.camera = camera;
     this.context = null;
     this.scale = CameraContext.BASE_SCALE;
@@ -97,8 +96,8 @@ CameraContext.prototype.setDisplayMode = function(modeID) {
 }
 
 CameraContext.prototype.setPosition = function(x, y) {
-    this.position.x = Math.floor(x);
-    this.position.y = Math.floor(y);
+    this.positionX = Math.floor(x);
+    this.positionY = Math.floor(y);
 }
 
 CameraContext.prototype.dragCamera = function(deltaX, deltaY) {
@@ -112,8 +111,8 @@ CameraContext.prototype.getWorldPosition = function(screenX, screenY) {
     const { x, y } = this.camera.getViewport();
 
     return {
-        "x": (screenX - this.position.x) / this.scale + x,
-        "y": (screenY - this.position.y) / this.scale + y
+        "x": (screenX - this.positionX) / this.scale + x,
+        "y": (screenY - this.positionY) / this.scale + y
     }
 }
 
@@ -121,8 +120,8 @@ CameraContext.prototype.getBounds = function() {
     const { w, h } = this.camera.getViewport();
 
     return {
-        "x": this.position.x,
-        "y": this.position.y,
+        "x": this.positionX,
+        "y": this.positionY,
         "w": w * this.scale,
         "h": h * this.scale
     }
@@ -198,14 +197,18 @@ CameraContext.prototype.reloadFixedScale = function(windowWidth, windowHeight) {
     }
 
     if(this.positionMode === CameraContext.POSITION_MODE.FIXED) {
-        windowWidth -= this.position.x;
-        windowHeight -= this.position.y;
+        windowWidth -= this.positionY;
+        windowHeight -= this.positionY;
     }
 
     const { x, y } = this.getScale(windowWidth, windowHeight);
     const scale = Math.min(x, y);
 
-    this.scale = clampValue(scale, Infinity, CameraContext.BASE_SCALE);
+    if(scale < CameraContext.BASE_SCALE) {
+        this.scale = CameraContext.BASE_SCALE;
+    } else {
+        this.scale = scale;
+    }
 }
 
 CameraContext.prototype.initRenderer = function(width, height) {
@@ -233,7 +236,7 @@ CameraContext.prototype.destroyRenderer = function() {
 CameraContext.prototype.update = function(gameContext, mainContext) {
     switch(this.displayMode) { 
         case CameraContext.DISPLAY_MODE.RESOLUTION_DEPENDENT: {
-            mainContext.translate(this.position.x, this.position.y);
+            mainContext.translate(this.positionX, this.positionY);
             this.camera.update(gameContext, mainContext);
             this.events.emit(CameraContext.EVENT.RENDER_COMPLETE, mainContext);
             break;
