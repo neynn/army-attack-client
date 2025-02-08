@@ -35,20 +35,10 @@ Factory.prototype.getType = function(typeID) {
     return type;
 }
 
-Factory.prototype.onCreate = function(gameContext, config, type) {}
+Factory.prototype.onCreate = function(gameContext, config) {}
 
 Factory.prototype.create = function(gameContext, config) {
-    const { type } = config;
-    const productType = this.getType(type);
-
-    if(!productType) {
-        this.failCount++;
-        this.events.emit(Factory.EVENT.CREATE_FAILED, config);
-
-        return null;
-    }
-
-    const product = this.onCreate(gameContext, config, productType);
+    const product = this.onCreate(gameContext, config);
 
     if(!product) {
         this.failCount++;
