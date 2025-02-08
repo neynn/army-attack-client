@@ -1,23 +1,14 @@
+import { FactoryOwner } from "../factory/factoryOwner.js";
 import { Logger } from "../logger.js";
 
 export const ControllerManager = function() {
+    FactoryOwner.call(this);
+
     this.controllers = new Map();
-    this.factoryTypes = new Map();
-    this.selectedFactory = null;
 }
 
-ControllerManager.prototype.registerFactory = function(factoryID, factory) {
-    this.factoryTypes.set(factoryID, factory);
-}
-
-ControllerManager.prototype.selectFactory = function(factoryID) {
-    if(!this.factoryTypes.has(factoryID)) {
-        Logger.log(false, "Factory has not been registered!", "ControllerManager.prototype.selectFactory", { factoryID });
-        return;
-    }
-
-    this.selectedFactory = factoryID;
-}
+ControllerManager.prototype = Object.create(FactoryOwner.prototype);
+ControllerManager.prototype.constructor = ControllerManager;
 
 ControllerManager.prototype.getOwnerOf = function(entityID) {
     for(const [controllerID, controller] of this.controllers) {
@@ -35,17 +26,10 @@ ControllerManager.prototype.createController = function(gameContext, config, con
         return null;
     }
 
-    const factory = this.factoryTypes.get(this.selectedFactory);
-
-    if(!factory) {
-        Logger.log(false, "Factory does not exist!", "ControllerManager.prototype.createController", { "factoryID": this.selectedFactory, config, controllerID });
-        return null;
-    }
-
-    const controller = factory.create(gameContext, config);
+    const controller = this.createProduct(gameContext, config);
 
     if(!controller) {
-        Logger.log(false, "Factory has not returned a controller!", "ControllerManager.prototype.createController", { "factoryID": this.selectedFactory, config, controllerID });
+        Logger.log(false, "Factory has not returned a controller!", "ControllerManager.prototype.createController", { config, controllerID });
         return null;
     }
     

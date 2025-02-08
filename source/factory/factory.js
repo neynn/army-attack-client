@@ -1,4 +1,4 @@
-import { EventEmitter } from "./events/eventEmitter.js";
+import { EventEmitter } from "../events/eventEmitter.js";
 
 export const Factory = function(DEBUG_NAME) {
     this.DEBUG_NAME = DEBUG_NAME;

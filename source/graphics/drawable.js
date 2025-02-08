@@ -7,13 +7,18 @@ export const Drawable = function(id = null, DEBUG_NAME = "Drawable") {
     this.id = id;
     this.family = null;
     this.opacity = 1;
-    this.isVisible = true;
+    this.state = Drawable.STATE.VISIBLE;
     this.position = new Vec2(0, 0);
 
     if(id === null) {
         console.warn(`Drawable (${DEBUG_NAME}) has no id!`);
     }
 }
+
+Drawable.STATE = {
+    "HIDDEN": 0,
+    "VISIBLE": 1
+};
 
 Drawable.DEFAULT_FAMILY_NAME = "DEFAULT_FAMILY_NAME";
 
@@ -69,7 +74,7 @@ Drawable.prototype.debug = function(context, viewportX, viewportY) {
 }
 
 Drawable.prototype.draw = function(context, viewportX, viewportY) {
-    if(!this.isVisible) {
+    if(this.state !== Drawable.STATE.VISIBLE) {
         return;
     }
 
@@ -91,7 +96,7 @@ Drawable.prototype.draw = function(context, viewportX, viewportY) {
             const child = children[i];
             const reference = child.getReference();
 
-            if(reference.isVisible) {
+            if(reference.state === Drawable.STATE.VISIBLE) {
                 drawStack.push({
                     "drawable": reference,
                     "localX": localX + reference.position.x,
@@ -139,11 +144,11 @@ Drawable.prototype.setPosition = function(positionX, positionY) {
 }
 
 Drawable.prototype.hide = function() {
-    this.isVisible = false;
+    this.state = Drawable.STATE.HIDDEN;
 }
 
 Drawable.prototype.show = function() {
-    this.isVisible = true;
+    this.state = Drawable.STATE.VISIBLE;
 }
 
 Drawable.prototype.setOpacity = function(opacity) {

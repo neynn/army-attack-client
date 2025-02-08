@@ -1,12 +1,18 @@
+import { FactoryOwner } from "../factory/factoryOwner.js";
 import { Logger } from "../logger.js";
 import { JSONManager } from "../resources/jsonManager.js";
 
 export const MapManager = function() {
+    FactoryOwner.call(this);
+
     this.mapTypes = {};
     this.loadedMaps = new Map();
     this.activeMapID = null;
     this.resources = new JSONManager();
 }
+
+MapManager.prototype = Object.create(FactoryOwner.prototype);
+MapManager.prototype.constructor = MapManager;
 
 MapManager.prototype.load = function(mapTypes) {
     if(typeof mapTypes === "object") {

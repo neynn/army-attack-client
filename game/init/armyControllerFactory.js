@@ -1,5 +1,6 @@
-import { Factory } from "../../source/factory.js";
+import { Factory } from "../../source/factory/factory.js";
 import { SpriteManager } from "../../source/graphics/spriteManager.js";
+
 import { CAMERA_TYPES } from "../enums.js";
 import { ControllerBuildState } from "../states/controller/build.js";
 import { ControllerIdleState } from "../states/controller/idle.js";

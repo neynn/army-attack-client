@@ -1,4 +1,5 @@
 import { SpriteManager } from "../../source/graphics/spriteManager.js";
+import { Factory } from "../../source/factory/factory.js";
 
 import { HealthComponent } from "../components/health.js";
 import { TeamComponent } from "../components/team.js";
@@ -10,7 +11,6 @@ import { AttackComponent } from "../components/attack.js";
 import { MoveComponent } from "../components/move.js";
 import { ConstructionComponent } from "../components/construction.js";
 import { ProductionComponent } from "../components/production.js";
-import { Factory } from "../../source/factory.js";
 import { ArmyEntity } from "./armyEntity.js";
 
 export const ArmyEntityFactory = function() {

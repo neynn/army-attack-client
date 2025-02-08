@@ -1,14 +1,18 @@
+import { FactoryOwner } from "../factory/factoryOwner.js";
 import { IDGenerator } from "../idGenerator.js";
 import { Logger } from "../logger.js";
 
 export const EntityManager = function() {
+    FactoryOwner.call(this);
+
     this.traitTypes = {};
     this.idGenerator = new IDGenerator();
-    this.factoryTypes = new Map();
     this.componentTypes = new Map();
     this.entities = [];
-    this.selectedFactory = null;
 }
+
+EntityManager.prototype = Object.create(FactoryOwner.prototype);
+EntityManager.prototype.constructor = EntityManager;
 
 EntityManager.prototype.load = function(traitTypes) {
     if(!typeof traitTypes === "object") {
@@ -109,31 +113,11 @@ EntityManager.prototype.getEntity = function(entityID) {
     return null;
 }
 
-EntityManager.prototype.registerFactory = function(factoryID, factory) {
-    this.factoryTypes.set(factoryID, factory);
-}
-
-EntityManager.prototype.selectFactory = function(factoryID) {
-    if(!this.factoryTypes.has(factoryID)) {
-        Logger.log(false, "Factory has not been registered!", "EntityManager.prototype.selectFactory", { factoryID });
-        return;
-    }
-
-    this.selectedFactory = factoryID;
-}
-
 EntityManager.prototype.createEntity = function(gameContext, config, externalID) {
-    const factory = this.factoryTypes.get(this.selectedFactory);
-
-    if(!factory) {
-        Logger.log(false, "Factory does not exist!", "EntityManager.prototype.createEntity", { "factoryID": this.selectedFactory, config, externalID });
-        return null;
-    }
-
-    const entity = factory.create(gameContext, config);
+    const entity = this.createProduct(gameContext, config);
 
     if(!entity) {
-        Logger.log(false, "Factory has not returned an entity!", "EntityManager.prototype.createEntity", { "factoryID": this.selectedFactory, config, externalID });
+        Logger.log(false, "Factory has not returned an entity!", "EntityManager.prototype.createEntity", { config, externalID });
         return null;
     }
 
