@@ -18,15 +18,9 @@ ArmyControllerFactory.TYPE = {
 ArmyControllerFactory.prototype = Object.create(Factory.prototype);
 ArmyControllerFactory.prototype.constructor = ArmyControllerFactory;
 
-ArmyControllerFactory.prototype.onCreate = function(gameContext, config) {
+ArmyControllerFactory.prototype.onCreate = function(gameContext, config, controllerType) {
     const { spriteManager, renderer } = gameContext;
     const { type, id, team } = config;
-
-    const controllerType = this.getType(type);
-
-    if(!controllerType) {
-        return null;
-    }
 
     switch(type) {
         case ArmyControllerFactory.TYPE.PLAYER: {

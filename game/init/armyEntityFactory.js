@@ -68,20 +68,13 @@ ArmyEntityFactory.prototype.createDefaultSprite = function(gameContext, entity, 
     return sprite;
 }
 
-ArmyEntityFactory.prototype.onCreate = function(gameContext, config) {
+ArmyEntityFactory.prototype.onCreate = function(gameContext, config, entityType) {
     const { world } = gameContext;
     const { entityManager } = world;
     const { mode, components, type } = config;
-
-    const entityType = this.getType(type);
-
-    if(!entityType) {
-        return null;
-    }
-
-    const entity = new ArmyEntity(entityType, type);
     const { archetype, stats } = entityType;
     const statConfig = stats[mode];
+    const entity = new ArmyEntity(entityType, type);
 
     this.loadDefaultComponents(entity, config);
 
