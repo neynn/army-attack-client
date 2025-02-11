@@ -25,7 +25,7 @@
         }
     },
     "mtn": {
-        "id": "pvp_valleys",
+        "id": "mtn",
         "directory": "assets/maps",
         "source": "mtn.json",
         "music": "music_remastered",

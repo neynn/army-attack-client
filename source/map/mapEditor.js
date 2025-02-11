@@ -130,14 +130,14 @@ MapEditor.prototype.loadConfig = function(config) {
     this.config = config;
 }
 
-MapEditor.prototype.loadBrushSets = function(tileMeta) {
-    for(const setID in tileMeta.inversion) {
+MapEditor.prototype.loadBrushSets = function(invertedTileMeta) {
+    for(const setID in invertedTileMeta) {
         if(this.config.hiddenSets[setID]) {
             continue;
         }
 
-        const set = tileMeta.inversion[setID];
         const brushSet = {};
+        const set = invertedTileMeta[setID];
 
         for(const tileID in set) {
             brushSet[tileID] = set[tileID];

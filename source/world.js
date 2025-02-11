@@ -5,7 +5,6 @@ import { EventManager } from "./eventManager.js";
 import { EventEmitter } from "./events/eventEmitter.js";
 import { Logger } from "./logger.js";
 import { MapManager } from "./map/mapManager.js";
-import { MapParser } from "./map/mapParser.js";
 
 export const World = function() {
     this.config = {};
@@ -16,20 +15,20 @@ export const World = function() {
     this.eventManager = new EventManager();
 
     this.events = new EventEmitter();
-    this.events.listen(World.EVENT_MAP_LOAD);
-    this.events.listen(World.EVENT_CONTROLLER_CREATE);
-    this.events.listen(World.EVENT_CONTROLLER_DESTROY);
-    this.events.listen(World.EVENT_ENTITY_CREATE);
-    this.events.listen(World.EVENT_ENTITY_DESTROY);
+    this.events.listen(World.EVENT.MAP_LOAD);
+    this.events.listen(World.EVENT.CONTROLLER_CREATE);
+    this.events.listen(World.EVENT.CONTROLLER_DESTROY);
+    this.events.listen(World.EVENT.ENTITY_CREATE);
+    this.events.listen(World.EVENT.ENTITY_DESTROY);
 }
 
-World.CODE_PARSE_MAP_ERROR = 0;
-World.CODE_PARSE_MAP_SUCCESS = 1;
-World.EVENT_MAP_LOAD = "EVENT_MAP_LOAD";
-World.EVENT_CONTROLLER_CREATE = "EVENT_CONTROLLER_CREATE";
-World.EVENT_CONTROLLER_DESTROY = "EVENT_CONTROLLER_DESTROY";
-World.EVENT_ENTITY_CREATE = "EVENT_ENTITY_CREATE";
-World.EVENT_ENTITY_DESTROY = "EVENT_ENTITY_DESTROY";
+World.EVENT = {
+    "MAP_LOAD": "MAP_LOAD",
+    "CONTROLLER_CREATE": "CONTROLLER_CREATE",
+    "CONTROLLER_DESTROY": "CONTROLLER_DESTROY",
+    "ENTITY_CREATE": "ENTITY_CREATE",
+    "ENTITY_DESTROY": "ENTITY_DESTROY"
+};
 
 World.prototype.exit = function() {
     this.actionQueue.exit();
@@ -42,58 +41,30 @@ World.prototype.update = function(gameContext) {
     this.entityManager.update(gameContext);
 }
 
-World.prototype.loadMapByID = async function(mapID) {
-    const worldMap = await this.parseMap(mapID, MapParser.parseMap2D);
+World.prototype.createMapByID = async function(gameContext, mapID) {
+    const mapData = await this.mapManager.fetchMapData(mapID);
+
+    if(!mapData) {
+        return null;
+    }
+
+    const worldMap = this.createMap(gameContext, mapID, mapData);
+
+    return worldMap;
+}
+
+World.prototype.createMap = function(gameContext, mapID, mapData) {
+    const worldMap = this.mapManager.createMap(gameContext, mapID, mapData);
 
     if(!worldMap) {
         return null;
     }
 
-    this.loadMap(mapID, worldMap);
+    this.mapManager.addMap(mapID, worldMap);
+    this.mapManager.updateActiveMap(mapID);
+    this.events.emit(World.EVENT.MAP_LOAD, worldMap);
 
     return worldMap;
-}
-
-World.prototype.loadEmptyMapByData = function(mapID, mapData) {
-    const { layers, meta } = mapData;
-    const worldMap = MapParser.parseMap2DEmpty(mapID, layers, meta);
-
-    this.loadMap(mapID, worldMap);
-
-    return worldMap;
-}
-
-World.prototype.loadMapByData = function(mapID, mapData) {
-    const { layers, meta } = mapData;
-    const worldMap = MapParser.parseMap2D(mapID, layers, meta);
-
-    this.loadMap(mapID, worldMap);
-
-    return worldMap;
-}
-
-World.prototype.parseMap = async function(mapID, onParse) {
-    if(!onParse) {
-        Logger.log(false, "No parser given!", "World.prototype.parseMap", { mapID });
-        return null;
-    }
-
-    const parsedMap = await this.mapManager.parseMap(mapID, onParse);
-
-    if(!parsedMap) {
-        Logger.log(false, "Map could not be parsed!", "World.prototype.parseMap", { mapID });
-        return null;
-    }
-
-    return parsedMap;
-}
-
-World.prototype.loadMap = function(mapID, worldMap) {
-    if(worldMap) {
-        this.mapManager.addMap(mapID, worldMap);
-        this.mapManager.updateActiveMap(mapID);
-        this.events.emit(World.EVENT_MAP_LOAD, worldMap);
-    }
 }
 
 World.prototype.getTileEntity = function(tileX, tileY) {
@@ -133,7 +104,7 @@ World.prototype.createController = function(gameContext, config) {
         return null;
     }
 
-    this.events.emit(World.EVENT_CONTROLLER_CREATE, controller);
+    this.events.emit(World.EVENT.CONTROLLER_CREATE, controller);
 
     return controller;
 }
@@ -146,7 +117,7 @@ World.prototype.destroyController = function(controllerID) {
     }
 
     this.controllerManager.destroyController(controllerID);
-    this.events.emit(World.EVENT_CONTROLLER_DESTROY, controller);
+    this.events.emit(World.EVENT.CONTROLLER_DESTROY, controller);
 }
 
 World.prototype.createEntity = function(gameContext, config) {
@@ -166,7 +137,7 @@ World.prototype.createEntity = function(gameContext, config) {
     const entityID = entity.getID();
 
     this.controllerManager.addEntity(owner, entityID);
-    this.events.emit(World.EVENT_ENTITY_CREATE, entity);
+    this.events.emit(World.EVENT.ENTITY_CREATE, entity);
 
     return entity;
 }
@@ -181,7 +152,7 @@ World.prototype.destroyEntity = function(entityID) {
 
     if(entity) {
         this.entityManager.destroyEntity(entityID);
-        this.events.emit(World.EVENT_ENTITY_DESTROY, entity);
+        this.events.emit(World.EVENT.ENTITY_DESTROY, entity);
     }
 }
 

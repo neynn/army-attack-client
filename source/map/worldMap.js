@@ -9,6 +9,10 @@ export const WorldMap = function(id) {
     this.entities = new Map();
 }
 
+WorldMap.prototype.setID = function(id) {
+    this.id = id;
+}
+
 WorldMap.prototype.getGraphicsSettings = function() {
     return this.meta.graphics;
 }

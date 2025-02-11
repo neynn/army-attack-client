@@ -31,6 +31,8 @@ import { CounterAttackAction } from "./actions/counterAttackAction.js";
 import { CounterMoveAction } from "./actions/counterMoveAction.js";
 import { ArmyEntityFactory } from "./init/armyEntityFactory.js";
 import { ArmyControllerFactory } from "./init/armyControllerFactory.js";
+import { ArmyMapFactory } from "./init/armyMapFactory.js";
+import { CameraContext } from "../source/camera/cameraContext.js";
 
 export const ArmyContext = function() {
     GameContext.call(this);
@@ -59,6 +61,9 @@ ArmyContext.prototype.initialize = function(resources) {
     this.world.entityManager.registerComponent("Bulldoze", BulldozeComponent);
     this.world.entityManager.registerComponent("Counter", CounterComponent);
     this.world.entityManager.registerComponent("Resource", ResourceComponent);
+
+    this.world.mapManager.registerFactory("Army", new ArmyMapFactory());
+    this.world.mapManager.selectFactory("Army");
 
     this.world.entityManager.registerFactory("Army", new ArmyEntityFactory().load(resources.entities));
     this.world.entityManager.selectFactory("Army");
@@ -92,11 +97,11 @@ ArmyContext.prototype.initialize = function(resources) {
         console.log(`${reason} is disconnected from the server!`);
     });
 
-    this.world.events.subscribe(World.EVENT_CONTROLLER_CREATE, "DEBUG", (controller) => console.log(controller, "HAS BEEN CREATED"));
-    this.world.events.subscribe(World.EVENT_CONTROLLER_DESTROY, "DEBUG", (controller) => console.log(controller, "HAS BEEN DESTROYED"));
-    this.world.events.subscribe(World.EVENT_ENTITY_DESTROY, "DEBUG", (entity) => console.log(entity, "HAS BEEN DESTROYED"));
-    this.world.events.subscribe(World.EVENT_ENTITY_CREATE, "DEBUG", (entity) => console.log(entity, "HAS BEEN CREATED"));
-    this.world.events.subscribe(World.EVENT_MAP_LOAD, "DEBUG", (worldMap) => console.log(worldMap, "HAS BEEN LOADED"));
+    this.world.events.subscribe(World.EVENT.CONTROLLER_CREATE, "DEBUG", (controller) => console.log(controller, "HAS BEEN CREATED"));
+    this.world.events.subscribe(World.EVENT.CONTROLLER_DESTROY, "DEBUG", (controller) => console.log(controller, "HAS BEEN DESTROYED"));
+    this.world.events.subscribe(World.EVENT.ENTITY_DESTROY, "DEBUG", (entity) => console.log(entity, "HAS BEEN DESTROYED"));
+    this.world.events.subscribe(World.EVENT.ENTITY_CREATE, "DEBUG", (entity) => console.log(entity, "HAS BEEN CREATED"));
+    this.world.events.subscribe(World.EVENT.MAP_LOAD, "DEBUG", (worldMap) => console.log(worldMap, "HAS BEEN LOADED"));
 
     this.switchState(CONTEXT_STATES.MAIN_MENU);
 }
@@ -204,10 +209,11 @@ ArmyContext.prototype.createCamera = function(cameraID) {
     const context = this.renderer.addCamera(cameraID, camera);
 
     camera.loadTileDimensions(settings.tileWidth, settings.tileHeight);
-    //context.initRenderer(640, 360);
+
+    //context.initRenderer(640/2, 360/2);
     //context.setDisplayMode(CameraContext.DISPLAY_MODE.RESOLUTION_FIXED);
     
-    this.world.events.subscribe(World.EVENT_MAP_LOAD, cameraID, (worldMap) => {
+    this.world.events.subscribe(World.EVENT.MAP_LOAD, cameraID, (worldMap) => {
         const { width, height, meta } = worldMap;
         const { music } = meta;
     
@@ -224,16 +230,17 @@ ArmyContext.prototype.createCamera = function(cameraID) {
     /*
     let x = false;
 
-    this.client.cursor.events.subscribe(Cursor.LEFT_MOUSE_CLICK, "HI", () => {
+    this.client.cursor.events.subscribe(Cursor.LEFT_MOUSE_CLICK, "TEST", () => {
         x = !x;
         let mode = x ? CameraContext.DISPLAY_MODE.RESOLUTION_DEPENDENT : CameraContext.DISPLAY_MODE.RESOLUTION_FIXED;
         this.renderer.getContext(cameraID).setDisplayMode(mode);
     });
     */
+
     return context;
 }
 
 ArmyContext.prototype.destroyCamera = function(cameraID) {
     this.renderer.removeCamera(cameraID);
-    this.world.events.unsubscribe(World.EVENT_MAP_LOAD, cameraID);
+    this.world.events.unsubscribe(World.EVENT.MAP_LOAD, cameraID);
 }

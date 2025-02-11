@@ -69,6 +69,10 @@ TileManager.prototype.updateDynamicAnimations = function(timestamp) {
     }
 }
 
+TileManager.prototype.getInvertedTileMeta = function() {
+    return this.tileMeta.inversion;
+}
+
 TileManager.prototype.getTileInversion = function() {
     const inversion = {};
 

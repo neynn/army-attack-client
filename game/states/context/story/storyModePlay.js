@@ -16,13 +16,14 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
     const { uiManager, world, renderer } = gameContext;
     const { actionQueue } = world;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
-    const worldMap = await world.loadMapByID("mtn");
+    const worldMap = await world.createMapByID(gameContext, "mtn");
 
     if(!worldMap) {
         return;
     }
 
     console.log(VersusSystem.pickRandomMap(gameContext, 2));
+    
     const controller = world.createController(gameContext, {
         "type": "Player",
         "team": "Allies",

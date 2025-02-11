@@ -30,6 +30,7 @@
             "team": { "id": "team", "fill": 0 }
         },
         "defaultMapMeta": {
+            "INTERPRET_AS_EMPTY": true,
             "music": "music_remastered",
             "width": 20,
             "height": 20,

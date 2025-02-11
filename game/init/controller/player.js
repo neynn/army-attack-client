@@ -215,7 +215,7 @@ PlayerController.prototype.addDragEvent = function(gameContext) {
     const { client } = gameContext;
     const { cursor } = client;
 
-    cursor.events.subscribe(Cursor.LEFT_MOUSE_DRAG, this.id, (deltaX, deltaY) => {
+    cursor.events.subscribe(Cursor.EVENT.LEFT_MOUSE_DRAG, this.id, (deltaX, deltaY) => {
         const context = gameContext.getCameraAtMouse();
 
         if(context) {
@@ -228,7 +228,7 @@ PlayerController.prototype.addClickEvent = function(gameContext) {
     const { client, uiManager } = gameContext;
     const { cursor } = client;
 
-    cursor.events.subscribe(Cursor.LEFT_MOUSE_CLICK, this.id, () => {
+    cursor.events.subscribe(Cursor.EVENT.LEFT_MOUSE_CLICK, this.id, () => {
         const clickedElements = uiManager.getCollidedElements(cursor.positionX, cursor.positionY, cursor.radius);
 
         if(clickedElements.length === 0) {

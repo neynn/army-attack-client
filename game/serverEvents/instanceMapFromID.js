@@ -4,7 +4,7 @@ export const instanceMapFromID = async function(gameContext, payload) {
     const { client, world } = gameContext;
     const { socket } = client;
     const { id } = payload;
-    const worldMap = await world.loadMapByID(id);
+    const worldMap = await world.createMapByID(gameContext, id);
 
     if(!worldMap) {
         socket.messageRoom(GAME_EVENTS.INSTANCE_MAP, {

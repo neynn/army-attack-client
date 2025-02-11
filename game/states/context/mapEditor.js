@@ -3,13 +3,13 @@ import { Cursor } from "../../../source/client/cursor.js";
 import { CameraContext } from "../../../source/camera/cameraContext.js";
 import { MapEditor } from "../../../source/map/mapEditor.js";
 import { clampValue } from "../../../source/math/math.js";
-import { Renderer } from "../../../source/renderer.js";
 import { Button } from "../../../source/ui/elements/button.js";
 
 import { CAMERA_TYPES } from "../../enums.js";
 import { saveMap } from "../../../helpers.js";
 
 export const MapEditorState = function() {
+    this.id = "MAP_EDITOR_STATE";
     this.mapEditor = new MapEditor();
     this.currentLayer = null;
     this.currentLayerButtonID = null;
@@ -40,7 +40,7 @@ MapEditorState.prototype.onEnter = function(stateMachine) {
     uiManager.unparseUI("FPS_COUNTER", gameContext);
 
     this.mapEditor.loadConfig(settings.mapEditor);
-    this.mapEditor.loadBrushSets(tileManager.tileMeta);
+    this.mapEditor.loadBrushSets(tileManager.getInvertedTileMeta());
     this.initializeRenderEvents(gameContext);
     this.initializeCursorEvents(gameContext);
     this.initializeUIEvents(gameContext);
@@ -127,14 +127,13 @@ MapEditorState.prototype.loadButtonEvents = function(gameContext) {
     const { uiManager, renderer, tileManager } = gameContext;
     const { slots, id } = this.mapEditor.config.interface;
     const pageElements = this.mapEditor.getPage();
-    const contextID = gameContext.getID();
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
 
     for(const buttonID of slots) {
         const button = uiManager.getElement(id, buttonID);
 
-        button.events.unsubscribe(Button.EVENT_CLICKED, contextID);
-        button.events.unsubscribe(Button.EVENT_DEFER_DRAW, contextID);
+        button.events.unsubscribe(Button.EVENT_CLICKED, this.id);
+        button.events.unsubscribe(Button.EVENT_DEFER_DRAW, this.id);
     }
 
     for(let i = 0; i < slots.length; i++) {
@@ -143,9 +142,9 @@ MapEditorState.prototype.loadButtonEvents = function(gameContext) {
         const button = uiManager.getElement(id, buttonID);
         const { tileName, tileID } = brushData;
 
-        button.events.subscribe(Button.EVENT_CLICKED, contextID, () => this.mapEditor.setBrush(brushData));
+        button.events.subscribe(Button.EVENT_CLICKED, this.id, () => this.mapEditor.setBrush(brushData));
 
-        button.events.subscribe(Button.EVENT_DEFER_DRAW, contextID, (element, context, localX, localY) => {
+        button.events.subscribe(Button.EVENT_DEFER_DRAW, this.id, (element, context, localX, localY) => {
             if(tileID === 0) {
                 camera.drawEmptyTile(context, localX, localY, MapEditorState.GRAPHICS_BUTTON_SCALE, MapEditorState.GRAPHICS_BUTTON_SCALE);
             } else {
@@ -189,11 +188,10 @@ MapEditorState.prototype.updateButtonText = function(gameContext) {
 MapEditorState.prototype.initializeRenderEvents = function(gameContext) {
     const { renderer, tileManager } = gameContext;
     const { layerButtons } = this.mapEditor.config.interface;
-    const contextID = gameContext.getID();
     const cameraContext = renderer.getContext(CAMERA_TYPES.ARMY_CAMERA);
     const camera = cameraContext.getCamera();
 
-    cameraContext.events.subscribe(CameraContext.EVENT.RENDER_COMPLETE, contextID, (context) => {
+    cameraContext.events.subscribe(CameraContext.EVENT.RENDER_COMPLETE, this.id, (context) => {
         const cursorTile = gameContext.getMouseTile();
         const brushSize = this.mapEditor.getBrushSize();
         const brush = this.mapEditor.getBrush();
@@ -273,27 +271,26 @@ MapEditorState.prototype.paint = function(gameContext) {
 MapEditorState.prototype.initializeCursorEvents = function(gameContext) {
     const { client } = gameContext;
     const { cursor } = client;
-    const contextID = gameContext.getID();
 
-    cursor.events.subscribe(Cursor.UP_MOUSE_SCROLL, contextID, () => {
+    cursor.events.subscribe(Cursor.EVENT.UP_MOUSE_SCROLL, this.id, () => {
         this.mapEditor.scrollBrushSize(1);
         this.updateButtonText(gameContext);
     });
 
-    cursor.events.subscribe(Cursor.DOWN_MOUSE_SCROLL, contextID, () => {
+    cursor.events.subscribe(Cursor.EVENT.DOWN_MOUSE_SCROLL, this.id, () => {
         this.mapEditor.scrollBrushSize(-1);
         this.updateButtonText(gameContext);
     });
 
-    cursor.events.subscribe(Cursor.RIGHT_MOUSE_DRAG, contextID, () => {
+    cursor.events.subscribe(Cursor.EVENT.RIGHT_MOUSE_DRAG, this.id, () => {
         this.paint(gameContext);
     });
 
-    cursor.events.subscribe(Cursor.RIGHT_MOUSE_CLICK, contextID, () => {
+    cursor.events.subscribe(Cursor.EVENT.RIGHT_MOUSE_CLICK, this.id, () => {
         this.paint(gameContext);
     });
 
-    cursor.events.subscribe(Cursor.LEFT_MOUSE_DRAG, contextID, (deltaX, deltaY) => {
+    cursor.events.subscribe(Cursor.EVENT.LEFT_MOUSE_DRAG, this.id, (deltaX, deltaY) => {
         const context = gameContext.getCameraAtMouse();
 
         if(context) {
@@ -313,8 +310,8 @@ MapEditorState.prototype.createNewMap = function(gameContext) {
     const mapID = `${Date.now()}`;
     const mapData = this.mapEditor.getDefaultMapData();
     
-    world.loadEmptyMapByData(mapID, mapData);
-    
+    world.createMap(gameContext, mapID, mapData);
+
     this.currentMapID = mapID;
 }
 
@@ -410,7 +407,7 @@ MapEditorState.prototype.initializeUIEvents = function(gameContext) {
 
     uiManager.addClick(id, "BUTTON_LOAD", async () => {
         const mapID = prompt("MAP-ID?");
-        const worldMap = await world.loadMapByID(mapID);
+        const worldMap = await world.createMapByID(gameContext, mapID);
 
         if(worldMap) {
             this.currentMapID = mapID;

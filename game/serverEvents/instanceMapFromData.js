@@ -5,7 +5,7 @@ export const instanceMapFromData = function(gameContext, payload) {
     const { socket } = client;
     const { id } = payload;
 
-    world.loadMapByData(id, payload);
+    world.createMap(gameContext, id, payload);
 
     socket.messageRoom(GAME_EVENTS.INSTANCE_MAP, {
         "success": true,
