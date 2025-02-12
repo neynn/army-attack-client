@@ -24,7 +24,7 @@ ReviveableComponent.prototype.isDead = function() {
 }
 
 ReviveableComponent.prototype.beginDecay = function() {
-    if(this.state === ReviveableComponent.STATE.NO_DECAY) {
+    if(!this.isElite && this.state === ReviveableComponent.STATE.NO_DECAY) {
         this.state = ReviveableComponent.STATE.DECAY;
     }
 }
@@ -47,21 +47,20 @@ ReviveableComponent.prototype.update = function(gameContext, entity) {
 }
 
 ReviveableComponent.prototype.save = function() {
-    return {
-        "state": this.state,
-        "passedTime": this.passedTime
-    }
+    return [this.state, this.passedTime];
 }
 
-ReviveableComponent.create = function(config) {
-    const reviveableComponent = new ReviveableComponent();
-    const {
-        state = ReviveableComponent.STATE.NO_DECAY,
-        passedTime = 0,
-    } = config;
+ReviveableComponent.prototype.load = function(blob) {
+    const [ state, passedTime ] = blob;
 
-    reviveableComponent.state = state;
-    reviveableComponent.passedTime = passedTime;
-
-    return reviveableComponent;
+    this.state = state;
+    this.passedTime = passedTime;
 } 
+
+ReviveableComponent.prototype.init = function(config) {
+    const { elite } = config;
+
+    if(elite) {
+        this.isElite = elite;
+    }
+}

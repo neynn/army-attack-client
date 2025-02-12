@@ -38,21 +38,19 @@ ConstructionComponent.prototype.advance = function(deltaSteps = 0) {
 }
 
 ConstructionComponent.prototype.save = function() {
-    return {
-        "stepsCompleted": this.stepsCompleted
-    }
+    return [this.stepsCompleted];
 }
 
-ConstructionComponent.create = function(config = {}) {
-    const constructionComponent = new ConstructionComponent();
-    const {
-        constructionSteps = 0,
-        constructionResult = 0
-    } = config;
+ConstructionComponent.prototype.load = function(blob) {
+    const [ stepsCompleted ] = blob;
 
-    constructionComponent.stepsCompleted = 0;
-    constructionComponent.stepsRequired = constructionSteps;
-    constructionComponent.result = constructionResult;
-    
-    return constructionComponent;
+    this.stepsCompleted = stepsCompleted;
+}
+
+ConstructionComponent.prototype.custom = function(type) {
+    const { constructionSteps, constructionResult } = type;
+
+    this.stepsCompleted = 0;
+    this.constructionResult = constructionSteps;
+    this.constructionResult = constructionResult;
 }

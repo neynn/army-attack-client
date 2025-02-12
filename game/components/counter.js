@@ -15,3 +15,15 @@ CounterComponent.prototype.isAttackCounterable = function() {
 CounterComponent.prototype.isMoveCounterable = function() {
     return this.counterMove;
 }
+
+CounterComponent.prototype.init = function(config) {
+    const { move, attack } = config;
+
+    if(move) {
+        this.counterMove = true;
+    }
+
+    if(attack) {
+        this.counterAttack = true;
+    }
+}

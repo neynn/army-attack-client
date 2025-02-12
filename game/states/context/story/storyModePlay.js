@@ -107,12 +107,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "tileX": 8,
         "tileY": 6,
         "team": "Allies",
-        "owner": "neyn",
-        "components": {
-            "Move": {
-                "range": 50
-            }
-        }
+        "owner": "neyn"
     });
 
     SpawnSystem.createEntity(gameContext, { 
@@ -141,16 +136,8 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "team": "Allies",
         "owner": "neyn",
         "components": {
-            "Move": {
-                range: 10
-            },
-            "Health": {
-                health: 99,
-                maxHealth: 99
-            },
-            "Attack": {
-                damage: 69
-            }
+            "Health": [99, 99],
+            "Attack": [69]
         }
     });
 

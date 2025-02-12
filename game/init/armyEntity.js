@@ -13,5 +13,19 @@ ArmyEntity.EVENT = {
     "DAMAGE_UPDATE": 1
 };
 
+ArmyEntity.COMPONENT = {
+    "HEALTH": "Health",
+    "CONSTRUCTION": "Construction",
+    "REVIVEABLE": "Reviveable",
+    "ATTACK": "Attack",
+    "MOVE": "Move",
+    "UNIT_SIZE": "UnitSize",
+    "ARMOR": "Armor",
+    "AVIAN": "Avian",
+    "BULLDOZE": "Bulldoze",
+    "COUNTER": "Counter",
+    "RESOURCE": "Resource"
+};
+
 ArmyEntity.prototype = Object.create(Entity.prototype);
 ArmyEntity.prototype.constructor = ArmyEntity;

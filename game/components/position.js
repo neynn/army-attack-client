@@ -11,12 +11,12 @@ PositionComponent.prototype = Object.create(Component.prototype);
 PositionComponent.prototype.constructor = PositionComponent;
 
 PositionComponent.prototype.save = function() {
-    return {
-        "tileX": this.tileX,
-        "tileY": this.tileY
-    }
+    return [this.tileX, this.tileY];
 }
 
-PositionComponent.create = function() {
-    return new PositionComponent();
+PositionComponent.prototype.load = function(blob) {
+    const [ tileX, tileY ] = blob;
+
+    this.tileX = tileX;
+    this.tileY = tileY;
 }

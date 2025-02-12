@@ -23,21 +23,12 @@ HealthComponent.prototype.getRemainder = function(damage) {
 }
 
 HealthComponent.prototype.save = function() {
-    return {
-        "maxHealth": this.maxHealth,
-        "health": this.health
-    }
+    return [this.health, this.maxHealth];
 }
 
-HealthComponent.create = function(config = {}) {
-    const healthComponent = new HealthComponent();
-    const { 
-        health = 0,
-        maxHealth = health
-    } = config;
+HealthComponent.prototype.load = function(blob) {
+    const [ health, maxHealth ] = blob;
 
-    healthComponent.health = health;
-    healthComponent.maxHealth = maxHealth;
-    
-    return healthComponent;
+    this.health = health;
+    this.maxHealth = maxHealth;
 }

@@ -31,21 +31,29 @@ AttackComponent.prototype.getDamage = function(armor) {
 }
 
 AttackComponent.prototype.save = function() {
-    return {
-        "damage": this.damage,
-        "range": this.range
-    }
+    return [this.damage, this.range];
 }
 
-AttackComponent.create = function(config = {}) {
-    const attackComponent = new AttackComponent();
+AttackComponent.prototype.load = function(blob) {
+    const [ damage, range ] = blob;
+    
+    this.damage = damage;
+    this.range = range;
+}
+
+AttackComponent.prototype.init = function(config) {
+    const { damage, range } = config;
+
+    this.damage = damage;
+    this.range = range;
+}
+
+AttackComponent.prototype.custom = function(stats) {
     const {
         damage = 0,
         attackRange = 0
-    } = config;
+    } = stats;
 
-    attackComponent.damage = damage;
-    attackComponent.range = attackRange;
-
-    return attackComponent;
+    this.damage = damage;
+    this.range = attackRange;
 }

@@ -30,3 +30,19 @@ BulldozeComponent.isBulldozeable = function(archetype) {
 
     return property !== undefined;
 }
+
+BulldozeComponent.prototype.init = function(config) {
+    const { unit, deco, building } = config;
+
+    if(unit) {
+        this.destroyUnit = true;
+    }
+
+    if(deco) {
+        this.destroyDeco = true;
+    }
+
+    if(building) {
+        this.destroyBuilding = true;
+    }
+}

@@ -7,17 +7,12 @@ export const ArmorComponent = function() {
 ArmorComponent.prototype = Object.create(Component.prototype);
 ArmorComponent.prototype.constructor = ArmorComponent;
 
-ArmorComponent.prototype.getArmor = function() {
-    return this.armor;
+ArmorComponent.prototype.init = function(config) {
+    const { armor } = config;
+
+    this.armor = armor;
 }
 
-ArmorComponent.create = function(config = {}) {
-    const armorComponent = new ArmorComponent();
-    const {
-        armor = 0
-    } = config;
-
-    armorComponent.armor = armor;
-
-    return armorComponent;
+ArmorComponent.prototype.getArmor = function() {
+    return this.armor;
 }

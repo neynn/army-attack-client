@@ -3,6 +3,7 @@ import { GameContext } from "../source/gameContext.js";
 import { Socket } from "../source/network/socket.js";
 import { World } from "../source/world.js";
 import { NETWORK_EVENTS } from "../source/network/events.js";
+import { CameraContext } from "../source/camera/cameraContext.js";
 
 import { ACTION_TYPES, CONTEXT_STATES } from "./enums.js";
 import { AttackAction } from "./actions/attackAction.js";
@@ -32,7 +33,7 @@ import { CounterMoveAction } from "./actions/counterMoveAction.js";
 import { ArmyEntityFactory } from "./init/armyEntityFactory.js";
 import { ArmyControllerFactory } from "./init/armyControllerFactory.js";
 import { ArmyMapFactory } from "./init/armyMapFactory.js";
-import { CameraContext } from "../source/camera/cameraContext.js";
+import { ArmyEntity } from "./init/armyEntity.js";
 
 export const ArmyContext = function() {
     GameContext.call(this);
@@ -50,17 +51,17 @@ ArmyContext.prototype.initialize = function(resources) {
     this.world.actionQueue.registerActionHandler(ACTION_TYPES.COUNTER_ATTACK, new CounterAttackAction());
     this.world.actionQueue.registerActionHandler(ACTION_TYPES.COUNTER_MOVE, new CounterMoveAction());
 
-    this.world.entityManager.registerComponent("Health", HealthComponent);
-    this.world.entityManager.registerComponent("Construction", ConstructionComponent);
-    this.world.entityManager.registerComponent("Reviveable", ReviveableComponent);
-    this.world.entityManager.registerComponent("Attack", AttackComponent);
-    this.world.entityManager.registerComponent("Move", MoveComponent);
-    this.world.entityManager.registerComponent("UnitSize", UnitSizeComponent);
-    this.world.entityManager.registerComponent("Armor", ArmorComponent);
-    this.world.entityManager.registerComponent("Avian", AvianComponent);
-    this.world.entityManager.registerComponent("Bulldoze", BulldozeComponent);
-    this.world.entityManager.registerComponent("Counter", CounterComponent);
-    this.world.entityManager.registerComponent("Resource", ResourceComponent);
+    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.HEALTH, HealthComponent);
+    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.CONSTRUCTION, ConstructionComponent);
+    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.REVIVEABLE, ReviveableComponent);
+    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.ATTACK, AttackComponent);
+    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.MOVE, MoveComponent);
+    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.UNIT_SIZE, UnitSizeComponent);
+    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.ARMOR, ArmorComponent);
+    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.AVIAN, AvianComponent);
+    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.BULLDOZE, BulldozeComponent);
+    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.COUNTER, CounterComponent);
+    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.RESOURCE, ResourceComponent);
 
     this.world.mapManager.registerFactory("Army", new ArmyMapFactory().load(resources.mapTypes));
     this.world.mapManager.selectFactory("Army");

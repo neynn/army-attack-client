@@ -21,3 +21,13 @@ AvianComponent.prototype.toAir = function() {
 AvianComponent.prototype.isFlying = function() {
     return this.state === AvianComponent.STATE_FLYING;
 }
+
+AvianComponent.prototype.save = function() {
+    return [this.state];
+}
+
+AvianComponent.prototype.load = function(blob) {
+    const [ state ] = blob;
+
+    this.state = state;
+}

@@ -33,12 +33,3 @@ ProductionComponent.prototype.update = function(gameContext, entity) {
 ProductionComponent.prototype.isFinished = function() {
     return this.state === ProductionComponent.STATE.FINISHED;
 }
-
-ProductionComponent.create = function(config = {}) {
-    const productionComponent = new ProductionComponent();
-    const {
-        //TODO
-    } = config;
-
-    return productionComponent;
-}

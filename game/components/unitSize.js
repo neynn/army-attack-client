@@ -8,3 +8,19 @@ export const UnitSizeComponent = function() {
 
 UnitSizeComponent.prototype = Object.create(Component.prototype);
 UnitSizeComponent.prototype.constructor = UnitSizeComponent;
+
+UnitSizeComponent.prototype.init = function(config) {
+    const { infantry, armor, artillery } = config;
+
+    if(infantry) {
+        this.infantry = infantry;
+    }
+
+    if(armor) {
+        this.armor = armor;
+    }
+
+    if(artillery) {
+        this.artillery = artillery;
+    }
+}

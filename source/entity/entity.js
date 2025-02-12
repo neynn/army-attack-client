@@ -36,20 +36,10 @@ Entity.prototype.update = function(gameContext) {
     }
 }
 
-Entity.prototype.loadComponent = function(type, data = {}) {
-    const component = this.components.get(type);
+Entity.prototype.save = function() {
+    this.components.forEach(component => {
 
-    if(!component) {
-        return;
-    }
-
-    for(const field in data) {
-        const value = data[field];
-
-        if(component[field] !== undefined) {
-            component[field] = value;
-        }
-    }
+    });
 }
 
 Entity.prototype.saveComponent = function(type) {
@@ -74,7 +64,7 @@ Entity.prototype.hasComponent = function(component) {
 
 Entity.prototype.addComponent = function(component) {
     if(this.components.has(component.constructor)) {
-        return;
+        return component;
     }
 
     this.components.set(component.constructor, component);
@@ -82,6 +72,8 @@ Entity.prototype.addComponent = function(component) {
     if(component instanceof ActiveComponent) {
         this.activeComponents.add(component.constructor);
     }
+
+    return component;
 }
 
 Entity.prototype.getComponent = function(component) {

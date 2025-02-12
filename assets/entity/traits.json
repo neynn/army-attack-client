@@ -46,21 +46,21 @@
         "id": "Coward",
         "description": "If a unit can walk on enemy tiles.",
         "components": {
-            "Move": { "isCoward": true }
+            "Move": { "coward": true }
         }
     },
     "Stealth": {
         "id": "Stealth",
         "description": "If a unit can move on enemy tiles.",
         "components": {
-            "Move": { "isStealth": true }
+            "Move": { "stealth": true }
         }
     },
     "Cloak": {
         "id": "Cloak",
         "description": "If a unit can walk through enemy units.",
         "components": {
-            "Move": { "isStealth": true, "isCloaked": true }
+            "Move": { "stealth": true, "cloak": true }
         }
     },
     "Avian": {
@@ -74,7 +74,7 @@
         "id": "Elite",
         "description": "If an entity has the elite status.",
         "components": {
-            "Reviveable": { "isElite": true }
+            "Reviveable": { "elite": true }
         }
     },
     "Reviveable": {
@@ -88,14 +88,14 @@
         "id": "Counter",
         "description": "If an entity automatically counters.",
         "components": {
-            "Counter": { "counterMove": true, "counterAttack": true }
+            "Counter": { "move": true, "attack": true }
         }
     },
     "Bulldoze": {
         "id": "Bulldoze",
         "description": "Used by enemy bulldozers to ignore the revive of the specified entityTypes.",
         "components": {
-            "Bulldoze": { "destroyUnit": true }
+            "Bulldoze": { "unit": true }
         }
     },
     "AoE": {

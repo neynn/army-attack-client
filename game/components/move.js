@@ -42,22 +42,36 @@ MoveComponent.prototype.isPathEmpty = function() {
     return this.path.length === 0;
 }
 
-MoveComponent.create = function(config = {}, typeConfig = {}) {
-    const moveComponent = new MoveComponent();
+MoveComponent.prototype.init = function(config) {
+    const { coward, stealth, cloak } = config;
+
+    if(coward) {
+        this.isCoward = coward;
+    }
+
+    if(stealth) {
+        this.isStealth = stealth;
+    }
+
+    if(cloak) {
+        this.isCloaked = cloak;
+    }
+}
+
+MoveComponent.prototype.custom = function(config, type) {
     const {
         passability = []
-    } = typeConfig;
+    } = type;
+
     const {
         moveRange = 0,
         moveSpeed = 480
     } = config;
 
     for(const passabilityID of passability) {
-        moveComponent.passability[passabilityID] = true;
+        this.passability[passabilityID] = true;
     }
 
-    moveComponent.range = moveRange;
-    moveComponent.speed = moveSpeed;
-
-    return moveComponent;
+    this.range = moveRange;
+    this.speed = moveSpeed;
 }

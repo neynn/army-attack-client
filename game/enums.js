@@ -38,11 +38,6 @@ export const CONTEXT_STATES = Object.freeze({
     "EDIT_MODE": "EDIT_MODE"
 });
 
-export const CONTROLLER_EVENTS = Object.freeze({
-    "CLICK": "CLICK",
-    "SELECT": "SELECT"
-});
-
 export const CAMERA_TYPES = Object.freeze({
     "ARMY_CAMERA": "ARMY_CAMERA"
 });

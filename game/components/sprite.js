@@ -19,14 +19,3 @@ SpriteComponent.prototype.denyFlip = function() {
 SpriteComponent.prototype.getFlippable = function() {
     return this.isFlippable;
 }
-
-SpriteComponent.create = function(config = {}) {
-    const spriteComponent = new SpriteComponent();
-    const {
-        id = null
-    } = config;
-
-    spriteComponent.spriteID = id;
-    
-    return spriteComponent;
-}

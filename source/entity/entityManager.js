@@ -71,26 +71,35 @@ EntityManager.prototype.saveComponents = function(entity, componentIDList = []) 
     return savedComponents;
 }
 
-EntityManager.prototype.loadComponents = function(entity, components = {}) {
-    for(const componentID in components) {
-        const component = this.componentTypes.get(componentID);
-        const data = components[componentID];
+EntityManager.prototype.loadComponents = function(entity, components) {
+    if(!components) {
+        return;
+    }
 
-        if(!component) {
+    for(const componentID in components) {
+        const blob = components[componentID];
+        const componentType = this.componentTypes.get(componentID);
+
+        if(!componentType) {
             Logger.log(false, "Component is not registered!", "EntityManager.prototype.loadComponents", { componentID }); 
             continue;
         }
 
-        if(!entity.hasComponent(component)) {
-            entity.addComponent(new component());
-        }
+        if(entity.hasComponent(componentType)) {
+            const component = entity.getComponent(componentType);
 
-        entity.loadComponent(component, data);
+            component.load(blob);
+        }
     }
 }
 
-EntityManager.prototype.loadTraits = function(entity, traitIDList = []) {
-    for(const traitID of traitIDList) {
+EntityManager.prototype.initTraits = function(entity, traits) {
+    if(!traits) {
+        return;
+    }
+
+    for(let i = 0; i < traits.length; i++) {
+        const traitID = traits[i];
         const traitType = this.traitTypes[traitID];
 
         if(!traitType) {
@@ -98,7 +107,29 @@ EntityManager.prototype.loadTraits = function(entity, traitIDList = []) {
             continue;
         }
 
-        this.loadComponents(entity, traitType.components);
+        const { components } = traitType;
+
+        for(const componentID in components) {
+            const config = components[componentID];
+            const componentType = this.componentTypes.get(componentID);
+
+            if(!componentType) {
+                Logger.log(false, "Component is not registered!", "EntityManager.prototype.initTraits", { componentID }); 
+                continue;
+            }
+
+            if(entity.hasComponent(componentType)) {
+                const component = entity.getComponent(componentType);
+
+                component.init(config);
+            } else {
+                const component = new componentType();
+
+                component.init(config);
+
+                entity.addComponent(component)
+            }
+        }
     }
 }
 

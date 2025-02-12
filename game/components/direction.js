@@ -28,7 +28,3 @@ DirectionComponent.prototype.toNorth = function() {
 DirectionComponent.prototype.toSouth = function() {
     this.directionY = DirectionComponent.DIRECTION_SOUTH;
 }
-
-DirectionComponent.create = function() {
-    return new DirectionComponent();
-}
