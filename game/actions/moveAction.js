@@ -40,15 +40,6 @@ MoveAction.prototype.onEnd = function(gameContext, request, messengerID) {
     actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.COUNTER_MOVE, entityID));
 }
 
-MoveAction.prototype.onUpdate = function(gameContext, request, messengerID) {
-    const { entityID } = request;
-    const { world } = gameContext;
-    const { entityManager } = world;
-    const entity = entityManager.getEntity(entityID);
-
-    MoveSystem.updatePath(gameContext, entity);
-}
-
 MoveAction.prototype.isFinished = function(gameContext, request, messengerID) {
     const { entityID } = request;
     const { world } = gameContext;

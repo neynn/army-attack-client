@@ -1,3 +1,5 @@
+import { ActiveComponent } from "../../source/component/activeComponent.js";
+
 export const ProductionComponent = function() {
     this.passedTime = 0;
     this.state = ProductionComponent.STATE.NOT_PRODUCING;
@@ -9,16 +11,21 @@ ProductionComponent.STATE = {
     "FINISHED": 2
 };
 
-ProductionComponent.prototype.update = function(gameContext, maxTime) {
+ProductionComponent.prototype = Object.create(ActiveComponent.prototype);
+ProductionComponent.prototype.constructor = ProductionComponent;
+
+ProductionComponent.prototype.update = function(gameContext, entity) {
     if(this.state === ProductionComponent.STATE.PRODUCING) {
         const { timer } = gameContext;
         const deltaTime = timer.getFixedDeltaTime();
     
         this.passedTime += deltaTime;
     
-        if(this.passedTime >= maxTime) {
-            this.passedTime = maxTime;
+        if(this.passedTime >= entity.config.collectableTimeSeconds) {
+            this.passedTime = entity.config.collectableTimeSeconds;
             this.state = ProductionComponent.STATE.FINISHED;
+            //TODO: Emit PRODUCTION_READY event!
+            console.error("TODO FINISH PRODUCTION");
         }
     }
 }

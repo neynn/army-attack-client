@@ -1,3 +1,6 @@
+import { ActiveComponent } from "../../source/component/activeComponent.js";
+import { MoveSystem } from "../systems/move.js";
+
 export const MoveComponent = function() {
     this.range = 0;
     this.speed = 0;
@@ -7,6 +10,15 @@ export const MoveComponent = function() {
     this.isCoward = false;
     this.isStealth = false;
     this.isCloaked = false;
+}
+
+MoveComponent.prototype = Object.create(ActiveComponent.prototype);
+MoveComponent.prototype.constructor = MoveComponent;
+
+MoveComponent.prototype.update = function(gameContext, entity) {
+    if(this.path.length !== 0) {
+        MoveSystem.updatePath(gameContext, entity);
+    }
 }
 
 MoveComponent.prototype.clear = function() {

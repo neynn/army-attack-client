@@ -1,3 +1,5 @@
+import { Component } from "../../source/component/component.js";
+
 export const ResourceComponent = function() {
     this.energy = 0;
     this.maxEnergy = 0;
@@ -27,6 +29,9 @@ ResourceComponent.RESOURCE_TYPE_MAP = {
     "Dollor": "dollor",
     "BackgroundEnergy": "backgroundEnergy"
 };
+
+ResourceComponent.prototype = Object.create(Component.prototype);
+ResourceComponent.prototype.constructor = ResourceComponent;
 
 ResourceComponent.create = function() {
     return new ResourceComponent();

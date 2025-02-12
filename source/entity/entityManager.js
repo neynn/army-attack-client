@@ -63,11 +63,9 @@ EntityManager.prototype.saveComponents = function(entity, componentIDList = []) 
 
         const data = entity.saveComponent(component);
 
-        if(!data) {
-            continue;
+        if(data) {
+            savedComponents[componentID] = data;
         }
-
-        savedComponents[componentID] = data;
     }
 
     return savedComponents;
@@ -81,6 +79,10 @@ EntityManager.prototype.loadComponents = function(entity, components = {}) {
         if(!component) {
             Logger.log(false, "Component is not registered!", "EntityManager.prototype.loadComponents", { componentID }); 
             continue;
+        }
+
+        if(!entity.hasComponent(component)) {
+            entity.addComponent(new component());
         }
 
         entity.loadComponent(component, data);

@@ -1,8 +1,13 @@
+import { Component } from "../../source/component/component.js";
+
 export const BulldozeComponent = function() {
     this.destroyUnit = false;
     this.destroyDeco = false;
     this.destroyBuilding = false;
 }
+
+BulldozeComponent.prototype = Object.create(Component.prototype);
+BulldozeComponent.prototype.constructor = BulldozeComponent;
 
 BulldozeComponent.ARCHETYPE_BULLDOZE_MAP = {
     "Unit": "destroyUnit",
@@ -23,9 +28,5 @@ BulldozeComponent.prototype.isBulldozed = function(archetype) {
 BulldozeComponent.isBulldozeable = function(archetype) {
     const property = BulldozeComponent.ARCHETYPE_BULLDOZE_MAP[archetype];
 
-    if(!property) {
-        return false;
-    }
-
-    return true;
+    return property !== undefined;
 }

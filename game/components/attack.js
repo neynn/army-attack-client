@@ -1,8 +1,13 @@
+import { Component } from "../../source/component/component.js";
+
 export const AttackComponent = function() {
     this.damage = 0;
     this.range = 0;
     this.type = AttackComponent.ATTACK_TYPE_PASSIVE;
 }
+
+AttackComponent.prototype = Object.create(Component.prototype);
+AttackComponent.prototype.constructor = AttackComponent;
 
 AttackComponent.ATTACK_TYPE_PASSIVE = 0;
 AttackComponent.ATTACK_TYPE_ACTIVE = 1;

@@ -1,9 +1,11 @@
+import { ActiveComponent } from "../component/activeComponent.js";
+
 export const Entity = function(DEBUG_NAME = "") {
     this.DEBUG_NAME = DEBUG_NAME;
     this.id = null;
     this.config = {};
     this.components = new Map();
-    this.updateComponents = new Map();
+    this.activeComponents = new Set();
 }
 
 Entity.prototype.setID = function(id) {
@@ -27,15 +29,19 @@ Entity.prototype.getConfig = function() {
 }
 
 Entity.prototype.update = function(gameContext) {
-    this.updateComponents.forEach(component => component.update(gameContext, this));
+    for(const componentID of this.activeComponents) {
+        const component = this.components.get(componentID);
+
+        component.update(gameContext, this);
+    }
 }
 
 Entity.prototype.loadComponent = function(type, data = {}) {
-    if(!this.hasComponent(type)) {
-        this.addComponent(new type());
-    }
-
     const component = this.components.get(type);
+
+    if(!component) {
+        return;
+    }
 
     for(const field in data) {
         const value = data[field];
@@ -53,15 +59,10 @@ Entity.prototype.saveComponent = function(type) {
         return null;
     }
 
-    if(typeof component.save === "function") {
-        return component.save();
-    }
+    const componentData = component.save();
 
-    const entries = Object.entries(component);
-    const componentData = {};
-
-    for(const [field, value] of entries) {
-        componentData[field] = value;
+    if(!componentData) {
+        return null;
     }
 
     return componentData;
@@ -78,8 +79,8 @@ Entity.prototype.addComponent = function(component) {
 
     this.components.set(component.constructor, component);
 
-    if(typeof component.update === "function") {
-        this.updateComponents.set(component.constructor, component);
+    if(component instanceof ActiveComponent) {
+        this.activeComponents.add(component.constructor);
     }
 }
 
@@ -92,7 +93,7 @@ Entity.prototype.removeComponent = function(component) {
         this.components.delete(component);
     }
 
-    if(this.updateComponents.has(component)) {
-        this.updateComponents.delete(component);
+    if(this.activeComponents.has(component)) {
+        this.activeComponents.delete(component);
     }
 }

@@ -1,3 +1,4 @@
+import { Component } from "../../source/component/component.js";
 import { clampValue } from "../../source/math/math.js";
 
 export const ConstructionComponent = function() {
@@ -7,6 +8,9 @@ export const ConstructionComponent = function() {
 }
 
 ConstructionComponent.CONSTRUCTION_FRAMES = [0, 0, 1, 1, 2];
+
+ConstructionComponent.prototype = Object.create(Component.prototype);
+ConstructionComponent.prototype.constructor = ConstructionComponent;
 
 ConstructionComponent.prototype.getResult = function() {
     return this.result;

@@ -10,9 +10,7 @@ import { ReviveableComponent } from "../components/reviveable.js";
 import { TeamComponent } from "../components/team.js";
 import { AllianceSystem } from "./alliance.js";
 
-export const AttackSystem = function() {
-    this.id = "AttackSystem";
-}
+export const AttackSystem = function() {}
 
 AttackSystem.OUTCOME_STATE = {
     "IDLE": 0,

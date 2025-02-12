@@ -1,9 +1,13 @@
+import { ActiveComponent } from "../../source/component/activeComponent.js";
+
 export const ReviveableComponent = function() {
     this.isElite = false;
     this.state = ReviveableComponent.STATE.NO_DECAY;
     this.passedTime = 0;
-    this.maxTime = 0;
 }
+
+ReviveableComponent.prototype = Object.create(ActiveComponent.prototype);
+ReviveableComponent.prototype.constructor = ReviveableComponent;
 
 ReviveableComponent.STATE = {
     "NO_DECAY": 0,
@@ -20,21 +24,24 @@ ReviveableComponent.prototype.isDead = function() {
 }
 
 ReviveableComponent.prototype.beginDecay = function() {
-    if(!this.isElite && this.state === ReviveableComponent.STATE.NO_DECAY) {
+    if(this.state === ReviveableComponent.STATE.NO_DECAY) {
         this.state = ReviveableComponent.STATE.DECAY;
     }
 }
 
-ReviveableComponent.prototype.update = function(gameContext) {
+ReviveableComponent.prototype.update = function(gameContext, entity) {
     if(this.state === ReviveableComponent.STATE.DECAY) {
-        const { timer } = gameContext;
+        const { timer, world } = gameContext;
+        const settings = world.getConfig("Settings");
         const fixedDeltaTime = timer.getFixedDeltaTime();
 
         this.passedTime += fixedDeltaTime;
 
-        if(this.passedTime >= this.maxTime) {
-            this.passedTime = this.maxTime;
+        if(this.passedTime >= settings.downDuration) {
+            this.passedTime = settings.downDuration;
             this.state = ReviveableComponent.STATE.DEAD;
+            //TODO: Emit ENTITY_DEATH event!
+            console.error(entity, "IS DEAD!");
         }
     }
 }
@@ -51,12 +58,10 @@ ReviveableComponent.create = function(config) {
     const {
         state = ReviveableComponent.STATE.NO_DECAY,
         passedTime = 0,
-        maxTime = 0
     } = config;
 
     reviveableComponent.state = state;
     reviveableComponent.passedTime = passedTime;
-    reviveableComponent.maxTime = maxTime;
 
     return reviveableComponent;
 } 
