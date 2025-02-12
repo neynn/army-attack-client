@@ -228,7 +228,7 @@ MapEditor.prototype.paint = function(gameContext, mapID, layerID) {
 }
 
 MapEditor.prototype.resizeMap = function(gameMap, width, height) {
-    const defaultSetup = this.config.defaultMapLayers;
+    const defaultSetup = this.config.default.layers;
     const layers = gameMap.getLayers();
 
     for(const layerID in layers) {
@@ -269,8 +269,5 @@ MapEditor.prototype.incrementTypeIndex = function(gameContext, types, mapID, lay
 }
 
 MapEditor.prototype.getDefaultMapData = function() {
-    return {
-        "layers": this.config.defaultMapLayers,
-        "meta": this.config.defaultMapMeta
-    }
+    return this.config.default;
 }

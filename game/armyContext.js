@@ -62,7 +62,7 @@ ArmyContext.prototype.initialize = function(resources) {
     this.world.entityManager.registerComponent("Counter", CounterComponent);
     this.world.entityManager.registerComponent("Resource", ResourceComponent);
 
-    this.world.mapManager.registerFactory("Army", new ArmyMapFactory());
+    this.world.mapManager.registerFactory("Army", new ArmyMapFactory().load(resources.mapTypes));
     this.world.mapManager.selectFactory("Army");
 
     this.world.entityManager.registerFactory("Army", new ArmyEntityFactory().load(resources.entities));

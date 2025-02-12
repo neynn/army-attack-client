@@ -21,36 +21,38 @@
             },
             "slots": ["BUTTON_0", "BUTTON_1", "BUTTON_2", "BUTTON_3", "BUTTON_4", "BUTTON_5", "BUTTON_6", "BUTTON_7", "BUTTON_8"]
         },
-        "defaultMapLayers": {
-            "ground": { "id": "ground", "fill": 1 },
-            "border": { "id": "border", "fill": 0 },
-            "decoration": { "id": "decoration", "fill": 0 },
-            "cloud": { "id": "cloud", "fill": 0 },
-            "type": { "id": "type", "fill": 0 },
-            "team": { "id": "team", "fill": 0 }
-        },
-        "defaultMapMeta": {
-            "INTERPRET_AS_EMPTY": true,
-            "music": "music_remastered",
-            "width": 20,
-            "height": 20,
-            "graphics": {
-                "layers": {
-                    "ground": { "id": "ground", "opacity": 1, "autoGenerate": false },
-                    "border": { "id": "border", "opacity": 1, "autoGenerate": true },
-                    "decoration": { "id": "decoration", "opacity": 1, "autoGenerate": false },
-                    "cloud": { "id": "cloud", "opacity": 1, "autoGenerate": true },
-                    "type": { "id": "type", "opacity": 1, "autoGenerate": false },
-                    "team": { "id": "team", "opacity": 1, "autoGenerate": false }
-                },
-                "background": ["ground", "border", "decoration"],
-                "foreground": ["cloud"]
-            }
-        },
         "hiddenSets": {
             "overlay": 1,
             "border": 1,
             "range": 1
+        },
+        "default": {
+            "layers": {
+                "ground": { "id": "ground", "fill": 1 },
+                "border": { "id": "border", "fill": 0 },
+                "decoration": { "id": "decoration", "fill": 0 },
+                "cloud": { "id": "cloud", "fill": 0 },
+                "type": { "id": "type", "fill": 0 },
+                "team": { "id": "team", "fill": 0 }
+            },
+            "meta": {
+                "type": "EmptyVersus",
+                "music": "music_remastered",
+                "width": 20,
+                "height": 20,
+                "graphics": {
+                    "layers": {
+                        "ground": { "id": "ground", "opacity": 1, "autoGenerate": false },
+                        "border": { "id": "border", "opacity": 1, "autoGenerate": true },
+                        "decoration": { "id": "decoration", "opacity": 1, "autoGenerate": false },
+                        "cloud": { "id": "cloud", "opacity": 1, "autoGenerate": true },
+                        "type": { "id": "type", "opacity": 1, "autoGenerate": false },
+                        "team": { "id": "team", "opacity": 1, "autoGenerate": false }
+                    },
+                    "background": ["ground", "border", "decoration"],
+                    "foreground": ["cloud"]
+                }
+            }
         }
     },
     "socket": {

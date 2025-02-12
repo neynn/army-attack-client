@@ -1,4 +1,5 @@
 import { clampValue } from "../math/math.js";
+import { Tracker } from "./tracker.js";
 
 export const WorldMap = function(id) {
     this.id = id;
@@ -6,7 +7,7 @@ export const WorldMap = function(id) {
     this.height = 0;
     this.meta = {};
     this.layers = {};
-    this.entities = new Map();
+    this.tracker = new Tracker();
 }
 
 WorldMap.prototype.setID = function(id) {
@@ -37,96 +38,40 @@ WorldMap.prototype.getLayers = function() {
     return this.layers;
 }
 
-WorldMap.prototype.addPointer = function(entityID, tileX, tileY) {
-    const entityList = this.getEntityList(tileX, tileY);
-    
-    if(!entityList) {
-        const index = tileY * this.width + tileX;
-
-        this.entities.set(index, [entityID]);
-        return;
-    }
-
-    entityList.push(entityID);
-}
-
-WorldMap.prototype.removePointer = function(entityID, tileX, tileY) {
-    const entityList = this.getEntityList(tileX, tileY);
-
-    if(!entityList) {
-        return;
-    }
-
-    for(let i = 0; i < entityList.length; i++) {
-        const entry = entityList[i];
-
-        if(entry === entityID) {
-            entityList.splice(i, 1);
-            break;
-        }
-    }
-
-    if(entityList.length === 0) {
-        const index = tileY * this.width + tileX;
-
-        this.entities.delete(index);
-    }
-}
-
-WorldMap.prototype.getEntityList = function(tileX, tileY) {
+WorldMap.prototype.getListID = function(tileX, tileY) {
     if(this.isTileOutOfBounds(tileX, tileY)) {
-        return null;
+        return -1;
     }
 
-    const index = tileY * this.width + tileX;
-    const entityList = this.entities.get(index);
-
-    if(!entityList) {
-        return null;
-    }
-
-    return entityList;
+    return tileY * this.width + tileX;
 }
 
 WorldMap.prototype.getEntities = function(tileX, tileY) {
-    const entityList = this.getEntityList(tileX, tileY);
-
-    if(!entityList) {
-        return [];
-    }
+    const listID = this.getListID(tileX, tileY);
+    const entityList = this.tracker.getList(listID);
 
     return entityList;
 }
 
 WorldMap.prototype.getTopEntity = function(tileX, tileY) {
-    const entityList = this.getEntityList(tileX, tileY);
+    const listID = this.getListID(tileX, tileY);
+    const topEntity = this.tracker.getTopElement(listID);
 
-    if(!entityList || entityList.length === 0) {
-        return null;
-    }
-
-    return entityList[entityList.length - 1];
+    return topEntity;
 }
 
 WorldMap.prototype.getBottomEntity = function(tileX, tileY) {
-    const entityList = this.getEntityList(tileX, tileY);
+    const listID = this.getListID(tileX, tileY);
+    const bottomEntity = this.tracker.getBottomElement(listID);
 
-    if(!entityList || entityList.length === 0) {
-        return null;
-    }
-
-    return entityList[0];
+    return bottomEntity;
 }
 
 WorldMap.prototype.isTileOccupied = function(tileX, tileY) {
-    const index = tileY * this.width + tileX;
-    const entityList = this.entities.get(index);
+    const listID = this.getListID(tileX, tileY);
+    const isActive = this.tracker.isListActive(listID);
 
-    if(!entityList) {
-        return false;
-    }
-
-    return entityList.length > 0;
+    return isActive;
 }
 
 WorldMap.prototype.setLayerOpacity = function(layerID, opacity) {
@@ -238,26 +183,32 @@ WorldMap.prototype.getTile = function(layerID, tileX, tileY) {
     return layer[index];
 }
 
-WorldMap.prototype.removeEntity = function(tileX, tileY, rangeX, rangeY, pointer) {
+WorldMap.prototype.removeEntity = function(tileX, tileY, rangeX, rangeY, entityID) {
     for(let i = 0; i < rangeY; i++) {
         const locationY = tileY + i;
 
         for(let j = 0; j < rangeX; j++) {
             const locationX = tileX + j;
+            const listID = this.getListID(locationX, locationY);
 
-            this.removePointer(pointer, locationX, locationY);
+            if(listID !== -1) {
+                this.tracker.removeElement(listID, entityID);
+            }
         }
     }
 }
 
-WorldMap.prototype.addEntity = function(tileX, tileY, rangeX, rangeY, pointer) {
+WorldMap.prototype.addEntity = function(tileX, tileY, rangeX, rangeY, entityID) {
     for(let i = 0; i < rangeY; i++) {
         const locationY = tileY + i;
 
         for(let j = 0; j < rangeX; j++) {
             const locationX = tileX + j;
+            const listID = this.getListID(locationX, locationY);
 
-            this.addPointer(pointer, locationX, locationY);
+            if(listID !== -1) {
+                this.tracker.addElement(listID, entityID);
+            }
         }
     }
 }

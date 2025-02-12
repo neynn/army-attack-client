@@ -9,7 +9,7 @@
         "width": 11,
         "height": 11,
         "author": "neyn",
-        "type": "PVP",
+        "type": "Versus",
         "maxPlayers": 2,
         "graphics": {
             "layers": {
@@ -29,6 +29,7 @@
         "directory": "assets/maps",
         "source": "mtn.json",
         "music": "music_remastered",
+        "type": "Versus",
         "width": 50,
         "height": 50,
         "graphics": {
@@ -50,6 +51,7 @@
         "source": "large.json",
         "author": "neyn",
         "music": "music_remastered",
+        "type": "Versus",
         "width": 200,
         "height": 200,
         "maxPlayers": 1,
