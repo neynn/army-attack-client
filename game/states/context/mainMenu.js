@@ -18,10 +18,14 @@ MainMenuState.prototype.onEnter = function(stateMachine) {
     uiManager.addDynamicText("FPS_COUNTER", "TEXT_FPS", (element) => {
         const fps = Math.floor(renderer.fpsCounter.getSmoothFPS());
         const text = `FPS: ${fps}`;
-        const color = fps > 60 ? [0, 255, 0] : [255, 0, 0];
 
         element.setText(text);
-        element.style.setColorArray(color);
+
+        if(fps > 60) {
+            element.style.color.setColorRGB(0, 255, 0);
+        } else {
+            element.style.color.setColorRGB(255, 0, 0);
+        }
     });
 
     uiManager.addClick("MAIN_MENU", "BUTTON_PLAY", () => gameContext.switchState(CONTEXT_STATES.STORY_MODE));

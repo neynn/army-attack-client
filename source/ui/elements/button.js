@@ -1,4 +1,3 @@
-import { Applyable } from "../../graphics/applyable.js";
 import { Outline } from "../../graphics/applyable/outline.js";
 import { isCircleCicleIntersect, isRectangleRectangleIntersect } from "../../math/math.js";
 import { UIElement } from "../uiElement.js";
@@ -7,10 +6,11 @@ export const Button = function(id) {
     UIElement.call(this, id, "Button");
 
     this.shape = Button.SHAPE_RECTANGLE;
-    this.highlight = new Applyable();
+    this.highlight = new Outline();
     this.outline = new Outline();
-    this.highlight.setColor(200, 200, 200, 0.25);
-    this.outline.setColor(255, 255, 255, 1);
+
+    this.highlight.color.setColor(200, 200, 200, 0.25);
+    this.outline.color.setColor(255, 255, 255, 1);
     this.outline.enable();
 
     this.events.listen(Button.EVENT_DEFER_DRAW);
@@ -103,7 +103,9 @@ Button.prototype.onDraw = function(context, viewportX, viewportY, localX, localY
     switch(this.shape) {
         case Button.SHAPE_RECTANGLE: {
             if(isHighlightActive) {
-                this.highlight.apply(context);
+                const fillStyle = this.highlight.color.getRGBAString();
+
+                context.fillStyle = fillStyle;
                 context.fillRect(localX, localY, this.width, this.height);
             }
         
@@ -115,7 +117,9 @@ Button.prototype.onDraw = function(context, viewportX, viewportY, localX, localY
         }
         case Button.SHAPE_CIRCLE: {
             if(isHighlightActive) {
-                this.highlight.apply(context);
+                const fillStyle = this.highlight.color.getRGBAString();
+
+                context.fillStyle = fillStyle;
                 context.beginPath();
                 context.arc(localX, localY, this.width, 0, 2 * Math.PI);
                 context.fill();

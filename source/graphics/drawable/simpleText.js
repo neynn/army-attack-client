@@ -6,8 +6,7 @@ export const SimpleText = function(id) {
 
     this.style = new TextStyle();
     this.text = "SAMPLE TEXT";
-
-    this.style.setColor(238, 238, 238, 1);
+    this.style.color.setColor(238, 238, 238, 1);
 }
 
 SimpleText.prototype = Object.create(Drawable.prototype);
@@ -24,9 +23,7 @@ SimpleText.prototype.onDraw = function(context, viewportX, viewportY, localX, lo
 }
 
 SimpleText.prototype.setText = function(text) {
-    if(text === undefined) {
-        return;
+    if(text !== undefined) {
+        this.text = text;
     }
-
-    this.text = text;
 }

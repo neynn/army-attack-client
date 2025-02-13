@@ -2,6 +2,7 @@ import { Drawable } from "../drawable.js";
 
 export const SimpleImage = function() {
     Drawable.call(this, null, "SIMPLE_IMAGE");
+
     this.image = null;
 }
 
@@ -24,9 +25,7 @@ SimpleImage.prototype.onDraw = function(context, viewportX, viewportY, localX, l
 }
 
 SimpleImage.prototype.setImage = function(image) {
-    if(image === undefined) {
-        return;
+    if(image !== undefined) {
+        this.image = image;
     }
-
-    this.image = image;
 }

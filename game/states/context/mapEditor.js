@@ -104,7 +104,7 @@ MapEditorState.prototype.scrollLayerButton = function(gameContext, buttonID) {
             const currentButtonColor = buttonStates[MapEditorState.BUTTON_STATE_VISIBLE].textColor;
         
             currentButton.state = MapEditorState.BUTTON_STATE_VISIBLE;
-            currentButtonText.style.setColorArray(currentButtonColor);
+            currentButtonText.style.color.setColorArray(currentButtonColor);
 
             this.currentLayer = null;
             this.currentLayerButtonID = null;
@@ -117,7 +117,7 @@ MapEditorState.prototype.scrollLayerButton = function(gameContext, buttonID) {
     const buttonText = uiManager.getElement(id, button.text);
     const buttonColor = buttonStates[nextState].textColor;
 
-    buttonText.style.setColorArray(buttonColor);
+    buttonText.style.color.setColorArray(buttonColor);
     button.state = nextState;
 
     this.updateLayerOpacity(gameContext);
@@ -429,7 +429,7 @@ MapEditorState.prototype.initializeUIEvents = function(gameContext) {
             const buttonColor = buttonStates[MapEditorState.BUTTON_STATE_VISIBLE].textColor;
 
             button.state = MapEditorState.BUTTON_STATE_VISIBLE;
-            buttonText.style.setColorArray(buttonColor);
+            buttonText.style.color.setColorArray(buttonColor);
         }
 
         this.currentLayer = null;

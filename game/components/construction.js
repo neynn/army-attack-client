@@ -51,6 +51,6 @@ ConstructionComponent.prototype.custom = function(type) {
     const { constructionSteps, constructionResult } = type;
 
     this.stepsCompleted = 0;
-    this.constructionResult = constructionSteps;
-    this.constructionResult = constructionResult;
+    this.stepsRequired = constructionSteps;
+    this.result = constructionResult;
 }

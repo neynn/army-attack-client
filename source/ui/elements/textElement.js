@@ -26,7 +26,7 @@ TextElement.prototype.loadFromConfig = function(config) {
     this.setPosition(x, y);
     this.style.setFont(font);
     this.style.setAlignment(align);
-    this.style.setColorArray(color);
+    this.style.color.setColorArray(color);
 }
 
 TextElement.prototype.setRevealSpeed = function(revealSpeed) {

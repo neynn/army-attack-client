@@ -86,9 +86,10 @@ Entity.prototype.removeComponent = function(componentID) {
         if(componentID === activeComponentID) {
             this.activeComponents[i] = this.activeComponents[this.activeComponents.length - 1];
             this.activeComponents.pop();
-            break;
+            
+            return 0;
         }
     }
 
-    return 0;
+    return -1;
 }

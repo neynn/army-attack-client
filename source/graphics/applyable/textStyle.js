@@ -1,17 +1,13 @@
-import { Applyable } from "../applyable.js";
+import { Color } from "../color.js";
 
 export const TextStyle = function() {
-    Applyable.call(this);
-    
+    this.color = new Color();
     this.fontSize = 10;
     this.fontType = "sans-serif";
     this.font = "10px sans-serif";
     this.baseline = "middle";
     this.alignment = "left"
 }
-
-TextStyle.prototype = Object.create(Applyable.prototype);
-TextStyle.prototype.constructor = TextStyle;
 
 TextStyle.TEXT_BASELINE_MIDDLE = "middle";
 TextStyle.TEXT_ALIGN_RIGHT = "right";
@@ -65,7 +61,7 @@ TextStyle.prototype.setFont = function(font) {
 }
 
 TextStyle.prototype.apply = function(context) {
-    const fillStyle = this.getRGBAString();
+    const fillStyle = this.color.getRGBAString();
 
     context.font = this.font;
     context.fillStyle = fillStyle;
