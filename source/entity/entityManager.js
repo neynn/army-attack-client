@@ -50,27 +50,6 @@ EntityManager.prototype.update = function(gameContext) {
     }
 }
 
-EntityManager.prototype.saveComponents = function(entity, componentIDList = []) {
-    const savedComponents = {};
-
-    for(const componentID of componentIDList) {
-        const component = this.componentTypes.get(componentID);
-
-        if(!component) {
-            Logger.log(false, "Component is not registered!", "EntityManager.prototype.saveComponents", { componentID });
-            continue;
-        }
-
-        const data = entity.saveComponent(component);
-
-        if(data) {
-            savedComponents[componentID] = data;
-        }
-    }
-
-    return savedComponents;
-}
-
 EntityManager.prototype.loadComponents = function(entity, components) {
     if(!components) {
         return;
@@ -85,8 +64,8 @@ EntityManager.prototype.loadComponents = function(entity, components) {
             continue;
         }
 
-        if(entity.hasComponent(componentType)) {
-            const component = entity.getComponent(componentType);
+        if(entity.hasComponent(componentID)) {
+            const component = entity.getComponent(componentID);
 
             component.load(blob);
         }
@@ -118,8 +97,8 @@ EntityManager.prototype.initTraits = function(entity, traits) {
                 continue;
             }
 
-            if(entity.hasComponent(componentType)) {
-                const component = entity.getComponent(componentType);
+            if(entity.hasComponent(componentID)) {
+                const component = entity.getComponent(componentID);
 
                 component.init(config);
             } else {
@@ -127,7 +106,7 @@ EntityManager.prototype.initTraits = function(entity, traits) {
 
                 component.init(config);
 
-                entity.addComponent(component)
+                entity.addComponent(componentID, component);
             }
         }
     }
@@ -172,11 +151,11 @@ EntityManager.prototype.destroyEntity = function(entityID) {
             this.entities[i] = this.entities[this.entities.length - 1];
             this.entities.pop();
 
-            return true;
+            return currentID;
         }
     }
 
     Logger.log(false, "Entity does not exist!", "EntityManager.prototype.destroyEntity", { entityID });
 
-    return false;
+    return -1;
 }

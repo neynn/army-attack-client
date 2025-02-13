@@ -1,4 +1,4 @@
-import { PositionComponent } from "../components/position.js";
+import { ArmyEntity } from "../init/armyEntity.js";
 
 export const PlaceSystem = function() {}
 
@@ -12,7 +12,7 @@ PlaceSystem.placeEntity = function(gameContext, entity) {
     }
 
     const entityID = entity.getID();
-    const positionComponent = entity.getComponent(PositionComponent);
+    const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
 
     activeMap.addEntity(positionComponent.tileX, positionComponent.tileY, entity.config.dimX, entity.config.dimY, entityID);
 }
@@ -27,7 +27,7 @@ PlaceSystem.removeEntity = function(gameContext, entity) {
     }
 
     const entityID = entity.getID();
-    const positionComponent = entity.getComponent(PositionComponent);
+    const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
 
     activeMap.removeEntity(positionComponent.tileX, positionComponent.tileY, entity.config.dimX, entity.config.dimY, entityID);
 }

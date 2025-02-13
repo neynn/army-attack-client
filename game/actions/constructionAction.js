@@ -1,7 +1,7 @@
 import { Action } from "../../source/action/action.js";
 
 import { AnimationSystem } from "../systems/animation.js";
-import { ConstructionComponent } from "../components/construction.js";
+import { ArmyEntity } from "../init/armyEntity.js";
 
 export const ConstructionAction = function() {
     this.timePassed = 0;
@@ -28,7 +28,7 @@ ConstructionAction.prototype.onEnd = function(gameContext, request, messengerID)
     const { entityManager } = world;
     const { entityID, deltaSteps } = request;
     const entity = entityManager.getEntity(entityID);
-    const constructionComponent = entity.getComponent(ConstructionComponent);
+    const constructionComponent = entity.getComponent(ArmyEntity.COMPONENT.CONSTRUCTION);
 
     constructionComponent.advance(deltaSteps);
     AnimationSystem.setConstructionFrame(gameContext, entity);
@@ -54,7 +54,7 @@ ConstructionAction.prototype.getValidated = function(gameContext, request, messe
     const { entityManager } = world;
     const { entityID } = request;
     const entity = entityManager.getEntity(entityID);
-    const constructionComponent = entity.getComponent(ConstructionComponent);
+    const constructionComponent = entity.getComponent(ArmyEntity.COMPONENT.CONSTRUCTION);
 
     if(!constructionComponent || constructionComponent.isComplete()) {
         return null;

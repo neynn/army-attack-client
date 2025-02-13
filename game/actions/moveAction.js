@@ -6,9 +6,8 @@ import { PathfinderSystem } from "../systems/pathfinder.js";
 import { MorphSystem } from "../systems/morph.js";
 import { PlaceSystem } from "../systems/place.js";
 import { ConquerSystem } from "../systems/conquer.js";
-import { MoveComponent } from "../components/move.js";
-import { HealthComponent } from "../components/health.js";
 import { ACTION_TYPES } from "../enums.js";
+import { ArmyEntity } from "../init/armyEntity.js";
 
 export const MoveAction = function() {}
 
@@ -45,7 +44,7 @@ MoveAction.prototype.isFinished = function(gameContext, request, messengerID) {
     const { world } = gameContext;
     const { entityManager } = world;
     const entity = entityManager.getEntity(entityID);
-    const moveComponent = entity.getComponent(MoveComponent);
+    const moveComponent = entity.getComponent(ArmyEntity.COMPONENT.MOVE);
 
     return moveComponent.isPathEmpty();
 }
@@ -60,7 +59,7 @@ MoveAction.prototype.getValidated = function(gameContext, request, messengerID) 
         return null;
     }
     
-    const healthComponent = entity.getComponent(HealthComponent);
+    const healthComponent = entity.getComponent(ArmyEntity.COMPONENT.HEALTH);
     const isTileFree = PathfinderSystem.isTileFree(gameContext, targetX, targetY);
 
     if(!healthComponent.isAlive() || !isTileFree) {

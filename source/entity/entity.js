@@ -5,7 +5,7 @@ export const Entity = function(DEBUG_NAME = "") {
     this.id = null;
     this.config = {};
     this.components = new Map();
-    this.activeComponents = new Set();
+    this.activeComponents = [];
 }
 
 Entity.prototype.setID = function(id) {
@@ -29,7 +29,8 @@ Entity.prototype.getConfig = function() {
 }
 
 Entity.prototype.update = function(gameContext) {
-    for(const componentID of this.activeComponents) {
+    for(let i = 0; i < this.activeComponents.length; i++) {
+        const componentID = this.activeComponents[i];
         const component = this.components.get(componentID);
 
         component.update(gameContext, this);
@@ -37,55 +38,57 @@ Entity.prototype.update = function(gameContext) {
 }
 
 Entity.prototype.save = function() {
-    this.components.forEach(component => {
+    const blob = {};
 
-    });
-}
+    for(const [componentID, component] of this.components) {
+        const data = component.save();
 
-Entity.prototype.saveComponent = function(type) {
-    const component = this.components.get(type);
-
-    if(!component) {
-        return null;
+        if(data) {
+            blob[componentID] = data;
+        }
     }
 
-    const componentData = component.save();
-
-    if(!componentData) {
-        return null;
-    }
-
-    return componentData;
+    return blob;
 }
 
 Entity.prototype.hasComponent = function(component) {
     return this.components.has(component);
 }
 
-Entity.prototype.addComponent = function(component) {
-    if(this.components.has(component.constructor)) {
-        return component;
+Entity.prototype.addComponent = function(componentID, component) {
+    if(this.components.has(componentID)) {
+        return -1;
     }
 
-    this.components.set(component.constructor, component);
+    this.components.set(componentID, component);
 
     if(component instanceof ActiveComponent) {
-        this.activeComponents.add(component.constructor);
+        this.activeComponents.push(componentID);
     }
 
-    return component;
+    return 0;
 }
 
-Entity.prototype.getComponent = function(component) {
-    return this.components.get(component);
+Entity.prototype.getComponent = function(componentID) {
+    return this.components.get(componentID);
 }
 
-Entity.prototype.removeComponent = function(component) {
-    if(this.components.has(component)) {
-        this.components.delete(component);
+Entity.prototype.removeComponent = function(componentID) {
+    if(!this.components.has(componentID)) {
+        return -1;
     }
 
-    if(this.activeComponents.has(component)) {
-        this.activeComponents.delete(component);
+    this.components.delete(componentID);
+
+    for(let i = 0; i < this.activeComponents.length; i++) {
+        const activeComponentID = this.activeComponents[i];
+
+        if(componentID === activeComponentID) {
+            this.activeComponents[i] = this.activeComponents[this.activeComponents.length - 1];
+            this.activeComponents.pop();
+            break;
+        }
     }
+
+    return 0;
 }

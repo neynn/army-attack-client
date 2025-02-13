@@ -1,3 +1,4 @@
+import { saveTemplateAsFile } from "../../../../helpers.js";
 import { State } from "../../../../source/state/state.js";
 
 import { ACTION_TYPES, CAMERA_TYPES } from "../../../enums.js";
@@ -144,8 +145,11 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
     actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.MOVE, battleTank.id, 7, 1));
     actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.MOVE, battleTank.id, 3, 0));
 
+    /*
     const s = gameContext.saveSnapshot();
+    saveTemplateAsFile("test.json", JSON.stringify(s));
     console.log(s, gameContext);
+    */
 
     console.timeEnd();
 }

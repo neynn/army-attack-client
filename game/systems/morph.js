@@ -1,10 +1,11 @@
 import { DirectionComponent } from "../components/direction.js";
+import { ArmyEntity } from "../init/armyEntity.js";
 import { SpriteSystem } from "./sprite.js";
 
 export const MorphSystem = function() {}
 
 MorphSystem.morphHorizontal = function(gameContext, entity) {
-    const directionComponent = entity.getComponent(DirectionComponent);
+    const directionComponent = entity.getComponent(ArmyEntity.COMPONENT.DIRECTION);
 
     if(directionComponent.directionX === DirectionComponent.DIRECTION_WEST) {
         SpriteSystem.flipSprite(gameContext, entity, SpriteSystem.FLIP_STATE_FLIPPED);
@@ -14,7 +15,7 @@ MorphSystem.morphHorizontal = function(gameContext, entity) {
 }
 
 MorphSystem.morphDirectional = function(gameContext, entity, southTypeID, northTypeID) {
-    const directionComponent = entity.getComponent(DirectionComponent);
+    const directionComponent = entity.getComponent(ArmyEntity.COMPONENT.DIRECTION);
 
     if(northTypeID === undefined && southTypeID === undefined) {
         return;

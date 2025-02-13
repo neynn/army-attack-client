@@ -1,5 +1,4 @@
-import { PositionComponent } from "../components/position.js";
-import { SpriteComponent } from "../components/sprite.js";
+import { ArmyEntity } from "../init/armyEntity.js";
 
 export const SpriteSystem = function() {}
 
@@ -8,8 +7,8 @@ SpriteSystem.FLIP_STATE_FLIPPED = 1;
 
 SpriteSystem.alignSpritePosition = function(gameContext, entity) {
     const { spriteManager } = gameContext;
-    const positionComponent = entity.getComponent(PositionComponent);
-    const spriteComponent = entity.getComponent(SpriteComponent);
+    const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
+    const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const { spriteID } = spriteComponent;
     const sprite = spriteManager.getSprite(spriteID);
     const { positionX, positionY } = positionComponent;
@@ -19,7 +18,7 @@ SpriteSystem.alignSpritePosition = function(gameContext, entity) {
 
 SpriteSystem.flipSprite = function(gameContext, entity, flipState) {
     const { spriteManager } = gameContext;
-    const spriteComponent = entity.getComponent(SpriteComponent);
+    const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const { spriteID, isFlippable } = spriteComponent;
 
     if(!isFlippable) {
@@ -46,7 +45,7 @@ SpriteSystem.flipSprite = function(gameContext, entity, flipState) {
 
 SpriteSystem.changeSprite = function(gameContext, entity, sheetID, animationID) {
     const { spriteManager } = gameContext;
-    const spriteComponent = entity.getComponent(SpriteComponent);
+    const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const { spriteID } = spriteComponent;
     
     if(sheetID !== undefined) {

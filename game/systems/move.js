@@ -1,6 +1,5 @@
-import { MoveComponent } from "../components/move.js";
-import { PositionComponent } from "../components/position.js";
 import { CAMERA_TYPES } from "../enums.js";
+import { ArmyEntity } from "../init/armyEntity.js";
 import { SpriteSystem } from "./sprite.js";
 
 export const MoveSystem = function() {}
@@ -11,8 +10,8 @@ MoveSystem.updatePath = function(gameContext, entity) {
     const { width } = camera.getTileDimensions();
     const deltaTime = timer.getFixedDeltaTime();
 
-    const positionComponent = entity.getComponent(PositionComponent);
-    const moveComponent = entity.getComponent(MoveComponent);
+    const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
+    const moveComponent = entity.getComponent(ArmyEntity.COMPONENT.MOVE);
 
     if(!moveComponent.isPathEmpty()) {
         const { deltaX, deltaY, speed } = moveComponent.getCurrentStep();
@@ -45,7 +44,7 @@ MoveSystem.updatePath = function(gameContext, entity) {
 MoveSystem.beginMove = function(gameContext, entity, path) {
     const { client } = gameContext;
     const { soundPlayer } = client;
-    const moveComponent = entity.getComponent(MoveComponent);
+    const moveComponent = entity.getComponent(ArmyEntity.COMPONENT.MOVE);
 
     moveComponent.path = path;
     soundPlayer.playRandom(entity.config.sounds.move);
@@ -54,8 +53,8 @@ MoveSystem.beginMove = function(gameContext, entity, path) {
 MoveSystem.endMove = function(gameContext, entity, targetX, targetY) {
     const { renderer } = gameContext;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
-    const positionComponent = entity.getComponent(PositionComponent);
-    const moveComponent = entity.getComponent(MoveComponent);
+    const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
+    const moveComponent = entity.getComponent(ArmyEntity.COMPONENT.MOVE);
     const { x, y } = camera.transformTileToPositionCenter(targetX, targetY);
 
     positionComponent.positionX = x;

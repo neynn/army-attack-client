@@ -1,6 +1,7 @@
 import { Action } from "../../source/action/action.js";
 import { CounterComponent } from "../components/counter.js";
 import { HealthComponent } from "../components/health.js";
+import { ArmyEntity } from "../init/armyEntity.js";
 import { AnimationSystem } from "../systems/animation.js";
 import { AttackSystem } from "../systems/attack.js";
 import { DeathSystem } from "../systems/death.js";
@@ -76,8 +77,8 @@ CounterAttackAction.prototype.getValidated = function(gameContext, template, mes
         return null;
     }
 
-    const counterComponent = entity.getComponent(CounterComponent);
-    const healthComponent = entity.getComponent(HealthComponent);
+    const counterComponent = entity.getComponent(ArmyEntity.COMPONENT.COUNTER);
+    const healthComponent = entity.getComponent(ArmyEntity.COMPONENT.HEALTH);
 
     if(!counterComponent || !counterComponent.isAttackCounterable() || !healthComponent.isAlive()) {
         return null;

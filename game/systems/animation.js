@@ -1,10 +1,6 @@
 import { SpriteManager } from "../../source/graphics/spriteManager.js";
-import { ConstructionComponent } from "../components/construction.js";
-
-import { PositionComponent } from "../components/position.js";
-import { SpriteComponent } from "../components/sprite.js";
-import { UnitSizeComponent } from "../components/unitSize.js";
 import { CAMERA_TYPES } from "../enums.js";
+import { ArmyEntity } from "../init/armyEntity.js";
 import { DirectionSystem } from "./direction.js";
 import { MorphSystem } from "./morph.js";
 
@@ -29,7 +25,7 @@ AnimationSystem.revertToIdle = function(gameContext, entityIDs) {
 AnimationSystem.playDeath = function(gameContext, entity) {
     const { spriteManager, client } = gameContext;
     const { soundPlayer } = client;
-    const positionComponent = entity.getComponent(PositionComponent);
+    const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
     const deathAnimation = spriteManager.createSprite(entity.config.sprites.death, SpriteManager.LAYER.MIDDLE);
 
     deathAnimation.expire();
@@ -49,12 +45,12 @@ AnimationSystem.playFire = function(gameContext, entity, attackersIDs) {
     const { world, client, spriteManager } = gameContext;
     const { entityManager } = world;
     const { soundPlayer } = client;
-    const spriteComponent = entity.getComponent(SpriteComponent);
+    const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const entitySprite = spriteManager.getSprite(spriteComponent.spriteID);
 
     for(const attackerID of attackersIDs) {
         const attacker = entityManager.getEntity(attackerID);
-        const unitSizeComponent = attacker.getComponent(UnitSizeComponent);
+        const unitSizeComponent = attacker.getComponent(ArmyEntity.COMPONENT.UNIT_SIZE);
         const weaponSprite = spriteManager.createSprite(attacker.config.sprites.weapon);
         const weaponSpriteID = weaponSprite.getID();
 
@@ -81,7 +77,7 @@ AnimationSystem.playFire = function(gameContext, entity, attackersIDs) {
 AnimationSystem.playSelect = function(gameContext, entity) {
     const { client, spriteManager } = gameContext;
     const { soundPlayer } = client;
-    const spriteComponent = entity.getComponent(SpriteComponent);
+    const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const entitySprite = spriteManager.getSprite(spriteComponent.spriteID);
     const moveSprite = spriteManager.createSprite("cursor_move_1x1");
     
@@ -91,7 +87,7 @@ AnimationSystem.playSelect = function(gameContext, entity) {
 
 AnimationSystem.stopSelect = function(gameContext, entity) {
     const { spriteManager } = gameContext;
-    const spriteComponent = entity.getComponent(SpriteComponent);
+    const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const entitySprite = spriteManager.getSprite(spriteComponent.spriteID);
     const moveSpriteID = entitySprite.getChildID("MOVE_CURSOR");
 
@@ -102,7 +98,7 @@ AnimationSystem.playConstruction = function(gameContext, entity) {
     const { client, spriteManager, renderer } = gameContext;
     const { soundPlayer } = client;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
-    const spriteComponent = entity.getComponent(SpriteComponent);
+    const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const entitySprite = spriteManager.getSprite(spriteComponent.spriteID);
     const delaySprite = spriteManager.createSprite("icon_delay");
     const { x, y } = camera.transformSizeToPositionOffsetCenter(entity.config.dimX, entity.config.dimY);
@@ -115,8 +111,8 @@ AnimationSystem.playConstruction = function(gameContext, entity) {
 
 AnimationSystem.setConstructionFrame = function(gameContext, entity) {
     const { spriteManager } = gameContext;
-    const spriteComponent = entity.getComponent(SpriteComponent);
-    const constructionComponent = entity.getComponent(ConstructionComponent);
+    const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
+    const constructionComponent = entity.getComponent(ArmyEntity.COMPONENT.CONSTRUCTION);
 
     const sprite = spriteManager.getSprite(spriteComponent.spriteID);
     const frame = constructionComponent.getFrame();

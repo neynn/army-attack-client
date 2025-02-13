@@ -1,19 +1,15 @@
 import { Cursor } from "../../../source/client/cursor.js";
 import { EntityController } from "../../../source/controller/entityController.js";
-
 import { CAMERA_TYPES } from "../../enums.js";
-import { PositionComponent } from "../../components/position.js";
 import { ArmyCamera } from "../../armyCamera.js";
 import { AnimationSystem } from "../../systems/animation.js";
 import { PathfinderSystem } from "../../systems/pathfinder.js";
 import { AllianceSystem } from "../../systems/alliance.js";
-import { TeamComponent } from "../../components/team.js";
 import { AttackSystem } from "../../systems/attack.js";
 import { MorphSystem } from "../../systems/morph.js";
 import { DirectionSystem } from "../../systems/direction.js";
-import { HealthComponent } from "../../components/health.js";
-import { MoveComponent } from "../../components/move.js";
 import { ControllerHover } from "./hover.js";
+import { ArmyEntity } from "../armyEntity.js";
 
 export const PlayerController = function(id) {
     EntityController.call(this, id);
@@ -34,8 +30,8 @@ PlayerController.prototype = Object.create(EntityController.prototype);
 PlayerController.prototype.constructor = PlayerController;
 
 PlayerController.prototype.isEntityMoveable = function(entity) {
-    const healthComponent = entity.getComponent(HealthComponent);
-    const isSelectable = entity.hasComponent(MoveComponent) && healthComponent.health > 0;
+    const healthComponent = entity.getComponent(ArmyEntity.COMPONENT.HEALTH);
+    const isSelectable = entity.hasComponent(ArmyEntity.COMPONENT.MOVE) && healthComponent.health > 0;
     const selectedEntityID = this.getFirstSelected();
 
     return isSelectable && selectedEntityID === null;
@@ -59,7 +55,7 @@ PlayerController.prototype.resetAttacker = function(gameContext, attackerID) {
     }
 
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
-    const positionComponent = attacker.getComponent(PositionComponent);
+    const positionComponent = attacker.getComponent(ArmyEntity.COMPONENT.POSITION);
 
     camera.removeOverlay(ArmyCamera.OVERLAY_TYPE_ATTACK, positionComponent.tileX, positionComponent.tileY);
     MorphSystem.toIdle(gameContext, attacker);
@@ -70,7 +66,7 @@ PlayerController.prototype.hightlightAttacker = function(gameContext, target, at
     const { entityManager } = world;
     const attacker = entityManager.getEntity(attackerID);
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
-    const positionComponent = attacker.getComponent(PositionComponent);
+    const positionComponent = attacker.getComponent(ArmyEntity.COMPONENT.POSITION);
     const tileID = tileManager.getTileID("overlay", "grid_attack_1x1");
 
     camera.addOverlay(ArmyCamera.OVERLAY_TYPE_ATTACK, positionComponent.tileX, positionComponent.tileY, tileID);
@@ -87,7 +83,7 @@ PlayerController.prototype.updateAttackers = function(gameContext) {
         return;
     }
 
-    const healthComponent = mouseEntity.getComponent(HealthComponent);
+    const healthComponent = mouseEntity.getComponent(ArmyEntity.COMPONENT.HEALTH);
     const isAttackable = this.isEntityAttackable(gameContext, mouseEntity);
 
     if(!isAttackable || !healthComponent.isAlive()) {
@@ -113,7 +109,7 @@ PlayerController.prototype.updateAttackers = function(gameContext) {
 }
 
 PlayerController.prototype.isEntityAttackable = function(gameContext, entity) {
-    const teamComponent = entity.getComponent(TeamComponent);
+    const teamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
     const isEnemy = AllianceSystem.isEnemy(gameContext, this.teamID, teamComponent.teamID);
 
     return isEnemy;
@@ -205,7 +201,7 @@ PlayerController.prototype.regulateSpritePosition = function(gameContext) {
     }
 
     const hoverEntity = this.hover.getEntity(gameContext);
-    const positionComponent = hoverEntity.getComponent(PositionComponent);
+    const positionComponent = hoverEntity.getComponent(ArmyEntity.COMPONENT.POSITION);
     const centerPosition = camera.transformTileToPositionCenter(positionComponent.tileX, positionComponent.tileY);
 
     sprite.setPosition(centerPosition.x, centerPosition.y);

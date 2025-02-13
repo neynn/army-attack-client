@@ -1,10 +1,9 @@
-import { DirectionComponent } from "../components/direction.js";
-import { PositionComponent } from "../components/position.js";
+import { ArmyEntity } from "../init/armyEntity.js";
 
 export const DirectionSystem = function() {}
 
 DirectionSystem.lookHorizontal = function(entity, westCondition) {
-    const directionComponent = entity.getComponent(DirectionComponent);
+    const directionComponent = entity.getComponent(ArmyEntity.COMPONENT.DIRECTION);
 
     if(westCondition) {
         directionComponent.toWest();
@@ -14,7 +13,7 @@ DirectionSystem.lookHorizontal = function(entity, westCondition) {
 }
 
 DirectionSystem.lookVertical = function(entity, northCondition) {
-    const directionComponent = entity.getComponent(DirectionComponent);
+    const directionComponent = entity.getComponent(ArmyEntity.COMPONENT.DIRECTION);
 
     if(northCondition) {
         directionComponent.toNorth();
@@ -24,7 +23,7 @@ DirectionSystem.lookVertical = function(entity, northCondition) {
 }
 
 DirectionSystem.lookTo = function(entity, westCondition, northCondition) {
-    const directionComponent = entity.getComponent(DirectionComponent);
+    const directionComponent = entity.getComponent(ArmyEntity.COMPONENT.DIRECTION);
     
     if(westCondition) {
         directionComponent.toWest();
@@ -40,8 +39,8 @@ DirectionSystem.lookTo = function(entity, westCondition, northCondition) {
 }
 
 DirectionSystem.lookAt = function(entity, target) {
-    const positionComponent = entity.getComponent(PositionComponent);
-    const targetPosition = target.getComponent(PositionComponent);
+    const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
+    const targetPosition = target.getComponent(ArmyEntity.COMPONENT.POSITION);
 
     if(targetPosition.tileX === positionComponent.tileX) {
         DirectionSystem.lookVertical(entity, targetPosition.tileY < positionComponent.tileY);
@@ -51,7 +50,7 @@ DirectionSystem.lookAt = function(entity, target) {
 }
 
 DirectionSystem.lookAtTile = function(entity, targetX, targetY) {
-    const positionComponent = entity.getComponent(PositionComponent);
+    const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
     const { tileX, tileY } = positionComponent;
 
     if(targetX === tileX) {

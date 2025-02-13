@@ -1,8 +1,8 @@
 import { State } from "../../../source/state/state.js";
-import { ConstructionComponent } from "../../components/construction.js";
 import { HealthComponent } from "../../components/health.js";
 
 import { ACTION_TYPES } from "../../enums.js";
+import { ArmyEntity } from "../../init/armyEntity.js";
 import { PlayerController } from "../../init/controller/player.js";
 import { ConstructionSystem } from "../../systems/construction.js";
 
@@ -24,7 +24,7 @@ ControllerIdleState.prototype.onEvent = function(stateMachine, gameContext) {
     const controllerID = controller.getID();
     const entityID = mouseEntity.getID();
     const isAttackable = controller.isEntityAttackable(gameContext, mouseEntity);
-    const healthComponent = mouseEntity.getComponent(HealthComponent);
+    const healthComponent = mouseEntity.getComponent(ArmyEntity.COMPONENT.HEALTH);
     const isControlled = controller.hasEntity(entityID);
 
     if(isAttackable && healthComponent.isAlive()) {
@@ -36,7 +36,7 @@ ControllerIdleState.prototype.onEvent = function(stateMachine, gameContext) {
         return;
     }
 
-    if(mouseEntity.hasComponent(ConstructionComponent)) {
+    if(mouseEntity.hasComponent(ArmyEntity.COMPONENT.CONSTRUCTION)) {
         ConstructionSystem.onInteract(gameContext, mouseEntity, controllerID);
     }
 

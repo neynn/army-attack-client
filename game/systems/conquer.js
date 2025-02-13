@@ -1,4 +1,4 @@
-import { TeamComponent } from "../components/team.js";
+import { ArmyEntity } from "../init/armyEntity.js";
 import { AllianceSystem } from "./alliance.js";
 import { MapSystem } from "./map.js";
 
@@ -13,7 +13,7 @@ ConquerSystem.conquerTile = function(gameContext, tileX, tileY, entity) {
         return;
     }
 
-    const teamComponent = entity.getComponent(TeamComponent);
+    const teamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
     const layerTypes = world.getConfig("LayerType");
     const teamMapping = world.getConfig("TeamTypeMapping");
     const teamLayerID = layerTypes["Team"].layerID;

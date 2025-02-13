@@ -9,14 +9,3 @@ export const PositionComponent = function() {
 
 PositionComponent.prototype = Object.create(Component.prototype);
 PositionComponent.prototype.constructor = PositionComponent;
-
-PositionComponent.prototype.save = function() {
-    return [this.tileX, this.tileY];
-}
-
-PositionComponent.prototype.load = function(blob) {
-    const [ tileX, tileY ] = blob;
-
-    this.tileX = tileX;
-    this.tileY = tileY;
-}

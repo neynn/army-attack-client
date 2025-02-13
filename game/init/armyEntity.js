@@ -24,7 +24,12 @@ ArmyEntity.COMPONENT = {
     "AVIAN": "Avian",
     "BULLDOZE": "Bulldoze",
     "COUNTER": "Counter",
-    "RESOURCE": "Resource"
+    "RESOURCE": "Resource",
+    "POSITION": "Position",
+    "SPRITE": "Sprite",
+    "DIRECTION": "Direction",
+    "TEAM": "Team",
+    "PRODUCTION": "Production"
 };
 
 ArmyEntity.prototype = Object.create(Entity.prototype);

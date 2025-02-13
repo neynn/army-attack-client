@@ -54,11 +54,11 @@ ArmyEntityFactory.prototype.loadDefaultComponents = function(entity, config) {
 
     teamComponent.teamID = team;
 
-    entity.addComponent(positionComponent);
-    entity.addComponent(spriteComponent);
-    entity.addComponent(directionComponent);
-    entity.addComponent(healthComponent);
-    entity.addComponent(teamComponent);
+    entity.addComponent(ArmyEntity.COMPONENT.POSITION, positionComponent);
+    entity.addComponent(ArmyEntity.COMPONENT.SPRITE, spriteComponent);
+    entity.addComponent(ArmyEntity.COMPONENT.DIRECTION, directionComponent);
+    entity.addComponent(ArmyEntity.COMPONENT.HEALTH, healthComponent);
+    entity.addComponent(ArmyEntity.COMPONENT.TEAM, teamComponent);
 }
 
 ArmyEntityFactory.prototype.createDefaultSprite = function(gameContext, entity, config) {
@@ -70,8 +70,8 @@ ArmyEntityFactory.prototype.createDefaultSprite = function(gameContext, entity, 
     const sprite = spriteManager.createSprite(spriteType, SpriteManager.LAYER.MIDDLE);
     const { x, y } = camera.transformTileToPositionCenter(tileX, tileY);
 
-    const positionComponent = entity.getComponent(PositionComponent);
-    const spriteComponent = entity.getComponent(SpriteComponent);
+    const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
+    const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
 
     positionComponent.positionX = x;
     positionComponent.positionY = y;
@@ -111,9 +111,9 @@ ArmyEntityFactory.prototype.onCreate = function(gameContext, config) {
             attackComponent.custom(statConfig);
             attackComponent.toActive();
         
-            entity.addComponent(attackComponent);
-            entity.addComponent(moveComponent);
-            entity.getComponent(SpriteComponent).allowFlip();
+            entity.addComponent(ArmyEntity.COMPONENT.ATTACK, attackComponent);
+            entity.addComponent(ArmyEntity.COMPONENT.MOVE, moveComponent);
+            entity.getComponent(ArmyEntity.COMPONENT.SPRITE).allowFlip();
             break;
         }
         case ArmyEntityFactory.TYPE.DEFENSE: {
@@ -122,14 +122,14 @@ ArmyEntityFactory.prototype.onCreate = function(gameContext, config) {
             attackComponent.custom(statConfig);
             attackComponent.toPassive();
                 
-            entity.addComponent(attackComponent);
+            entity.addComponent(ArmyEntity.COMPONENT.ATTACK, attackComponent);
             break;
         }
         case ArmyEntityFactory.TYPE.CONSTRUCTION: {
             const constructionComponent = new ConstructionComponent();
 
             constructionComponent.custom(entityType);
-            entity.addComponent(constructionComponent);
+            entity.addComponent(ArmyEntity.COMPONENT.CONSTRUCTION, constructionComponent);
         
             sprite.freeze();
             sprite.setFrame(0);
@@ -140,7 +140,7 @@ ArmyEntityFactory.prototype.onCreate = function(gameContext, config) {
 
             productionComponent.state = ProductionComponent.STATE.PRODUCING;
 
-            entity.addComponent(productionComponent);
+            entity.addComponent(ArmyEntity.COMPONENT.PRODUCTION, productionComponent);
             break;
         }
         default: {

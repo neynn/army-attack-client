@@ -1,9 +1,5 @@
 import { FloodFill } from "../../source/pathfinders/floodFill.js";
-
-import { AvianComponent } from "../components/avian.js";
-import { MoveComponent } from "../components/move.js";
-import { PositionComponent } from "../components/position.js";
-import { TeamComponent } from "../components/team.js";
+import { ArmyEntity } from "../init/armyEntity.js";
 import { AllianceSystem } from "./alliance.js";
 
 export const PathfinderSystem = function() {}
@@ -34,14 +30,14 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
     const { mapManager, entityManager } = world;
     const activeMap = mapManager.getActiveMap();
     
-    if(!activeMap || !entity || !entity.hasComponent(MoveComponent)) {
+    if(!activeMap || !entity || !entity.hasComponent(ArmyEntity.COMPONENT.MOVE)) {
         return [];
     }
 
-    const avianComponent = entity.getComponent(AvianComponent);
-    const positionComponent = entity.getComponent(PositionComponent);
-    const moveComponent = entity.getComponent(MoveComponent);
-    const teamComponent = entity.getComponent(TeamComponent);
+    const avianComponent = entity.getComponent(ArmyEntity.COMPONENT.AVIAN);
+    const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
+    const moveComponent = entity.getComponent(ArmyEntity.COMPONENT.MOVE);
+    const teamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
 
     const teamMapping = world.getConfig("TeamTypeMapping");
     const layerTypes = world.getConfig("LayerType");
@@ -73,12 +69,12 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
             }
 
             const tileEntity = entityManager.getEntity(entityID);
-            const tileEntityTeamComponent = tileEntity.getComponent(TeamComponent);
+            const tileEntityTeamComponent = tileEntity.getComponent(ArmyEntity.COMPONENT.TEAM);
             const tileEntityAlliance = AllianceSystem.getAlliance(gameContext, teamComponent.teamID, tileEntityTeamComponent.teamID);
             const isPassable = tileEntityAlliance.isEntityPassingAllowed || moveComponent.isCloaked || (avianComponent && avianComponent.inFlying());
 
             if(!isPassable) {
-                const tileEntityAvianComponent = tileEntity.getComponent(AvianComponent);
+                const tileEntityAvianComponent = tileEntity.getComponent(ArmyEntity.COMPONENT.AVIAN);
                 const isFlying = (tileEntityAvianComponent && tileEntityAvianComponent.isFlying());
         
                 if(!isFlying) {

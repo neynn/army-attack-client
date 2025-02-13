@@ -5,6 +5,7 @@ import { PositionComponent } from "../../components/position.js";
 import { DirectionSystem } from "../../systems/direction.js";
 import { MorphSystem } from "../../systems/morph.js";
 import { PlayerController } from "../../init/controller/player.js";
+import { ArmyEntity } from "../../init/armyEntity.js";
 
 export const ControllerSelectedState = function() {}
 
@@ -39,7 +40,7 @@ ControllerSelectedState.prototype.updateEntity = function(gameContext, controlle
         return;
     }
 
-    const positionComponent = selectedEntity.getComponent(PositionComponent);
+    const positionComponent = selectedEntity.getComponent(ArmyEntity.COMPONENT.POSITION);
     
     if(controller.hover.tileX !== positionComponent.tileX) {
         DirectionSystem.lookHorizontal(selectedEntity, controller.hover.tileX < positionComponent.tileX);

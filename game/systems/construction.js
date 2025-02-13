@@ -1,7 +1,5 @@
-import { ConstructionComponent } from "../components/construction.js";
-import { PositionComponent } from "../components/position.js";
-import { TeamComponent } from "../components/team.js";
 import { ACTION_TYPES } from "../enums.js";
+import { ArmyEntity } from "../init/armyEntity.js";
 import { DeathSystem } from "./death.js";
 import { SpawnSystem } from "./spawn.js";
 
@@ -10,7 +8,7 @@ export const ConstructionSystem = function() {}
 ConstructionSystem.onInteract = function(gameContext, entity, controllerID) {
     const { world } = gameContext;
     const { actionQueue } = world;
-    const constructionComponent = entity.getComponent(ConstructionComponent);
+    const constructionComponent = entity.getComponent(ArmyEntity.COMPONENT.CONSTRUCTION);
 
     if(!constructionComponent) {
         return;
@@ -28,14 +26,14 @@ ConstructionSystem.onInteract = function(gameContext, entity, controllerID) {
 }
 
 ConstructionSystem.finishConstruction = function(gameContext, entity, controllerID) {        
-    const constructionComponent = entity.getComponent(ConstructionComponent);
+    const constructionComponent = entity.getComponent(ArmyEntity.COMPONENT.CONSTRUCTION);
 
     if(!constructionComponent) {
         return;
     }
 
-    const positionComponent = entity.getComponent(PositionComponent);
-    const teamComponent = entity.getComponent(TeamComponent);
+    const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
+    const teamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
     const resultType = constructionComponent.getResult();
     const entityID = entity.getID();
     const result = {

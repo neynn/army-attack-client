@@ -1,5 +1,4 @@
-import { AvianComponent } from "../components/avian.js";
-import { ReviveableComponent } from "../components/reviveable.js";
+import { ArmyEntity } from "../init/armyEntity.js";
 import { MorphSystem } from "./morph.js";
 
 export const DecaySystem = function() {}
@@ -7,13 +6,13 @@ export const DecaySystem = function() {}
 DecaySystem.beginDecay = function(gameContext, entity) {
     const { client } = gameContext;
     const { soundPlayer } = client;
-    const reviveableComponent = entity.getComponent(ReviveableComponent);
+    const reviveableComponent = entity.getComponent(ArmyEntity.COMPONENT.REVIVEABLE);
 
     if(!reviveableComponent) {
         return;
     }
 
-    const avianComponent = entity.getComponent(AvianComponent);
+    const avianComponent = entity.getComponent(ArmyEntity.COMPONENT.AVIAN);
 
     if(avianComponent) {
         avianComponent.toGround();

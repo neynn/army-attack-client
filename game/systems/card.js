@@ -1,11 +1,6 @@
 import { SimpleText } from "../../source/graphics/drawable/simpleText.js";
 import { TextStyle } from "../../source/graphics/applyable/textStyle.js";
-
-import { AttackComponent } from "../components/attack.js";
-import { HealthComponent } from "../components/health.js";
-import { TeamComponent } from "../components/team.js";
 import { CAMERA_TYPES } from "../enums.js";
-import { SpriteComponent } from "../components/sprite.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 
 export const CardSystem = function() {}
@@ -15,7 +10,7 @@ CardSystem.HEALTH_TEXT_ID = "HEALTH_TEXT";
 CardSystem.DAMAGE_TEXT_ID = "DAMAGE_TEXT";
 
 CardSystem.addHealthText = function(entity, statCard) {
-    const healthComponent = entity.getComponent(HealthComponent);
+    const healthComponent = entity.getComponent(ArmyEntity.COMPONENT.HEALTH);
     const healthText = new SimpleText(CardSystem.HEALTH_TEXT_ID);
     
     healthText.style.setFontType("ArmyAttack Arial");
@@ -33,7 +28,7 @@ CardSystem.addHealthText = function(entity, statCard) {
 }
 
 CardSystem.addDamageText = function(entity, statCard) {
-    const attackComponent = entity.getComponent(AttackComponent);
+    const attackComponent = entity.getComponent(ArmyEntity.COMPONENT.ATTACK);
     const damageText = new SimpleText(CardSystem.DAMAGE_TEXT_ID);
 
     damageText.style.setFontType("ArmyAttack Arial");
@@ -54,12 +49,12 @@ CardSystem.createStatCard = function(gameContext, entity) {
     const { spriteManager, renderer, world } = gameContext;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
     const teamTypes = world.getConfig("TeamType");
-    const teamComponent = entity.getComponent(TeamComponent);
+    const teamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
     const { x, y } = camera.transformSizeToPositionOffset(entity.config.dimX, entity.config.dimY);
     const positionX = x - 48;
     const positionY = y - 48;
 
-    if(entity.hasComponent(AttackComponent)) {
+    if(entity.hasComponent(ArmyEntity.COMPONENT.ATTACK)) {
         const statCardType = teamTypes[teamComponent.teamID].sprites.stat_card;
 
         if(!statCardType) {
@@ -100,7 +95,7 @@ CardSystem.generateStatCard = function(gameContext, entity) {
         return;
     }
 
-    const spriteComponent = entity.getComponent(SpriteComponent);
+    const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const sprite = spriteManager.getSprite(spriteComponent.spriteID);
     const statCard = CardSystem.createStatCard(gameContext, entity);
 

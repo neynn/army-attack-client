@@ -34,6 +34,9 @@ import { ArmyEntityFactory } from "./init/armyEntityFactory.js";
 import { ArmyControllerFactory } from "./init/armyControllerFactory.js";
 import { ArmyMapFactory } from "./init/armyMapFactory.js";
 import { ArmyEntity } from "./init/armyEntity.js";
+import { SpriteComponent } from "./components/sprite.js";
+import { ProductionComponent } from "./components/production.js";
+import { DirectionComponent } from "./components/direction.js";
 
 export const ArmyContext = function() {
     GameContext.call(this);
@@ -51,6 +54,11 @@ ArmyContext.prototype.initialize = function(resources) {
     this.world.actionQueue.registerActionHandler(ACTION_TYPES.COUNTER_ATTACK, new CounterAttackAction());
     this.world.actionQueue.registerActionHandler(ACTION_TYPES.COUNTER_MOVE, new CounterMoveAction());
 
+    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.DIRECTION, DirectionComponent)
+    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.POSITION, PositionComponent)
+    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.PRODUCTION, ProductionComponent)
+    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.SPRITE, SpriteComponent)
+    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.TEAM, TeamComponent)
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.HEALTH, HealthComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.CONSTRUCTION, ConstructionComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.REVIVEABLE, ReviveableComponent);
@@ -141,7 +149,6 @@ ArmyContext.prototype.updateConversions = function() {
 }
 
 ArmyContext.prototype.saveSnapshot = function() {
-    const components = ["Position", "Health", "Attack"];
     const entities = [];
     const controllers = [];
 
@@ -157,9 +164,9 @@ ArmyContext.prototype.saveSnapshot = function() {
 
     this.world.entityManager.entities.forEach(entity => {
         const entityID = entity.getID();
-        const positionComponent = entity.getComponent(PositionComponent);
-        const teamComponent = entity.getComponent(TeamComponent);
-        const savedComponents = this.world.entityManager.saveComponents(entity, components);
+        const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
+        const teamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
+        const savedComponents = entity.save();
         const owner = this.world.controllerManager.getOwnerOf(entityID);
         
         entities.push({
