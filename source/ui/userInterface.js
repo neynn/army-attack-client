@@ -227,13 +227,13 @@ UserInterface.prototype.addElementAnchor = function(gameContext, element, origin
 }
 
 UserInterface.prototype.createElement = function(typeID, elementID, config) {
-    const Type = UserInterface.ELEMENT_CLASS[typeID];
+    const ElementType = UserInterface.ELEMENT_CLASS[typeID];
 
-    if(!Type) {
+    if(!ElementType || this.elements.has(elementID)) {
         return null;
     }
 
-    const element = new Type(elementID);
+    const element = new ElementType(elementID);
 
     element.loadFromConfig(config);
 
@@ -260,24 +260,17 @@ UserInterface.prototype.addEffects = function(gameContext, element, effects = []
 }
 
 UserInterface.prototype.fromConfig = function(gameContext, userInterface) {
-    const elements = new Map();
-
     for(const elementID in userInterface) {
         const config = userInterface[elementID];
         const { type } = config;
-        const element = this.createElement(type, elementID, config);
 
-        if(!element) {
-            continue;
-        }
-
-        elements.set(elementID, element);
+        this.createElement(type, elementID, config);
     }
     
     for(const elementID in userInterface) {
         const config = userInterface[elementID];
         const { children } = config;
-        const element = elements.get(elementID);
+        const element = this.elements.get(elementID);
 
         if(!element || !Array.isArray(children)) {
             continue;
@@ -285,7 +278,7 @@ UserInterface.prototype.fromConfig = function(gameContext, userInterface) {
 
         for(let i = 0; i < children.length; i++) {
             const childID = children[i];
-            const child = elements.get(childID);
+            const child = this.elements.get(childID);
 
             if(child) {
                 element.addChild(child, childID);
@@ -293,7 +286,7 @@ UserInterface.prototype.fromConfig = function(gameContext, userInterface) {
         }
     }
 
-    for(const [elementID, element] of elements) {
+    for(const [elementID, element] of this.elements) {
         const { anchor, effects, position } = userInterface[elementID];
 
         this.addEffects(gameContext, element, effects);
@@ -303,8 +296,6 @@ UserInterface.prototype.fromConfig = function(gameContext, userInterface) {
             this.roots.push(elementID);
         }
     }
-
-    return elements;
 }
 
 UserInterface.prototype.getID = function() {
