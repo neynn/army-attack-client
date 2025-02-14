@@ -32,39 +32,35 @@ UIElement.prototype.isColliding = function(mouseX, mouseY, mouseRange) {
 
 UIElement.prototype.getCollisions = function(mouseX, mouseY, mouseRange) {
     const collidedElements = [];
-    const uncheckedElements = [];
+    const referenceStack = [this];
+    const positionStack = [mouseX, mouseY];
 
-    uncheckedElements.push({
-        "element": this,
-        "localX": mouseX,
-        "localY": mouseY
-    });
-
-    while(uncheckedElements.length !== 0) {
-        const { element, localX, localY } = uncheckedElements.pop();
-        const isColliding = element.isColliding(localX, localY, mouseRange);
+    while(referenceStack.length !== 0) {
+        const positionY = positionStack.pop();
+        const positionX = positionStack.pop();
+        const reference = referenceStack.pop();
+        const isColliding = reference.isColliding(positionX, positionY, mouseRange);
 
         if(!isColliding) {
             continue;
         }
 
-        collidedElements.push(element);
+        const children = reference.getChildren();
+        const nextX = positionX - reference.position.x;
+        const nextY = positionY - reference.position.y;
 
-        const children = element.getChildren();
-        const nextLocalX = localX - element.position.x;
-        const nextLocalY = localY - element.position.y;
-
-        for(const child of children) {
+        for(let i = 0; i < children.length; i++) {
+            const child = children[i];
             const reference = child.getReference();
-            
+
             if(reference instanceof UIElement) {
-                uncheckedElements.push({
-                    "element": reference,
-                    "localX": nextLocalX,
-                    "localY": nextLocalY
-                });
+                referenceStack.push(reference);
+                positionStack.push(nextX);
+                positionStack.push(nextY);
             }
         }
+
+        collidedElements.push(reference);
     }
 
     return collidedElements;

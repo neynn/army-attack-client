@@ -94,9 +94,7 @@ Button.prototype.isColliding = function(mouseX, mouseY, mouseRange) {
     }
 }
 
-Button.prototype.onDraw = function(context, viewportX, viewportY, localX, localY) {    
-    this.events.emit(Button.EVENT_DEFER_DRAW, this, context, localX, localY);
-    
+Button.prototype.drawStyle = function(context, localX, localY) {
     const isHighlightActive = this.highlight.isActive();
     const isOutlineActive = this.outline.isActive();
 
@@ -134,4 +132,9 @@ Button.prototype.onDraw = function(context, viewportX, viewportY, localX, localY
             break;
         }
     }
+}
+
+Button.prototype.onDraw = function(context, viewportX, viewportY, localX, localY) {
+    this.events.emit(Button.EVENT_DEFER_DRAW, this, context, localX, localY);
+    this.drawStyle(context, localX, localY);
 }

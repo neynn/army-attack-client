@@ -1,5 +1,4 @@
 import { Action } from "../../source/action/action.js";
-
 import { AnimationSystem } from "../systems/animation.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 

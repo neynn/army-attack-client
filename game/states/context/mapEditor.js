@@ -189,9 +189,8 @@ MapEditorState.prototype.initializeRenderEvents = function(gameContext) {
     const { renderer, tileManager } = gameContext;
     const { layerButtons } = this.mapEditor.config.interface;
     const cameraContext = renderer.getContext(CAMERA_TYPES.ARMY_CAMERA);
-    const camera = cameraContext.getCamera();
 
-    cameraContext.events.subscribe(CameraContext.EVENT.RENDER_COMPLETE, this.id, (context) => {
+    cameraContext.events.subscribe(CameraContext.EVENT.RENDER_COMPLETE, this.id, (camera, context) => {
         const cursorTile = gameContext.getMouseTile();
         const brushSize = this.mapEditor.getBrushSize();
         const brush = this.mapEditor.getBrush();

@@ -135,11 +135,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "tileX": 0,
         "tileY": 1,
         "team": "Allies",
-        "owner": "neyn",
-        "components": {
-            "Health": [99, 99],
-            "Attack": [69]
-        }
+        "owner": "neyn"
     });
 
     actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.MOVE, battleTank.id, 7, 1));

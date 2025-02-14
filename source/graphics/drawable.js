@@ -16,8 +16,8 @@ export const Drawable = function(id = null, DEBUG_NAME = "Drawable") {
 }
 
 Drawable.STATE = {
-    "HIDDEN": 0,
-    "VISIBLE": 1
+    HIDDEN: 0,
+    VISIBLE: 1
 };
 
 Drawable.DEFAULT_FAMILY_NAME = "DEFAULT_FAMILY_NAME";
@@ -29,16 +29,17 @@ Drawable.prototype.onDraw = function(context, viewportX, viewportY, localX, loca
 Drawable.prototype.onDebug = function(context, viewportX, viewportY, localX, localY) {}
 
 Drawable.prototype.update = function(timestamp, deltaTime) {
-    const updateStack = [this];
+    const referenceStack = [this];
 
-    while(updateStack.length !== 0) {
-        const drawable = updateStack.pop();
+    while(referenceStack.length !== 0) {
+        const drawable = referenceStack.pop();
         const children = drawable.getChildren();
 
-        for(const child of children) {
+        for(let i = 0; i < children.length; i++) {
+            const child = children[i];
             const reference = child.getReference();
 
-            updateStack.push(reference);
+            referenceStack.push(reference);
         }
 
         drawable.onUpdate(timestamp, deltaTime);
@@ -46,29 +47,26 @@ Drawable.prototype.update = function(timestamp, deltaTime) {
 }
 
 Drawable.prototype.debug = function(context, viewportX, viewportY) {
-    const debugStack = [{
-        "drawable": this,
-        "localX": this.position.x,
-        "localY": this.position.y
-    }];
+    const referenceStack = [this];
+    const positionStack = [this.position.x, this.position.y];
 
-    while(debugStack.length !== 0) {
-        const { drawable, localX, localY } = debugStack.pop();
-        const children = drawable.getChildren();
+    while(referenceStack.length !== 0) {
+        const positionY = positionStack.pop();
+        const positionX = positionStack.pop();
+        const reference = referenceStack.pop();
+        const children = reference.getChildren();
 
         context.save();
-        drawable.onDebug(context, viewportX, viewportY, localX, localY);
+        reference.onDebug(context, viewportX, viewportY, positionX, positionY);
         context.restore();
 
         for(let i = children.length - 1; i >= 0; i--) {
             const child = children[i];
             const reference = child.getReference();
 
-            debugStack.push({
-                "drawable": reference,
-                "localX": localX + reference.position.x,
-                "localY": localY + reference.position.y
-            });
+            referenceStack.push(reference);
+            positionStack.push(positionX + reference.position.x);
+            positionStack.push(positionY + reference.position.y);
         }
     }
 }
@@ -78,18 +76,17 @@ Drawable.prototype.draw = function(context, viewportX, viewportY) {
         return;
     }
 
-    const drawStack = [{
-        "drawable": this,
-        "localX": this.position.x,
-        "localY": this.position.y
-    }];
+    const referenceStack = [this];
+    const positionStack = [this.position.x, this.position.y];
 
-    while(drawStack.length !== 0) {
-        const { drawable, localX, localY } = drawStack.pop();
-        const children = drawable.getChildren();
+    while(referenceStack.length !== 0) {
+        const positionY = positionStack.pop();
+        const positionX = positionStack.pop();
+        const reference = referenceStack.pop();
+        const children = reference.getChildren();
 
         context.save();
-        drawable.onDraw(context, viewportX, viewportY, localX, localY);
+        reference.onDraw(context, viewportX, viewportY, positionX, positionY);
         context.restore();
 
         for(let i = children.length - 1; i >= 0; i--) {
@@ -97,22 +94,20 @@ Drawable.prototype.draw = function(context, viewportX, viewportY) {
             const reference = child.getReference();
 
             if(reference.state === Drawable.STATE.VISIBLE) {
-                drawStack.push({
-                    "drawable": reference,
-                    "localX": localX + reference.position.x,
-                    "localY": localY + reference.position.y
-                });
+                referenceStack.push(reference);
+                positionStack.push(positionX + reference.position.x);
+                positionStack.push(positionY + reference.position.y);
             }
         }
     }
 }
 
-Drawable.prototype.getFamilyStack = function() {
-    const familyStack = [];
-    const stack = [this];
+Drawable.prototype.getReferenceStack = function() {
+    const referenceStack = [this];
+    const referenceIDStack = [];
 
-    while(stack.length !== 0) {
-        const drawable = stack.pop();
+    while(referenceStack.length !== 0) {
+        const drawable = referenceStack.pop();
         const drawableID = drawable.getID();
         const children = drawable.getChildren();
 
@@ -120,13 +115,13 @@ Drawable.prototype.getFamilyStack = function() {
             const child = children[i];
             const reference = child.getReference();
             
-            stack.push(reference);
+            referenceStack.push(reference);
         }
 
-        familyStack.push(drawableID);
+        referenceIDStack.push(drawableID);
     }
 
-    return familyStack;
+    return referenceIDStack;
 }
 
 Drawable.prototype.getID = function() {

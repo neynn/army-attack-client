@@ -79,7 +79,7 @@ GameContext.prototype.loadResources = function(resources) {
     this.world.config = resources.world;
 }
 
-GameContext.prototype.initialize = function() {}
+GameContext.prototype.init = function() {}
 
 GameContext.prototype.getCameraAtMouse = function() {
     const context = this.renderer.getCollidedContext(this.client.cursor.positionX, this.client.cursor.positionY, this.client.cursor.radius);

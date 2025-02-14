@@ -15,7 +15,7 @@ ConstructionSystem.onInteract = function(gameContext, entity, controllerID) {
     }
 
     const entityID = entity.getID();
-
+    
     if(constructionComponent.isComplete()) {
         if(!actionQueue.isRunning()) {
             ConstructionSystem.finishConstruction(gameContext, entity, controllerID);

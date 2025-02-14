@@ -10,7 +10,7 @@ const resources = await resourceManager.loadJSONList(files);
 
 resourceManager.loadFontList(resources.fonts).then(() => {
 	gameContext.loadResources(resources);
-	gameContext.initialize(resources);
+	gameContext.init(resources);
 	gameContext.start();
 });
 

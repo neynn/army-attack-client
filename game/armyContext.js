@@ -45,31 +45,32 @@ export const ArmyContext = function() {
 ArmyContext.prototype = Object.create(GameContext.prototype);
 ArmyContext.prototype.constructor = ArmyContext;
 
-ArmyContext.prototype.initialize = function(resources) {
+ArmyContext.prototype.init = function(resources) {
     this.updateConversions();
 
-    this.world.actionQueue.registerActionHandler(ACTION_TYPES.MOVE, new MoveAction());
     this.world.actionQueue.registerActionHandler(ACTION_TYPES.ATTACK, new AttackAction());
     this.world.actionQueue.registerActionHandler(ACTION_TYPES.CONSTRUCTION, new ConstructionAction());
     this.world.actionQueue.registerActionHandler(ACTION_TYPES.COUNTER_ATTACK, new CounterAttackAction());
     this.world.actionQueue.registerActionHandler(ACTION_TYPES.COUNTER_MOVE, new CounterMoveAction());
+    this.world.actionQueue.registerActionHandler(ACTION_TYPES.MOVE, new MoveAction());
 
-    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.DIRECTION, DirectionComponent)
-    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.POSITION, PositionComponent)
-    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.PRODUCTION, ProductionComponent)
-    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.SPRITE, SpriteComponent)
-    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.TEAM, TeamComponent)
-    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.HEALTH, HealthComponent);
-    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.CONSTRUCTION, ConstructionComponent);
-    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.REVIVEABLE, ReviveableComponent);
-    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.ATTACK, AttackComponent);
-    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.MOVE, MoveComponent);
-    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.UNIT_SIZE, UnitSizeComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.ARMOR, ArmorComponent);
+    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.ATTACK, AttackComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.AVIAN, AvianComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.BULLDOZE, BulldozeComponent);
+    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.CONSTRUCTION, ConstructionComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.COUNTER, CounterComponent);
+    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.DIRECTION, DirectionComponent);
+    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.HEALTH, HealthComponent);
+    //INVENTORY
+    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.MOVE, MoveComponent);
+    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.POSITION, PositionComponent);
+    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.PRODUCTION, ProductionComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.RESOURCE, ResourceComponent);
+    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.REVIVEABLE, ReviveableComponent);
+    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.SPRITE, SpriteComponent);
+    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.TEAM, TeamComponent);
+    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.UNIT_SIZE, UnitSizeComponent);
 
     this.world.mapManager.registerFactory("Army", new ArmyMapFactory().load(resources.mapTypes));
     this.world.mapManager.selectFactory("Army");

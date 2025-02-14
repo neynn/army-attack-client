@@ -150,7 +150,7 @@ SpriteManager.prototype.destroySprite = function(spriteID) {
         return unknownElements;
     }
     
-    const familyStack = sprite.getFamilyStack();
+    const familyStack = sprite.getReferenceStack();
 
     for(let i = familyStack.length - 1; i >= 0; i--) {
         const id = familyStack[i];
@@ -237,7 +237,7 @@ SpriteManager.prototype.updateSprite = function(spriteID, typeID, animationID = 
     if(drawData.typeID !== typeID || drawData.animationID !== animationID) {
         const { x, y, w, h } = spriteType.getBounds();
 
-        sprite.initialize(typeID, animationID, animationType.frameCount, animationType.frameTime);
+        sprite.init(typeID, animationID, animationType.frameCount, animationType.frameTime);
         sprite.setBounds(x, y, w, h);
 
         this.resources.addReference(typeID);

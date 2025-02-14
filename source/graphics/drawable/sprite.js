@@ -26,7 +26,7 @@ Sprite.prototype.onTerminate = function() {
     console.warn(`Method onTerminate has not been implemented by sprite ${this.id}`);
 }
 
-Sprite.prototype.initialize = function(typeID, animationID, frameCount, frameTime) {
+Sprite.prototype.init = function(typeID, animationID, frameCount, frameTime) {
     this.typeID = typeID;
     this.animationID = animationID;
     this.frameCount = frameCount;
