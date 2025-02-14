@@ -292,15 +292,11 @@ UserInterface.prototype.createElements = function(gameContext, userInterface) {
 
         if(!element.hasParent()) {
             this.addElementAnchor(gameContext, element, position, anchor);
-            this.addRoot(elementID);
+            this.roots.push(elementID);
         }
     }
 
     return elements;
-}
-
-UserInterface.prototype.addRoot = function(rootID) {
-    this.roots.push(rootID);
 }
 
 UserInterface.prototype.getID = function() {

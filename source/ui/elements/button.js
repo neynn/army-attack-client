@@ -3,7 +3,7 @@ import { isCircleCicleIntersect, isRectangleRectangleIntersect } from "../../mat
 import { UIElement } from "../uiElement.js";
 
 export const Button = function(id) {
-    UIElement.call(this, id, "Button");
+    UIElement.call(this, id, "BUTTON");
 
     this.shape = Button.SHAPE_RECTANGLE;
     this.highlight = new Outline();
@@ -15,6 +15,8 @@ export const Button = function(id) {
 
     this.events.listen(Button.EVENT_DEFER_DRAW);
     this.events.listen(Button.EVENT_CLICKED);
+    this.events.subscribe(UIElement.EVENT.FIRST_COLLISION, this.DEBUG_NAME, () => this.highlight.enable());
+    this.events.subscribe(UIElement.EVENT.FINAL_COLLISION, this.DEBUG_NAME, () => this.highlight.disable());
 }
 
 Button.EVENT_DEFER_DRAW = "EVENT_DEFER_DRAW";
@@ -39,9 +41,6 @@ Button.prototype.loadFromConfig = function(config) {
     this.DEBUG_NAME = id;
     this.setPosition(x, y);
     this.setOpacity(opacity);
-
-    this.events.subscribe(UIElement.EVENT.FIRST_COLLISION, this.DEBUG_NAME, () => this.highlight.enable());
-    this.events.subscribe(UIElement.EVENT.FINAL_COLLISION, this.DEBUG_NAME, () => this.highlight.disable());
 
     switch(shape) {
         case Button.SHAPE_RECTANGLE: {

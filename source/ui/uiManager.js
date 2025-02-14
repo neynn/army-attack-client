@@ -35,12 +35,12 @@ UIManager.prototype.getInterfaceStack = function() {
     return this.interfaceStack;
 }
 
-UIManager.prototype.getInterfaceIndex = function(userInterfaceID) {
+UIManager.prototype.getInterfaceIndex = function(interfaceID) {
     for(let i = 0; i < this.interfaceStack.length; i++) {
         const userInterface = this.interfaceStack[i];
         const currentID = userInterface.getID();
 
-        if(currentID === userInterfaceID) {
+        if(currentID === interfaceID) {
             return i;
         }
     }

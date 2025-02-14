@@ -44,6 +44,8 @@ ArmyCamera.prototype.addOverlay = function(overlayID, positionX, positionY, tile
     overlayType.set(overlayKey, {
         "x": positionX,
         "y": positionY,
+        "drawX": this.tileWidth * positionX,
+        "drawY": this.tileHeight * positionY,
         "id": tileID
     });
 }
@@ -86,10 +88,10 @@ ArmyCamera.prototype.update = function(gameContext, renderContext) {
         this.drawLayer(gameContext, renderContext, worldMap, layers[layerID], worldBounds);
     }
     
-    this.drawOverlay(gameContext, renderContext, ArmyCamera.OVERLAY_TYPE_MOVE);
-    this.drawOverlay(gameContext, renderContext, ArmyCamera.OVERLAY_TYPE_ATTACK);
+    this.drawOverlay(gameContext, renderContext, worldBounds, ArmyCamera.OVERLAY_TYPE_MOVE);
+    this.drawOverlay(gameContext, renderContext, worldBounds, ArmyCamera.OVERLAY_TYPE_ATTACK);
     this.drawSpriteLayers(gameContext, renderContext, [SpriteManager.LAYER.BOTTOM, SpriteManager.LAYER.MIDDLE, SpriteManager.LAYER.TOP]);
-    this.drawOverlay(gameContext, renderContext, ArmyCamera.OVERLAY_TYPE_RANGE);
+    this.drawOverlay(gameContext, renderContext, worldBounds, ArmyCamera.OVERLAY_TYPE_RANGE);
 
     for(const layerID of foreground) {
         this.drawLayer(gameContext, renderContext, worldMap, layers[layerID], worldBounds);
@@ -135,7 +137,7 @@ ArmyCamera.prototype.drawLayerData = function(context, worldBounds, worldMap, la
     });
 }
 
-ArmyCamera.prototype.drawOverlay = function(gameContext, renderContext, overlayID) {
+ArmyCamera.prototype.drawOverlay = function(gameContext, renderContext, worldBounds, overlayID) {
     const { tileManager } = gameContext;
     const overlay = this.overlays[overlayID];
 
@@ -143,11 +145,17 @@ ArmyCamera.prototype.drawOverlay = function(gameContext, renderContext, overlayI
         return;
     }
 
-    for(const [overlayKey, overlayData] of overlay) {
-        const renderX = this.tileWidth * overlayData.x - this.viewportX;
-        const renderY = this.tileHeight * overlayData.y - this.viewportY;
+    const { startX, startY, endX, endY } = worldBounds;
 
-        this.drawTileGraphics(tileManager, renderContext, overlayData.id, renderX, renderY);
+    for(const [overlayKey, overlayData] of overlay) {
+        const { x, y, drawX, drawY, id } = overlayData;
+
+        if(x >= startX && x <= endX && y >= startY && y <= endY) {
+            const renderX = drawX - this.viewportX;
+            const renderY = drawY - this.viewportY;
+    
+            this.drawTileGraphics(tileManager, renderContext, id, renderX, renderY);
+        }
     }
 }
 
