@@ -9,23 +9,25 @@ VersusModeLobbyState.prototype.constructor = VersusModeLobbyState;
 VersusModeLobbyState.prototype.onEnter = function(stateMachine) {
     const gameContext = stateMachine.getContext();
     const { uiManager, client } = gameContext;
-    
+
     uiManager.parseUI("VERSUS_MODE_HUB", gameContext);
 
-    uiManager.addClick("VERSUS_MODE_HUB", "BUTTON_CREATE_ROOM", () => {
+    const versusInterface = uiManager.getInterface("VERSUS_MODE_HUB");
+
+    versusInterface.addClick("BUTTON_CREATE_ROOM", () => {
         client.socket.createRoom("VERSUS"); //TODO
     });
 
-    uiManager.addClick("VERSUS_MODE_HUB", "BUTTON_JOIN_ROOM", () => {
+    versusInterface.addClick("BUTTON_JOIN_ROOM", () => {
         const roomID = prompt("ROOM-ID?");
         client.socket.joinRoom(roomID);
     });
 
-    uiManager.addClick("VERSUS_MODE_HUB", "BUTTON_LEAVE_ROOM", () => {
+    versusInterface.addClick("BUTTON_LEAVE_ROOM", () => {
         client.socket.leaveRoom();
     });
 
-    uiManager.addClick("VERSUS_MODE_HUB", "BUTTON_START_INSTANCE", () => {
+    versusInterface.addClick("BUTTON_START_INSTANCE", () => {
         client.socket.messageRoom(ROOM_EVENTS.START_INSTANCE, {
             "mapID": "pvp_valleys"
         });

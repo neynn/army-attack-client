@@ -15,7 +15,9 @@ MainMenuState.prototype.onEnter = function(stateMachine) {
     uiManager.parseUI("FPS_COUNTER", gameContext);
     uiManager.parseUI("MAIN_MENU", gameContext);
 
-    uiManager.addDynamicText("FPS_COUNTER", "TEXT_FPS", (element) => {
+    const fpsInterface = uiManager.getInterface("FPS_COUNTER");
+
+    fpsInterface.addDynamicText("TEXT_FPS", (element) => {
         const fps = Math.floor(renderer.fpsCounter.getSmoothFPS());
         const text = `FPS: ${fps}`;
 
@@ -28,13 +30,15 @@ MainMenuState.prototype.onEnter = function(stateMachine) {
         }
     });
 
-    uiManager.addClick("MAIN_MENU", "BUTTON_PLAY", () => gameContext.switchState(CONTEXT_STATES.STORY_MODE));
-    uiManager.addClick("MAIN_MENU", "BUTTON_EDIT", () => gameContext.switchState(CONTEXT_STATES.EDIT_MODE));
-    uiManager.addClick("MAIN_MENU", "BUTTON_VERSUS", () => gameContext.switchState(CONTEXT_STATES.VERSUS_MODE));
+    const mainMenuInterface = uiManager.getInterface("MAIN_MENU");
 
-    const buttonPlay = uiManager.getElement("MAIN_MENU", "BUTTON_PLAY");
-    const buttonVersus = uiManager.getElement("MAIN_MENU", "BUTTON_VERSUS");
-    const buttonEdit = uiManager.getElement("MAIN_MENU", "BUTTON_EDIT");
+    mainMenuInterface.addClick("BUTTON_PLAY", () => gameContext.switchState(CONTEXT_STATES.STORY_MODE));
+    mainMenuInterface.addClick("BUTTON_EDIT", () => gameContext.switchState(CONTEXT_STATES.EDIT_MODE));
+    mainMenuInterface.addClick("BUTTON_VERSUS", () => gameContext.switchState(CONTEXT_STATES.VERSUS_MODE));
+
+    const buttonPlay = mainMenuInterface.getElement("BUTTON_PLAY");
+    const buttonVersus = mainMenuInterface.getElement("BUTTON_VERSUS");
+    const buttonEdit = mainMenuInterface.getElement("BUTTON_EDIT");
 
     const spritePlay = spriteManager.createSprite("blue_battletank_idle");
     const spriteVersus = spriteManager.createSprite("red_battletank_idle");

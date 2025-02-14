@@ -50,10 +50,9 @@ MapEditorState.prototype.onEnter = function(stateMachine) {
 
 MapEditorState.prototype.onExit = function(stateMachine) {
     const gameContext = stateMachine.getContext();
-    const { world, renderer } = gameContext;
-    const { mapManager } = world;
+    const { renderer, uiManager } = gameContext;
 
-    mapManager.unparseUI("MAP_EDITOR", gameContext);
+    uiManager.unparseUI("MAP_EDITOR", gameContext);
     renderer.removeCamera(CAMERA_TYPES.ARMY_CAMERA);
 }
 
@@ -91,6 +90,7 @@ MapEditorState.prototype.scrollLayerButton = function(gameContext, buttonID) {
     const { layerButtons, buttonStates, id } = this.mapEditor.config.interface;
     const button = layerButtons[buttonID];
     const { nextState } = buttonStates[button.state];
+    const editorInterface = uiManager.getInterface(id);
 
     if(button.id === this.currentLayerButtonID) {
         this.currentLayerButtonID = null;
@@ -100,7 +100,7 @@ MapEditorState.prototype.scrollLayerButton = function(gameContext, buttonID) {
     if(nextState === MapEditorState.BUTTON_STATE_EDIT) {
         if(this.currentLayerButtonID !== null) {
             const currentButton = layerButtons[this.currentLayerButtonID];
-            const currentButtonText = uiManager.getElement(id, currentButton.text);
+            const currentButtonText = editorInterface.getElement(currentButton.text);
             const currentButtonColor = buttonStates[MapEditorState.BUTTON_STATE_VISIBLE].textColor;
         
             currentButton.state = MapEditorState.BUTTON_STATE_VISIBLE;
@@ -114,7 +114,7 @@ MapEditorState.prototype.scrollLayerButton = function(gameContext, buttonID) {
         this.currentLayerButtonID = button.id;
     }
 
-    const buttonText = uiManager.getElement(id, button.text);
+    const buttonText = editorInterface.getElement(button.text);
     const buttonColor = buttonStates[nextState].textColor;
 
     buttonText.style.color.setColorArray(buttonColor);
@@ -128,9 +128,10 @@ MapEditorState.prototype.loadButtonEvents = function(gameContext) {
     const { slots, id } = this.mapEditor.config.interface;
     const pageElements = this.mapEditor.getPage();
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
+    const editorInterface = uiManager.getInterface(id);
 
     for(const buttonID of slots) {
-        const button = uiManager.getElement(id, buttonID);
+        const button = editorInterface.getElement(buttonID);
 
         button.events.unsubscribe(Button.EVENT_CLICKED, this.id);
         button.events.unsubscribe(Button.EVENT_DEFER_DRAW, this.id);
@@ -139,7 +140,7 @@ MapEditorState.prototype.loadButtonEvents = function(gameContext) {
     for(let i = 0; i < slots.length; i++) {
         const buttonID = slots[i];
         const brushData = pageElements[i];
-        const button = uiManager.getElement(id, buttonID);
+        const button = editorInterface.getElement(buttonID);
         const { tileName, tileID } = brushData;
 
         button.events.subscribe(Button.EVENT_CLICKED, this.id, () => this.mapEditor.setBrush(brushData));
@@ -178,11 +179,12 @@ MapEditorState.prototype.getSizeText = function() {
 MapEditorState.prototype.updateButtonText = function(gameContext) {
     const { uiManager } = gameContext;
     const { id } = this.mapEditor.config.interface;
+    const editorInterface = uiManager.getInterface(id);
 
-    uiManager.setText(id, "TEXT_TILESET_MODE", `MODE: ${this.mapEditor.getBrushMode()}`);
-    uiManager.setText(id, "TEXT_TILESET", `${this.mapEditor.getBrushSet().id}`);
-    uiManager.setText(id, "TEXT_PAGE", this.getPageText());
-    uiManager.setText(id, "TEXT_SIZE",  this.getSizeText());
+    editorInterface.setText("TEXT_TILESET_MODE", `MODE: ${this.mapEditor.getBrushMode()}`);
+    editorInterface.setText("TEXT_TILESET", `${this.mapEditor.getBrushSet().id}`);
+    editorInterface.setText("TEXT_PAGE", this.getPageText());
+    editorInterface.setText("TEXT_SIZE",  this.getSizeText());
 }
 
 MapEditorState.prototype.initializeRenderEvents = function(gameContext) {
@@ -342,69 +344,70 @@ MapEditorState.prototype.initializeUIEvents = function(gameContext) {
     const { uiManager, world } = gameContext;
     const { mapManager } = world;
     const { id, layerButtons, buttonStates } = this.mapEditor.config.interface;
+    const editorInterface = uiManager.getInterface(id);
 
-    uiManager.addClick(id, "BUTTON_TILESET_MODE", () => {
+    editorInterface.addClick("BUTTON_TILESET_MODE", () => {
         this.mapEditor.scrollBrushMode(1);
         this.loadButtonEvents(gameContext);
         this.updateButtonText(gameContext);
     });
 
-    uiManager.addClick(id, "BUTTON_TILESET_LEFT", () => {
+    editorInterface.addClick("BUTTON_TILESET_LEFT", () => {
         this.mapEditor.scrollBrushSet(-1);
         this.loadButtonEvents(gameContext);
         this.updateButtonText(gameContext);
     });
 
-    uiManager.addClick(id, "BUTTON_TILESET_RIGHT", () => {
+    editorInterface.addClick("BUTTON_TILESET_RIGHT", () => {
         this.mapEditor.scrollBrushSet(1);
         this.loadButtonEvents(gameContext);
         this.updateButtonText(gameContext);
     });
 
-    uiManager.addClick(id, "BUTTON_PAGE_LAST", () => {
+    editorInterface.addClick("BUTTON_PAGE_LAST", () => {
         this.mapEditor.scrollPage(-1);
         this.loadButtonEvents(gameContext);
         this.updateButtonText(gameContext);
     }); 
 
-    uiManager.addClick(id, "BUTTON_PAGE_NEXT", () => {
+    editorInterface.addClick("BUTTON_PAGE_NEXT", () => {
         this.mapEditor.scrollPage(1);
         this.loadButtonEvents(gameContext);
         this.updateButtonText(gameContext);
     });  
 
-    uiManager.addClick(id, "BUTTON_SCROLL_SIZE", () => {
+    editorInterface.addClick("BUTTON_SCROLL_SIZE", () => {
         this.mapEditor.scrollBrushSize(1);
         this.updateButtonText(gameContext);
     }); 
 
-    uiManager.addClick(id, "BUTTON_L1", () => {
+    editorInterface.addClick("BUTTON_L1", () => {
         this.scrollLayerButton(gameContext, "L1");
     });
 
-    uiManager.addClick(id, "BUTTON_L2", () => {
+    editorInterface.addClick("BUTTON_L2", () => {
         this.scrollLayerButton(gameContext, "L2");
     });
 
-    uiManager.addClick(id, "BUTTON_L3", () => {
+    editorInterface.addClick("BUTTON_L3", () => {
         this.scrollLayerButton(gameContext, "L3");
     });
 
-    uiManager.addClick(id, "BUTTON_LC", () => {
+    editorInterface.addClick("BUTTON_LC", () => {
         this.scrollLayerButton(gameContext, "LC");
     });
 
-    uiManager.addClick(id, "BUTTON_SAVE", () => {
+    editorInterface.addClick("BUTTON_SAVE", () => {
         const mapData = mapManager.getLoadedMap(this.currentMapID);
         
         saveMap(this.currentMapID, mapData);
     });
 
-    uiManager.addClick(id, "BUTTON_CREATE", () => {
+    editorInterface.addClick("BUTTON_CREATE", () => {
         this.createNewMap(gameContext);
     });
 
-    uiManager.addClick(id, "BUTTON_LOAD", async () => {
+    editorInterface.addClick("BUTTON_LOAD", async () => {
         const mapID = prompt("MAP-ID?");
         const worldMap = await world.createMapByID(gameContext, mapID);
 
@@ -413,18 +416,18 @@ MapEditorState.prototype.initializeUIEvents = function(gameContext) {
         }
     });
 
-    uiManager.addClick(id, "BUTTON_RESIZE", () => {
+    editorInterface.addClick("BUTTON_RESIZE", () => {
         this.resizeMap(gameContext);
     }); 
 
-    uiManager.addClick(id, "BUTTON_UNDO", () => {
+    editorInterface.addClick("BUTTON_UNDO", () => {
         this.mapEditor.undo(gameContext);
     }); 
 
-    uiManager.addClick(id, "BUTTON_VIEW_ALL", () => {
+    editorInterface.addClick("BUTTON_VIEW_ALL", () => {
         for(const buttonID in layerButtons) {
             const button = layerButtons[buttonID];
-            const buttonText = uiManager.getElement(id, button.text);
+            const buttonText = editorInterface.getElement(button.text);
             const buttonColor = buttonStates[MapEditorState.BUTTON_STATE_VISIBLE].textColor;
 
             button.state = MapEditorState.BUTTON_STATE_VISIBLE;

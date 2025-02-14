@@ -130,15 +130,9 @@ Renderer.prototype.drawUI = function(gameContext) {
     const interfaceStack = uiManager.getInterfaceStack();
 
     for(let i = interfaceStack.length - 1; i >= 0; i--) {
-        const interfaceElement = interfaceStack[i];
-        const { roots } = interfaceElement;
+        const userInterface = interfaceStack[i];
 
-        for(const elementUID of roots) {
-            const element = uiManager.getElementByID(elementUID);
-           
-            element.update(realTime, deltaTime);
-            element.draw(this.display.context, 0, 0);
-        }
+        userInterface.draw(this.display.context, realTime, deltaTime);
     }
 }
 
@@ -147,14 +141,9 @@ Renderer.prototype.drawUIDebug = function(gameContext) {
     const interfaceStack = uiManager.getInterfaceStack();
 
     for(let i = interfaceStack.length - 1; i >= 0; i--) {
-        const interfaceElement = interfaceStack[i];
-        const { roots } = interfaceElement;
+        const userInterface = interfaceStack[i];
 
-        for(const elementUID of roots) {
-            const element = uiManager.getElementByID(elementUID);
-           
-            element.debug(this.display.context, 0, 0);
-        }
+        userInterface.debug(this.display.context);
     }
 }
 
