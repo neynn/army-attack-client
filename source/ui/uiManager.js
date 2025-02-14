@@ -31,6 +31,16 @@ UIManager.prototype.load = function(interfaceTypes, iconTypes, fontTypes) {
     }
 }
 
+UIManager.prototype.isIDAvailable = function(interfaceID) {
+    if(this.interfaceTypes[interfaceID]) {
+        return false;
+    }
+
+    const interfaceIndex = this.getInterfaceIndex(interfaceID);
+
+    return interfaceIndex === -1;
+}
+
 UIManager.prototype.getInterfaceStack = function() {
     return this.interfaceStack;
 }
@@ -83,17 +93,17 @@ UIManager.prototype.getInterface = function(interfaceID) {
     return this.interfaceStack[interfaceIndex];
 }
 
-UIManager.prototype.parseUI = function(userInterfaceID, gameContext) {
-    const config = this.interfaceTypes[userInterfaceID];
+UIManager.prototype.parseUI = function(interfaceID, gameContext) {
+    const config = this.interfaceTypes[interfaceID];
 
     if(!config) {
-        Logger.log(false, "Interface does not exist!", "UIManager.prototype.parseUI", { userInterfaceID });
+        Logger.log(false, "Interface does not exist!", "UIManager.prototype.parseUI", { interfaceID });
         return;
     }
 
-    const userInterface = new UserInterface(userInterfaceID);
+    const userInterface = new UserInterface(interfaceID);
 
-    userInterface.createElements(gameContext, config);
+    userInterface.fromConfig(gameContext, config);
 
     this.interfaceStack.push(userInterface);
 
@@ -110,7 +120,39 @@ UIManager.prototype.unparseUI = function(interfaceID, gameContext) {
 
     const userInterface = this.interfaceStack[interfaceIndex];
 
-    userInterface.unparse(gameContext);
+    userInterface.clear(gameContext);
    
     this.interfaceStack.splice(interfaceIndex, 1);
+}
+
+UIManager.prototype.removeUI = function(interfaceID) {
+    const interfaceIndex = this.getInterfaceIndex(interfaceID);
+
+    if(interfaceIndex === -1) {
+        Logger.log(false, "Interface does not exist!", "UIManager.prototype.removeUI", { interfaceID });
+        return;
+    }
+
+    this.interfaceStack.splice(interfaceIndex, 1);
+}
+
+UIManager.prototype.addUI = function(userInterface) {
+    if(!(userInterface instanceof UserInterface)) {
+        return false;
+    }
+
+    const interfaceID = userInterface.getID();
+
+    if(this.interfaceTypes[interfaceID]) {
+        return false;
+    }
+
+    if(this.getInterfaceIndex(interfaceID) !== -1) {
+        return false;
+    }
+
+
+    this.interfaceStack.push(userInterface);
+
+    return true;
 }

@@ -13,6 +13,7 @@ export const UserInterface = function(id) {
     this.roots = [];
     this.elements = new Map();
     this.previousCollisions = new Set();
+    this.state = UserInterface.STATE.VISIBLE;
 }
 
 UserInterface.EFFECT_TYPE = {
@@ -47,7 +48,7 @@ UserInterface.STATE = {
     VISIBLE_NO_INTERACT: 2
 };
 
-UserInterface.prototype.unparse = function(gameContext) {
+UserInterface.prototype.clear = function(gameContext) {
     const { renderer } = gameContext;
 
     for(let i = 0; i < this.roots.length; i++) {
@@ -89,6 +90,10 @@ UserInterface.prototype.debug = function(context) {
 }
 
 UserInterface.prototype.draw = function(context, realTime, deltaTime) {
+    if(this.state === UserInterface.STATE.HIDDEN) {
+        return;
+    }
+
     for(let i = 0; i < this.roots.length; i++) {
         const elementID = this.roots[i];
         const element = this.elements.get(elementID);
@@ -139,7 +144,10 @@ UserInterface.prototype.updateCollisions = function(mouseX, mouseY, mouseRange) 
 }
 
 UserInterface.prototype.getCollidedElements = function(mouseX, mouseY, mouseRange) {
-    //TODO add state handling!
+    if(this.state !== UserInterface.STATE.VISIBLE) {
+        return [];
+    }
+
     for(let i = 0; i < this.roots.length; i++) {
         const elementID = this.roots[i];
         const element = this.elements.get(elementID);
@@ -251,7 +259,7 @@ UserInterface.prototype.addEffects = function(gameContext, element, effects = []
     }
 }
 
-UserInterface.prototype.createElements = function(gameContext, userInterface) {
+UserInterface.prototype.fromConfig = function(gameContext, userInterface) {
     const elements = new Map();
 
     for(const elementID in userInterface) {
