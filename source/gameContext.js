@@ -81,7 +81,7 @@ GameContext.prototype.loadResources = function(resources) {
 
 GameContext.prototype.init = function() {}
 
-GameContext.prototype.getCameraAtMouse = function() {
+GameContext.prototype.getContextAtMouse = function() {
     const context = this.renderer.getCollidedContext(this.client.cursor.positionX, this.client.cursor.positionY, this.client.cursor.radius);
 
     if(!context) {
@@ -92,7 +92,7 @@ GameContext.prototype.getCameraAtMouse = function() {
 }
 
 GameContext.prototype.getMouseTile = function() {
-    const context = this.getCameraAtMouse();
+    const context = this.getContextAtMouse();
 
     if(!context) {
         return {
@@ -101,8 +101,8 @@ GameContext.prototype.getMouseTile = function() {
         }
     }
 
-    const camera = context.getCamera();
     const { x, y } = context.getWorldPosition(this.client.cursor.positionX, this.client.cursor.positionY);
+    const camera = context.getCamera();
     const mouseTile = camera.transformPositionToTile(x, y);
 
     return mouseTile;

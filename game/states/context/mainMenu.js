@@ -1,7 +1,6 @@
 import { State } from "../../../source/state/state.js";
 import { UIElement } from "../../../source/ui/uiElement.js";
-
-import { CONTEXT_STATES } from "../../enums.js";
+import { ArmyContext } from "../../armyContext.js";
 
 export const MainMenuState = function() {}
 
@@ -32,9 +31,9 @@ MainMenuState.prototype.onEnter = function(stateMachine) {
 
     const mainMenuInterface = uiManager.getInterface("MAIN_MENU");
 
-    mainMenuInterface.addClick("BUTTON_PLAY", () => gameContext.switchState(CONTEXT_STATES.STORY_MODE));
-    mainMenuInterface.addClick("BUTTON_EDIT", () => gameContext.switchState(CONTEXT_STATES.EDIT_MODE));
-    mainMenuInterface.addClick("BUTTON_VERSUS", () => gameContext.switchState(CONTEXT_STATES.VERSUS_MODE));
+    mainMenuInterface.addClick("BUTTON_PLAY", () => gameContext.switchState(ArmyContext.STATE.STORY_MODE));
+    mainMenuInterface.addClick("BUTTON_EDIT", () => gameContext.switchState(ArmyContext.STATE.EDIT_MODE));
+    mainMenuInterface.addClick("BUTTON_VERSUS", () => gameContext.switchState(ArmyContext.STATE.VERSUS_MODE));
 
     const buttonPlay = mainMenuInterface.getElement("BUTTON_PLAY");
     const buttonVersus = mainMenuInterface.getElement("BUTTON_VERSUS");

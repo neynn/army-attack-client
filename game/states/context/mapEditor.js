@@ -295,7 +295,7 @@ MapEditorState.prototype.initializeCursorEvents = function(gameContext) {
     });
 
     cursor.events.subscribe(Cursor.EVENT.LEFT_MOUSE_DRAG, this.id, (deltaX, deltaY) => {
-        const context = gameContext.getCameraAtMouse();
+        const context = gameContext.getContextAtMouse();
 
         if(context) {
             context.dragCamera(deltaX, deltaY);

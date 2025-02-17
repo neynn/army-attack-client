@@ -1,8 +1,7 @@
 import { ROOM_EVENTS } from "../../../source/network/events.js";
 import { Socket } from "../../../source/network/socket.js";
 import { StateMachine } from "../../../source/state/stateMachine.js";
-
-import { CAMERA_TYPES, CONTEXT_STATES, GAME_EVENTS } from "../../enums.js";
+import { CAMERA_TYPES, GAME_EVENTS } from "../../enums.js";
 import { VersusModeLobbyState } from "./versus/versusModeLobby.js";
 import { VersusModePlayState } from "./versus/versusModePlay.js";
 import { instanceMapFromData } from "../../serverEvents/instanceMapFromData.js";
@@ -19,8 +18,8 @@ import { ArmyContext } from "../../armyContext.js";
 export const VersusModeState = function() {
     StateMachine.call(this);
 
-    this.addState(CONTEXT_STATES.VERSUS_MODE_LOBBY, new VersusModeLobbyState());
-    this.addState(CONTEXT_STATES.VERSUS_MODE_PLAY, new VersusModePlayState());
+    this.addState(ArmyContext.STATE.VERSUS_MODE_LOBBY, new VersusModeLobbyState());
+    this.addState(ArmyContext.STATE.VERSUS_MODE_PLAY, new VersusModePlayState());
 }
 
 VersusModeState.prototype = Object.create(StateMachine.prototype);
@@ -32,7 +31,7 @@ VersusModeState.prototype.onServerMessage = function(gameContext, type, payload)
     switch(type) {
         case ROOM_EVENTS.ROOM_UPDATE: return roomUpdate(gameContext, payload);
         case ROOM_EVENTS.START_INSTANCE: {
-            this.setNextState(CONTEXT_STATES.VERSUS_MODE_PLAY);
+            this.setNextState(ArmyContext.STATE.VERSUS_MODE_PLAY);
             return startVersusInstance(gameContext, payload);
         }
         case GAME_EVENTS.INSTANCE_CONTROLLER: return instanceController(gameContext, payload);
@@ -57,7 +56,7 @@ VersusModeState.prototype.onEnter = function(stateMachine) {
     socket.events.subscribe(Socket.EVENT_MESSAGE_FROM_SERVER, contextID, (type, payload) => this.onServerMessage(gameContext, type, payload));
     socket.connect();
 
-    this.setNextState(CONTEXT_STATES.VERSUS_MODE_LOBBY);
+    this.setNextState(ArmyContext.STATE.VERSUS_MODE_LOBBY);
 }
 
 VersusModeState.prototype.onExit = function(stateMachine) {

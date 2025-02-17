@@ -4,8 +4,7 @@ import { Socket } from "../source/network/socket.js";
 import { World } from "../source/world.js";
 import { NETWORK_EVENTS } from "../source/network/events.js";
 import { CameraContext } from "../source/camera/cameraContext.js";
-
-import { ACTION_TYPES, CONTEXT_STATES } from "./enums.js";
+import { ACTION_TYPES } from "./enums.js";
 import { AttackAction } from "./actions/attackAction.js";
 import { MoveAction } from "./actions/moveAction.js";
 import { ArmorComponent } from "./components/armor.js";
@@ -47,6 +46,23 @@ export const ArmyContext = function() {
 
 ArmyContext.prototype = Object.create(GameContext.prototype);
 ArmyContext.prototype.constructor = ArmyContext;
+
+ArmyContext.FACTORY = {
+    MAP: "MAP",
+    ENTITY: "ENTITY",
+    CONTROLLER: "CONTROLLER"
+};
+
+ArmyContext.STATE = {
+    MAIN_MENU: 0,
+    STORY_MODE: 1,
+    STORY_MODE_INTRO: 2,
+    STORY_MODE_PLAY: 3,
+    VERSUS_MODE: 4,
+    VERSUS_MODE_LOBBY: 5,
+    VERSUS_MODE_PLAY: 6,
+    EDIT_MODE: 7
+};
 
 ArmyContext.GAME_MODE = {
     NONE: "none",
@@ -91,19 +107,19 @@ ArmyContext.prototype.init = function(resources) {
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.TRANSPARENT, TransparentComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.UNIT_SIZE, UnitSizeComponent);
 
-    this.world.mapManager.registerFactory("Army", new ArmyMapFactory().load(resources.mapTypes));
-    this.world.mapManager.selectFactory("Army");
+    this.world.mapManager.registerFactory(ArmyContext.FACTORY.MAP, new ArmyMapFactory().load(resources.mapTypes));
+    this.world.mapManager.selectFactory(ArmyContext.FACTORY.MAP);
 
-    this.world.entityManager.registerFactory("Army", new ArmyEntityFactory().load(resources.entities));
-    this.world.entityManager.selectFactory("Army");
+    this.world.entityManager.registerFactory(ArmyContext.FACTORY.ENTITY, new ArmyEntityFactory().load(resources.entities));
+    this.world.entityManager.selectFactory(ArmyContext.FACTORY.ENTITY);
+
+    this.world.controllerManager.registerFactory(ArmyContext.FACTORY.CONTROLLER, new ArmyControllerFactory().load(resources.controllers));
+    this.world.controllerManager.selectFactory(ArmyContext.FACTORY.CONTROLLER);
     
-    this.world.controllerManager.registerFactory("Army", new ArmyControllerFactory().load(resources.controllers));
-    this.world.controllerManager.selectFactory("Army");
-    
-    this.states.addState(CONTEXT_STATES.MAIN_MENU, new MainMenuState());
-    this.states.addState(CONTEXT_STATES.STORY_MODE, new StoryModeState());
-    this.states.addState(CONTEXT_STATES.VERSUS_MODE, new VersusModeState());
-    this.states.addState(CONTEXT_STATES.EDIT_MODE, new MapEditorState());
+    this.states.addState(ArmyContext.STATE.MAIN_MENU, new MainMenuState());
+    this.states.addState(ArmyContext.STATE.STORY_MODE, new StoryModeState());
+    this.states.addState(ArmyContext.STATE.VERSUS_MODE, new VersusModeState());
+    this.states.addState(ArmyContext.STATE.EDIT_MODE, new MapEditorState());
 
     this.client.soundPlayer.loadAllSounds();
     
@@ -132,7 +148,7 @@ ArmyContext.prototype.init = function(resources) {
     this.world.events.subscribe(World.EVENT.ENTITY_CREATE, "DEBUG", (entity) => console.log(entity, "HAS BEEN CREATED"));
     this.world.events.subscribe(World.EVENT.MAP_CREATE, "DEBUG", (worldMap) => console.log(worldMap, "HAS BEEN LOADED"));
 
-    this.switchState(CONTEXT_STATES.MAIN_MENU);
+    this.switchState(ArmyContext.STATE.MAIN_MENU);
 }
 
 ArmyContext.prototype.updateConversions = function() {

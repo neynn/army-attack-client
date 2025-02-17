@@ -50,24 +50,18 @@ PlayerController.prototype.resetAllAttackers = function(gameContext) {
     const { renderer } = gameContext;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
 
-    camera.clearOverlay(ArmyCamera.OVERLAY_TYPE_ATTACK);
+    camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.ATTACK);
     this.attackers = [];
 }
 
 PlayerController.prototype.resetAttacker = function(gameContext, attackerID) {
-    const { world, renderer } = gameContext;
+    const { world } = gameContext;
     const { entityManager } = world;
     const attacker = entityManager.getEntity(attackerID);
 
-    if(!attacker) {
-        return;
+    if(attacker) {
+        attacker.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
     }
-
-    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
-    const positionComponent = attacker.getComponent(ArmyEntity.COMPONENT.POSITION);
-
-    camera.removeOverlay(ArmyCamera.OVERLAY_TYPE_ATTACK, positionComponent.tileX, positionComponent.tileY);
-    attacker.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
 }
 
 PlayerController.prototype.hightlightAttackers = function(gameContext, target) {
@@ -76,6 +70,8 @@ PlayerController.prototype.hightlightAttackers = function(gameContext, target) {
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
     const tileID = tileManager.getTileID("overlay", "grid_attack_1x1");
 
+    camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.ATTACK);
+
     for(let i = 0; i < this.attackers.length; i++) {
         const attackerID = this.attackers[i];
         const attacker = entityManager.getEntity(attackerID);
@@ -83,7 +79,7 @@ PlayerController.prototype.hightlightAttackers = function(gameContext, target) {
 
         attacker.lookAtEntity(target);
         attacker.updateSpriteDirectonal(gameContext, ArmyEntity.SPRITE_TYPE.AIM, ArmyEntity.SPRITE_TYPE.AIM_UP);
-        camera.addOverlay(ArmyCamera.OVERLAY_TYPE_ATTACK, positionComponent.tileX, positionComponent.tileY, tileID);
+        camera.addOverlay(ArmyCamera.OVERLAY_TYPE.ATTACK, positionComponent.tileX, positionComponent.tileY, tileID);
     }
 }
 
@@ -118,19 +114,21 @@ PlayerController.prototype.addNodeOverlays = function(gameContext, nodeList) {
     const enableTileID = tileManager.getTileID("overlay", "grid_enabled_1x1");
     const attackTileID = tileManager.getTileID("overlay", "grid_attack_1x1");
 
+    camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.MOVE);
+
     for(let i = 0; i < nodeList.length; i++) {
         const { positionX, positionY, state } = nodeList[i];
 
         if(state !== PathfinderSystem.NODE_STATE.VALID) {
             if(DEBUG["SHOW_INVALID_MOVE_TILES"]) {
-                camera.addOverlay(ArmyCamera.OVERLAY_TYPE_MOVE, positionX, positionY, attackTileID);
+                camera.addOverlay(ArmyCamera.OVERLAY_TYPE.MOVE, positionX, positionY, attackTileID);
             }
 
         } else {
             const tileEntity = world.getTileEntity(positionX, positionY);
 
             if(!tileEntity) {
-                camera.addOverlay(ArmyCamera.OVERLAY_TYPE_MOVE, positionX, positionY, enableTileID);
+                camera.addOverlay(ArmyCamera.OVERLAY_TYPE.MOVE, positionX, positionY, enableTileID);
             }
         } 
     }
@@ -161,7 +159,7 @@ PlayerController.prototype.addDragEvent = function(gameContext) {
     const { cursor } = client;
 
     cursor.events.subscribe(Cursor.EVENT.LEFT_MOUSE_DRAG, this.id, (deltaX, deltaY) => {
-        const context = gameContext.getCameraAtMouse();
+        const context = gameContext.getContextAtMouse();
 
         if(context) {
             context.dragCamera(deltaX, deltaY);
@@ -216,7 +214,7 @@ PlayerController.prototype.onDeselectEntity = function(gameContext, entity) {
     const { renderer } = gameContext;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
 
-    camera.clearOverlay(ArmyCamera.OVERLAY_TYPE_MOVE);
+    camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.MOVE);
 
     this.selectedEntities.clear();
     this.hover.clearNodes();
