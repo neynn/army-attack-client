@@ -1,9 +1,6 @@
 import { Factory } from "../../source/factory/factory.js";
 import { SpriteManager } from "../../source/graphics/spriteManager.js";
 import { CAMERA_TYPES } from "../enums.js";
-import { ControllerBuildState } from "../states/controller/build.js";
-import { ControllerIdleState } from "../states/controller/idle.js";
-import { ControllerSelectedState } from "../states/controller/selected.js";
 import { PlayerController } from "./controller/player.js";
 
 export const ArmyControllerFactory = function() {
@@ -36,14 +33,9 @@ ArmyControllerFactory.prototype.onCreate = function(gameContext, config) {
             controller.teamID = team ?? null;
             controller.addClickEvent(gameContext);
             controller.addDragEvent(gameContext);
-        
-            controller.states.addState(PlayerController.STATE.IDLE, new ControllerIdleState());
-            controller.states.addState(PlayerController.STATE.BUILD, new ControllerBuildState());
-            controller.states.addState(PlayerController.STATE.SELECTED, new ControllerSelectedState());
-            controller.states.setNextState(PlayerController.STATE.IDLE);
-
             controller.setConfig(controllerType);
-
+            controller.setState(PlayerController.STATE.IDLE);
+            
             return controller;
         }
         default: {

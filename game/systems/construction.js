@@ -4,7 +4,7 @@ import { SpawnSystem } from "./spawn.js";
 
 export const ConstructionSystem = function() {}
 
-ConstructionSystem.onInteract = function(gameContext, entity, controllerID) {
+ConstructionSystem.onInteract = function(gameContext, entity) {
     const { world } = gameContext;
     const { actionQueue } = world;
     const constructionComponent = entity.getComponent(ArmyEntity.COMPONENT.CONSTRUCTION);
@@ -12,39 +12,44 @@ ConstructionSystem.onInteract = function(gameContext, entity, controllerID) {
     if(!constructionComponent) {
         return;
     }
-
-    const entityID = entity.getID();
     
     if(constructionComponent.isComplete()) {
         if(!actionQueue.isRunning()) {
-            ConstructionSystem.finishConstruction(gameContext, entity, controllerID);
+            const result = ConstructionSystem.getResult(gameContext, entity);
+
+            if(result) {
+                entity.die(gameContext);
+                SpawnSystem.createEntity(gameContext, result);
+            }
         }
-    }  else {
+    } else {
+        const entityID = entity.getID();
+        
         actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.CONSTRUCTION, entityID));
     }
 }
 
-ConstructionSystem.finishConstruction = function(gameContext, entity, controllerID) {        
+ConstructionSystem.getResult = function(gameContext, entity) {
+    const { world } = gameContext;
+    const { controllerManager } = world;
     const constructionComponent = entity.getComponent(ArmyEntity.COMPONENT.CONSTRUCTION);
 
     if(!constructionComponent) {
-        return;
+        return null;
     }
 
-    const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
-    const teamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
-    const resultType = constructionComponent.getResult();
+    const { tileX, tileY } = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
+    const { teamID } = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
     const entityID = entity.getID();
-    const result = {
-        "id": entityID,
-        "team": teamComponent.teamID,
-        "owner": controllerID,
-        "type": resultType,
-        "tileX": positionComponent.tileX,
-        "tileY": positionComponent.tileY
-    }
+    const ownerID = controllerManager.getOwnerOf(entityID).getID();
+    const type = entity.config.constructionResult;
 
-    //TODO: Open GUI and check if the controller has enough materials/resources.
-    entity.die(gameContext);
-    SpawnSystem.createEntity(gameContext, result);
+    return {
+        "id": entityID,
+        "team": teamID,
+        "owner": ownerID,
+        "type": type,
+        "tileX": tileX,
+        "tileY": tileY
+    }
 }

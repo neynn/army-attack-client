@@ -2,6 +2,7 @@ import { Entity } from "../../source/entity/entity.js";
 import { EventEmitter } from "../../source/events/eventEmitter.js";
 import { DirectionComponent } from "../components/direction.js";
 import { SpriteComponent } from "../components/sprite.js";
+import { AllianceSystem } from "../systems/alliance.js";
 
 export const ArmyEntity = function(DEBUG_NAME) {
     Entity.call(this, DEBUG_NAME);
@@ -265,4 +266,27 @@ ArmyEntity.prototype.die = function(gameContext) {
     spriteManager.destroySprite(spriteComponent.spriteID);
 
     world.destroyEntity(this.id);
+}
+
+ArmyEntity.prototype.isAttackable = function(gameContext, attackerTeamID) {
+    const healthComponent = this.getComponent(ArmyEntity.COMPONENT.HEALTH);
+
+    if(!healthComponent.isAlive()) {
+        return false;
+    }
+
+    const { teamID } = this.getComponent(ArmyEntity.COMPONENT.TEAM);
+    const isEnemy = AllianceSystem.isEnemy(gameContext, attackerTeamID, teamID);
+
+    return isEnemy;
+}
+
+ArmyEntity.prototype.isMoveable = function() {
+    const healthComponent = this.getComponent(ArmyEntity.COMPONENT.HEALTH);
+
+    if(!healthComponent.isAlive()) {
+        return false;
+    }
+
+    return this.hasComponent(ArmyEntity.COMPONENT.MOVE);
 }
