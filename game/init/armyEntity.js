@@ -171,10 +171,6 @@ ArmyEntity.prototype.playSound = function(gameContext, soundType) {
     }
 }
 
-ArmyEntity.prototype.getSizeKey = function() {
-    return `${this.config.dimX}-${this.config.dimY}`;
-}
-
 ArmyEntity.prototype.getSpriteID = function(spriteType) {
     const spriteID = this.config.sprites[spriteType];
 

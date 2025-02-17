@@ -12,7 +12,7 @@ ControllerManager.prototype.constructor = ControllerManager;
 
 ControllerManager.prototype.getOwnerOf = function(entityID) {
     for(const [controllerID, controller] of this.controllers) {
-        if(controller.hasEntity(entityID)) {
+        if(controller.selector.hasEntity(entityID)) {
             return controller;
         }
     }
@@ -74,8 +74,8 @@ ControllerManager.prototype.addEntity = function(controllerID, entityID) {
     if(currentOwner !== null) {
         Logger.warn(false, "Entity is already linked to controller! Transferring ownership!", { controllerID, entityID });
 
-        currentOwner.removeEntity(entityID);
+        currentOwner.selector.removeEntity(entityID);
     }
 
-    controller.addEntity(entityID);
+    controller.selector.addEntity(entityID);
 }

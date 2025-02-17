@@ -147,7 +147,7 @@ World.prototype.destroyEntity = function(entityID) {
     const owner = this.controllerManager.getOwnerOf(entityID);
 
     if(owner) {
-        owner.removeEntity(entityID);
+        owner.selector.removeEntity(entityID);
     }
 
     if(entity) {

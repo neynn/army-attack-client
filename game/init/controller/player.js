@@ -1,5 +1,4 @@
 import { Cursor } from "../../../source/client/cursor.js";
-import { EntityController } from "../../../source/controller/entityController.js";
 import { ACTION_TYPES, CAMERA_TYPES } from "../../enums.js";
 import { ArmyCamera } from "../../armyCamera.js";
 import { AnimationSystem } from "../../systems/animation.js";
@@ -8,13 +7,16 @@ import { AttackSystem } from "../../systems/attack.js";
 import { ControllerHover } from "./hover.js";
 import { ArmyEntity } from "../armyEntity.js";
 import { ConstructionSystem } from "../../systems/construction.js";
+import { Selector } from "../../../source/controller/selector.js";
+import { Controller } from "../../../source/controller/controller.js";
 
 export const PlayerController = function(id) {
-    EntityController.call(this, id);
+    Controller.call(this, id);
 
     this.spriteID = null;
     this.teamID = null;
     this.attackers = [];
+    this.selector = new Selector();
     this.hover = new ControllerHover();
     this.state = PlayerController.STATE.NONE;
 }
@@ -27,7 +29,12 @@ PlayerController.STATE = {
     SHOP: 4
 };
 
-PlayerController.prototype = Object.create(EntityController.prototype);
+PlayerController.SPRITE_TYPE = {
+    SELECT: "select",
+    ATTACK: "attack" 
+};
+
+PlayerController.prototype = Object.create(Controller.prototype);
 PlayerController.prototype.constructor = PlayerController;
 
 PlayerController.prototype.setState = function(state) {
@@ -106,8 +113,8 @@ PlayerController.prototype.addNodeOverlays = function(gameContext, nodeList) {
     const enableTileID = tileManager.getTileID("overlay", "grid_enabled_1x1");
     const attackTileID = tileManager.getTileID("overlay", "grid_attack_1x1");
 
-    for(const node of nodeList) {
-        const { positionX, positionY, state } = node;
+    for(let i = 0; i < nodeList.length; i++) {
+        const { positionX, positionY, state } = nodeList[i];
 
         if(state !== PathfinderSystem.NODE_STATE.VALID) {
             if(DEBUG["SHOW_INVALID_MOVE_TILES"]) {
@@ -192,7 +199,7 @@ PlayerController.prototype.onSelectEntity = function(gameContext, entity) {
 
     this.hover.updateNodes(gameContext, nodeList);
     this.addNodeOverlays(gameContext, nodeList);
-    this.selectSingle(entityID);
+    this.selector.selectSingle(entityID);
     
     AnimationSystem.playSelect(gameContext, entity);
 }
@@ -203,7 +210,7 @@ PlayerController.prototype.onDeselectEntity = function(gameContext, entity) {
 
     camera.clearOverlay(ArmyCamera.OVERLAY_TYPE_MOVE);
 
-    this.deselectAll();
+    this.selector.deselectAll();
     this.hover.clearNodes();
 
     AnimationSystem.stopSelect(gameContext, entity);
@@ -219,8 +226,8 @@ PlayerController.prototype.updateIdleCursor = function(gameContext) {
     }
 
     const hoveredEntity = this.hover.getEntity(gameContext);
-    const spriteKey = hoveredEntity.getSizeKey();
-    const spriteTypeID = this.attackers.length > 0 ? "attack" : "select"; 
+    const spriteKey = `${hoveredEntity.config.dimX}-${hoveredEntity.config.dimY}`;
+    const spriteTypeID = this.attackers.length > 0 ? PlayerController.SPRITE_TYPE.ATTACK : PlayerController.SPRITE_TYPE.SELECT; 
     const spriteType = this.config.sprites[spriteTypeID][spriteKey];
 
     if(spriteType) {
@@ -250,7 +257,7 @@ PlayerController.prototype.updateSelectedCursor = function(gameContext) {
 PlayerController.prototype.updateSelectedEntity = function(gameContext) {
     const { world } = gameContext;
     const { entityManager } = world;
-    const selectedEntityID = this.getFirstSelected();
+    const selectedEntityID = this.selector.getFirstSelected();
     const selectedEntity = entityManager.getEntity(selectedEntityID);
 
     if(!selectedEntity) {
@@ -269,7 +276,7 @@ PlayerController.prototype.onSelectedClick = function(gameContext) {
     const { client, world } = gameContext;
     const { actionQueue, entityManager } = world;
     const { soundPlayer } = client;
-    const selectedEntityID = this.getFirstSelected();
+    const selectedEntityID = this.selector.getFirstSelected();
     const selectedEntity = entityManager.getEntity(selectedEntityID);
 
     const { x, y } = gameContext.getMouseTile();
@@ -303,7 +310,7 @@ PlayerController.prototype.onIdleClick = function(gameContext) {
 
     const entityID = mouseEntity.getID();
     const isAttackable = mouseEntity.isAttackable(gameContext, this.teamID);
-    const isControlled = this.hasEntity(entityID);
+    const isControlled = this.selector.hasEntity(entityID);
 
     if(isAttackable) {
         actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.ATTACK, entityID));
