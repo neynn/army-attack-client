@@ -5,13 +5,20 @@ import { ArmyEntity } from "../init/armyEntity.js";
 
 export const CardSystem = function() {}
 
-CardSystem.STAT_CARD_ID = "STAT_CARD";
-CardSystem.HEALTH_TEXT_ID = "HEALTH_TEXT";
-CardSystem.DAMAGE_TEXT_ID = "DAMAGE_TEXT";
+CardSystem.TYPE = {
+    STAT_CARD: "STAT_CARD",
+    HEALTH_TEXT: "HEALTH_TEXT",
+    DAMAGE_TEXT: "DAMAGE_TEXT"
+};
+
+CardSystem.SPRITE_TYPE = {
+    LARGE: "stat_card",
+    SMALL: "stat_card_small"
+};
 
 CardSystem.addHealthText = function(entity, statCard) {
     const healthComponent = entity.getComponent(ArmyEntity.COMPONENT.HEALTH);
-    const healthText = new SimpleText(CardSystem.HEALTH_TEXT_ID);
+    const healthText = new SimpleText(CardSystem.TYPE.HEALTH_TEXT);
     
     healthText.style.setFontType("ArmyAttack Arial");
     healthText.style.setAlignment(TextStyle.TEXT_ALIGN_RIGHT);
@@ -19,13 +26,13 @@ CardSystem.addHealthText = function(entity, statCard) {
     healthText.setPosition(95, 90);
     healthText.setText(`${healthComponent.health}/${healthComponent.maxHealth}`);
 
-    statCard.addChild(healthText, CardSystem.HEALTH_TEXT_ID);
-    entity.events.subscribe(ArmyEntity.EVENT.HEALTH_UPDATE, CardSystem.STAT_CARD_ID, (health, maxHealth) => healthText.setText(`${health}/${maxHealth}`));
+    statCard.addChild(healthText, CardSystem.TYPE.HEALTH_TEXT);
+    entity.events.subscribe(ArmyEntity.EVENT.HEALTH_UPDATE, CardSystem.TYPE.STAT_CARD, (health, maxHealth) => healthText.setText(`${health}/${maxHealth}`));
 }
 
 CardSystem.addDamageText = function(entity, statCard) {
     const attackComponent = entity.getComponent(ArmyEntity.COMPONENT.ATTACK);
-    const damageText = new SimpleText(CardSystem.DAMAGE_TEXT_ID);
+    const damageText = new SimpleText(CardSystem.TYPE.DAMAGE_TEXT);
 
     damageText.style.setFontType("ArmyAttack Arial");
     damageText.style.setAlignment(TextStyle.TEXT_ALIGN_RIGHT);
@@ -33,49 +40,76 @@ CardSystem.addDamageText = function(entity, statCard) {
     damageText.setPosition(95, 78);
     damageText.setText(`${attackComponent.damage}`);
 
-    statCard.addChild(damageText, CardSystem.DAMAGE_TEXT_ID);
-    entity.events.subscribe(ArmyEntity.EVENT.DAMAGE_UPDATE, CardSystem.STAT_CARD_ID, (damage) => damageText.setText(`${damage}`));
+    statCard.addChild(damageText, CardSystem.TYPE.DAMAGE_TEXT);
+    entity.events.subscribe(ArmyEntity.EVENT.DAMAGE_UPDATE, CardSystem.TYPE.STAT_CARD, (damage) => damageText.setText(`${damage}`));
+}
+
+CardSystem.createAttackerCard = function(gameContext, entity, cardType) {
+    const { spriteManager } = gameContext;
+    const statCard = spriteManager.createSprite(cardType, null);
+
+    CardSystem.addHealthText(entity, statCard);
+    CardSystem.addDamageText(entity, statCard);
+
+    return statCard;
+}
+
+CardSystem.createNormalCard = function(gameContext, entity, cardType) {
+    const { spriteManager } = gameContext;
+    const statCard = spriteManager.createSprite(cardType, null);
+
+    CardSystem.addHealthText(entity, statCard);
+
+    return statCard;
+}
+
+CardSystem.getTeamSprites = function(gameContext, entity) {
+    const { world } = gameContext;
+    const teamTypes = world.getConfig("TeamType");
+    const teamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
+    const teamSprites = teamTypes[teamComponent.teamID].sprites;
+
+    return teamSprites;
+}
+
+CardSystem.getCardOffset = function(gameContext, entity) {
+    const { renderer } = gameContext;
+    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
+    const { x, y } = camera.transformSizeToPositionOffset(entity.config.dimX, entity.config.dimY);
+
+    return {
+        "x": x - 48,
+        "y": y - 48
+    }
 }
 
 CardSystem.createStatCard = function(gameContext, entity) {
-    const { spriteManager, renderer, world } = gameContext;
-    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
-    const teamTypes = world.getConfig("TeamType");
-    const teamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
-    const { x, y } = camera.transformSizeToPositionOffset(entity.config.dimX, entity.config.dimY);
-    const positionX = x - 48;
-    const positionY = y - 48;
-
+    const { x, y } = CardSystem.getCardOffset(gameContext, entity);
+    const teamSprites = CardSystem.getTeamSprites(gameContext, entity);
+    
     if(entity.hasComponent(ArmyEntity.COMPONENT.ATTACK)) {
-        const statCardType = teamTypes[teamComponent.teamID].sprites.stat_card;
+        const statCardType = teamSprites[CardSystem.SPRITE_TYPE.LARGE];
 
-        if(!statCardType) {
-            return null;
-        }
+        if(statCardType) {
+            const statCard = CardSystem.createAttackerCard(gameContext, entity, statCardType);
 
-        const statCard = spriteManager.createSprite(statCardType, null);
+            statCard.setPosition(x, y);
 
-        this.addHealthText(entity, statCard);
-        this.addDamageText(entity, statCard);
-
-        statCard.setPosition(positionX, positionY);
-        
-        return statCard;
+            return statCard;
+        }        
     } else {
-        const statCardType = teamTypes[teamComponent.teamID].sprites.stat_card_small;
+        const statCardType = teamSprites[CardSystem.SPRITE_TYPE.SMALL];
 
-        if(!statCardType) {
-            return null;
+        if(statCardType) {
+            const statCard = CardSystem.createNormalCard(gameContext, entity, statCardType);
+
+            statCard.setPosition(x, y);
+
+            return statCard;
         }
-        
-        const statCard = spriteManager.createSprite(statCardType, null);
-
-        this.addHealthText(entity, statCard);
-
-        statCard.setPosition(positionX, positionY);
-
-        return statCard;
     }
+
+    return null;
 }
 
 CardSystem.generateStatCard = function(gameContext, entity) {
@@ -92,6 +126,6 @@ CardSystem.generateStatCard = function(gameContext, entity) {
     const statCard = CardSystem.createStatCard(gameContext, entity);
 
     if(statCard) {
-        sprite.addChild(statCard, CardSystem.STAT_CARD_ID);
+        sprite.addChild(statCard, CardSystem.TYPE.STAT_CARD);
     }
 }

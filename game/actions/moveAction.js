@@ -1,5 +1,4 @@
 import { Action } from "../../source/action/action.js";
-import { DirectionSystem } from "../systems/direction.js";
 import { MoveSystem } from "../systems/move.js";
 import { PathfinderSystem } from "../systems/pathfinder.js";
 import { ConquerSystem } from "../systems/conquer.js";
@@ -17,8 +16,8 @@ MoveAction.prototype.onStart = function(gameContext, request, messengerID) {
     const { entityManager } = world;
     const entity = entityManager.getEntity(entityID);
 
-    DirectionSystem.lookAtTile(entity, targetX, targetY);    
     MoveSystem.beginMove(gameContext, entity, path);
+    entity.lookAtTile(targetX, targetY);
     entity.updateSpriteDirectonal(gameContext, ArmyEntity.SPRITE_TYPE.MOVE, ArmyEntity.SPRITE_TYPE.MOVE_UP);
     entity.removeSelf(gameContext);
 }

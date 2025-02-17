@@ -1,6 +1,5 @@
 import { Factory } from "../../source/factory/factory.js";
 import { SpriteManager } from "../../source/graphics/spriteManager.js";
-
 import { CAMERA_TYPES } from "../enums.js";
 import { ControllerBuildState } from "../states/controller/build.js";
 import { ControllerIdleState } from "../states/controller/idle.js";
@@ -12,7 +11,7 @@ export const ArmyControllerFactory = function() {
 }
 
 ArmyControllerFactory.TYPE = {
-    "PLAYER": "Player"
+    PLAYER: "Player"
 };
 
 ArmyControllerFactory.prototype = Object.create(Factory.prototype);

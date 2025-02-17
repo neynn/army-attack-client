@@ -37,6 +37,7 @@ import { ArmyEntity } from "./init/armyEntity.js";
 import { SpriteComponent } from "./components/sprite.js";
 import { ProductionComponent } from "./components/production.js";
 import { DirectionComponent } from "./components/direction.js";
+import { TransparentComponent } from "./components/transparent.js";
 
 export const ArmyContext = function() {
     GameContext.call(this);
@@ -70,6 +71,7 @@ ArmyContext.prototype.init = function(resources) {
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.REVIVEABLE, ReviveableComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.SPRITE, SpriteComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.TEAM, TeamComponent);
+    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.TRANSPARENT, TransparentComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.UNIT_SIZE, UnitSizeComponent);
 
     this.world.mapManager.registerFactory("Army", new ArmyMapFactory().load(resources.mapTypes));

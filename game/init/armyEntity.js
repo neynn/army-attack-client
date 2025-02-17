@@ -32,7 +32,8 @@ ArmyEntity.COMPONENT = {
     SPRITE: "Sprite",
     DIRECTION: "Direction",
     TEAM: "Team",
-    PRODUCTION: "Production"
+    PRODUCTION: "Production",
+    TRANSPARENT: "Transparent"
 };
 
 ArmyEntity.SPRITE_TYPE = {
@@ -169,17 +170,42 @@ ArmyEntity.prototype.playSound = function(gameContext, soundType) {
     }
 }
 
-ArmyEntity.prototype.canMoveThere = function(gameContext, targetX, targetY) {
+ArmyEntity.prototype.getSizeKey = function() {
+    return `${this.config.dimX}-${this.config.dimY}`;
+}
+
+ArmyEntity.prototype.getSpriteID = function(spriteType) {
+    const spriteID = this.config.sprites[spriteType];
+
+    if(!spriteID) {
+        return null;
+    }
+
+    return spriteID;
+}
+
+ArmyEntity.prototype.canMoveThere = function(gameContext, tileX, tileY) {
     const { world } = gameContext;
-    const { mapManager } = world;
+    const { mapManager, entityManager } = world;
     const worldMap = mapManager.getActiveMap();
     
     if(!worldMap) {
         return false;
     }
 
-    if(worldMap.isTileOccupied(targetX, targetY)) {
-        return false;
+    const entities = worldMap.getEntities(tileX, tileY);
+
+    for(let i = 0; i < entities.length; i++) {
+        const entityID = entities[i];
+        const entity = entityManager.getEntity(entityID);
+
+        if(!entity) {
+            continue;
+        }
+
+        if(!entity.hasComponent(ArmyEntity.COMPONENT.TRANSPARENT)) {
+            return false;
+        }
     }
 
     const healthComponent = this.getComponent(ArmyEntity.COMPONENT.HEALTH);
@@ -189,4 +215,48 @@ ArmyEntity.prototype.canMoveThere = function(gameContext, targetX, targetY) {
     }
 
     return true;
+}
+
+ArmyEntity.prototype.lookHorizontal = function(westCondition) {
+    const directionComponent = this.getComponent(ArmyEntity.COMPONENT.DIRECTION);
+
+    if(westCondition) {
+        directionComponent.toWest();
+    } else {
+        directionComponent.toEast();
+    }
+}
+
+ArmyEntity.prototype.lookVertical = function(northCondition) {
+    const directionComponent = this.getComponent(ArmyEntity.COMPONENT.DIRECTION);
+
+    if(northCondition) {
+        directionComponent.toNorth();
+    } else {
+        directionComponent.toSouth();
+    }
+}
+
+ArmyEntity.prototype.lookAtEntity = function(target) {
+    const positionComponent = this.getComponent(ArmyEntity.COMPONENT.POSITION);
+    const targetPosition = target.getComponent(ArmyEntity.COMPONENT.POSITION);
+
+    if(targetPosition.tileX === positionComponent.tileX) {
+        this.lookVertical(targetPosition.tileY < positionComponent.tileY);
+    } else {
+        this.lookHorizontal(targetPosition.tileX < positionComponent.tileX);
+        this.lookVertical(targetPosition.tileY < positionComponent.tileY);
+    }
+}
+
+ArmyEntity.prototype.lookAtTile = function(targetX, targetY) {
+    const positionComponent = this.getComponent(ArmyEntity.COMPONENT.POSITION);
+    const { tileX, tileY } = positionComponent;
+
+    if(targetX === tileX) {
+        this.lookVertical(targetY < tileY);
+    } else {
+        this.lookHorizontal(targetX < tileX);
+        this.lookVertical(targetY < tileY);
+    }
 }

@@ -2,7 +2,6 @@ import { SpriteManager } from "../../source/graphics/spriteManager.js";
 import { getRandomOffset } from "../../source/math/math.js";
 import { CAMERA_TYPES } from "../enums.js";
 import { ArmyEntity } from "../init/armyEntity.js";
-import { DirectionSystem } from "./direction.js";
 
 export const AnimationSystem = function() {}
 
@@ -14,7 +13,12 @@ AnimationSystem.FIRE_OFFSET = {
 AnimationSystem.SPRITE_ID = {
     MOVE: "MOVE_CURSOR",
     DELAY: "DELAY_SPRITE"
-}
+};
+
+AnimationSystem.SPRITE_TYPE = {
+    SELECT: "cursor_move_1x1",
+    DELAY: "icon_delay"
+};
 
 AnimationSystem.revertToIdle = function(gameContext, entityIDs) {
     const { world } = gameContext;
@@ -32,7 +36,8 @@ AnimationSystem.revertToIdle = function(gameContext, entityIDs) {
 AnimationSystem.playDeath = function(gameContext, entity) {
     const { spriteManager } = gameContext;
     const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
-    const deathAnimation = spriteManager.createSprite(entity.config.sprites.death, SpriteManager.LAYER.MIDDLE);
+    const spriteType = entity.getSpriteID(ArmyEntity.SPRITE_TYPE.DEATH);
+    const deathAnimation = spriteManager.createSprite(spriteType, SpriteManager.LAYER.MIDDLE);
 
     deathAnimation.expire();
     deathAnimation.setPosition(positionComponent.positionX, positionComponent.positionY);
@@ -53,7 +58,7 @@ AnimationSystem.playFire = function(gameContext, target, attackersIDs) {
         const weaponSpriteID = weaponSprite.getID();
         const { x, y } = getRandomOffset(AnimationSystem.FIRE_OFFSET.REGULAR, AnimationSystem.FIRE_OFFSET.REGULAR);
 
-        DirectionSystem.lookAt(attacker, target);
+        attacker.lookAtEntity(target);
         attacker.updateSpriteDirectonal(gameContext, ArmyEntity.SPRITE_TYPE.FIRE, ArmyEntity.SPRITE_TYPE.FIRE_UP);
         attacker.playSound(gameContext, ArmyEntity.SOUND_TYPE.FIRE);
         entitySprite.addChild(weaponSprite, weaponSpriteID);
@@ -77,7 +82,7 @@ AnimationSystem.playSelect = function(gameContext, entity) {
     const { spriteManager } = gameContext;
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const entitySprite = spriteManager.getSprite(spriteComponent.spriteID);
-    const moveSprite = spriteManager.createSprite("cursor_move_1x1");
+    const moveSprite = spriteManager.createSprite(AnimationSystem.SPRITE_TYPE.SELECT);
     
     entitySprite.addChild(moveSprite, AnimationSystem.SPRITE_ID.MOVE);
 
@@ -98,7 +103,7 @@ AnimationSystem.playConstruction = function(gameContext, entity) {
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const entitySprite = spriteManager.getSprite(spriteComponent.spriteID);
-    const delaySprite = spriteManager.createSprite("icon_delay");
+    const delaySprite = spriteManager.createSprite(AnimationSystem.SPRITE_TYPE.DELAY);
     const { x, y } = camera.transformSizeToPositionOffsetCenter(entity.config.dimX, entity.config.dimY);
 
     entitySprite.addChild(delaySprite, AnimationSystem.SPRITE_ID.DELAY);

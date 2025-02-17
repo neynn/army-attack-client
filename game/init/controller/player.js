@@ -6,7 +6,6 @@ import { AnimationSystem } from "../../systems/animation.js";
 import { PathfinderSystem } from "../../systems/pathfinder.js";
 import { AllianceSystem } from "../../systems/alliance.js";
 import { AttackSystem } from "../../systems/attack.js";
-import { DirectionSystem } from "../../systems/direction.js";
 import { ControllerHover } from "./hover.js";
 import { ArmyEntity } from "../armyEntity.js";
 
@@ -69,7 +68,7 @@ PlayerController.prototype.hightlightAttacker = function(gameContext, target, at
     const tileID = tileManager.getTileID("overlay", "grid_attack_1x1");
 
     camera.addOverlay(ArmyCamera.OVERLAY_TYPE_ATTACK, positionComponent.tileX, positionComponent.tileY, tileID);
-    DirectionSystem.lookAt(attacker, target);
+    attacker.lookAtEntity(target);
     attacker.updateSpriteDirectonal(gameContext, ArmyEntity.SPRITE_TYPE.AIM, ArmyEntity.SPRITE_TYPE.AIM_UP);
 }
 
@@ -176,7 +175,7 @@ PlayerController.prototype.updateHoverSprite = function(gameContext) {
     }
 
     const hoveredEntity = this.hover.getEntity(gameContext);
-    const spriteKey = `${hoveredEntity.config.dimX}-${hoveredEntity.config.dimY}`;
+    const spriteKey = hoveredEntity.getSizeKey();
     const spriteTypeID = this.attackers.size > 0 ? "attack" : "select"; 
     const spriteType = this.config.sprites[spriteTypeID][spriteKey];
 

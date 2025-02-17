@@ -1,6 +1,5 @@
 import { State } from "../../../source/state/state.js";
 import { ACTION_TYPES } from "../../enums.js";
-import { DirectionSystem } from "../../systems/direction.js";
 import { PlayerController } from "../../init/controller/player.js";
 import { ArmyEntity } from "../../init/armyEntity.js";
 
@@ -40,7 +39,7 @@ ControllerSelectedState.prototype.updateEntity = function(gameContext, controlle
     const positionComponent = selectedEntity.getComponent(ArmyEntity.COMPONENT.POSITION);
     
     if(controller.hover.tileX !== positionComponent.tileX) {
-        DirectionSystem.lookHorizontal(selectedEntity, controller.hover.tileX < positionComponent.tileX);
+        selectedEntity.lookHorizontal(controller.hover.tileX < positionComponent.tileX);
         selectedEntity.updateSpriteHorizontal(gameContext, selectedEntity);
     }
 }

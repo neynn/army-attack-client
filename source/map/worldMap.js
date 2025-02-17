@@ -200,6 +200,7 @@ WorldMap.prototype.getUniqueEntitiesInRange = function(startX, startY, endX, end
 
     return entities;
 }
+
 WorldMap.prototype.removeEntity = function(tileX, tileY, rangeX, rangeY, entityID) {
     for(let i = 0; i < rangeY; i++) {
         const locationY = tileY + i;

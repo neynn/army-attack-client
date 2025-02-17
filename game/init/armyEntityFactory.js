@@ -1,6 +1,5 @@
 import { SpriteManager } from "../../source/graphics/spriteManager.js";
 import { Factory } from "../../source/factory/factory.js";
-
 import { HealthComponent } from "../components/health.js";
 import { TeamComponent } from "../components/team.js";
 import { SpriteComponent } from "../components/sprite.js";
@@ -64,7 +63,7 @@ ArmyEntityFactory.prototype.createDefaultSprite = function(gameContext, entity, 
     const { spriteManager, renderer } = gameContext;
     const { tileX, tileY } = config;
 
-    const spriteType = entity.config.sprites["idle"];
+    const spriteType = entity.getSpriteID(ArmyEntity.SPRITE_TYPE.IDLE);
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
     const sprite = spriteManager.createSprite(spriteType, SpriteManager.LAYER.MIDDLE);
     const { x, y } = camera.transformTileToPositionCenter(tileX, tileY);
