@@ -4,15 +4,22 @@ FloodFill.IGNORE_NEXT = 0;
 FloodFill.USE_NEXT = 1;
 
 FloodFill.NEIGHBOR_COST = {
-    "STRAIGHT": 1,
-    "CROSS": 1.5
+    STRAIGHT: 1,
+    CROSS: 1.5
+};
+
+FloodFill.STRAIGHT = {
+    UP: 0,
+    RIGHT: 1,
+    DOWN: 2,
+    LEFT: 3
 };
 
 FloodFill.CROSS_REQUIREMENT = [
-    [3, 0],
-    [1, 0],
-    [3, 2],
-    [1, 2]
+    [FloodFill.STRAIGHT.LEFT, FloodFill.STRAIGHT.UP],
+    [FloodFill.STRAIGHT.RIGHT, FloodFill.STRAIGHT.UP],
+    [FloodFill.STRAIGHT.LEFT, FloodFill.STRAIGHT.DOWN],
+    [FloodFill.STRAIGHT.RIGHT, FloodFill.STRAIGHT.DOWN]
 ];
 
 FloodFill.createNode = function(cost, positionX, positionY, parent) {

@@ -41,8 +41,7 @@ ConstructionSystem.finishConstruction = function(gameContext, entity, controller
         "owner": controllerID,
         "type": resultType,
         "tileX": positionComponent.tileX,
-        "tileY": positionComponent.tileY,
-        "mode": "story" //TODO gets determined by the client/server
+        "tileY": positionComponent.tileY
     }
 
     //TODO: Open GUI and check if the controller has enough materials/resources.

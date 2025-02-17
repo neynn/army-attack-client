@@ -41,10 +41,27 @@ import { TransparentComponent } from "./components/transparent.js";
 
 export const ArmyContext = function() {
     GameContext.call(this);
+
+    this.gameMode = ArmyContext.GAME_MODE.NONE;
 }
 
 ArmyContext.prototype = Object.create(GameContext.prototype);
 ArmyContext.prototype.constructor = ArmyContext;
+
+ArmyContext.GAME_MODE = {
+    NONE: "none",
+    STORY: "story",
+    VERSUS: "versus",
+    EDIT: "edit"
+};
+
+ArmyContext.prototype.setGameMode = function(modeID) {
+    this.gameMode = modeID;
+}
+
+ArmyContext.prototype.getGameMode = function() {
+    return this.gameMode;
+}
 
 ArmyContext.prototype.init = function(resources) {
     this.updateConversions();

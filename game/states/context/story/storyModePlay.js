@@ -39,7 +39,6 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
 
     SpawnSystem.createEntity(gameContext, { 
         "type": "red_guardtower",
-        "mode": "story",
         "tileX": 4,
         "tileY": 4,
         "team": "Crimson",
@@ -48,7 +47,6 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
 
     SpawnSystem.createEntity(gameContext, { 
         "type": "blue_elite_commando",
-        "mode": "story",
         "tileX": 6,
         "tileY": 5,
         "team": "Allies",
@@ -57,7 +55,6 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
 
     SpawnSystem.createEntity(gameContext, { 
         "type": "michie_war_machine",
-        "mode": "story",
         "tileX": 7,
         "tileY": 5,
         "team": "Allies",
@@ -66,7 +63,6 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
 
     const battery = SpawnSystem.createEntity(gameContext, { 
         "type": "blue_elite_battery",
-        "mode": "story",
         "tileX": 4,
         "tileY": 3,
         "team": "Crimson",
@@ -75,7 +71,6 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
 
     SpawnSystem.createEntity(gameContext, { 
         "type": "blue_commando",
-        "mode": "story",
         "tileX": 13,
         "tileY": 10,
         "team": "Allies",
@@ -84,7 +79,6 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
 
     SpawnSystem.createEntity(gameContext, {
         "type": "red_artillery",
-        "mode": "story",
         "tileX": 2,
         "tileY": 3,
         "team": "Allies",
@@ -93,7 +87,6 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
 
     SpawnSystem.createEntity(gameContext, {
         "type": "blue_bootcamp_construction",
-        "mode": "story",
         "tileX": 2,
         "tileY": 9,
         "team": "Allies",
@@ -102,7 +95,6 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
 
     SpawnSystem.createEntity(gameContext, { 
         "type": "blue_elite_infantry",
-        "mode": "story",
         "tileX": 8,
         "tileY": 6,
         "team": "Allies",
@@ -111,7 +103,6 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
 
     SpawnSystem.createEntity(gameContext, { 
         "type": "red_bulldozer",
-        "mode": "story",
         "tileX": 3,
         "tileY": 1,
         "team": "Allies",
@@ -120,7 +111,6 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
 
     const redBattletank = SpawnSystem.createEntity(gameContext, { 
         "type": "red_battletank",
-        "mode": "story",
         "tileX": 4,
         "tileY": 1,
         "team": "Crimson",
@@ -129,7 +119,6 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
 
     const battleTank = SpawnSystem.createEntity(gameContext, { 
         "type": "blue_elite_battletank",
-        "mode": "story",
         "tileX": 0,
         "tileY": 1,
         "team": "Allies",

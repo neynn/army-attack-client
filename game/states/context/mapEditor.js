@@ -7,6 +7,7 @@ import { Button } from "../../../source/ui/elements/button.js";
 
 import { CAMERA_TYPES } from "../../enums.js";
 import { saveMap } from "../../../helpers.js";
+import { ArmyContext } from "../../armyContext.js";
 
 export const MapEditorState = function() {
     this.id = "MAP_EDITOR_STATE";
@@ -33,6 +34,7 @@ MapEditorState.prototype.onEnter = function(stateMachine) {
     const context = gameContext.createCamera(CAMERA_TYPES.ARMY_CAMERA);
     const camera = context.getCamera();
 
+    gameContext.setGameMode(ArmyContext.GAME_MODE.EDIT);
     context.setPositionMode(CameraContext.POSITION_MODE.FIXED_ORIGIN);
     camera.unbindViewport();
 
@@ -52,6 +54,7 @@ MapEditorState.prototype.onExit = function(stateMachine) {
     const gameContext = stateMachine.getContext();
     const { renderer, uiManager } = gameContext;
 
+    gameContext.setGameMode(ArmyContext.GAME_MODE.NONE);
     uiManager.unparseUI("MAP_EDITOR", gameContext);
     renderer.removeCamera(CAMERA_TYPES.ARMY_CAMERA);
 }

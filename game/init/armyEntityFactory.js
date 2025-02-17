@@ -17,17 +17,17 @@ export const ArmyEntityFactory = function() {
 }
 
 ArmyEntityFactory.TYPE = {
-    "UNIT": "Unit",
-    "DEFENSE": "Defense",
-    "CONSTRUCTION": "Construction",
-    "BUILDING": "Building"
+    UNIT: "Unit",
+    DEFENSE: "Defense",
+    CONSTRUCTION: "Construction",
+    BUILDING: "Building"
 };
 
 ArmyEntityFactory.prototype = Object.create(Factory.prototype);
 ArmyEntityFactory.prototype.constructor = ArmyEntityFactory;
 
-ArmyEntityFactory.prototype.createDefaultEntity = function(defaultConfig, config) {
-    const { mode, tileX = 0, tileY = 0, team = null, type } = config;
+ArmyEntityFactory.prototype.createDefaultEntity = function(defaultConfig, config, gameMode) {
+    const { tileX = 0, tileY = 0, team = null, type } = config;
     const { stats } = defaultConfig;
     const entity = new ArmyEntity(type);
     const positionComponent = new PositionComponent();
@@ -39,7 +39,7 @@ ArmyEntityFactory.prototype.createDefaultEntity = function(defaultConfig, config
     const {
         health = 1,
         maxHealth = health
-    } = stats[mode];
+    } = stats[gameMode];
 
     healthComponent.health = config.health ?? health;
     healthComponent.maxHealth = config.maxHealth ?? maxHealth;
@@ -84,17 +84,18 @@ ArmyEntityFactory.prototype.createDefaultSprite = function(gameContext, entity, 
 ArmyEntityFactory.prototype.onCreate = function(gameContext, config) {
     const { world } = gameContext;
     const { entityManager } = world;
-    const { mode, components, type } = config;
+    const { components, type } = config;
+    const gameMode = gameContext.getGameMode();
     const entityType = this.getType(type);
 
     if(!entityType) {
         return null;
     }
 
-    const entity = this.createDefaultEntity(entityType, config);
+    const entity = this.createDefaultEntity(entityType, config, gameMode);
     const sprite = this.createDefaultSprite(gameContext, entity, config);
     const { archetype, stats } = entityType;
-    const statConfig = stats[mode];
+    const statConfig = stats[gameMode];
 
     switch(archetype) {
         case ArmyEntityFactory.TYPE.UNIT: {

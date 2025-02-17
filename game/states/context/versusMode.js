@@ -14,6 +14,7 @@ import { roomUpdate } from "../../serverEvents/roomUpdate.js";
 import { startVersusInstance } from "../../serverEvents/startVersusInstance.js";
 import { queueAction } from "../../serverEvents/queueAction.js";
 import { queueActionBatch } from "../../serverEvents/queueActionBatch.js";
+import { ArmyContext } from "../../armyContext.js";
 
 export const VersusModeState = function() {
     StateMachine.call(this);
@@ -51,6 +52,7 @@ VersusModeState.prototype.onEnter = function(stateMachine) {
     const { client } = gameContext;
     const { socket } = client;
 
+    gameContext.setGameMode(ArmyContext.GAME_MODE.VERSUS);
     gameContext.createCamera(CAMERA_TYPES.ARMY_CAMERA);
     socket.events.subscribe(Socket.EVENT_MESSAGE_FROM_SERVER, contextID, (type, payload) => this.onServerMessage(gameContext, type, payload));
     socket.connect();
@@ -61,5 +63,6 @@ VersusModeState.prototype.onEnter = function(stateMachine) {
 VersusModeState.prototype.onExit = function(stateMachine) {
     const gameContext = stateMachine.getContext();
 
+    gameContext.setGameMode(ArmyContext.GAME_MODE.NONE);
     gameContext.destroyCamera(CAMERA_TYPES.ARMY_CAMERA);
 }

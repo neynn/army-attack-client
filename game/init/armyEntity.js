@@ -238,15 +238,10 @@ ArmyEntity.prototype.lookVertical = function(northCondition) {
 }
 
 ArmyEntity.prototype.lookAtEntity = function(target) {
-    const positionComponent = this.getComponent(ArmyEntity.COMPONENT.POSITION);
     const targetPosition = target.getComponent(ArmyEntity.COMPONENT.POSITION);
+    const { tileX, tileY } = targetPosition;
 
-    if(targetPosition.tileX === positionComponent.tileX) {
-        this.lookVertical(targetPosition.tileY < positionComponent.tileY);
-    } else {
-        this.lookHorizontal(targetPosition.tileX < positionComponent.tileX);
-        this.lookVertical(targetPosition.tileY < positionComponent.tileY);
-    }
+    this.lookAtTile(tileX, tileY);
 }
 
 ArmyEntity.prototype.lookAtTile = function(targetX, targetY) {
