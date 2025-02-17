@@ -135,6 +135,30 @@ ArmyEntity.prototype.getSurroundingEntities = function(gameContext, range = 0) {
     return entities;
 }
 
+ArmyEntity.prototype.placeSelf = function(gameContext) {
+    const { world } = gameContext;
+    const { mapManager } = world;
+    const worldMap = mapManager.getActiveMap();
+
+    if(worldMap) {
+        const { tileX, tileY } = this.getComponent(ArmyEntity.COMPONENT.POSITION);
+
+        worldMap.addEntity(tileX, tileY, this.config.dimX, this.config.dimY, this.id);
+    }
+}
+
+ArmyEntity.prototype.removeSelf = function(gameContext) {
+    const { world } = gameContext;
+    const { mapManager } = world;
+    const worldMap = mapManager.getActiveMap();
+
+    if(worldMap) {
+        const { tileX, tileY } = this.getComponent(ArmyEntity.COMPONENT.POSITION);
+
+        worldMap.removeEntity(tileX, tileY, this.config.dimX, this.config.dimY, this.id);
+    }
+}
+
 ArmyEntity.prototype.playSound = function(gameContext, soundType) {
     const { client } = gameContext;
     const { soundPlayer } = client;
@@ -143,4 +167,26 @@ ArmyEntity.prototype.playSound = function(gameContext, soundType) {
     if(soundID) {
         soundPlayer.playRandom(soundID);
     }
+}
+
+ArmyEntity.prototype.canMoveThere = function(gameContext, targetX, targetY) {
+    const { world } = gameContext;
+    const { mapManager } = world;
+    const worldMap = mapManager.getActiveMap();
+    
+    if(!worldMap) {
+        return false;
+    }
+
+    if(worldMap.isTileOccupied(targetX, targetY)) {
+        return false;
+    }
+
+    const healthComponent = this.getComponent(ArmyEntity.COMPONENT.HEALTH);
+
+    if(!healthComponent.isAlive()) {
+        return false;
+    }
+
+    return true;
 }

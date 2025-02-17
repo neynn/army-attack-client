@@ -1,5 +1,4 @@
 import { CardSystem } from "./card.js";
-import { PlaceSystem } from "./place.js";
 
 export const SpawnSystem = function() {}
 
@@ -11,7 +10,7 @@ SpawnSystem.createEntity = function(gameContext, config) {
         return null;
     }
     
-    PlaceSystem.placeEntity(gameContext, entity);
+    entity.placeSelf(gameContext);
     CardSystem.generateStatCard(gameContext, entity);
 
     return entity;

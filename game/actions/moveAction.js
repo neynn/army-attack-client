@@ -2,7 +2,6 @@ import { Action } from "../../source/action/action.js";
 import { DirectionSystem } from "../systems/direction.js";
 import { MoveSystem } from "../systems/move.js";
 import { PathfinderSystem } from "../systems/pathfinder.js";
-import { PlaceSystem } from "../systems/place.js";
 import { ConquerSystem } from "../systems/conquer.js";
 import { ACTION_TYPES } from "../enums.js";
 import { ArmyEntity } from "../init/armyEntity.js";
@@ -21,7 +20,7 @@ MoveAction.prototype.onStart = function(gameContext, request, messengerID) {
     DirectionSystem.lookAtTile(entity, targetX, targetY);    
     MoveSystem.beginMove(gameContext, entity, path);
     entity.updateSpriteDirectonal(gameContext, ArmyEntity.SPRITE_TYPE.MOVE, ArmyEntity.SPRITE_TYPE.MOVE_UP);
-    PlaceSystem.removeEntity(gameContext, entity);
+    entity.removeSelf(gameContext);
 }
 
 MoveAction.prototype.onEnd = function(gameContext, request, messengerID) {
@@ -33,7 +32,7 @@ MoveAction.prototype.onEnd = function(gameContext, request, messengerID) {
     ConquerSystem.conquerTile(gameContext, targetX, targetY, entity);
     MoveSystem.endMove(gameContext, entity, targetX, targetY);
     entity.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
-    PlaceSystem.placeEntity(gameContext, entity);
+    entity.placeSelf(gameContext);
     actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.COUNTER_MOVE, entityID));
 }
 
@@ -53,14 +52,7 @@ MoveAction.prototype.getValidated = function(gameContext, request, messengerID) 
     const { entityManager } = world;
     const entity = entityManager.getEntity(entityID);
 
-    if(!entity) {
-        return null;
-    }
-    
-    const healthComponent = entity.getComponent(ArmyEntity.COMPONENT.HEALTH);
-    const isTileFree = PathfinderSystem.isTileFree(gameContext, targetX, targetY);
-
-    if(!healthComponent.isAlive() || !isTileFree) {
+    if(!entity || !entity.canMoveThere(gameContext, targetX, targetY)) {
         return null;
     }
 

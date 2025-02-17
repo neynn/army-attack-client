@@ -56,13 +56,14 @@ MoveSystem.endMove = function(gameContext, entity, targetX, targetY) {
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
     const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
     const moveComponent = entity.getComponent(ArmyEntity.COMPONENT.MOVE);
-    const { x, y } = camera.transformTileToPositionCenter(targetX, targetY);
 
-    positionComponent.positionX = x;
-    positionComponent.positionY = y;
-    positionComponent.tileX = targetX;
-    positionComponent.tileY = targetY;
+    if(camera) {
+        const { x, y } = camera.transformTileToPositionCenter(targetX, targetY);
+        
+        positionComponent.setPosition(x, y);
+    }
 
+    positionComponent.setTile(targetX, targetY);
     moveComponent.clear();
 
     MoveSystem.updateSpritePosition(gameContext, entity);

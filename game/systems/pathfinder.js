@@ -11,20 +11,6 @@ PathfinderSystem.NODE_STATE = {
     INVALID_OCCUPIED: 3
 };
 
-PathfinderSystem.isTileFree = function(gameContext, targetX, targetY) {
-    const { world } = gameContext;
-    const { mapManager } = world;
-    const activeMap = mapManager.getActiveMap();
-    
-    if(!activeMap) {
-        return false;
-    }
-
-    const isEmpty = !activeMap.isTileOccupied(targetX, targetY);
-
-    return isEmpty;
-}
-
 PathfinderSystem.generateNodeList = function(gameContext, entity) {
     const { world } = gameContext;
     const { mapManager, entityManager } = world;

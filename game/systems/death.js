@@ -1,5 +1,4 @@
 import { ArmyEntity } from "../init/armyEntity.js";
-import { PlaceSystem } from "./place.js";
 
 export const DeathSystem = function() {}
 
@@ -9,7 +8,7 @@ DeathSystem.destroyEntity = function(gameContext, entityID) {
     const entity = entityManager.getEntity(entityID);
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
 
-    PlaceSystem.removeEntity(gameContext, entity);
+    entity.removeSelf(gameContext);
     spriteManager.destroySprite(spriteComponent.spriteID);
     world.destroyEntity(entityID);
 }
