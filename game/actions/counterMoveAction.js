@@ -2,7 +2,6 @@ import { Action } from "../../source/action/action.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { AnimationSystem } from "../systems/animation.js";
 import { AttackSystem } from "../systems/attack.js";
-import { DeathSystem } from "../systems/death.js";
 import { DecaySystem } from "../systems/decay.js";
 
 export const CounterMoveAction = function() {
@@ -42,7 +41,7 @@ CounterMoveAction.prototype.onEnd = function(gameContext, request, messengerID) 
 
     if(state === AttackSystem.OUTCOME_STATE.DEAD) {
         AnimationSystem.playDeath(gameContext, target);
-        DeathSystem.destroyEntity(gameContext, entityID);
+        target.die();
     } else if(state === AttackSystem.OUTCOME_STATE.IDLE) {
         target.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
     }

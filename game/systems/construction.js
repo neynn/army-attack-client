@@ -1,6 +1,5 @@
 import { ACTION_TYPES } from "../enums.js";
 import { ArmyEntity } from "../init/armyEntity.js";
-import { DeathSystem } from "./death.js";
 import { SpawnSystem } from "./spawn.js";
 
 export const ConstructionSystem = function() {}
@@ -47,6 +46,6 @@ ConstructionSystem.finishConstruction = function(gameContext, entity, controller
     }
 
     //TODO: Open GUI and check if the controller has enough materials/resources.
-    DeathSystem.destroyEntity(gameContext, entityID);
+    entity.die();
     SpawnSystem.createEntity(gameContext, result);
 }

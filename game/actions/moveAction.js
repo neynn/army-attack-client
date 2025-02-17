@@ -19,7 +19,7 @@ MoveAction.prototype.onStart = function(gameContext, request, messengerID) {
     MoveSystem.beginMove(gameContext, entity, path);
     entity.lookAtTile(targetX, targetY);
     entity.updateSpriteDirectonal(gameContext, ArmyEntity.SPRITE_TYPE.MOVE, ArmyEntity.SPRITE_TYPE.MOVE_UP);
-    entity.removeSelf(gameContext);
+    entity.removeFromMap(gameContext);
 }
 
 MoveAction.prototype.onEnd = function(gameContext, request, messengerID) {
@@ -31,7 +31,7 @@ MoveAction.prototype.onEnd = function(gameContext, request, messengerID) {
     ConquerSystem.conquerTile(gameContext, targetX, targetY, entity);
     MoveSystem.endMove(gameContext, entity, targetX, targetY);
     entity.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
-    entity.placeSelf(gameContext);
+    entity.placeOnMap(gameContext);
     actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.COUNTER_MOVE, entityID));
 }
 

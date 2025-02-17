@@ -3,7 +3,6 @@ import { ACTION_TYPES, EVENT_TYPES } from "../enums.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { AnimationSystem } from "../systems/animation.js";
 import { AttackSystem } from "../systems/attack.js";
-import { DeathSystem } from "../systems/death.js";
 import { DecaySystem } from "../systems/decay.js";
 
 export const AttackAction = function() {
@@ -48,7 +47,7 @@ AttackAction.prototype.onEnd = function(gameContext, request, messengerID) {
 
     if(state === AttackSystem.OUTCOME_STATE.DEAD) {
         AnimationSystem.playDeath(gameContext, target);
-        DeathSystem.destroyEntity(gameContext, entityID);
+        target.die(gameContext);
         eventManager.emitEvent(EVENT_TYPES.COUNTER, {
             "entityID": entityID,
             "attackers": attackers,

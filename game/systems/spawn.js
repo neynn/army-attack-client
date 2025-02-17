@@ -10,7 +10,7 @@ SpawnSystem.createEntity = function(gameContext, config) {
         return null;
     }
     
-    entity.placeSelf(gameContext);
+    entity.placeOnMap(gameContext);
     CardSystem.generateStatCard(gameContext, entity);
 
     return entity;

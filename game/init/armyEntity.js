@@ -136,7 +136,7 @@ ArmyEntity.prototype.getSurroundingEntities = function(gameContext, range = 0) {
     return entities;
 }
 
-ArmyEntity.prototype.placeSelf = function(gameContext) {
+ArmyEntity.prototype.placeOnMap = function(gameContext) {
     const { world } = gameContext;
     const { mapManager } = world;
     const worldMap = mapManager.getActiveMap();
@@ -148,7 +148,7 @@ ArmyEntity.prototype.placeSelf = function(gameContext) {
     }
 }
 
-ArmyEntity.prototype.removeSelf = function(gameContext) {
+ArmyEntity.prototype.removeFromMap = function(gameContext) {
     const { world } = gameContext;
     const { mapManager } = world;
     const worldMap = mapManager.getActiveMap();
@@ -259,4 +259,15 @@ ArmyEntity.prototype.lookAtTile = function(targetX, targetY) {
         this.lookHorizontal(targetX < tileX);
         this.lookVertical(targetY < tileY);
     }
+}
+
+ArmyEntity.prototype.die = function(gameContext) {
+    const { world, spriteManager } = gameContext;
+    const spriteComponent = this.getComponent(ArmyEntity.COMPONENT.SPRITE);
+
+    this.removeFromMap(gameContext);
+
+    spriteManager.destroySprite(spriteComponent.spriteID);
+
+    world.destroyEntity(this.id);
 }
