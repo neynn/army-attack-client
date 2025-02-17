@@ -30,13 +30,17 @@ ControllerHover.prototype.updateNodes = function(gameContext, nodeList) {
     this.nodeMap = nodes;
 }
 
+ControllerHover.prototype.getNodeKey = function(nodeX, nodeY) {
+    return `${nodeX}-${nodeY}`;
+}
+
 ControllerHover.prototype.createValidNodeHashmap = function(gameContext, nodeList) {
     const { world } = gameContext;
     const nodes = new Map();
 
     for(const node of nodeList) {
         const { positionX, positionY, state } = node;
-        const nodeKey = `${positionX}-${positionY}`;
+        const nodeKey = this.getNodeKey(positionX, positionY);
 
         if(state !== PathfinderSystem.NODE_STATE.VALID) {
             continue;
@@ -55,10 +59,9 @@ ControllerHover.prototype.createValidNodeHashmap = function(gameContext, nodeLis
 }
 
 ControllerHover.prototype.isHoveringOnNode = function() {
-    const nodeKey = `${this.tileX}-${this.tileY}`;
-    const isOnNode = this.nodeMap.has(nodeKey);
+    const nodeKey = this.getNodeKey(this.tileX, this.tileY);
 
-    return isOnNode;
+    return this.nodeMap.has(nodeKey);
 }
 
 ControllerHover.prototype.isHoveringOnEntity = function() {

@@ -12,7 +12,7 @@ ControllerManager.prototype.constructor = ControllerManager;
 
 ControllerManager.prototype.getOwnerOf = function(entityID) {
     for(const [controllerID, controller] of this.controllers) {
-        if(controller.selector.hasEntity(entityID)) {
+        if(controller.hasEntity(entityID)) {
             return controller;
         }
     }
@@ -61,6 +61,17 @@ ControllerManager.prototype.update = function(gameContext) {
     this.controllers.forEach(controller => controller.update(gameContext));
 }
 
+ControllerManager.prototype.removeEntity = function(entityID) {
+    const owner = this.getOwnerOf(entityID);
+
+    if(!owner) {
+        //TODO: ERROR
+        return;
+    }
+
+    owner.removeEntity(entityID);
+}
+
 ControllerManager.prototype.addEntity = function(controllerID, entityID) {
     const controller = this.controllers.get(controllerID);
 
@@ -74,8 +85,8 @@ ControllerManager.prototype.addEntity = function(controllerID, entityID) {
     if(currentOwner !== null) {
         Logger.warn(false, "Entity is already linked to controller! Transferring ownership!", { controllerID, entityID });
 
-        currentOwner.selector.removeEntity(entityID);
+        currentOwner.removeEntity(entityID);
     }
 
-    controller.selector.addEntity(entityID);
+    controller.addEntity(entityID);
 }

@@ -9,13 +9,13 @@ import { MapManager } from "./map/mapManager.js";
 export const World = function() {
     this.config = {};
     this.actionQueue = new RequestQueue();
-    this.mapManager = new MapManager();
-    this.entityManager = new EntityManager();
     this.controllerManager = new ControllerManager();
+    this.entityManager = new EntityManager();
+    this.mapManager = new MapManager();
     this.eventManager = new EventManager();
 
     this.events = new EventEmitter();
-    this.events.listen(World.EVENT.MAP_LOAD);
+    this.events.listen(World.EVENT.MAP_CREATE);
     this.events.listen(World.EVENT.CONTROLLER_CREATE);
     this.events.listen(World.EVENT.CONTROLLER_DESTROY);
     this.events.listen(World.EVENT.ENTITY_CREATE);
@@ -23,11 +23,11 @@ export const World = function() {
 }
 
 World.EVENT = {
-    "MAP_LOAD": "MAP_LOAD",
-    "CONTROLLER_CREATE": "CONTROLLER_CREATE",
-    "CONTROLLER_DESTROY": "CONTROLLER_DESTROY",
-    "ENTITY_CREATE": "ENTITY_CREATE",
-    "ENTITY_DESTROY": "ENTITY_DESTROY"
+    MAP_CREATE: "MAP_CREATE",
+    CONTROLLER_CREATE: "CONTROLLER_CREATE",
+    CONTROLLER_DESTROY: "CONTROLLER_DESTROY",
+    ENTITY_CREATE: "ENTITY_CREATE",
+    ENTITY_DESTROY: "ENTITY_DESTROY"
 };
 
 World.prototype.exit = function() {
@@ -62,7 +62,7 @@ World.prototype.createMap = function(gameContext, mapID, mapData) {
 
     this.mapManager.addMap(mapID, worldMap);
     this.mapManager.updateActiveMap(mapID);
-    this.events.emit(World.EVENT.MAP_LOAD, worldMap);
+    this.events.emit(World.EVENT.MAP_CREATE, worldMap);
 
     return worldMap;
 }
@@ -79,20 +79,8 @@ World.prototype.getTileEntity = function(tileX, tileY) {
     return this.entityManager.getEntity(entityID);
 }
 
-World.prototype.getTileEntityList = function(tileX, tileY) {
-    const activeMap = this.mapManager.getActiveMap();
-
-    if(!activeMap) {
-        return [];
-    }
-
-    const entityList = activeMap.getEntities(tileX, tileY);
-    
-    return entityList;
-}
-
 World.prototype.createController = function(gameContext, config) {
-    if(typeof config !== "object") {
+    if(!config) {
         Logger.error(false, "Config must be an object!", "World.prototype.createController", null);
         return null;
     }
@@ -144,13 +132,9 @@ World.prototype.createEntity = function(gameContext, config) {
 
 World.prototype.destroyEntity = function(entityID) {
     const entity = this.entityManager.getEntity(entityID);
-    const owner = this.controllerManager.getOwnerOf(entityID);
-
-    if(owner) {
-        owner.selector.removeEntity(entityID);
-    }
 
     if(entity) {
+        this.controllerManager.removeEntity(entityID);
         this.entityManager.destroyEntity(entityID);
         this.events.emit(World.EVENT.ENTITY_DESTROY, entity);
     }

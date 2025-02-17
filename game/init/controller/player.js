@@ -7,7 +7,6 @@ import { AttackSystem } from "../../systems/attack.js";
 import { ControllerHover } from "./hover.js";
 import { ArmyEntity } from "../armyEntity.js";
 import { ConstructionSystem } from "../../systems/construction.js";
-import { Selector } from "../../../source/controller/selector.js";
 import { Controller } from "../../../source/controller/controller.js";
 
 export const PlayerController = function(id) {
@@ -16,8 +15,8 @@ export const PlayerController = function(id) {
     this.spriteID = null;
     this.teamID = null;
     this.attackers = [];
-    this.selector = new Selector();
     this.hover = new ControllerHover();
+    this.selectedEntities = new Set();
     this.state = PlayerController.STATE.NONE;
 }
 
@@ -36,6 +35,12 @@ PlayerController.SPRITE_TYPE = {
 
 PlayerController.prototype = Object.create(Controller.prototype);
 PlayerController.prototype.constructor = PlayerController;
+
+PlayerController.prototype.onEntityRemove = function(entityID) {
+    if(this.selectedEntities.has(entityID)) {
+        this.selectedEntities.delete(entityID);
+    }
+}
 
 PlayerController.prototype.setState = function(state) {
     this.state = state;
@@ -199,7 +204,10 @@ PlayerController.prototype.onSelectEntity = function(gameContext, entity) {
 
     this.hover.updateNodes(gameContext, nodeList);
     this.addNodeOverlays(gameContext, nodeList);
-    this.selector.selectSingle(entityID);
+
+    if(this.hasEntity(entityID)) {
+        this.selectedEntities.add(entityID);
+    }
     
     AnimationSystem.playSelect(gameContext, entity);
 }
@@ -210,7 +218,7 @@ PlayerController.prototype.onDeselectEntity = function(gameContext, entity) {
 
     camera.clearOverlay(ArmyCamera.OVERLAY_TYPE_MOVE);
 
-    this.selector.deselectAll();
+    this.selectedEntities.clear();
     this.hover.clearNodes();
 
     AnimationSystem.stopSelect(gameContext, entity);
@@ -257,7 +265,7 @@ PlayerController.prototype.updateSelectedCursor = function(gameContext) {
 PlayerController.prototype.updateSelectedEntity = function(gameContext) {
     const { world } = gameContext;
     const { entityManager } = world;
-    const selectedEntityID = this.selector.getFirstSelected();
+    const selectedEntityID = this.getFirstSelected();
     const selectedEntity = entityManager.getEntity(selectedEntityID);
 
     if(!selectedEntity) {
@@ -276,7 +284,7 @@ PlayerController.prototype.onSelectedClick = function(gameContext) {
     const { client, world } = gameContext;
     const { actionQueue, entityManager } = world;
     const { soundPlayer } = client;
-    const selectedEntityID = this.selector.getFirstSelected();
+    const selectedEntityID = this.getFirstSelected();
     const selectedEntity = entityManager.getEntity(selectedEntityID);
 
     const { x, y } = gameContext.getMouseTile();
@@ -299,6 +307,17 @@ PlayerController.prototype.onSelectedClick = function(gameContext) {
     this.setState(PlayerController.STATE.IDLE);
 }
 
+PlayerController.prototype.getFirstSelected = function() {
+    if(this.selectedEntities.size === 0) {
+        return null;
+    }
+
+    const iterator = this.selectedEntities.values();
+    const firstSelected = iterator.next().value;
+
+    return firstSelected;
+}
+
 PlayerController.prototype.onIdleClick = function(gameContext) {
     const { world } = gameContext;
     const { actionQueue } = world;
@@ -310,7 +329,7 @@ PlayerController.prototype.onIdleClick = function(gameContext) {
 
     const entityID = mouseEntity.getID();
     const isAttackable = mouseEntity.isAttackable(gameContext, this.teamID);
-    const isControlled = this.selector.hasEntity(entityID);
+    const isControlled = this.hasEntity(entityID);
 
     if(isAttackable) {
         actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.ATTACK, entityID));

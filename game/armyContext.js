@@ -130,7 +130,7 @@ ArmyContext.prototype.init = function(resources) {
     this.world.events.subscribe(World.EVENT.CONTROLLER_DESTROY, "DEBUG", (controller) => console.log(controller, "HAS BEEN DESTROYED"));
     this.world.events.subscribe(World.EVENT.ENTITY_DESTROY, "DEBUG", (entity) => console.log(entity, "HAS BEEN DESTROYED"));
     this.world.events.subscribe(World.EVENT.ENTITY_CREATE, "DEBUG", (entity) => console.log(entity, "HAS BEEN CREATED"));
-    this.world.events.subscribe(World.EVENT.MAP_LOAD, "DEBUG", (worldMap) => console.log(worldMap, "HAS BEEN LOADED"));
+    this.world.events.subscribe(World.EVENT.MAP_CREATE, "DEBUG", (worldMap) => console.log(worldMap, "HAS BEEN LOADED"));
 
     this.switchState(CONTEXT_STATES.MAIN_MENU);
 }
@@ -241,7 +241,7 @@ ArmyContext.prototype.createCamera = function(cameraID) {
     //context.initRenderer(640/2, 360/2);
     //context.setDisplayMode(CameraContext.DISPLAY_MODE.RESOLUTION_FIXED);
     
-    this.world.events.subscribe(World.EVENT.MAP_LOAD, cameraID, (worldMap) => {
+    this.world.events.subscribe(World.EVENT.MAP_CREATE, cameraID, (worldMap) => {
         const { width, height, meta } = worldMap;
         const { music } = meta;
     
@@ -270,5 +270,5 @@ ArmyContext.prototype.createCamera = function(cameraID) {
 
 ArmyContext.prototype.destroyCamera = function(cameraID) {
     this.renderer.removeCamera(cameraID);
-    this.world.events.unsubscribe(World.EVENT.MAP_LOAD, cameraID);
+    this.world.events.unsubscribe(World.EVENT.MAP_CREATE, cameraID);
 }
