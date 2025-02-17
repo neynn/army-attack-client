@@ -1,9 +1,7 @@
 import { Action } from "../../source/action/action.js";
-
 import { DirectionSystem } from "../systems/direction.js";
 import { MoveSystem } from "../systems/move.js";
 import { PathfinderSystem } from "../systems/pathfinder.js";
-import { MorphSystem } from "../systems/morph.js";
 import { PlaceSystem } from "../systems/place.js";
 import { ConquerSystem } from "../systems/conquer.js";
 import { ACTION_TYPES } from "../enums.js";
@@ -22,7 +20,7 @@ MoveAction.prototype.onStart = function(gameContext, request, messengerID) {
 
     DirectionSystem.lookAtTile(entity, targetX, targetY);    
     MoveSystem.beginMove(gameContext, entity, path);
-    MorphSystem.toMove(gameContext, entity);
+    entity.updateSpriteDirectonal(gameContext, ArmyEntity.SPRITE_TYPE.MOVE, ArmyEntity.SPRITE_TYPE.MOVE_UP);
     PlaceSystem.removeEntity(gameContext, entity);
 }
 
@@ -34,7 +32,7 @@ MoveAction.prototype.onEnd = function(gameContext, request, messengerID) {
 
     ConquerSystem.conquerTile(gameContext, targetX, targetY, entity);
     MoveSystem.endMove(gameContext, entity, targetX, targetY);
-    MorphSystem.toIdle(gameContext, entity);
+    entity.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
     PlaceSystem.placeEntity(gameContext, entity);
     actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.COUNTER_MOVE, entityID));
 }

@@ -1,8 +1,6 @@
 import { saveTemplateAsFile } from "../../../../helpers.js";
 import { State } from "../../../../source/state/state.js";
-
 import { ACTION_TYPES, CAMERA_TYPES } from "../../../enums.js";
-import { MapSystem } from "../../../systems/map.js";
 import { SpawnSystem } from "../../../systems/spawn.js";
 import { VersusSystem } from "../../../systems/versus.js";
 
@@ -35,7 +33,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
     camera.bindViewport();
     camera.focusOn(controller.getID());
 
-    MapSystem.reloadGraphics(gameContext);
+    worldMap.reloadGraphics(gameContext);
 
     uiManager.parseUI("STORY_MODE", gameContext);
 

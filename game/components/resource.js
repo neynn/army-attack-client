@@ -32,7 +32,3 @@ ResourceComponent.RESOURCE_TYPE_MAP = {
 
 ResourceComponent.prototype = Object.create(Component.prototype);
 ResourceComponent.prototype.constructor = ResourceComponent;
-
-ResourceComponent.create = function() {
-    return new ResourceComponent();
-}

@@ -3,21 +3,23 @@ import { Component } from "../../source/component/component.js";
 export const AttackComponent = function() {
     this.damage = 0;
     this.range = 0;
-    this.type = AttackComponent.ATTACK_TYPE_PASSIVE;
+    this.type = AttackComponent.ATTACK_TYPE.PASSIVE;
 }
 
 AttackComponent.prototype = Object.create(Component.prototype);
 AttackComponent.prototype.constructor = AttackComponent;
 
-AttackComponent.ATTACK_TYPE_PASSIVE = 0;
-AttackComponent.ATTACK_TYPE_ACTIVE = 1;
+AttackComponent.ATTACK_TYPE = {
+    PASSIVE: 0,
+    ACTIVE: 1
+};
 
 AttackComponent.prototype.toPassive = function() {
-    this.type = AttackComponent.ATTACK_TYPE_PASSIVE;
+    this.type = AttackComponent.ATTACK_TYPE.PASSIVE;
 }
 
 AttackComponent.prototype.toActive = function() {
-    this.type = AttackComponent.ATTACK_TYPE_ACTIVE;
+    this.type = AttackComponent.ATTACK_TYPE.ACTIVE;
 }
 
 AttackComponent.prototype.getDamage = function(armor) {

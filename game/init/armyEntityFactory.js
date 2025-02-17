@@ -27,24 +27,20 @@ ArmyEntityFactory.TYPE = {
 ArmyEntityFactory.prototype = Object.create(Factory.prototype);
 ArmyEntityFactory.prototype.constructor = ArmyEntityFactory;
 
-ArmyEntityFactory.prototype.loadDefaultComponents = function(entity, config) {
+ArmyEntityFactory.prototype.createDefaultEntity = function(defaultConfig, config) {
+    const { mode, tileX = 0, tileY = 0, team = null, type } = config;
+    const { stats } = defaultConfig;
+    const entity = new ArmyEntity(type);
     const positionComponent = new PositionComponent();
     const spriteComponent = new SpriteComponent();
     const directionComponent = new DirectionComponent();
     const healthComponent = new HealthComponent();
     const teamComponent = new TeamComponent();
 
-    const { 
-        mode,
-        tileX = 0,
-        tileY = 0,
-        team = null
-    } = config;
-
     const {
         health = 1,
         maxHealth = health
-    } = entity.config.stats[mode];;
+    } = stats[mode];
 
     healthComponent.health = config.health ?? health;
     healthComponent.maxHealth = config.maxHealth ?? maxHealth;
@@ -54,11 +50,14 @@ ArmyEntityFactory.prototype.loadDefaultComponents = function(entity, config) {
 
     teamComponent.teamID = team;
 
+    entity.setConfig(defaultConfig);
     entity.addComponent(ArmyEntity.COMPONENT.POSITION, positionComponent);
     entity.addComponent(ArmyEntity.COMPONENT.SPRITE, spriteComponent);
     entity.addComponent(ArmyEntity.COMPONENT.DIRECTION, directionComponent);
     entity.addComponent(ArmyEntity.COMPONENT.HEALTH, healthComponent);
     entity.addComponent(ArmyEntity.COMPONENT.TEAM, teamComponent);
+
+    return entity;
 }
 
 ArmyEntityFactory.prototype.createDefaultSprite = function(gameContext, entity, config) {
@@ -93,14 +92,10 @@ ArmyEntityFactory.prototype.onCreate = function(gameContext, config) {
         return null;
     }
 
+    const entity = this.createDefaultEntity(entityType, config);
+    const sprite = this.createDefaultSprite(gameContext, entity, config);
     const { archetype, stats } = entityType;
     const statConfig = stats[mode];
-
-    const entity = new ArmyEntity(entityType, type);
-
-    this.loadDefaultComponents(entity, config);
-
-    const sprite = this.createDefaultSprite(gameContext, entity, config);
 
     switch(archetype) {
         case ArmyEntityFactory.TYPE.UNIT: {

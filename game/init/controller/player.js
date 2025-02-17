@@ -6,7 +6,6 @@ import { AnimationSystem } from "../../systems/animation.js";
 import { PathfinderSystem } from "../../systems/pathfinder.js";
 import { AllianceSystem } from "../../systems/alliance.js";
 import { AttackSystem } from "../../systems/attack.js";
-import { MorphSystem } from "../../systems/morph.js";
 import { DirectionSystem } from "../../systems/direction.js";
 import { ControllerHover } from "./hover.js";
 import { ArmyEntity } from "../armyEntity.js";
@@ -58,7 +57,7 @@ PlayerController.prototype.resetAttacker = function(gameContext, attackerID) {
     const positionComponent = attacker.getComponent(ArmyEntity.COMPONENT.POSITION);
 
     camera.removeOverlay(ArmyCamera.OVERLAY_TYPE_ATTACK, positionComponent.tileX, positionComponent.tileY);
-    MorphSystem.toIdle(gameContext, attacker);
+    attacker.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
 }
 
 PlayerController.prototype.hightlightAttacker = function(gameContext, target, attackerID) {
@@ -71,7 +70,7 @@ PlayerController.prototype.hightlightAttacker = function(gameContext, target, at
 
     camera.addOverlay(ArmyCamera.OVERLAY_TYPE_ATTACK, positionComponent.tileX, positionComponent.tileY, tileID);
     DirectionSystem.lookAt(attacker, target);
-    MorphSystem.toAim(gameContext, attacker);
+    attacker.updateSpriteDirectonal(gameContext, ArmyEntity.SPRITE_TYPE.AIM, ArmyEntity.SPRITE_TYPE.AIM_UP);
 }
 
 PlayerController.prototype.updateAttackers = function(gameContext) {

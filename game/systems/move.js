@@ -1,6 +1,5 @@
 import { CAMERA_TYPES } from "../enums.js";
 import { ArmyEntity } from "../init/armyEntity.js";
-import { SpriteSystem } from "./sprite.js";
 
 export const MoveSystem = function() {}
 
@@ -16,10 +15,8 @@ MoveSystem.updatePath = function(gameContext, entity) {
     if(!moveComponent.isPathEmpty()) {
         const { deltaX, deltaY, speed } = moveComponent.getCurrentStep();
         const moveSpeed = moveComponent.speed * deltaTime / speed;
-
-        positionComponent.positionX += deltaX * moveSpeed;
-        positionComponent.positionY += deltaY * moveSpeed;
-
+        
+        positionComponent.updatePosition(deltaX * moveSpeed, deltaY * moveSpeed);
         moveComponent.distance += moveSpeed;
 
         while(moveComponent.distance >= width && !moveComponent.isPathEmpty()) {
@@ -28,26 +25,30 @@ MoveSystem.updatePath = function(gameContext, entity) {
             const tileY = positionComponent.tileY + deltaY;
             const { x, y } = camera.transformTileToPositionCenter(tileX, tileY);
             
-            positionComponent.positionX = x;
-            positionComponent.positionY = y;
-            positionComponent.tileX = tileX;
-            positionComponent.tileY = tileY;
-
+            positionComponent.setPosition(x, y);
+            positionComponent.setTile(tileX, tileY);
             moveComponent.distance -= width;
             moveComponent.path.pop();
         }
     }
 
-    SpriteSystem.alignSpritePosition(gameContext, entity);
+    MoveSystem.updateSpritePosition(gameContext, entity);
+}
+
+MoveSystem.updateSpritePosition = function(gameContext, entity) {
+    const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
+    const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
+    const { positionX, positionY } = positionComponent;
+
+    spriteComponent.setPosition(gameContext, positionX, positionY);
 }
 
 MoveSystem.beginMove = function(gameContext, entity, path) {
-    const { client } = gameContext;
-    const { soundPlayer } = client;
     const moveComponent = entity.getComponent(ArmyEntity.COMPONENT.MOVE);
 
     moveComponent.path = path;
-    soundPlayer.playRandom(entity.config.sounds.move);
+    
+    entity.playSound(gameContext, ArmyEntity.SOUND_TYPE.MOVE);
 }
 
 MoveSystem.endMove = function(gameContext, entity, targetX, targetY) {
@@ -64,5 +65,5 @@ MoveSystem.endMove = function(gameContext, entity, targetX, targetY) {
 
     moveComponent.clear();
 
-    SpriteSystem.alignSpritePosition(gameContext, entity);
+    MoveSystem.updateSpritePosition(gameContext, entity);
 }

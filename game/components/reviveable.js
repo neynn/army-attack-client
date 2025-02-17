@@ -10,9 +10,9 @@ ReviveableComponent.prototype = Object.create(ActiveComponent.prototype);
 ReviveableComponent.prototype.constructor = ReviveableComponent;
 
 ReviveableComponent.STATE = {
-    "NO_DECAY": 0,
-    "DECAY": 1,
-    "DEAD": 2
+    NO_DECAY: 0,
+    DECAY: 1,
+    DEAD: 2
 };
 
 ReviveableComponent.prototype.isAlive = function() {

@@ -6,9 +6,9 @@ export const ProductionComponent = function() {
 }
 
 ProductionComponent.STATE = {
-    "NOT_PRODUCING": 0,
-    "PRODUCING": 1,
-    "FINISHED": 2
+    NOT_PRODUCING: 0,
+    PRODUCING: 1,
+    FINISHED: 2
 };
 
 ProductionComponent.prototype = Object.create(ActiveComponent.prototype);

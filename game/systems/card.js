@@ -20,11 +20,7 @@ CardSystem.addHealthText = function(entity, statCard) {
     healthText.setText(`${healthComponent.health}/${healthComponent.maxHealth}`);
 
     statCard.addChild(healthText, CardSystem.HEALTH_TEXT_ID);
-
-    entity.events.listen(ArmyEntity.EVENT.HEALTH_UPDATE);
-    entity.events.subscribe(ArmyEntity.EVENT.HEALTH_UPDATE, CardSystem.STAT_CARD_ID, (health, maxHealth) => {
-        healthText.setText(`${health}/${maxHealth}`);
-    });
+    entity.events.subscribe(ArmyEntity.EVENT.HEALTH_UPDATE, CardSystem.STAT_CARD_ID, (health, maxHealth) => healthText.setText(`${health}/${maxHealth}`));
 }
 
 CardSystem.addDamageText = function(entity, statCard) {
@@ -38,11 +34,7 @@ CardSystem.addDamageText = function(entity, statCard) {
     damageText.setText(`${attackComponent.damage}`);
 
     statCard.addChild(damageText, CardSystem.DAMAGE_TEXT_ID);
-
-    entity.events.listen(ArmyEntity.EVENT.DAMAGE_UPDATE);
-    entity.events.subscribe(ArmyEntity.EVENT.DAMAGE_UPDATE, CardSystem.STAT_CARD_ID, (damage) => {
-        damageText.setText(`${damage}`);
-    });
+    entity.events.subscribe(ArmyEntity.EVENT.DAMAGE_UPDATE, CardSystem.STAT_CARD_ID, (damage) => damageText.setText(`${damage}`));
 }
 
 CardSystem.createStatCard = function(gameContext, entity) {

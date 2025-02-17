@@ -128,14 +128,14 @@ Drawable.prototype.getID = function() {
     return this.id;
 }
 
-Drawable.prototype.setPosition = function(positionX, positionY) {
-    if(positionX !== undefined) {
-        this.position.x = positionX;
-    }
+Drawable.prototype.updatePosition = function(deltaX, deltaY) {
+    this.position.x += deltaX;
+    this.position.y += deltaY;
+}
 
-    if(positionY !== undefined) {
-        this.position.y = positionY;
-    }
+Drawable.prototype.setPosition = function(positionX, positionY) {
+    this.position.x = positionX;
+    this.position.y = positionY;
 }
 
 Drawable.prototype.hide = function() {

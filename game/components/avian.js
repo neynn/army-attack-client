@@ -1,26 +1,36 @@
 import { Component } from "../../source/component/component.js";
 
 export const AvianComponent = function() {
-    this.state = AvianComponent.STATE_GROUNDED;
+    this.state = AvianComponent.STATE.GROUNDED;
 }
 
-AvianComponent.STATE_GROUNDED = 0;
-AvianComponent.STATE_FLYING = 1;
+AvianComponent.STATE = {
+    GROUNDED: 0,
+    FLYING: 1
+}
 
 AvianComponent.prototype = Object.create(Component.prototype);
 AvianComponent.prototype.constructor = AvianComponent;
 
 AvianComponent.prototype.toGround = function() {
-    this.state = AvianComponent.STATE_GROUNDED;
+    this.state = AvianComponent.STATE.GROUNDED;
 }
 
 AvianComponent.prototype.toAir = function() {
-    this.state = AvianComponent.STATE_FLYING;
+    this.state = AvianComponent.STATE.FLYING;
 }
 
 AvianComponent.prototype.isFlying = function() {
-    return this.state === AvianComponent.STATE_FLYING;
+    return this.state === AvianComponent.STATE.FLYING;
 }
+
+AvianComponent.prototype.init = function(config) {
+    const { flying } = config;
+
+    if(flying) {
+        this.state = AvianComponent.STATE.FLYING;
+    }
+};
 
 AvianComponent.prototype.save = function() {
     return [this.state];

@@ -23,11 +23,11 @@ MapManager.prototype.load = function(mapTypes) {
     this.mapTypes = mapTypes;
 }
 
-MapManager.prototype.createMap = function(gameContext, mapID, config) {
-    const worldMap = this.createProduct(gameContext, config);
+MapManager.prototype.createMap = function(gameContext, mapID, mapData) {
+    const worldMap = this.createProduct(gameContext, mapData);
 
     if(!worldMap) {
-        Logger.log(false, "Factory has not returned an entity!", "MapManager.prototype.createMap", { config });
+        Logger.log(false, "Factory has not returned an entity!", "MapManager.prototype.createMap", { mapData });
         return null;
     }
 

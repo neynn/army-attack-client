@@ -67,7 +67,7 @@
         "id": "Avian",
         "description": "If a unit is flying. When flying, other units can go below it. state = { 0: grounded, 1: flying }",
         "components": {
-            "Avian": { "state": 1 }
+            "Avian": { "flying": true }
         }
     },
     "Elite": {

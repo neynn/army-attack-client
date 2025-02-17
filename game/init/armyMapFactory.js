@@ -1,5 +1,5 @@
 import { Factory } from "../../source/factory/factory.js";
-import { WorldMap } from "../../source/map/worldMap.js";
+import { ArmyMap } from "./armyMap.js";
 
 export const ArmyMapFactory = function() {
     Factory.call(this, "ARMY_MAP_FACTORY");
@@ -111,7 +111,7 @@ ArmyMapFactory.prototype.parseMap2DEmpty = function(map2D, layerData, meta) {
 ArmyMapFactory.prototype.onCreate = function(gameContext, config) {
     const { meta, layers } = config;
     const { type } = meta;
-    const worldMap = new WorldMap(null);
+    const worldMap = new ArmyMap();
 
     switch(type) {
         case ArmyMapFactory.TYPE.STORY: {

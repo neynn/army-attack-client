@@ -10,7 +10,9 @@ ArmorComponent.prototype.constructor = ArmorComponent;
 ArmorComponent.prototype.init = function(config) {
     const { armor } = config;
 
-    this.armor = armor;
+    if(armor) {
+        this.armor = armor;
+    }
 }
 
 ArmorComponent.prototype.getArmor = function() {

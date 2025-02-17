@@ -1,13 +1,20 @@
 import { SpriteManager } from "../../source/graphics/spriteManager.js";
+import { getRandomOffset } from "../../source/math/math.js";
 import { CAMERA_TYPES } from "../enums.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { DirectionSystem } from "./direction.js";
-import { MorphSystem } from "./morph.js";
 
 export const AnimationSystem = function() {}
 
-AnimationSystem.FIRE_OFFSET_ARTILLERY = 48;
-AnimationSystem.FIRE_OFFSET_REGULAR = 12;
+AnimationSystem.FIRE_OFFSET = {
+    ARTILLERY: 48,
+    REGULAR: 12
+};
+
+AnimationSystem.SPRITE_ID = {
+    MOVE: "MOVE_CURSOR",
+    DELAY: "DELAY_SPRITE"
+}
 
 AnimationSystem.revertToIdle = function(gameContext, entityIDs) {
     const { world } = gameContext;
@@ -17,35 +24,26 @@ AnimationSystem.revertToIdle = function(gameContext, entityIDs) {
         const entity = entityManager.getEntity(entityID);
         
         if(entity) {
-            MorphSystem.toIdle(gameContext, entity);
+            entity.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
         }
     }
 }
 
 AnimationSystem.playDeath = function(gameContext, entity) {
-    const { spriteManager, client } = gameContext;
-    const { soundPlayer } = client;
+    const { spriteManager } = gameContext;
     const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
     const deathAnimation = spriteManager.createSprite(entity.config.sprites.death, SpriteManager.LAYER.MIDDLE);
 
     deathAnimation.expire();
     deathAnimation.setPosition(positionComponent.positionX, positionComponent.positionY);
-    soundPlayer.playRandom(entity.config.sounds.death);
+    
+    entity.playSound(gameContext, ArmyEntity.SOUND_TYPE.DEATH);
 }
 
-AnimationSystem.addRandomOffset = function(fireSprite, maxOffsetX = 0, maxOffsetY = 0) {
-    const randomX = Math.random() * 2 - 1;
-    const randomY = Math.random() * 2 - 1;
-
-    fireSprite.position.x += randomX * maxOffsetX;
-    fireSprite.position.y += randomY * maxOffsetY;
-}   
-
-AnimationSystem.playFire = function(gameContext, entity, attackersIDs) {
-    const { world, client, spriteManager } = gameContext;
+AnimationSystem.playFire = function(gameContext, target, attackersIDs) {
+    const { world, spriteManager } = gameContext;
     const { entityManager } = world;
-    const { soundPlayer } = client;
-    const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
+    const spriteComponent = target.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const entitySprite = spriteManager.getSprite(spriteComponent.spriteID);
 
     for(const attackerID of attackersIDs) {
@@ -53,67 +51,67 @@ AnimationSystem.playFire = function(gameContext, entity, attackersIDs) {
         const unitSizeComponent = attacker.getComponent(ArmyEntity.COMPONENT.UNIT_SIZE);
         const weaponSprite = spriteManager.createSprite(attacker.config.sprites.weapon);
         const weaponSpriteID = weaponSprite.getID();
+        const { x, y } = getRandomOffset(AnimationSystem.FIRE_OFFSET.REGULAR, AnimationSystem.FIRE_OFFSET.REGULAR);
 
-        DirectionSystem.lookAt(attacker, entity);
-        MorphSystem.toFire(gameContext, attacker);
-
-        soundPlayer.playRandom(attacker.config.sounds.fire);
+        DirectionSystem.lookAt(attacker, target);
+        attacker.updateSpriteDirectonal(gameContext, ArmyEntity.SPRITE_TYPE.FIRE, ArmyEntity.SPRITE_TYPE.FIRE_UP);
+        attacker.playSound(gameContext, ArmyEntity.SOUND_TYPE.FIRE);
         entitySprite.addChild(weaponSprite, weaponSpriteID);
+        weaponSprite.updatePosition(x, y);
         weaponSprite.expire();
-        AnimationSystem.addRandomOffset(weaponSprite, AnimationSystem.FIRE_OFFSET_REGULAR, AnimationSystem.FIRE_OFFSET_REGULAR);
 
         if(unitSizeComponent && unitSizeComponent.artillery) {
             const artillerySprite = spriteManager.createSprite(attacker.config.sprites.weapon);
             const artillerySpriteID = artillerySprite.getID();
+            const { x, y } = getRandomOffset(AnimationSystem.FIRE_OFFSET.ARTILLERY, AnimationSystem.FIRE_OFFSET.ARTILLERY);
 
             entitySprite.addChild(artillerySprite, artillerySpriteID);
+            artillerySprite.updatePosition(x, y);
             artillerySprite.flip();
             artillerySprite.expire();
-            AnimationSystem.addRandomOffset(artillerySprite, AnimationSystem.FIRE_OFFSET_ARTILLERY, AnimationSystem.FIRE_OFFSET_ARTILLERY);
         }
     }
 }
 
 AnimationSystem.playSelect = function(gameContext, entity) {
-    const { client, spriteManager } = gameContext;
-    const { soundPlayer } = client;
+    const { spriteManager } = gameContext;
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const entitySprite = spriteManager.getSprite(spriteComponent.spriteID);
     const moveSprite = spriteManager.createSprite("cursor_move_1x1");
     
-    entitySprite.addChild(moveSprite, "MOVE_CURSOR");
-    soundPlayer.playRandom(entity.config.sounds.select);
+    entitySprite.addChild(moveSprite, AnimationSystem.SPRITE_ID.MOVE);
+
+    entity.playSound(gameContext, ArmyEntity.SOUND_TYPE.SELECT);
 }
 
 AnimationSystem.stopSelect = function(gameContext, entity) {
     const { spriteManager } = gameContext;
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const entitySprite = spriteManager.getSprite(spriteComponent.spriteID);
-    const moveSpriteID = entitySprite.getChildID("MOVE_CURSOR");
+    const moveSpriteID = entitySprite.getChildID(AnimationSystem.SPRITE_ID.MOVE);
 
     spriteManager.destroySprite(moveSpriteID);
 }
 
 AnimationSystem.playConstruction = function(gameContext, entity) {
-    const { client, spriteManager, renderer } = gameContext;
-    const { soundPlayer } = client;
+    const { spriteManager, renderer } = gameContext;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const entitySprite = spriteManager.getSprite(spriteComponent.spriteID);
     const delaySprite = spriteManager.createSprite("icon_delay");
     const { x, y } = camera.transformSizeToPositionOffsetCenter(entity.config.dimX, entity.config.dimY);
 
-    entitySprite.addChild(delaySprite, "DELAY_SPRITE");
-    soundPlayer.playRandom(entity.config.sounds.build);
+    entitySprite.addChild(delaySprite, AnimationSystem.SPRITE_ID.DELAY);
     delaySprite.expire();
     delaySprite.setPosition(x, y);
+
+    entity.playSound(gameContext, ArmyEntity.SOUND_TYPE.BUILD);
 }
 
 AnimationSystem.setConstructionFrame = function(gameContext, entity) {
     const { spriteManager } = gameContext;
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const constructionComponent = entity.getComponent(ArmyEntity.COMPONENT.CONSTRUCTION);
-
     const sprite = spriteManager.getSprite(spriteComponent.spriteID);
     const frame = constructionComponent.getFrame();
     

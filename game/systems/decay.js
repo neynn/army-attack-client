@@ -1,11 +1,8 @@
 import { ArmyEntity } from "../init/armyEntity.js";
-import { MorphSystem } from "./morph.js";
 
 export const DecaySystem = function() {}
 
 DecaySystem.beginDecay = function(gameContext, entity) {
-    const { client } = gameContext;
-    const { soundPlayer } = client;
     const reviveableComponent = entity.getComponent(ArmyEntity.COMPONENT.REVIVEABLE);
 
     if(!reviveableComponent) {
@@ -19,6 +16,6 @@ DecaySystem.beginDecay = function(gameContext, entity) {
     }
 
     reviveableComponent.beginDecay();
-    MorphSystem.toDown(gameContext, entity);
-    soundPlayer.playRandom(entity.config.sounds.death);
+    entity.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.DOWN);
+    entity.playSound(gameContext, ArmyEntity.SOUND_TYPE.DEATH);
 }

@@ -7,9 +7,9 @@ import { AllianceSystem } from "./alliance.js";
 export const AttackSystem = function() {}
 
 AttackSystem.OUTCOME_STATE = {
-    "IDLE": 0,
-    "DOWN": 1,
-    "DEAD": 2
+    IDLE: 0,
+    DOWN: 1,
+    DEAD: 2
 };
 
 AttackSystem.getOutcomeState = function(gameContext, damage, target, attackerIDs) {
@@ -28,19 +28,6 @@ AttackSystem.getOutcomeState = function(gameContext, damage, target, attackerIDs
     }
 
     return AttackSystem.OUTCOME_STATE.IDLE;
-}
-
-AttackSystem.getUniqueEntitiesInRangeOfEntity = function(gameContext, entity, range = 0) {
-    const { world } = gameContext;
-
-    const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
-    const startX = positionComponent.tileX - range;
-    const startY = positionComponent.tileY - range;
-    const endX = positionComponent.tileX + entity.config.dimX + range;
-    const endY = positionComponent.tileY + entity.config.dimY + range;
-    const entities = world.getEntitiesInRange(startX, startY, endX, endY);
-
-    return entities;
 }
 
 AttackSystem.isTargetInRange = function(target, attacker, range) {
@@ -126,7 +113,7 @@ AttackSystem.getActiveAttackers = function(gameContext, target) {
     const attackers = this.findAttackersInMaxRange(gameContext, target, (attacker) => {
         const attackComponent = attacker.getComponent(ArmyEntity.COMPONENT.ATTACK);
 
-        if(!attackComponent || attackComponent.type !== AttackComponent.ATTACK_TYPE_ACTIVE) {
+        if(!attackComponent || attackComponent.type !== AttackComponent.ATTACK_TYPE.ACTIVE) {
             return false;
         }
 
@@ -150,6 +137,8 @@ AttackSystem.getActiveAttackers = function(gameContext, target) {
 
 AttackSystem.findTargetsInMaxRange = function(gameContext, attacker, onCheck) {
     const { world } = gameContext;
+    const { entityManager } = world;
+
     const targets = [];
     const healthComponent = attacker.getComponent(ArmyEntity.COMPONENT.HEALTH);
 
@@ -158,13 +147,14 @@ AttackSystem.findTargetsInMaxRange = function(gameContext, attacker, onCheck) {
     }
 
     const settings = world.getConfig("Settings");
-    const nearbyEntities = AttackSystem.getUniqueEntitiesInRangeOfEntity(gameContext, attacker, settings.maxAttackRange);
+    const nearbyEntities = attacker.getSurroundingEntities(gameContext, settings.maxAttackRange);
 
-    for(const entity of nearbyEntities) {
-        if(onCheck(entity)) {
-            const id = entity.getID();
+    for(let i = 0; i < nearbyEntities.length; i++) {
+        const entityID = nearbyEntities[i];
+        const entity = entityManager.getEntity(entityID);
 
-            targets.push(id);
+        if(entity && onCheck(entity)) {
+            targets.push(entityID);
         }
     }
 
@@ -173,21 +163,24 @@ AttackSystem.findTargetsInMaxRange = function(gameContext, attacker, onCheck) {
 
 AttackSystem.findAttackersInMaxRange = function(gameContext, target, onCheck) {
     const { world } = gameContext;
-    const healthComponent = target.getComponent(ArmyEntity.COMPONENT.HEALTH);
+    const { entityManager } = world;
+    
     const attackers = [];
+    const healthComponent = target.getComponent(ArmyEntity.COMPONENT.HEALTH);
 
     if(!healthComponent.isAlive()) {
         return attackers;
     }
 
     const settings = world.getConfig("Settings");
-    const nearbyEntities = AttackSystem.getUniqueEntitiesInRangeOfEntity(gameContext, target, settings.maxAttackRange);
+    const nearbyEntities = target.getSurroundingEntities(gameContext, settings.maxAttackRange);
 
-    for(const entity of nearbyEntities) {
-        if(onCheck(entity)) {
-            const id = entity.getID();
+    for(let i = 0; i < nearbyEntities.length; i++) {
+        const entityID = nearbyEntities[i];
+        const entity = entityManager.getEntity(entityID);
 
-            attackers.push(id);
+        if(entity && onCheck(entity)) {
+            attackers.push(entityID);
         }
     }
 

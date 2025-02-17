@@ -1,11 +1,9 @@
 import { Action } from "../../source/action/action.js";
-
+import { ArmyEntity } from "../init/armyEntity.js";
 import { AnimationSystem } from "../systems/animation.js";
 import { AttackSystem } from "../systems/attack.js";
 import { DeathSystem } from "../systems/death.js";
 import { DecaySystem } from "../systems/decay.js";
-import { HealthSystem } from "../systems/health.js";
-import { MorphSystem } from "../systems/morph.js";
 
 export const CounterMoveAction = function() {
     this.timePassed = 0;
@@ -25,12 +23,12 @@ CounterMoveAction.prototype.onStart = function(gameContext, request, messengerID
     const target = entityManager.getEntity(entityID);
 
     AnimationSystem.playFire(gameContext, target, attackers);
-    HealthSystem.reduceHealth(target, damage);
+    target.reduceHealth(damage);
 
     if(state === AttackSystem.OUTCOME_STATE.DOWN) {
         DecaySystem.beginDecay(gameContext, target);
     } else {
-        MorphSystem.toHit(gameContext, target);
+        target.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.HIT);
     }
 }
 
@@ -46,7 +44,7 @@ CounterMoveAction.prototype.onEnd = function(gameContext, request, messengerID) 
         AnimationSystem.playDeath(gameContext, target);
         DeathSystem.destroyEntity(gameContext, entityID);
     } else if(state === AttackSystem.OUTCOME_STATE.IDLE) {
-        MorphSystem.toIdle(gameContext, target);
+        target.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
     }
 }
 
