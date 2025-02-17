@@ -17,7 +17,11 @@ OrthogonalCamera.prototype = Object.create(Camera.prototype);
 OrthogonalCamera.prototype.constructor = OrthogonalCamera;
 
 OrthogonalCamera.MAP_OUTLINE_COLOR = "#dddddd";
-OrthogonalCamera.EMPTY_TILE_COLOR = { "FIRST": "#000000", "SECOND": "#701867" };
+
+OrthogonalCamera.EMPTY_TILE_COLOR = {
+    FIRST: "#000000",
+    SECOND: "#701867"
+};
 
 OrthogonalCamera.prototype.drawCustom = function(worldBounds, onDraw) {
     const { startX, startY, endX, endY } = worldBounds;

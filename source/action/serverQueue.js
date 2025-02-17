@@ -19,12 +19,13 @@ ServerQueue.prototype.processElement = function(gameContext, element) {
     const isValid = this.validateExecution(gameContext, element);
 
     if(isValid) {
-        this.update(gameContext);
-    }
-}
+        const processNext = () => {
+            if(!this.isEmpty()) {
+                this.update(gameContext);
+                setTimeout(processNext, 0);
+            }
+        };
 
-ServerQueue.prototype.onUpdate = function(gameContext) {
-    if(!this.isEmpty()) {
-        this.update(gameContext);
+        processNext();
     }
 }

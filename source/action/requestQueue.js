@@ -24,32 +24,30 @@ export const RequestQueue = function() {
 }
 
 RequestQueue.STATE = {
-    "INACTIVE": 0,
-    "ACTIVE": 1,
-    "PROCESSING": 2,
-    "FLUSH": 3
+    INACTIVE: 0,
+    ACTIVE: 1,
+    PROCESSING: 2,
+    FLUSH: 3
 };
 
 RequestQueue.MODE = {
-    "DIRECT": 0,
-    "DEFERRED": 1,
-    "TELL": 2
+    DIRECT: 0,
+    DEFERRED: 1,
+    TELL: 2
 };
 
 RequestQueue.PRIORITY = {
-    "HIGH": "HIGH",
-    "MEDIUM": "MEDIUM",
-    "LOW": "LOW"
+    HIGH: "HIGH",
+    MEDIUM: "MEDIUM",
+    LOW: "LOW"
 };
 
 RequestQueue.EVENT = {
-    "EXECUTION_DEFER": "EXECUTION_DEFER",
-    "EXECUTION_ERROR": "EXECUTION_ERROR",
-    "EXECUTION_RUNNING": "EXECUTION_RUNNING",
-    "QUEUE_ERROR": "QUEUE_ERROR"
+    EXECUTION_DEFER: "EXECUTION_DEFER",
+    EXECUTION_ERROR: "EXECUTION_ERROR",
+    EXECUTION_RUNNING: "EXECUTION_RUNNING",
+    QUEUE_ERROR: "QUEUE_ERROR"
 };
-
-RequestQueue.prototype.onUpdate = function(gameContext) {}
 
 RequestQueue.prototype.load = function(actionTypes) {
     if(typeof actionTypes !== "object") {

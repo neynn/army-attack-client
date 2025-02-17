@@ -1,5 +1,4 @@
 import { ResourceManager } from "./source/resourceManager.js";
-
 import { ArmyContext } from "./game/armyContext.js";
 
 const gameContext = new ArmyContext();

@@ -23,9 +23,9 @@ export const Keyboard = function() {
 }
 
 Keyboard.EVENT = {
-    "KEY_PRESSED": "KEY_PRESSED",
-    "KEY_RELEASED": "KEY_RELEASED",
-    "KEY_DOWN": "KEY_DOWN"
+    KEY_PRESSED: "KEY_PRESSED",
+    KEY_RELEASED: "KEY_RELEASED",
+    KEY_DOWN: "KEY_DOWN"
 };
 
 Keyboard.prototype.eventKeyPress = function(key) {

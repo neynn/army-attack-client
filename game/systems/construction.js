@@ -46,6 +46,6 @@ ConstructionSystem.finishConstruction = function(gameContext, entity, controller
     }
 
     //TODO: Open GUI and check if the controller has enough materials/resources.
-    entity.die();
+    entity.die(gameContext);
     SpawnSystem.createEntity(gameContext, result);
 }

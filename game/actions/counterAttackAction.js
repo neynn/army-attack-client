@@ -37,7 +37,7 @@ CounterAttackAction.prototype.onEnd = function(gameContext, request, messengerID
 
     if(state === AttackSystem.OUTCOME_STATE.DEAD) {
         AnimationSystem.playDeath(gameContext, target);
-        target.die();
+        target.die(gameContext);
     } else if(state === AttackSystem.OUTCOME_STATE.IDLE) {
         target.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
     }
