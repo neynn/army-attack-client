@@ -98,8 +98,7 @@ ArmyMap.prototype.updateBorder = function(gameContext, tileX, tileY, range) {
                 continue;
             }
 
-            const nextIndex = Autotiler.autotile8Bits(j, i, (next) => {
-                const { x, y } = next;
+            const nextIndex = Autotiler.autotile8Bits(j, i, (x, y) => {
                 const neighborTypeID = this.getTile(typeLayerID, x, y);
                 const neighborType = tileTypes[neighborTypeID];
         

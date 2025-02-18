@@ -5,6 +5,7 @@ export const ControllerHover = function() {
     this.tileY = -1;
     this.entityID = null;
     this.nodeMap = new Map();
+    this.targetChanged = false;
 }
 
 ControllerHover.prototype.getEntity = function(gameContext) {
@@ -72,6 +73,7 @@ ControllerHover.prototype.update = function(gameContext) {
     const { world } = gameContext;
     const { x, y } = gameContext.getMouseTile();
     const mouseEntity = world.getTileEntity(x, y);
+    const lastTarget = this.entityID;
 
     this.tileX = x;
     this.tileY = y;
@@ -83,4 +85,6 @@ ControllerHover.prototype.update = function(gameContext) {
     } else {
         this.entityID = null;
     }
+
+    this.targetChanged = (lastTarget !== this.entityID);
 }

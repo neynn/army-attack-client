@@ -1,4 +1,3 @@
-import { Cursor } from "../../../source/client/cursor.js";
 import { ACTION_TYPES, CAMERA_TYPES } from "../../enums.js";
 import { ArmyCamera } from "../../armyCamera.js";
 import { AnimationSystem } from "../../systems/animation.js";
@@ -8,6 +7,7 @@ import { ControllerHover } from "./hover.js";
 import { ArmyEntity } from "../armyEntity.js";
 import { ConstructionSystem } from "../../systems/construction.js";
 import { Controller } from "../../../source/controller/controller.js";
+import { Autotiler } from "../../../source/tile/autotiler.js";
 
 export const PlayerController = function(id) {
     Controller.call(this, id);
@@ -18,6 +18,7 @@ export const PlayerController = function(id) {
     this.hover = new ControllerHover();
     this.selectedEntities = new Set();
     this.state = PlayerController.STATE.NONE;
+    this.showRange = true;
 }
 
 PlayerController.STATE = {
@@ -51,6 +52,7 @@ PlayerController.prototype.resetAllAttackers = function(gameContext) {
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
 
     camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.ATTACK);
+
     this.attackers = [];
 }
 
@@ -75,16 +77,16 @@ PlayerController.prototype.hightlightAttackers = function(gameContext, target) {
     for(let i = 0; i < this.attackers.length; i++) {
         const attackerID = this.attackers[i];
         const attacker = entityManager.getEntity(attackerID);
-        const positionComponent = attacker.getComponent(ArmyEntity.COMPONENT.POSITION);
+        const { tileX, tileY } = attacker.getComponent(ArmyEntity.COMPONENT.POSITION);
 
         attacker.lookAtEntity(target);
         attacker.updateSpriteDirectonal(gameContext, ArmyEntity.SPRITE_TYPE.AIM, ArmyEntity.SPRITE_TYPE.AIM_UP);
-        camera.addOverlay(ArmyCamera.OVERLAY_TYPE.ATTACK, positionComponent.tileX, positionComponent.tileY, tileID);
+        camera.addOverlay(ArmyCamera.OVERLAY_TYPE.ATTACK, tileX, tileY, tileID);
     }
 }
 
 PlayerController.prototype.updateAttackers = function(gameContext) {
-    const mouseEntity = gameContext.getMouseEntity();
+    const mouseEntity = this.hover.getEntity(gameContext);
 
     if(!mouseEntity || !mouseEntity.isAttackable(gameContext, this.teamID)) {
         AnimationSystem.revertToIdle(gameContext, this.attackers);
@@ -152,32 +154,6 @@ PlayerController.prototype.updateSpritePosition = function(gameContext) {
     } else {
         this.setSpriteTilePosition(gameContext, this.hover.tileX, this.hover.tileY);
     }
-}
-
-PlayerController.prototype.addDragEvent = function(gameContext) {
-    const { client } = gameContext;
-    const { cursor } = client;
-
-    cursor.events.subscribe(Cursor.EVENT.LEFT_MOUSE_DRAG, this.id, (deltaX, deltaY) => {
-        const context = gameContext.getContextAtMouse();
-
-        if(context) {
-            context.dragCamera(deltaX, deltaY);
-        }
-    });
-}
-
-PlayerController.prototype.addClickEvent = function(gameContext) {
-    const { client, uiManager } = gameContext;
-    const { cursor } = client;
-
-    cursor.events.subscribe(Cursor.EVENT.LEFT_MOUSE_CLICK, this.id, () => {
-        const clickedElements = uiManager.getCollidedElements(cursor.positionX, cursor.positionY, cursor.radius);
-
-        if(clickedElements.length === 0) {
-            this.onClick(gameContext);
-        }
-    });
 }
 
 PlayerController.prototype.onClick = function(gameContext) {
@@ -350,6 +326,55 @@ PlayerController.prototype.onIdleClick = function(gameContext) {
     }
 }
 
+PlayerController.prototype.updateRangeIndicator = function(gameContext) {
+    if(!this.showRange || !this.hover.targetChanged) {
+        return;
+    }
+
+    const { renderer, tileManager, world } = gameContext;
+    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
+
+    camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.RANGE);
+
+    if(!this.hover.isHoveringOnEntity()) {
+        return;
+    }
+
+    const entity = this.hover.getEntity(gameContext);
+    const attackComponent = entity.getComponent(ArmyEntity.COMPONENT.ATTACK);
+
+    if(!attackComponent) {
+        return;
+    }
+
+    const autotilerTypes = world.getConfig("AutotilerType");
+    const rangeAutotilerID = autotilerTypes["Range"].autotilerID;
+
+    const { range } = attackComponent;
+    const { tileX, tileY } = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
+
+    const startX = tileX - range;
+    const startY = tileY - range;
+    const endX = tileX + range;
+    const endY = tileY + range;
+
+    for(let i = startY; i <= endY; i++) {
+        for(let j = startX; j <= endX; j++) {
+            const nextIndex = Autotiler.autotile4Bits(j, i, (x, y) => {
+                if(x >= startX && x <= endX && y >= startY && y <= endY) {
+                    return 1;
+                } 
+
+                return 0;
+            });
+
+            const tileID = tileManager.getAutotilerID(rangeAutotilerID, nextIndex);
+
+            camera.addOverlay(ArmyCamera.OVERLAY_TYPE.RANGE, j, i, tileID);
+        }
+    }
+}
+
 PlayerController.prototype.update = function(gameContext) {
     const { world } = gameContext;
     const { actionQueue } = world;
@@ -366,12 +391,14 @@ PlayerController.prototype.update = function(gameContext) {
             }
         
             this.updateIdleCursor(gameContext);
+            this.updateRangeIndicator(gameContext);
             break;
         }
         case PlayerController.STATE.SELECTED: {
             this.updateAttackers(gameContext);
             this.updateSelectedEntity(gameContext);
             this.updateSelectedCursor(gameContext);
+            this.updateRangeIndicator(gameContext);
             break;
         }
         case PlayerController.STATE.SHOP: {

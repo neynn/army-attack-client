@@ -1,3 +1,4 @@
+import { Cursor } from "../../source/client/cursor.js";
 import { Factory } from "../../source/factory/factory.js";
 import { SpriteManager } from "../../source/graphics/spriteManager.js";
 import { CAMERA_TYPES } from "../enums.js";
@@ -13,6 +14,32 @@ ArmyControllerFactory.TYPE = {
 
 ArmyControllerFactory.prototype = Object.create(Factory.prototype);
 ArmyControllerFactory.prototype.constructor = ArmyControllerFactory;
+
+ArmyControllerFactory.prototype.addDragEvent = function(gameContext) {
+    const { client } = gameContext;
+    const { cursor } = client;
+
+    cursor.events.subscribe(Cursor.EVENT.LEFT_MOUSE_DRAG, this.id, (deltaX, deltaY) => {
+        const context = gameContext.getContextAtMouse();
+
+        if(context) {
+            context.dragCamera(deltaX, deltaY);
+        }
+    });
+}
+
+ArmyControllerFactory.prototype.addClickEvent = function(gameContext, controller) {
+    const { client, uiManager } = gameContext;
+    const { cursor } = client;
+
+    cursor.events.subscribe(Cursor.EVENT.LEFT_MOUSE_CLICK, this.id, () => {
+        const clickedElements = uiManager.getCollidedElements(cursor.positionX, cursor.positionY, cursor.radius);
+
+        if(clickedElements.length === 0) {
+            controller.onClick(gameContext);
+        }
+    });
+}
 
 ArmyControllerFactory.prototype.onCreate = function(gameContext, config) {
     const { spriteManager, renderer } = gameContext;
@@ -31,11 +58,12 @@ ArmyControllerFactory.prototype.onCreate = function(gameContext, config) {
         
             controller.spriteID = spriteID;
             controller.teamID = team ?? null;
-            controller.addClickEvent(gameContext);
-            controller.addDragEvent(gameContext);
             controller.setConfig(controllerType);
             controller.setState(PlayerController.STATE.IDLE);
             
+            this.addClickEvent(gameContext, controller);
+            this.addDragEvent(gameContext);
+
             return controller;
         }
         default: {
