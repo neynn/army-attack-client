@@ -27,23 +27,48 @@ ArmyMap.CONVERTABLE_LAYER = {
     DECORATION: "decoration"
 };
 
+ArmyMap.BORDER_RANGE = {
+    LOAD: 0,
+    CAPTURE: 1
+};
+
 ArmyMap.prototype = Object.create(WorldMap.prototype);
 ArmyMap.prototype.constructor = ArmyMap;
 
+ArmyMap.prototype.conquer = function(gameContext, tileX, tileY, teamName) {
+    const { world } = gameContext;
+    const tileTeamID = this.getTile(ArmyMap.LAYER_TYPE.TEAM, tileX, tileY);
+    const teamMapping = world.getConfig("TeamTypeMapping");
+    const isEnemy = AllianceSystem.isEnemy(gameContext, teamName, teamMapping[tileTeamID]);
+
+    if(!isEnemy) {
+        return;
+    }
+
+    const teamTypes = world.getConfig("TeamType");
+    const worldID = teamTypes[teamName].worldID;
+
+    this.placeTile(worldID, ArmyMap.LAYER_TYPE.TEAM, tileX, tileY);
+    this.convertGraphics(gameContext, tileX, tileY, teamName);
+    this.updateBorder(gameContext, tileX, tileY, ArmyMap.BORDER_RANGE.CAPTURE);
+}
+
 ArmyMap.prototype.reloadGraphics = function(gameContext) {
+    const { world } = gameContext;
+    const teamMapping = world.getConfig("TeamTypeMapping");
+
     this.updateTiles((index, tileX, tileY) => {
         const teamID = this.getTile(ArmyMap.LAYER_TYPE.TEAM, tileX, tileY);
-        
-        this.updateBorder(gameContext, tileX, tileY, 0);
-        this.convertGraphics(gameContext, tileX, tileY, teamID);
+        const teamName = teamMapping[teamID];
+
+        this.updateBorder(gameContext, tileX, tileY, ArmyMap.BORDER_RANGE.LOAD);
+        this.convertGraphics(gameContext, tileX, tileY, teamName);
     });
 }
 
-ArmyMap.prototype.convertGraphics = function(gameContext, tileX, tileY, teamID) {
+ArmyMap.prototype.convertGraphics = function(gameContext, tileX, tileY, teamName) {
     const { world, tileManager } = gameContext;
-    const teamMapping = world.getConfig("TeamTypeMapping");
     const tileConversions = world.getConfig("TileTeamConversion");
-    const teamTypeID = teamMapping[teamID];
 
     for(const key in ArmyMap.CONVERTABLE_LAYER) {
         const layerID = ArmyMap.CONVERTABLE_LAYER[key];
@@ -51,7 +76,7 @@ ArmyMap.prototype.convertGraphics = function(gameContext, tileX, tileY, teamID) 
         const conversion = tileConversions[tileID];
 
         if(conversion) {
-            const convertedTileID = conversion[teamTypeID];
+            const convertedTileID = conversion[teamName];
 
             if(tileManager.hasTileMeta(convertedTileID)) {
                 this.placeTile(convertedTileID, layerID, tileX, tileY);
