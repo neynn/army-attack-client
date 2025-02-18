@@ -1,4 +1,5 @@
 import { Logger } from "../logger.js";
+import { Renderer } from "../renderer.js";
 import { ImageManager } from "../resources/imageManager.js";
 import { UserInterface } from "./userInterface.js";
 
@@ -29,16 +30,6 @@ UIManager.prototype.load = function(interfaceTypes, iconTypes, fontTypes) {
     } else {
         Logger.log(false, "FontTypes cannot be undefined!", "UIManager.prototype.load", null);
     }
-}
-
-UIManager.prototype.isIDAvailable = function(interfaceID) {
-    if(this.interfaceTypes[interfaceID]) {
-        return false;
-    }
-
-    const interfaceIndex = this.getInterfaceIndex(interfaceID);
-
-    return interfaceIndex === -1;
 }
 
 UIManager.prototype.getInterfaceStack = function() {
@@ -94,6 +85,7 @@ UIManager.prototype.getInterface = function(interfaceID) {
 }
 
 UIManager.prototype.parseUI = function(interfaceID, gameContext) {
+    const { renderer } = gameContext;
     const config = this.interfaceTypes[interfaceID];
 
     if(!config) {
@@ -105,12 +97,15 @@ UIManager.prototype.parseUI = function(interfaceID, gameContext) {
 
     userInterface.fromConfig(gameContext, config);
 
+    renderer.events.subscribe(Renderer.EVENT.SCREEN_RESIZE, interfaceID, (width, height) => userInterface.onWindowResize(width, height));
+
     this.interfaceStack.push(userInterface);
 
     return userInterface;
 }
 
 UIManager.prototype.unparseUI = function(interfaceID, gameContext) {
+    const { renderer } = gameContext;
     const interfaceIndex = this.getInterfaceIndex(interfaceID);
 
     if(interfaceIndex === -1) {
@@ -120,8 +115,10 @@ UIManager.prototype.unparseUI = function(interfaceID, gameContext) {
 
     const userInterface = this.interfaceStack[interfaceIndex];
 
-    userInterface.clear(gameContext);
-   
+    userInterface.clear();
+
+    renderer.events.unsubscribe(Renderer.EVENT.SCREEN_RESIZE, interfaceID);
+
     this.interfaceStack.splice(interfaceIndex, 1);
 }
 
@@ -138,21 +135,18 @@ UIManager.prototype.removeUI = function(interfaceID) {
 
 UIManager.prototype.addUI = function(userInterface) {
     if(!(userInterface instanceof UserInterface)) {
-        return false;
+        return;
     }
 
     const interfaceID = userInterface.getID();
 
     if(this.interfaceTypes[interfaceID]) {
-        return false;
+        return;
     }
 
     if(this.getInterfaceIndex(interfaceID) !== -1) {
-        return false;
+        return;
     }
 
-
     this.interfaceStack.push(userInterface);
-
-    return true;
 }

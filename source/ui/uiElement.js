@@ -4,6 +4,9 @@ import { Drawable } from "../graphics/drawable.js";
 export const UIElement = function(id, DEBUG_NAME) {
     Drawable.call(this, id, DEBUG_NAME);
     
+    this.anchor = UIElement.ANCHOR_TYPE.TOP_LEFT;
+    this.originX = 0;
+    this.originY = 0;
     this.width = 0;
     this.height = 0;
     
@@ -78,63 +81,65 @@ UIElement.prototype.getCollisions = function(mouseX, mouseY, mouseRange) {
     return collidedElements;
 }
 
-UIElement.prototype.setAnchor = function(typeID, originX, originY, windowWidth, windowHeight) {
-    if(UIElement.ANCHOR_TYPE[typeID] === undefined) {
-        console.warn(`Anchor Type ${typeID} does not exist!`);
-        return;
-    }
+UIElement.prototype.setOrigin = function(originX, originY) {
+    this.originX = originX;
+    this.originY = originY;
+}
 
-    const { width, height } = this;
+UIElement.prototype.setAnchor = function(anchor) {
+    this.anchor = anchor;
+}
 
-    switch(typeID) {
+UIElement.prototype.updateAnchor = function(windowWidth, windowHeight) {    
+    switch(this.anchor) {
         case UIElement.ANCHOR_TYPE.TOP_CENTER: {
-            const anchorX = windowWidth / 2 - originX - width / 2;
+            const anchorX = windowWidth / 2 - this.originX - this.width / 2;
 
-            this.setPosition(anchorX, originY);
+            this.setPosition(anchorX, this.originY);
             break;
         }
         case UIElement.ANCHOR_TYPE.TOP_RIGHT: {
-            const anchorX = windowWidth - originX - width;
+            const anchorX = windowWidth - this.originX - this.width;
 
-            this.setPosition(anchorX, originY);
+            this.setPosition(anchorX, this.originY);
             break;
         }
         case UIElement.ANCHOR_TYPE.BOTTOM_LEFT: {
-            const anchorY = windowHeight - originY - height;
+            const anchorY = windowHeight - this.originY - this.height;
 
-            this.setPosition(originX, anchorY);
+            this.setPosition(this.originX, anchorY);
             break;
         }
         case UIElement.ANCHOR_TYPE.BOTTOM_CENTER: {
-            const anchorX = windowWidth / 2 - originX - width / 2;
-            const anchorY = windowHeight - originY - height;
+            const anchorX = windowWidth / 2 - this.originX - this.width / 2;
+            const anchorY = windowHeight - this.originY - this.height;
 
             this.setPosition(anchorX, anchorY);
             break;
         }
         case UIElement.ANCHOR_TYPE.BOTTOM_RIGHT: {
-            const anchorX = windowWidth - originX - width;
-            const anchorY = windowHeight - originY - height;
+            const anchorX = windowWidth - this.originX - this.width;
+            const anchorY = windowHeight - this.originY - this.height;
 
             this.setPosition(anchorX, anchorY);
             break;
         }
         case UIElement.ANCHOR_TYPE.LEFT: {
-            const anchorY = windowHeight / 2 - originY - height / 2;
+            const anchorY = windowHeight / 2 - this.originY - this.height / 2;
 
-            this.setPosition(originX, anchorY);
+            this.setPosition(this.originX, anchorY);
             break;
         }
         case UIElement.ANCHOR_TYPE.CENTER: {
-            const anchorX = windowWidth / 2 - originX - width / 2;
-            const anchorY = windowHeight / 2 - originY - height / 2;
+            const anchorX = windowWidth / 2 - this.originX - this.width / 2;
+            const anchorY = windowHeight / 2 - this.originY - this.height / 2;
 
             this.setPosition(anchorX, anchorY);
             break;
         }
         case UIElement.ANCHOR_TYPE.RIGHT: {
-            const anchorX = windowWidth - originX - width;
-            const anchorY = windowHeight / 2 - originY - height / 2;
+            const anchorX = windowWidth - this.originX - this.width;
+            const anchorY = windowHeight / 2 - this.originY - this.height / 2;
 
             this.setPosition(anchorX, anchorY);
             break;

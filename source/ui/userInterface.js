@@ -48,15 +48,7 @@ UserInterface.STATE = {
     VISIBLE_NO_INTERACT: 2
 };
 
-UserInterface.prototype.clear = function(gameContext) {
-    const { renderer } = gameContext;
-
-    for(let i = 0; i < this.roots.length; i++) {
-        const elementID = this.roots[i];
-
-        renderer.events.unsubscribe(Renderer.EVENT.SCREEN_RESIZE, elementID);
-    }
-
+UserInterface.prototype.clear = function() {
     this.elements.forEach(element => element.closeFamily());
     this.elements.clear();
 }
@@ -211,15 +203,6 @@ UserInterface.prototype.removeDynamicText = function(textID) {
     text.events.mute(DynamicTextElement.EVENT_REQUEST_TEXT);
 }
 
-UserInterface.prototype.addElementAnchor = function(gameContext, element, originX, originY, anchorType = UIElement.ANCHOR_TYPE.TOP_LEFT) {
-    const { renderer } = gameContext;
-    const { w, h } = renderer.getWindow();
-    const elementID = element.getID();
-
-    element.setAnchor(anchorType, originX, originY, w, h);
-    renderer.events.subscribe(Renderer.EVENT.SCREEN_RESIZE, elementID, (width, height) => element.setAnchor(anchorType, originX, originY, width, height));  
-}
-
 UserInterface.prototype.createElement = function(typeID, elementID, config) {
     const ElementType = UserInterface.ELEMENT_CLASS[typeID];
 
@@ -254,6 +237,9 @@ UserInterface.prototype.addEffects = function(gameContext, element, effects = []
 }
 
 UserInterface.prototype.fromConfig = function(gameContext, userInterface) {
+    const { renderer } = gameContext;
+    const { w, h } = renderer.getWindow();
+
     for(const elementID in userInterface) {
         const config = userInterface[elementID];
         const { type } = config;
@@ -287,10 +273,22 @@ UserInterface.prototype.fromConfig = function(gameContext, userInterface) {
 
         if(!element.hasParent()) {
             const { x, y } = position;
+        
+            element.setOrigin(x, y);
+            element.setAnchor(anchor);
+            element.updateAnchor(w, h);
 
-            this.addElementAnchor(gameContext, element, x, y, anchor);
             this.roots.push(elementID);
         }
+    }
+}
+
+UserInterface.prototype.onWindowResize = function(width, height) {
+    for(let i = 0; i < this.roots.length; i++) {
+        const elementID = this.roots[i];
+        const element = this.elements.get(elementID);
+
+        element.updateAnchor(width, height);
     }
 }
 
