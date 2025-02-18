@@ -31,7 +31,8 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
 
     //camera.centerWorld();
     camera.bindViewport();
-    camera.focusOn(controller.getID());
+
+    gameContext.player = controller.getID();
 
     worldMap.reloadGraphics(gameContext);
 

@@ -5,7 +5,6 @@ import { SpriteManager } from "../source/graphics/spriteManager.js";
 export const ArmyCamera = function() {
     OrthogonalCamera.call(this);
 
-    this.controllerID = null;
     this.overlays = [];
     this.overlays[ArmyCamera.OVERLAY_TYPE.ATTACK] = [];
     this.overlays[ArmyCamera.OVERLAY_TYPE.MOVE] = [];
@@ -20,14 +19,6 @@ ArmyCamera.OVERLAY_TYPE = {
 
 ArmyCamera.prototype = Object.create(OrthogonalCamera.prototype);
 ArmyCamera.prototype.constructor = ArmyCamera;
-
-ArmyCamera.prototype.focusOn = function(controllerID) {
-    this.controllerID = controllerID;
-}
-
-ArmyCamera.prototype.getFocus = function() {
-    return this.controllerID;
-}
 
 ArmyCamera.prototype.addOverlay = function(overlayIndex, positionX, positionY, tileID) {
     if(overlayIndex < 0 || overlayIndex >= this.overlays.length) {

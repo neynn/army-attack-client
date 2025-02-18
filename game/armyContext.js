@@ -41,6 +41,7 @@ import { TransparentComponent } from "./components/transparent.js";
 export const ArmyContext = function() {
     GameContext.call(this);
 
+    this.player = null;
     this.gameMode = ArmyContext.GAME_MODE.NONE;
 }
 
@@ -239,19 +240,6 @@ ArmyContext.prototype.loadSnapshot = function(snapshot) {
     for(const entity of entities) {
         SpawnSystem.createEntity(this, entity);
     }
-}
-
-ArmyContext.prototype.getCameraControllerFocus = function(cameraID) {
-    const camera = this.renderer.getCamera(cameraID);
-
-    if(!camera) {
-        return null;
-    }
-
-    const focusID = camera.getFocus();
-    const controller = this.world.controllerManager.getController(focusID);
-
-    return controller;
 }
 
 ArmyContext.prototype.createCamera = function(cameraID) {

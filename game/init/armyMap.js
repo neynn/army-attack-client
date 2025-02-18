@@ -87,15 +87,16 @@ ArmyMap.prototype.convertGraphics = function(gameContext, tileX, tileY, teamName
 
 ArmyMap.prototype.updateBorder = function(gameContext, tileX, tileY, range) {
     const { tileManager, world } = gameContext;
+    const { controllerManager } = world;
     const settings = world.getConfig("Settings");
 
     if(!settings.drawBorder || this.meta.disableBorder) {
         return;
     }
 
-    const controllerFocus = gameContext.getCameraControllerFocus(CAMERA_TYPES.ARMY_CAMERA);
+    const player = controllerManager.getController(gameContext.player);
 
-    if(!controllerFocus || !controllerFocus.teamID) {
+    if(!player || !player.teamID) {
         return;
     }
 
@@ -117,7 +118,7 @@ ArmyMap.prototype.updateBorder = function(gameContext, tileX, tileY, range) {
             }
 
             const centerTeamID = this.getTile(ArmyMap.LAYER_TYPE.TEAM, j, i);
-            const isEnemy = AllianceSystem.isEnemy(gameContext, controllerFocus.teamID, teamMapping[centerTeamID]);
+            const isEnemy = AllianceSystem.isEnemy(gameContext, player.teamID, teamMapping[centerTeamID]);
 
             if(isEnemy) {
                 continue;
