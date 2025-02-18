@@ -14,14 +14,6 @@
             "english": { "id": "english", "directory": "assets/config/language", "source": "en.json" }
         }
     },
-    "LayerType": {
-        "Ground": { "id": "Ground", "layerID": "ground", "isConvertable": true },
-        "Decoration": { "id": "Decoration", "layerID": "decoration", "isConvertable": true },
-        "Border": { "id": "Border", "layerID": "border", "isConvertable": false },
-        "Cloud": { "id": "Cloud", "layerID": "cloud", "isConvertable": false },
-        "Type": { "id": "Type", "layerID": "type", "isConvertable": false },
-        "Team": { "id": "Team", "layerID": "team", "isConvertable": false }
-    },
     "VersusMode": {
         "availableMaps": ["pvp_valleys"],
         "TeamType": {
@@ -70,11 +62,6 @@
         "Town": { "id": "Town", "disableCard": false },
         "Unit": { "id": "Unit", "disableCard": false }
     },
-    "UnitType": {
-        "Armor": { "id": "Armor" },
-        "Artillery": { "id": "Artillery" },
-        "Infantry": { "id": "Infantry" }
-    },
     "ResourceType": {
         "Money": { "id": "Money", "maxDrop": 50, "icon": "resource_icon_cash" },
         "Gold": { "id": "Gold", "maxDrop": 1, "icon": "resource_icon_credits" },
@@ -93,12 +80,6 @@
         "1": { "id": 1, "color": "#ff0000", "name": "Mountain", "passability": "Mountain", "autoCapture": false, "hasBorder": false },
         "2": { "id": 2, "color": "#0000ff", "name": "Sea", "passability": "Sea", "autoCapture": false, "hasBorder": false },
         "3": { "id": 3, "color": "#0000ff", "name": "Shore", "passability": "Shore", "autoCapture": true, "hasBorder": false }
-    },
-    "PassabilityType": {
-        "Land": { "id": "Land" },
-        "Mountain": { "id": "Mountain" },
-        "Sea": { "id": "Sea" },
-        "Shore": { "id": "Shore" }
     },
     "AllianceType": {
         "Enemy": { "id": "Enemy", "isWalkable": false, "isEntityPassingAllowed": false, "isEnemy": true },

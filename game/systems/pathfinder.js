@@ -1,5 +1,6 @@
 import { FloodFill } from "../../source/pathfinders/floodFill.js";
 import { ArmyEntity } from "../init/armyEntity.js";
+import { ArmyMap } from "../init/armyMap.js";
 import { AllianceSystem } from "./alliance.js";
 
 export const PathfinderSystem = function() {}
@@ -26,18 +27,14 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
     const teamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
 
     const teamMapping = world.getConfig("TeamTypeMapping");
-    const layerTypes = world.getConfig("LayerType");
     const tileTypes = world.getConfig("TileType");
 
-    const teamLayerID = layerTypes["Team"].layerID;
-    const typeLayerID = layerTypes["Type"].layerID;
-
-    const originTeamID = activeMap.getTile(teamLayerID, positionComponent.tileX, positionComponent.tileY);
+    const originTeamID = activeMap.getTile(ArmyMap.LAYER_TYPE.TEAM, positionComponent.tileX, positionComponent.tileY);
     const originAlliance = AllianceSystem.getAlliance(gameContext, teamComponent.teamID, teamMapping[originTeamID]);
     const isOriginWalkable = originAlliance.isWalkable || moveComponent.isStealth;
 
     const nodeList = FloodFill.search_cross(positionComponent.tileX, positionComponent.tileY, moveComponent.range, activeMap.width, activeMap.height, (next, current) => {
-        const nextTypeID = activeMap.getTile(typeLayerID, next.positionX, next.positionY);
+        const nextTypeID = activeMap.getTile(ArmyMap.LAYER_TYPE.TYPE, next.positionX, next.positionY);
         const nextTileType = tileTypes[nextTypeID];
         const isNextPassable = moveComponent.hasPassability(nextTileType.passability);
 
@@ -70,7 +67,7 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
             }
         }
 
-        const nextTeamID = activeMap.getTile(teamLayerID, next.positionX, next.positionY);
+        const nextTeamID = activeMap.getTile(ArmyMap.LAYER_TYPE.TEAM, next.positionX, next.positionY);
         const nextAlliance = AllianceSystem.getAlliance(gameContext, teamComponent.teamID, teamMapping[nextTeamID]);
         const isNextWalkable = nextAlliance.isWalkable || moveComponent.isStealth;
 

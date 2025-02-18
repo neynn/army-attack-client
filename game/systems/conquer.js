@@ -1,4 +1,5 @@
 import { ArmyEntity } from "../init/armyEntity.js";
+import { ArmyMap } from "../init/armyMap.js";
 import { AllianceSystem } from "./alliance.js";
 
 export const ConquerSystem = function() {}
@@ -13,10 +14,8 @@ ConquerSystem.conquerTile = function(gameContext, tileX, tileY, entity) {
     }
 
     const teamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
-    const layerTypes = world.getConfig("LayerType");
     const teamMapping = world.getConfig("TeamTypeMapping");
-    const teamLayerID = layerTypes["Team"].layerID;
-    const tileTeamID = activeMap.getTile(teamLayerID, tileX, tileY);
+    const tileTeamID = activeMap.getTile(ArmyMap.LAYER_TYPE.TEAM, tileX, tileY);
     const isEnemy = AllianceSystem.isEnemy(gameContext, teamComponent.teamID, teamMapping[tileTeamID]);
 
     if(!isEnemy) {
@@ -27,7 +26,7 @@ ConquerSystem.conquerTile = function(gameContext, tileX, tileY, entity) {
     const teamTypes = world.getConfig("TeamType");
     const worldID = teamTypes[teamComponent.teamID].worldID;
 
-    activeMap.placeTile(worldID, teamLayerID, tileX, tileY);
+    activeMap.placeTile(worldID, ArmyMap.LAYER_TYPE.TEAM, tileX, tileY);
     activeMap.convertGraphics(gameContext, tileX, tileY, worldID);
     activeMap.updateBorder(gameContext, tileX, tileY, BORDER_RANGE);
 }
