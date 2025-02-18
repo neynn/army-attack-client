@@ -62,44 +62,41 @@ OrthogonalCamera.prototype.drawTileLayer = function(gameContext, renderContext, 
     }
 }
 
-OrthogonalCamera.prototype.drawSpriteLayers = function(gameContext, renderContext, layers) {
+OrthogonalCamera.prototype.drawSpriteLayer = function(gameContext, renderContext, layerID) {
     const { timer, spriteManager } = gameContext;
+    const spriteLayer = spriteManager.getLayer(layerID);
     const realTime = timer.getRealTime();
     const deltaTime = timer.getDeltaTime();
     const viewportLeftEdge = this.viewportX;
     const viewportTopEdge = this.viewportY;
     const viewportRightEdge = viewportLeftEdge + this.viewportWidth;
     const viewportBottomEdge = viewportTopEdge + this.viewportHeight;
+    const visibleSprites = [];
 
-    for(let i = 0; i < layers.length; i++) {
-        const visibleSprites = [];
-        const spriteLayer = spriteManager.getLayer(layers[i]);
+    for(let j = 0; j < spriteLayer.length; j++) {
+        const sprite = spriteLayer[j];
+        const { x, y, w, h } = sprite.getBounds();
+        const inBounds = x < viewportRightEdge && x + w > viewportLeftEdge && y < viewportBottomEdge && y + h > viewportTopEdge;
 
-        for(let j = 0; j < spriteLayer.length; j++) {
-            const sprite = spriteLayer[j];
-            const { x, y, w, h } = sprite.getBounds();
-            const inBounds = x < viewportRightEdge && x + w > viewportLeftEdge && y < viewportBottomEdge && y + h > viewportTopEdge;
-    
-            if(inBounds) {
-                visibleSprites.push(sprite);
-            }
+        if(inBounds) {
+            visibleSprites.push(sprite);
         }
+    }
+
+    visibleSprites.sort((current, next) => current.position.y - next.position.y);
     
-        visibleSprites.sort((current, next) => current.position.y - next.position.y);
-    
+    for(let j = 0; j < visibleSprites.length; j++) {
+        const sprite = visibleSprites[j];
+
+        sprite.update(realTime, deltaTime);
+        sprite.draw(renderContext, viewportLeftEdge, viewportTopEdge);
+    }
+
+    if((Renderer.DEBUG.VALUE & Renderer.DEBUG.SPRITES) !== 0) {
         for(let j = 0; j < visibleSprites.length; j++) {
             const sprite = visibleSprites[j];
     
-            sprite.update(realTime, deltaTime);
-            sprite.draw(renderContext, viewportLeftEdge, viewportTopEdge);
-        }
-    
-        if((Renderer.DEBUG.VALUE & Renderer.DEBUG.SPRITES) !== 0) {
-            for(let j = 0; j < visibleSprites.length; j++) {
-                const sprite = visibleSprites[j];
-        
-                sprite.debug(renderContext, viewportLeftEdge, viewportTopEdge);
-            }
+            sprite.debug(renderContext, viewportLeftEdge, viewportTopEdge);
         }
     }
 }

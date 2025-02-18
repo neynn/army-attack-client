@@ -3,8 +3,9 @@ import { PathfinderSystem } from "../../systems/pathfinder.js";
 export const ControllerHover = function() {
     this.tileX = -1;
     this.tileY = -1;
-    this.entityID = null;
     this.nodeMap = new Map();
+    this.currentTarget = null;
+    this.lastTarget = null;
     this.targetChanged = false;
 }
 
@@ -12,11 +13,11 @@ ControllerHover.prototype.getEntity = function(gameContext) {
     const { world } = gameContext;
     const { entityManager } = world;
     
-    if(this.entityID === null) {
+    if(this.currentTarget === null) {
         return null;
     }
 
-    const entity = entityManager.getEntity(this.entityID);
+    const entity = entityManager.getEntity(this.currentTarget);
 
     return entity;
 }
@@ -66,14 +67,14 @@ ControllerHover.prototype.isHoveringOnNode = function() {
 }
 
 ControllerHover.prototype.isHoveringOnEntity = function() {
-    return this.entityID !== null;
+    return this.currentTarget !== null;
 }
 
 ControllerHover.prototype.update = function(gameContext) {
     const { world } = gameContext;
     const { x, y } = gameContext.getMouseTile();
     const mouseEntity = world.getTileEntity(x, y);
-    const lastTarget = this.entityID;
+    const previous = this.currentTarget;
 
     this.tileX = x;
     this.tileY = y;
@@ -81,10 +82,14 @@ ControllerHover.prototype.update = function(gameContext) {
     if(mouseEntity) {
         const entityID = mouseEntity.getID();
 
-        this.entityID = entityID;
+        this.currentTarget = entityID;
     } else {
-        this.entityID = null;
+        this.currentTarget = null;
     }
 
-    this.targetChanged = (lastTarget !== this.entityID);
+    this.targetChanged = (this.currentTarget !== previous);
+
+    if(this.targetChanged) {
+        this.lastTarget = previous;
+    }
 }

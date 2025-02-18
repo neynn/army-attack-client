@@ -47,6 +47,14 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
     });
 
     SpawnSystem.createEntity(gameContext, { 
+        "type": "red_battlefortress",
+        "tileX": 6,
+        "tileY": 8,
+        "team": "Crimson",
+        "owner": null
+    });
+
+    SpawnSystem.createEntity(gameContext, { 
         "type": "blue_elite_commando",
         "tileX": 6,
         "tileY": 5,

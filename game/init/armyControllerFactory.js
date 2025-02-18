@@ -50,7 +50,7 @@ ArmyControllerFactory.prototype.onCreate = function(gameContext, config) {
         case ArmyControllerFactory.TYPE.PLAYER: {
             const controller = new PlayerController(id);
             const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
-            const controllerSprite = spriteManager.createSprite("cursor_attack_1x1", SpriteManager.LAYER.TOP);
+            const controllerSprite = spriteManager.createSprite("cursor_attack_1x1", SpriteManager.LAYER.UI);
             const { x, y } = camera.transformTileToPositionCenter(0, 0);
             const spriteID = controllerSprite.getID();
             

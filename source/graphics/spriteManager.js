@@ -10,21 +10,23 @@ export const SpriteManager = function() {
     this.sprites = new Map();
     this.spriteTypes = {};
     this.timestamp = 0;
-    this.layers = {
-        [SpriteManager.LAYER.BOTTOM]: [],
-        [SpriteManager.LAYER.MIDDLE]: [],
-        [SpriteManager.LAYER.TOP]: []
-    };
+
+    this.layers = [];
+    this.layers[SpriteManager.LAYER.BOTTOM] = [];
+    this.layers[SpriteManager.LAYER.MIDDLE] = [];
+    this.layers[SpriteManager.LAYER.TOP] = [];
+    this.layers[SpriteManager.LAYER.UI] = [];
 }
 
 SpriteManager.LAYER = {
-    "BOTTOM": 0,
-    "MIDDLE": 1,
-    "TOP": 2
+    BOTTOM: 0,
+    MIDDLE: 1,
+    TOP: 2,
+    UI: 3
 };
 
-SpriteManager.prototype.getLayer = function(layerID) {
-    return this.layers[layerID];
+SpriteManager.prototype.getLayer = function(layerIndex) {
+    return this.layers[layerIndex];
 }
 
 SpriteManager.prototype.load = function(spriteTypes) {
@@ -77,8 +79,8 @@ SpriteManager.prototype.clear = function() {
     this.sprites.clear();
     this.idGenerator.reset();
 
-    for(const layerID in this.layers) {
-        this.layers[layerID] = [];
+    for(let i = 0; i < this.layers.length; i++) {
+        this.layers[i] = [];
     }
 }
 
@@ -163,7 +165,7 @@ SpriteManager.prototype.destroySprite = function(spriteID) {
 
         sprite.closeFamily();
 
-        this.removeSpriteFromLayers(sprite);
+        this.removeSpriteFromLayers(id);
         this.sprites.delete(id);
     }
 
@@ -180,28 +182,44 @@ SpriteManager.prototype.getSprite = function(spriteID) {
     return sprite;
 }
 
-SpriteManager.prototype.addToLayer = function(layerID, sprite) {
-    const layer = this.layers[layerID];
-
-    if(!layer) {
-        Logger.log(false, "Layer does not exist!", "SpriteManager.prototype.addToLayer", { layerID });
+SpriteManager.prototype.swapLayer = function(layerIndex, spriteID) {
+    if(layerIndex < 0 || layerIndex >= this.layers.length) {
+        Logger.log(false, "Layer does not exist!", "SpriteManager.prototype.swapLayer", { layerIndex });
         return;
     }
 
+    const sprite = this.sprites.get(spriteID);
+
+    if(!sprite) {
+        Logger.log(false, "Sprite does not exist!", "SpriteManager.prototype.swapLayer", { layerIndex });
+        return;
+    }
+
+    this.removeSpriteFromLayers(spriteID);
+    this.addToLayer(layerIndex, sprite)
+}
+
+SpriteManager.prototype.addToLayer = function(layerIndex, sprite) {
+    if(layerIndex < 0 || layerIndex >= this.layers.length) {
+        Logger.log(false, "Layer does not exist!", "SpriteManager.prototype.addToLayer", { layerIndex });
+        return;
+    }
+
+    const layer = this.layers[layerIndex];
     const index = layer.findIndex(member => member.id === sprite.id);
 
     if(index !== -1) {
-        Logger.log(false, "Sprite already exists on layer!", "SpriteManager.prototype.addToLayer", { layerID });
+        Logger.log(false, "Sprite already exists on layer!", "SpriteManager.prototype.addToLayer", { layerIndex });
         return;
     }
 
     layer.push(sprite);
 }
 
-SpriteManager.prototype.removeSpriteFromLayers = function(sprite) {
-    for(const layerID in this.layers) {
-        const layer = this.layers[layerID];
-        const index = layer.findIndex(member => member.id === sprite.id);
+SpriteManager.prototype.removeSpriteFromLayers = function(spriteID) {
+    for(let i = 0; i < this.layers.length; i++) {
+        const layer = this.layers[i];
+        const index = layer.findIndex(member => member.id === spriteID);
 
         if(index !== -1) {
             layer[index] = layer[layer.length - 1];

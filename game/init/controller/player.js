@@ -10,6 +10,7 @@ import { Controller } from "../../../source/controller/controller.js";
 import { Autotiler } from "../../../source/tile/autotiler.js";
 import { ArmyMap } from "../armyMap.js";
 import { ArmyContext } from "../../armyContext.js";
+import { SpriteManager } from "../../../source/graphics/spriteManager.js";
 
 export const PlayerController = function(id) {
     Controller.call(this, id);
@@ -327,34 +328,40 @@ PlayerController.prototype.onIdleClick = function(gameContext) {
     }
 }
 
-PlayerController.prototype.updateRangeIndicator = function(gameContext) {
-    if(!this.showRange || !this.hover.targetChanged) {
-        return;
-    }
-
-    const { renderer, tileManager } = gameContext;
+PlayerController.prototype.resetRangeIndicator = function(gameContext) {
+    const { renderer, spriteManager, world } = gameContext;
+    const { entityManager } = world;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
+    const entity = entityManager.getEntity(this.hover.lastTarget);
 
     camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.RANGE);
 
-    if(!this.hover.isHoveringOnEntity()) {
-        return;
+    if(entity) {
+        const { spriteID } = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
+        
+        spriteManager.swapLayer(SpriteManager.LAYER.MIDDLE, spriteID);
     }
+}
 
-    const entity = this.hover.getEntity(gameContext);
+PlayerController.prototype.showEntityRange = function(gameContext, entity) {
+    const { renderer, tileManager, spriteManager } = gameContext;
     const attackComponent = entity.getComponent(ArmyEntity.COMPONENT.ATTACK);
 
     if(!attackComponent) {
         return;
     }
 
+    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
     const { range } = attackComponent;
     const { tileX, tileY } = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
+    const { spriteID } = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
+
+    spriteManager.swapLayer(SpriteManager.LAYER.TOP, spriteID);
 
     const startX = tileX - range;
     const startY = tileY - range;
-    const endX = tileX + range;
-    const endY = tileY + range;
+    const endX = tileX + range + entity.config.dimX - 1;
+    const endY = tileY + range + entity.config.dimY - 1;
 
     for(let i = startY; i <= endY; i++) {
         for(let j = startX; j <= endX; j++) {
@@ -370,6 +377,20 @@ PlayerController.prototype.updateRangeIndicator = function(gameContext) {
 
             camera.addOverlay(ArmyCamera.OVERLAY_TYPE.RANGE, j, i, tileID);
         }
+    }
+}
+
+PlayerController.prototype.updateRangeIndicator = function(gameContext) {
+    if(!this.showRange || !this.hover.targetChanged) {
+        return;
+    }
+
+    this.resetRangeIndicator(gameContext);
+
+    if(this.hover.isHoveringOnEntity()) {
+        const entity = this.hover.getEntity(gameContext);
+
+        this.showEntityRange(gameContext, entity);
     }
 }
 

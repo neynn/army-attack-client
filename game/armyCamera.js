@@ -83,8 +83,11 @@ ArmyCamera.prototype.update = function(gameContext, renderContext) {
     
     this.drawOverlay(gameContext, renderContext, worldBounds, ArmyCamera.OVERLAY_TYPE.MOVE);
     this.drawOverlay(gameContext, renderContext, worldBounds, ArmyCamera.OVERLAY_TYPE.ATTACK);
-    this.drawSpriteLayers(gameContext, renderContext, [SpriteManager.LAYER.BOTTOM, SpriteManager.LAYER.MIDDLE, SpriteManager.LAYER.TOP]);
+    this.drawSpriteLayer(gameContext, renderContext, SpriteManager.LAYER.BOTTOM);
+    this.drawSpriteLayer(gameContext, renderContext, SpriteManager.LAYER.MIDDLE);
     this.drawOverlay(gameContext, renderContext, worldBounds, ArmyCamera.OVERLAY_TYPE.RANGE);
+    this.drawSpriteLayer(gameContext, renderContext, SpriteManager.LAYER.TOP);
+    this.drawSpriteLayer(gameContext, renderContext, SpriteManager.LAYER.UI);
 
     for(const layerID of foreground) {
         this.drawLayer(gameContext, renderContext, worldMap, layers[layerID], worldBounds);
