@@ -26,6 +26,10 @@ SpriteManager.LAYER = {
 };
 
 SpriteManager.prototype.getLayer = function(layerIndex) {
+    if(layerIndex < 0 || layerIndex >= this.layers.length) {
+        return [];
+    }
+
     return this.layers[layerIndex];
 }
 
@@ -121,8 +125,8 @@ SpriteManager.prototype.drawSprite = function(sprite, context, viewportX, viewpo
     const animationType = spriteType.getAnimation(animationID);
     const animationFrame = animationType.getFrame(currentFrame);
 
-    for(const component of animationFrame) {
-        const { shiftX, shiftY, frame } = component;
+    for(let i = 0; i < animationFrame.length; i++) {
+        const { shiftX, shiftY, frame } = animationFrame[i];
         const { x, y, w, h, offset } = frame;
         const renderX = localX - viewportX + offset.x + shiftX;
         const renderY = localY - viewportY + offset.y + shiftY;
@@ -196,7 +200,7 @@ SpriteManager.prototype.swapLayer = function(layerIndex, spriteID) {
     }
 
     this.removeSpriteFromLayers(spriteID);
-    this.addToLayer(layerIndex, sprite)
+    this.addToLayer(layerIndex, sprite);
 }
 
 SpriteManager.prototype.addToLayer = function(layerIndex, sprite) {
