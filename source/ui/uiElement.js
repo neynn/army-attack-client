@@ -14,9 +14,21 @@ export const UIElement = function(id, DEBUG_NAME) {
 }
 
 UIElement.EVENT = {
-    "FINAL_COLLISION": "FINAL_COLLISION",
-    "FIRST_COLLISION": "FIRST_COLLISION",
-    "COLLISION": "COLLISION"
+    FINAL_COLLISION: "FINAL_COLLISION",
+    FIRST_COLLISION: "FIRST_COLLISION",
+    COLLISION: "COLLISION"
+};
+
+UIElement.ANCHOR_TYPE = {
+    "TOP_CENTER": "TOP_CENTER",
+    "TOP_LEFT": "TOP_LEFT",
+    "TOP_RIGHT": "TOP_RIGHT",
+    "BOTTOM_CENTER": "BOTTOM_CENTER",
+    "BOTTOM_LEFT": "BOTTOM_LEFT",
+    "BOTTOM_RIGHT": "BOTTOM_RIGHT",
+    "CENTER": "CENTER",
+    "LEFT": "LEFT",
+    "RIGHT": "RIGHT"
 };
 
 UIElement.prototype = Object.create(Drawable.prototype);
@@ -64,4 +76,68 @@ UIElement.prototype.getCollisions = function(mouseX, mouseY, mouseRange) {
     }
 
     return collidedElements;
+}
+
+UIElement.prototype.setAnchor = function(typeID, originX, originY, windowWidth, windowHeight) {
+    if(UIElement.ANCHOR_TYPE[typeID] === undefined) {
+        console.warn(`Anchor Type ${typeID} does not exist!`);
+        return;
+    }
+
+    const { width, height } = this;
+
+    switch(typeID) {
+        case UIElement.ANCHOR_TYPE.TOP_CENTER: {
+            const anchorX = windowWidth / 2 - originX - width / 2;
+
+            this.setPosition(anchorX, originY);
+            break;
+        }
+        case UIElement.ANCHOR_TYPE.TOP_RIGHT: {
+            const anchorX = windowWidth - originX - width;
+
+            this.setPosition(anchorX, originY);
+            break;
+        }
+        case UIElement.ANCHOR_TYPE.BOTTOM_LEFT: {
+            const anchorY = windowHeight - originY - height;
+
+            this.setPosition(originX, anchorY);
+            break;
+        }
+        case UIElement.ANCHOR_TYPE.BOTTOM_CENTER: {
+            const anchorX = windowWidth / 2 - originX - width / 2;
+            const anchorY = windowHeight - originY - height;
+
+            this.setPosition(anchorX, anchorY);
+            break;
+        }
+        case UIElement.ANCHOR_TYPE.BOTTOM_RIGHT: {
+            const anchorX = windowWidth - originX - width;
+            const anchorY = windowHeight - originY - height;
+
+            this.setPosition(anchorX, anchorY);
+            break;
+        }
+        case UIElement.ANCHOR_TYPE.LEFT: {
+            const anchorY = windowHeight / 2 - originY - height / 2;
+
+            this.setPosition(originX, anchorY);
+            break;
+        }
+        case UIElement.ANCHOR_TYPE.CENTER: {
+            const anchorX = windowWidth / 2 - originX - width / 2;
+            const anchorY = windowHeight / 2 - originY - height / 2;
+
+            this.setPosition(anchorX, anchorY);
+            break;
+        }
+        case UIElement.ANCHOR_TYPE.RIGHT: {
+            const anchorX = windowWidth - originX - width;
+            const anchorY = windowHeight / 2 - originY - height / 2;
+
+            this.setPosition(anchorX, anchorY);
+            break;
+        }
+    }
 }

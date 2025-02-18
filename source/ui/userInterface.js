@@ -211,19 +211,13 @@ UserInterface.prototype.removeDynamicText = function(textID) {
     text.events.mute(DynamicTextElement.EVENT_REQUEST_TEXT);
 }
 
-UserInterface.prototype.addElementAnchor = function(gameContext, element, originalPosition, anchorType = Renderer.ANCHOR_TYPE.TOP_LEFT) {
+UserInterface.prototype.addElementAnchor = function(gameContext, element, originX, originY, anchorType = UIElement.ANCHOR_TYPE.TOP_LEFT) {
     const { renderer } = gameContext;
-    const { x, y } = originalPosition;
+    const { w, h } = renderer.getWindow();
     const elementID = element.getID();
-    const anchor = renderer.getAnchor(anchorType, x, y, element.width, element.height);
-            
-    element.setPosition(anchor.x, anchor.y);
 
-    renderer.events.subscribe(Renderer.EVENT.SCREEN_RESIZE, elementID, (width, height) => {
-        const anchor = renderer.getAnchor(anchorType, x, y, element.width, element.height);
-
-        element.setPosition(anchor.x, anchor.y);
-    });    
+    element.setAnchor(anchorType, originX, originY, w, h);
+    renderer.events.subscribe(Renderer.EVENT.SCREEN_RESIZE, elementID, (width, height) => element.setAnchor(anchorType, originX, originY, width, height));  
 }
 
 UserInterface.prototype.createElement = function(typeID, elementID, config) {
@@ -292,7 +286,9 @@ UserInterface.prototype.fromConfig = function(gameContext, userInterface) {
         this.addEffects(gameContext, element, effects);
 
         if(!element.hasParent()) {
-            this.addElementAnchor(gameContext, element, position, anchor);
+            const { x, y } = position;
+
+            this.addElementAnchor(gameContext, element, x, y, anchor);
             this.roots.push(elementID);
         }
     }

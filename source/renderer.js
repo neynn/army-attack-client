@@ -24,18 +24,6 @@ export const Renderer = function() {
     window.addEventListener("resize", () => this.resizeDisplay(window.innerWidth, window.innerHeight));
 }
 
-Renderer.ANCHOR_TYPE = {
-    "TOP_CENTER": "TOP_CENTER",
-    "TOP_LEFT": "TOP_LEFT",
-    "TOP_RIGHT": "TOP_RIGHT",
-    "BOTTOM_CENTER": "BOTTOM_CENTER",
-    "BOTTOM_LEFT": "BOTTOM_LEFT",
-    "BOTTOM_RIGHT": "BOTTOM_RIGHT",
-    "CENTER": "CENTER",
-    "LEFT": "LEFT",
-    "RIGHT": "RIGHT"
-};
-
 Renderer.EVENT = {
     SCREEN_RESIZE: 0
 };
@@ -48,10 +36,6 @@ Renderer.DEBUG = {
     MAP: 1 << 3
 };
 
-Renderer.prototype.getDrawingContext = function() {
-    return this.display.context;
-}
-
 Renderer.prototype.getContext = function(contextID) {
     const context = this.contexts.get(contextID);
 
@@ -60,14 +44,6 @@ Renderer.prototype.getContext = function(contextID) {
     }
 
     return context;
-}
-
-Renderer.prototype.getWidth = function() {
-    return this.windowWidth;
-}
-
-Renderer.prototype.getHeight = function() {
-    return this.windowHeight;
 }
 
 Renderer.prototype.getCamera = function(cameraID) {
@@ -158,19 +134,19 @@ Renderer.prototype.drawCameraDebug = function() {
 
 Renderer.prototype.update = function(gameContext) {
     const { timer } = gameContext; 
-    const renderContext = this.getDrawingContext();
+    const drawContext = this.display.context;
     const deltaTime = timer.getDeltaTime();
 
     this.display.clear();
     this.fpsCounter.update(deltaTime);
 
     this.contexts.forEach(context => {
-        renderContext.save();
-        context.update(gameContext, renderContext);
-        renderContext.restore();
+        drawContext.save();
+        context.update(gameContext, drawContext);
+        drawContext.restore();
     });
 
-    this.effects.update(renderContext, deltaTime);
+    this.effects.update(drawContext, deltaTime);
 
     if((Renderer.DEBUG.VALUE & Renderer.DEBUG.CAMERA) !== 0) {
         this.drawCameraDebug();
@@ -191,22 +167,10 @@ Renderer.prototype.resizeDisplay = function(width, height) {
     this.events.emit(Renderer.EVENT.SCREEN_RESIZE, width, height);
 }
 
-Renderer.prototype.getAnchor = function(typeID, originX, originY, width, height) {
-    if(Renderer.ANCHOR_TYPE[typeID] === undefined) {
-        console.warn(`Anchor Type ${typeID} does not exist!`);
-        return { "x": originX, "y": originY };
-    }
-
-    switch(typeID) {
-        case Renderer.ANCHOR_TYPE.TOP_LEFT: return { "x": originX, "y": originY };
-        case Renderer.ANCHOR_TYPE.TOP_CENTER: return { "x": this.windowWidth / 2 - originX - width / 2, "y": originY };
-        case Renderer.ANCHOR_TYPE.TOP_RIGHT: return { "x": this.windowWidth - originX - width, "y": originY };
-        case Renderer.ANCHOR_TYPE.BOTTOM_LEFT: return { "x": originX, "y": this.windowHeight - originY - height };
-        case Renderer.ANCHOR_TYPE.BOTTOM_CENTER: return { "x": this.windowWidth / 2 - originX - width / 2, "y": this.windowHeight - originY - height };
-        case Renderer.ANCHOR_TYPE.BOTTOM_RIGHT: return { "x": this.windowWidth - originX - width, "y": this.windowHeight - originY - height };
-        case Renderer.ANCHOR_TYPE.LEFT: return { "x": originX, "y": this.windowHeight / 2 - originY - height / 2 };
-        case Renderer.ANCHOR_TYPE.CENTER: return { "x": this.windowWidth / 2 - originX - width / 2, "y": this.windowHeight / 2 - originY - height / 2 };
-        case Renderer.ANCHOR_TYPE.RIGHT: return { "x": this.windowWidth - originX - width, "y": this.windowHeight / 2 - originY - height / 2 };
+Renderer.prototype.getWindow = function() {
+    return {
+        "w": this.windowWidth,
+        "h": this.windowHeight
     }
 }
 
