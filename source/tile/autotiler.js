@@ -1,5 +1,10 @@
 export const Autotiler = function() {}
 
+Autotiler.RESPONSE = {
+    INVALID: 0,
+    VALID: 1
+};
+
 Autotiler.SHIFTSET_8 = {
     NORTH_WEST: 0,
     NORTH: 1,

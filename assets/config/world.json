@@ -1,7 +1,4 @@
 {
-    "DEBUG": {
-        "SHOW_INVALID_MOVE_TILES": true
-    },
     "Settings": {
         "tileWidth": 96,
         "tileHeight": 96,
@@ -16,11 +13,6 @@
             "german": { "id": "german", "directory": "assets/config/language", "source": "de.json" },
             "english": { "id": "english", "directory": "assets/config/language", "source": "en.json" }
         }
-    },
-    "AutotilerType": {
-        "Border": { "id": "Border", "autotilerID": "border" },
-        "Cloud": { "id": "Cloud", "autotilerID": "cloud" },
-        "Range": { "id": "Range", "autotilerID": "range" }
     },
     "LayerType": {
         "Ground": { "id": "Ground", "layerID": "ground", "isConvertable": true },

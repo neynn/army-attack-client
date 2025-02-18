@@ -47,6 +47,13 @@ export const ArmyContext = function() {
 ArmyContext.prototype = Object.create(GameContext.prototype);
 ArmyContext.prototype.constructor = ArmyContext;
 
+ArmyContext.DEBUG = {
+    SHOW_INVALID_MOVE_TILES: true,
+    LOG_WORLD_EVENTS: true,
+    LOG_SOCKET_EVENTS: true,
+    LOG_QUEUE_EVENTS: true
+};
+
 ArmyContext.FACTORY = {
     MAP: "MAP",
     ENTITY: "ENTITY",
@@ -123,30 +130,30 @@ ArmyContext.prototype.init = function(resources) {
 
     this.client.soundPlayer.loadAllSounds();
     
-    this.world.actionQueue.events.subscribe(RequestQueue.EVENT.QUEUE_ERROR, "DEBUG", (error) => console.log(error));
-    this.world.actionQueue.events.subscribe(RequestQueue.EVENT.EXECUTION_RUNNING, "DEBUG", (item) => console.log(item, "IS PROCESSING"));
-    this.world.actionQueue.events.subscribe(RequestQueue.EVENT.EXECUTION_ERROR, "DEBUG",  (request, actionType) => {
-        if(actionType.errorSound) {
-            this.client.soundPlayer.playSound(actionType.errorSound, 0.5);
-        }
+    if(ArmyContext.DEBUG.LOG_QUEUE_EVENTS) {
+        this.world.actionQueue.events.subscribe(RequestQueue.EVENT.QUEUE_ERROR, "DEBUG", (error) => console.log(error));
+        this.world.actionQueue.events.subscribe(RequestQueue.EVENT.EXECUTION_RUNNING, "DEBUG", (item) => console.log(item, "IS PROCESSING"));
+        this.world.actionQueue.events.subscribe(RequestQueue.EVENT.EXECUTION_ERROR, "DEBUG",  (request, actionType) => console.log(request, "IS INVALID"));
+    }
 
-        console.log(request, "IS INVALID");
-    });
+    if(ArmyContext.DEBUG.LOG_SOCKET_EVENTS) {
+        this.client.socket.events.subscribe(Socket.EVENT_CONNECTED_TO_SERVER, "DEBUG", (socketID) => {
+            this.client.socket.emit(NETWORK_EVENTS.REGISTER, { "user-id": "neyn!" }, (response) => console.log(response));
+            console.log(`${socketID} is connected to the server!`);
+        });
+    
+        this.client.socket.events.subscribe(Socket.EVENT_DISCONNECTED_FROM_SERVER, "DEBUG", (reason) => {
+            console.log(`${reason} is disconnected from the server!`);
+        });
+    }
 
-    this.client.socket.events.subscribe(Socket.EVENT_CONNECTED_TO_SERVER, "DEBUG", (socketID) => {
-        this.client.socket.emit(NETWORK_EVENTS.REGISTER, { "user-id": "neyn!" }, (response) => console.log(response));
-        console.log(`${socketID} is connected to the server!`);
-    });
-
-    this.client.socket.events.subscribe(Socket.EVENT_DISCONNECTED_FROM_SERVER, "DEBUG", (reason) => {
-        console.log(`${reason} is disconnected from the server!`);
-    });
-
-    this.world.events.subscribe(World.EVENT.CONTROLLER_CREATE, "DEBUG", (controller) => console.log(controller, "HAS BEEN CREATED"));
-    this.world.events.subscribe(World.EVENT.CONTROLLER_DESTROY, "DEBUG", (controller) => console.log(controller, "HAS BEEN DESTROYED"));
-    this.world.events.subscribe(World.EVENT.ENTITY_DESTROY, "DEBUG", (entity) => console.log(entity, "HAS BEEN DESTROYED"));
-    this.world.events.subscribe(World.EVENT.ENTITY_CREATE, "DEBUG", (entity) => console.log(entity, "HAS BEEN CREATED"));
-    this.world.events.subscribe(World.EVENT.MAP_CREATE, "DEBUG", (worldMap) => console.log(worldMap, "HAS BEEN LOADED"));
+    if(ArmyContext.DEBUG.LOG_WORLD_EVENTS) {
+        this.world.events.subscribe(World.EVENT.CONTROLLER_CREATE, "DEBUG", (controller) => console.log(controller, "HAS BEEN CREATED"));
+        this.world.events.subscribe(World.EVENT.CONTROLLER_DESTROY, "DEBUG", (controller) => console.log(controller, "HAS BEEN DESTROYED"));
+        this.world.events.subscribe(World.EVENT.ENTITY_DESTROY, "DEBUG", (entity) => console.log(entity, "HAS BEEN DESTROYED"));
+        this.world.events.subscribe(World.EVENT.ENTITY_CREATE, "DEBUG", (entity) => console.log(entity, "HAS BEEN CREATED"));
+        this.world.events.subscribe(World.EVENT.MAP_CREATE, "DEBUG", (worldMap) => console.log(worldMap, "HAS BEEN LOADED"));
+    }
 
     this.switchState(ArmyContext.STATE.MAIN_MENU);
 }

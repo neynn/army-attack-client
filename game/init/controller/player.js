@@ -8,6 +8,8 @@ import { ArmyEntity } from "../armyEntity.js";
 import { ConstructionSystem } from "../../systems/construction.js";
 import { Controller } from "../../../source/controller/controller.js";
 import { Autotiler } from "../../../source/tile/autotiler.js";
+import { ArmyMap } from "../armyMap.js";
+import { ArmyContext } from "../../armyContext.js";
 
 export const PlayerController = function(id) {
     Controller.call(this, id);
@@ -111,7 +113,6 @@ PlayerController.prototype.updateAttackers = function(gameContext) {
 
 PlayerController.prototype.addNodeOverlays = function(gameContext, nodeList) {
     const { tileManager, world, renderer } = gameContext;
-    const DEBUG = world.getConfig("DEBUG");
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
     const enableTileID = tileManager.getTileID("overlay", "grid_enabled_1x1");
     const attackTileID = tileManager.getTileID("overlay", "grid_attack_1x1");
@@ -122,7 +123,7 @@ PlayerController.prototype.addNodeOverlays = function(gameContext, nodeList) {
         const { positionX, positionY, state } = nodeList[i];
 
         if(state !== PathfinderSystem.NODE_STATE.VALID) {
-            if(DEBUG["SHOW_INVALID_MOVE_TILES"]) {
+            if(ArmyContext.DEBUG.SHOW_INVALID_MOVE_TILES) {
                 camera.addOverlay(ArmyCamera.OVERLAY_TYPE.MOVE, positionX, positionY, attackTileID);
             }
 
@@ -331,7 +332,7 @@ PlayerController.prototype.updateRangeIndicator = function(gameContext) {
         return;
     }
 
-    const { renderer, tileManager, world } = gameContext;
+    const { renderer, tileManager } = gameContext;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
 
     camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.RANGE);
@@ -347,9 +348,6 @@ PlayerController.prototype.updateRangeIndicator = function(gameContext) {
         return;
     }
 
-    const autotilerTypes = world.getConfig("AutotilerType");
-    const rangeAutotilerID = autotilerTypes["Range"].autotilerID;
-
     const { range } = attackComponent;
     const { tileX, tileY } = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
 
@@ -362,13 +360,13 @@ PlayerController.prototype.updateRangeIndicator = function(gameContext) {
         for(let j = startX; j <= endX; j++) {
             const nextIndex = Autotiler.autotile4Bits(j, i, (x, y) => {
                 if(x >= startX && x <= endX && y >= startY && y <= endY) {
-                    return 1;
+                    return Autotiler.RESPONSE.VALID;
                 } 
 
-                return 0;
+                return Autotiler.RESPONSE.INVALID;
             });
 
-            const tileID = tileManager.getAutotilerID(rangeAutotilerID, nextIndex);
+            const tileID = tileManager.getAutotilerID(ArmyMap.AUTOTILER.RANGE, nextIndex);
 
             camera.addOverlay(ArmyCamera.OVERLAY_TYPE.RANGE, j, i, tileID);
         }
