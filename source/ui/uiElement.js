@@ -87,7 +87,9 @@ UIElement.prototype.setOrigin = function(originX, originY) {
 }
 
 UIElement.prototype.setAnchor = function(anchor) {
-    this.anchor = anchor;
+    if(UIElement.ANCHOR_TYPE[anchor] !== undefined) {
+        this.anchor = anchor;
+    }
 }
 
 UIElement.prototype.updateAnchor = function(windowWidth, windowHeight) {    
