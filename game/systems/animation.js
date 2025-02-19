@@ -93,9 +93,13 @@ AnimationSystem.stopSelect = function(gameContext, entity) {
     const { spriteManager } = gameContext;
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const entitySprite = spriteManager.getSprite(spriteComponent.spriteID);
-    const moveSpriteID = entitySprite.getChildID(AnimationSystem.SPRITE_ID.MOVE);
+    const moveSprite = entitySprite.getChild(AnimationSystem.SPRITE_ID.MOVE);
 
-    spriteManager.destroySprite(moveSpriteID);
+    if(moveSprite) {
+        const spriteID = moveSprite.getID();
+
+        spriteManager.destroySprite(spriteID);
+    }
 }
 
 AnimationSystem.playConstruction = function(gameContext, entity) {

@@ -1,11 +1,11 @@
 import { clampValue } from "../math/math.js";
 import { Vec2 } from "../math/vec2.js";
-import { Family } from "./family.js";
+import { Graph } from "./graph.js";
 
 export const Drawable = function(id = null, DEBUG_NAME = "Drawable") {
     this.DEBUG_NAME = DEBUG_NAME;
     this.id = id;
-    this.family = null;
+    this.graph = null;
     this.opacity = 1;
     this.state = Drawable.STATE.VISIBLE;
     this.position = new Vec2(0, 0);
@@ -19,8 +19,6 @@ Drawable.STATE = {
     HIDDEN: 0,
     VISIBLE: 1
 };
-
-Drawable.DEFAULT_FAMILY_NAME = "DEFAULT_FAMILY_NAME";
 
 Drawable.prototype.onUpdate = function(timestamp, deltaTime) {}
 
@@ -160,70 +158,63 @@ Drawable.prototype.getOpacity = function() {
 }
 
 Drawable.prototype.hasParent = function() {
-    if(!this.family) {
+    if(!this.graph) {
         return false;
     }
 
-    return this.family.parent !== null;
+    return this.graph.parent !== null;
 }
 
 Drawable.prototype.hasChild = function(name) {
-    if(!this.family) {
+    if(!this.graph) {
         return false;
     }
 
-    return this.family.hasChild(name);
-}
-
-Drawable.prototype.getChild = function(name) {
-    if(!this.family) {
-        return null;
-    }
-
-    return this.family.getChildByName(name);
+    return this.graph.hasChild(name);
 }
 
 Drawable.prototype.getChildren = function() {
-    if(!this.family) {
+    if(!this.graph) {
         return [];
     }
 
-    return this.family.getChildren();
+    return this.graph.getChildren();
 }
 
-Drawable.prototype.getChildID = function(name) {
-    if(!this.family) {
+Drawable.prototype.getChild = function(name) {
+    if(!this.graph) {
         return null;
     }
 
-    const child = this.family.getChildByName(name);
+    const child = this.graph.getChild(name);
     
     if(!child) {
         return null;
     }
 
-    return child.getID();
+    return child.getReference();
 }
 
 Drawable.prototype.hasFamily = function() {
-    return this.family !== null;
+    return this.graph !== null;
 }
 
-Drawable.prototype.openFamily = function(name = Drawable.DEFAULT_FAMILY_NAME) {
-    if(this.family || this.id === null) {
+Drawable.prototype.openFamily = function(name = Graph.DEFAULT_NAME) {
+    if(this.graph || this.id === null) {
         return;
     }
 
-    this.family = new Family(this.id, this, name);
+    this.graph = new Graph(this);
+    this.graph.setName(name);
 }
 
 Drawable.prototype.closeFamily = function() {
-    if(!this.family) {
+    if(!this.graph) {
         return;
     }
 
-    this.family.onRemove();
-    this.family = null;
+    this.graph.destroy();
+    this.graph = null;
 }
 
 Drawable.prototype.addChild = function(drawable, name) {
@@ -231,36 +222,33 @@ Drawable.prototype.addChild = function(drawable, name) {
         return;
     }
     
-    if(!this.family) {
+    if(!this.graph) {
         this.openFamily();
     }
 
-    if(this.family.hasChild(name)) {
+    if(this.graph.hasChild(name)) {
         return;
     }
 
     if(drawable.hasFamily()) {
-        drawable.family.setName(name);
+        drawable.graph.setName(name);
     } else {
         drawable.openFamily(name);
     }
 
-    this.family.addChild(drawable.family);
-    drawable.family.setParent(this.family);
+    this.graph.link(drawable.graph);
 }
 
 Drawable.prototype.removeChild = function(name) {
-    if(!this.family) {
+    if(!this.graph) {
         return;
     }
 
-    const child = this.family.getChildByName(name);
+    const child = this.graph.getChild(name);
 
-    if(child === null) {
-        return;
+    if(child !== null) {
+        const reference = child.getReference();
+
+        reference.closeFamily();
     }
-
-    const reference = child.getReference();
-
-    reference.closeFamily();
 }
