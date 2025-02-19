@@ -1,6 +1,5 @@
 import { createFadeInEffect } from "../effects/example/fadeIn.js";
 import { createFadeOutEffect } from "../effects/example/fadeOut.js";
-import { Renderer } from "../renderer.js";
 import { Button } from "./elements/button.js";
 import { Container } from "./elements/container.js";
 import { DynamicTextElement } from "./elements/dynamicTextElement.js";

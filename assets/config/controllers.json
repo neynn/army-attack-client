@@ -1,6 +1,10 @@
 {
     "Player": {
         "id": "Player",
+        "overlays": {
+            "attack": { "set": "overlay", "animation": "grid_attack_1x1" },
+            "enable": { "set": "overlay", "animation": "grid_enabled_1x1"}
+        },
         "sprites": {
             "move": {
                 "1-1": "cursor_select_1x1"

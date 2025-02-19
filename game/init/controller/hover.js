@@ -27,20 +27,12 @@ ControllerHover.prototype.clearNodes = function() {
 }
 
 ControllerHover.prototype.updateNodes = function(gameContext, nodeList) {
-    const nodes = this.createValidNodeHashmap(gameContext, nodeList);
-
-    this.nodeMap = nodes;
-}
-
-ControllerHover.prototype.getNodeKey = function(nodeX, nodeY) {
-    return `${nodeX}-${nodeY}`;
-}
-
-ControllerHover.prototype.createValidNodeHashmap = function(gameContext, nodeList) {
     const { world } = gameContext;
-    const nodes = new Map();
 
-    for(const node of nodeList) {
+    this.nodeMap.clear();
+
+    for(let i = 0; i < nodeList.length; i++) {
+        const node = nodeList[i];
         const { positionX, positionY, state } = node;
         const nodeKey = this.getNodeKey(positionX, positionY);
 
@@ -50,14 +42,14 @@ ControllerHover.prototype.createValidNodeHashmap = function(gameContext, nodeLis
 
         const tileEntity = world.getTileEntity(positionX, positionY);
 
-        if(tileEntity) {
-            continue;
+        if(tileEntity === null) {
+            this.nodeMap.set(nodeKey, node);
         }
-
-        nodes.set(nodeKey, node);
     }
+}
 
-    return nodes;
+ControllerHover.prototype.getNodeKey = function(nodeX, nodeY) {
+    return `${nodeX}-${nodeY}`;
 }
 
 ControllerHover.prototype.isHoveringOnNode = function() {

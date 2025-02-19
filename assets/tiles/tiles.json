@@ -322,7 +322,7 @@
             "LINE_MEDIUM_TOP_LEFT": {"x":96,"y":165,"w":99,"h":96,"offset":{"x":0,"y":-76}},
             "LINE_MEDIUM_RIGHT_TOP": {"x":195,"y":165,"w":96,"h":99,"offset":{"x":45,"y":0}},
             "LINE_MEDIUM_BOTTOM_LEFT": {"x":291,"y":165,"w":99,"h":96,"offset":{"x":0,"y":52}},
-            "LINE_MEDIUM_LEFT_TOP": {"x":0,"y":264,"w":96,"h":99,"offset":{"x":-59,"y":0}},
+            "LINE_MEDIUM_LEFT_TOP": {"x":0,"y":264,"w":96,"h":99,"offset":{"x":-58,"y":0}},
             "LINE_MEDIUM_RIGHT_BOTTOM": {"x":96,"y":264,"w":96,"h":99,"offset":{"x":45,"y":0}},
             "LINE_MEDIUM_BOTTOM_RIGHT": {"x":192,"y":264,"w":99,"h":96,"offset":{"x":0,"y":52}},
             "LINE_MEDIUM_TOP_RIGHT": {"x":291,"y":264,"w":99,"h":96,"offset":{"x":0,"y":-76}}

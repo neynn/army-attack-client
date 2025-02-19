@@ -108,13 +108,6 @@ GameContext.prototype.getMouseTile = function() {
     return mouseTile;
 }
 
-GameContext.prototype.getMouseEntity = function() {
-    const { x, y } = this.getMouseTile();
-    const mouseEntity = this.world.getTileEntity(x, y);
-    
-    return mouseEntity;
-}
-
 GameContext.prototype.clearEvents = function() {
     this.client.cursor.events.unsubscribeAll(this.id);
     this.client.keyboard.events.unsubscribeAll(this.id);
