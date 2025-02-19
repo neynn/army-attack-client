@@ -21,7 +21,7 @@ CardSystem.addHealthText = function(entity, statCard) {
     const healthText = new SimpleText(CardSystem.TYPE.HEALTH_TEXT);
     
     healthText.style.setFontType("ArmyAttack Arial");
-    healthText.style.setAlignment(TextStyle.TEXT_ALIGN_RIGHT);
+    healthText.style.setAlignment(TextStyle.TEXT_ALIGNMENT.RIGHT);
 
     healthText.setPosition(95, 90);
     healthText.setText(`${healthComponent.health}/${healthComponent.maxHealth}`);
@@ -35,7 +35,7 @@ CardSystem.addDamageText = function(entity, statCard) {
     const damageText = new SimpleText(CardSystem.TYPE.DAMAGE_TEXT);
 
     damageText.style.setFontType("ArmyAttack Arial");
-    damageText.style.setAlignment(TextStyle.TEXT_ALIGN_RIGHT);
+    damageText.style.setAlignment(TextStyle.TEXT_ALIGNMENT.RIGHT);
 
     damageText.setPosition(95, 78);
     damageText.setText(`${attackComponent.damage}`);

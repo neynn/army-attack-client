@@ -73,7 +73,6 @@ TextElement.prototype.isCompleted = function() {
 TextElement.prototype.onDraw = function(context, viewportX, viewportY, localX, localY) {
     this.style.apply(context);
 
-    context.globalAlpha = this.opacity;
     context.fillText(this.revealedText, localX, localY);
 }
 

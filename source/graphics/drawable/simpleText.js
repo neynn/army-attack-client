@@ -18,7 +18,6 @@ SimpleText.prototype.onDraw = function(context, viewportX, viewportY, localX, lo
     
     this.style.apply(context);
 
-    context.globalAlpha = this.opacity;
     context.fillText(this.text, renderX, renderY);
 }
 

@@ -37,6 +37,5 @@ DynamicTextElement.prototype.onDraw = function(context, viewportX, viewportY, lo
     this.events.emit(DynamicTextElement.EVENT_REQUEST_TEXT, this);
     this.style.apply(context);
 
-    context.globalAlpha = this.opacity;
     context.fillText(this.fullText, localX, localY);
 }

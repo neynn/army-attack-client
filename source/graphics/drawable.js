@@ -86,6 +86,7 @@ Drawable.prototype.draw = function(context, viewportX, viewportY) {
         const children = reference.getChildren();
 
         context.save();
+        context.globalAlpha = this.opacity;
         reference.onDraw(context, viewportX, viewportY, positionX, positionY);
         context.restore();
 
@@ -147,13 +148,11 @@ Drawable.prototype.show = function() {
 }
 
 Drawable.prototype.setOpacity = function(opacity) {
-    if(opacity === undefined) {
-        return;
+    if(opacity !== undefined) {
+        const clampedOpacity = clampValue(opacity, 1, 0);
+
+        this.opacity = clampedOpacity;
     }
-
-    opacity = clampValue(opacity, 1, 0);
-
-    this.opacity = opacity;
 }
 
 Drawable.prototype.getOpacity = function() {
@@ -203,9 +202,7 @@ Drawable.prototype.getChildID = function(name) {
         return null;
     }
 
-    const childID = child.getID();
-
-    return childID;
+    return child.getID();
 }
 
 Drawable.prototype.hasFamily = function() {

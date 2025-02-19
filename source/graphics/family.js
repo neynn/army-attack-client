@@ -32,7 +32,9 @@ Family.prototype.addChild = function(child) {
         return;
     }
 
-    for(const element of this.children) {
+    for(let i = 0; i < this.children.length; i++) {
+        const element = this.children[i];
+
         if(element.id === child.id || element.name === child.name) {
             return;
         }
@@ -41,9 +43,11 @@ Family.prototype.addChild = function(child) {
     this.children.push(child);
 }
 
-Family.prototype.removeChild = function(child) {
+Family.prototype.removeChild = function(element) {
     for(let i = 0; i < this.children.length; i++) {
-        if(this.children[i].id === child.id) {
+        const child = this.children[i];
+
+        if(child.id === element.id) {
             this.children.splice(i, 1);
             return;
         }
@@ -77,7 +81,9 @@ Family.prototype.getReference = function() {
 }
 
 Family.prototype.hasChild = function(name) {
-    for(const child of this.children) {
+    for(let i = 0; i < this.children.length; i++) {
+        const child = this.children[i];
+
         if(child.name === name) {
             return true;
         }
@@ -87,7 +93,9 @@ Family.prototype.hasChild = function(name) {
 }
 
 Family.prototype.getChildByName = function(name) {
-    for(const child of this.children) {
+    for(let i = 0; i < this.children.length; i++) {
+        const child = this.children[i];
+
         if(child.name === name) {
             return child;
         }

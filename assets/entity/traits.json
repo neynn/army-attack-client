@@ -14,6 +14,13 @@
             "UnitSize": { "infantry": 1 } 
         }
     },
+    "HeavyInfantry": {
+        "id": "HeavyInfantry",
+        "description": "If a unit is an infantry. Also counts the amount of space needed.",
+        "components": {
+            "UnitSize": { "infantry": 2 } 
+        }
+    },
     "Artillery": {
         "id": "Artillery",
         "description": "If a unit is an artillery. Also counts the amount of space needed.",
@@ -21,11 +28,25 @@
             "UnitSize": { "artillery": 1 } 
         }
     },
+    "HeavyArtillery": {
+        "id": "HeavyArtillery",
+        "description": "If a unit is an artillery. Also counts the amount of space needed.",
+        "components": { 
+            "UnitSize": { "artillery": 2 } 
+        }
+    },
     "Armor": {
         "id": "Armor",
         "description": "If a unit is armored. Also counts the amount of space needed.",
         "components": {
             "UnitSize": { "armor": 1 } 
+        }
+    },
+    "HeavyArmor": {
+        "id": "HeavyArmor",
+        "description": "If a unit is armored. Also counts the amount of space needed.",
+        "components": {
+            "UnitSize": { "armor": 2 } 
         }
     },
     "EliteArmor": {

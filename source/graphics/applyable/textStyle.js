@@ -5,14 +5,19 @@ export const TextStyle = function() {
     this.fontSize = 10;
     this.fontType = "sans-serif";
     this.font = "10px sans-serif";
-    this.baseline = "middle";
-    this.alignment = "left"
+    this.baseline = TextStyle.TEXT_BASELINE.MIDDLE;
+    this.alignment = TextStyle.TEXT_ALIGNMENT.LEFT;
 }
 
-TextStyle.TEXT_BASELINE_MIDDLE = "middle";
-TextStyle.TEXT_ALIGN_RIGHT = "right";
-TextStyle.TEXT_ALIGN_LEFT = "left";
-TextStyle.TEXT_ALIGN_CENTER = "center";
+TextStyle.TEXT_BASELINE = {
+    MIDDLE: "middle"
+};
+
+TextStyle.TEXT_ALIGNMENT = {
+    RIGHT: "right",
+    LEFT: "left",
+    MIDDLE: "center"
+};
 
 TextStyle.prototype.setAlignment = function(alignment) {
     if(alignment === undefined) {
