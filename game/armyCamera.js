@@ -21,7 +21,7 @@ ArmyCamera.prototype = Object.create(OrthogonalCamera.prototype);
 ArmyCamera.prototype.constructor = ArmyCamera;
 
 ArmyCamera.prototype.addOverlay = function(overlayIndex, positionX, positionY, tileID) {
-    if(overlayIndex < 0 || overlayIndex >= this.overlays.length) {
+    if(overlayIndex < 0 || overlayIndex >= this.overlays.length || tileID === 0) {
         return;
     }
 
@@ -60,7 +60,7 @@ ArmyCamera.prototype.drawOverlay = function(gameContext, renderContext, worldBou
             const renderX = drawX - this.viewportX;
             const renderY = drawY - this.viewportY;
     
-            this.drawTileGraphics(tileManager, renderContext, id, renderX, renderY);
+            this.drawTileGraphics(tileManager, id, renderContext, renderX, renderY);
         }
     }
 }

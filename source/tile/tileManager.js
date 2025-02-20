@@ -9,21 +9,6 @@ export const TileManager = function() {
     this.tileMeta = {};
 }
 
-TileManager.prototype.getTileFrame = function(tileID) {
-    const { set, animation } = this.getTileMeta(tileID);
-    const tileBuffer = this.resources.getImage(set);
-
-    if(!tileBuffer) {
-        return [];
-    }
-
-    const tileType = this.getTileType(set);
-    const tileAnimation = tileType.getAnimation(animation);
-    const currentFrame = tileAnimation.getCurrentFrame();
-
-    return currentFrame;
-}
-
 TileManager.prototype.load = function(tileTypes, tileMeta) {
     if(typeof tileTypes === "object") {
         this.loadTileTypes(tileTypes);
@@ -93,10 +78,7 @@ TileManager.prototype.getTileMeta = function(tileID) {
     const tileIndex = tileID - 1;
 
     if(tileIndex < 0 || tileIndex >= this.tileMeta.values.length) {
-        return {
-            "set": null,
-            "animation": null
-        };
+        return null;
     }
 
     return this.tileMeta.values[tileIndex];
@@ -177,5 +159,5 @@ TileManager.prototype.getAutotilerID = function(autotilerID, autoIndex) {
 
     const { set, animation } = meta;
 
-    return this.getTileID(set, animation);;
+    return this.getTileID(set, animation);
 }

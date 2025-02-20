@@ -56,13 +56,13 @@ PlayerController.prototype.setState = function(state) {
     this.state = state;
 }
 
-PlayerController.prototype.resetAllAttackers = function(gameContext) {
+PlayerController.prototype.clearAttackers = function(gameContext) {
     const { renderer } = gameContext;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
 
     camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.ATTACK);
 
-    this.attackers = [];
+    this.attackers.length = 0;
 }
 
 PlayerController.prototype.resetAttacker = function(gameContext, attackerID) {
@@ -99,7 +99,7 @@ PlayerController.prototype.updateAttackers = function(gameContext) {
 
     if(!mouseEntity || !mouseEntity.isAttackable(gameContext, this.teamID)) {
         AnimationSystem.revertToIdle(gameContext, this.attackers);
-        this.resetAllAttackers(gameContext);
+        this.clearAttackers(gameContext);
         return;
     }
 
@@ -120,7 +120,13 @@ PlayerController.prototype.updateAttackers = function(gameContext) {
 
 PlayerController.prototype.getOverlayID = function(gameContext, typeID) {
     const { tileManager } = gameContext;
-    const { set, animation } = this.config.overlays[typeID];
+    const overlay = this.config.overlays[typeID];
+
+    if(!overlay) {
+        return -1;
+    }
+
+    const { set, animation } = overlay;
     const tileID = tileManager.getTileID(set, animation);
 
     return tileID;
@@ -188,21 +194,24 @@ PlayerController.prototype.onClick = function(gameContext) {
     }
 }
 
-PlayerController.prototype.onSelectEntity = function(gameContext, entity) {
+PlayerController.prototype.selectEntity = function(gameContext, entity) {
     const entityID = entity.getID();
+
+    if(!this.hasEntity(entityID)) {
+        return;
+    }
+
     const nodeList = PathfinderSystem.generateNodeList(gameContext, entity);
 
+    this.selectedEntities.add(entityID);
     this.hover.updateNodes(gameContext, nodeList);
     this.addNodeOverlays(gameContext, nodeList);
+    this.setState(PlayerController.STATE.SELECTED);
 
-    if(this.hasEntity(entityID)) {
-        this.selectedEntities.add(entityID);
-    }
-    
     AnimationSystem.playSelect(gameContext, entity);
 }
 
-PlayerController.prototype.onDeselectEntity = function(gameContext, entity) {
+PlayerController.prototype.deselectEntity = function(gameContext, entity) {
     const { renderer } = gameContext;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
 
@@ -210,6 +219,7 @@ PlayerController.prototype.onDeselectEntity = function(gameContext, entity) {
 
     this.selectedEntities.clear();
     this.hover.clearNodes();
+    this.setState(PlayerController.STATE.IDLE);
 
     AnimationSystem.stopSelect(gameContext, entity);
 }
@@ -275,8 +285,22 @@ PlayerController.prototype.updateSelectedEntity = function(gameContext) {
     }
 }
 
+PlayerController.prototype.queueAttack = function(gameContext, entity) {
+    const { world } = gameContext;
+    const { actionQueue } = world;
+    const isAttackable = entity.isAttackable(gameContext, this.teamID);
+
+    if(isAttackable) {
+        const entityID = entity.getID();
+
+        actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.ATTACK, entityID));
+    }
+
+    return isAttackable;
+}
+
 PlayerController.prototype.onSelectedClick = function(gameContext) {
-    const { client, world } = gameContext;
+    const { world, client } = gameContext;
     const { actionQueue, entityManager } = world;
     const { soundPlayer } = client;
     const selectedEntityID = this.getFirstSelected();
@@ -284,20 +308,42 @@ PlayerController.prototype.onSelectedClick = function(gameContext) {
 
     if(this.hover.isHoveringOnEntity()) {
         const hoverEntity = this.hover.getEntity(gameContext);
-        const mouseEntityID = hoverEntity.getID();
-        const isAttackable = hoverEntity.isAttackable(gameContext, this.teamID);
+        const success = this.queueAttack(gameContext, hoverEntity);
 
-        if(isAttackable) {
-            actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.ATTACK, mouseEntityID));
-        } else {
-            soundPlayer.playSound("sound_error", 0.5);
+        if(!success) {
+            soundPlayer.playSound("sound_error", 0.5); 
         }
     } else {
         actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.MOVE, selectedEntityID, this.hover.tileX, this.hover.tileY));
     }
 
-    this.onDeselectEntity(gameContext, selectedEntity);
-    this.setState(PlayerController.STATE.IDLE);
+    this.deselectEntity(gameContext, selectedEntity);
+}
+
+PlayerController.prototype.onIdleClick = function(gameContext) {
+    if(!this.hover.isHoveringOnEntity()) {
+        return;
+    }
+
+    const { world } = gameContext;
+    const { actionQueue } = world;
+    const hoverEntity = this.hover.getEntity(gameContext);
+    const entityID = hoverEntity.getID();
+    const success = this.queueAttack(gameContext, hoverEntity);
+
+    if(success || !this.hasEntity(entityID)) {
+        return;
+    }
+
+    if(hoverEntity.hasComponent(ArmyEntity.COMPONENT.CONSTRUCTION)) {
+        ConstructionSystem.onInteract(gameContext, hoverEntity);
+    }
+
+    if(!actionQueue.isRunning()) {
+        if(hoverEntity.isMoveable()) {
+            this.selectEntity(gameContext, hoverEntity);
+        }
+    }
 }
 
 PlayerController.prototype.getFirstSelected = function() {
@@ -309,39 +355,6 @@ PlayerController.prototype.getFirstSelected = function() {
     const firstSelected = iterator.next().value;
 
     return firstSelected;
-}
-
-PlayerController.prototype.onIdleClick = function(gameContext) {
-    if(!this.hover.isHoveringOnEntity()) {
-        return;
-    }
-
-    const { world } = gameContext;
-    const { actionQueue } = world;
-    const mouseEntity = this.hover.getEntity(gameContext);
-    const entityID = mouseEntity.getID();
-    const isAttackable = mouseEntity.isAttackable(gameContext, this.teamID);
-    const isControlled = this.hasEntity(entityID);
-
-    if(isAttackable) {
-        actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.ATTACK, entityID));
-        return;
-    }
-
-    if(!isControlled) {
-        return;
-    }
-
-    if(mouseEntity.hasComponent(ArmyEntity.COMPONENT.CONSTRUCTION)) {
-        ConstructionSystem.onInteract(gameContext, mouseEntity);
-    }
-
-    if(!actionQueue.isRunning()) {
-        if(mouseEntity.isMoveable()) {
-            this.onSelectEntity(gameContext, mouseEntity);
-            this.setState(PlayerController.STATE.SELECTED);
-        }
-    }
 }
 
 PlayerController.prototype.resetRangeIndicator = function(gameContext) {
@@ -360,13 +373,13 @@ PlayerController.prototype.resetRangeIndicator = function(gameContext) {
 }
 
 PlayerController.prototype.showEntityRange = function(gameContext, entity) {
-    const { renderer, tileManager, spriteManager } = gameContext;
     const attackComponent = entity.getComponent(ArmyEntity.COMPONENT.ATTACK);
 
     if(!attackComponent) {
         return;
     }
 
+    const { renderer, tileManager, spriteManager } = gameContext;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
     const { range } = attackComponent;
     const { tileX, tileY } = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
@@ -394,6 +407,8 @@ PlayerController.prototype.showEntityRange = function(gameContext, entity) {
             camera.addOverlay(ArmyCamera.OVERLAY_TYPE.RANGE, j, i, tileID);
         }
     }
+
+    //spriteManager.getSprite(spriteID).drizzle((s) => s.setOpacity(0.5)); //TODO
 }
 
 PlayerController.prototype.updateRangeIndicator = function(gameContext) {
@@ -420,7 +435,7 @@ PlayerController.prototype.update = function(gameContext) {
     switch(this.state) {
         case PlayerController.STATE.IDLE: {
             if(actionQueue.isRunning()) {
-                this.resetAllAttackers(gameContext);
+                this.clearAttackers(gameContext);
             } else {
                 this.updateAttackers(gameContext);   
             }

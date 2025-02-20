@@ -152,7 +152,7 @@ MapEditorState.prototype.loadButtonEvents = function(gameContext) {
             if(tileID === 0) {
                 camera.drawEmptyTile(context, localX, localY, MapEditorState.GRAPHICS_BUTTON_SCALE, MapEditorState.GRAPHICS_BUTTON_SCALE);
             } else {
-                camera.drawTileGraphics(tileManager, context, tileID, localX, localY, MapEditorState.GRAPHICS_BUTTON_SCALE, MapEditorState.GRAPHICS_BUTTON_SCALE);
+                camera.drawTileGraphics(tileManager, tileID, context, localX, localY, MapEditorState.GRAPHICS_BUTTON_SCALE, MapEditorState.GRAPHICS_BUTTON_SCALE);
                 context.fillStyle = "#eeeeee";
                 context.textAlign = "center";
                 context.fillText(tileName, localX + 25, localY + 25);
@@ -231,7 +231,7 @@ MapEditorState.prototype.initializeRenderEvents = function(gameContext) {
                 if(tileID === 0) {
                     camera.drawEmptyTile(context, renderX, renderY);
                 } else {
-                    camera.drawTileGraphics(tileManager, context, tileID, renderX, renderY);
+                    camera.drawTileGraphics(tileManager, tileID, context, renderX, renderY);
                     context.fillStyle = this.mapEditor.config.overlayTextColor;
                     context.textAlign = "center";
                     context.fillText(tileName, renderX + halfWidth, renderY);  

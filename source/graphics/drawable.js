@@ -42,6 +42,24 @@ Drawable.prototype.update = function(timestamp, deltaTime) {
     }
 }
 
+Drawable.prototype.drizzle = function(onCall) {
+    const referenceStack = [this];
+
+    while(referenceStack.length !== 0) {
+        const drawable = referenceStack.pop();
+        const children = drawable.getChildren();
+
+        for(let i = 0; i < children.length; i++) {
+            const child = children[i];
+            const reference = child.getReference();
+
+            referenceStack.push(reference);
+        }
+
+        onCall(drawable);
+    }
+}
+
 Drawable.prototype.debug = function(context, viewportX, viewportY) {
     const referenceStack = [this];
     const positionStack = [this.position.x, this.position.y];

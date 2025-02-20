@@ -29,6 +29,10 @@ HealthComponent.prototype.isAlive = function() {
     return this.health > 0;
 }
 
+HealthComponent.prototype.isFull = function() {
+    return this.health >= this.maxHealth;
+}
+
 HealthComponent.prototype.getRemainder = function(damage) {
     const health = clampValue(this.health - damage, this.maxHealth, 0);
 

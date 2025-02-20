@@ -5,7 +5,7 @@
         "source": "cursor_repair_4x4.png",
         "bounds": {"x":-52,"y":-92,"w":393,"h":393},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":393,"h":393,"offset":{"x":0,"y":0}},
             "2": {"x":393,"y":0,"w":393,"h":393,"offset":{"x":0,"y":0}},
@@ -55,7 +55,7 @@
         "source": "blue_commando_fire_ne.png",
         "bounds": {"x":-61,"y":-128,"w":183,"h":181},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":183,"h":181,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":183,"h":181,"offset":{"x":0,"y":0}},
@@ -100,7 +100,7 @@
         "source": "red_bulldozer_move_ne.png",
         "bounds": {"x":-85,"y":-50,"w":146,"h":134},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":146,"h":134,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":146,"h":134,"offset":{"x":0,"y":0}},
@@ -142,7 +142,7 @@
         "source": "blue_sniper_fire.png",
         "bounds": {"x":-37,"y":-43,"w":117,"h":125},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":117,"h":125,"offset":{"x":0,"y":0}},
             "2": {"x":117,"y":0,"w":117,"h":125,"offset":{"x":0,"y":0}},
@@ -197,7 +197,7 @@
         "source": "effect_explosion_small.png",
         "bounds": {"x":0,"y":0,"w":141,"h":146},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":141,"h":146,"offset":{"x":0,"y":0}},
             "2": {"x":141,"y":0,"w":141,"h":146,"offset":{"x":0,"y":0}},
@@ -225,7 +225,7 @@
         "source": "effect_explosion_sequence.png",
         "bounds": {"x":-112,"y":-96,"w":225,"h":200},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":225,"h":200,"offset":{"x":0,"y":0}},
             "2": {"x":225,"y":0,"w":225,"h":200,"offset":{"x":0,"y":0}},
@@ -270,7 +270,7 @@
         "source": "red_stormtrooper_aim_ne.png",
         "bounds": {"x":-27,"y":-55,"w":61,"h":77},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":61,"h":77,"offset":{"x":0,"y":0}},
             "2": {"x":61,"y":0,"w":61,"h":77,"offset":{"x":0,"y":0}},
@@ -312,7 +312,7 @@
         "source": "blue_battery_hit.png",
         "bounds": {"x":-52,"y":-63,"w":104,"h":123},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":104,"h":123,"offset":{"x":0,"y":0}},
             "2": {"x":104,"y":0,"w":104,"h":123,"offset":{"x":0,"y":0}},
@@ -358,7 +358,7 @@
         "source": "blue_elite_infantry_hit.png",
         "bounds": {"x":-43,"y":-50,"w":86,"h":87},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":86,"h":87,"offset":{"x":0,"y":0}},
             "2": {"x":86,"y":0,"w":86,"h":87,"offset":{"x":0,"y":0}},
@@ -403,7 +403,7 @@
         "source": "blue_commando_move.png",
         "bounds": {"x":-23,"y":-53,"w":55,"h":69},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":55,"h":69,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":55,"h":69,"offset":{"x":0,"y":0}},
@@ -445,7 +445,7 @@
         "source": "cursor_powerup_1x1.png",
         "bounds": {"x":-57,"y":-56,"w":115,"h":114},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":115,"h":114,"offset":{"x":0,"y":0}},
             "2": {"x":115,"y":0,"w":115,"h":114,"offset":{"x":0,"y":0}},
@@ -464,7 +464,7 @@
         "source": "cursor_powerup_2x2.png",
         "bounds": {"x":-57,"y":-56,"w":211,"h":210},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":211,"h":210,"offset":{"x":0,"y":0}},
             "2": {"x":211,"y":0,"w":211,"h":210,"offset":{"x":0,"y":0}},
@@ -483,7 +483,7 @@
         "source": "blue_sniper_hit.png",
         "bounds": {"x":-36,"y":-52,"w":98,"h":98},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":98,"h":98,"offset":{"x":0,"y":0}},
             "2": {"x":98,"y":0,"w":98,"h":98,"offset":{"x":0,"y":0}},
@@ -528,7 +528,7 @@
         "source": "cursor_powerup_3x1.png",
         "bounds": {"x":-59,"y":-56,"w":309,"h":114},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":309,"h":114,"offset":{"x":0,"y":0}},
             "2": {"x":309,"y":0,"w":309,"h":114,"offset":{"x":0,"y":0}},
@@ -547,7 +547,7 @@
         "source": "cursor_powerup_3x3.png",
         "bounds": {"x":-57,"y":-56,"w":307,"h":306},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":307,"h":306,"offset":{"x":0,"y":0}},
             "2": {"x":307,"y":0,"w":307,"h":306,"offset":{"x":0,"y":0}},
@@ -566,7 +566,7 @@
         "source": "cursor_powerup_6x1.png",
         "bounds": {"x":-59,"y":-56,"w":597,"h":114},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":597,"h":114,"offset":{"x":0,"y":0}},
             "2": {"x":597,"y":0,"w":597,"h":114,"offset":{"x":0,"y":0}},
@@ -585,7 +585,7 @@
         "source": "red_bulldozer_fire.png",
         "bounds": {"x":-100,"y":-194,"w":238,"h":263},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":238,"h":263,"offset":{"x":0,"y":0}},
             "2": {"x":238,"y":0,"w":238,"h":263,"offset":{"x":0,"y":0}},
@@ -657,7 +657,7 @@
         "source": "red_scout_fire_ne.png",
         "bounds": {"x":-38,"y":-65,"w":95,"h":101},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":95,"h":101,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":95,"h":101,"offset":{"x":0,"y":0}},
@@ -703,7 +703,7 @@
         "source": "blue_battletank_aim_ne.png",
         "bounds": {"x":-69,"y":-62,"w":272,"h":272},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":272,"h":272,"offset":{"x":0,"y":0}}
         }
@@ -714,7 +714,7 @@
         "source": "cursor_sell_4x4.png",
         "bounds": {"x":-64,"y":-60,"w":415,"h":408},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":415,"h":408,"offset":{"x":0,"y":0}},
             "2": {"x":415,"y":0,"w":415,"h":408,"offset":{"x":0,"y":0}},
@@ -733,7 +733,7 @@
         "source": "red_stormtrooper_fire.png",
         "bounds": {"x":-27,"y":-55,"w":94,"h":86},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":94,"h":86,"offset":{"x":0,"y":0}},
             "2": {"x":94,"y":0,"w":94,"h":86,"offset":{"x":0,"y":0}},
@@ -775,7 +775,7 @@
         "source": "blue_tank_downed.png",
         "bounds": {"x":-66,"y":-62,"w":137,"h":141},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":137,"h":141,"offset":{"x":0,"y":0}},
             "2": {"x":137,"y":0,"w":137,"h":141,"offset":{"x":0,"y":0}},
@@ -809,7 +809,7 @@
         "source": "red_artillery_idle.png",
         "bounds": {"x":-55,"y":-33,"w":111,"h":79},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":111,"h":79,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":111,"h":79,"offset":{"x":0,"y":0}},
@@ -1159,7 +1159,7 @@
         "source": "powerup_airsupport.png",
         "bounds": {"x":-69,"y":-69,"w":138,"h":138},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":138,"h":138,"offset":{"x":0,"y":0}},
             "2": {"x":138,"y":0,"w":138,"h":138,"offset":{"x":0,"y":0}},
@@ -1259,7 +1259,7 @@
         "source": "blue_tank_aim.png",
         "bounds": {"x":-67,"y":-66,"w":141,"h":131},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":141,"h":131,"offset":{"x":0,"y":0}}
         }
@@ -1270,7 +1270,7 @@
         "source": "red_supplytruck_move_ne.png",
         "bounds": {"x":-72,"y":-70,"w":128,"h":131},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":128,"h":131,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":128,"h":131,"offset":{"x":0,"y":0}},
@@ -1312,7 +1312,7 @@
         "source": "blue_elite_battletank_hit.png",
         "bounds": {"x":-48,"y":-51,"w":103,"h":89},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":103,"h":89,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":103,"h":89,"offset":{"x":0,"y":0}},
@@ -1357,7 +1357,7 @@
         "source": "powerup_shield.png",
         "bounds": {"x":-74,"y":-206,"w":157,"h":268},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":157,"h":268,"offset":{"x":0,"y":0}},
             "2": {"x":157,"y":0,"w":157,"h":268,"offset":{"x":0,"y":0}},
@@ -1467,7 +1467,7 @@
         "source": "cursor_place_3x3.png",
         "bounds": {"x":-61,"y":-61,"w":315,"h":315},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":315,"h":315,"offset":{"x":0,"y":0}},
             "2": {"x":315,"y":0,"w":315,"h":315,"offset":{"x":0,"y":0}},
@@ -1486,7 +1486,7 @@
         "source": "cursor_select_2x2.png",
         "bounds": {"x":-56,"y":-60,"w":208,"h":212},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":208,"h":212,"offset":{"x":0,"y":0}},
             "2": {"x":208,"y":0,"w":208,"h":212,"offset":{"x":0,"y":0}},
@@ -1507,7 +1507,7 @@
         "source": "blue_mortar.png",
         "bounds": {"x":-50,"y":-68,"w":103,"h":118},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":103,"h":118,"offset":{"x":0,"y":0}}
         }
@@ -1518,7 +1518,7 @@
         "source": "red_superdroid_hit.png",
         "bounds": {"x":-55,"y":-67,"w":112,"h":130},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":112,"h":130,"offset":{"x":0,"y":0}},
             "2": {"x":112,"y":0,"w":112,"h":130,"offset":{"x":0,"y":0}},
@@ -1563,7 +1563,7 @@
         "source": "cursor_move_3x2.png",
         "bounds": {"x":-293,"y":-211,"w":776,"h":517},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":776,"h":517,"offset":{"x":0,"y":0}},
             "2": {"x":776,"y":0,"w":776,"h":517,"offset":{"x":0,"y":0}},
@@ -1603,7 +1603,7 @@
         "source": "red_commando_move_ne.png",
         "bounds": {"x":-97,"y":-79,"w":189,"h":205},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":189,"h":205,"offset":{"x":0,"y":0}},
             "2": {"x":189,"y":0,"w":189,"h":205,"offset":{"x":0,"y":0}},
@@ -1688,7 +1688,7 @@
         "source": "building_destroyed_1x1.png",
         "bounds": {"x":-46,"y":-49,"w":92,"h":96},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":92,"h":96,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":92,"h":96,"offset":{"x":0,"y":0}},
@@ -1716,7 +1716,7 @@
         "source": "red_battletank_fire_ne.png",
         "bounds": {"x":-171,"y":-292,"w":463,"h":464},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":463,"h":464,"offset":{"x":0,"y":0}},
             "2": {"x":463,"y":0,"w":463,"h":464,"offset":{"x":0,"y":0}},
@@ -1761,7 +1761,7 @@
         "source": "blue_infantry_downed.png",
         "bounds": {"x":-42,"y":-55,"w":94,"h":109},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":94,"h":109,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":94,"h":109,"offset":{"x":0,"y":0}},
@@ -1807,7 +1807,7 @@
         "source": "blue_commando_hit.png",
         "bounds": {"x":-29,"y":-54,"w":63,"h":71},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":63,"h":71,"offset":{"x":0,"y":0}},
             "2": {"x":63,"y":0,"w":63,"h":71,"offset":{"x":0,"y":0}},
@@ -1852,7 +1852,7 @@
         "source": "red_snipernest_fire.png",
         "bounds": {"x":-65,"y":-52,"w":136,"h":105},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":136,"h":105,"offset":{"x":0,"y":0}},
             "2": {"x":136,"y":0,"w":136,"h":105,"offset":{"x":0,"y":0}},
@@ -1882,7 +1882,7 @@
         "source": "red_snipernest.png",
         "bounds": {"x":-52,"y":-52,"w":104,"h":105},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":104,"h":105,"offset":{"x":0,"y":0}}
         }
@@ -1893,7 +1893,7 @@
         "source": "red_battery_fire_ne.png",
         "bounds": {"x":-199,"y":-179,"w":307,"h":366},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":307,"h":366,"offset":{"x":0,"y":0}},
             "2": {"x":307,"y":0,"w":307,"h":366,"offset":{"x":0,"y":0}},
@@ -1938,7 +1938,7 @@
         "source": "red_infantry_fire.png",
         "bounds": {"x":-51,"y":-74,"w":129,"h":125},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":129,"h":125,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":129,"h":125,"offset":{"x":0,"y":0}},
@@ -1984,7 +1984,7 @@
         "source": "red_commando_move.png",
         "bounds": {"x":-96,"y":-87,"w":189,"h":203},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":189,"h":203,"offset":{"x":0,"y":0}},
             "2": {"x":189,"y":0,"w":189,"h":203,"offset":{"x":0,"y":0}},
@@ -2069,7 +2069,7 @@
         "source": "blue_factory.png",
         "bounds": {"x":-42,"y":-40,"w":270,"h":271},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":270,"h":271,"offset":{"x":0,"y":0}}
         }
@@ -2080,7 +2080,7 @@
         "source": "blue_factory_construction.png",
         "bounds": {"x":-47,"y":-50,"w":286,"h":289},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":286,"h":289,"offset":{"x":0,"y":0}},
             "2": {"x":286,"y":0,"w":286,"h":289,"offset":{"x":0,"y":0}},
@@ -2093,7 +2093,7 @@
         "source": "red_bulldozer_aim_ne.png",
         "bounds": {"x":-63,"y":-50,"w":123,"h":115},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":123,"h":115,"offset":{"x":0,"y":0}}
         }
@@ -2104,7 +2104,7 @@
         "source": "powerup_range.png",
         "bounds": {"x":-74,"y":-206,"w":157,"h":268},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":157,"h":268,"offset":{"x":0,"y":0}},
             "2": {"x":157,"y":0,"w":157,"h":268,"offset":{"x":0,"y":0}},
@@ -2214,7 +2214,7 @@
         "source": "blue_elite_battery_idle.png",
         "bounds": {"x":-52,"y":-60,"w":103,"h":119},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":103,"h":119,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":103,"h":119,"offset":{"x":0,"y":0}},
@@ -2989,7 +2989,7 @@
         "source": "blue_infantry_hit.png",
         "bounds": {"x":-53,"y":-71,"w":104,"h":121},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":104,"h":121,"offset":{"x":0,"y":0}},
             "2": {"x":104,"y":0,"w":104,"h":121,"offset":{"x":0,"y":0}},
@@ -3034,7 +3034,7 @@
         "source": "blue_supplydump.png",
         "bounds": {"x":-52,"y":-66,"w":102,"h":114},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":102,"h":114,"offset":{"x":0,"y":0}}
         }
@@ -3045,7 +3045,7 @@
         "source": "cursor_move_1x1.png",
         "bounds": {"x":-105,"y":-105,"w":211,"h":211},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":211,"h":211,"offset":{"x":0,"y":0}},
             "2": {"x":211,"y":0,"w":211,"h":211,"offset":{"x":0,"y":0}},
@@ -3070,7 +3070,7 @@
         "source": "blue_elite_commando_fire.png",
         "bounds": {"x":-34,"y":-45,"w":87,"h":85},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":87,"h":85,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":87,"h":85,"offset":{"x":0,"y":0}},
@@ -3115,7 +3115,7 @@
         "source": "blue_elite_infantry_downed.png",
         "bounds": {"x":-42,"y":-55,"w":94,"h":109},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":94,"h":109,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":94,"h":109,"offset":{"x":0,"y":0}},
@@ -3161,7 +3161,7 @@
         "source": "blue_waterplant.png",
         "bounds": {"x":-59,"y":-90,"w":219,"h":239},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":219,"h":239,"offset":{"x":0,"y":0}},
             "2": {"x":219,"y":0,"w":219,"h":239,"offset":{"x":0,"y":0}},
@@ -3231,7 +3231,7 @@
         "source": "icon_progress.png",
         "bounds": {"x":-45,"y":-45,"w":91,"h":91},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":91,"h":91,"offset":{"x":0,"y":0}},
             "2": {"x":91,"y":0,"w":91,"h":91,"offset":{"x":0,"y":0}},
@@ -3301,7 +3301,7 @@
         "source": "red_infantry_move.png",
         "bounds": {"x":-53,"y":-74,"w":105,"h":127},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":105,"h":127,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":105,"h":127,"offset":{"x":0,"y":0}},
@@ -3343,7 +3343,7 @@
         "source": "red_superdroid_fire.png",
         "bounds": {"x":-98,"y":-201,"w":334,"h":333},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":334,"h":333,"offset":{"x":0,"y":0}},
             "2": {"x":334,"y":0,"w":334,"h":333,"offset":{"x":0,"y":0}},
@@ -3388,7 +3388,7 @@
         "source": "red_battletank_aim.png",
         "bounds": {"x":-70,"y":-71,"w":136,"h":145},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":136,"h":145,"offset":{"x":0,"y":0}}
         }
@@ -3399,7 +3399,7 @@
         "source": "icon_production.png",
         "bounds": {"x":-15,"y":-15,"w":30,"h":30},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":30,"h":30,"offset":{"x":0,"y":0}},
             "2": {"x":30,"y":0,"w":30,"h":30,"offset":{"x":0,"y":0}},
@@ -3424,7 +3424,7 @@
         "source": "cursor_move_2x2.png",
         "bounds": {"x":-231,"y":-247,"w":562,"h":562},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":562,"h":562,"offset":{"x":0,"y":0}},
             "2": {"x":562,"y":0,"w":562,"h":562,"offset":{"x":0,"y":0}},
@@ -3459,7 +3459,7 @@
         "source": "cursor_place_1x1.png",
         "bounds": {"x":-61,"y":-61,"w":125,"h":124},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":125,"h":124,"offset":{"x":0,"y":0}},
             "2": {"x":125,"y":0,"w":125,"h":124,"offset":{"x":0,"y":0}},
@@ -3478,7 +3478,7 @@
         "source": "red_commando_fire.png",
         "bounds": {"x":-96,"y":-86,"w":189,"h":191},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":189,"h":191,"offset":{"x":0,"y":0}},
             "2": {"x":189,"y":0,"w":189,"h":191,"offset":{"x":0,"y":0}},
@@ -3520,7 +3520,7 @@
         "source": "blue_elite_infantry_fire.png",
         "bounds": {"x":-44,"y":-50,"w":109,"h":86},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":109,"h":86,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":109,"h":86,"offset":{"x":0,"y":0}},
@@ -3566,7 +3566,7 @@
         "source": "red_stormtrooper_fire_ne.png",
         "bounds": {"x":-27,"y":-74,"w":90,"h":96},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":90,"h":96,"offset":{"x":0,"y":0}},
             "2": {"x":90,"y":0,"w":90,"h":96,"offset":{"x":0,"y":0}},
@@ -3608,7 +3608,7 @@
         "source": "cursor_move_4x4.png",
         "bounds": {"x":-367,"y":-367,"w":1021,"h":1021},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":1021,"h":1021,"offset":{"x":0,"y":0}},
             "2": {"x":1021,"y":0,"w":1021,"h":1021,"offset":{"x":0,"y":0}},
@@ -3648,7 +3648,7 @@
         "source": "red_battery_idle.png",
         "bounds": {"x":-54,"y":-80,"w":107,"h":137},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":107,"h":137,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":107,"h":137,"offset":{"x":0,"y":0}},
@@ -4071,7 +4071,7 @@
         "source": "red_guardtower_fire.png",
         "bounds": {"x":-50,"y":-78,"w":118,"h":124},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":118,"h":124,"offset":{"x":0,"y":0}},
             "2": {"x":118,"y":0,"w":118,"h":124,"offset":{"x":0,"y":0}},
@@ -4087,7 +4087,7 @@
         "source": "red_secretpolice_fire.png",
         "bounds": {"x":-52,"y":-98,"w":292,"h":336},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":292,"h":336,"offset":{"x":0,"y":0}},
             "2": {"x":292,"y":0,"w":292,"h":336,"offset":{"x":0,"y":0}},
@@ -4117,7 +4117,7 @@
         "source": "blue_elite_commando_aim_ne.png",
         "bounds": {"x":-25,"y":-45,"w":48,"h":70},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":48,"h":70,"offset":{"x":0,"y":0}}
         }
@@ -4128,7 +4128,7 @@
         "source": "red_barricades.png",
         "bounds": {"x":-53,"y":-48,"w":108,"h":114},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":108,"h":114,"offset":{"x":0,"y":0}}
         }
@@ -4139,7 +4139,7 @@
         "source": "cursor_select_4x4.png",
         "bounds": {"x":-56,"y":-60,"w":400,"h":404},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":400,"h":404,"offset":{"x":0,"y":0}},
             "2": {"x":400,"y":0,"w":400,"h":404,"offset":{"x":0,"y":0}},
@@ -4160,7 +4160,7 @@
         "source": "cursor_sell_2x2.png",
         "bounds": {"x":-64,"y":-60,"w":224,"h":216},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":224,"h":216,"offset":{"x":0,"y":0}},
             "2": {"x":224,"y":0,"w":224,"h":216,"offset":{"x":0,"y":0}},
@@ -4179,7 +4179,7 @@
         "source": "red_commandobunker.png",
         "bounds": {"x":-48,"y":-59,"w":289,"h":301},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":289,"h":301,"offset":{"x":0,"y":0}}
         }
@@ -4190,7 +4190,7 @@
         "source": "blue_barricades.png",
         "bounds": {"x":-44,"y":-35,"w":89,"h":67},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":89,"h":67,"offset":{"x":0,"y":0}}
         }
@@ -4201,7 +4201,7 @@
         "source": "building_destroyed_3x3.png",
         "bounds": {"x":-35,"y":-47,"w":264,"h":278},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":264,"h":278,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":264,"h":278,"offset":{"x":0,"y":0}},
@@ -4229,7 +4229,7 @@
         "source": "cursor_select_3x2.png",
         "bounds": {"x":-56,"y":-60,"w":304,"h":212},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":304,"h":212,"offset":{"x":0,"y":0}},
             "2": {"x":304,"y":0,"w":304,"h":212,"offset":{"x":0,"y":0}},
@@ -4250,7 +4250,7 @@
         "source": "red_supplytruck_move.png",
         "bounds": {"x":-72,"y":-67,"w":124,"h":104},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":124,"h":104,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":124,"h":104,"offset":{"x":0,"y":0}},
@@ -4292,7 +4292,7 @@
         "source": "blue_tank_move.png",
         "bounds": {"x":-84,"y":-68,"w":159,"h":125},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":159,"h":125,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":159,"h":125,"offset":{"x":0,"y":0}},
@@ -4334,7 +4334,7 @@
         "source": "red_battlefortress.png",
         "bounds": {"x":-48,"y":-82,"w":292,"h":322},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":292,"h":322,"offset":{"x":0,"y":0}}
         }
@@ -4345,7 +4345,7 @@
         "source": "red_tank_move.png",
         "bounds": {"x":-81,"y":-50,"w":137,"h":101},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":137,"h":101,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":137,"h":101,"offset":{"x":0,"y":0}},
@@ -4387,7 +4387,7 @@
         "source": "red_battery_fire.png",
         "bounds": {"x":-118,"y":-115,"w":241,"h":172},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":241,"h":172,"offset":{"x":0,"y":0}},
             "2": {"x":241,"y":0,"w":241,"h":172,"offset":{"x":0,"y":0}},
@@ -4432,7 +4432,7 @@
         "source": "blue_mines.png",
         "bounds": {"x":-44,"y":-44,"w":89,"h":88},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":89,"h":88,"offset":{"x":0,"y":0}},
             "2": {"x":89,"y":0,"w":89,"h":88,"offset":{"x":0,"y":0}},
@@ -4469,7 +4469,7 @@
         "source": "red_commando_idle.png",
         "bounds": {"x":-96,"y":-87,"w":189,"h":200},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":189,"h":200,"offset":{"x":0,"y":0}},
             "2": {"x":189,"y":0,"w":189,"h":200,"offset":{"x":0,"y":0}},
@@ -4919,7 +4919,7 @@
         "source": "blue_elite_battery_fire_ne.png",
         "bounds": {"x":-154,"y":-166,"w":330,"h":279},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":330,"h":279,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":330,"h":279,"offset":{"x":0,"y":0}},
@@ -4964,7 +4964,7 @@
         "source": "blue_elite_infantry_fire_ne.png",
         "bounds": {"x":-44,"y":-64,"w":104,"h":100},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":104,"h":100,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":104,"h":100,"offset":{"x":0,"y":0}},
@@ -5010,7 +5010,7 @@
         "source": "blue_mortar_fire.png",
         "bounds": {"x":-52,"y":-68,"w":105,"h":118},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":105,"h":118,"offset":{"x":0,"y":0}},
             "2": {"x":105,"y":0,"w":105,"h":118,"offset":{"x":0,"y":0}},
@@ -5033,7 +5033,7 @@
         "source": "red_superdroid_idle.png",
         "bounds": {"x":-55,"y":-71,"w":112,"h":133},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":112,"h":133,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":112,"h":133,"offset":{"x":0,"y":0}},
@@ -6183,7 +6183,7 @@
         "source": "red_superdroid_move_ne.png",
         "bounds": {"x":-65,"y":-69,"w":136,"h":132},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":136,"h":132,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":136,"h":132,"offset":{"x":0,"y":0}},
@@ -6225,7 +6225,7 @@
         "source": "blue_pillbox_fire.png",
         "bounds": {"x":-45,"y":-72,"w":190,"h":218},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":190,"h":218,"offset":{"x":0,"y":0}},
             "2": {"x":190,"y":0,"w":190,"h":218,"offset":{"x":0,"y":0}},
@@ -6261,7 +6261,7 @@
         "source": "pvp_barricades.png",
         "bounds": {"x":-53,"y":-55,"w":108,"h":114},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":108,"h":114,"offset":{"x":0,"y":0}}
         }
@@ -6272,7 +6272,7 @@
         "source": "blue_elite_battery_downed.png",
         "bounds": {"x":-51,"y":-82,"w":105,"h":129},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":105,"h":129,"offset":{"x":0,"y":0}},
             "2": {"x":105,"y":0,"w":105,"h":129,"offset":{"x":0,"y":0}},
@@ -6306,7 +6306,7 @@
         "source": "blue_hq_construction.png",
         "bounds": {"x":-46,"y":-90,"w":189,"h":232},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":189,"h":232,"offset":{"x":0,"y":0}},
             "2": {"x":189,"y":0,"w":189,"h":232,"offset":{"x":0,"y":0}},
@@ -6319,7 +6319,7 @@
         "source": "red_bunker_fire.png",
         "bounds": {"x":-70,"y":-48,"w":119,"h":119},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":119,"h":119,"offset":{"x":0,"y":0}},
             "2": {"x":119,"y":0,"w":119,"h":119,"offset":{"x":0,"y":0}},
@@ -6335,7 +6335,7 @@
         "source": "blue_elite_battletank_move_ne.png",
         "bounds": {"x":-88,"y":-47,"w":145,"h":133},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":145,"h":133,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":145,"h":133,"offset":{"x":0,"y":0}},
@@ -6377,7 +6377,7 @@
         "source": "blue_airport.png",
         "bounds": {"x":-51,"y":-61,"w":395,"h":393},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":395,"h":393,"offset":{"x":0,"y":0}},
             "2": {"x":395,"y":0,"w":395,"h":393,"offset":{"x":0,"y":0}},
@@ -6448,7 +6448,7 @@
         "source": "cursor_attack_4x2.png",
         "bounds": {"x":-57,"y":-56,"w":403,"h":210},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":403,"h":210,"offset":{"x":0,"y":0}},
             "2": {"x":403,"y":0,"w":403,"h":210,"offset":{"x":0,"y":0}},
@@ -6467,7 +6467,7 @@
         "source": "cursor_attack_4x1.png",
         "bounds": {"x":-57,"y":-56,"w":403,"h":114},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":403,"h":114,"offset":{"x":0,"y":0}},
             "2": {"x":403,"y":0,"w":403,"h":114,"offset":{"x":0,"y":0}},
@@ -6486,7 +6486,7 @@
         "source": "blue_battletank_fire_ne.png",
         "bounds": {"x":-124,"y":-274,"w":413,"h":412},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":413,"h":412,"offset":{"x":0,"y":0}},
             "2": {"x":413,"y":0,"w":413,"h":412,"offset":{"x":0,"y":0}},
@@ -6531,7 +6531,7 @@
         "source": "blue_battletank_idle.png",
         "bounds": {"x":-71,"y":-61,"w":136,"h":136},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":136,"h":136,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":136,"h":136,"offset":{"x":0,"y":0}},
@@ -7916,7 +7916,7 @@
         "source": "red_scout_idle.png",
         "bounds": {"x":-37,"y":-50,"w":75,"h":86},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":75,"h":86,"offset":{"x":0,"y":0}}
         }
@@ -7927,7 +7927,7 @@
         "source": "red_superweapon.png",
         "bounds": {"x":-82,"y":-221,"w":372,"h":464},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":372,"h":464,"offset":{"x":0,"y":0}},
             "2": {"x":372,"y":0,"w":372,"h":464,"offset":{"x":0,"y":0}},
@@ -8037,7 +8037,7 @@
         "source": "blue_artillery_aim.png",
         "bounds": {"x":-57,"y":-43,"w":117,"h":97},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":117,"h":97,"offset":{"x":0,"y":0}}
         }
@@ -8048,7 +8048,7 @@
         "source": "blue_elite_battery_fire.png",
         "bounds": {"x":-193,"y":-143,"w":382,"h":253},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":382,"h":253,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":382,"h":253,"offset":{"x":0,"y":0}},
@@ -8093,7 +8093,7 @@
         "source": "blue_bootcamp_construction.png",
         "bounds": {"x":-46,"y":-51,"w":189,"h":193},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":189,"h":193,"offset":{"x":0,"y":0}},
             "2": {"x":189,"y":0,"w":189,"h":193,"offset":{"x":0,"y":0}},
@@ -8106,7 +8106,7 @@
         "source": "icon_status_finished.png",
         "bounds": {"x":-22,"y":-23,"w":47,"h":54},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":47,"h":54,"offset":{"x":0,"y":0}},
             "2": {"x":47,"y":0,"w":47,"h":54,"offset":{"x":0,"y":0}},
@@ -8266,7 +8266,7 @@
         "source": "blue_arsenal_construction.png",
         "bounds": {"x":-46,"y":-52,"w":189,"h":193},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":189,"h":193,"offset":{"x":0,"y":0}},
             "2": {"x":189,"y":0,"w":189,"h":193,"offset":{"x":0,"y":0}},
@@ -8279,7 +8279,7 @@
         "source": "blue_warehouse.png",
         "bounds": {"x":-44,"y":-52,"w":184,"h":194},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":184,"h":194,"offset":{"x":0,"y":0}}
         }
@@ -8290,7 +8290,7 @@
         "source": "blue_artillery_aim_ne.png",
         "bounds": {"x":-48,"y":-58,"w":100,"h":98},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":100,"h":98,"offset":{"x":0,"y":0}}
         }
@@ -8301,7 +8301,7 @@
         "source": "blue_elite_battletank_fire.png",
         "bounds": {"x":-104,"y":-225,"w":412,"h":412},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":412,"h":412,"offset":{"x":0,"y":0}},
             "2": {"x":412,"y":0,"w":412,"h":412,"offset":{"x":0,"y":0}},
@@ -8346,7 +8346,7 @@
         "source": "blue_elite_commando_hit.png",
         "bounds": {"x":-24,"y":-45,"w":48,"h":66},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":48,"h":66,"offset":{"x":0,"y":0}},
             "2": {"x":48,"y":0,"w":48,"h":66,"offset":{"x":0,"y":0}},
@@ -8391,7 +8391,7 @@
         "source": "blue_elite_battletank_downed.png",
         "bounds": {"x":-62,"y":-82,"w":111,"h":121},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":111,"h":121,"offset":{"x":0,"y":0}},
             "2": {"x":111,"y":0,"w":111,"h":121,"offset":{"x":0,"y":0}},
@@ -8426,7 +8426,7 @@
         "source": "red_battery_aim.png",
         "bounds": {"x":-54,"y":-80,"w":107,"h":137},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":107,"h":137,"offset":{"x":0,"y":0}}
         }
@@ -8437,7 +8437,7 @@
         "source": "icon_delay.png",
         "bounds": {"x":-45,"y":-45,"w":91,"h":91},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":91,"h":91,"offset":{"x":0,"y":0}},
             "2": {"x":91,"y":0,"w":91,"h":91,"offset":{"x":0,"y":0}},
@@ -8507,7 +8507,7 @@
         "source": "red_teslacoil_fire.png",
         "bounds": {"x":-145,"y":-153,"w":291,"h":293},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":291,"h":293,"offset":{"x":0,"y":0}},
             "2": {"x":291,"y":0,"w":291,"h":293,"offset":{"x":0,"y":0}},
@@ -8531,7 +8531,7 @@
         "source": "blue_battery_aim_ne.png",
         "bounds": {"x":-54,"y":-66,"w":114,"h":126},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":114,"h":126,"offset":{"x":0,"y":0}}
         }
@@ -8542,7 +8542,7 @@
         "source": "icon_status_lowhealth.png",
         "bounds": {"x":-18,"y":-19,"w":37,"h":37},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":37,"h":37,"offset":{"x":0,"y":0}},
             "2": {"x":37,"y":0,"w":37,"h":37,"offset":{"x":0,"y":0}},
@@ -8572,7 +8572,7 @@
         "source": "cursor_select_1x1.png",
         "bounds": {"x":-56,"y":-60,"w":112,"h":116},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":112,"h":116,"offset":{"x":0,"y":0}},
             "2": {"x":112,"y":0,"w":112,"h":116,"offset":{"x":0,"y":0}},
@@ -8593,7 +8593,7 @@
         "source": "blue_supplyfactory.png",
         "bounds": {"x":-48,"y":-240,"w":185,"h":376},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":185,"h":376,"offset":{"x":0,"y":0}},
             "2": {"x":185,"y":0,"w":185,"h":376,"offset":{"x":0,"y":0}},
@@ -8703,7 +8703,7 @@
         "source": "blue_sniper_aim_ne.png",
         "bounds": {"x":-57,"y":-42,"w":115,"h":84},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":115,"h":84,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":115,"h":84,"offset":{"x":0,"y":0}},
@@ -8722,7 +8722,7 @@
         "source": "red_scout_aim_ne.png",
         "bounds": {"x":-37,"y":-50,"w":77,"h":86},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":77,"h":86,"offset":{"x":0,"y":0}}
         }
@@ -8733,7 +8733,7 @@
         "source": "blue_elite_battery_aim.png",
         "bounds": {"x":-52,"y":-66,"w":103,"h":125},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":103,"h":125,"offset":{"x":0,"y":0}}
         }
@@ -8744,7 +8744,7 @@
         "source": "blue_elite_battletank_aim.png",
         "bounds": {"x":-48,"y":-40,"w":112,"h":79},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":112,"h":79,"offset":{"x":0,"y":0}}
         }
@@ -8755,7 +8755,7 @@
         "source": "red_superdroid_fire_ne.png",
         "bounds": {"x":-103,"y":-241,"w":337,"h":338},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":337,"h":338,"offset":{"x":0,"y":0}},
             "2": {"x":337,"y":0,"w":337,"h":338,"offset":{"x":0,"y":0}},
@@ -8800,7 +8800,7 @@
         "source": "blue_vault.png",
         "bounds": {"x":-47,"y":-45,"w":95,"h":89},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":95,"h":89,"offset":{"x":0,"y":0}}
         }
@@ -8811,7 +8811,7 @@
         "source": "cursor_attack_4x4.png",
         "bounds": {"x":-57,"y":-56,"w":403,"h":402},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":403,"h":402,"offset":{"x":0,"y":0}},
             "2": {"x":403,"y":0,"w":403,"h":402,"offset":{"x":0,"y":0}},
@@ -8830,7 +8830,7 @@
         "source": "red_infantry_aim.png",
         "bounds": {"x":-49,"y":-73,"w":107,"h":125},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":107,"h":125,"offset":{"x":0,"y":0}}
         }
@@ -8841,7 +8841,7 @@
         "source": "blue_commandoschool.png",
         "bounds": {"x":-48,"y":-66,"w":290,"h":298},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":290,"h":298,"offset":{"x":0,"y":0}}
         }
@@ -8852,7 +8852,7 @@
         "source": "blue_battletank_fire.png",
         "bounds": {"x":-104,"y":-225,"w":412,"h":412},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":412,"h":412,"offset":{"x":0,"y":0}},
             "2": {"x":412,"y":0,"w":412,"h":412,"offset":{"x":0,"y":0}},
@@ -8897,7 +8897,7 @@
         "source": "blue_motorpool.png",
         "bounds": {"x":-36,"y":-53,"w":271,"h":288},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":271,"h":288,"offset":{"x":0,"y":0}}
         }
@@ -8908,7 +8908,7 @@
         "source": "blue_sniper_fire_ne.png",
         "bounds": {"x":-57,"y":-62,"w":144,"h":104},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":144,"h":104,"offset":{"x":0,"y":0}},
             "2": {"x":144,"y":0,"w":144,"h":104,"offset":{"x":0,"y":0}},
@@ -8963,7 +8963,7 @@
         "source": "red_infantry_fire_ne.png",
         "bounds": {"x":-53,"y":-88,"w":125,"h":138},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":125,"h":138,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":125,"h":138,"offset":{"x":0,"y":0}},
@@ -9009,7 +9009,7 @@
         "source": "blue_elite_infantry_aim_ne.png",
         "bounds": {"x":-44,"y":-48,"w":86,"h":85},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":86,"h":85,"offset":{"x":0,"y":0}}
         }
@@ -9020,7 +9020,7 @@
         "source": "red_battletank_fire.png",
         "bounds": {"x":-74,"y":-71,"w":140,"h":145},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":140,"h":145,"offset":{"x":0,"y":0}},
             "2": {"x":140,"y":0,"w":140,"h":145,"offset":{"x":0,"y":0}},
@@ -9065,7 +9065,7 @@
         "source": "red_bulldozer_aim.png",
         "bounds": {"x":-59,"y":-80,"w":124,"h":139},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":124,"h":139,"offset":{"x":0,"y":0}}
         }
@@ -9076,7 +9076,7 @@
         "source": "blue_elite_battery_aim_ne.png",
         "bounds": {"x":-54,"y":-67,"w":114,"h":127},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":114,"h":127,"offset":{"x":0,"y":0}}
         }
@@ -9087,7 +9087,7 @@
         "source": "blue_commando_idle.png",
         "bounds": {"x":-36,"y":-53,"w":69,"h":70},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":69,"h":70,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":69,"h":70,"offset":{"x":0,"y":0}},
@@ -9760,7 +9760,7 @@
         "source": "cursor_attack_2x1.png",
         "bounds": {"x":-57,"y":-56,"w":211,"h":114},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":211,"h":114,"offset":{"x":0,"y":0}},
             "2": {"x":211,"y":0,"w":211,"h":114,"offset":{"x":0,"y":0}},
@@ -9779,7 +9779,7 @@
         "source": "blue_battletank_move.png",
         "bounds": {"x":-86,"y":-63,"w":148,"h":109},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":148,"h":109,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":148,"h":109,"offset":{"x":0,"y":0}},
@@ -9821,7 +9821,7 @@
         "source": "red_tank_fire.png",
         "bounds": {"x":-152,"y":-224,"w":427,"h":427},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":427,"h":427,"offset":{"x":0,"y":0}},
             "2": {"x":427,"y":0,"w":427,"h":427,"offset":{"x":0,"y":0}},
@@ -9866,7 +9866,7 @@
         "source": "blue_snipernest_fire.png",
         "bounds": {"x":-69,"y":-73,"w":139,"h":124},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":139,"h":124,"offset":{"x":0,"y":0}},
             "2": {"x":139,"y":0,"w":139,"h":124,"offset":{"x":0,"y":0}},
@@ -9896,7 +9896,7 @@
         "source": "red_propaganda.png",
         "bounds": {"x":-47,"y":-100,"w":102,"h":148},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":102,"h":148,"offset":{"x":0,"y":0}}
         }
@@ -9907,7 +9907,7 @@
         "source": "cursor_move_4x1.png",
         "bounds": {"x":-367,"y":-148,"w":1021,"h":287},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":1021,"h":287,"offset":{"x":0,"y":0}},
             "2": {"x":1021,"y":0,"w":1021,"h":287,"offset":{"x":0,"y":0}},
@@ -9947,7 +9947,7 @@
         "source": "red_scout_aim.png",
         "bounds": {"x":-33,"y":-49,"w":76,"h":86},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":76,"h":86,"offset":{"x":0,"y":0}}
         }
@@ -9958,7 +9958,7 @@
         "source": "cursor_move_4x2.png",
         "bounds": {"x":-367,"y":-204,"w":1021,"h":503},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":1021,"h":503,"offset":{"x":0,"y":0}},
             "2": {"x":1021,"y":0,"w":1021,"h":503,"offset":{"x":0,"y":0}},
@@ -9998,7 +9998,7 @@
         "source": "red_scout_move.png",
         "bounds": {"x":-37,"y":-51,"w":76,"h":91},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":76,"h":91,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":76,"h":91,"offset":{"x":0,"y":0}},
@@ -10040,7 +10040,7 @@
         "source": "red_infantry_idle.png",
         "bounds": {"x":-54,"y":-73,"w":107,"h":124},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":107,"h":124,"offset":{"x":0,"y":0}}
         }
@@ -10051,7 +10051,7 @@
         "source": "red_bulldozer_fire_ne.png",
         "bounds": {"x":-133,"y":-196,"w":278,"h":265},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":278,"h":265,"offset":{"x":0,"y":0}},
             "2": {"x":278,"y":0,"w":278,"h":265,"offset":{"x":0,"y":0}},
@@ -10123,7 +10123,7 @@
         "source": "red_superdroid_move.png",
         "bounds": {"x":-54,"y":-67,"w":111,"h":129},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":111,"h":129,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":111,"h":129,"offset":{"x":0,"y":0}},
@@ -10165,7 +10165,7 @@
         "source": "blue_commando_aim_ne.png",
         "bounds": {"x":-25,"y":-44,"w":46,"h":67},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":46,"h":67,"offset":{"x":0,"y":0}}
         }
@@ -10176,7 +10176,7 @@
         "source": "cursor_attack_2x2.png",
         "bounds": {"x":-57,"y":-56,"w":211,"h":210},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":211,"h":210,"offset":{"x":0,"y":0}},
             "2": {"x":211,"y":0,"w":211,"h":210,"offset":{"x":0,"y":0}},
@@ -10195,7 +10195,7 @@
         "source": "blue_logbunker.png",
         "bounds": {"x":-54,"y":-75,"w":116,"h":129},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":116,"h":129,"offset":{"x":0,"y":0}}
         }
@@ -10206,7 +10206,7 @@
         "source": "blue_infantry_aim.png",
         "bounds": {"x":-52,"y":-71,"w":104,"h":122},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":104,"h":122,"offset":{"x":0,"y":0}}
         }
@@ -10217,7 +10217,7 @@
         "source": "blue_logbunker_fire.png",
         "bounds": {"x":-54,"y":-75,"w":116,"h":129},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":116,"h":129,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":129,"w":116,"h":129,"offset":{"x":0,"y":0}},
@@ -10262,7 +10262,7 @@
         "source": "red_battery_hit.png",
         "bounds": {"x":-53,"y":-72,"w":107,"h":129},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":107,"h":129,"offset":{"x":0,"y":0}},
             "2": {"x":107,"y":0,"w":107,"h":129,"offset":{"x":0,"y":0}},
@@ -10308,7 +10308,7 @@
         "source": "effect_death_explosion.png",
         "bounds": {"x":-140,"y":-260,"w":280,"h":371},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":280,"h":371,"offset":{"x":0,"y":0}},
             "2": {"x":280,"y":0,"w":280,"h":371,"offset":{"x":0,"y":0}},
@@ -10353,7 +10353,7 @@
         "source": "cursor_repair_3x3.png",
         "bounds": {"x":-52,"y":-52,"w":297,"h":297},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":297,"h":297,"offset":{"x":0,"y":0}},
             "2": {"x":297,"y":0,"w":297,"h":297,"offset":{"x":0,"y":0}},
@@ -10403,7 +10403,7 @@
         "source": "blue_artillery_idle.png",
         "bounds": {"x":-59,"y":-43,"w":114,"h":97},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":114,"h":97,"offset":{"x":0,"y":0}}
         }
@@ -10414,7 +10414,7 @@
         "source": "blue_motorpool_construction.png",
         "bounds": {"x":-47,"y":-50,"w":286,"h":289},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":286,"h":289,"offset":{"x":0,"y":0}},
             "2": {"x":286,"y":0,"w":286,"h":289,"offset":{"x":0,"y":0}},
@@ -10427,7 +10427,7 @@
         "source": "cursor_repair_1x1.png",
         "bounds": {"x":-54,"y":-54,"w":109,"h":109},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":109,"h":109,"offset":{"x":0,"y":0}},
             "2": {"x":109,"y":0,"w":109,"h":109,"offset":{"x":0,"y":0}},
@@ -10477,7 +10477,7 @@
         "source": "red_battletank_move.png",
         "bounds": {"x":-89,"y":-75,"w":150,"h":123},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":150,"h":123,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":150,"h":123,"offset":{"x":0,"y":0}},
@@ -10519,7 +10519,7 @@
         "source": "red_superdroid_aim_ne.png",
         "bounds": {"x":-65,"y":-67,"w":136,"h":130},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":136,"h":130,"offset":{"x":0,"y":0}}
         }
@@ -10530,7 +10530,7 @@
         "source": "blue_elite_commando_idle.png",
         "bounds": {"x":-42,"y":-61,"w":84,"h":96},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":84,"h":96,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":84,"h":96,"offset":{"x":0,"y":0}},
@@ -11203,7 +11203,7 @@
         "source": "red_tank_hit.png",
         "bounds": {"x":-63,"y":-55,"w":127,"h":121},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":127,"h":121,"offset":{"x":0,"y":0}},
             "2": {"x":127,"y":0,"w":127,"h":121,"offset":{"x":0,"y":0}},
@@ -11249,7 +11249,7 @@
         "source": "red_stormtrooper_move_ne.png",
         "bounds": {"x":-27,"y":-55,"w":59,"h":84},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":59,"h":84,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":59,"h":84,"offset":{"x":0,"y":0}},
@@ -11291,7 +11291,7 @@
         "source": "blue_artillery_move.png",
         "bounds": {"x":-57,"y":-46,"w":114,"h":100},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":114,"h":100,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":114,"h":100,"offset":{"x":0,"y":0}},
@@ -11333,7 +11333,7 @@
         "source": "powerup_paratrooper.png",
         "bounds": {"x":-69,"y":-69,"w":138,"h":138},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":138,"h":138,"offset":{"x":0,"y":0}},
             "2": {"x":138,"y":0,"w":138,"h":138,"offset":{"x":0,"y":0}},
@@ -11433,7 +11433,7 @@
         "source": "red_artillery_move_ne.png",
         "bounds": {"x":-50,"y":-59,"w":97,"h":99},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":97,"h":99,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":97,"h":99,"offset":{"x":0,"y":0}},
@@ -11475,7 +11475,7 @@
         "source": "red_stormtrooper_hit.png",
         "bounds": {"x":-28,"y":-54,"w":59,"h":72},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":59,"h":72,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":72,"w":59,"h":72,"offset":{"x":0,"y":0}},
@@ -11520,7 +11520,7 @@
         "source": "blue_elite_infantry_move_ne.png",
         "bounds": {"x":-44,"y":-52,"w":87,"h":94},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":87,"h":94,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":87,"h":94,"offset":{"x":0,"y":0}},
@@ -11562,7 +11562,7 @@
         "source": "blue_commandoschool_construction.png",
         "bounds": {"x":-47,"y":-50,"w":286,"h":289},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":286,"h":289,"offset":{"x":0,"y":0}},
             "2": {"x":286,"y":0,"w":286,"h":289,"offset":{"x":0,"y":0}},
@@ -11575,7 +11575,7 @@
         "source": "blue_commando_move_ne.png",
         "bounds": {"x":-29,"y":-45,"w":56,"h":71},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":1,"y":1,"w":56,"h":71,"offset":{"x":0,"y":0}},
             "2": {"x":1,"y":1,"w":56,"h":71,"offset":{"x":0,"y":0}},
@@ -11617,7 +11617,7 @@
         "source": "blue_commando_downed.png",
         "bounds": {"x":-50,"y":-63,"w":96,"h":110},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":1,"y":1,"w":96,"h":110,"offset":{"x":0,"y":0}},
             "2": {"x":1,"y":1,"w":96,"h":110,"offset":{"x":0,"y":0}},
@@ -11663,7 +11663,7 @@
         "source": "blue_battletank_hit.png",
         "bounds": {"x":-55,"y":-59,"w":119,"h":106},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":119,"h":106,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":119,"h":106,"offset":{"x":0,"y":0}},
@@ -11709,7 +11709,7 @@
         "source": "red_bulldozer_move.png",
         "bounds": {"x":-80,"y":-84,"w":148,"h":134},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":148,"h":134,"offset":{"x":0,"y":0}},
             "2": {"x":148,"y":0,"w":148,"h":134,"offset":{"x":0,"y":0}},
@@ -11751,7 +11751,7 @@
         "source": "red_supplytruck_idle.png",
         "bounds": {"x":-61,"y":-61,"w":120,"h":118},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":120,"h":118,"offset":{"x":0,"y":0}}
         }
@@ -11762,7 +11762,7 @@
         "source": "red_commandobunker_fire.png",
         "bounds": {"x":-49,"y":-59,"w":291,"h":305},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":291,"h":305,"offset":{"x":0,"y":0}},
             "2": {"x":291,"y":0,"w":291,"h":305,"offset":{"x":0,"y":0}},
@@ -11792,7 +11792,7 @@
         "source": "red_battletank_idle.png",
         "bounds": {"x":-70,"y":-73,"w":136,"h":147},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":136,"h":147,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":136,"h":147,"offset":{"x":0,"y":0}},
@@ -12932,7 +12932,7 @@
         "source": "blue_battery_move_ne.png",
         "bounds": {"x":-82,"y":-67,"w":141,"h":145},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":1,"y":1,"w":141,"h":145,"offset":{"x":0,"y":0}},
             "2": {"x":1,"y":1,"w":141,"h":145,"offset":{"x":0,"y":0}},
@@ -12974,7 +12974,7 @@
         "source": "blue_elite_battery_move_ne.png",
         "bounds": {"x":-84,"y":-67,"w":144,"h":149},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":1,"y":1,"w":144,"h":149,"offset":{"x":0,"y":0}},
             "2": {"x":1,"y":1,"w":144,"h":149,"offset":{"x":0,"y":0}},
@@ -13016,7 +13016,7 @@
         "source": "red_artillery_fire_ne.png",
         "bounds": {"x":-77,"y":-226,"w":296,"h":297},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":296,"h":297,"offset":{"x":0,"y":0}},
             "2": {"x":296,"y":0,"w":296,"h":297,"offset":{"x":0,"y":0}},
@@ -13061,7 +13061,7 @@
         "source": "blue_sniper_aim.png",
         "bounds": {"x":-35,"y":-43,"w":89,"h":108},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":89,"h":108,"offset":{"x":0,"y":0}},
             "2": {"x":89,"y":0,"w":89,"h":108,"offset":{"x":0,"y":0}},
@@ -13080,7 +13080,7 @@
         "source": "red_stormtrooper_idle.png",
         "bounds": {"x":-27,"y":-54,"w":61,"h":72},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":61,"h":72,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":61,"h":72,"offset":{"x":0,"y":0}},
@@ -13370,7 +13370,7 @@
         "source": "red_superdroid_aim.png",
         "bounds": {"x":-55,"y":-71,"w":113,"h":134},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":113,"h":134,"offset":{"x":0,"y":0}}
         }
@@ -13381,7 +13381,7 @@
         "source": "red_vileboard.png",
         "bounds": {"x":-48,"y":-49,"w":96,"h":97},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":96,"h":97,"offset":{"x":0,"y":0}}
         }
@@ -13392,7 +13392,7 @@
         "source": "blue_battletank_move_ne.png",
         "bounds": {"x":-87,"y":-47,"w":145,"h":137},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":1,"y":1,"w":145,"h":137,"offset":{"x":0,"y":0}},
             "2": {"x":1,"y":1,"w":145,"h":137,"offset":{"x":0,"y":0}},
@@ -13434,7 +13434,7 @@
         "source": "blue_researchlab.png",
         "bounds": {"x":-49,"y":-95,"w":299,"h":321},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":299,"h":321,"offset":{"x":0,"y":0}},
             "2": {"x":299,"y":0,"w":299,"h":321,"offset":{"x":0,"y":0}},
@@ -14264,7 +14264,7 @@
         "source": "icon_unfinished.png",
         "bounds": {"x":-15,"y":-15,"w":30,"h":30},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":30,"h":30,"offset":{"x":0,"y":0}},
             "2": {"x":30,"y":0,"w":30,"h":30,"offset":{"x":0,"y":0}},
@@ -14515,7 +14515,7 @@
         "source": "blue_elite_commando_fire_ne.png",
         "bounds": {"x":-25,"y":-47,"w":73,"h":72},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":1,"y":1,"w":73,"h":72,"offset":{"x":0,"y":0}},
             "2": {"x":1,"y":1,"w":73,"h":72,"offset":{"x":0,"y":0}},
@@ -14560,7 +14560,7 @@
         "source": "blue_artillery_hit.png",
         "bounds": {"x":-59,"y":-43,"w":118,"h":97},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":118,"h":97,"offset":{"x":0,"y":0}},
             "2": {"x":118,"y":0,"w":118,"h":97,"offset":{"x":0,"y":0}},
@@ -14606,7 +14606,7 @@
         "source": "red_infantry_aim_ne.png",
         "bounds": {"x":-53,"y":-74,"w":107,"h":125},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":107,"h":125,"offset":{"x":0,"y":0}}
         }
@@ -14617,7 +14617,7 @@
         "source": "cursor_sell_3x3.png",
         "bounds": {"x":-64,"y":-60,"w":320,"h":312},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":320,"h":312,"offset":{"x":0,"y":0}},
             "2": {"x":320,"y":0,"w":320,"h":312,"offset":{"x":0,"y":0}},
@@ -14636,7 +14636,7 @@
         "source": "blue_elite_commando_move.png",
         "bounds": {"x":-22,"y":-46,"w":45,"h":65},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":1,"y":1,"w":45,"h":65,"offset":{"x":0,"y":0}},
             "2": {"x":1,"y":1,"w":45,"h":65,"offset":{"x":0,"y":0}},
@@ -14678,7 +14678,7 @@
         "source": "red_fueldump.png",
         "bounds": {"x":-48,"y":-61,"w":96,"h":109},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":96,"h":109,"offset":{"x":0,"y":0}}
         }
@@ -14689,7 +14689,7 @@
         "source": "cursor_sell_1x1.png",
         "bounds": {"x":-63,"y":-60,"w":127,"h":120},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":127,"h":120,"offset":{"x":0,"y":0}},
             "2": {"x":127,"y":0,"w":127,"h":120,"offset":{"x":0,"y":0}},
@@ -14708,7 +14708,7 @@
         "source": "cursor_move_2x1.png",
         "bounds": {"x":-231,"y":-147,"w":562,"h":281},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":562,"h":281,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":281,"w":562,"h":281,"offset":{"x":0,"y":0}},
@@ -14743,7 +14743,7 @@
         "source": "blue_infantry_fire.png",
         "bounds": {"x":-52,"y":-72,"w":128,"h":123},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":128,"h":123,"offset":{"x":0,"y":0}},
             "2": {"x":128,"y":0,"w":128,"h":123,"offset":{"x":0,"y":0}},
@@ -14789,7 +14789,7 @@
         "source": "cursor_place_4x4.png",
         "bounds": {"x":-61,"y":-61,"w":411,"h":411},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":411,"h":411,"offset":{"x":0,"y":0}},
             "2": {"x":411,"y":0,"w":411,"h":411,"offset":{"x":0,"y":0}},
@@ -14808,7 +14808,7 @@
         "source": "blue_sniper_idle.png",
         "bounds": {"x":-39,"y":-57,"w":105,"h":105},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":105,"h":105,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":105,"h":105,"offset":{"x":0,"y":0}},
@@ -15493,7 +15493,7 @@
         "source": "red_stormtrooper_move.png",
         "bounds": {"x":-25,"y":-57,"w":59,"h":77},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":59,"h":77,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":77,"w":59,"h":77,"offset":{"x":0,"y":0}},
@@ -15535,7 +15535,7 @@
         "source": "cursor_place_2x2.png",
         "bounds": {"x":-63,"y":-63,"w":222,"h":222},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":222,"h":222,"offset":{"x":0,"y":0}},
             "2": {"x":222,"y":0,"w":222,"h":222,"offset":{"x":0,"y":0}},
@@ -15554,7 +15554,7 @@
         "source": "red_bulldozer_idle.png",
         "bounds": {"x":-60,"y":-86,"w":126,"h":145},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":126,"h":145,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":126,"h":145,"offset":{"x":0,"y":0}},
@@ -16694,7 +16694,7 @@
         "source": "red_tank_fire_ne.png",
         "bounds": {"x":-157,"y":-269,"w":427,"h":427},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":427,"h":427,"offset":{"x":0,"y":0}},
             "2": {"x":427,"y":0,"w":427,"h":427,"offset":{"x":0,"y":0}},
@@ -16739,7 +16739,7 @@
         "source": "blue_sniper_move.png",
         "bounds": {"x":-37,"y":-54,"w":102,"h":94},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":102,"h":94,"offset":{"x":0,"y":0}},
             "2": {"x":102,"y":0,"w":102,"h":94,"offset":{"x":0,"y":0}},
@@ -16781,7 +16781,7 @@
         "source": "building_destroyed_2x2.png",
         "bounds": {"x":-47,"y":-44,"w":191,"h":186},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":191,"h":186,"offset":{"x":0,"y":0}},
             "2": {"x":191,"y":0,"w":191,"h":186,"offset":{"x":0,"y":0}},
@@ -16809,7 +16809,7 @@
         "source": "effect_redeploy.png",
         "bounds": {"x":-357,"y":-206,"w":574,"h":508},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":574,"h":508,"offset":{"x":0,"y":0}},
             "2": {"x":574,"y":0,"w":574,"h":508,"offset":{"x":0,"y":0}},
@@ -16914,7 +16914,7 @@
         "source": "building_destroyed_4x4.png",
         "bounds": {"x":-44,"y":-61,"w":377,"h":394},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":377,"h":394,"offset":{"x":0,"y":0}},
             "2": {"x":377,"y":0,"w":377,"h":394,"offset":{"x":0,"y":0}},
@@ -16943,7 +16943,7 @@
         "source": "blue_elite_battletank_move.png",
         "bounds": {"x":-89,"y":-57,"w":139,"h":99},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":1,"y":1,"w":139,"h":99,"offset":{"x":0,"y":0}},
             "2": {"x":1,"y":1,"w":139,"h":99,"offset":{"x":0,"y":0}},
@@ -16985,7 +16985,7 @@
         "source": "blue_elite_commando_downed.png",
         "bounds": {"x":-55,"y":-89,"w":101,"h":136},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":1,"y":1,"w":101,"h":136,"offset":{"x":0,"y":0}},
             "2": {"x":1,"y":1,"w":101,"h":136,"offset":{"x":0,"y":0}},
@@ -17031,7 +17031,7 @@
         "source": "blue_tank_fire_ne.png",
         "bounds": {"x":-73,"y":-76,"w":137,"h":141},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":137,"h":141,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":137,"h":141,"offset":{"x":0,"y":0}},
@@ -17075,7 +17075,7 @@
         "source": "cursor_move_3x3.png",
         "bounds": {"x":-293,"y":-292,"w":776,"h":776},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":776,"h":776,"offset":{"x":0,"y":0}},
             "2": {"x":776,"y":0,"w":776,"h":776,"offset":{"x":0,"y":0}},
@@ -17115,7 +17115,7 @@
         "source": "red_artillery_fire.png",
         "bounds": {"x":-60,"y":-151,"w":245,"h":247},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":245,"h":247,"offset":{"x":0,"y":0}},
             "2": {"x":245,"y":0,"w":245,"h":247,"offset":{"x":0,"y":0}},
@@ -17160,7 +17160,7 @@
         "source": "red_bunker.png",
         "bounds": {"x":-49,"y":-48,"w":98,"h":96},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":98,"h":96,"offset":{"x":0,"y":0}}
         }
@@ -17171,7 +17171,7 @@
         "source": "blue_tank_fire.png",
         "bounds": {"x":-68,"y":-66,"w":142,"h":132},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":142,"h":132,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":142,"h":132,"offset":{"x":0,"y":0}},
@@ -17215,7 +17215,7 @@
         "source": "red_factory.png",
         "bounds": {"x":-48,"y":-273,"w":288,"h":417},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":288,"h":417,"offset":{"x":0,"y":0}},
             "2": {"x":288,"y":0,"w":288,"h":417,"offset":{"x":0,"y":0}},
@@ -17345,7 +17345,7 @@
         "source": "red_battery_aim_ne.png",
         "bounds": {"x":-51,"y":-79,"w":109,"h":140},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":109,"h":140,"offset":{"x":0,"y":0}}
         }
@@ -17356,7 +17356,7 @@
         "source": "red_artillery_aim_ne.png",
         "bounds": {"x":-51,"y":-59,"w":96,"h":101},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":96,"h":101,"offset":{"x":0,"y":0}}
         }
@@ -17367,7 +17367,7 @@
         "source": "blue_commando_aim.png",
         "bounds": {"x":-21,"y":-47,"w":51,"h":65},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":1,"y":1,"w":51,"h":65,"offset":{"x":0,"y":0}}
         }
@@ -17378,7 +17378,7 @@
         "source": "icon_speed_up.png",
         "bounds": {"x":-22,"y":-22,"w":44,"h":44},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":44,"h":44,"offset":{"x":0,"y":0}},
             "2": {"x":44,"y":0,"w":44,"h":44,"offset":{"x":0,"y":0}},
@@ -17443,7 +17443,7 @@
         "source": "red_commando_aim.png",
         "bounds": {"x":-96,"y":-87,"w":189,"h":203},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":189,"h":203,"offset":{"x":0,"y":0}},
             "2": {"x":189,"y":0,"w":189,"h":203,"offset":{"x":0,"y":0}},
@@ -17528,7 +17528,7 @@
         "source": "blue_commando_fire.png",
         "bounds": {"x":-39,"y":-69,"w":148,"h":138},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":148,"h":138,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":148,"h":138,"offset":{"x":0,"y":0}},
@@ -17573,7 +17573,7 @@
         "source": "icon_finishing_enemy.png",
         "bounds": {"x":-18,"y":-18,"w":36,"h":38},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":36,"h":38,"offset":{"x":0,"y":0}},
             "2": {"x":36,"y":0,"w":36,"h":38,"offset":{"x":0,"y":0}},
@@ -17602,7 +17602,7 @@
         "source": "powerup_damage.png",
         "bounds": {"x":-74,"y":-206,"w":157,"h":268},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":157,"h":268,"offset":{"x":0,"y":0}},
             "2": {"x":157,"y":0,"w":157,"h":268,"offset":{"x":0,"y":0}},
@@ -17712,7 +17712,7 @@
         "source": "blue_elite_battletank_aim_ne.png",
         "bounds": {"x":-47,"y":-47,"w":93,"h":86},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":93,"h":86,"offset":{"x":0,"y":0}}
         }
@@ -17723,7 +17723,7 @@
         "source": "red_battlefortress_fire.png",
         "bounds": {"x":-48,"y":-82,"w":308,"h":322},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":308,"h":322,"offset":{"x":0,"y":0}},
             "2": {"x":308,"y":0,"w":308,"h":322,"offset":{"x":0,"y":0}},
@@ -17763,7 +17763,7 @@
         "source": "red_scout_fire.png",
         "bounds": {"x":-35,"y":-50,"w":98,"h":86},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":98,"h":86,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":98,"h":86,"offset":{"x":0,"y":0}},
@@ -17809,7 +17809,7 @@
         "source": "cursor_select_4x1.png",
         "bounds": {"x":-56,"y":-60,"w":400,"h":116},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":400,"h":116,"offset":{"x":0,"y":0}},
             "2": {"x":400,"y":0,"w":400,"h":116,"offset":{"x":0,"y":0}},
@@ -17830,7 +17830,7 @@
         "source": "cursor_select_4x2.png",
         "bounds": {"x":-56,"y":-60,"w":400,"h":212},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":400,"h":212,"offset":{"x":0,"y":0}},
             "2": {"x":400,"y":0,"w":400,"h":212,"offset":{"x":0,"y":0}},
@@ -17851,7 +17851,7 @@
         "source": "cursor_select_2x1.png",
         "bounds": {"x":-56,"y":-60,"w":208,"h":116},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":208,"h":116,"offset":{"x":0,"y":0}},
             "2": {"x":208,"y":0,"w":208,"h":116,"offset":{"x":0,"y":0}},
@@ -17872,7 +17872,7 @@
         "source": "blue_ammobunker.png",
         "bounds": {"x":-50,"y":-72,"w":219,"h":215},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":219,"h":215,"offset":{"x":0,"y":0}}
         }
@@ -17883,7 +17883,7 @@
         "source": "blue_snipernest.png",
         "bounds": {"x":-52,"y":-73,"w":104,"h":124},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":104,"h":124,"offset":{"x":0,"y":0}}
         }
@@ -17894,7 +17894,7 @@
         "source": "red_tank_aim.png",
         "bounds": {"x":-58,"y":-49,"w":114,"h":119},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":114,"h":119,"offset":{"x":0,"y":0}}
         }
@@ -17905,7 +17905,7 @@
         "source": "cursor_select_3x3.png",
         "bounds": {"x":-56,"y":-60,"w":304,"h":308},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":304,"h":308,"offset":{"x":0,"y":0}},
             "2": {"x":304,"y":0,"w":304,"h":308,"offset":{"x":0,"y":0}},
@@ -17926,7 +17926,7 @@
         "source": "red_commando_fire_ne.png",
         "bounds": {"x":-97,"y":-102,"w":189,"h":216},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":189,"h":216,"offset":{"x":0,"y":0}},
             "2": {"x":189,"y":0,"w":189,"h":216,"offset":{"x":0,"y":0}},
@@ -17968,7 +17968,7 @@
         "source": "blue_tank_idle.png",
         "bounds": {"x":-67,"y":-66,"w":141,"h":131},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":141,"h":131,"offset":{"x":0,"y":0}}
         }
@@ -17979,7 +17979,7 @@
         "source": "blue_elite_battletank_fire_ne.png",
         "bounds": {"x":-126,"y":-282,"w":412,"h":412},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":1,"y":1,"w":412,"h":412,"offset":{"x":0,"y":0}},
             "2": {"x":415,"y":1,"w":412,"h":412,"offset":{"x":0,"y":0}},
@@ -18024,7 +18024,7 @@
         "source": "blue_artillery_fire_ne.png",
         "bounds": {"x":-67,"y":-212,"w":280,"h":281},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":280,"h":281,"offset":{"x":0,"y":0}},
             "2": {"x":280,"y":0,"w":280,"h":281,"offset":{"x":0,"y":0}},
@@ -18069,7 +18069,7 @@
         "source": "red_battery_move.png",
         "bounds": {"x":-76,"y":-67,"w":129,"h":124},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":129,"h":124,"offset":{"x":0,"y":0}},
             "2": {"x":129,"y":0,"w":129,"h":124,"offset":{"x":0,"y":0}},
@@ -18111,7 +18111,7 @@
         "source": "blue_battletank_downed.png",
         "bounds": {"x":-64,"y":-82,"w":119,"h":133},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":1,"y":1,"w":119,"h":133,"offset":{"x":0,"y":0}},
             "2": {"x":122,"y":1,"w":119,"h":133,"offset":{"x":0,"y":0}},
@@ -18145,7 +18145,7 @@
         "source": "blue_pillbox.png",
         "bounds": {"x":-45,"y":-56,"w":186,"h":202},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":186,"h":202,"offset":{"x":0,"y":0}}
         }
@@ -18156,7 +18156,7 @@
         "source": "red_tank_idle.png",
         "bounds": {"x":-58,"y":-50,"w":114,"h":120},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":114,"h":120,"offset":{"x":0,"y":0}}
         }
@@ -18167,7 +18167,7 @@
         "source": "red_artillery_aim.png",
         "bounds": {"x":-55,"y":-33,"w":111,"h":79},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":111,"h":79,"offset":{"x":0,"y":0}}
         }
@@ -18178,7 +18178,7 @@
         "source": "red_commando_hit.png",
         "bounds": {"x":-96,"y":-90,"w":189,"h":200},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":189,"h":200,"offset":{"x":0,"y":0}},
             "2": {"x":189,"y":0,"w":189,"h":200,"offset":{"x":0,"y":0}},
@@ -18223,7 +18223,7 @@
         "source": "red_supplytruck_hit.png",
         "bounds": {"x":-60,"y":-65,"w":120,"h":122},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":120,"h":122,"offset":{"x":0,"y":0}},
             "2": {"x":120,"y":0,"w":120,"h":122,"offset":{"x":0,"y":0}},
@@ -18269,7 +18269,7 @@
         "source": "red_landingzone.png",
         "bounds": {"x":-50,"y":-70,"w":100,"h":118},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":100,"h":118,"offset":{"x":0,"y":0}},
             "2": {"x":100,"y":0,"w":100,"h":118,"offset":{"x":0,"y":0}},
@@ -18344,7 +18344,7 @@
         "source": "blue_hq.png",
         "bounds": {"x":-50,"y":-91,"w":199,"h":239},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":199,"h":239,"offset":{"x":0,"y":0}}
         }
@@ -18355,7 +18355,7 @@
         "source": "blue_infantry_aim_ne.png",
         "bounds": {"x":-53,"y":-70,"w":104,"h":119},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":104,"h":119,"offset":{"x":0,"y":0}}
         }
@@ -18366,7 +18366,7 @@
         "source": "blue_elite_battery_hit.png",
         "bounds": {"x":-52,"y":-63,"w":105,"h":124},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":105,"h":124,"offset":{"x":0,"y":0}},
             "2": {"x":105,"y":0,"w":105,"h":124,"offset":{"x":0,"y":0}},
@@ -18412,7 +18412,7 @@
         "source": "red_teslacoil.png",
         "bounds": {"x":-48,"y":-74,"w":96,"h":122},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":96,"h":122,"offset":{"x":0,"y":0}}
         }
@@ -18423,7 +18423,7 @@
         "source": "blue_elite_battletank_idle.png",
         "bounds": {"x":-48,"y":-50,"w":112,"h":89},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":112,"h":89,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":112,"h":89,"offset":{"x":0,"y":0}},
@@ -19933,7 +19933,7 @@
         "source": "blue_infantry_move.png",
         "bounds": {"x":-55,"y":-72,"w":106,"h":128},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":106,"h":128,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":106,"h":128,"offset":{"x":0,"y":0}},
@@ -19975,7 +19975,7 @@
         "source": "blue_artillery_downed.png",
         "bounds": {"x":-57,"y":-82,"w":113,"h":136},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":113,"h":136,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":136,"w":113,"h":136,"offset":{"x":0,"y":0}},
@@ -20009,7 +20009,7 @@
         "source": "blue_artillery_fire.png",
         "bounds": {"x":-85,"y":-202,"w":325,"h":327},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":325,"h":327,"offset":{"x":0,"y":0}},
             "2": {"x":325,"y":0,"w":325,"h":327,"offset":{"x":0,"y":0}},
@@ -20054,7 +20054,7 @@
         "source": "red_teslacoil_charged.png",
         "bounds": {"x":-48,"y":-74,"w":96,"h":122},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":96,"h":122,"offset":{"x":0,"y":0}},
             "2": {"x":96,"y":0,"w":96,"h":122,"offset":{"x":0,"y":0}},
@@ -20072,7 +20072,7 @@
         "source": "icon_finished_enemy.png",
         "bounds": {"x":-21,"y":-21,"w":44,"h":45},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":44,"h":45,"offset":{"x":0,"y":0}},
             "2": {"x":44,"y":0,"w":44,"h":45,"offset":{"x":0,"y":0}},
@@ -20102,7 +20102,7 @@
         "source": "blue_arsenal.png",
         "bounds": {"x":-48,"y":-52,"w":192,"h":197},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":192,"h":197,"offset":{"x":0,"y":0}}
         }
@@ -20113,7 +20113,7 @@
         "source": "red_scout_move_ne.png",
         "bounds": {"x":-40,"y":-51,"w":78,"h":96},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":78,"h":96,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":78,"h":96,"offset":{"x":0,"y":0}},
@@ -20155,7 +20155,7 @@
         "source": "icon_urgent_enemy.png",
         "bounds": {"x":-15,"y":-35,"w":31,"h":53},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":31,"h":53,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":53,"w":31,"h":53,"offset":{"x":0,"y":0}},
@@ -20190,7 +20190,7 @@
         "source": "red_battletank_move_ne.png",
         "bounds": {"x":-86,"y":-67,"w":153,"h":151},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":153,"h":151,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":153,"h":151,"offset":{"x":0,"y":0}},
@@ -20232,7 +20232,7 @@
         "source": "blue_battery_move.png",
         "bounds": {"x":-77,"y":-61,"w":130,"h":122},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":1,"y":1,"w":130,"h":122,"offset":{"x":0,"y":0}},
             "2": {"x":1,"y":1,"w":130,"h":122,"offset":{"x":0,"y":0}},
@@ -20274,7 +20274,7 @@
         "source": "blue_bootcamp.png",
         "bounds": {"x":-44,"y":-58,"w":186,"h":198},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":186,"h":198,"offset":{"x":0,"y":0}}
         }
@@ -20285,7 +20285,7 @@
         "source": "cursor_disabled.png",
         "bounds": {"x":-37,"y":-37,"w":75,"h":75},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":75,"h":75,"offset":{"x":0,"y":0}}
         }
@@ -20296,7 +20296,7 @@
         "source": "blue_rocketsite.png",
         "bounds": {"x":-37,"y":-43,"w":264,"h":269},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":264,"h":269,"offset":{"x":0,"y":0}}
         }
@@ -20307,7 +20307,7 @@
         "source": "blue_guardtower_fire.png",
         "bounds": {"x":-63,"y":-77,"w":128,"h":129},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":128,"h":129,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":129,"w":128,"h":129,"offset":{"x":0,"y":0}},
@@ -20347,7 +20347,7 @@
         "source": "blue_elite_commando_aim.png",
         "bounds": {"x":-24,"y":-46,"w":46,"h":64},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":1,"y":1,"w":46,"h":64,"offset":{"x":0,"y":0}}
         }
@@ -20358,7 +20358,7 @@
         "source": "blue_elite_commando_move_ne.png",
         "bounds": {"x":-24,"y":-47,"w":43,"h":73},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":43,"h":73,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":43,"h":73,"offset":{"x":0,"y":0}},
@@ -20400,7 +20400,7 @@
         "source": "blue_battletank_aim.png",
         "bounds": {"x":-71,"y":-61,"w":138,"h":136},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":138,"h":136,"offset":{"x":0,"y":0}}
         }
@@ -20411,7 +20411,7 @@
         "source": "blue_tank_aim_ne.png",
         "bounds": {"x":-72,"y":-63,"w":137,"h":128},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":137,"h":128,"offset":{"x":0,"y":0}}
         }
@@ -20422,7 +20422,7 @@
         "source": "blue_airport_construction.png",
         "bounds": {"x":-44,"y":-53,"w":377,"h":387},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":377,"h":387,"offset":{"x":0,"y":0}},
             "2": {"x":377,"y":0,"w":377,"h":387,"offset":{"x":0,"y":0}},
@@ -20435,7 +20435,7 @@
         "source": "blue_sniper_move_ne.png",
         "bounds": {"x":-41,"y":-52,"w":92,"h":93},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":92,"h":93,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":92,"h":93,"offset":{"x":0,"y":0}},
@@ -20477,7 +20477,7 @@
         "source": "blue_infantry_fire_ne.png",
         "bounds": {"x":-53,"y":-88,"w":122,"h":136},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":122,"h":136,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":122,"h":136,"offset":{"x":0,"y":0}},
@@ -20523,7 +20523,7 @@
         "source": "blue_infantry_move_ne.png",
         "bounds": {"x":-56,"y":-71,"w":105,"h":128},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":105,"h":128,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":105,"h":128,"offset":{"x":0,"y":0}},
@@ -20565,7 +20565,7 @@
         "source": "blue_artillery_move_ne.png",
         "bounds": {"x":-48,"y":-58,"w":100,"h":99},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":100,"h":99,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":100,"h":99,"offset":{"x":0,"y":0}},
@@ -20607,7 +20607,7 @@
         "source": "blue_battery_downed.png",
         "bounds": {"x":-52,"y":-82,"w":106,"h":129},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":1,"y":1,"w":106,"h":129,"offset":{"x":0,"y":0}},
             "2": {"x":109,"y":1,"w":106,"h":129,"offset":{"x":0,"y":0}},
@@ -20641,7 +20641,7 @@
         "source": "blue_battery_fire_ne.png",
         "bounds": {"x":-154,"y":-166,"w":330,"h":279},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":330,"h":279,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":330,"h":279,"offset":{"x":0,"y":0}},
@@ -20686,7 +20686,7 @@
         "source": "cursor_attack_3x2.png",
         "bounds": {"x":-57,"y":-56,"w":307,"h":210},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":307,"h":210,"offset":{"x":0,"y":0}},
             "2": {"x":307,"y":0,"w":307,"h":210,"offset":{"x":0,"y":0}},
@@ -20705,7 +20705,7 @@
         "source": "blue_battery_idle.png",
         "bounds": {"x":-52,"y":-60,"w":105,"h":121},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":105,"h":121,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":105,"h":121,"offset":{"x":0,"y":0}},
@@ -21480,7 +21480,7 @@
         "source": "red_infantry_hit.png",
         "bounds": {"x":-54,"y":-74,"w":108,"h":124},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":108,"h":124,"offset":{"x":0,"y":0}},
             "2": {"x":108,"y":0,"w":108,"h":124,"offset":{"x":0,"y":0}},
@@ -21525,7 +21525,7 @@
         "source": "blue_elite_battery_move.png",
         "bounds": {"x":-77,"y":-61,"w":131,"h":122},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":131,"h":122,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":131,"h":122,"offset":{"x":0,"y":0}},
@@ -21567,7 +21567,7 @@
         "source": "blue_battery_fire.png",
         "bounds": {"x":-196,"y":-145,"w":387,"h":256},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":387,"h":256,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":387,"h":256,"offset":{"x":0,"y":0}},
@@ -21612,7 +21612,7 @@
         "source": "red_commando_aim_ne.png",
         "bounds": {"x":-97,"y":-81,"w":189,"h":206},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":189,"h":206,"offset":{"x":0,"y":0}},
             "2": {"x":189,"y":0,"w":189,"h":206,"offset":{"x":0,"y":0}},
@@ -21697,7 +21697,7 @@
         "source": "powerup_airsupport_collect.png",
         "bounds": {"x":-97,"y":-95,"w":197,"h":184},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":197,"h":184,"offset":{"x":0,"y":0}},
             "2": {"x":197,"y":0,"w":197,"h":184,"offset":{"x":0,"y":0}},
@@ -21807,7 +21807,7 @@
         "source": "cursor_attack_3x3.png",
         "bounds": {"x":-57,"y":-56,"w":307,"h":306},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":307,"h":306,"offset":{"x":0,"y":0}},
             "2": {"x":307,"y":0,"w":307,"h":306,"offset":{"x":0,"y":0}},
@@ -21826,7 +21826,7 @@
         "source": "red_tank_aim_ne.png",
         "bounds": {"x":-58,"y":-50,"w":114,"h":119},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":114,"h":119,"offset":{"x":0,"y":0}}
         }
@@ -21837,7 +21837,7 @@
         "source": "red_bulldozer_hit.png",
         "bounds": {"x":-64,"y":-89,"w":133,"h":146},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":133,"h":146,"offset":{"x":0,"y":0}},
             "2": {"x":133,"y":0,"w":133,"h":146,"offset":{"x":0,"y":0}},
@@ -21883,7 +21883,7 @@
         "source": "red_artillery_move.png",
         "bounds": {"x":-55,"y":-36,"w":110,"h":82},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":110,"h":82,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":110,"h":82,"offset":{"x":0,"y":0}},
@@ -21925,7 +21925,7 @@
         "source": "cursor_attack_1x1.png",
         "bounds": {"x":-57,"y":-56,"w":115,"h":114},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":115,"h":114,"offset":{"x":0,"y":0}},
             "2": {"x":115,"y":0,"w":115,"h":114,"offset":{"x":0,"y":0}},
@@ -21944,7 +21944,7 @@
         "source": "blue_battery_aim.png",
         "bounds": {"x":-52,"y":-64,"w":105,"h":125},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":105,"h":125,"offset":{"x":0,"y":0}}
         }
@@ -21955,7 +21955,7 @@
         "source": "blue_elite_infantry_move.png",
         "bounds": {"x":-44,"y":-55,"w":87,"h":94},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":87,"h":94,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":87,"h":94,"offset":{"x":0,"y":0}},
@@ -21997,7 +21997,7 @@
         "source": "red_secretpolice.png",
         "bounds": {"x":-46,"y":-98,"w":285,"h":336},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":285,"h":336,"offset":{"x":0,"y":0}}
         }
@@ -22008,7 +22008,7 @@
         "source": "red_mines_6497.png",
         "bounds": {"x":-48,"y":-48,"w":96,"h":96},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":96,"h":96,"offset":{"x":0,"y":0}}
         }
@@ -22019,7 +22019,7 @@
         "source": "blue_researchlab_construction.png",
         "bounds": {"x":-47,"y":-50,"w":287,"h":289},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":287,"h":289,"offset":{"x":0,"y":0}},
             "2": {"x":287,"y":0,"w":287,"h":289,"offset":{"x":0,"y":0}},
@@ -22032,7 +22032,7 @@
         "source": "cursor_redeploy.png",
         "bounds": {"x":-57,"y":-70,"w":115,"h":125},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":115,"h":125,"offset":{"x":0,"y":0}},
             "2": {"x":115,"y":0,"w":115,"h":125,"offset":{"x":0,"y":0}},
@@ -22051,7 +22051,7 @@
         "source": "blue_rocketsite_construction.png",
         "bounds": {"x":-47,"y":-81,"w":286,"h":320},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":286,"h":320,"offset":{"x":0,"y":0}},
             "2": {"x":286,"y":0,"w":286,"h":320,"offset":{"x":0,"y":0}},
@@ -22064,7 +22064,7 @@
         "source": "powerup_healthpack.png",
         "bounds": {"x":-69,"y":-69,"w":138,"h":138},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":138,"h":138,"offset":{"x":0,"y":0}},
             "2": {"x":138,"y":0,"w":138,"h":138,"offset":{"x":0,"y":0}},
@@ -22164,7 +22164,7 @@
         "source": "blue_infantry_idle.png",
         "bounds": {"x":-52,"y":-71,"w":103,"h":121},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":103,"h":121,"offset":{"x":0,"y":0}}
         }
@@ -22175,7 +22175,7 @@
         "source": "blue_elite_infantry_aim.png",
         "bounds": {"x":-43,"y":-50,"w":86,"h":86},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":86,"h":86,"offset":{"x":0,"y":0}}
         }
@@ -22186,7 +22186,7 @@
         "source": "red_scout_hit.png",
         "bounds": {"x":-38,"y":-51,"w":77,"h":87},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":77,"h":87,"offset":{"x":0,"y":0}},
             "2": {"x":77,"y":0,"w":77,"h":87,"offset":{"x":0,"y":0}},
@@ -22231,7 +22231,7 @@
         "source": "powerup_paratrooper_collect.png",
         "bounds": {"x":-96,"y":-96,"w":197,"h":178},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":197,"h":178,"offset":{"x":0,"y":0}},
             "2": {"x":197,"y":0,"w":197,"h":178,"offset":{"x":0,"y":0}},
@@ -22341,7 +22341,7 @@
         "source": "red_guardtower.png",
         "bounds": {"x":-50,"y":-78,"w":103,"h":124},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":103,"h":124,"offset":{"x":0,"y":0}}
         }
@@ -22352,7 +22352,7 @@
         "source": "red_battery_move_ne.png",
         "bounds": {"x":-89,"y":-79,"w":147,"h":164},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":147,"h":164,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":147,"h":164,"offset":{"x":0,"y":0}},
@@ -22394,7 +22394,7 @@
         "source": "blue_guardtower.png",
         "bounds": {"x":-53,"y":-75,"w":106,"h":126},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":106,"h":126,"offset":{"x":0,"y":0}}
         }
@@ -22405,7 +22405,7 @@
         "source": "effect_bullets.png",
         "bounds": {"x":-56,"y":-109,"w":159,"h":156},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":159,"h":156,"offset":{"x":0,"y":0}},
             "2": {"x":159,"y":0,"w":159,"h":156,"offset":{"x":0,"y":0}},
@@ -22450,7 +22450,7 @@
         "source": "red_battletank_hit.png",
         "bounds": {"x":-67,"y":-73,"w":132,"h":124},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":132,"h":124,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":132,"h":124,"offset":{"x":0,"y":0}},
@@ -22496,7 +22496,7 @@
         "source": "blue_tank_move_ne.png",
         "bounds": {"x":-79,"y":-64,"w":144,"h":140},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":144,"h":140,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":144,"h":140,"offset":{"x":0,"y":0}},
@@ -22538,7 +22538,7 @@
         "source": "powerup_healthpack_collect.png",
         "bounds": {"x":-89,"y":-106,"w":197,"h":178},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":197,"h":178,"offset":{"x":0,"y":0}},
             "2": {"x":197,"y":0,"w":197,"h":178,"offset":{"x":0,"y":0}},
@@ -22648,7 +22648,7 @@
         "source": "red_stormtrooper_aim.png",
         "bounds": {"x":-27,"y":-55,"w":61,"h":72},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":61,"h":72,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":61,"h":72,"offset":{"x":0,"y":0}},
@@ -22690,7 +22690,7 @@
         "source": "effect_medevac.png",
         "bounds": {"x":-440,"y":-202,"w":644,"h":472},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":644,"h":472,"offset":{"x":0,"y":0}},
             "2": {"x":644,"y":0,"w":644,"h":472,"offset":{"x":0,"y":0}},
@@ -22930,7 +22930,7 @@
         "source": "red_artillery_hit.png",
         "bounds": {"x":-55,"y":-34,"w":112,"h":80},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":112,"h":80,"offset":{"x":0,"y":0}},
             "2": {"x":112,"y":0,"w":112,"h":80,"offset":{"x":0,"y":0}},
@@ -22976,7 +22976,7 @@
         "source": "red_infantry_move_ne.png",
         "bounds": {"x":-53,"y":-65,"w":106,"h":129},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":106,"h":129,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":106,"h":129,"offset":{"x":0,"y":0}},
@@ -23018,7 +23018,7 @@
         "source": "cursor_repair_2x2.png",
         "bounds": {"x":-52,"y":-52,"w":201,"h":202},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":201,"h":202,"offset":{"x":0,"y":0}},
             "2": {"x":201,"y":0,"w":201,"h":202,"offset":{"x":0,"y":0}},
@@ -23068,7 +23068,7 @@
         "source": "red_tank_move_ne.png",
         "bounds": {"x":-77,"y":-51,"w":134,"h":140},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":134,"h":140,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":134,"h":140,"offset":{"x":0,"y":0}},
@@ -23110,7 +23110,7 @@
         "source": "red_battletank_aim_ne.png",
         "bounds": {"x":-66,"y":-69,"w":136,"h":136},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":136,"h":136,"offset":{"x":0,"y":0}}
         }
@@ -23121,7 +23121,7 @@
         "source": "blue_elite_infantry_idle.png",
         "bounds": {"x":-42,"y":-51,"w":86,"h":87},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":86,"h":87,"offset":{"x":0,"y":0}},
             "2": {"x":0,"y":0,"w":86,"h":87,"offset":{"x":0,"y":0}},
@@ -23664,7 +23664,7 @@
         "source": "blue_tank_hit.png",
         "bounds": {"x":-71,"y":-71,"w":151,"h":135},
         "frameTime": 0.03,
-        "allowFlip": true,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":151,"h":135,"offset":{"x":0,"y":0}},
             "2": {"x":151,"y":0,"w":151,"h":135,"offset":{"x":0,"y":0}},
@@ -23710,7 +23710,7 @@
         "source": "blue_landingzone.png",
         "bounds": {"x":-87,"y":-110,"w":176,"h":212},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":176,"h":212,"offset":{"x":0,"y":0}}
         }
@@ -23721,7 +23721,7 @@
         "source": "blue_town.png",
         "bounds": {"x":-47,"y":-107,"w":190,"h":210},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":190,"h":210,"offset":{"x":0,"y":0}}
         }
@@ -23732,7 +23732,7 @@
         "source": "blue_town_producing.png",
         "bounds": {"x":-47,"y":-107,"w":190,"h":252},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":190,"h":252,"offset":{"x":0,"y":0}},
             "2": {"x":190,"y":0,"w":190,"h":252,"offset":{"x":0,"y":0}},
@@ -23777,7 +23777,7 @@
         "source": "red_town.png",
         "bounds": {"x":-47,"y":-107,"w":190,"h":218},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":190,"h":218,"offset":{"x":0,"y":0}},
             "2": {"x":190,"y":0,"w":190,"h":218,"offset":{"x":0,"y":0}},
@@ -23805,7 +23805,7 @@
         "source": "unit_stat_card_good.png",
         "bounds": {"x":59,"y":70,"w":38,"h":25},
         "frameTime": 1,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":38,"h":25,"offset":{"x":0,"y":0}}
         }
@@ -23816,7 +23816,7 @@
         "source": "unit_stat_card_good_small.png",
         "bounds": {"x":59,"y":83,"w":38,"h":12},
         "frameTime": 1,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":38,"h":12,"offset":{"x":0,"y":0}}
         }
@@ -23827,7 +23827,7 @@
         "source": "unit_stat_card_bad.png",
         "bounds": {"x":59,"y":70,"w":38,"h":25},
         "frameTime": 1,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":38,"h":25,"offset":{"x":0,"y":0}}
         }
@@ -23838,7 +23838,7 @@
         "source": "unit_stat_card_bad_small.png",
         "bounds": {"x":59,"y":83,"w":38,"h":12},
         "frameTime": 1,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":38,"h":12,"offset":{"x":0,"y":0}}
         }
@@ -23849,7 +23849,7 @@
         "source": "icon_unit_repair.png",
         "bounds": {"x":65,"y":71,"w":23,"h":23},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":23,"h":23,"offset":{"x":0,"y":0}},
             "2": {"x":23,"y":0,"w":23,"h":23,"offset":{"x":0,"y":0}},
@@ -23944,7 +23944,7 @@
         "source": "effect_electric.png",
         "bounds": {"x":-42,"y":-226,"w":129,"h":323},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":129,"h":323,"offset":{"x":0,"y":0}},
             "2": {"x":129,"y":0,"w":129,"h":323,"offset":{"x":0,"y":0}},
@@ -23970,7 +23970,7 @@
         "source": "tooltip_building_bad.png",
         "bounds": {"x":-27,"y":9,"w":157,"h":73},
         "frameTime": 1,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":157,"h":73,"offset":{"x":0,"y":0}}
         }
@@ -23981,7 +23981,7 @@
         "source": "tooltip_unit_bad.png",
         "bounds": {"x":-27,"y":9,"w":157,"h":113},
         "frameTime": 1,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":157,"h":113,"offset":{"x":0,"y":0}}
         }
@@ -23992,7 +23992,7 @@
         "source": "red_supplytruck_airdrop.png",
         "bounds": {"x":-95,"y":-530,"w":181,"h":616},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":181,"h":616,"offset":{"x":0,"y":0}},
             "2": {"x":181,"y":0,"w":181,"h":616,"offset":{"x":0,"y":0}},
@@ -24122,7 +24122,7 @@
         "source": "red_battletank_airdrop.png",
         "bounds": {"x":-92,"y":-520,"w":181,"h":613},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":181,"h":613,"offset":{"x":0,"y":0}},
             "2": {"x":181,"y":0,"w":181,"h":613,"offset":{"x":0,"y":0}},
@@ -24252,7 +24252,7 @@
         "source": "red_stormtrooper_airdrop.png",
         "bounds": {"x":-56,"y":-504,"w":111,"h":551},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":111,"h":551,"offset":{"x":0,"y":0}},
             "2": {"x":111,"y":0,"w":111,"h":551,"offset":{"x":0,"y":0}},
@@ -24382,7 +24382,7 @@
         "source": "red_bulldozer_airdrop.png",
         "bounds": {"x":-84,"y":-469,"w":159,"h":547},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":159,"h":547,"offset":{"x":0,"y":0}},
             "2": {"x":159,"y":0,"w":159,"h":547,"offset":{"x":0,"y":0}},
@@ -24512,7 +24512,7 @@
         "source": "red_battery_airdrop.png",
         "bounds": {"x":-91,"y":-511,"w":181,"h":597},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":181,"h":597,"offset":{"x":0,"y":0}},
             "2": {"x":181,"y":0,"w":181,"h":597,"offset":{"x":0,"y":0}},
@@ -24642,7 +24642,7 @@
         "source": "red_tank_airdrop.png",
         "bounds": {"x":-95,"y":-514,"w":181,"h":614},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":181,"h":614,"offset":{"x":0,"y":0}},
             "2": {"x":181,"y":0,"w":181,"h":614,"offset":{"x":0,"y":0}},
@@ -24772,7 +24772,7 @@
         "source": "red_vilesnest.png",
         "bounds": {"x":-49,"y":-110,"w":291,"h":358},
         "frameTime": 0.03,
-        "allowFlip": false,
+        "autoBuffer": false,
         "frames": {
             "1": {"x":0,"y":0,"w":291,"h":358,"offset":{"x":0,"y":0}}
         }
