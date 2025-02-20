@@ -2,8 +2,8 @@ import { Outline } from "../../graphics/applyable/outline.js";
 import { isRectangleRectangleIntersect } from "../../math/math.js";
 import { UIElement } from "../uiElement.js";
 
-export const Container = function(id) {
-    UIElement.call(this, id, "CONTAINER");
+export const Container = function(DEBUG_NAME) {
+    UIElement.call(this, DEBUG_NAME);
     
     this.outline = new Outline();
     this.outline.color.setColor(255, 255, 255, 1);

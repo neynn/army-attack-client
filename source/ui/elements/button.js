@@ -2,8 +2,8 @@ import { Outline } from "../../graphics/applyable/outline.js";
 import { isCircleCicleIntersect, isRectangleRectangleIntersect } from "../../math/math.js";
 import { UIElement } from "../uiElement.js";
 
-export const Button = function(id) {
-    UIElement.call(this, id, "BUTTON");
+export const Button = function(DEBUG_NAME) {
+    UIElement.call(this, DEBUG_NAME);
 
     this.shape = Button.SHAPE_RECTANGLE;
     this.highlight = new Outline();

@@ -1,8 +1,8 @@
 import { EventEmitter } from "../events/eventEmitter.js";
 import { Drawable } from "../graphics/drawable.js";
 
-export const UIElement = function(id, DEBUG_NAME) {
-    Drawable.call(this, id, DEBUG_NAME);
+export const UIElement = function(DEBUG_NAME) {
+    Drawable.call(this, DEBUG_NAME);
     
     this.anchor = UIElement.ANCHOR_TYPE.TOP_LEFT;
     this.originX = 0;

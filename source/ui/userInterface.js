@@ -10,6 +10,7 @@ import { UIElement } from "./uiElement.js";
 export const UserInterface = function(id) {
     this.id = id;
     this.roots = [];
+    this.idTranslate = new Map();
     this.elements = new Map();
     this.previousCollisions = new Set();
     this.state = UserInterface.STATE.VISIBLE;
@@ -50,18 +51,23 @@ UserInterface.STATE = {
 UserInterface.prototype.clear = function() {
     this.elements.forEach(element => element.closeFamily());
     this.elements.clear();
+    this.idTranslate.clear();
+    this.roots.length = 0;
 }
 
-UserInterface.prototype.destroyElement = function(elementID) {
-    const element = this.elements.get(elementID);
+UserInterface.prototype.destroyElement = function(name) {
+    const element = this.getElement(name);
 
     if(!element) {
         return;
     }
 
+    const elementID = element.getID();
+
     element.closeFamily();
 
     this.elements.delete(elementID);
+    this.idTranslate.delete(name);
 }
 
 UserInterface.prototype.update = function(gameContext) {
@@ -94,7 +100,8 @@ UserInterface.prototype.draw = function(context, realTime, deltaTime) {
     }
 }
 
-UserInterface.prototype.getElement = function(elementID) {
+UserInterface.prototype.getElement = function(name) {
+    const elementID = this.idTranslate.get(name);
     const element = this.elements.get(elementID);
 
     if(!element) {
@@ -153,7 +160,7 @@ UserInterface.prototype.getCollidedElements = function(mouseX, mouseY, mouseRang
 }
 
 UserInterface.prototype.addClick = function(buttonID, onClick) {
-    const button = this.elements.get(buttonID);
+    const button = this.getElement(buttonID);
 
     if(!(button instanceof Button)) {
         return;
@@ -163,7 +170,7 @@ UserInterface.prototype.addClick = function(buttonID, onClick) {
 }
 
 UserInterface.prototype.removeClick = function(buttonID) {
-    const button = this.elements.get(buttonID);
+    const button = this.getElement(buttonID);
 
     if(!(button instanceof Button)) {
         return;
@@ -173,7 +180,7 @@ UserInterface.prototype.removeClick = function(buttonID) {
 }
 
 UserInterface.prototype.setText = function(textID, message) {
-    const text = this.elements.get(textID);
+    const text = this.getElement(textID);
 
     if(!(text instanceof TextElement)) {
         return;
@@ -183,7 +190,7 @@ UserInterface.prototype.setText = function(textID, message) {
 }
 
 UserInterface.prototype.addDynamicText = function(textID, onCall) {
-    const text = this.elements.get(textID);
+    const text = this.getElement(textID);
 
     if(!(text instanceof DynamicTextElement)) {
         return;
@@ -193,7 +200,7 @@ UserInterface.prototype.addDynamicText = function(textID, onCall) {
 }
 
 UserInterface.prototype.removeDynamicText = function(textID) {
-    const text = this.elements.get(textID);
+    const text = this.getElement(textID);
 
     if(!(text instanceof DynamicTextElement)) {
         return;
@@ -202,17 +209,19 @@ UserInterface.prototype.removeDynamicText = function(textID) {
     text.events.mute(DynamicTextElement.EVENT_REQUEST_TEXT);
 }
 
-UserInterface.prototype.createElement = function(typeID, elementID, config) {
+UserInterface.prototype.createElement = function(name, typeID, config) {
     const ElementType = UserInterface.ELEMENT_CLASS[typeID];
 
-    if(!ElementType || this.elements.has(elementID)) {
+    if(!ElementType || this.idTranslate.has(name)) {
         return null;
     }
 
-    const element = new ElementType(elementID);
+    const element = new ElementType(name);
+    const elementID = element.getID();
 
     element.loadFromConfig(config);
 
+    this.idTranslate.set(name, elementID);
     this.elements.set(elementID, element);
 
     return element;
@@ -243,13 +252,13 @@ UserInterface.prototype.fromConfig = function(gameContext, userInterface) {
         const config = userInterface[elementID];
         const { type } = config;
 
-        this.createElement(type, elementID, config);
+        this.createElement(elementID, type, config);
     }
     
     for(const elementID in userInterface) {
         const config = userInterface[elementID];
         const { children } = config;
-        const element = this.elements.get(elementID);
+        const element = this.getElement(elementID);
 
         if(!element || !Array.isArray(children)) {
             continue;
@@ -257,7 +266,7 @@ UserInterface.prototype.fromConfig = function(gameContext, userInterface) {
 
         for(let i = 0; i < children.length; i++) {
             const childID = children[i];
-            const child = this.elements.get(childID);
+            const child = this.getElement(childID);
 
             if(child) {
                 element.addChild(child, childID);
@@ -265,14 +274,16 @@ UserInterface.prototype.fromConfig = function(gameContext, userInterface) {
         }
     }
 
-    for(const [elementID, element] of this.elements) {
-        const { anchor, effects, position } = userInterface[elementID];
+    for(const elementKey in userInterface) {
+        const { anchor, effects, position } = userInterface[elementKey];
+        const element = this.getElement(elementKey);
+        const elementID = element.getID();
 
         this.addEffects(gameContext, element, effects);
 
         if(!element.hasParent()) {
             const { x, y } = position;
-        
+
             element.setOrigin(x, y);
             element.setAnchor(anchor);
             element.updateAnchor(w, h);

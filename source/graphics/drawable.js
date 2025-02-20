@@ -2,18 +2,16 @@ import { clampValue } from "../math/math.js";
 import { Vec2 } from "../math/vec2.js";
 import { Graph } from "./graph.js";
 
-export const Drawable = function(id = null, DEBUG_NAME = "Drawable") {
+export const Drawable = function(DEBUG_NAME = "") {
     this.DEBUG_NAME = DEBUG_NAME;
-    this.id = id;
-    this.graph = null;
-    this.opacity = 1;
+    this.id = Drawable.LATEST_ID++;
     this.state = Drawable.STATE.VISIBLE;
     this.position = new Vec2(0, 0);
-
-    if(id === null) {
-        console.warn(`Drawable (${DEBUG_NAME}) has no id!`);
-    }
+    this.graph = null;
+    this.opacity = 1;
 }
+
+Drawable.LATEST_ID = 0;
 
 Drawable.STATE = {
     HIDDEN: 0,
@@ -199,8 +197,8 @@ Drawable.prototype.hasFamily = function() {
     return this.graph !== null;
 }
 
-Drawable.prototype.openFamily = function(name = Graph.DEFAULT_NAME) {
-    if(this.graph || this.id === null) {
+Drawable.prototype.openFamily = function(name) {
+    if(this.graph) {
         return;
     }
 
@@ -218,7 +216,7 @@ Drawable.prototype.closeFamily = function() {
 }
 
 Drawable.prototype.addChild = function(drawable, name) {
-    if(drawable.getID() === null || name === undefined) {
+    if(name === undefined) {
         return;
     }
     

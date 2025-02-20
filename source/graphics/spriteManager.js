@@ -1,4 +1,3 @@
-import { IDGenerator } from "../idGenerator.js";
 import { Logger } from "../logger.js";
 import { ImageSheet } from "./imageSheet.js";
 import { Sprite } from "./drawable/sprite.js";
@@ -6,7 +5,6 @@ import { ImageManager } from "../resources/imageManager.js";
 
 export const SpriteManager = function() {
     this.resources = new ImageManager();
-    this.idGenerator = new IDGenerator();
     this.sprites = new Map();
     this.spriteTypes = {};
     this.timestamp = 0;
@@ -81,10 +79,9 @@ SpriteManager.prototype.update = function(gameContext) {
 
 SpriteManager.prototype.clear = function() {
     this.sprites.clear();
-    this.idGenerator.reset();
 
     for(let i = 0; i < this.layers.length; i++) {
-        this.layers[i] = [];
+        this.layers[i].length = 0;
     }
 }
 
@@ -93,11 +90,10 @@ SpriteManager.prototype.createSprite = function(typeID, layerID = null, animatio
         return null;
     }
 
-    const spriteID = this.idGenerator.getID();
-    const sprite = new Sprite(spriteID, typeID);
-    
+    const sprite = new Sprite(typeID);
+
     sprite.onDraw = (context, viewportX, viewportY, localX, localY) => this.drawSprite(sprite, context, viewportX, viewportY, localX, localY);
-    sprite.onTerminate = () => this.destroySprite(spriteID);
+    sprite.onTerminate = (id) => this.destroySprite(id);
     sprite.setLastCallTime(this.timestamp);
 
     this.sprites.set(sprite.id, sprite);

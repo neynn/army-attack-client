@@ -1,8 +1,8 @@
 import { Rectangle } from "../../math/rect.js";
 import { Drawable } from "../drawable.js";
 
-export const Sprite = function(id, DEBUG_NAME) {
-    Drawable.call(this, id, DEBUG_NAME);
+export const Sprite = function(DEBUG_NAME) {
+    Drawable.call(this, DEBUG_NAME);
     
     this.bounds = new Rectangle();
     this.typeID = null;
@@ -22,8 +22,8 @@ export const Sprite = function(id, DEBUG_NAME) {
 Sprite.prototype = Object.create(Drawable.prototype);
 Sprite.prototype.constructor = Sprite;
 
-Sprite.prototype.onTerminate = function() {
-    console.warn(`Method onTerminate has not been implemented by sprite ${this.id}`);
+Sprite.prototype.onTerminate = function(spriteID) {
+    console.warn(`Method onTerminate has not been implemented by sprite ${spriteID}`);
 }
 
 Sprite.prototype.init = function(typeID, animationID, frameCount, frameTime) {
@@ -113,7 +113,7 @@ Sprite.prototype.setFrame = function(frameIndex = this.currentFrame) {
 Sprite.prototype.terminate = function() {
     this.hide();
     this.freeze();
-    this.onTerminate();
+    this.onTerminate(this.id);
 }
 
 Sprite.prototype.repeat = function() {

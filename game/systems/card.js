@@ -18,7 +18,7 @@ CardSystem.SPRITE_TYPE = {
 
 CardSystem.addHealthText = function(entity, statCard) {
     const healthComponent = entity.getComponent(ArmyEntity.COMPONENT.HEALTH);
-    const healthText = new SimpleText(CardSystem.TYPE.HEALTH_TEXT);
+    const healthText = new SimpleText();
     
     healthText.style.setFontType("ArmyAttack Arial");
     healthText.style.setAlignment(TextStyle.TEXT_ALIGNMENT.RIGHT);
@@ -32,7 +32,7 @@ CardSystem.addHealthText = function(entity, statCard) {
 
 CardSystem.addDamageText = function(entity, statCard) {
     const attackComponent = entity.getComponent(ArmyEntity.COMPONENT.ATTACK);
-    const damageText = new SimpleText(CardSystem.TYPE.DAMAGE_TEXT);
+    const damageText = new SimpleText();
 
     damageText.style.setFontType("ArmyAttack Arial");
     damageText.style.setAlignment(TextStyle.TEXT_ALIGNMENT.RIGHT);

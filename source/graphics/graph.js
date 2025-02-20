@@ -7,6 +7,7 @@ export const Graph = function(reference) {
 }
 
 Graph.LATEST_ID = 0;
+
 Graph.DEFAULT_NAME = "DEFAULT";
 
 Graph.prototype.link = function(child) {
@@ -46,7 +47,9 @@ Graph.prototype.destroy = function() {
 }
 
 Graph.prototype.setName = function(name) {
-    this.name = name;
+    if(name !== undefined) {
+        this.name = name;
+    }
 }
 
 Graph.prototype.setParent = function(parent) {
