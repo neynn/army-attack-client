@@ -5,7 +5,6 @@ import { SpriteManager } from "../source/graphics/spriteManager.js";
 export const ArmyCamera = function() {
     OrthogonalCamera.call(this);
 
-    this.overlays = [];
     this.overlays[ArmyCamera.OVERLAY_TYPE.ATTACK] = [];
     this.overlays[ArmyCamera.OVERLAY_TYPE.MOVE] = [];
     this.overlays[ArmyCamera.OVERLAY_TYPE.RANGE] = [];
@@ -19,51 +18,6 @@ ArmyCamera.OVERLAY_TYPE = {
 
 ArmyCamera.prototype = Object.create(OrthogonalCamera.prototype);
 ArmyCamera.prototype.constructor = ArmyCamera;
-
-ArmyCamera.prototype.addOverlay = function(overlayIndex, positionX, positionY, tileID) {
-    if(overlayIndex < 0 || overlayIndex >= this.overlays.length || tileID === 0) {
-        return;
-    }
-
-    const overlayType = this.overlays[overlayIndex];
-
-    overlayType.push({
-        "id": tileID,
-        "x": positionX,
-        "y": positionY,
-        "drawX": this.tileWidth * positionX,
-        "drawY": this.tileHeight * positionY
-    });
-}
-
-ArmyCamera.prototype.clearOverlay = function(overlayIndex) {
-    if(overlayIndex < 0 || overlayIndex >= this.overlays.length) {
-        return;
-    }
-
-    this.overlays[overlayIndex] = [];
-}
-
-ArmyCamera.prototype.drawOverlay = function(gameContext, renderContext, worldBounds, overlayIndex) {
-    if(overlayIndex < 0 || overlayIndex >= this.overlays.length) {
-        return;
-    }
-
-    const { tileManager } = gameContext;
-    const { startX, startY, endX, endY } = worldBounds;
-    const overlay = this.overlays[overlayIndex];
-
-    for(let i = 0; i < overlay.length; i++) {
-        const { x, y, drawX, drawY, id } = overlay[i];
-
-        if(x >= startX && x <= endX && y >= startY && y <= endY) {
-            const renderX = drawX - this.viewportX;
-            const renderY = drawY - this.viewportY;
-    
-            this.drawTileGraphics(tileManager, id, renderContext, renderX, renderY);
-        }
-    }
-}
 
 ArmyCamera.prototype.update = function(gameContext, renderContext) {
     const { world } = gameContext;

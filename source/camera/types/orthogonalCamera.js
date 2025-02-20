@@ -11,6 +11,7 @@ export const OrthogonalCamera = function() {
     this.halfTileHeight = 0;
     this.mapWidth = 0;
     this.mapHeight = 0;
+    this.overlays = [];
 }
 
 OrthogonalCamera.prototype = Object.create(Camera.prototype);
@@ -22,6 +23,52 @@ OrthogonalCamera.EMPTY_TILE_COLOR = {
     FIRST: "#000000",
     SECOND: "#701867"
 };
+
+OrthogonalCamera.prototype.addToOverlay = function(index, tileID, positionX, positionY) {
+    if(index < 0 || index >= this.overlays.length || tileID === 0) {
+        return;
+    }
+
+    const overlayType = this.overlays[index];
+    const element = {
+        "id": tileID,
+        "x": positionX,
+        "y": positionY,
+        "drawX": this.tileWidth * positionX,
+        "drawY": this.tileHeight * positionY
+    };
+
+    overlayType.push(element);
+}
+
+OrthogonalCamera.prototype.clearOverlay = function(index) {
+    if(index < 0 || index >= this.overlays.length) {
+        return;
+    }
+
+    this.overlays[index].length = 0;
+}
+
+OrthogonalCamera.prototype.drawOverlay = function(gameContext, renderContext, worldBounds, index) {
+    if(index < 0 || index >= this.overlays.length) {
+        return;
+    }
+
+    const { tileManager } = gameContext;
+    const { startX, startY, endX, endY } = worldBounds;
+    const overlay = this.overlays[index];
+
+    for(let i = 0; i < overlay.length; i++) {
+        const { id, x, y, drawX, drawY } = overlay[i];
+
+        if(x >= startX && x <= endX && y >= startY && y <= endY) {
+            const renderX = drawX - this.viewportX;
+            const renderY = drawY - this.viewportY;
+    
+            this.drawTileGraphics(tileManager, id, renderContext, renderX, renderY);
+        }
+    }
+}
 
 OrthogonalCamera.prototype.drawCustom = function(worldBounds, onDraw) {
     const { startX, startY, endX, endY } = worldBounds;

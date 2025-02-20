@@ -90,7 +90,7 @@ PlayerController.prototype.hightlightAttackers = function(gameContext, target) {
 
         attacker.lookAtEntity(target);
         attacker.updateSpriteDirectonal(gameContext, ArmyEntity.SPRITE_TYPE.AIM, ArmyEntity.SPRITE_TYPE.AIM_UP);
-        camera.addOverlay(ArmyCamera.OVERLAY_TYPE.ATTACK, tileX, tileY, tileID);
+        camera.addToOverlay(ArmyCamera.OVERLAY_TYPE.ATTACK, tileID, tileX, tileY);
     }
 }
 
@@ -145,14 +145,14 @@ PlayerController.prototype.addNodeOverlays = function(gameContext, nodeList) {
 
         if(state !== PathfinderSystem.NODE_STATE.VALID) {
             if(ArmyContext.DEBUG.SHOW_INVALID_MOVE_TILES) {
-                camera.addOverlay(ArmyCamera.OVERLAY_TYPE.MOVE, positionX, positionY, attackTileID);
+                camera.addToOverlay(ArmyCamera.OVERLAY_TYPE.MOVE, attackTileID, positionX, positionY);
             }
 
         } else {
             const tileEntity = world.getTileEntity(positionX, positionY);
 
             if(!tileEntity) {
-                camera.addOverlay(ArmyCamera.OVERLAY_TYPE.MOVE, positionX, positionY, enableTileID);
+                camera.addToOverlay(ArmyCamera.OVERLAY_TYPE.MOVE, enableTileID, positionX, positionY);
             }
         } 
     }
@@ -404,7 +404,7 @@ PlayerController.prototype.showEntityRange = function(gameContext, entity) {
 
             const tileID = tileManager.getAutotilerID(ArmyMap.AUTOTILER.RANGE, nextIndex);
 
-            camera.addOverlay(ArmyCamera.OVERLAY_TYPE.RANGE, j, i, tileID);
+            camera.addToOverlay(ArmyCamera.OVERLAY_TYPE.RANGE, tileID, j, i);
         }
     }
 
