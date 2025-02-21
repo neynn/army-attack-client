@@ -11,6 +11,8 @@ export const EntityManager = function() {
     this.entities = [];
 }
 
+EntityManager.INVALID_ID = -1;
+
 EntityManager.prototype = Object.create(FactoryOwner.prototype);
 EntityManager.prototype.constructor = EntityManager;
 

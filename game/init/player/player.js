@@ -7,10 +7,8 @@ import { ControllerHover } from "./hover.js";
 import { ArmyEntity } from "../armyEntity.js";
 import { ConstructionSystem } from "../../systems/construction.js";
 import { Controller } from "../../../source/controller/controller.js";
-import { Autotiler } from "../../../source/tile/autotiler.js";
-import { ArmyMap } from "../armyMap.js";
 import { ArmyContext } from "../../armyContext.js";
-import { SpriteManager } from "../../../source/graphics/spriteManager.js";
+import { RangeShow } from "./rangeShow.js";
 
 export const PlayerController = function(id) {
     Controller.call(this, id);
@@ -19,10 +17,9 @@ export const PlayerController = function(id) {
     this.teamID = null;
     this.attackers = [];
     this.hover = new ControllerHover();
+    this.rangeShow = new RangeShow();
     this.selectedEntities = new Set();
     this.state = PlayerController.STATE.NONE;
-    this.showRange = true;
-    this.rangeShowEntity = -1;
 }
 
 PlayerController.COMMAND = {
@@ -362,88 +359,24 @@ PlayerController.prototype.getFirstSelected = function() {
     return firstSelected;
 }
 
-PlayerController.prototype.resetRangeIndicator = function(gameContext) {
-    const { renderer, spriteManager, world } = gameContext;
-    const { entityManager } = world;
-    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
-    const entity = entityManager.getEntity(this.rangeShowEntity);
+PlayerController.prototype.toggleRangeShow = function(gameContext) {
+    const hoverEntity = this.hover.getEntity(gameContext);
 
-    camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.RANGE);
-
-    if(entity) {
-        const { spriteID } = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
-        
-        spriteManager.swapLayer(SpriteManager.LAYER.MIDDLE, spriteID);
-    }
-
-    this.rangeShowEntity = -1;
-}
-
-PlayerController.prototype.showEntityRange = function(gameContext, entity) {
-    const attackComponent = entity.getComponent(ArmyEntity.COMPONENT.ATTACK);
-
-    if(!attackComponent) {
-        return;
-    }
-
-    const { renderer, tileManager, spriteManager } = gameContext;
-    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
-    const entityID = entity.getID();
-    const { range } = attackComponent;
-    const { tileX, tileY } = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
-    const { spriteID } = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
-
-    spriteManager.swapLayer(SpriteManager.LAYER.TOP, spriteID);
-
-    const startX = tileX - range;
-    const startY = tileY - range;
-    const endX = tileX + range + entity.config.dimX - 1;
-    const endY = tileY + range + entity.config.dimY - 1;
-
-    for(let i = startY; i <= endY; i++) {
-        for(let j = startX; j <= endX; j++) {
-            const nextIndex = Autotiler.autotile4Bits(j, i, (x, y) => {
-                if(x >= startX && x <= endX && y >= startY && y <= endY) {
-                    return Autotiler.RESPONSE.VALID;
-                } 
-
-                return Autotiler.RESPONSE.INVALID;
-            });
-
-            const tileID = tileManager.getAutotilerID(ArmyMap.AUTOTILER.RANGE, nextIndex);
-
-            camera.addToOverlay(ArmyCamera.OVERLAY_TYPE.RANGE, tileID, j, i);
-        }
-    }
-
-    this.rangeShowEntity = entityID;
-}
-
-PlayerController.prototype.showHoverEntityRange = function(gameContext) {
-    if(this.hover.isHoveringOnEntity()) {
-        const entity = this.hover.getEntity(gameContext);
-
-        this.showEntityRange(gameContext, entity);
-    }
-}
-
-PlayerController.prototype.toggleShowRange = function(gameContext) {
-    if(this.showRange) {
-        this.resetRangeIndicator(gameContext);
-    } else {
-        this.showHoverEntityRange(gameContext);
-    }
-
-    this.showRange = !this.showRange;
+    this.rangeShow.toggle(gameContext, hoverEntity);
 }
 
 PlayerController.prototype.updateRangeIndicator = function(gameContext) {
-    if(!this.showRange || !this.hover.targetChanged) {
+    if(!this.rangeShow.isEnabled() || !this.hover.targetChanged) {
         return;
     }
 
-    this.resetRangeIndicator(gameContext);
-    this.showHoverEntityRange(gameContext);
+    this.rangeShow.reset(gameContext);
+
+    if(this.hover.isHoveringOnEntity()) {
+        const entity = this.hover.getEntity(gameContext);
+
+        this.rangeShow.show(gameContext, entity);
+    }
 }
 
 PlayerController.prototype.update = function(gameContext) {
