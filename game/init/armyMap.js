@@ -6,10 +6,18 @@ export const ArmyMap = function() {
     WorldMap.call(this, null);
 }
 
+ArmyMap.TILE_TYPE = {
+    GROUND: 0,
+    MOUNTAIN: 1,
+    SEA: 2,
+    DESERT_SHORE: 3
+};
+
 ArmyMap.AUTOTILER = {
     CLOUD: "cloud",
     BORDER: "border",
-    RANGE: "range"
+    RANGE: "range",
+    DESERT_SHORE: "shore"
 };
 
 ArmyMap.LAYER_TYPE = {
@@ -59,10 +67,36 @@ ArmyMap.prototype.reloadGraphics = function(gameContext) {
     this.updateTiles((index, tileX, tileY) => {
         const teamID = this.getTile(ArmyMap.LAYER_TYPE.TEAM, tileX, tileY);
         const teamName = teamMapping[teamID];
-
+        
+        this.handleAutotiler(gameContext, tileX, tileY);
         this.updateBorder(gameContext, tileX, tileY, ArmyMap.BORDER_RANGE.LOAD);
         this.convertGraphics(gameContext, tileX, tileY, teamName);
     });
+}
+
+ArmyMap.prototype.handleAutotiler = function(gameContext, tileX, tileY) {
+    const { tileManager } = gameContext;
+    const typeID = this.getTile(ArmyMap.LAYER_TYPE.TYPE, tileX, tileY);
+
+    switch(typeID) {
+        case ArmyMap.TILE_TYPE.DESERT_SHORE: {
+            const index = Autotiler.autotile8Bits(tileX, tileY, (x, y) => {
+                const nextTypeID = this.getTile(ArmyMap.LAYER_TYPE.TYPE, x, y);
+
+                if(nextTypeID === ArmyMap.TILE_TYPE.DESERT_SHORE) {
+                    return Autotiler.RESPONSE.VALID;
+                }
+
+                return Autotiler.RESPONSE.INVALID;
+            });
+
+            const tileID = tileManager.getAutotilerID(ArmyMap.AUTOTILER.DESERT_SHORE, Autotiler.VALUES_8[index]);
+
+            this.placeTile(tileID, ArmyMap.LAYER_TYPE.GROUND, tileX, tileY);
+
+            break;
+        }
+    }
 }
 
 ArmyMap.prototype.convertGraphics = function(gameContext, tileX, tileY, teamName) {
@@ -141,7 +175,7 @@ ArmyMap.prototype.updateBorder = function(gameContext, tileX, tileY, range) {
                 return Autotiler.RESPONSE.VALID;
             });
 
-            const tileID = tileManager.getAutotilerID(ArmyMap.AUTOTILER.BORDER, nextIndex);
+            const tileID = tileManager.getAutotilerID(ArmyMap.AUTOTILER.BORDER, Autotiler.VALUES_8[nextIndex]);
 
             this.placeTile(tileID, ArmyMap.LAYER_TYPE.BORDER, j, i);
         }

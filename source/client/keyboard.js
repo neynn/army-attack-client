@@ -1,7 +1,7 @@
 import { EventEmitter } from "../events/eventEmitter.js";
 
 export const Keyboard = function() {
-    this.keybinds = new Set();
+    this.reservedKeys = new Set();
     this.activeKeys = new Set();
 
     this.events = new EventEmitter();
@@ -26,7 +26,7 @@ Keyboard.prototype.init = function() {
     document.addEventListener("keydown", (event) => {
         const { key } = event;
 
-        if(this.keybinds.has(key)) {
+        if(this.reservedKeys.has(key)) {
             event.preventDefault();
             this.onKeyDown(event.key);
         }
@@ -35,7 +35,7 @@ Keyboard.prototype.init = function() {
     document.addEventListener("keyup", (event) => {
         const { key } = event;
 
-        if(this.keybinds.has(key)) {
+        if(this.reservedKeys.has(key)) {
             event.preventDefault();
             this.onKeyUp(event.key);
         }
@@ -57,20 +57,20 @@ Keyboard.prototype.onKeyUp = function(keyID) {
 }
 
 Keyboard.prototype.reserve = function(keyID) {
-    if(this.keybinds.has(keyID)) {
+    if(this.reservedKeys.has(keyID)) {
         return;
     }
 
-    this.keybinds.add(keyID);
+    this.reservedKeys.add(keyID);
     this.events.emit(Keyboard.EVENT.KEY_BOUND, keyID);
 }
 
 Keyboard.prototype.free = function(keyID) {
-    if(!this.keybinds.has(keyID)) {
+    if(!this.reservedKeys.has(keyID)) {
         return;
     }
 
-    this.keybinds.delete(keyID);
+    this.reservedKeys.delete(keyID);
 }
 
 Keyboard.prototype.update = function() {

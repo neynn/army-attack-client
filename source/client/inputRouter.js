@@ -17,24 +17,27 @@ InputRouter.CURSOR_MAP = {
     [Cursor.BUTTON_MIDDLE]: "M3"
 };
 
-InputRouter.INPUT = {
-    KEY_W: "w",
-    KEY_A: "a",
-    KEY_S: "s",
-    KEY_D: "d",
-    KEY_E: "e",
-    KEY_V: "v",
-    KEY_SPACE: " ",
-    KEY_SHIFT: "Shift",
-    KEY_ENTER: "Enter",
-    KEY_ESCAPE: "Escape",
-    KEY_ARROW_UP: "ArrowUp",
-    KEY_ARROW_DOWN: "ArrowDown",
-    KEY_ARROW_LEFT: "ArrowLeft",
-    KEY_ARROW_RIGHT: "ArrowRight",
-    MOUSE_LEFT: "M1",
-    MOUSE_RIGHT: "M2",
-    MOUSE_MIDDLE: "M3"
+InputRouter.CURSOR_INPUT = {
+    M1: "M1",
+    M2: "M2",
+    M3: "M3"
+};
+
+InputRouter.KEY_INPUT = {
+    W: "w",
+    A: "a",
+    S: "s",
+    D: "d",
+    E: "e",
+    V: "v",
+    SPACE: " ",
+    SHIFT: "Shift",
+    ENTER: "Enter",
+    ESCAPE: "Escape",
+    ARROW_UP: "ArrowUp",
+    ARROW_DOWN: "ArrowDown",
+    ARROW_LEFT: "ArrowLeft",
+    ARROW_RIGHT: "ArrowRight"
 };
 
 InputRouter.prototype.load = function(gameContext, binds) {
@@ -57,12 +60,16 @@ InputRouter.prototype.load = function(gameContext, binds) {
 
             this.bindInput(inputID, commandID);
 
-            keyboard.reserve(keyID);
+            if(InputRouter.CURSOR_INPUT[keyID] === undefined) {
+                keyboard.reserve(keyID);
+            }
         } else {
             this.bindInput(InputRouter.PREFIX.DOWN + inputID, commandID);
             this.bindInput(InputRouter.PREFIX.UP + inputID, commandID);
     
-            keyboard.reserve(inputID);
+            if(InputRouter.CURSOR_INPUT[inputID] === undefined) {
+                keyboard.reserve(inputID);
+            }
         }
     }
 }
@@ -91,12 +98,6 @@ InputRouter.prototype.on = function(commandID, command) {
     this.commands.set(commandID, command);
 }
 
-InputRouter.prototype.createKeyboardListener = function(eventID, prefixID, keyboard) {
-    const { events } = keyboard;
-
-    events.subscribe(eventID, this.id, (keyID) => this.handleInput(keyID, prefixID));
-}
-
 InputRouter.prototype.handleInput = function(inputID, prefix) {
     const prefixedID = prefix + inputID;
 
@@ -111,6 +112,12 @@ InputRouter.prototype.handleInput = function(inputID, prefix) {
         command();
     }
 } 
+
+InputRouter.prototype.createKeyboardListener = function(eventID, prefixID, keyboard) {
+    const { events } = keyboard;
+
+    events.subscribe(eventID, this.id, (keyID) => this.handleInput(keyID, prefixID));
+}
 
 InputRouter.prototype.createMouseListener = function(eventID, prefixID, cursor) {
     const { events } = cursor;

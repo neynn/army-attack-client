@@ -10,6 +10,23 @@ export const WorldMap = function(id) {
     this.tracker = new Tracker();
 }
 
+WorldMap.prototype.updateArea = function(tileX, tileY, onUpdate) {
+    const startX = tileX - 1;
+    const startY = tileY - 1;
+    const endX = tileX + 1;
+    const endY = tileY + 1;
+
+    for(let i = startY; i <= endY; i++) {
+        const row = i * this.width;
+
+        for(let j = startX; j <= endX; j++) {
+            const index = row + j;
+
+            onUpdate(index, j, i);
+        }
+    }
+}
+
 WorldMap.prototype.setID = function(id) {
     this.id = id;
 }

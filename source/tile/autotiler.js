@@ -45,6 +45,26 @@ Autotiler.autotile4Bits = function(tileX, tileY, onCheck) {
     return total;
 }
 
+Autotiler.autotile8Bits_full = function(tileX, tileY, onCheck) {
+    if(tileX === undefined || tileY === undefined || !onCheck) {
+        return 0;
+    }
+
+    let total = 0b00000000;
+    const { NORTH_WEST, NORTH, NORTH_EAST, WEST, EAST, SOUTH_WEST, SOUTH, SOUTH_EAST } = Autotiler.SHIFTSET_8;
+    
+    total |= onCheck(tileX, tileY - 1) << NORTH;
+    total |= onCheck(tileX - 1, tileY) << WEST;
+    total |= onCheck(tileX + 1, tileY) << EAST;
+    total |= onCheck(tileX, tileY + 1) << SOUTH;
+    total |= onCheck(tileX - 1, tileY - 1) << NORTH_WEST;
+    total |= onCheck(tileX + 1, tileY - 1) << NORTH_EAST;
+    total |= onCheck(tileX - 1, tileY + 1) << SOUTH_WEST;
+    total |= onCheck(tileX + 1, tileY + 1) << SOUTH_EAST;
+
+    return total;
+}
+
 Autotiler.autotile8Bits = function(tileX, tileY, onCheck) {
     if(tileX === undefined || tileY === undefined || !onCheck) {
         return 0;
@@ -78,5 +98,5 @@ Autotiler.autotile8Bits = function(tileX, tileY, onCheck) {
         total |= onCheck(tileX + 1, tileY + 1) << SOUTH_EAST;
     }
 
-    return Autotiler.VALUES_8[total];
+    return total;
 }
