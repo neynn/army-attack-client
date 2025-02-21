@@ -88,17 +88,10 @@
         "Ally": { "id": "Ally", "isWalkable": true, "isEntityPassingAllowed": true, "isEnemy": false },
         "Neutral": { "id": "Neutral", "isWalkable": true, "isEntityPassingAllowed": true, "isEnemy": false }
     },
-    "TeamTypeMapping": {
-        "0": "Crimson",
-        "1": "Allies",
-        "2": "Neutral",
-        "3": "Wrath"
-    },
     "TeamType": {
         "Crimson": {
             "id": "Crimson",
             "name": "Crimson Skies Empire",
-            "worldID": 0,
             "alliances": {
                 "Crimson": "Ally",
                 "Allies": "Enemy",
@@ -113,7 +106,6 @@
         "Allies": {
             "id": "Allies",
             "name": "The Resistance",
-            "worldID": 1,
             "alliances": {
                 "Crimson": "Enemy",
                 "Allies": "Ally",
@@ -128,7 +120,6 @@
         "Neutral": {
             "id": "Neutral",
             "name": "Neutral Forces",
-            "worldID": 2,
             "alliances": {
                 "Crimson": "Neutral",
                 "Allies": "Neutral",
@@ -140,7 +131,6 @@
         "Wrath": {
             "id": "Wrath",
             "name": "The Wrathful",
-            "worldID": 3,
             "alliances": {
                 "Crimson": "Enemy",
                 "Allies": "Enemy", 
@@ -201,6 +191,130 @@
         "OpenMission": { "ID":"OpenMission", "Type":"Client" },
         "OpenItemTab": { "ID":"OpenItemTab", "Type":"Client" },
         "OpenBuilding": { "ID":"OpenBuilding", "Type":"Client" }
+    },
+    "TileFormCondition": {
+        "coast": {
+            "Bg_CoastTile_ne_01": [
+                0, 0, 0,
+                0, 0, 0,
+                1, 0, 0
+            ],
+            "Bg_CoastTile_ne_02": [
+                0, 0, 0,
+                0, 0, 0,
+                1, 0, 0
+            ],
+            "Bg_CoastTile_w_01": [
+                0, 0, 0,
+                0, 0, 1,
+                0, 0, 0
+            ],
+            "Bg_CoastTile_w_02": [
+                0, 0, 0,
+                0, 0, 1,
+                0, 0, 0
+            ],
+            "Bg_CoastTile_nw_inside_01": [
+                0, 1, 0,
+                1, 0, 0,
+                0, 0, 0
+            ],
+            "Bg_CoastTile_nw_inside_02": [
+                0, 1, 0,
+                1, 0, 0,
+                0, 0, 0
+            ],
+            "Bg_CoastTile_ne_inside_02": [
+                0, 1, 0,
+                0, 0, 1,
+                0, 0, 0
+            ],
+            "Bg_CoastTile_ne_inside_01": [
+                0, 1, 0,
+                0, 0, 1,
+                0, 0, 0
+            ],
+            "Bg_CoastTile_sw_01": [
+                0, 0, 1,
+                0, 0, 0,
+                0, 0, 0
+            ],
+            "Bg_CoastTile_sw_02": [
+                0, 0, 1,
+                0, 0, 0,
+                0, 0, 0
+            ],
+            "Bg_CoastTile_e_01": [
+                0, 0, 0,
+                1, 0, 0,
+                0, 0, 0
+            ],
+            "Bg_CoastTile_e_02": [
+                0, 0, 0,
+                1, 0, 0,
+                0, 0, 0
+            ],
+            "Bg_CoastTile_sw_inside_01": [
+                0, 0, 0,
+                1, 0, 0,
+                0, 1, 0
+            ],
+            "Bg_CoastTile_sw_inside_02": [
+                0, 0, 0,
+                1, 0, 0,
+                0, 1, 0
+            ],
+            "Bg_CoastTile_s_01": [
+                0, 1, 0,
+                0, 0, 0,
+                0, 0, 0
+            ],
+            "Bg_CoastTile_s_02": [
+                0, 1, 0,
+                0, 0, 0,
+                0, 0, 0
+            ],
+            "Bg_CoastTile_se_inside_01": [
+                0, 0, 0,
+                0, 0, 1,
+                0, 1, 0
+            ],
+            "Bg_CoastTile_se_inside_02": [
+                0, 0, 0,
+                0, 0, 1,
+                0, 1, 0
+            ],
+            "Bg_CoastTile_n_01": [
+                0, 0, 0,
+                0, 0, 0,
+                0, 1, 0
+            ],
+            "Bg_CoastTile_n_02": [
+                0, 0, 0,
+                0, 0, 0,
+                0, 1, 0
+            ],
+            "Bg_CoastTile_nw_01": [
+                0, 0, 0,
+                0, 0, 0,
+                0, 0, 1
+            ],
+            "Bg_CoastTile_nw_02": [
+                0, 0, 0,
+                0, 0, 0,
+                0, 0, 1
+            ],
+            "Bg_CoastTile_se_01": [
+                1, 0, 0,
+                0, 0, 0,
+                0, 0, 0
+            ],
+            "Bg_CoastTile_se_02": [
+                1, 0, 0,
+                0, 0, 0,
+                0, 0, 0
+            ]
+        }
     },
     "TileTeamConversion": {
         "ground": {
