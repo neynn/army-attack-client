@@ -266,7 +266,7 @@ MapEditor.prototype.incrementTypeIndex = function(gameContext, types, mapID, lay
     const nextID = tileTypeIDs[nextIndex];
 
     worldMap.placeTile(nextID, layerID, x, y);
-    worldMap.updateArea(x, y, (i, tx, ty) => worldMap.handleAutotiler(gameContext, tx, ty));
+    worldMap.updateAutotiler(gameContext, x, y, 1);
 }
 
 MapEditor.prototype.getDefaultMapData = function() {
