@@ -44,21 +44,28 @@ InputRouter.prototype.load = function(gameContext, binds) {
     for(const commandID in binds) {
         const inputID = binds[commandID];
         
-        if(inputID.length <= 1) {
+        if(inputID.length === 0) {
             continue;
         }
 
         const prefixID = inputID[0];
 
-        if(prefixID !== InputRouter.PREFIX.DOWN && prefixID !== InputRouter.PREFIX.UP) {
+        if(prefixID === InputRouter.PREFIX.DOWN || prefixID === InputRouter.PREFIX.UP) {
+            if(inputID.length > 1) {
+                const keyID = inputID.slice(1);
+
+                this.bindInput(inputID, commandID);
+                
+                keyboard.reserve(keyID);
+            }
+
             continue;
         }
 
-        const keyID = inputID.slice(1);
+        this.bindInput(InputRouter.PREFIX.DOWN + inputID, commandID);
+        this.bindInput(InputRouter.PREFIX.UP + inputID, commandID);
 
-        keyboard.reserve(keyID);
-
-        this.bindInput(inputID, commandID);
+        keyboard.reserve(inputID);
     }
 }
 

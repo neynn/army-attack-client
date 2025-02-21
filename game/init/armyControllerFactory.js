@@ -1,5 +1,4 @@
 import { Cursor } from "../../source/client/cursor.js";
-import { Keyboard } from "../../source/client/keyboard.js";
 import { Factory } from "../../source/factory/factory.js";
 import { SpriteManager } from "../../source/graphics/spriteManager.js";
 import { CAMERA_TYPES } from "../enums.js";
@@ -50,7 +49,6 @@ ArmyControllerFactory.prototype.onCreate = function(gameContext, config) {
             controller.setConfig(controllerType);
             controller.setState(PlayerController.STATE.IDLE);
             
-            //this.addClickEvent(gameContext, controller);
             this.addDragEvent(gameContext);
 
             router.load(gameContext, controllerType.binds);
