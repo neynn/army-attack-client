@@ -46,10 +46,7 @@ ArmyControllerFactory.prototype.onCreate = function(gameContext, config) {
     const { spriteManager, renderer, client } = gameContext;
     const { router, keyboard } = client;
     const { type, id, team } = config;
-
     const controllerType = this.getType(type);
-
-    keyboard.bindKey(Keyboard.KEY.V, PlayerController.COMMAND.TOGGLE_RANGE);
 
     switch(type) {
         case ArmyControllerFactory.TYPE.PLAYER: {
@@ -69,7 +66,8 @@ ArmyControllerFactory.prototype.onCreate = function(gameContext, config) {
             this.addClickEvent(gameContext, controller);
             this.addDragEvent(gameContext);
 
-            router.registerInput(Keyboard.EVENT.KEY_PRESSED, PlayerController.COMMAND.TOGGLE_RANGE, () => controller.toggleRangeShow(gameContext));        
+            keyboard.load(controllerType.keybinds);
+            router.on(Keyboard.EVENT.KEY_PRESSED, PlayerController.COMMAND.TOGGLE_RANGE, () => controller.toggleRangeShow(gameContext));
 
             return controller;
         }

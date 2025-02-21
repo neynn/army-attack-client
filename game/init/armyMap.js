@@ -1,5 +1,4 @@
 import { Autotiler } from "../../source/tile/autotiler.js";
-import { CAMERA_TYPES } from "../enums.js";
 import { WorldMap } from "../../source/map/worldMap.js";
 import { AllianceSystem } from "../systems/alliance.js";
 

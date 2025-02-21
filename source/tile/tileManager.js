@@ -4,10 +4,15 @@ import { ImageManager } from "../resources/imageManager.js";
 
 export const TileManager = function() {
     this.resources = new ImageManager();
-    this.dynamicAnimations = {};
+    this.dynamicAnimations = [];
     this.tileTypes = {};
     this.tileMeta = {};
 }
+
+TileManager.TILE_ID = {
+    EMPTY: 0,
+    INVALID: -1
+};
 
 TileManager.prototype.load = function(tileTypes, tileMeta) {
     if(typeof tileTypes === "object") {
@@ -25,7 +30,7 @@ TileManager.prototype.load = function(tileTypes, tileMeta) {
 
     if(typeof tileMeta === "object") {
         this.tileMeta = tileMeta;
-        this.tileMeta.inversion = this.getTileInversion();
+        this.tileMeta.inversion = this.getTileMetaInversion();
     } else {
         Logger.log(false, "TileMeta cannot be undefined!", "TileManager.prototype.load", null);
     }
@@ -43,14 +48,12 @@ TileManager.prototype.exit = function() {
 }
 
 TileManager.prototype.updateDynamicAnimations = function(timestamp) {
-    for(const typeID in this.dynamicAnimations) {
-        const tileType = this.tileTypes[typeID];
-        const animationIDs = this.dynamicAnimations[typeID];
+    for(let i = 0; i < this.dynamicAnimations.length; i++) {
+        const { set, animation } = this.dynamicAnimations[i];
+        const tileType = this.tileTypes[set];
+        const animationType = tileType.getAnimation(animation);
 
-        for(const animationID of animationIDs) {
-            const animation = tileType.getAnimation(animationID);
-            animation.updateFrameIndex(timestamp);
-        }
+        animationType.updateFrameIndex(timestamp);
     }
 }
 
@@ -58,7 +61,7 @@ TileManager.prototype.getInvertedTileMeta = function() {
     return this.tileMeta.inversion;
 }
 
-TileManager.prototype.getTileInversion = function() {
+TileManager.prototype.getTileMetaInversion = function() {
     const inversion = {};
 
     for(let i = 0; i < this.tileMeta.values.length; i++) {
@@ -103,15 +106,12 @@ TileManager.prototype.loadTileTypes = function(tileTypes) {
         const animations = imageSheet.getAnimations();
 
         for(const [animationID, animation] of animations) {
-            if(animation.frameCount <= 1) {
-                continue;
+            if(animation.frameCount > 1) {
+                this.dynamicAnimations.push({
+                    "set": typeID,
+                    "animation": animationID
+                });
             }
-
-            if(!this.dynamicAnimations[typeID]) {
-                this.dynamicAnimations[typeID] = [];
-            }
-
-            this.dynamicAnimations[typeID].push(animationID);
         }
 
         this.tileTypes[typeID] = imageSheet;
@@ -132,13 +132,13 @@ TileManager.prototype.getTileID = function(setID, animationID) {
     const metaSet = this.tileMeta.inversion[setID];
 
     if(!metaSet) {
-        return 0;
+        return TileManager.TILE_ID.EMPTY;
     }
 
     const metaID = metaSet[animationID];
 
     if(metaID === undefined) {
-        return 0;
+        return TileManager.TILE_ID.EMPTY;
     }
 
     return metaID;
@@ -148,13 +148,13 @@ TileManager.prototype.getAutotilerID = function(autotilerID, autoIndex) {
     const autotiler = this.tileMeta.autotilers[autotilerID];
 
     if(!autotiler) {
-        return 0;
+        return TileManager.TILE_ID.EMPTY;
     }
 
     const meta = autotiler.values[autoIndex];
 
     if(!meta) {
-        return 0;
+        return TileManager.TILE_ID.EMPTY;
     }
 
     const { set, animation } = meta;

@@ -9,6 +9,7 @@ import { ConstructionSystem } from "../../systems/construction.js";
 import { Controller } from "../../../source/controller/controller.js";
 import { ArmyContext } from "../../armyContext.js";
 import { RangeShow } from "./rangeShow.js";
+import { TileManager } from "../../../source/tile/tileManager.js";
 
 export const PlayerController = function(id) {
     Controller.call(this, id);
@@ -125,7 +126,7 @@ PlayerController.prototype.getOverlayID = function(gameContext, typeID) {
     const overlay = this.config.overlays[typeID];
 
     if(!overlay) {
-        return -1;
+        return TileManager.TILE_ID.INVALID;
     }
 
     const { set, animation } = overlay;

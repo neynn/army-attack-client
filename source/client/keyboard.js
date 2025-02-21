@@ -1,7 +1,7 @@
 import { EventEmitter } from "../events/eventEmitter.js";
 
 export const Keyboard = function() {
-    this.keyBinds = new Map();
+    this.keybinds = new Map();
     this.activeKeys = new Set();
 
     this.events = new EventEmitter();
@@ -42,7 +42,7 @@ Keyboard.KEY = {
 Keyboard.prototype.init = function() {
     document.addEventListener("keydown", (event) => {
         const { key } = event;
-        const keybind = this.keyBinds.get(key);
+        const keybind = this.keybinds.get(key);
 
         if(keybind !== undefined) {
             event.preventDefault();
@@ -52,13 +52,24 @@ Keyboard.prototype.init = function() {
 
     document.addEventListener("keyup", (event) => {
         const { key } = event;
-        const keybind = this.keyBinds.get(key);
+        const keybind = this.keybinds.get(key);
 
         if(keybind !== undefined) {
             event.preventDefault();
             this.onKeyUp(event.key, keybind);
         }
     });
+}
+
+Keyboard.prototype.load = function(keybinds) {
+    this.keybinds.clear();
+    this.activeKeys.clear();
+    
+    for(const actionID in keybinds) {
+        const keyID = keybinds[actionID];
+
+        this.bindKey(keyID, actionID);
+    }
 }
 
 Keyboard.prototype.onKeyDown = function(keyID, action) {
@@ -76,26 +87,26 @@ Keyboard.prototype.onKeyUp = function(keyID, action) {
 }
 
 Keyboard.prototype.bindKey = function(keyID, action) {
-    if(this.keyBinds.has(keyID)) {
+    if(this.keybinds.has(keyID)) {
         return;
     }
 
-    this.keyBinds.set(keyID, action);
+    this.keybinds.set(keyID, action);
     this.events.emit(Keyboard.EVENT.KEY_BOUND, keyID, action);
 }
 
 Keyboard.prototype.unbindKey = function(keyID) {
-    if(!this.keyBinds.has(keyID)) {
+    if(!this.keybinds.has(keyID)) {
         return;
     }
 
-    this.keyBinds.delete(keyID);
+    this.keybinds.delete(keyID);
 }
 
 Keyboard.prototype.unbindAction = function(action) {
     const unboundKeys = [];
 
-    for(const [keyID, actionID] of this.keyBinds) {
+    for(const [keyID, actionID] of this.keybinds) {
         if(actionID === action) {
             unboundKeys.push(keyID);
         }
@@ -104,14 +115,14 @@ Keyboard.prototype.unbindAction = function(action) {
     for(let i = 0; i < unboundKeys.length; i++) {
         const keyID = unboundKeys[i];
 
-        this.keyBinds.delete(keyID);
+        this.keybinds.delete(keyID);
         this.events.emit(Keyboard.EVENT.KEY_UNBOUND, keyID, action);
     }
 }
 
 Keyboard.prototype.update = function() {
     for(const keyID of this.activeKeys) {
-        const keybind = this.keyBinds.get(keyID);
+        const keybind = this.keybinds.get(keyID);
 
         this.events.emit(Keyboard.EVENT.KEY_DOWN, keyID, keybind);
     }

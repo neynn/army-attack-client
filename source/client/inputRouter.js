@@ -5,7 +5,7 @@ export const InputRouter = function() {
     this.listeners = new Map();
 }
 
-InputRouter.prototype.registerInput = function(eventID, actionID, onCall) {
+InputRouter.prototype.on = function(eventID, actionID, onCall) {
     const listener = this.listeners.get(eventID);
 
     if(!listener) {
@@ -15,7 +15,7 @@ InputRouter.prototype.registerInput = function(eventID, actionID, onCall) {
     listener.registerInput(actionID, onCall);
 }
 
-InputRouter.prototype.createEventListener = function(eventID, keyboard) {
+InputRouter.prototype.createInputListener = function(eventID, keyboard) {
     const { events } = keyboard;
 
     if(this.listeners.has(eventID)) {
@@ -31,7 +31,7 @@ InputRouter.prototype.createEventListener = function(eventID, keyboard) {
     });
 }
 
-InputRouter.prototype.deleteEventListener = function(eventID, keyboard) {
+InputRouter.prototype.deleteInputListener = function(eventID, keyboard) {
     const { events } = keyboard;
 
     if(!this.listeners.has(keyboardEvent)) {

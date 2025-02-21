@@ -14,9 +14,8 @@ export const Client = function() {
     this.soundPlayer = new SoundPlayer();
     this.socket = new Socket();
 
-    this.router.createEventListener(Keyboard.EVENT.KEY_PRESSED, this.keyboard);
-    this.router.createEventListener(Keyboard.EVENT.KEY_RELEASED, this.keyboard);
-    this.router.createEventListener(Keyboard.EVENT.KEY_DOWN, this.keyboard);
+    this.router.createInputListener(Keyboard.EVENT.KEY_PRESSED, this.keyboard);
+    this.router.createInputListener(Keyboard.EVENT.KEY_RELEASED, this.keyboard);
 }
 
 Client.prototype.update = function() {
