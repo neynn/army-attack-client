@@ -3,14 +3,20 @@ import { Keyboard } from "./keyboard.js";
 import { MusicPlayer } from "./musicPlayer.js";
 import { Socket } from "../network/socket.js";
 import { SoundPlayer } from "./soundPlayer.js";
+import { InputRouter } from "./inputRouter.js";
 
 export const Client = function() {
     this.id = null;
+    this.router = new InputRouter();
     this.keyboard = new Keyboard();
     this.cursor = new Cursor();
     this.musicPlayer = new MusicPlayer();
     this.soundPlayer = new SoundPlayer();
     this.socket = new Socket();
+
+    this.router.createEventListener(Keyboard.EVENT.KEY_PRESSED, this.keyboard);
+    this.router.createEventListener(Keyboard.EVENT.KEY_RELEASED, this.keyboard);
+    this.router.createEventListener(Keyboard.EVENT.KEY_DOWN, this.keyboard);
 }
 
 Client.prototype.update = function() {

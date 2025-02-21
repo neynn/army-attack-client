@@ -22,7 +22,12 @@ export const PlayerController = function(id) {
     this.selectedEntities = new Set();
     this.state = PlayerController.STATE.NONE;
     this.showRange = true;
+    this.rangeShowEntity = -1;
 }
+
+PlayerController.COMMAND = {
+    TOGGLE_RANGE: "TOGGLE_RANGE"
+};
 
 PlayerController.STATE = {
     NONE: 0,
@@ -361,7 +366,7 @@ PlayerController.prototype.resetRangeIndicator = function(gameContext) {
     const { renderer, spriteManager, world } = gameContext;
     const { entityManager } = world;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
-    const entity = entityManager.getEntity(this.hover.lastTarget);
+    const entity = entityManager.getEntity(this.rangeShowEntity);
 
     camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.RANGE);
 
@@ -370,6 +375,8 @@ PlayerController.prototype.resetRangeIndicator = function(gameContext) {
         
         spriteManager.swapLayer(SpriteManager.LAYER.MIDDLE, spriteID);
     }
+
+    this.rangeShowEntity = -1;
 }
 
 PlayerController.prototype.showEntityRange = function(gameContext, entity) {
@@ -381,6 +388,7 @@ PlayerController.prototype.showEntityRange = function(gameContext, entity) {
 
     const { renderer, tileManager, spriteManager } = gameContext;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
+    const entityID = entity.getID();
     const { range } = attackComponent;
     const { tileX, tileY } = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
     const { spriteID } = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
@@ -408,7 +416,25 @@ PlayerController.prototype.showEntityRange = function(gameContext, entity) {
         }
     }
 
-    //spriteManager.getSprite(spriteID).drizzle((s) => s.setOpacity(0.5)); //TODO
+    this.rangeShowEntity = entityID;
+}
+
+PlayerController.prototype.showHoverEntityRange = function(gameContext) {
+    if(this.hover.isHoveringOnEntity()) {
+        const entity = this.hover.getEntity(gameContext);
+
+        this.showEntityRange(gameContext, entity);
+    }
+}
+
+PlayerController.prototype.toggleShowRange = function(gameContext) {
+    if(this.showRange) {
+        this.resetRangeIndicator(gameContext);
+    } else {
+        this.showHoverEntityRange(gameContext);
+    }
+
+    this.showRange = !this.showRange;
 }
 
 PlayerController.prototype.updateRangeIndicator = function(gameContext) {
@@ -417,12 +443,7 @@ PlayerController.prototype.updateRangeIndicator = function(gameContext) {
     }
 
     this.resetRangeIndicator(gameContext);
-
-    if(this.hover.isHoveringOnEntity()) {
-        const entity = this.hover.getEntity(gameContext);
-
-        this.showEntityRange(gameContext, entity);
-    }
+    this.showHoverEntityRange(gameContext);
 }
 
 PlayerController.prototype.update = function(gameContext) {

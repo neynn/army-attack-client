@@ -1,4 +1,5 @@
 import { Cursor } from "../../source/client/cursor.js";
+import { Keyboard } from "../../source/client/keyboard.js";
 import { Factory } from "../../source/factory/factory.js";
 import { SpriteManager } from "../../source/graphics/spriteManager.js";
 import { CAMERA_TYPES } from "../enums.js";
@@ -42,10 +43,14 @@ ArmyControllerFactory.prototype.addClickEvent = function(gameContext, controller
 }
 
 ArmyControllerFactory.prototype.onCreate = function(gameContext, config) {
-    const { spriteManager, renderer } = gameContext;
+    const { spriteManager, renderer, client } = gameContext;
+    const { router, keyboard } = client;
     const { type, id, team } = config;
+
     const controllerType = this.getType(type);
 
+    keyboard.bindKey(Keyboard.KEY.V, PlayerController.COMMAND.TOGGLE_RANGE);
+    
     switch(type) {
         case ArmyControllerFactory.TYPE.PLAYER: {
             const controller = new PlayerController(id);
@@ -63,6 +68,8 @@ ArmyControllerFactory.prototype.onCreate = function(gameContext, config) {
             
             this.addClickEvent(gameContext, controller);
             this.addDragEvent(gameContext);
+
+            router.registerInput(Keyboard.EVENT.KEY_PRESSED, PlayerController.COMMAND.TOGGLE_RANGE, () => controller.toggleShowRange(gameContext));        
 
             return controller;
         }
