@@ -166,7 +166,7 @@ UserInterface.prototype.addClick = function(buttonID, onClick) {
         return;
     }
 
-    button.events.subscribe(Button.EVENT_CLICKED, this.id, onClick);
+    button.events.subscribe(Button.EVENT.CLICKED, this.id, onClick);
 }
 
 UserInterface.prototype.removeClick = function(buttonID) {
@@ -176,7 +176,7 @@ UserInterface.prototype.removeClick = function(buttonID) {
         return;
     }
 
-    button.events.mute(Button.EVENT_CLICKED);
+    button.events.mute(Button.EVENT.CLICKED);
 }
 
 UserInterface.prototype.setText = function(textID, message) {
@@ -219,7 +219,7 @@ UserInterface.prototype.createElement = function(name, typeID, config) {
     const element = new ElementType(name);
     const elementID = element.getID();
 
-    element.loadFromConfig(config);
+    element.init(config);
 
     this.idTranslate.set(name, elementID);
     this.elements.set(elementID, element);

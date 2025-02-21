@@ -5,7 +5,8 @@ import { UIElement } from "../uiElement.js";
 export const Button = function(DEBUG_NAME) {
     UIElement.call(this, DEBUG_NAME);
 
-    this.shape = Button.SHAPE_RECTANGLE;
+    this.defers = [];
+    this.shape = Button.SHAPE.RECTANGLE;
     this.highlight = new Outline();
     this.outline = new Outline();
 
@@ -13,17 +14,19 @@ export const Button = function(DEBUG_NAME) {
     this.outline.color.setColor(255, 255, 255, 1);
     this.outline.enable();
 
-    this.events.listen(Button.EVENT_DEFER_DRAW);
-    this.events.listen(Button.EVENT_CLICKED);
+    this.events.listen(Button.EVENT.CLICKED);
     this.events.subscribe(UIElement.EVENT.FIRST_COLLISION, this.DEBUG_NAME, () => this.highlight.enable());
     this.events.subscribe(UIElement.EVENT.FINAL_COLLISION, this.DEBUG_NAME, () => this.highlight.disable());
 }
 
-Button.EVENT_DEFER_DRAW = "EVENT_DEFER_DRAW";
-Button.EVENT_CLICKED = "EVENT_CLICKED";
+Button.EVENT = {
+    CLICKED: "EVENT_CLICKED"
+};
 
-Button.SHAPE_RECTANGLE = 0;
-Button.SHAPE_CIRCLE = 1;
+Button.SHAPE = {
+    RECTANGLE: 0,
+    CIRCLE: 1
+};
 
 Button.prototype = Object.create(UIElement.prototype);
 Button.prototype.constructor = Button;
@@ -34,7 +37,7 @@ Button.prototype.setShape = function(shape) {
     }
 }
 
-Button.prototype.loadFromConfig = function(config) {
+Button.prototype.init = function(config) {
     const { id, opacity, position, shape } = config;
     const { x, y } = position;
 
@@ -43,20 +46,20 @@ Button.prototype.loadFromConfig = function(config) {
     this.setOpacity(opacity);
 
     switch(shape) {
-        case Button.SHAPE_RECTANGLE: {
+        case Button.SHAPE.RECTANGLE: {
             const { width, height } = config;
 
             this.width = width;
             this.height = height;
-            this.setShape(Button.SHAPE_RECTANGLE);
+            this.setShape(Button.SHAPE.RECTANGLE);
             break;
         }
-        case Button.SHAPE_CIRCLE: {
+        case Button.SHAPE.CIRCLE: {
             const { radius } = config;
 
             this.width = radius;
             this.height = radius;
-            this.setShape(Button.SHAPE_CIRCLE);
+            this.setShape(Button.SHAPE.CIRCLE);
             break;
         }
         default: {
@@ -70,11 +73,11 @@ Button.prototype.onDebug = function(context, viewportX, viewportY, localX, local
     context.fillStyle = "#ff00ff";
 
     switch(this.shape) {
-        case Button.SHAPE_RECTANGLE: {
+        case Button.SHAPE.RECTANGLE: {
             context.fillRect(localX, localY, this.width, this.height);
             break;
         }
-        case Button.SHAPE_CIRCLE: {
+        case Button.SHAPE.CIRCLE: {
             context.beginPath();
             context.arc(localX, localY, this.width, 0, 2 * Math.PI);
             context.fill();
@@ -87,9 +90,25 @@ Button.prototype.isColliding = function(mouseX, mouseY, mouseRange) {
     const { x, y } = this.position;
 
     switch(this.shape) {
-        case Button.SHAPE_RECTANGLE: return isRectangleRectangleIntersect(x, y, this.width, this.height, mouseX, mouseY, mouseRange, mouseRange);
-        case Button.SHAPE_CIRCLE: return isCircleCicleIntersect(x, y, this.width, mouseX, mouseY, mouseRange);
+        case Button.SHAPE.RECTANGLE: return isRectangleRectangleIntersect(x, y, this.width, this.height, mouseX, mouseY, mouseRange, mouseRange);
+        case Button.SHAPE.CIRCLE: return isCircleCicleIntersect(x, y, this.width, mouseX, mouseY, mouseRange);
         default: return false;
+    }
+}
+
+Button.prototype.clearDefers = function() {
+    this.defers.length = 0;
+}
+
+Button.prototype.addDefer = function(onDraw) {
+    this.defers.push(onDraw);
+}
+
+Button.prototype.drawDefers = function(context, localX, localY) {
+    for(let i = 0; i < this.defers.length; i++) {
+        const onDraw = this.defers[i];
+
+        onDraw(context, localX, localY);
     }
 }
 
@@ -98,7 +117,7 @@ Button.prototype.drawStyle = function(context, localX, localY) {
     const isOutlineActive = this.outline.isActive();
 
     switch(this.shape) {
-        case Button.SHAPE_RECTANGLE: {
+        case Button.SHAPE.RECTANGLE: {
             if(isHighlightActive) {
                 const fillStyle = this.highlight.color.getRGBAString();
 
@@ -108,11 +127,13 @@ Button.prototype.drawStyle = function(context, localX, localY) {
         
             if(isOutlineActive) {
                 this.outline.apply(context);
+
                 context.strokeRect(localX, localY, this.width, this.height);
             }
+
             break;
         }
-        case Button.SHAPE_CIRCLE: {
+        case Button.SHAPE.CIRCLE: {
             if(isHighlightActive) {
                 const fillStyle = this.highlight.color.getRGBAString();
 
@@ -124,16 +145,18 @@ Button.prototype.drawStyle = function(context, localX, localY) {
         
             if(isOutlineActive) {
                 this.outline.apply(context);
+
                 context.beginPath();
                 context.arc(localX, localY, this.width, 0, 2 * Math.PI);
                 context.stroke();
             }
+
             break;
         }
     }
 }
 
 Button.prototype.onDraw = function(context, viewportX, viewportY, localX, localY) {
-    this.events.emit(Button.EVENT_DEFER_DRAW, this, context, localX, localY);
+    this.drawDefers(context, localX, localY);
     this.drawStyle(context, localX, localY);
 }

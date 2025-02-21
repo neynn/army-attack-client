@@ -9,7 +9,7 @@ export const Icon = function(DEBUG_NAME) {
 Icon.prototype = Object.create(UIElement.prototype);
 Icon.prototype.constructor = Icon;
 
-Icon.prototype.loadFromConfig = function(config) {
+Icon.prototype.init = function(config) {
     const { id, opacity, position } = config;
     const { x, y } = position;
 

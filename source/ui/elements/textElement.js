@@ -16,7 +16,7 @@ export const TextElement = function(DEBUG_NAME) {
 TextElement.prototype = Object.create(UIElement.prototype);
 TextElement.prototype.constructor = TextElement;
 
-TextElement.prototype.loadFromConfig = function(config) {
+TextElement.prototype.init = function(config) {
     const { id, opacity, position, font, align, color = [0, 0, 0, 0], text } = config;
     const { x, y } = position;
 

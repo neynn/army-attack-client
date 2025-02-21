@@ -136,8 +136,8 @@ MapEditorState.prototype.loadButtonEvents = function(gameContext) {
     for(const buttonID of slots) {
         const button = editorInterface.getElement(buttonID);
 
-        button.events.unsubscribe(Button.EVENT_CLICKED, this.id);
-        button.events.unsubscribe(Button.EVENT_DEFER_DRAW, this.id);
+        button.events.unsubscribe(Button.EVENT.CLICKED, this.id);
+        button.clearDefers();
     }
 
     for(let i = 0; i < slots.length; i++) {
@@ -146,18 +146,20 @@ MapEditorState.prototype.loadButtonEvents = function(gameContext) {
         const button = editorInterface.getElement(buttonID);
         const { tileName, tileID } = brushData;
 
-        button.events.subscribe(Button.EVENT_CLICKED, this.id, () => this.mapEditor.setBrush(brushData));
+        button.events.subscribe(Button.EVENT.CLICKED, this.id, () => this.mapEditor.setBrush(brushData));
 
-        button.events.subscribe(Button.EVENT_DEFER_DRAW, this.id, (element, context, localX, localY) => {
-            if(tileID === 0) {
+        if(tileID === 0) {
+            button.addDefer((context, localX, localY) => {
                 camera.drawEmptyTile(context, localX, localY, MapEditorState.GRAPHICS_BUTTON_SCALE, MapEditorState.GRAPHICS_BUTTON_SCALE);
-            } else {
+            });
+        } else {
+            button.addDefer((context, localX, localY) => {
                 camera.drawTileGraphics(tileManager, tileID, context, localX, localY, MapEditorState.GRAPHICS_BUTTON_SCALE, MapEditorState.GRAPHICS_BUTTON_SCALE);
                 context.fillStyle = "#eeeeee";
                 context.textAlign = "center";
                 context.fillText(tileName, localX + 25, localY + 25);
-            }
-        });
+            });
+        }
     }
 } 
 

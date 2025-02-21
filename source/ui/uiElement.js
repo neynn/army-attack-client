@@ -3,7 +3,7 @@ import { Drawable } from "../graphics/drawable.js";
 
 export const UIElement = function(DEBUG_NAME) {
     Drawable.call(this, DEBUG_NAME);
-    
+
     this.anchor = UIElement.ANCHOR_TYPE.TOP_LEFT;
     this.originX = 0;
     this.originY = 0;
@@ -37,8 +37,8 @@ UIElement.ANCHOR_TYPE = {
 UIElement.prototype = Object.create(Drawable.prototype);
 UIElement.prototype.constructor = UIElement;
 
-UIElement.prototype.loadFromConfig = function(config) {
-    console.warn(`Method loadFromConfig has not been defined!`);
+UIElement.prototype.init = function(config) {
+    console.warn(`Method init has not been defined!`);
 }
 
 UIElement.prototype.isColliding = function(mouseX, mouseY, mouseRange) {

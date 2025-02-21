@@ -48,7 +48,7 @@ GameContext.prototype.addClickEvent = function() {
         const clickedElements = this.uiManager.getCollidedElements(cursor.positionX, cursor.positionY, cursor.radius);
 
         for(const element of clickedElements) {
-            element.events.emit(Button.EVENT_CLICKED);
+            element.events.emit(Button.EVENT.CLICKED);
         }
     });
 }

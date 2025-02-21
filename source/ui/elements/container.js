@@ -13,7 +13,7 @@ export const Container = function(DEBUG_NAME) {
 Container.prototype = Object.create(UIElement.prototype);
 Container.prototype.constructor = Container;
 
-Container.prototype.loadFromConfig = function(config) {
+Container.prototype.init = function(config) {
     const { id, width, height, opacity, position } = config;
     const { x, y } = position;
 

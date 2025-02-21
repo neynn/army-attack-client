@@ -14,7 +14,7 @@ DynamicTextElement.EVENT_REQUEST_TEXT = "EVENT_REQUEST_TEXT";
 DynamicTextElement.prototype = Object.create(UIElement.prototype);
 DynamicTextElement.prototype.constructor = DynamicTextElement;
 
-DynamicTextElement.prototype.loadFromConfig = function(config) {
+DynamicTextElement.prototype.init = function(config) {
     const { id, opacity, position, font, align, color = [0, 0, 0, 0], text } = config;
     const { x, y } = position;
 
