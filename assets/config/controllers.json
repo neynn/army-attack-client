@@ -1,8 +1,9 @@
 {
     "Player": {
         "id": "Player",
-        "keybinds": {
-            "TOGGLE_RANGE": "v"
+        "binds": {
+            "TOGGLE_RANGE": "+v",
+            "CLICK": "+M1"
         },
         "overlays": {
             "attack": { "set": "overlay", "animation": "grid_attack_1x1" },

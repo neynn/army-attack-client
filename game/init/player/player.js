@@ -24,6 +24,7 @@ export const PlayerController = function(id) {
 }
 
 PlayerController.COMMAND = {
+    CLICK: "CLICK",
     TOGGLE_RANGE: "TOGGLE_RANGE"
 };
 
@@ -182,6 +183,15 @@ PlayerController.prototype.updateSpritePosition = function(gameContext) {
 }
 
 PlayerController.prototype.onClick = function(gameContext) {
+    const { client, uiManager } = gameContext;
+    const { cursor } = client;
+    const { positionX, positionY, radius } = cursor;
+    const clickedElements = uiManager.getCollidedElements(positionX, positionY, radius);
+
+    if(clickedElements.length > 0) {
+        return;
+    }
+
     switch(this.state) {
         case PlayerController.STATE.IDLE: {
             this.onIdleClick(gameContext);

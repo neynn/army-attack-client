@@ -29,22 +29,9 @@ ArmyControllerFactory.prototype.addDragEvent = function(gameContext) {
     });
 }
 
-ArmyControllerFactory.prototype.addClickEvent = function(gameContext, controller) {
-    const { client, uiManager } = gameContext;
-    const { cursor } = client;
-
-    cursor.events.subscribe(Cursor.EVENT.LEFT_MOUSE_CLICK, this.id, () => {
-        const clickedElements = uiManager.getCollidedElements(cursor.positionX, cursor.positionY, cursor.radius);
-
-        if(clickedElements.length === 0) {
-            controller.onClick(gameContext);
-        }
-    });
-}
-
 ArmyControllerFactory.prototype.onCreate = function(gameContext, config) {
     const { spriteManager, renderer, client } = gameContext;
-    const { router, keyboard } = client;
+    const { router } = client;
     const { type, id, team } = config;
     const controllerType = this.getType(type);
 
@@ -63,11 +50,12 @@ ArmyControllerFactory.prototype.onCreate = function(gameContext, config) {
             controller.setConfig(controllerType);
             controller.setState(PlayerController.STATE.IDLE);
             
-            this.addClickEvent(gameContext, controller);
+            //this.addClickEvent(gameContext, controller);
             this.addDragEvent(gameContext);
 
-            keyboard.load(controllerType.keybinds);
-            router.on(Keyboard.EVENT.KEY_PRESSED, PlayerController.COMMAND.TOGGLE_RANGE, () => controller.toggleRangeShow(gameContext));
+            router.load(gameContext, controllerType.binds);
+            router.on(PlayerController.COMMAND.TOGGLE_RANGE, () => controller.toggleRangeShow(gameContext));
+            router.on(PlayerController.COMMAND.CLICK, () => controller.onClick(gameContext));
 
             return controller;
         }

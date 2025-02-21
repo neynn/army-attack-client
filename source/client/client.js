@@ -6,7 +6,6 @@ import { SoundPlayer } from "./soundPlayer.js";
 import { InputRouter } from "./inputRouter.js";
 
 export const Client = function() {
-    this.id = null;
     this.router = new InputRouter();
     this.keyboard = new Keyboard();
     this.cursor = new Cursor();
@@ -14,21 +13,17 @@ export const Client = function() {
     this.soundPlayer = new SoundPlayer();
     this.socket = new Socket();
 
-    this.router.createInputListener(Keyboard.EVENT.KEY_PRESSED, this.keyboard);
-    this.router.createInputListener(Keyboard.EVENT.KEY_RELEASED, this.keyboard);
+    this.router.createKeyboardListener(Keyboard.EVENT.KEY_PRESSED, InputRouter.PREFIX.DOWN, this.keyboard);
+    this.router.createKeyboardListener(Keyboard.EVENT.KEY_RELEASED, InputRouter.PREFIX.UP, this.keyboard);
+    this.router.createMouseListener(Cursor.EVENT.LEFT_MOUSE_CLICK, InputRouter.PREFIX.DOWN, this.cursor);
+    this.router.createMouseListener(Cursor.EVENT.LEFT_MOUSE_UP, InputRouter.PREFIX.UP, this.cursor);
+    this.router.createMouseListener(Cursor.EVENT.RIGHT_MOUSE_CLICK, InputRouter.PREFIX.DOWN, this.cursor);
+    this.router.createMouseListener(Cursor.EVENT.RIGHT_MOUSE_UP, InputRouter.PREFIX.UP, this.cursor);
 }
 
 Client.prototype.update = function() {
     this.keyboard.update();
     this.cursor.update();
-}
-
-Client.prototype.setID = function(id) {
-    if(!id) {
-        return;
-    }
-
-    this.id = id;
 }
 
 Client.prototype.isOnline = function() {
