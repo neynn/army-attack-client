@@ -85,7 +85,8 @@ ArmyMap.prototype.reload = function(gameContext) {
 
 ArmyMap.prototype.getAnimationForm = function(gameContext, tileID) {
     const { tileManager, world } = gameContext;
-    const tileMeta = tileManager.getTileMeta(tileID);
+    const { meta } = tileManager;
+    const tileMeta = meta.getMeta(tileID);
 
     if(!tileMeta) {
         return null;
@@ -138,7 +139,7 @@ ArmyMap.prototype.autotile = function(gameContext, centerX, centerY, tileID, lay
         return;
     }
 
-    this.updateArea(centerX, centerY, 1, (i, tileX, tileY) => {
+    this.updateArea(centerX, centerY, 1, (index, tileX, tileY) => {
         const id = this.getTile(layerID, tileX, tileY);
 
         if(!autotiler.hasMember(id)) {
@@ -177,6 +178,7 @@ ArmyMap.prototype.getConversionID = function(gameContext, tileID, teamID) {
 
 ArmyMap.prototype.updateShoreTiles = function(gameContext, centerX, centerY, range) {
     const { tileManager } = gameContext;
+    const { meta } = tileManager;
     const teamID = this.getTile(ArmyMap.LAYER.TEAM, centerX, centerY);
 
     this.updateArea(centerX, centerY, range, (index, tileX, tileY) => {
@@ -210,7 +212,7 @@ ArmyMap.prototype.updateShoreTiles = function(gameContext, centerX, centerY, ran
 
         const conversionID = this.getConversionID(gameContext, groundID, teamID);
     
-        if(tileManager.hasTileMeta(conversionID)) {
+        if(meta.hasMeta(conversionID)) {
             this.placeTile(conversionID, ArmyMap.LAYER.GROUND, tileX, tileY);
         }
     });
@@ -218,6 +220,7 @@ ArmyMap.prototype.updateShoreTiles = function(gameContext, centerX, centerY, ran
 
 ArmyMap.prototype.convertGraphicToTeam = function(gameContext, tileX, tileY) {
     const { tileManager } = gameContext;
+    const { meta } = tileManager;
 
     for(let i = 0; i < ArmyMap.CONVERTABLE_LAYERS.length; i++) {
         const layerID = ArmyMap.CONVERTABLE_LAYERS[i];
@@ -225,7 +228,7 @@ ArmyMap.prototype.convertGraphicToTeam = function(gameContext, tileX, tileY) {
         const teamID = this.getTile(ArmyMap.LAYER.TEAM, tileX, tileY);
         const conversionID = this.getConversionID(gameContext, tileID, teamID);
 
-        if(tileManager.hasTileMeta(conversionID)) {
+        if(meta.hasMeta(conversionID)) {
             this.placeTile(conversionID, layerID, tileX, tileY);
         }
     }

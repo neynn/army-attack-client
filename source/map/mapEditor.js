@@ -188,6 +188,7 @@ MapEditor.prototype.undo = function(gameContext) {
 MapEditor.prototype.paint = function(gameContext, mapID, layerID) {
     const { world, tileManager } = gameContext;
     const { mapManager } = world;
+    const { meta } = tileManager;
     const cursorTile = gameContext.getMouseTile();
     const gameMap = mapManager.getLoadedMap(mapID);
     const brush = this.getBrush();
@@ -203,7 +204,7 @@ MapEditor.prototype.paint = function(gameContext, mapID, layerID) {
     const startY = cursorTile.y - brushSize;
     const endX = cursorTile.x + brushSize;
     const endY = cursorTile.y + brushSize;
-    const tileMeta = tileManager.getTileMeta(tileID);
+    const tileMeta = meta.getMeta(tileID);
 
     for(let i = startY; i <= endY; i++) {
         for(let j = startX; j <= endX; j++) {

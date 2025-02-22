@@ -161,6 +161,7 @@ ArmyContext.prototype.init = function(resources) {
 }
 
 ArmyContext.prototype.updateConversions = function() {
+    const { meta } = this.tileManager;
     const conversions = this.world.getConfig("TileTeamConversion");
     const newConversions = {};
 
@@ -169,7 +170,7 @@ ArmyContext.prototype.updateConversions = function() {
 
         for(const frameID in set) {
             const config = {};
-            const mainID = this.tileManager.getTileID(setID, frameID);
+            const mainID = meta.getTileID(setID, frameID);
 
             if(mainID === TileManager.TILE_ID.EMPTY) {
                 continue;
@@ -179,7 +180,7 @@ ArmyContext.prototype.updateConversions = function() {
 
             for(const teamID in teamConversions) {
                 const [tileSetID, tileFrameID] = teamConversions[teamID];
-                const tileID = this.tileManager.getTileID(tileSetID, tileFrameID);
+                const tileID = meta.getTileID(tileSetID, tileFrameID);
 
                 if(teamID !== TileManager.TILE_ID.EMPTY) {
                     config[teamID] = tileID;

@@ -2,13 +2,14 @@ import { ImageSheet } from "../graphics/imageSheet.js";
 import { Logger } from "../logger.js";
 import { ImageManager } from "../resources/imageManager.js";
 import { Autotiler } from "./autotiler.js";
+import { TileMeta } from "./tileMeta.js";
 
 export const TileManager = function() {
+    this.meta = new TileMeta();
     this.autotilers = new Map();
     this.resources = new ImageManager();
     this.dynamicAnimations = [];
     this.tileTypes = {};
-    this.tileMeta = {};
 }
 
 TileManager.TILE_ID = {
@@ -31,20 +32,17 @@ TileManager.prototype.load = function(tileTypes, tileMeta) {
     }
 
     if(typeof tileMeta === "object") {
-        this.tileMeta = tileMeta;
-        this.tileMeta.inversion = this.getTileMetaInversion();
-        this.loadAutotilers(tileMeta);
-        
-        delete this.tileMeta.autotilers;
+        this.meta.init(tileMeta.values);
+        this.loadAutotilers(tileMeta.autotilers);
     } else {
         Logger.log(false, "TileMeta cannot be undefined!", "TileManager.prototype.load", null);
     }
 }
 
-TileManager.prototype.loadAutotilers = function(tileMeta) {
-    for(const autotilerID in tileMeta.autotilers) {
+TileManager.prototype.loadAutotilers = function(autotilers) {
+    for(const autotilerID in autotilers) {
         const autotiler = new Autotiler(autotilerID);
-        const config = tileMeta.autotilers[autotilerID];
+        const config = autotilers[autotilerID];
 
         autotiler.init(this, config);
 
@@ -71,42 +69,6 @@ TileManager.prototype.updateDynamicAnimations = function(timestamp) {
 
         animationType.updateFrameIndex(timestamp);
     }
-}
-
-TileManager.prototype.getInvertedTileMeta = function() {
-    return this.tileMeta.inversion;
-}
-
-TileManager.prototype.getTileMetaInversion = function() {
-    const inversion = {};
-
-    for(let i = 0; i < this.tileMeta.values.length; i++) {
-        const { set, animation } = this.tileMeta.values[i];
-
-        if(!inversion[set]) {
-            inversion[set] = {};
-        }
-
-        inversion[set][animation] = i + 1;
-    }
-
-    return inversion;
-}
-
-TileManager.prototype.getTileMeta = function(tileID) {
-    const tileIndex = tileID - 1;
-
-    if(tileIndex < 0 || tileIndex >= this.tileMeta.values.length) {
-        return null;
-    }
-
-    return this.tileMeta.values[tileIndex];
-}
-
-TileManager.prototype.hasTileMeta = function(tileID) {
-    const tileIndex = tileID - 1;
-
-    return tileIndex >= 0 && tileIndex < this.tileMeta.values.length;
 }
 
 TileManager.prototype.loadTileTypes = function(tileTypes) {
@@ -143,22 +105,6 @@ TileManager.prototype.getTileType = function(typeID) {
     return type;
 }
 
-TileManager.prototype.getTileID = function(setID, animationID) {
-    const metaSet = this.tileMeta.inversion[setID];
-
-    if(!metaSet) {
-        return TileManager.TILE_ID.EMPTY;
-    }
-
-    const metaID = metaSet[animationID];
-
-    if(metaID === undefined) {
-        return TileManager.TILE_ID.EMPTY;
-    }
-
-    return metaID;
-}
-
 TileManager.prototype.getAutotilerByID = function(autotilerID) {
     const autotiler = this.autotilers.get(autotilerID);
 
@@ -170,7 +116,7 @@ TileManager.prototype.getAutotilerByID = function(autotilerID) {
 }
 
 TileManager.prototype.getAutotilerByTile = function(tileID) {
-    const tileMeta = this.getTileMeta(tileID);
+    const tileMeta = this.meta.getMeta(tileID);
 
     if(!tileMeta) {
         return null;

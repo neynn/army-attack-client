@@ -150,7 +150,8 @@ OrthogonalCamera.prototype.drawSpriteLayer = function(gameContext, renderContext
 }
 
 OrthogonalCamera.prototype.drawTileGraphics = function(tileManager, tileID, context, renderX, renderY, scaleX = 1, scaleY = 1) {
-    const tileMeta = tileManager.getTileMeta(tileID);
+    const { meta, resources } = tileManager;
+    const tileMeta = meta.getMeta(tileID);
 
     if(tileMeta === null) {
         this.drawEmptyTile(context, renderX, renderY, scaleX, scaleY);
@@ -158,7 +159,7 @@ OrthogonalCamera.prototype.drawTileGraphics = function(tileManager, tileID, cont
     }
 
     const { set, animation } = tileMeta;
-    const tileBuffer = tileManager.resources.getImage(set);
+    const tileBuffer = resources.getImage(set);
 
     if(!tileBuffer) {
         this.drawEmptyTile(context, renderX, renderY, scaleX, scaleY);
