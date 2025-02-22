@@ -193,13 +193,15 @@ PlayerController.prototype.onClick = function(gameContext) {
         return;
     }
 
+    const mouseTile = gameContext.getMouseTile();
+
     switch(this.state) {
         case PlayerController.STATE.IDLE: {
-            this.onIdleClick(gameContext);
+            this.onIdleClick(gameContext, mouseTile);
             break;
         }
         case PlayerController.STATE.SELECTED: {
-            this.onSelectedClick(gameContext);
+            this.onSelectedClick(gameContext, mouseTile);
             break;
         }
         case PlayerController.STATE.SHOP: {
@@ -313,16 +315,16 @@ PlayerController.prototype.queueAttack = function(gameContext, entity) {
     return isAttackable;
 }
 
-PlayerController.prototype.onSelectedClick = function(gameContext) {
+PlayerController.prototype.onSelectedClick = function(gameContext, mouseTile) {
     const { world, client } = gameContext;
     const { actionQueue, entityManager } = world;
     const { soundPlayer } = client;
     const selectedEntityID = this.getFirstSelected();
     const selectedEntity = entityManager.getEntity(selectedEntityID);
+    const entity = this.getTileEntity(gameContext, mouseTile);
 
-    if(this.hover.isHoveringOnEntity()) {
-        const hoverEntity = this.hover.getEntity(gameContext);
-        const success = this.queueAttack(gameContext, hoverEntity);
+    if(entity) {
+        const success = this.queueAttack(gameContext, entity);
 
         if(!success) {
             soundPlayer.playSound("sound_error", 0.5); 
@@ -334,28 +336,37 @@ PlayerController.prototype.onSelectedClick = function(gameContext) {
     this.deselectEntity(gameContext, selectedEntity);
 }
 
-PlayerController.prototype.onIdleClick = function(gameContext) {
-    if(!this.hover.isHoveringOnEntity()) {
+PlayerController.prototype.getTileEntity = function(gameContext, tile) {
+    const { world } = gameContext;
+    const { x, y } = tile;
+    const entity = world.getTileEntity(x, y);
+
+    return entity;
+}
+
+PlayerController.prototype.onIdleClick = function(gameContext, mouseTile) {
+    const { world } = gameContext;
+    const { actionQueue } = world;
+    const entity = this.getTileEntity(gameContext, mouseTile);
+
+    if(!entity) {
         return;
     }
 
-    const { world } = gameContext;
-    const { actionQueue } = world;
-    const hoverEntity = this.hover.getEntity(gameContext);
-    const entityID = hoverEntity.getID();
-    const success = this.queueAttack(gameContext, hoverEntity);
+    const entityID = entity.getID();
+    const success = this.queueAttack(gameContext, entity);
 
     if(success || !this.hasEntity(entityID)) {
         return;
     }
 
-    if(hoverEntity.hasComponent(ArmyEntity.COMPONENT.CONSTRUCTION)) {
-        ConstructionSystem.onInteract(gameContext, hoverEntity);
+    if(entity.hasComponent(ArmyEntity.COMPONENT.CONSTRUCTION)) {
+        ConstructionSystem.onInteract(gameContext, entity);
     }
 
     if(!actionQueue.isRunning()) {
-        if(hoverEntity.isMoveable()) {
-            this.selectEntity(gameContext, hoverEntity);
+        if(entity.isMoveable()) {
+            this.selectEntity(gameContext, entity);
         }
     }
 }

@@ -77,13 +77,13 @@ Autotiler.prototype.getValue = function(autoIndex) {
 Autotiler.prototype.run = function(tileX, tileY, onCheck) {
     switch(this.type) {
         case Autotiler.TYPE.MIN_4: {
-            const index = Autotiler.autotile4Bits(tileX, tileY, onCheck);
+            const index = this.autotile4Bits(tileX, tileY, onCheck);
             const tileID = this.getValue(index);
 
             return tileID;
         }
         case Autotiler.TYPE.MIN_8: {
-            const index = Autotiler.autotile8Bits(tileX, tileY, onCheck);
+            const index = this.autotile8Bits(tileX, tileY, onCheck);
             const transform = Autotiler.VALUES_8[index];
             const tileID = this.getValue(transform);
 
@@ -159,7 +159,7 @@ Autotiler.prototype.loadValues = function(tileManager, values) {
     }
 } 
 
-Autotiler.autotile4Bits = function(tileX, tileY, onCheck) {
+Autotiler.prototype.autotile4Bits = function(tileX, tileY, onCheck) {
     if(tileX === undefined || tileY === undefined || !onCheck) {
         return 0;
     }
@@ -179,7 +179,7 @@ Autotiler.autotile4Bits = function(tileX, tileY, onCheck) {
     return total;
 }
 
-Autotiler.autotile8Bits = function(tileX, tileY, onCheck) {
+Autotiler.prototype.autotile8Bits = function(tileX, tileY, onCheck) {
     if(tileX === undefined || tileY === undefined || !onCheck) {
         return 0;
     }
