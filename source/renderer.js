@@ -7,19 +7,17 @@ import { isRectangleRectangleIntersect } from "./math/math.js";
 import { CameraContext } from "./camera/cameraContext.js";
 
 export const Renderer = function() {
+    this.contexts = [];
     this.windowWidth = window.innerWidth;
     this.windowHeight = window.innerHeight;
 
     this.effects = new EffectManager();
     this.fpsCounter = new FPSCounter();
     this.display = new RenderContext();
-    this.display.init(this.windowWidth, this.windowHeight, true);
+    this.display.init(this.windowWidth, this.windowHeight, RenderContext.TYPE.DISPLAY);
 
     this.events = new EventEmitter();
     this.events.listen(Renderer.EVENT.SCREEN_RESIZE);
-
-    this.contexts = new Map();
-    this.contextStack = [];
 
     window.addEventListener("resize", () => this.resizeDisplay(window.innerWidth, window.innerHeight));
 }
@@ -29,25 +27,27 @@ Renderer.EVENT = {
 };
 
 Renderer.DEBUG = {
-    VALUE: 0b00000001,
-    CAMERA: 1 << 0,
-    INTERFACE: 1 << 1,
-    SPRITES: 1 << 2,
-    MAP: 1 << 3
+    CAMERA: true,
+    INTERFACE: false,
+    SPRITES: false,
+    MAP: false
 };
 
-Renderer.prototype.getContext = function(contextID) {
-    const context = this.contexts.get(contextID);
+Renderer.prototype.getContext = function(id) {
+    for(let i = 0; i < this.contexts.length; i++) {
+        const context = this.contexts[i];
+        const contextID = context.getID();
 
-    if(!context) {
-        return null;
+        if(contextID === id) {
+            return context;
+        }
     }
 
-    return context;
+    return null;
 }
 
-Renderer.prototype.getCamera = function(cameraID) {
-    const context = this.contexts.get(cameraID);
+Renderer.prototype.getCamera = function(id) {
+    const context = this.getContext(id);
 
     if(!context) {
         return null;
@@ -56,8 +56,21 @@ Renderer.prototype.getCamera = function(cameraID) {
     return context.getCamera();
 }
 
+Renderer.prototype.hasContext = function(id) {
+    for(let i = 0; i < this.contexts.length; i++) {
+        const context = this.contexts[i];
+        const contextID = context.getID();
+
+        if(contextID === id) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 Renderer.prototype.refreshCamera = function(cameraID) {
-    const context = this.contexts.get(cameraID);
+    const context = this.getContext(cameraID);
 
     if(!context) {
         return;
@@ -67,34 +80,29 @@ Renderer.prototype.refreshCamera = function(cameraID) {
 }
 
 Renderer.prototype.addCamera = function(cameraID, camera) {
-    if(!(camera instanceof Camera) || this.contexts.has(cameraID)) {
+    if(!(camera instanceof Camera) || this.hasContext(cameraID)) {
         return null;
     }
 
     const context = new CameraContext(cameraID, camera);
 
     camera.setViewport(this.windowWidth, this.windowHeight);
+
     context.events.subscribe(CameraContext.EVENT.REQUEST_WINDOW, EventEmitter.SUPER_ID, (onRequest) => onRequest(this.windowWidth, this.windowHeight));
 
-    this.contexts.set(cameraID, context);
-    this.contextStack.push(cameraID);
+    this.contexts.push(context);
 
     return context;
 }
 
-Renderer.prototype.removeCamera = function(cameraID) {
-    if(!this.contexts.has(cameraID)) {
-        return;
-    }
+Renderer.prototype.removeCamera = function(id) {
+    for(let i = 0; i < this.contexts.length; i++) {
+        const context = this.contexts[i];
+        const contextID = context.getID();
 
-    this.contexts.delete(cameraID);
-
-    for(let i = 0; i < this.contextStack.length; i++) {
-        const stackedCameraID = this.contextStack[i];
-
-        if(stackedCameraID === cameraID) {
-            this.contextStack.splice(i, 1);
-            break;
+        if(contextID === id) {
+            this.contexts.splice(i, 1);
+            return;
         }
     }
 }
@@ -126,10 +134,13 @@ Renderer.prototype.drawUIDebug = function(gameContext) {
 Renderer.prototype.drawCameraDebug = function() {
     this.display.context.strokeStyle = "#eeeeee";
     this.display.context.lineWidth = 3;
-    this.contexts.forEach(context => {
+
+    for(let i = 0; i < this.contexts.length; i++) {
+        const context = this.contexts[i];
         const { x, y, w, h } = context.getBounds();
+
         this.display.context.strokeRect(x, y, w, h);
-    });
+    }
 }
 
 Renderer.prototype.update = function(gameContext) {
@@ -140,21 +151,23 @@ Renderer.prototype.update = function(gameContext) {
     this.display.clear();
     this.fpsCounter.update(deltaTime);
 
-    this.contexts.forEach(context => {
+    for(let i = 0; i < this.contexts.length; i++) {
+        const context = this.contexts[i];
+
         drawContext.save();
         context.update(gameContext, drawContext);
         drawContext.restore();
-    });
+    }
 
     this.effects.update(drawContext, deltaTime);
 
-    if((Renderer.DEBUG.VALUE & Renderer.DEBUG.CAMERA) !== 0) {
+    if(Renderer.DEBUG.CAMERA) {
         this.drawCameraDebug();
     }
 
     this.drawUI(gameContext);
 
-    if((Renderer.DEBUG.VALUE & Renderer.DEBUG.INTERFACE) !== 0) {
+    if(Renderer.DEBUG.INTERFACE) {
         this.drawUIDebug(gameContext);
     }
 }
@@ -163,7 +176,13 @@ Renderer.prototype.resizeDisplay = function(width, height) {
     this.windowWidth = width;
     this.windowHeight = height;
     this.display.resize(width, height);
-    this.contexts.forEach(context => context.onWindowResize(width, height));
+
+    for(let i = 0; i < this.contexts.length; i++) {
+        const context = this.contexts[i];
+
+        context.onWindowResize(width, height)
+    }
+
     this.events.emit(Renderer.EVENT.SCREEN_RESIZE, width, height);
 }
 
@@ -175,9 +194,8 @@ Renderer.prototype.getWindow = function() {
 }
 
 Renderer.prototype.getCollidedContext = function(mouseX, mouseY, mouseRange) {
-    for(let i = this.contextStack.length - 1; i >= 0; i--) {
-        const contextID = this.contextStack[i];
-        const context = this.contexts.get(contextID);
+    for(let i = this.contexts.length - 1; i >= 0; i--) {
+        const context = this.contexts[i];
         const { x, y, w, h } = context.getBounds();
         const isColliding = isRectangleRectangleIntersect(
             x, y, w, h,

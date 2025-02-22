@@ -40,6 +40,10 @@ CameraContext.SCALE_MODE = {
     FRACTURED: 1
 };
 
+CameraContext.prototype.getID = function() {
+    return this.id;
+}
+
 CameraContext.prototype.getPosition = function() {
     return this.position;
 }
@@ -214,7 +218,7 @@ CameraContext.prototype.reloadFixedScale = function(windowWidth, windowHeight) {
 CameraContext.prototype.initRenderer = function(width, height) {
     if(!this.context) {
         this.context = new RenderContext();
-        this.context.init(width, height, false);
+        this.context.init(width, height, RenderContext.TYPE.BUFFER);
     }
 }
 

@@ -140,7 +140,7 @@ OrthogonalCamera.prototype.drawSpriteLayer = function(gameContext, renderContext
         sprite.draw(renderContext, viewportLeftEdge, viewportTopEdge);
     }
 
-    if((Renderer.DEBUG.VALUE & Renderer.DEBUG.SPRITES) !== 0) {
+    if(Renderer.DEBUG.SPRITES) {
         for(let j = 0; j < visibleSprites.length; j++) {
             const sprite = visibleSprites[j];
     

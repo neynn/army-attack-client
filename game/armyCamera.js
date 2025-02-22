@@ -47,7 +47,7 @@ ArmyCamera.prototype.update = function(gameContext, renderContext) {
         this.drawLayer(gameContext, renderContext, worldMap, layers[layerID], worldBounds);
     }
 
-    if((Renderer.DEBUG.VALUE & Renderer.DEBUG.MAP) !== 0) {
+    if(Renderer.DEBUG.MAP) {
         renderContext.font = "16px Arial";
         renderContext.textBaseline = "middle";
         renderContext.textAlign = "center";

@@ -8,6 +8,11 @@ export const RenderContext = function() {
     this.imageData = null;
 }
 
+RenderContext.TYPE = {
+    BUFFER: 0,
+    DISPLAY: 1
+};
+
 RenderContext.prototype.clear = function() {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 }
@@ -23,10 +28,10 @@ RenderContext.prototype.resize = function(width, height) {
     this.context.imageSmoothingEnabled = false;
 }
 
-RenderContext.prototype.init = function(width, height, isDisplay) {
+RenderContext.prototype.init = function(width, height, type) {
     this.canvas = document.createElement("canvas");
 
-    if(isDisplay) {
+    if(type === RenderContext.TYPE.DISPLAY) {
         this.canvas.oncontextmenu = (event) => { 
             event.preventDefault();
             event.stopPropagation();
