@@ -37,6 +37,7 @@ RangeShow.prototype.show = function(gameContext, entity) {
     const { renderer, tileManager, spriteManager } = gameContext;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
     const entityID = entity.getID();
+    const autotiler = tileManager.getAutotilerByID(ArmyMap.AUTOTILER.RANGE);
     const { range } = attackComponent;
     const { tileX, tileY } = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
     const { spriteID } = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
@@ -50,15 +51,13 @@ RangeShow.prototype.show = function(gameContext, entity) {
 
     for(let i = startY; i <= endY; i++) {
         for(let j = startX; j <= endX; j++) {
-            const nextIndex = Autotiler.autotile4Bits(j, i, (x, y) => {
+            const tileID = autotiler.run(j, i, (x, y) => {
                 if(x >= startX && x <= endX && y >= startY && y <= endY) {
                     return Autotiler.RESPONSE.VALID;
                 } 
 
                 return Autotiler.RESPONSE.INVALID;
             });
-
-            const tileID = tileManager.getAutotilerValue(ArmyMap.AUTOTILER.RANGE, nextIndex);
 
             camera.addToOverlay(ArmyCamera.OVERLAY_TYPE.RANGE, tileID, j, i);
         }

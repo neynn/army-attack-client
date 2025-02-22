@@ -1,4 +1,22 @@
-export const Autotiler = function() {}
+import { TileManager } from "./tileManager.js";
+
+export const Autotiler = function(id) {
+    this.id = id;
+    this.members = new Set();
+    this.values = {};
+    this.type = Autotiler.TYPE.NONE;
+}
+
+Autotiler.TYPE = {
+    NONE: 0,
+    MIN_4: 1,
+    MIN_8: 2
+};
+
+Autotiler.TYPE_NAME = {
+    MIN_4: "MIN_4",
+    MIN_8: "MIN_8"
+};
 
 Autotiler.RESPONSE = {
     INVALID: 0,
@@ -24,6 +42,96 @@ Autotiler.SHIFTSET_4 = {
 };
 
 Autotiler.VALUES_8 = {"2": 1, "8": 2, "10": 3, "11": 4, "16": 5, "18": 6, "22": 7, "24": 8, "26": 9, "27": 10, "30": 11, "31": 12, "64": 13, "66": 14, "72": 15, "74": 16, "75": 17, "80": 18, "82": 19, "86": 20, "88": 21, "90": 22, "91": 23, "94": 24, "95": 25, "104": 26, "106": 27, "107": 28, "120": 29, "122": 30, "123": 31, "126": 32, "127": 33, "208": 34, "210": 35, "214": 36, "216": 37, "218": 38, "219": 39, "222": 40, "223": 41, "248": 42, "250": 43, "251": 44, "254": 45, "255": 46, "0": 47};
+
+Autotiler.prototype.hasMember = function(tileID) {
+    return this.members.has(tileID);
+}
+
+Autotiler.prototype.getValue = function(autoIndex) {
+    const value = this.values[autoIndex];
+
+    if(!value) {
+        return TileManager.TILE_ID.EMPTY;
+    }
+
+    return value;
+}
+
+Autotiler.prototype.run = function(tileX, tileY, onCheck) {
+    switch(this.type) {
+        case Autotiler.TYPE.MIN_4: {
+            const index = Autotiler.autotile4Bits(tileX, tileY, onCheck);
+            const tileID = this.getValue(index);
+
+            return tileID;
+        }
+        case Autotiler.TYPE.MIN_8: {
+            const index = Autotiler.autotile8Bits(tileX, tileY, onCheck);
+            const transform = Autotiler.VALUES_8[index];
+            const tileID = this.getValue(transform);
+
+            return tileID;
+        }
+        default: {            
+            return TileManager.TILE_ID.EMPTY;
+        }
+    }
+}
+
+Autotiler.prototype.loadType = function(type) {
+    switch(type) {
+        case Autotiler.TYPE_NAME.MIN_4: {
+            this.type = Autotiler.TYPE.MIN_4;
+            break;
+        }
+        case Autotiler.TYPE_NAME.MIN_8: {
+            this.type = Autotiler.TYPE.MIN_8;
+            break;
+        }
+        default: {
+            console.warn(`Autotiler type ${type} does not exist!`);
+            break;
+        }
+    }
+}
+
+Autotiler.prototype.loadMembers = function(tileManager, members) {
+    if(!members) {
+        return;
+    }
+
+    for(let i = 0; i < members.length; i++) {
+        const { set, animation } = members[i];
+        const tileID = tileManager.getTileID(set, animation);
+
+        if(tileID !== TileManager.TILE_ID.EMPTY) {
+            this.members.add(tileID);
+        }
+    }
+}
+
+Autotiler.prototype.loadValues = function(tileManager, values) {
+    if(!values) {
+        return;
+    }
+
+    const idList = Object.keys(values);
+
+    for(let i = 0; i < idList.length; i++) {
+        const id = idList[i];
+        const value = values[id];
+
+        if(!value) {
+            this.values[id] = TileManager.TILE_ID.EMPTY;
+            continue;
+        }
+
+        const { set, animation } = value;
+        const tileID = tileManager.getTileID(set, animation);
+
+        this.values[id] = tileID;
+    }
+} 
 
 Autotiler.autotile4Bits = function(tileX, tileY, onCheck) {
     if(tileX === undefined || tileY === undefined || !onCheck) {

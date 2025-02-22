@@ -198,7 +198,7 @@
     "autotilers": {
         "shore": {
             "id": "shore",
-            "type": "8BIT_MINIMAL",
+            "type": "MIN_8",
             "members": [
                 { "set": "coast", "animation": "Bg_WaterTile_01_desert" },
                 { "set": "coast", "animation": "Bg_CoastTile_ne_01" },
@@ -279,7 +279,7 @@
         },
         "border": {
             "id": "border",
-            "type": "8BIT_MINIMAL",
+            "type": "MIN_8",
             "values": {
                 "0": null,
                 "1": { "set": "border", "animation": "1" },
@@ -333,7 +333,7 @@
         },
         "cloud": {
             "id": "cloud",
-            "type": "8BIT_MINIMAL",
+            "type": "MIN_8",
             "values": {
                 "0": null,
                 "1": null,
@@ -387,7 +387,7 @@
         },
         "range": {
             "id": "range",
-            "type": "4BIT_MINIMAL",
+            "type": "MIN_4",
             "values": {
                 "0": null,
                 "1": null,

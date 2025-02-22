@@ -132,7 +132,7 @@ ArmyMap.prototype.repaint = function(gameContext, centerX, centerY, layerID) {
 
 ArmyMap.prototype.autotile = function(gameContext, centerX, centerY, tileID, layerID) {
     const { tileManager } = gameContext;
-    const autotiler = tileManager.getAutotiler(tileID);
+    const autotiler = tileManager.getAutotilerByTile(tileID);
 
     if(!autotiler) {
         return;
@@ -141,21 +141,19 @@ ArmyMap.prototype.autotile = function(gameContext, centerX, centerY, tileID, lay
     this.updateArea(centerX, centerY, 1, (i, tileX, tileY) => {
         const id = this.getTile(layerID, tileX, tileY);
 
-        if(!autotiler.members.has(id)) {
+        if(!autotiler.hasMember(id)) {
             return;
         }
 
-        const index = Autotiler.autotile8Bits(tileX, tileY, (x, y) => {
+        const responseID = autotiler.run(tileX, tileY, (x, y) => {
             const nextID = this.getTile(layerID, x, y);
 
-            if(autotiler.members.has(nextID) || nextID === null) {
+            if(autotiler.hasMember(nextID) || nextID === null) {
                 return Autotiler.RESPONSE.VALID;
             }
 
             return Autotiler.RESPONSE.INVALID;
         });
-
-        const responseID = tileManager.getAutotilerValue(autotiler.id, Autotiler.VALUES_8[index]);
 
         if(responseID !== TileManager.TILE_ID.EMPTY) {
             this.placeTile(responseID, layerID, tileX, tileY);
@@ -248,6 +246,7 @@ ArmyMap.prototype.updateBorder = function(gameContext, centerX, centerY, range) 
         return;
     }
 
+    const autotiler = tileManager.getAutotilerByID(ArmyMap.AUTOTILER.BORDER);
     const tileTypes = world.getConfig("TileType");
 
     this.updateArea(centerX, centerY, range, (index, tileX, tileY) => {
@@ -265,7 +264,7 @@ ArmyMap.prototype.updateBorder = function(gameContext, centerX, centerY, range) 
             return;
         }
 
-        const nextIndex = Autotiler.autotile8Bits(tileX, tileY, (x, y) => {
+        const tileID = autotiler.run(tileX, tileY, (x, y) => {
             const neighborTypeID = this.getTile(ArmyMap.LAYER.TYPE, x, y);
             const neighborType = tileTypes[neighborTypeID];
     
@@ -282,8 +281,6 @@ ArmyMap.prototype.updateBorder = function(gameContext, centerX, centerY, range) 
 
             return Autotiler.RESPONSE.VALID;
         });
-
-        const tileID = tileManager.getAutotilerValue(ArmyMap.AUTOTILER.BORDER, Autotiler.VALUES_8[nextIndex]);
 
         this.placeTile(tileID, ArmyMap.LAYER.BORDER, tileX, tileY);
     });

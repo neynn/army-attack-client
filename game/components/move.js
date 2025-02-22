@@ -6,7 +6,7 @@ export const MoveComponent = function() {
     this.speed = 0;
     this.path = [];
     this.distance = 0;
-    this.passability = {};
+    this.passability = new Set();
     this.isCoward = false;
     this.isStealth = false;
     this.isCloaked = false;
@@ -35,7 +35,7 @@ MoveComponent.prototype.getCurrentStep = function() {
 }
 
 MoveComponent.prototype.hasPassability = function(type) {
-    return this.passability[type];
+    return this.passability.has(type);
 }
 
 MoveComponent.prototype.isPathEmpty = function() {
@@ -68,8 +68,8 @@ MoveComponent.prototype.custom = function(config, type) {
         moveSpeed = 480
     } = config;
 
-    for(const passabilityID of passability) {
-        this.passability[passabilityID] = true;
+    for(let i = 0; i < passability.length; i++) {
+        this.passability.add(passability[i]);
     }
 
     this.range = moveRange;
