@@ -37,6 +37,7 @@ import { SpriteComponent } from "./components/sprite.js";
 import { ProductionComponent } from "./components/production.js";
 import { DirectionComponent } from "./components/direction.js";
 import { TransparentComponent } from "./components/transparent.js";
+import { TileManager } from "../source/tile/tileManager.js";
 
 export const ArmyContext = function() {
     GameContext.call(this);
@@ -170,7 +171,7 @@ ArmyContext.prototype.updateConversions = function() {
             const config = {};
             const mainID = this.tileManager.getTileID(setID, frameID);
 
-            if(mainID === null) {
+            if(mainID === TileManager.TILE_ID.EMPTY) {
                 continue;
             }
 
@@ -180,7 +181,7 @@ ArmyContext.prototype.updateConversions = function() {
                 const [tileSetID, tileFrameID] = teamConversions[teamID];
                 const tileID = this.tileManager.getTileID(tileSetID, tileFrameID);
 
-                if(teamID !== null) {
+                if(teamID !== TileManager.TILE_ID.EMPTY) {
                     config[teamID] = tileID;
                 }
             }

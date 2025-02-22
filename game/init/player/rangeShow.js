@@ -58,7 +58,7 @@ RangeShow.prototype.show = function(gameContext, entity) {
                 return Autotiler.RESPONSE.INVALID;
             });
 
-            const tileID = tileManager.getAutotilerID(ArmyMap.AUTOTILER.RANGE, nextIndex);
+            const tileID = tileManager.getAutotilerValue(ArmyMap.AUTOTILER.RANGE, nextIndex);
 
             camera.addToOverlay(ArmyCamera.OVERLAY_TYPE.RANGE, tileID, j, i);
         }

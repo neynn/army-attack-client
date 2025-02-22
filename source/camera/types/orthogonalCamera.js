@@ -1,5 +1,6 @@
 import { clampValue } from "../../math/math.js";
 import { Renderer } from "../../renderer.js";
+import { TileManager } from "../../tile/tileManager.js";
 import { Camera } from "../camera.js";
 
 export const OrthogonalCamera = function() {
@@ -25,7 +26,7 @@ OrthogonalCamera.EMPTY_TILE_COLOR = {
 };
 
 OrthogonalCamera.prototype.addToOverlay = function(index, tileID, positionX, positionY) {
-    if(index < 0 || index >= this.overlays.length || tileID === 0) {
+    if(index < 0 || index >= this.overlays.length || tileID === TileManager.TILE_ID.EMPTY) {
         return;
     }
 

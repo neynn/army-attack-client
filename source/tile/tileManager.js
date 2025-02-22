@@ -31,8 +31,60 @@ TileManager.prototype.load = function(tileTypes, tileMeta) {
     if(typeof tileMeta === "object") {
         this.tileMeta = tileMeta;
         this.tileMeta.inversion = this.getTileMetaInversion();
+        this.loadTileMetaAutotilers();
     } else {
         Logger.log(false, "TileMeta cannot be undefined!", "TileManager.prototype.load", null);
+    }
+}
+
+TileManager.prototype.loadTileMetaAutotilers = function() {
+    for(const autotilerID in this.tileMeta.autotilers) {
+        const memberSet = new Set();
+        const autotiler = this.tileMeta.autotilers[autotilerID];
+        const { members } = autotiler;
+
+        if(!members) {
+            autotiler.members = memberSet;
+            continue;
+        }
+
+        for(let i = 0; i < members.length; i++) {
+            const { set, animation } = members[i];
+            const tileID = this.getTileID(set, animation);
+
+            if(tileID !== TileManager.TILE_ID.EMPTY) {
+                memberSet.add(tileID);
+            }
+        }
+
+        autotiler.members = memberSet;
+    }
+
+    for(const autotilerID in this.tileMeta.autotilers) {
+        const valueSet = {};
+        const autotiler = this.tileMeta.autotilers[autotilerID];
+        const { values } = autotiler;
+
+        if(!values) {
+            autotiler.values = valueSet;
+            continue;
+        }
+
+        for(const id in values) {
+            const value = values[id];
+
+            if(!value) {
+                valueSet[id] = TileManager.TILE_ID.EMPTY;
+                continue;
+            }
+
+            const { set, animation } = value;
+            const tileID = this.getTileID(set, animation);
+
+            valueSet[id] = tileID;
+        }
+
+        autotiler.values = valueSet;
     }
 }
 
@@ -93,7 +145,6 @@ TileManager.prototype.hasTileMeta = function(tileID) {
     return tileIndex >= 0 && tileIndex < this.tileMeta.values.length;
 }
 
-
 TileManager.prototype.loadTileTypes = function(tileTypes) {
     for(const typeID in tileTypes) {
         const tileType = tileTypes[typeID];
@@ -144,20 +195,40 @@ TileManager.prototype.getTileID = function(setID, animationID) {
     return metaID;
 }
 
-TileManager.prototype.getAutotilerID = function(autotilerID, autoIndex) {
+TileManager.prototype.getAutotilerValue = function(autotilerID, autoIndex) {
     const autotiler = this.tileMeta.autotilers[autotilerID];
 
     if(!autotiler) {
         return TileManager.TILE_ID.EMPTY;
     }
 
-    const meta = autotiler.values[autoIndex];
+    const value = autotiler.values[autoIndex];
 
-    if(!meta) {
+    if(!value) {
         return TileManager.TILE_ID.EMPTY;
     }
 
-    const { set, animation } = meta;
+    return value;
+}
 
-    return this.getTileID(set, animation);
+TileManager.prototype.getAutotiler = function(tileID) {
+    const tileMeta = this.getTileMeta(tileID);
+
+    if(!tileMeta) {
+        return null;
+    }
+
+    const autotilerID = tileMeta.autotiler;
+
+    if(!autotilerID) {
+        return null;
+    }
+    
+    const autotiler = this.tileMeta.autotilers[autotilerID];
+
+    if(!autotiler) {
+        return null;
+    }
+
+    return autotiler;
 }

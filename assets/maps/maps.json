@@ -67,5 +67,26 @@
             "background": ["ground", "border", "decoration"],
             "foreground": ["cloud"]
         }
+    },
+    "oasis": {
+        "id": "oasis",
+        "directory": "assets/maps",
+        "source": "oasis.json",
+        "music": "music_remastered",
+        "width": 20,
+        "height": 20,
+        "type": "Versus",
+        "graphics": {
+            "layers": {
+                "ground": { "id": "ground", "opacity": 1, "autoGenerate": false },
+                "border": { "id": "border", "opacity": 1, "autoGenerate": true },
+                "decoration": { "id": "decoration", "opacity": 1, "autoGenerate": false },
+                "cloud": { "id": "cloud", "opacity": 1, "autoGenerate": true },
+                "type": { "id": "type", "opacity": 1, "autoGenerate": false },
+                "team": { "id": "team", "opacity": 1, "autoGenerate": false }
+            },
+            "background": ["ground","border","decoration"],
+            "foreground": ["cloud"]
+        }
     }
 }

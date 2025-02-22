@@ -15,7 +15,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
     const { uiManager, world, renderer } = gameContext;
     const { actionQueue } = world;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
-    const worldMap = await world.createMapByID(gameContext, "mtn");
+    const worldMap = await world.createMapByID(gameContext, "oasis");
 
     if(!worldMap) {
         return;
@@ -128,7 +128,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
 
     const battleTank = SpawnSystem.createEntity(gameContext, { 
         "type": "blue_elite_battletank",
-        "tileX": 0,
+        "tileX": 1,
         "tileY": 1,
         "team": "Allies",
         "owner": "neyn"

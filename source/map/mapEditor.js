@@ -12,6 +12,7 @@ export const MapEditor = function() {
     this.activityStack = [];
     this.modes = [MapEditor.MODE.DRAW, MapEditor.MODE.ERASE, MapEditor.MODE.FILL];
     this.modeIndex = 0;
+    this.isAutotiling = false;
 }
 
 MapEditor.MODE = {
@@ -208,6 +209,10 @@ MapEditor.prototype.paint = function(gameContext, mapID, layerID) {
 
             gameMap.placeTile(tileID, layerID, j, i);
 
+            if(this.isAutotiling) {
+                gameMap.repaint(gameContext, j, i, layerID);
+            }
+
             actionsTaken.push({
                 "layerID": layerID,
                 "tileX": j,
@@ -266,7 +271,6 @@ MapEditor.prototype.incrementTypeIndex = function(gameContext, types, mapID, lay
     const nextID = tileTypeIDs[nextIndex];
 
     worldMap.placeTile(nextID, layerID, x, y);
-    worldMap.updateAutotiler(gameContext, x, y, 1);
 }
 
 MapEditor.prototype.getDefaultMapData = function() {
