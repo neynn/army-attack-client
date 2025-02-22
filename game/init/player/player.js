@@ -184,7 +184,7 @@ PlayerController.prototype.updateSpritePosition = function(gameContext) {
 }
 
 PlayerController.prototype.onClick = function(gameContext) {
-    const { client, uiManager } = gameContext;
+    const { client, uiManager, world } = gameContext;
     const { cursor } = client;
     const { positionX, positionY, radius } = cursor;
     const clickedElements = uiManager.getCollidedElements(positionX, positionY, radius);
@@ -194,14 +194,16 @@ PlayerController.prototype.onClick = function(gameContext) {
     }
 
     const mouseTile = gameContext.getMouseTile();
+    const { x, y } = mouseTile;
+    const mouseEntity = world.getTileEntity(x, y);
 
     switch(this.state) {
         case PlayerController.STATE.IDLE: {
-            this.onIdleClick(gameContext, mouseTile);
+            this.onIdleClick(gameContext, mouseTile, mouseEntity);
             break;
         }
         case PlayerController.STATE.SELECTED: {
-            this.onSelectedClick(gameContext, mouseTile);
+            this.onSelectedClick(gameContext, mouseTile, mouseEntity);
             break;
         }
         case PlayerController.STATE.SHOP: {
@@ -315,58 +317,50 @@ PlayerController.prototype.queueAttack = function(gameContext, entity) {
     return isAttackable;
 }
 
-PlayerController.prototype.onSelectedClick = function(gameContext, mouseTile) {
+PlayerController.prototype.onSelectedClick = function(gameContext, mouseTile, mouseEntity) {
     const { world, client } = gameContext;
     const { actionQueue, entityManager } = world;
     const { soundPlayer } = client;
     const selectedEntityID = this.getFirstSelected();
     const selectedEntity = entityManager.getEntity(selectedEntityID);
-    const entity = this.getTileEntity(gameContext, mouseTile);
 
-    if(entity) {
-        const success = this.queueAttack(gameContext, entity);
+    if(mouseEntity) {
+        const success = this.queueAttack(gameContext, mouseEntity);
 
         if(!success) {
             soundPlayer.playSound("sound_error", 0.5); 
         }
     } else {
-        actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.MOVE, selectedEntityID, this.hover.tileX, this.hover.tileY));
+        const { x, y } = mouseTile;
+        
+        actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.MOVE, selectedEntityID, x, y));
     }
 
     this.deselectEntity(gameContext, selectedEntity);
 }
 
-PlayerController.prototype.getTileEntity = function(gameContext, tile) {
-    const { world } = gameContext;
-    const { x, y } = tile;
-    const entity = world.getTileEntity(x, y);
-
-    return entity;
-}
-
-PlayerController.prototype.onIdleClick = function(gameContext, mouseTile) {
+PlayerController.prototype.onIdleClick = function(gameContext, mouseTile, mouseEntity) {
     const { world } = gameContext;
     const { actionQueue } = world;
-    const entity = this.getTileEntity(gameContext, mouseTile);
 
-    if(!entity) {
+    if(!mouseEntity) {
         return;
     }
 
-    const entityID = entity.getID();
-    const success = this.queueAttack(gameContext, entity);
+    const entityID = mouseEntity.getID();
+    const success = this.queueAttack(gameContext, mouseEntity);
 
     if(success || !this.hasEntity(entityID)) {
         return;
     }
 
-    if(entity.hasComponent(ArmyEntity.COMPONENT.CONSTRUCTION)) {
-        ConstructionSystem.onInteract(gameContext, entity);
+    if(mouseEntity.hasComponent(ArmyEntity.COMPONENT.CONSTRUCTION)) {
+        ConstructionSystem.onInteract(gameContext, mouseEntity);
     }
 
     if(!actionQueue.isRunning()) {
-        if(entity.isMoveable()) {
-            this.selectEntity(gameContext, entity);
+        if(mouseEntity.isMoveable()) {
+            this.selectEntity(gameContext, mouseEntity);
         }
     }
 }
