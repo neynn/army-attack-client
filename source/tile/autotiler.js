@@ -1,11 +1,16 @@
 import { TileManager } from "./tileManager.js";
 
-export const Autotiler = function(id) {
-    this.id = id;
+export const Autotiler = function() {
     this.members = new Set();
-    this.values = {};
+    this.values = [];
     this.type = Autotiler.TYPE.NONE;
 }
+
+Autotiler.TYPE_SIZE = {
+    NONE: 0,
+    MIN_4: 16,
+    MIN_8: 48
+};
 
 Autotiler.TYPE = {
     NONE: 0,
@@ -43,18 +48,30 @@ Autotiler.SHIFTSET_4 = {
 
 Autotiler.VALUES_8 = {"2": 1, "8": 2, "10": 3, "11": 4, "16": 5, "18": 6, "22": 7, "24": 8, "26": 9, "27": 10, "30": 11, "31": 12, "64": 13, "66": 14, "72": 15, "74": 16, "75": 17, "80": 18, "82": 19, "86": 20, "88": 21, "90": 22, "91": 23, "94": 24, "95": 25, "104": 26, "106": 27, "107": 28, "120": 29, "122": 30, "123": 31, "126": 32, "127": 33, "208": 34, "210": 35, "214": 36, "216": 37, "218": 38, "219": 39, "222": 40, "223": 41, "248": 42, "250": 43, "251": 44, "254": 45, "255": 46, "0": 47};
 
+Autotiler.prototype.init = function(tileManager, config) {
+    const { type, members, values } = config;
+
+    this.loadType(type);
+
+    if(members) {
+        this.loadMembers(tileManager, members);
+    }
+
+    if(values) {
+        this.loadValues(tileManager, values);
+    }
+}
+
 Autotiler.prototype.hasMember = function(tileID) {
     return this.members.has(tileID);
 }
 
 Autotiler.prototype.getValue = function(autoIndex) {
-    const value = this.values[autoIndex];
-
-    if(!value) {
+    if(autoIndex < 0 || autoIndex >= this.values.length) {
         return TileManager.TILE_ID.EMPTY;
     }
 
-    return value;
+    return this.values[autoIndex];
 }
 
 Autotiler.prototype.run = function(tileX, tileY, onCheck) {
@@ -82,24 +99,35 @@ Autotiler.prototype.loadType = function(type) {
     switch(type) {
         case Autotiler.TYPE_NAME.MIN_4: {
             this.type = Autotiler.TYPE.MIN_4;
+            this.values.length = Autotiler.TYPE_SIZE.MIN_4;
+
+            for(let i = 0; i < this.values.length; i++) {
+                this.values[i] = TileManager.TILE_ID.EMPTY;
+            }
+
             break;
         }
         case Autotiler.TYPE_NAME.MIN_8: {
             this.type = Autotiler.TYPE.MIN_8;
+            this.values.length = Autotiler.TYPE_SIZE.MIN_8;
+
+            for(let i = 0; i < this.values.length; i++) {
+                this.values[i] = TileManager.TILE_ID.EMPTY;
+            }
+
             break;
         }
         default: {
+            this.values.length = Autotiler.TYPE_SIZE.NONE;
+
             console.warn(`Autotiler type ${type} does not exist!`);
+
             break;
         }
     }
 }
 
 Autotiler.prototype.loadMembers = function(tileManager, members) {
-    if(!members) {
-        return;
-    }
-
     for(let i = 0; i < members.length; i++) {
         const { set, animation } = members[i];
         const tileID = tileManager.getTileID(set, animation);
@@ -111,25 +139,20 @@ Autotiler.prototype.loadMembers = function(tileManager, members) {
 }
 
 Autotiler.prototype.loadValues = function(tileManager, values) {
-    if(!values) {
-        return;
-    }
+    const indexList = Object.keys(values);
 
-    const idList = Object.keys(values);
+    for(let i = 0; i < indexList.length; i++) {
+        const index = indexList[i];
+        const value = values[index];
 
-    for(let i = 0; i < idList.length; i++) {
-        const id = idList[i];
-        const value = values[id];
-
-        if(!value) {
-            this.values[id] = TileManager.TILE_ID.EMPTY;
+        if(index < 0 || index >= this.values.length || !value) {
             continue;
         }
 
         const { set, animation } = value;
         const tileID = tileManager.getTileID(set, animation);
 
-        this.values[id] = tileID;
+        this.values[index] = tileID;
     }
 } 
 

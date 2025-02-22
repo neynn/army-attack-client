@@ -43,12 +43,10 @@ TileManager.prototype.load = function(tileTypes, tileMeta) {
 
 TileManager.prototype.loadAutotilers = function(tileMeta) {
     for(const autotilerID in tileMeta.autotilers) {
-        const config = tileMeta.autotilers[autotilerID];
         const autotiler = new Autotiler(autotilerID);
+        const config = tileMeta.autotilers[autotilerID];
 
-        autotiler.loadType(config.type);
-        autotiler.loadMembers(this, config.members);
-        autotiler.loadValues(this, config.values);
+        autotiler.init(this, config);
 
         this.autotilers.set(autotilerID, autotiler);
     }
