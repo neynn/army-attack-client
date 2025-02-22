@@ -15,43 +15,39 @@ ArmyMapFactory.TYPE = {
 ArmyMapFactory.prototype = Object.create(Factory.prototype);
 ArmyMapFactory.prototype.constructor = Factory;
 
-ArmyMapFactory.prototype.createUint8Layer = function(layerData, width = 0, height = 0) {
-    const layerSize = width * height;
-    const layerBuffer = new Uint8Array(layerSize);
-
+ArmyMapFactory.prototype.parseLayer = function(buffer, layerData) {
     if(!layerData) {
-        return layerBuffer;
+        return buffer;
     }
 
-    if(layerData.length < layerSize) {
+    if(layerData.length < buffer.length) {
         for(let i = 0; i < layerData.length; i++) {
             const tileID = layerData[i];
-            layerBuffer[i] = tileID;
+
+            buffer[i] = tileID;
         }
 
-        return layerBuffer;
+        return buffer;
     }
 
-    for(let i = 0; i < layerSize; i++) {
+    for(let i = 0; i < buffer.length; i++) {
         const tileID = layerData[i];
-        layerBuffer[i] = tileID;
+        buffer[i] = tileID;
     }
 
-    return layerBuffer;
+    return buffer;
 }
 
-ArmyMapFactory.prototype.createUint8LayerEmpty = function(fill = 0, width, height) {
-    const layerSize = width * height;
-    const layerBuffer = new Uint8Array(layerSize);
+ArmyMapFactory.prototype.createBuffer = function(gameContext, width, height) {
+    const { tileManager } = gameContext;
+    const { meta } = tileManager;
+    const bufferSize = width * height;
+    const buffer = meta.getCorrectBuffer(bufferSize);
 
-    for(let i = 0; i < layerSize; i++) {
-        layerBuffer[i] = fill;
-    }
-
-    return layerBuffer;
+    return buffer;
 }
 
-ArmyMapFactory.prototype.parseMap2D = function(map2D, layerData, meta) {
+ArmyMapFactory.prototype.parseMap2D = function(gameContext, map2D, layerData, meta) {
     const parsedLayers = {};
 
     const { 
@@ -66,7 +62,8 @@ ArmyMapFactory.prototype.parseMap2D = function(map2D, layerData, meta) {
 
     for(const layerID in layers) {
         const { id } = layers[layerID];
-        const parsedLayerData = this.createUint8Layer(layerData[id], width, height);
+        const buffer = this.createBuffer(gameContext, width, height);
+        const parsedLayerData = this.parseLayer(buffer, layerData[id]);
 
         parsedLayers[id] = parsedLayerData;
     }
@@ -79,7 +76,7 @@ ArmyMapFactory.prototype.parseMap2D = function(map2D, layerData, meta) {
     return map2D;
 }
 
-ArmyMapFactory.prototype.parseMap2DEmpty = function(map2D, layerData, meta) {
+ArmyMapFactory.prototype.parseMap2DEmpty = function(gameContext, map2D, layerData, meta) {
     const parsedLayers = {};
 
     const { 
@@ -95,9 +92,15 @@ ArmyMapFactory.prototype.parseMap2DEmpty = function(map2D, layerData, meta) {
     for(const layerID in layers) {
         const { id } = layers[layerID];
         const { fill } = layerData[id];
-        const parsedLayerData = this.createUint8LayerEmpty(fill, width, height);
+        const buffer = this.createBuffer(gameContext, width, height);
 
-        parsedLayers[id] = parsedLayerData;
+        if(fill) {
+            for(let i = 0; i < buffer.length; i++) {
+                buffer[i] = fill;
+            }
+        }
+
+        parsedLayers[id] = buffer;
     }
 
     map2D.width = width;
@@ -115,19 +118,19 @@ ArmyMapFactory.prototype.onCreate = function(gameContext, config) {
 
     switch(type) {
         case ArmyMapFactory.TYPE.STORY: {
-            this.parseMap2D(worldMap, layers, meta);
+            this.parseMap2D(gameContext, worldMap, layers, meta);
             break;
         }
         case ArmyMapFactory.TYPE.VERSUS: {
-            this.parseMap2D(worldMap, layers, meta);
+            this.parseMap2D(gameContext, worldMap, layers, meta);
             break;
         }
         case ArmyMapFactory.TYPE.EMPTY_STORY: {
-            this.parseMap2DEmpty(worldMap, layers, meta);
+            this.parseMap2DEmpty(gameContext, worldMap, layers, meta);
             break;
         }
         case ArmyMapFactory.TYPE.EMPTY_VERUS: {
-            this.parseMap2DEmpty(worldMap, layers, meta);
+            this.parseMap2DEmpty(gameContext, worldMap, layers, meta);
             break;
         }
         default: {

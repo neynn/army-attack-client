@@ -5,12 +5,27 @@ export const TileMeta = function() {
     this.inversion = {};
 }
 
+TileMeta.BUFFER_THRESHOLD = {
+    BIT_8: 256,
+    BIT_16: 65536
+};
+
+TileMeta.prototype.getCorrectBuffer = function(bufferSize) {
+    if(this.values.length < TileMeta.BUFFER_THRESHOLD.BIT_8) {
+        return new Uint8Array(bufferSize);
+    } else if(this.values.length < TileMeta.BUFFER_THRESHOLD.BIT_16) {
+        return new Uint16Array(bufferSize);
+    }
+
+    return new Uint32Array(bufferSize);
+}
+
 TileMeta.prototype.init = function(values) {
     for(let i = 0; i < values.length; i++) {
         this.values[i] = values[i];
     }
 
-    this.invert();
+    this.inversion = this.createInversion(values);
 }
 
 TileMeta.prototype.getInversion = function() {
@@ -49,16 +64,18 @@ TileMeta.prototype.getMeta = function(tileID) {
     return this.values[index];
 }
 
-TileMeta.prototype.invert = function() {
-    this.inversion = {};
+TileMeta.prototype.createInversion = function(values) {
+    const inversion = {};
 
-    for(let i = 0; i < this.values.length; i++) {
-        const { set, animation } = this.values[i];
+    for(let i = 0; i < values.length; i++) {
+        const { set, animation } = values[i];
 
-        if(!this.inversion[set]) {
-            this.inversion[set] = {};
+        if(!inversion[set]) {
+            inversion[set] = {};
         }
 
-        this.inversion[set][animation] = i + 1;
+        inversion[set][animation] = i + 1;
     }
+    
+    return inversion;
 }

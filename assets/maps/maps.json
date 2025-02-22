@@ -72,7 +72,7 @@
         "id": "oasis",
         "directory": "assets/maps",
         "source": "oasis.json",
-        "music": "music_remastered",
+        "music": "music_desertscorpion",
         "width": 20,
         "height": 20,
         "type": "Versus",
