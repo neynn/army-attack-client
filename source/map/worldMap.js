@@ -247,15 +247,3 @@ WorldMap.prototype.addEntity = function(tileX, tileY, rangeX, rangeY, entityID) 
         }
     }
 }
-
-WorldMap.prototype.updateTiles = function(onUpdate) {
-    for(let i = 0; i < this.height; i++) {
-        const row = i * this.width;
-
-        for(let j = 0; j < this.width; j++) {
-            const index = row + j;
-
-            onUpdate(index, j, i);
-        }
-    }
-}

@@ -34,7 +34,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
 
     gameContext.player = controller.getID();
 
-    worldMap.reloadGraphics(gameContext);
+    worldMap.reload(gameContext);
 
     uiManager.parseUI("STORY_MODE", gameContext);
 

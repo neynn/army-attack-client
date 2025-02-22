@@ -28,12 +28,12 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
 
     const tileTypes = world.getConfig("TileType");
 
-    const originTeamID = activeMap.getTile(ArmyMap.LAYER_TYPE.TEAM, positionComponent.tileX, positionComponent.tileY);
+    const originTeamID = activeMap.getTile(ArmyMap.LAYER.TEAM, positionComponent.tileX, positionComponent.tileY);
     const originAlliance = AllianceSystem.getAlliance(gameContext, teamComponent.teamID, ArmyMap.TEAM_TYPE[originTeamID]);
     const isOriginWalkable = originAlliance.isWalkable || moveComponent.isStealth;
 
     const nodeList = FloodFill.search_cross(positionComponent.tileX, positionComponent.tileY, moveComponent.range, activeMap.width, activeMap.height, (next, current) => {
-        const nextTypeID = activeMap.getTile(ArmyMap.LAYER_TYPE.TYPE, next.positionX, next.positionY);
+        const nextTypeID = activeMap.getTile(ArmyMap.LAYER.TYPE, next.positionX, next.positionY);
         const nextTileType = tileTypes[nextTypeID];
         const isNextPassable = moveComponent.hasPassability(nextTileType.passability);
 
@@ -66,7 +66,7 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
             }
         }
 
-        const nextTeamID = activeMap.getTile(ArmyMap.LAYER_TYPE.TEAM, next.positionX, next.positionY);
+        const nextTeamID = activeMap.getTile(ArmyMap.LAYER.TEAM, next.positionX, next.positionY);
         const nextAlliance = AllianceSystem.getAlliance(gameContext, teamComponent.teamID, ArmyMap.TEAM_TYPE[nextTeamID]);
         const isNextWalkable = nextAlliance.isWalkable || moveComponent.isStealth;
 

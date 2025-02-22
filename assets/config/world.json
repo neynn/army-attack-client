@@ -76,12 +76,13 @@
         "BackgroundEnergy": { "id": "BackgroundEnergy", "maxDrop": 0, "icon": null }
     },
     "TileType": {
-        "0": { "id": 0, "color": "#000000", "name": "Ground", "passability": "Land", "autoCapture": false, "hasBorder": true },
-        "1": { "id": 1, "color": "#ff0000", "name": "Mountain", "passability": "Mountain", "autoCapture": false, "hasBorder": false },
-        "2": { "id": 2, "color": "#0000ff", "name": "Sea", "passability": "Sea", "autoCapture": false, "hasBorder": false },
-        "3": { "id": 3, "color": "#00ffff", "name": "DesertShore", "passability": "Shore", "autoCapture": true, "hasBorder": false },
-        "4": { "id": 4, "color": "#00ffff", "name": "PolarShore", "passability": "Shore", "autoCapture": true, "hasBorder": false },
-        "5": { "id": 5, "color": "#00ffff", "name": "ColossalShore", "passability": "Shore", "autoCapture": true, "hasBorder": false }
+        "0": { "id": 0, "color": "#000000", "name": "Ground", "passability": "Land", "defaultTeam": null, "hasBorder": true },
+        "1": { "id": 1, "color": "#ff0000", "name": "Mountain", "passability": "Mountain", "defaultTeam": null, "hasBorder": false },
+        "2": { "id": 2, "color": "#0000ff", "name": "Sea", "passability": "Sea", "defaultTeam": null, "hasBorder": false },
+        "3": { "id": 3, "color": "#00ffff", "name": "DesertShore", "passability": "Shore", "defaultTeam": "Neutral", "hasBorder": false },
+        "4": { "id": 4, "color": "#00ffff", "name": "DesertShore", "passability": "Shore", "defaultTeam": "Neutral", "hasBorder": false },
+        "5": { "id": 5, "color": "#00ffff", "name": "PolarShore", "passability": "Shore", "defaultTeam": "Neutral", "hasBorder": false },
+        "6": { "id": 6, "color": "#00ffff", "name": "ColossalShore", "passability": "Shore", "defaultTeam": "Neutral", "hasBorder": false }
     },
     "AllianceType": {
         "Enemy": { "id": "Enemy", "isWalkable": false, "isEntityPassingAllowed": false, "isEnemy": true },
