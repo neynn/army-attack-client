@@ -21,6 +21,10 @@ MapEditor.MODE = {
     "FILL": "FILL"
 };
 
+MapEditor.prototype.toggleAutotiling = function() {
+    this.isAutotiling = !this.isAutotiling;
+}
+
 MapEditor.prototype.scrollBrushSize = function(delta = 0) {    
     this.brushSizeIndex = clampValue(this.brushSizeIndex + delta, this.config.brushSizes.length - 1, 0);
 }

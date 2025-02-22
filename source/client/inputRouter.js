@@ -40,11 +40,30 @@ InputRouter.KEY_INPUT = {
     ARROW_RIGHT: "ArrowRight"
 };
 
+InputRouter.prototype.clearCommands = function() {
+    this.commands.clear();
+}
+
+InputRouter.prototype.clearBinds = function(gameContext) {
+    const { client } = gameContext;
+    const { keyboard } = client;
+
+    for(const [inputID, commandID] of this.commandBinds) {
+        const keyID = inputID.slice(1);
+
+        if(InputRouter.CURSOR_INPUT[keyID] === undefined) {
+            keyboard.free(keyID);
+        }
+    }
+
+    this.commandBinds.clear();
+}
+
 InputRouter.prototype.load = function(gameContext, binds) {
     const { client } = gameContext;
     const { keyboard } = client;
 
-    this.commandBinds.clear();
+    this.clearBinds(gameContext);
 
     for(const commandID in binds) {
         const inputID = binds[commandID];
@@ -80,14 +99,6 @@ InputRouter.prototype.bindInput = function(inputID, commandID) {
     }
 
     this.commandBinds.set(inputID, commandID);
-}
-
-InputRouter.prototype.freeInput = function(inputID) {
-    if(!this.commandBinds.has(inputID)) {
-        return;
-    }
-
-    this.commandBinds.delete(inputID);
 }
 
 InputRouter.prototype.on = function(commandID, command) {

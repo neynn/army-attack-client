@@ -30,7 +30,8 @@ MapEditorState.prototype.constructor = MapEditorState;
 
 MapEditorState.prototype.onEnter = function(stateMachine) {
     const gameContext = stateMachine.getContext();
-    const { uiManager, tileManager, settings } = gameContext;
+    const { uiManager, tileManager, settings, client } = gameContext;
+    const { router } = client;
     const context = gameContext.createCamera(CAMERA_TYPES.ARMY_CAMERA);
     const camera = context.getCamera();
 
@@ -40,6 +41,9 @@ MapEditorState.prototype.onEnter = function(stateMachine) {
 
     uiManager.parseUI("MAP_EDITOR", gameContext);
     uiManager.unparseUI("FPS_COUNTER", gameContext);
+
+    router.load(gameContext, { "TOGGLE_AUTOTILER": "+a" });
+    router.on("TOGGLE_AUTOTILER", () => this.mapEditor.toggleAutotiling());
 
     this.mapEditor.loadConfig(settings.mapEditor);
     this.mapEditor.loadBrushSets(tileManager.getInvertedTileMeta());
