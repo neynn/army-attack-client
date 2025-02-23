@@ -1,4 +1,5 @@
 import { clampValue } from "../math/math.js";
+import { Layer } from "./layer.js";
 import { Tracker } from "./tracker.js";
 
 export const WorldMap = function(id) {
@@ -6,7 +7,7 @@ export const WorldMap = function(id) {
     this.width = 0;
     this.height = 0;
     this.meta = {};
-    this.layers = {};
+    this.layers = new Map();
     this.tracker = new Tracker();
 }
 
@@ -43,16 +44,26 @@ WorldMap.prototype.setHeight = function(height) {
     this.height = height;
 }
 
-WorldMap.prototype.setLayers = function(graphics) {
-    this.layers = graphics;
+WorldMap.prototype.createLayer = function(id, buffer) {
+    if(this.layers.has(id)) {
+        return;
+    }
+
+    const layer = new Layer(buffer);
+
+    this.layers.set(id, layer);
+
+    return layer;
 }
 
 WorldMap.prototype.getLayer = function(layerID) {
-    return this.layers[layerID];
-}
+    const layer = this.layers.get(layerID);
 
-WorldMap.prototype.getLayers = function() {
-    return this.layers;
+    if(!layer) {
+        return null;
+    }
+
+    return layer;
 }
 
 WorldMap.prototype.getListID = function(tileX, tileY) {
@@ -92,94 +103,61 @@ WorldMap.prototype.isTileOccupied = function(tileX, tileY) {
 }
 
 WorldMap.prototype.setLayerOpacity = function(layerID, opacity) {
-    if(this.layers[layerID] === undefined || opacity === undefined) {
+    if(!this.layers.has(layerID) || opacity === undefined) {
         return;
     }
 
     const clampedOpacity = clampValue(opacity, 1, 0);
-    const layer = this.meta.graphics.layers[layerID];
+    const layer = this.meta.graphics.layers[layerID]; //TODO
 
     layer.opacity = clampedOpacity;
 } 
 
-WorldMap.prototype.resize = function(width, height) {
-    for(const layerID in this.layers) {
-        this.resizeLayer(layerID, width, height, 0);
-    }
+WorldMap.prototype.resizeLayer = function(layerID, width, height, fill) {
+    const layer = this.layers.get(layerID);
 
-    this.width = width;
-    this.height = height;
-}
-
-WorldMap.prototype.resizeLayer = function(layerID, width, height, fill = 0) {
-    const oldLayer = this.layers[layerID];
-
-    if(!oldLayer) {
+    if(!layer) {
         return;
     }
 
-    const layerSize = width * height;
-    const ArrayType = oldLayer.constructor;
-    const newLayer = new ArrayType(layerSize);
-    
-    for(let i = 0; i < layerSize; i++) {
-        newLayer[i] = fill;
-    }
-
-    for(let i = 0; i < this.height && i < height; i++) {
-        const newRow = i * width;
-        const oldRow = i * this.width;
-
-        for(let j = 0; j < this.width && j < width; j++) {
-            const newIndex = newRow + j;
-            const oldIndex = oldRow + j;
-
-            newLayer[newIndex] = oldLayer[oldIndex];
-        }
-    }
-
-    this.layers[layerID] = newLayer;
+    layer.resize(this.width, this.height, width, height, fill);
 }
 
 WorldMap.prototype.clearTile = function(layerID, tileX, tileY) {
-    const layer = this.layers[layerID];
+    const layer = this.layers.get(layerID);
 
     if(!layer) {
         console.warn(`Layer ${layerID} does not exist! Returning...`);
         return;
     }
 
-    if(this.isTileOutOfBounds(tileX, tileY)) {
-        console.warn(`Tile ${tileY},${tileX} does not exist! Returning...`);
-        return;
-    }
-    
     const index = tileY * this.width + tileX;
+    const response = layer.setItem(0, index);
 
-    layer[index] = 0;
+    if(response === Layer.RESPONSE_CODE.OUT_OF_BOUNDS) {
+        console.warn(`Tile ${tileY},${tileX} does not exist! Returning...`);
+    }
 }
 
 WorldMap.prototype.placeTile = function(data, layerID, tileX, tileY) {
-    const layer = this.layers[layerID];
+    const layer = this.layers.get(layerID);
 
     if(!layer) {
         console.warn(`Layer ${layerID} does not exist! Returning...`);
         return;
     }
 
-    if(this.isTileOutOfBounds(tileX, tileY)) {
-        console.warn(`Tile ${tileY},${tileX} does not exist! Returning...`);
-        return;
-    }
-    
     if(typeof data !== "number") {
         console.warn(`Data ${data} is not a number! It is ${typeof data}! Returning...`);
         return;
     }
 
     const index = tileY * this.width + tileX;
+    const response = layer.setItem(data, index);
 
-    layer[index] = data;
+    if(response === Layer.RESPONSE_CODE.OUT_OF_BOUNDS) {
+        console.warn(`Tile ${tileY},${tileX} does not exist! Returning...`);
+    }
 }
 
 WorldMap.prototype.isTileOutOfBounds = function(tileX, tileY) {
@@ -187,17 +165,21 @@ WorldMap.prototype.isTileOutOfBounds = function(tileX, tileY) {
 }
 
 WorldMap.prototype.getTile = function(layerID, tileX, tileY) {
-    const layer = this.layers[layerID];
-    const isOutOfBounds = this.isTileOutOfBounds(tileX, tileY);
+    const layer = this.layers.get(layerID);
 
-    if(!layer || isOutOfBounds) {
+    if(!layer) {
         console.warn(`Layer ${layerID} does not exist or tile ${tileX} ${tileY} is out of bounds! Returning null...`);
         return null;
     }
 
     const index = tileY * this.width + tileX;
+    const item = layer.getItem(index);
 
-    return layer[index];
+    if(item === null) {
+        console.warn(`Tile ${tileX} ${tileY} is out of bounds! Returning null...`);
+    }
+
+    return item;
 }
 
 WorldMap.prototype.getUniqueEntitiesInRange = function(startX, startY, endX, endY) {

@@ -27,9 +27,9 @@ ArmyMapFactory.prototype.parseLayer = function(buffer, layerData) {
         const typeCount = layerData[i + 1];
         const copies = Math.min(typeCount, buffer.length - index);
 
-        for(let j = 0; j < copies; j++) {
+        for(let j = 0; j < copies; ++j) {
             buffer[index] = typeID;
-            index++;
+            ++index;
         }
 
         if(index >= buffer.length) {
@@ -50,8 +50,6 @@ ArmyMapFactory.prototype.createBuffer = function(gameContext, width, height) {
 }
 
 ArmyMapFactory.prototype.parseMap2D = function(gameContext, map2D, layerData, meta) {
-    const parsedLayers = {};
-
     const { 
         width = 0,
         height = 0,
@@ -65,22 +63,19 @@ ArmyMapFactory.prototype.parseMap2D = function(gameContext, map2D, layerData, me
     for(const layerID in layers) {
         const { id } = layers[layerID];
         const buffer = this.createBuffer(gameContext, width, height);
-        const parsedLayerData = this.parseLayer(buffer, layerData[id]);
+        const layer = map2D.createLayer(layerID, buffer);
 
-        parsedLayers[id] = parsedLayerData;
+        layer.decode(layerData[id]);
     }
 
     map2D.width = width;
     map2D.height = height;
-    map2D.setLayers(parsedLayers);
     map2D.meta = JSON.parse(JSON.stringify(meta));
     
     return map2D;
 }
 
 ArmyMapFactory.prototype.parseMap2DEmpty = function(gameContext, map2D, layerData, meta) {
-    const parsedLayers = {};
-
     const { 
         width = 0,
         height = 0,
@@ -102,12 +97,11 @@ ArmyMapFactory.prototype.parseMap2DEmpty = function(gameContext, map2D, layerDat
             }
         }
 
-        parsedLayers[id] = buffer;
+        map2D.createLayer(layerID, buffer);
     }
 
     map2D.width = width;
     map2D.height = height;
-    map2D.setLayers(parsedLayers);
     map2D.meta = JSON.parse(JSON.stringify(meta));
 
     return map2D;

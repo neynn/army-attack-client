@@ -39,43 +39,19 @@ export const packerToJSON = (id, packerFile) => {
   saveTemplateAsFile(`${id}.json`, meta);
 }
 
-const rleLayer = function(buffer) {    
-    if(buffer.length === 0) {
-        return [];
-    }
-
-    let index = 0;
-    const encodedLayer = [buffer[0], 1];
-
-    for(let i = 1; i < buffer.length; i++) {
-        const currentID = buffer[i];
-
-        if(currentID === encodedLayer[index]) {
-            encodedLayer[index + 1]++;
-        } else {
-            encodedLayer.push(currentID);
-            encodedLayer.push(1);
-            index += 2;
-        }  
-    }
-
-    return encodedLayer;
-}
-
 const formatLayers = function(worldMap) {
     const formattedLayers = [];
-    const layers = worldMap.getLayers();
     const graphics = worldMap.getGraphicsSettings();
 
-	for(const layerID in layers) {
+    for(const [layerID, layer] of worldMap.layers) {
         const layerMeta = graphics.layers[layerID];
 
-		if(layerMeta && layerMeta.autoGenerate) {
+        if(layerMeta && layerMeta.autoGenerate) {
 			continue;
 		}
 
-		formattedLayers.push(`"${layerID}": [${rleLayer(layers[layerID])}]`);
-	}
+        formattedLayers.push(`"${layerID}": [${layer.encode()}]`);
+    }
 
     return formattedLayers;
 }
@@ -92,35 +68,6 @@ const formatLayerSettings = function(worldMap) {
     }
 
     return formattedConfig;
-}
-
-const stringifyArray = (width, height, array) => {
-    let result = `[\n        `;
-
-    for (let i = 0; i < height; i++) {
-        let row = ``;
-
-        for (let j = 0; j < width; j++) {
-            const element = array[i * width + j];
-            const jsonElement = JSON.stringify(element);
-            
-            row += jsonElement;
-
-            if(j < width - 1) {
-                row += `,`
-            }
-        }
-
-        result += row;
-
-        if (i < height - 1) {
-            result += `,\n        `;
-        }
-    }
-
-    result += `\n    ]`;
-    
-    return result;
 }
 
 export const saveMap = function(mapID, map2D) {

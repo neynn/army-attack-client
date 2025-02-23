@@ -249,9 +249,8 @@ MapEditor.prototype.paint = function(gameContext, mapID, layerID) {
 
 MapEditor.prototype.resizeMap = function(gameMap, width, height) {
     const defaultSetup = this.config.default.layers;
-    const layers = gameMap.getLayers();
 
-    for(const layerID in layers) {
+    for(const [layerID, layer] of gameMap.layers) {
         const layerSetup = defaultSetup[layerID];
         const fill = layerSetup ? layerSetup.fill : 0;
 

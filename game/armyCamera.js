@@ -77,9 +77,10 @@ ArmyCamera.prototype.drawLayerData = function(context, worldBounds, worldMap, la
     }
 
     const layer = worldMap.getLayer(id);
+    const buffer = layer.getBuffer();
 
     this.drawCustom(worldBounds, (index, renderX, renderY) => {
-        const tileID = layer[index];
+        const tileID = buffer[index];
         const drawX = renderX + offsetX;
         const drawY = renderY + offsetY;
 
@@ -94,9 +95,10 @@ ArmyCamera.prototype.drawLayer = function(gameContext, renderContext, map2D, lay
         return;
     }
 
-    const layer = map2D.getLayer(id);
+    const layer = worldMap.getLayer(id);
+    const buffer = layer.getBuffer();
 
     renderContext.globalAlpha = opacity;
-    this.drawTileLayer(gameContext, renderContext, layer, worldBounds);
+    this.drawTileLayer(gameContext, renderContext, buffer, worldBounds);
     renderContext.globalAlpha = 1;
 }
