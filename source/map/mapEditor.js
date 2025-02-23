@@ -247,18 +247,18 @@ MapEditor.prototype.paint = function(gameContext, mapID, layerID) {
     }
 }
 
-MapEditor.prototype.resizeMap = function(gameMap, width, height) {
+MapEditor.prototype.resizeMap = function(worldMap, width, height) {
     const defaultSetup = this.config.default.layers;
 
-    for(const [layerID, layer] of gameMap.layers) {
+    for(const [layerID, layer] of worldMap.layers) {
         const layerSetup = defaultSetup[layerID];
         const fill = layerSetup ? layerSetup.fill : 0;
 
-        gameMap.resizeLayer(layerID, width, height, fill);
+        worldMap.resizeLayer(layerID, width, height, fill);
     }
 
-    gameMap.setWidth(width);
-    gameMap.setHeight(height);
+    worldMap.setWidth(width);
+    worldMap.setHeight(height);
 }
 
 MapEditor.prototype.incrementTypeIndex = function(gameContext, types, mapID, layerID) {

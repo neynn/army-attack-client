@@ -28,11 +28,13 @@ ArmyCamera.prototype.update = function(gameContext, renderContext) {
         return;
     }
 
-    const { background, foreground, layers } = worldMap.getGraphicsSettings();
+    const { background, foreground } = worldMap.getGraphicsSettings();
     const worldBounds = this.getWorldBounds();
 
     for(const layerID of background) {
-        this.drawLayer(gameContext, renderContext, worldMap, layers[layerID], worldBounds);
+        const layer = worldMap.getLayer(layerID);
+
+        this.drawLayer(gameContext, renderContext, layer, worldBounds);
     }
     
     this.drawOverlay(gameContext, renderContext, worldBounds, ArmyCamera.OVERLAY_TYPE.MOVE);
@@ -44,7 +46,9 @@ ArmyCamera.prototype.update = function(gameContext, renderContext) {
     this.drawSpriteLayer(gameContext, renderContext, SpriteManager.LAYER.UI);
 
     for(const layerID of foreground) {
-        this.drawLayer(gameContext, renderContext, worldMap, layers[layerID], worldBounds);
+        const layer = worldMap.getLayer(layerID);
+
+        this.drawLayer(gameContext, renderContext, layer, worldBounds);
     }
 
     if(Renderer.DEBUG.MAP) {
@@ -53,30 +57,28 @@ ArmyCamera.prototype.update = function(gameContext, renderContext) {
         renderContext.textAlign = "center";
 
         renderContext.fillStyle = "#ff0000";
-        this.drawLayerData(renderContext, worldBounds, worldMap, "type", 16, 16);
+        this.drawLayerData(renderContext, worldBounds, worldMap.getLayer("type"), 16, 16);
 
         renderContext.fillStyle = "#00ff00";
-        this.drawLayerData(renderContext, worldBounds, worldMap, "team", this.tileWidth - 16, 16);
+        this.drawLayerData(renderContext, worldBounds, worldMap.getLayer("team"), this.tileWidth - 16, 16);
 
         renderContext.fillStyle = "#0000ff";
-        this.drawLayerData(renderContext, worldBounds, worldMap, "border", 16, this.tileHeight - 16);
+        this.drawLayerData(renderContext, worldBounds, worldMap.getLayer("border"), 16, this.tileHeight - 16);
 
         renderContext.fillStyle = "#ffff00";
-        this.drawLayerData(renderContext, worldBounds, worldMap, "ground", this.tileWidth - 16, this.tileHeight - 16);
+        this.drawLayerData(renderContext, worldBounds, worldMap.getLayer("ground"), this.tileWidth - 16, this.tileHeight - 16);
 
         this.drawTileOutlines(renderContext, worldBounds);
     }
 }
 
-ArmyCamera.prototype.drawLayerData = function(context, worldBounds, worldMap, layerID, offsetX, offsetY) {
-    const { layers } = worldMap.getGraphicsSettings();
-    const { id, opacity } = layers[layerID];
+ArmyCamera.prototype.drawLayerData = function(context, worldBounds, layer, offsetX, offsetY) {
+    const opacity = layer.getOpacity();
 
     if(!opacity) {
         return;
     }
 
-    const layer = worldMap.getLayer(id);
     const buffer = layer.getBuffer();
 
     this.drawCustom(worldBounds, (index, renderX, renderY) => {
@@ -88,14 +90,13 @@ ArmyCamera.prototype.drawLayerData = function(context, worldBounds, worldMap, la
     });
 }
 
-ArmyCamera.prototype.drawLayer = function(gameContext, renderContext, map2D, layerSettings, worldBounds) {
-    const { id, opacity } = layerSettings;
+ArmyCamera.prototype.drawLayer = function(gameContext, renderContext, layer, worldBounds) {
+    const opacity = layer.getOpacity();
 
     if(!opacity) {
         return;
     }
 
-    const layer = worldMap.getLayer(id);
     const buffer = layer.getBuffer();
 
     renderContext.globalAlpha = opacity;

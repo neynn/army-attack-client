@@ -8,12 +8,18 @@ Layer.RESPONSE_CODE = {
     OUT_OF_BOUNDS: 1
 };
 
-Layer.prototype.setBuffer = function(buffer) {
-    this.buffer = buffer;
-}
-
 Layer.prototype.getBuffer = function() {
     return this.buffer;
+}
+
+Layer.prototype.getOpacity = function() {
+    return this.opacity;
+}
+
+Layer.prototype.setOpacity = function(opacity) {
+    if(opacity !== undefined) {
+        this.opacity = opacity;
+    }
 }
 
 Layer.prototype.resize = function(oldWidth, oldHeight, width, height, fill = 0) {

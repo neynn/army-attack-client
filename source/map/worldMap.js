@@ -103,14 +103,15 @@ WorldMap.prototype.isTileOccupied = function(tileX, tileY) {
 }
 
 WorldMap.prototype.setLayerOpacity = function(layerID, opacity) {
-    if(!this.layers.has(layerID) || opacity === undefined) {
+    const layer = this.layers.get(layerID);
+
+    if(!layer || opacity === undefined) {
         return;
     }
 
     const clampedOpacity = clampValue(opacity, 1, 0);
-    const layer = this.meta.graphics.layers[layerID]; //TODO
 
-    layer.opacity = clampedOpacity;
+    layer.setOpacity(clampedOpacity);
 } 
 
 WorldMap.prototype.resizeLayer = function(layerID, width, height, fill) {
