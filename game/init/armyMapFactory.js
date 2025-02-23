@@ -20,19 +20,21 @@ ArmyMapFactory.prototype.parseLayer = function(buffer, layerData) {
         return buffer;
     }
 
-    if(layerData.length < buffer.length) {
-        for(let i = 0; i < layerData.length; i++) {
-            const tileID = layerData[i];
+    let index = 0;
 
-            buffer[i] = tileID;
+    for(let i = 0; i < layerData.length; i += 2) {
+        const typeID = layerData[i];
+        const typeCount = layerData[i + 1];
+        const copies = Math.min(typeCount, buffer.length - index);
+
+        for(let j = 0; j < copies; j++) {
+            buffer[index] = typeID;
+            index++;
         }
 
-        return buffer;
-    }
-
-    for(let i = 0; i < buffer.length; i++) {
-        const tileID = layerData[i];
-        buffer[i] = tileID;
+        if(index >= buffer.length) {
+            return buffer;
+        }
     }
 
     return buffer;

@@ -39,19 +39,42 @@ export const packerToJSON = (id, packerFile) => {
   saveTemplateAsFile(`${id}.json`, meta);
 }
 
-const formatLayers = function(worldMap, onSave) {
+const rleLayer = function(buffer) {    
+    if(buffer.length === 0) {
+        return [];
+    }
+
+    let index = 0;
+    const encodedLayer = [buffer[0], 1];
+
+    for(let i = 1; i < buffer.length; i++) {
+        const currentID = buffer[i];
+
+        if(currentID === encodedLayer[index]) {
+            encodedLayer[index + 1]++;
+        } else {
+            encodedLayer.push(currentID);
+            encodedLayer.push(1);
+            index += 2;
+        }  
+    }
+
+    return encodedLayer;
+}
+
+const formatLayers = function(worldMap) {
     const formattedLayers = [];
     const layers = worldMap.getLayers();
     const graphics = worldMap.getGraphicsSettings();
 
 	for(const layerID in layers) {
-        const layer = graphics.layers[layerID];
+        const layerMeta = graphics.layers[layerID];
 
-		if(layer && layer.autoGenerate) {
+		if(layerMeta && layerMeta.autoGenerate) {
 			continue;
 		}
 
-		formattedLayers.push(`"${layerID}": ${onSave(worldMap.width, worldMap.height, layers[layerID])}`);
+		formattedLayers.push(`"${layerID}": [${rleLayer(layers[layerID])}]`);
 	}
 
     return formattedLayers;
@@ -106,7 +129,7 @@ export const saveMap = function(mapID, map2D) {
     }
 
     const formattedConfig = formatLayerSettings(map2D);
-	const formattedLayers = formatLayers(map2D, stringifyArray);
+	const formattedLayers = formatLayers(map2D);
       
     const downloadableString = 
 `{
