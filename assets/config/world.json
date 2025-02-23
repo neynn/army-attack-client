@@ -314,6 +314,22 @@
             ]
         }
     },
+    "TeamTileConversion": {
+        "Crimson": {
+            "ground": {
+                "Bg_GoodTile_01": ["ground", "Bg_BadTile_01"],
+                "Bg_GoodTile_01_desert": ["ground", "Bg_BadTile_01_desert"],
+                "Bg_GoodTile_02": ["ground", "Bg_BadTile_02"]
+            }
+        },
+        "Allies": {
+            "ground": {
+                "Bg_BadTile_01": ["ground", "Bg_GoodTile_01"],
+                "Bg_BadTile_01_desert": ["ground", "Bg_GoodTile_01_desert"],
+                "Bg_BadTile_02": ["ground", "Bg_GoodTile_02"]
+            }
+        }
+    },
     "TileTeamConversion": {
         "ground": {
             "Bg_BadTile_01": {"Crimson": ["ground", "Bg_BadTile_01"], "Allies": ["ground", "Bg_GoodTile_01"]},

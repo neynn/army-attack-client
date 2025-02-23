@@ -3,7 +3,7 @@ import { TileManager } from "./tileManager.js";
 
 export const TileMeta = function() {
     this.graphics = [];
-    this.inversion = {};
+    this.graphicsInversion = {};
     this.autotilers = new Map();
 }
 
@@ -24,26 +24,37 @@ TileMeta.prototype.getCorrectBuffer = function(bufferSize) {
 
 TileMeta.prototype.init = function(tileMeta) {
     const { graphics, autotilers } = tileMeta;
-    
-    this.graphics = graphics;
-    this.inversion = this.createInversion(graphics);
+
+    for(let i = 0; i < graphics.length; i++) {
+        const element = graphics[i];
+        const { autotiler, set, animation } = element;
+
+        this.graphics[i] = element;
+    }
+
+    this.graphicsInversion = this.createInversion(graphics);
 
     for(const autotilerID in autotilers) {
-        const autotiler = new Autotiler(autotilerID);
         const config = autotilers[autotilerID];
+        const { type, values, members } = config;
+        const autotiler = new Autotiler(autotilerID);
 
-        autotiler.init(this, config);
+        autotiler.loadType(type);
+        autotiler.loadValues(this, values);
+        autotiler.loadMembers(this, members);
 
         this.autotilers.set(autotilerID, autotiler);
     }
+
+    //Members also have to be loaded HERE!!! (This means to LINK the members to an element in graphics!!!);
 }
 
 TileMeta.prototype.getInversion = function() {
-    return this.inversion;
+    return this.graphicsInversion;
 }
 
 TileMeta.prototype.getTileID = function(setID, animationID) {
-    const set = this.inversion[setID];
+    const set = this.graphicsInversion[setID];
 
     if(!set) {
         return TileManager.TILE_ID.EMPTY;
