@@ -1,5 +1,5 @@
 {
-    "values": [
+    "graphics": [
         { "set": "ground", "animation": "Bg_BadTile_01" },
         { "set": "ground", "animation": "Bg_BadTile_02" },
         { "set": "ground", "animation": "Bg_BadTile_01_desert" },

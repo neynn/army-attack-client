@@ -63,8 +63,6 @@ InputRouter.prototype.load = function(gameContext, binds) {
     const { client } = gameContext;
     const { keyboard } = client;
 
-    this.clearBinds(gameContext);
-
     for(const commandID in binds) {
         const inputID = binds[commandID];
         

@@ -8,6 +8,7 @@ import { Button } from "../../../source/ui/elements/button.js";
 import { CAMERA_TYPES } from "../../enums.js";
 import { saveMap } from "../../../helpers.js";
 import { ArmyContext } from "../../armyContext.js";
+import { Renderer } from "../../../source/renderer.js";
 
 export const MapEditorState = function() {
     this.id = "MAP_EDITOR_STATE";
@@ -43,9 +44,14 @@ MapEditorState.prototype.onEnter = function(stateMachine) {
     uiManager.parseUI("MAP_EDITOR", gameContext);
     uiManager.unparseUI("FPS_COUNTER", gameContext);
 
-    router.load(gameContext, { "TOGGLE_AUTOTILER": "+a" });
-    router.on("TOGGLE_AUTOTILER", () => this.mapEditor.toggleAutotiling());
+    router.load(gameContext, {
+        "TOGGLE_AUTOTILER": "+a",
+        "DEBUG_MAP": "+F1"
+    });
 
+    router.on("TOGGLE_AUTOTILER", () => this.mapEditor.toggleAutotiling());
+    router.on("DEBUG_MAP", () => Renderer.DEBUG.MAP = !Renderer.DEBUG.MAP);
+    
     this.mapEditor.loadConfig(settings.mapEditor);
     this.mapEditor.loadBrushSets(meta.getInversion());
     this.initializeRenderEvents(gameContext);

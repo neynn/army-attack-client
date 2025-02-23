@@ -133,7 +133,8 @@ ArmyMap.prototype.repaint = function(gameContext, centerX, centerY, layerID) {
 
 ArmyMap.prototype.autotile = function(gameContext, centerX, centerY, tileID, layerID) {
     const { tileManager } = gameContext;
-    const autotiler = tileManager.getAutotilerByTile(tileID);
+    const { meta } = tileManager; 
+    const autotiler = meta.getAutotilerByTile(tileID);
 
     if(!autotiler) {
         return;
@@ -237,6 +238,7 @@ ArmyMap.prototype.convertGraphicToTeam = function(gameContext, tileX, tileY) {
 ArmyMap.prototype.updateBorder = function(gameContext, centerX, centerY, range) {
     const { tileManager, world } = gameContext;
     const { controllerManager } = world;
+    const { meta } = tileManager;
     const settings = world.getConfig("Settings");
 
     if(!settings.drawBorder || this.meta.disableBorder) {
@@ -249,7 +251,7 @@ ArmyMap.prototype.updateBorder = function(gameContext, centerX, centerY, range) 
         return;
     }
 
-    const autotiler = tileManager.getAutotilerByID(ArmyMap.AUTOTILER.BORDER);
+    const autotiler = meta.getAutotilerByID(ArmyMap.AUTOTILER.BORDER);
     const tileTypes = world.getConfig("TileType");
 
     this.updateArea(centerX, centerY, range, (index, tileX, tileY) => {

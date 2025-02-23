@@ -30,7 +30,7 @@ Renderer.DEBUG = {
     CAMERA: true,
     INTERFACE: false,
     SPRITES: false,
-    MAP: false
+    MAP: true
 };
 
 Renderer.prototype.getContext = function(id) {

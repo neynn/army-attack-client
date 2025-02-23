@@ -35,9 +35,10 @@ RangeShow.prototype.show = function(gameContext, entity) {
     }
 
     const { renderer, tileManager, spriteManager } = gameContext;
+    const { meta } = tileManager;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
     const entityID = entity.getID();
-    const autotiler = tileManager.getAutotilerByID(ArmyMap.AUTOTILER.RANGE);
+    const autotiler = meta.getAutotilerByID(ArmyMap.AUTOTILER.RANGE);
     const { range } = attackComponent;
     const { tileX, tileY } = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
     const { spriteID } = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);

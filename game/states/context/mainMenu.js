@@ -1,3 +1,4 @@
+import { Renderer } from "../../../source/renderer.js";
 import { State } from "../../../source/state/state.js";
 import { UIElement } from "../../../source/ui/uiElement.js";
 import { ArmyContext } from "../../armyContext.js";

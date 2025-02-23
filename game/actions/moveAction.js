@@ -28,7 +28,7 @@ MoveAction.prototype.onEnd = function(gameContext, request, messengerID) {
     const { entityManager, actionQueue } = world;
     const entity = entityManager.getEntity(entityID);
 
-    ConquerSystem.conquerTile(gameContext, targetX, targetY, entity);
+    ConquerSystem.tryConquering(gameContext, targetX, targetY, entity);
     MoveSystem.endMove(gameContext, entity, targetX, targetY);
     entity.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
     entity.placeOnMap(gameContext);
