@@ -162,36 +162,38 @@ ArmyContext.prototype.init = function(resources) {
 
 ArmyContext.prototype.updateConversions = function() {
     const { meta } = this.tileManager;
-    const conversions = this.world.getConfig("TileTeamConversion");
-    const newConversions = {};
+    const teamConversions = this.world.getConfig("TeamTileConversion");
+    const updatedConversions = {};
 
-    for(const setID in conversions) {
-        const set = conversions[setID];
+    for(const teamID in teamConversions) {
+        const sets = teamConversions[teamID];
+        const teamConversion = {};
 
-        for(const frameID in set) {
-            const config = {};
-            const mainID = meta.getTileID(setID, frameID);
+        for(const setID in sets) {
+            const set = sets[setID];
 
-            if(mainID === TileManager.TILE_ID.EMPTY) {
-                continue;
-            }
+            for(const animationID in set) {
+                const tileID = meta.getTileID(setID, animationID);
 
-            const teamConversions = set[frameID];
-
-            for(const teamID in teamConversions) {
-                const [tileSetID, tileFrameID] = teamConversions[teamID];
-                const tileID = meta.getTileID(tileSetID, tileFrameID);
-
-                if(teamID !== TileManager.TILE_ID.EMPTY) {
-                    config[teamID] = tileID;
+                if(tileID === TileManager.TILE_ID.EMPTY) {
+                    continue;
                 }
-            }
 
-            newConversions[mainID] = config;
+                const [a, b] = set[animationID];
+                const convertedID = meta.getTileID(a, b);
+
+                if(convertedID === TileManager.TILE_ID.EMPTY) {
+                    continue;
+                }
+
+                teamConversion[tileID] = convertedID;
+            }
         }
+
+        updatedConversions[teamID] = teamConversion;
     }
 
-    this.world.config["TileTeamConversion"] = newConversions;
+    this.world.config["TeamTileConversion"] = updatedConversions;
 }
 
 ArmyContext.prototype.saveSnapshot = function() {

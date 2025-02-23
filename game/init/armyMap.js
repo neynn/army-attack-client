@@ -165,14 +165,18 @@ ArmyMap.prototype.autotile = function(gameContext, centerX, centerY, tileID, lay
 
 ArmyMap.prototype.getConversionID = function(gameContext, tileID, teamID) {
     const { world } = gameContext;
-    const tileConversions = world.getConfig("TileTeamConversion");
-    const conversion = tileConversions[tileID];
+    const tileConversions = world.getConfig("TeamTileConversion");
+    const teamConversions = tileConversions[ArmyMap.TEAM_TYPE[teamID]];
 
-    if(!conversion) {
+    if(!teamConversions) {
         return TileManager.TILE_ID.EMPTY;
     }
 
-    const convertedID = conversion[ArmyMap.TEAM_TYPE[teamID]];
+    const convertedID = teamConversions[tileID];
+    
+    if(!convertedID) {
+        return TileManager.TILE_ID.EMPTY;
+    }
 
     return convertedID;
 }
