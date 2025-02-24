@@ -18,12 +18,10 @@
         },
         "animations": {
             "0": {
-                "id": "0",
                 "frameTime": 0.4,
                 "frames": ["Bg_GoodTile_01", "Bg_GoodTile_02", "Bg_WaterTile_01"]
             },
             "1": {
-                "id": "1",
                 "frameTime": 0.4,
                 "frames": ["Bg_BadTile_01", "Bg_BadTile_02", "Bg_DebrisTile_01"]
             }
@@ -99,7 +97,6 @@
         },
         "animations": {
             "0A": {
-                "id": "0A",
                 "frameTime": 0.4,
                 "frames": ["0", "Bg_BadTile_Deco_06"]
             }

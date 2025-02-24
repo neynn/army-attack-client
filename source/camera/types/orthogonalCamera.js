@@ -164,7 +164,8 @@ OrthogonalCamera.prototype.drawTileGraphics = function(tileManager, tileID, cont
     }
 
     const tileType = tileManager.getTileType(set);
-    const currentFrame = tileType.getCurrentFrame(animation);
+    const animationType = tileType.getAnimation(animation);
+    const currentFrame = animationType.getCurrentFrame();
 
     for(let i = 0; i < currentFrame.length; i++) {
         const component = currentFrame[i];

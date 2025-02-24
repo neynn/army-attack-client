@@ -146,22 +146,9 @@ TileSheet.prototype.defineAnimations = function(animationTypes, patternTypes, fr
     }
 }
 
-TileSheet.prototype.updateFrameIndex = function(animationID, timestamp) {
-    const animation = this.animations.get(animationID);
 
-    if(animation) {
-        animation.updateFrameIndex(timestamp);
-    }
-}
-
-TileSheet.prototype.getCurrentFrame = function(animationID) {
-    const animation = this.animations.get(animationID);
-
-    if(!animation) {
-        return [];
-    }
-
-    return animation.getCurrentFrame();
+TileSheet.prototype.getAnimation = function(animationID) {
+    return this.animations.get(animationID);
 }
 
 TileSheet.prototype.getDynamicAnimations = function() {

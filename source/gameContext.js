@@ -61,7 +61,6 @@ GameContext.prototype.start = function() {
 GameContext.prototype.exit = function() {
     this.world.exit();
     this.spriteManager.clear();
-    this.tileManager.exit();
     this.uiManager.exit();
 }
 

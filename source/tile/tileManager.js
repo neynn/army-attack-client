@@ -42,16 +42,13 @@ TileManager.prototype.update = function(gameContext) {
     this.updateDynamicAnimations(realTime);
 }
 
-TileManager.prototype.exit = function() {
-    
-}
-
 TileManager.prototype.updateDynamicAnimations = function(timestamp) {
     for(let i = 0; i < this.dynamicAnimations.length; i++) {
         const { set, animation } = this.dynamicAnimations[i];
         const tileType = this.tileTypes[set];
+        const animationType = tileType.getAnimation(animation);
 
-        tileType.updateFrameIndex(animation, timestamp);
+        animationType.updateFrameIndex(timestamp);
     }
 }
 
