@@ -39,45 +39,14 @@ export const packerToJSON = (id, packerFile) => {
   saveTemplateAsFile(`${id}.json`, meta);
 }
 
-const formatLayers = function(worldMap) {
-    const formattedLayers = [];
-    const graphics = worldMap.getGraphicsSettings();
-
-    for(const [layerID, layer] of worldMap.layers) {
-        const layerMeta = graphics.layers[layerID];
-
-        if(layerMeta && layerMeta.autoGenerate) {
-			continue;
-		}
-
-        formattedLayers.push(`"${layerID}": [${layer.encode()}]`);
-    }
-
-    return formattedLayers;
-}
-
-const formatLayerSettings = function(worldMap) {
-    const formattedConfig = [];
-    const { layers } = worldMap.getGraphicsSettings();
-
-    for(const layerID in layers) {
-        const layer = layers[layerID];
-        const { id, opacity, autoGenerate } = layer;
-
-        formattedConfig.push(`"${id}": { "id": "${id}", "opacity": ${opacity}, "autoGenerate": ${autoGenerate} }`);
-    }
-
-    return formattedConfig;
-}
-
 export const saveMap = function(mapID, map2D) {
     if(!map2D) {
         return `{ "ERROR": "MAP NOT LOADED! USE CREATE OR LOAD!" }`;
     }
 
-    const formattedConfig = formatLayerSettings(map2D);
-	const formattedLayers = formatLayers(map2D);
-      
+    const graphics = map2D.saveMeta();
+    const layers = map2D.saveLayers();
+
     const downloadableString = 
 `{
     "music": "${map2D.music}",
@@ -85,16 +54,16 @@ export const saveMap = function(mapID, map2D) {
     "height": ${map2D.height},
     "graphics": {
         "layers": {
-            ${formattedConfig.join(",\n            ")}
+            ${graphics.join(",\n            ")}
         },
-        "background": ${JSON.stringify(map2D.graphics.background)},
-        "foreground": ${JSON.stringify(map2D.graphics.foreground)}
+        "background": ${JSON.stringify(map2D.background)},
+        "foreground": ${JSON.stringify(map2D.foreground)}
     }
 }`;
 
     const downloadableLayers = 
 `{
-    ${formattedLayers.join(",\n    ")}
+    ${layers.join(",\n    ")}
 }`;
 
     saveTemplateAsFile("layers_" + mapID + ".json", downloadableLayers);

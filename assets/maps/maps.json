@@ -13,12 +13,12 @@
         "maxPlayers": 2,
         "graphics": {
             "layers": {
-                "ground": { "id": "ground", "opacity": 1, "autoGenerate": false },
-                "border": { "id": "border", "opacity": 1, "autoGenerate": true },
-                "decoration": { "id": "decoration", "opacity": 1, "autoGenerate": false },
-                "cloud": { "id": "cloud", "opacity": 1, "autoGenerate": false },
-                "type": { "id": "type", "opacity": 1, "autoGenerate": false },
-                "team": { "id": "team", "opacity": 1, "autoGenerate": false }
+                "ground": { "opacity": 1, "autoGenerate": false },
+                "border": { "opacity": 1, "autoGenerate": true },
+                "decoration": { "opacity": 1, "autoGenerate": false },
+                "cloud": { "opacity": 1, "autoGenerate": false },
+                "type": { "opacity": 1, "autoGenerate": false },
+                "team": { "opacity": 1, "autoGenerate": false }
             },
             "background": ["ground", "border", "decoration"],
             "foreground": ["cloud"]
@@ -34,12 +34,12 @@
         "height": 50,
         "graphics": {
             "layers": {
-                "ground": { "id": "ground", "opacity": 1, "autoGenerate": false },
-                "border": { "id": "border", "opacity": 1, "autoGenerate": true },
-                "decoration": { "id": "decoration", "opacity": 1, "autoGenerate": false },
-                "cloud": { "id": "cloud", "opacity": 1, "autoGenerate": true },
-                "type": { "id": "type", "opacity": 1, "autoGenerate": false },
-                "team": { "id": "team", "opacity": 1, "autoGenerate": false }
+                "ground": { "opacity": 1, "autoGenerate": false },
+                "border": { "opacity": 1, "autoGenerate": true },
+                "decoration": { "opacity": 1, "autoGenerate": false },
+                "cloud": { "opacity": 1, "autoGenerate": true },
+                "type": { "opacity": 1, "autoGenerate": false },
+                "team": { "opacity": 1, "autoGenerate": false }
             },
             "background": ["ground","border","decoration"],
             "foreground": ["cloud"]
@@ -57,12 +57,12 @@
         "maxPlayers": 1,
         "graphics": {
             "layers": {
-                "ground": { "id": "ground", "opacity": 1, "autoGenerate": false },
-                "border": { "id": "border", "opacity": 1, "autoGenerate": true },
-                "decoration": { "id": "decoration", "opacity": 1, "autoGenerate": false },
-                "cloud": { "id": "cloud", "opacity": 1, "autoGenerate": false },
-                "type": { "id": "type", "opacity": 1, "autoGenerate": false },
-                "team": { "id": "team", "opacity": 1, "autoGenerate": false }
+                "ground": { "opacity": 1, "autoGenerate": false },
+                "border": { "opacity": 1, "autoGenerate": true },
+                "decoration": { "opacity": 1, "autoGenerate": false },
+                "cloud": { "opacity": 1, "autoGenerate": false },
+                "type": { "opacity": 1, "autoGenerate": false },
+                "team": { "opacity": 1, "autoGenerate": false }
             },
             "background": ["ground", "border", "decoration"],
             "foreground": ["cloud"]
@@ -78,12 +78,12 @@
         "type": "Versus",
         "graphics": {
             "layers": {
-                "ground": { "id": "ground", "opacity": 1, "autoGenerate": false },
-                "border": { "id": "border", "opacity": 1, "autoGenerate": true },
-                "decoration": { "id": "decoration", "opacity": 1, "autoGenerate": false },
-                "cloud": { "id": "cloud", "opacity": 1, "autoGenerate": true },
-                "type": { "id": "type", "opacity": 1, "autoGenerate": false },
-                "team": { "id": "team", "opacity": 1, "autoGenerate": false }
+                "ground": { "opacity": 1, "autoGenerate": false },
+                "border": { "opacity": 1, "autoGenerate": true },
+                "decoration": { "opacity": 1, "autoGenerate": false },
+                "cloud": { "opacity": 1, "autoGenerate": true },
+                "type": { "opacity": 1, "autoGenerate": false },
+                "team": { "opacity": 1, "autoGenerate": false }
             },
             "background": ["ground","border","decoration"],
             "foreground": ["cloud"]

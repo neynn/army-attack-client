@@ -36,15 +36,16 @@ ArmyMapFactory.prototype.parseMap2D = function(gameContext, map2D, layerData, me
     } = graphics;
 
     for(const layerID in layers) {
-        const { id } = layers[layerID];
+        const config = layers[layerID];
         const buffer = this.createBuffer(gameContext, width, height);
         const layer = map2D.createLayer(layerID, buffer);
 
-        layer.decode(layerData[id]);
+        layer.decode(layerData[layerID]);
+        layer.init(config);
     }
 
-    map2D.width = width;
-    map2D.height = height;
+    map2D.setWidth(width);
+    map2D.setHeight(height);
     map2D.loadMeta(meta);
     
     return map2D;
@@ -62,8 +63,8 @@ ArmyMapFactory.prototype.parseMap2DEmpty = function(gameContext, map2D, layerDat
     } = graphics;
 
     for(const layerID in layers) {
-        const { id } = layers[layerID];
-        const { fill } = layerData[id];
+        const config = layers[layerID];
+        const { fill } = layerData[layerID];
         const buffer = this.createBuffer(gameContext, width, height);
 
         if(fill) {
@@ -72,11 +73,13 @@ ArmyMapFactory.prototype.parseMap2DEmpty = function(gameContext, map2D, layerDat
             }
         }
 
-        map2D.createLayer(layerID, buffer);
+        const layer = map2D.createLayer(layerID, buffer);
+
+        layer.init(config);
     }
 
-    map2D.width = width;
-    map2D.height = height;
+    map2D.setWidth(width);
+    map2D.setHeight(height);
     map2D.loadMeta(meta);
 
     return map2D;

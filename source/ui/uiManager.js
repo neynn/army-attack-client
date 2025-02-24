@@ -97,7 +97,7 @@ UIManager.prototype.parseUI = function(interfaceID, gameContext) {
 
     userInterface.fromConfig(gameContext, config);
 
-    renderer.events.subscribe(Renderer.EVENT.SCREEN_RESIZE, interfaceID, (width, height) => userInterface.onWindowResize(width, height));
+    renderer.events.subscribe(Renderer.EVENT.SCREEN_RESIZE, interfaceID, (width, height) => userInterface.updateRootAnchors(width, height));
 
     this.interfaceStack.push(userInterface);
 

@@ -77,7 +77,7 @@ ArmyMap.prototype.loadMeta = function(meta) {
     }
 
     if(graphics) {
-        this.setGraphicsSettings(graphics);
+        this.loadGraphics(graphics);
     }
 
     if(music) {

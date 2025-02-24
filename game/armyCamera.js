@@ -27,8 +27,9 @@ ArmyCamera.prototype.update = function(gameContext, renderContext) {
     if(!worldMap) {
         return;
     }
-
-    const { background, foreground } = worldMap.getGraphicsSettings();
+    
+    const background = worldMap.getBackgroundLayers();
+    const foreground = worldMap.getForegroundLayers();
     const worldBounds = this.getWorldBounds();
 
     for(let i = 0; i < background.length; i++) {

@@ -293,7 +293,7 @@ UserInterface.prototype.fromConfig = function(gameContext, userInterface) {
     }
 }
 
-UserInterface.prototype.onWindowResize = function(width, height) {
+UserInterface.prototype.updateRootAnchors = function(width, height) {
     for(let i = 0; i < this.roots.length; i++) {
         const elementID = this.roots[i];
         const element = this.elements.get(elementID);

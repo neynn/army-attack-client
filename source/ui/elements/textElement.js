@@ -3,7 +3,7 @@ import { UIElement } from "../uiElement.js";
 
 export const TextElement = function(DEBUG_NAME) {
     UIElement.call(this, DEBUG_NAME);
-
+    
     this.style = new TextStyle();
     this.fullText = "";
     this.revealedText = "";

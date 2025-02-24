@@ -1,6 +1,7 @@
 export const Layer = function(buffer) {
     this.buffer = buffer;
     this.opacity = 1;
+    this.autoGenerate = false;
 }
 
 Layer.RESPONSE_CODE = {
@@ -20,6 +21,17 @@ Layer.prototype.setOpacity = function(opacity) {
     if(opacity !== undefined) {
         this.opacity = opacity;
     }
+}
+
+Layer.prototype.init = function(config) {
+    if(!config) {
+        return;
+    }
+
+    const { opacity, autoGenerate } = config;
+
+    this.setOpacity(opacity);
+    this.autoGenerate = autoGenerate ?? this.autoGenerate;
 }
 
 Layer.prototype.resize = function(oldWidth, oldHeight, width, height, fill = 0) {
