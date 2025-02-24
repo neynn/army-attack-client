@@ -15,31 +15,6 @@ ArmyMapFactory.TYPE = {
 ArmyMapFactory.prototype = Object.create(Factory.prototype);
 ArmyMapFactory.prototype.constructor = Factory;
 
-ArmyMapFactory.prototype.parseLayer = function(buffer, layerData) {
-    if(!layerData) {
-        return buffer;
-    }
-
-    let index = 0;
-
-    for(let i = 0; i < layerData.length; i += 2) {
-        const typeID = layerData[i];
-        const typeCount = layerData[i + 1];
-        const copies = Math.min(typeCount, buffer.length - index);
-
-        for(let j = 0; j < copies; ++j) {
-            buffer[index] = typeID;
-            ++index;
-        }
-
-        if(index >= buffer.length) {
-            return buffer;
-        }
-    }
-
-    return buffer;
-}
-
 ArmyMapFactory.prototype.createBuffer = function(gameContext, width, height) {
     const { tileManager } = gameContext;
     const { meta } = tileManager;
@@ -70,7 +45,7 @@ ArmyMapFactory.prototype.parseMap2D = function(gameContext, map2D, layerData, me
 
     map2D.width = width;
     map2D.height = height;
-    map2D.meta = JSON.parse(JSON.stringify(meta));
+    map2D.loadMeta(meta);
     
     return map2D;
 }
@@ -102,7 +77,7 @@ ArmyMapFactory.prototype.parseMap2DEmpty = function(gameContext, map2D, layerDat
 
     map2D.width = width;
     map2D.height = height;
-    map2D.meta = JSON.parse(JSON.stringify(meta));
+    map2D.loadMeta(meta);
 
     return map2D;
 }

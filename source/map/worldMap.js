@@ -6,7 +6,7 @@ export const WorldMap = function(id) {
     this.id = id;
     this.width = 0;
     this.height = 0;
-    this.meta = {};
+    this.graphics = {};
     this.layers = new Map();
     this.tracker = new Tracker();
 }
@@ -32,8 +32,12 @@ WorldMap.prototype.setID = function(id) {
     this.id = id;
 }
 
+WorldMap.prototype.setGraphicsSettings = function(graphics) {
+    this.graphics = graphics;
+}
+
 WorldMap.prototype.getGraphicsSettings = function() {
-    return this.meta.graphics;
+    return this.graphics;
 }
 
 WorldMap.prototype.setWidth = function(width) {

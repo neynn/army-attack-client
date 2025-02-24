@@ -257,8 +257,7 @@ ArmyContext.prototype.createCamera = function(cameraID) {
     //context.setDisplayMode(CameraContext.DISPLAY_MODE.RESOLUTION_FIXED);
     
     this.world.events.subscribe(World.EVENT.MAP_CREATE, cameraID, (worldMap) => {
-        const { width, height, meta } = worldMap;
-        const { music } = meta;
+        const { width, height, music } = worldMap;
     
         camera.loadWorld(width, height);
     

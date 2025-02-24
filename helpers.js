@@ -80,15 +80,15 @@ export const saveMap = function(mapID, map2D) {
       
     const downloadableString = 
 `{
-    "music": "${map2D.meta.music}",
+    "music": "${map2D.music}",
     "width": ${map2D.width},
     "height": ${map2D.height},
     "graphics": {
         "layers": {
             ${formattedConfig.join(",\n            ")}
         },
-        "background": ${JSON.stringify(map2D.meta.graphics.background)},
-        "foreground": ${JSON.stringify(map2D.meta.graphics.foreground)}
+        "background": ${JSON.stringify(map2D.graphics.background)},
+        "foreground": ${JSON.stringify(map2D.graphics.foreground)}
     }
 }`;
 

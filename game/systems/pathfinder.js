@@ -45,7 +45,7 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
         const entityID = activeMap.getTopEntity(next.positionX, next.positionY);
 
         if(entityID !== null) {
-            if(activeMap.meta.disablePassing) {
+            if(activeMap.disablePassing) {
                 next.state = PathfinderSystem.NODE_STATE.INVALID_OCCUPIED;
                 return FloodFill.IGNORE_NEXT;
             }

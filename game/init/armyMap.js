@@ -5,6 +5,10 @@ import { TileManager } from "../../source/tile/tileManager.js";
 
 export const ArmyMap = function() {
     WorldMap.call(this, null);
+
+    this.music = null;
+    this.disablePassing = false;
+    this.disableBorder = false;
 }
 
 ArmyMap.TEAM_TO_WORLD = {
@@ -56,6 +60,30 @@ ArmyMap.UPDATE_RANGE = {
 
 ArmyMap.prototype = Object.create(WorldMap.prototype);
 ArmyMap.prototype.constructor = ArmyMap;
+
+ArmyMap.prototype.loadMeta = function(meta) {
+    if(!meta) {
+        return;
+    }
+
+    const { disableBorder, disablePassing, graphics, music } = meta;
+
+    if(disableBorder) {
+        this.disableBorder = true;
+    }
+
+    if(disablePassing) {
+        this.disablePassing = true;
+    }
+
+    if(graphics) {
+        this.setGraphicsSettings(graphics);
+    }
+
+    if(music) {
+        this.music = music;
+    }
+}
 
 ArmyMap.prototype.reload = function(gameContext) {
     const { world } = gameContext;
@@ -245,7 +273,7 @@ ArmyMap.prototype.updateBorder = function(gameContext, centerX, centerY, range) 
     const { meta } = tileManager;
     const settings = world.getConfig("Settings");
 
-    if(!settings.drawBorder || this.meta.disableBorder) {
+    if(!settings.drawBorder || this.disableBorder) {
         return;
     }
 
