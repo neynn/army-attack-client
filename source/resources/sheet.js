@@ -1,9 +1,49 @@
-export const Sheet = function(id, image) {
-    this.id = id;
-    this.image = image;
+export const Sheet = function(path) {
+    this.path = path;
+    this.image = null;
     this.buffer = null;
     this.isBuffered = false;
+    this.isLoaded = false;
     this.references = 0;
+}
+
+Sheet.ERROR_CODE = {
+    NONE: 0,
+    ERROR_IMAGE_LOAD: 1
+};
+
+Sheet.prototype.removeImage = function() {
+    if(!this.image) {
+        return;
+    }
+
+    this.image.src = null;
+    this.image = null;
+}
+
+Sheet.prototype.requestImage = async function() {
+    if(!this.path || this.image) {
+        return;
+    }
+
+    return new Promise((resolve, reject) => {
+        const image = new Image();
+
+        image.onload = () => {
+            this.image = image;
+            this.isLoaded = true;
+
+            resolve(image, Sheet.ERROR_CODE.NONE);
+        };
+
+        image.onerror = () => {
+            this.isLoaded = false;
+
+            reject(Sheet.ERROR_CODE.ERROR_IMAGE_LOAD);
+        };
+
+        image.src = this.path;
+    });
 }
 
 Sheet.prototype.addReference = function() {

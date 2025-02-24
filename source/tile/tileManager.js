@@ -22,8 +22,7 @@ TileManager.prototype.load = function(tileTypes, tileMeta) {
         this.resources.loadImages(tileTypes, (key, image, sheet) => {
             sheet.toBuffer();
             this.resources.addReference(key);
-        },
-        (key, error) => console.error(key, error));
+        });
 
     } else {
         Logger.log(false, "TileTypes cannot be undefined!", "TileManager.prototype.load", null);
@@ -60,16 +59,20 @@ TileManager.prototype.updateDynamicAnimations = function(timestamp) {
 TileManager.prototype.loadTileTypes = function(tileTypes) {
     for(const typeID in tileTypes) {
         const tileType = tileTypes[typeID];
-        const imageSheet = new ImageSheet(typeID);
+        const imageSheet = new ImageSheet();
 
         imageSheet.load(tileType);
+        imageSheet.defineFrames();
+        imageSheet.definePatterns();
         imageSheet.defineAnimations();
         //imageSheet.defineDefaultAnimation();
 
         const animations = imageSheet.getAnimations();
 
         for(const [animationID, animation] of animations) {
-            if(animation.frameCount > 1) {
+            const frameCount = animation.getFrameCount();
+
+            if(frameCount > 1) {
                 this.dynamicAnimations.push({
                     "set": typeID,
                     "animation": animationID

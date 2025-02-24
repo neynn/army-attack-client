@@ -14,27 +14,7 @@ ImageManager.prototype.getPath = function(directory, source) {
     return path;
 }
 
-ImageManager.prototype.addImage = function(id, image) {
-    const sheet = new Sheet(id, image);
-
-    this.images.set(id, sheet);
-
-    return sheet;
-}
-
-ImageManager.prototype.promiseHTMLImage = function(path) {
-    const promise = new Promise((resolve, reject) => {
-        const image = new Image();
-
-        image.onload = () => resolve(image);
-        image.onerror = () => reject(image);
-        image.src = path;
-    }); 
-
-    return promise;
-}
-
-ImageManager.prototype.loadImages = function(imageMeta, onLoad, onError) {
+ImageManager.prototype.loadImages = function(imageMeta, onLoad) {
     for(const imageID in imageMeta) {
         const imageConfig = imageMeta[imageID];
         const { directory, source } = imageConfig;
@@ -45,15 +25,13 @@ ImageManager.prototype.loadImages = function(imageMeta, onLoad, onError) {
             continue;
         }
 
-        this.promiseHTMLImage(imagePath)
-        .then(image => {
-            const sheet = this.addImage(imageID, image);
+        const sheet = new Sheet(imagePath);
 
-            if(sheet) {
-                onLoad(imageID, image, sheet);
-            }
-        })
-        .catch(error => onError(imageID, error));
+        this.images.set(imageID, sheet);
+
+        sheet.requestImage()
+        .then((image, code) => onLoad(imageID, image, sheet))
+        .catch((code) => console.error(`Image ${imageID} could not be loaded! Code: ${code}`));
     }
 }
 

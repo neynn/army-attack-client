@@ -74,14 +74,15 @@ OrthogonalCamera.prototype.drawOverlay = function(gameContext, renderContext, wo
 OrthogonalCamera.prototype.drawLayer = function(gameContext, renderContext, layer, worldBounds) {
     const opacity = layer.getOpacity();
 
-    if(opacity) {
+    if(opacity > 0) {
         const buffer = layer.getBuffer();
+        const previousAlpha = renderContext.globalAlpha;
 
         renderContext.globalAlpha = opacity;
 
         this.drawTileBuffer(gameContext, renderContext, buffer, worldBounds);
 
-        renderContext.globalAlpha = 1;
+        renderContext.globalAlpha = previousAlpha;
     }
 }
 

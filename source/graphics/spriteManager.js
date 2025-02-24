@@ -2,6 +2,7 @@ import { Logger } from "../logger.js";
 import { ImageSheet } from "./imageSheet.js";
 import { Sprite } from "./drawable/sprite.js";
 import { ImageManager } from "../resources/imageManager.js";
+import { SpriteSheet } from "./spriteSheet.js";
 
 export const SpriteManager = function() {
     this.resources = new ImageManager();
@@ -39,7 +40,7 @@ SpriteManager.prototype.load = function(spriteTypes) {
 
     for(const typeID in spriteTypes) {
         const spriteType = spriteTypes[typeID];
-        const imageSheet = new ImageSheet(typeID);
+        const imageSheet = new SpriteSheet();
 
         imageSheet.load(spriteType);
         imageSheet.defineDefaultAnimation();
@@ -65,7 +66,7 @@ SpriteManager.prototype.load = function(spriteTypes) {
           "imageID": key,
           "imageSizeMB": imageSizeMB
         });
-    }), (key, error) => console.error(key, error));
+    }));
 
     console.log(usedMB, usedMBLarge);
 }
@@ -254,8 +255,10 @@ SpriteManager.prototype.updateSprite = function(spriteID, typeID, animationID = 
 
     if(drawData.typeID !== typeID || drawData.animationID !== animationID) {
         const { x, y, w, h } = spriteType.getBounds();
+        const frameCount = animationType.getFrameCount();
+        const frameTime = animationType.getFrameTime();
 
-        sprite.init(typeID, animationID, animationType.frameCount, animationType.frameTime);
+        sprite.init(typeID, animationID, frameCount, frameTime);
         sprite.setBounds(x, y, w, h);
 
         this.resources.addReference(typeID);

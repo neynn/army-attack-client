@@ -1,9 +1,6 @@
 import { Animation } from "./animation.js";
 
-export const ImageSheet = function(id) {
-    this.id = id;
-    this.directory = null;
-    this.source = null;
+export const ImageSheet = function() {
     this.frames = {};
     this.animations = {};
     this.patterns = {};
@@ -23,12 +20,7 @@ ImageSheet.prototype.getAnimations = function() {
 }
 
 ImageSheet.prototype.load = function(config) {
-    const { id, directory, source, bounds, frameTime, frames, animations, patterns } = config;
-
-    this.id = id;
-    this.directory = directory;
-    this.source = source;
-    this.frameTime = frameTime;
+    const { bounds, frameTime, frames, animations, patterns } = config;
 
     if(frameTime) this.frameTime = frameTime;
     if(frames) this.frames = frames;
@@ -40,20 +32,6 @@ ImageSheet.prototype.load = function(config) {
         this.bounds.w = bounds.w;
         this.bounds.h = bounds.h;
     }
-}
-
-ImageSheet.prototype.defineDefaultAnimation = function() {
-    const defaultAnimation = new Animation(ImageSheet.DEFAULT_ANIMATION_ID);
-
-    defaultAnimation.setFrameTime(this.frameTime);
-
-    for(const frameID in this.frames) {
-        const frame = this.createFrame(frameID);
-        
-        defaultAnimation.addFrame(frame);
-    }
-
-    this.addAnimation(ImageSheet.DEFAULT_ANIMATION_ID, defaultAnimation);
 }
 
 ImageSheet.prototype.createFrame = function(frameID) {
@@ -123,9 +101,23 @@ ImageSheet.prototype.addAnimation = function(animationID, animation) {
     this.loadedAnimations.set(animationID, animation);
 }
 
-ImageSheet.prototype.defineAnimations = function() {
+ImageSheet.prototype.defineDefaultAnimation = function() {
+    const defaultAnimation = new Animation();
+
+    defaultAnimation.setFrameTime(this.frameTime);
+
+    for(const frameID in this.frames) {
+        const frame = this.createFrame(frameID);
+        
+        defaultAnimation.addFrame(frame);
+    }
+
+    this.addAnimation(ImageSheet.DEFAULT_ANIMATION_ID, defaultAnimation);
+}
+
+ImageSheet.prototype.definePatterns = function() {
     for(const patternID in this.patterns) {
-        const animation = new Animation(patternID);
+        const animation = new Animation();
         const patternFrame = this.createPatternFrame(patternID);
 
         animation.setFrameTime(this.frameTime);
@@ -133,9 +125,11 @@ ImageSheet.prototype.defineAnimations = function() {
 
         this.addAnimation(patternID, animation);
     }
-    
+}
+
+ImageSheet.prototype.defineFrames = function() {
     for(const frameID in this.frames) {
-        const animation = new Animation(frameID);
+        const animation = new Animation();
         const frame = this.createFrame(frameID);
 
         animation.setFrameTime(this.frameTime);
@@ -143,10 +137,12 @@ ImageSheet.prototype.defineAnimations = function() {
 
         this.addAnimation(frameID, animation);
     }
+}
 
+ImageSheet.prototype.defineAnimations = function() {
     for(const animationID in this.animations) {
-        const { id, frames, frameTime } = this.animations[animationID];
-        const animation = new Animation(animationID);
+        const { frames, frameTime } = this.animations[animationID];
+        const animation = new Animation();
 
         animation.setFrameTime(frameTime);
 

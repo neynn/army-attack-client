@@ -14,7 +14,7 @@ export const UIManager = function() {
 UIManager.prototype.load = function(interfaceTypes, iconTypes, fontTypes) {
     if(typeof interfaceTypes === "object") {
         this.interfaceTypes = interfaceTypes;
-        //this.resources.loadImages(iconTypes, (imageID, image) => console.log(imageID), (imageID, error) => console.error(imageID));
+        //this.resources.loadImages(iconTypes, (imageID, image) => console.log(imageID));
     } else {
         Logger.log(false, "InterfaceTypes cannot be undefined!", "UIManager.prototype.load", null);
     }

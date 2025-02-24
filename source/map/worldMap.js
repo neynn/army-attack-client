@@ -68,13 +68,21 @@ WorldMap.prototype.loadGraphics = function(graphics) {
 
     if(background) {
         for(let i = 0; i < background.length; i++) {
-            this.background.push(background[i]);
+            const layerID = background[i];
+
+            if(this.layers.has(layerID)) {
+                this.background.push(background[i]);
+            }
         }
     }
 
     if(foreground) {
         for(let i = 0; i < foreground.length; i++) {
-            this.foreground.push(foreground[i]);
+            const layerID = foreground[i];
+
+            if(this.layers.has(layerID)) {
+                this.foreground.push(foreground[i]);
+            }
         }
     }
 }
