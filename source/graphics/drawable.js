@@ -20,9 +20,9 @@ Drawable.STATE = {
 
 Drawable.prototype.onUpdate = function(timestamp, deltaTime) {}
 
-Drawable.prototype.onDraw = function(context, viewportX, viewportY, localX, localY) {}
+Drawable.prototype.onDraw = function(context, localX, localY) {}
 
-Drawable.prototype.onDebug = function(context, viewportX, viewportY, localX, localY) {}
+Drawable.prototype.onDebug = function(context, localX, localY) {}
 
 Drawable.prototype.update = function(timestamp, deltaTime) {
     const referenceStack = [this];
@@ -62,7 +62,7 @@ Drawable.prototype.drizzle = function(onCall) {
 
 Drawable.prototype.debug = function(context, viewportX, viewportY) {
     const referenceStack = [this];
-    const positionStack = [this.position.x, this.position.y];
+    const positionStack = [this.position.x - viewportX, this.position.y - viewportY];
 
     while(referenceStack.length !== 0) {
         const positionY = positionStack.pop();
@@ -71,7 +71,7 @@ Drawable.prototype.debug = function(context, viewportX, viewportY) {
         const children = reference.getChildren();
 
         context.save();
-        reference.onDebug(context, viewportX, viewportY, positionX, positionY);
+        reference.onDebug(context, positionX, positionY);
         context.restore();
 
         for(let i = children.length - 1; i >= 0; i--) {
@@ -91,7 +91,7 @@ Drawable.prototype.draw = function(context, viewportX, viewportY) {
     }
 
     const referenceStack = [this];
-    const positionStack = [this.position.x, this.position.y];
+    const positionStack = [this.position.x - viewportX, this.position.y - viewportY];
 
     while(referenceStack.length !== 0) {
         const positionY = positionStack.pop();
@@ -101,7 +101,7 @@ Drawable.prototype.draw = function(context, viewportX, viewportY) {
 
         context.save();
         context.globalAlpha = this.opacity;
-        reference.onDraw(context, viewportX, viewportY, positionX, positionY);
+        reference.onDraw(context, positionX, positionY);
         context.restore();
 
         for(let i = children.length - 1; i >= 0; i--) {

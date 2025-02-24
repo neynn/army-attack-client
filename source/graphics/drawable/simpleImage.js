@@ -9,18 +9,15 @@ export const SimpleImage = function() {
 SimpleImage.prototype = Object.create(Drawable.prototype);
 SimpleImage.prototype.constructor = SimpleImage;
 
-SimpleImage.prototype.onDraw = function(context, viewportX, viewportY, localX, localY) {
+SimpleImage.prototype.onDraw = function(context, localX, localY) {
     if(!this.image) {
         return;
     }
 
-    const drawX = viewportX - localX;
-    const drawY = viewportY - localY;
-
     context.drawImage(
         this.image,
         0, 0, this.image.width, this.image.height,
-        drawX, drawY, this.image.width, this.image.height
+        localX, localY, this.image.width, this.image.height
     );
 }
 

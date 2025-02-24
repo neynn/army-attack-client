@@ -92,7 +92,7 @@ SpriteManager.prototype.createSprite = function(typeID, layerID = null, animatio
 
     const sprite = new Sprite(typeID);
 
-    sprite.onDraw = (context, viewportX, viewportY, localX, localY) => this.drawSprite(sprite, context, viewportX, viewportY, localX, localY);
+    sprite.onDraw = (context, localX, localY) => this.drawSprite(sprite, context, localX, localY);
     sprite.onTerminate = (id) => this.destroySprite(id);
     sprite.setLastCallTime(this.timestamp);
 
@@ -108,7 +108,7 @@ SpriteManager.prototype.createSprite = function(typeID, layerID = null, animatio
     return sprite;
 }
 
-SpriteManager.prototype.drawSprite = function(sprite, context, viewportX, viewportY, localX, localY) {
+SpriteManager.prototype.drawSprite = function(sprite, context, localX, localY) {
     const { typeID, animationID, currentFrame, isFlipped } = sprite;
     const spriteBuffer = this.resources.getImage(typeID);
 
@@ -124,8 +124,8 @@ SpriteManager.prototype.drawSprite = function(sprite, context, viewportX, viewpo
     for(let i = 0; i < animationFrame.length; i++) {
         const { shiftX, shiftY, frame } = animationFrame[i];
         const { x, y, w, h, offset } = frame;
-        const renderX = localX - viewportX + offset.x + shiftX;
-        const renderY = localY - viewportY + offset.y + shiftY;
+        const renderX = localX + offset.x + shiftX;
+        const renderY = localY + offset.y + shiftY;
 
         if(isFlipped) {
             const drawX = renderX - (spriteBounds.x + w);

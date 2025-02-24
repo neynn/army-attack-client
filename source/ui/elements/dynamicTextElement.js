@@ -33,7 +33,7 @@ DynamicTextElement.prototype.setText = function(text) {
     }
 }
 
-DynamicTextElement.prototype.onDraw = function(context, viewportX, viewportY, localX, localY) {
+DynamicTextElement.prototype.onDraw = function(context, localX, localY) {
     this.events.emit(DynamicTextElement.EVENT_REQUEST_TEXT, this);
     this.style.apply(context);
 

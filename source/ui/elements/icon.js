@@ -18,7 +18,7 @@ Icon.prototype.init = function(config) {
     this.setOpacity(opacity);
 }
 
-Icon.prototype.onDraw = function(context, viewportX, viewportY, localX, localY) {
+Icon.prototype.onDraw = function(context, localX, localY) {
     if(!this.image) {
         return;
     }
@@ -26,7 +26,7 @@ Icon.prototype.onDraw = function(context, viewportX, viewportY, localX, localY) 
     context.drawImage(this.image, localX, localY, this.width, this.height);
 }
 
-Icon.prototype.onDebug = function(context, viewportX, viewportY, localX, localY) {
+Icon.prototype.onDebug = function(context, localX, localY) {
     context.globalAlpha = 0.5;
     context.fillStyle = "#0000ff";
     context.fillRect(localX, localY, this.width, this.height);

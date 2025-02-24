@@ -31,13 +31,13 @@ Container.prototype.isColliding = function(mouseX, mouseY, mouseRange) {
     return isIntersection;
 }
 
-Container.prototype.onDebug = function(context, viewportX, viewportY,localX, localY) {
+Container.prototype.onDebug = function(context, localX, localY) {
     context.globalAlpha = 0.2;
     context.fillStyle = "#0000ff";
     context.fillRect(localX, localY, this.width, this.height);
 }
 
-Container.prototype.onDraw = function(context, viewportX, viewportY, localX, localY) {
+Container.prototype.onDraw = function(context, localX, localY) {
     if(this.outline.isActive()) {
         this.outline.apply(context);
     

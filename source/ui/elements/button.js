@@ -68,7 +68,7 @@ Button.prototype.init = function(config) {
     }
 }
 
-Button.prototype.onDebug = function(context, viewportX, viewportY, localX, localY) {
+Button.prototype.onDebug = function(context, localX, localY) {
     context.globalAlpha = 0.2;
     context.fillStyle = "#ff00ff";
 
@@ -156,7 +156,7 @@ Button.prototype.drawStyle = function(context, localX, localY) {
     }
 }
 
-Button.prototype.onDraw = function(context, viewportX, viewportY, localX, localY) {
+Button.prototype.onDraw = function(context, localX, localY) {
     this.drawDefers(context, localX, localY);
     this.drawStyle(context, localX, localY);
 }

@@ -31,8 +31,8 @@ ArmyCamera.prototype.update = function(gameContext, renderContext) {
     const { background, foreground } = worldMap.getGraphicsSettings();
     const worldBounds = this.getWorldBounds();
 
-    for(const layerID of background) {
-        const layer = worldMap.getLayer(layerID);
+    for(let i = 0; i < background.length; i++) {
+        const layer = worldMap.getLayer(background[i]);
 
         this.drawLayer(gameContext, renderContext, layer, worldBounds);
     }
@@ -45,8 +45,8 @@ ArmyCamera.prototype.update = function(gameContext, renderContext) {
     this.drawSpriteLayer(gameContext, renderContext, SpriteManager.LAYER.TOP);
     this.drawSpriteLayer(gameContext, renderContext, SpriteManager.LAYER.UI);
 
-    for(const layerID of foreground) {
-        const layer = worldMap.getLayer(layerID);
+    for(let i = 0; i < foreground.length; i++) {
+        const layer = worldMap.getLayer(foreground[i]);
 
         this.drawLayer(gameContext, renderContext, layer, worldBounds);
     }
@@ -73,33 +73,21 @@ ArmyCamera.prototype.update = function(gameContext, renderContext) {
 }
 
 ArmyCamera.prototype.drawLayerData = function(context, worldBounds, layer, offsetX, offsetY) {
-    const opacity = layer.getOpacity();
-
-    if(!opacity) {
-        return;
-    }
-
+    const { startX, startY, endX, endY } = worldBounds;
+    const drawX = offsetX - this.viewportX;
+    const drawY = offsetY - this.viewportY;
     const buffer = layer.getBuffer();
 
-    this.drawCustom(worldBounds, (index, renderX, renderY) => {
-        const tileID = buffer[index];
-        const drawX = renderX + offsetX;
-        const drawY = renderY + offsetY;
+    for(let i = startY; i <= endY; i++) {
+        const renderY = i * this.tileHeight + drawY;
+        const tileRow = i * this.mapWidth;
 
-        context.fillText(tileID, drawX, drawY);
-    });
-}
+        for(let j = startX; j <= endX; j++) {
+            const renderX = j * this.tileWidth + drawX;
+            const index = tileRow + j;
+            const tileID = buffer[index];
 
-ArmyCamera.prototype.drawLayer = function(gameContext, renderContext, layer, worldBounds) {
-    const opacity = layer.getOpacity();
-
-    if(!opacity) {
-        return;
+            context.fillText(tileID, renderX, renderY);
+        }
     }
-
-    const buffer = layer.getBuffer();
-
-    renderContext.globalAlpha = opacity;
-    this.drawTileLayer(gameContext, renderContext, buffer, worldBounds);
-    renderContext.globalAlpha = 1;
 }

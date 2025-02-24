@@ -70,7 +70,7 @@ TextElement.prototype.isCompleted = function() {
     return this.fullText.length === this.revealedText.length;
 }
 
-TextElement.prototype.onDraw = function(context, viewportX, viewportY, localX, localY) {
+TextElement.prototype.onDraw = function(context, localX, localY) {
     this.style.apply(context);
 
     context.fillText(this.revealedText, localX, localY);

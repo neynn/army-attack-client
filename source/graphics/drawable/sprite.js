@@ -79,14 +79,12 @@ Sprite.prototype.onUpdate = function(timestamp, deltaTime) {
     this.updateFrame(passedFrames);
 }
 
-Sprite.prototype.onDebug = function(context, viewportX, viewportY, localX, localY) {
+Sprite.prototype.onDebug = function(context, localX, localY) {
     const { x, y, w, h } = this.bounds;
-    const renderX = localX - viewportX;
-    const renderY = localY - viewportY;
-
+    
     if(this.isFlipped) {
-        const drawX = renderX - (x + w);
-        const drawY = renderY + y;
+        const drawX = localX - (x + w);
+        const drawY = localY + y;
 
         context.translate(drawX + w, 0);
         context.scale(-1, 1);
@@ -94,8 +92,8 @@ Sprite.prototype.onDebug = function(context, viewportX, viewportY, localX, local
         context.lineWidth = 3;
         context.strokeRect(0, drawY, w, h);
     } else {
-        const drawX = renderX + x;
-        const drawY = renderY + y;
+        const drawX = localX + x;
+        const drawY = localY + y;
 
         context.strokeStyle = "black";
         context.lineWidth = 3;

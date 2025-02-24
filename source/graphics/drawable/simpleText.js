@@ -12,13 +12,10 @@ export const SimpleText = function() {
 SimpleText.prototype = Object.create(Drawable.prototype);
 SimpleText.prototype.constructor = SimpleText;
 
-SimpleText.prototype.onDraw = function(context, viewportX, viewportY, localX, localY) {
-    const renderX = localX - viewportX;
-    const renderY = localY - viewportY;
-    
+SimpleText.prototype.onDraw = function(context, localX, localY) {
     this.style.apply(context);
 
-    context.fillText(this.text, renderX, renderY);
+    context.fillText(this.text, localX, localY);
 }
 
 SimpleText.prototype.setText = function(text) {

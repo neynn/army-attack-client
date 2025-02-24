@@ -71,41 +71,37 @@ OrthogonalCamera.prototype.drawOverlay = function(gameContext, renderContext, wo
     }
 }
 
-OrthogonalCamera.prototype.drawCustom = function(worldBounds, onDraw) {
-    const { startX, startY, endX, endY } = worldBounds;
+OrthogonalCamera.prototype.drawLayer = function(gameContext, renderContext, layer, worldBounds) {
+    const opacity = layer.getOpacity();
 
-    for(let i = startY; i <= endY; i++) {
-        const row = i * this.mapWidth;
-        const renderY = i * this.tileHeight - this.viewportY;
+    if(opacity) {
+        const buffer = layer.getBuffer();
 
-        for(let j = startX; j <= endX; j++) {
-            const index = row + j;
-            const renderX = j * this.tileWidth - this.viewportX;
+        renderContext.globalAlpha = opacity;
 
-            onDraw(index, renderX, renderY);
-        }
+        this.drawTileBuffer(gameContext, renderContext, buffer, worldBounds);
+
+        renderContext.globalAlpha = 1;
     }
 }
 
-OrthogonalCamera.prototype.drawTileLayer = function(gameContext, renderContext, layer, worldBounds) {
+OrthogonalCamera.prototype.drawTileBuffer = function(gameContext, renderContext, buffer, worldBounds) {
     const { tileManager } = gameContext;
     const { startX, startY, endX, endY } = worldBounds;
 
     for(let i = startY; i <= endY; i++) {
-        const row = i * this.mapWidth;
+        const tileRow = i * this.mapWidth;
         const renderY = i * this.tileHeight - this.viewportY;
 
         for(let j = startX; j <= endX; j++) {
-            const index = row + j;
-            const id = layer[index];
+            const index = tileRow + j;
+            const tileID = buffer[index];
 
-            if(id === 0) {
-                continue;
+            if(tileID !== 0) {
+                const renderX = j * this.tileWidth - this.viewportX;
+
+                this.drawTileGraphics(tileManager, tileID, renderContext, renderX, renderY);
             }
-
-            const renderX = j * this.tileWidth - this.viewportX;
-
-            this.drawTileGraphics(tileManager, id, renderContext, renderX, renderY);
         }
     }
 }
