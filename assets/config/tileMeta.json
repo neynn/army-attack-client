@@ -144,8 +144,7 @@
         { "set": "range", "animation": "bottom_left" },
         { "set": "range", "animation": "bottom" },
         { "set": "range", "animation": "bottom_right" },
-        
-        { "set": "border", "animation": "0" },
+
         { "set": "border", "animation": "1" },
         { "set": "border", "animation": "2" },
         { "set": "border", "animation": "3" },
@@ -191,7 +190,6 @@
         { "set": "border", "animation": "43" },
         { "set": "border", "animation": "44" },
         { "set": "border", "animation": "45" },
-        { "set": "border", "animation": "46" },
         { "set": "border", "animation": "47" }
     ],
     "autotilers": {

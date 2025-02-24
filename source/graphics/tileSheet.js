@@ -60,8 +60,8 @@ TileSheet.prototype.createPatternFrame = function(pattern, frames) {
             "frameY": y,
             "frameW": w,
             "frameH": h,
-            "shiftX": offset.x + (shiftX ?? 0),
-            "shiftY": offset.y + (shiftY ?? 0)
+            "shiftX": (offset?.x ?? 0) + (shiftX ?? 0),
+            "shiftY": (offset?.y ?? 0) + (shiftY ?? 0)
         };
 
         frame.push(component);
@@ -84,8 +84,8 @@ TileSheet.prototype.createFrame = function(frameData) {
         "frameY": y,
         "frameW": w,
         "frameH": h,
-        "shiftX": offset.x,
-        "shiftY": offset.y
+        "shiftX": (offset?.x ?? 0),
+        "shiftY": (offset?.y ?? 0)
     };
     
     frame.push(component);
