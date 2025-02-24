@@ -1,4 +1,4 @@
-export const Sheet = function(path) {
+export const BufferableImage = function(path) {
     this.path = path;
     this.image = null;
     this.buffer = null;
@@ -7,12 +7,12 @@ export const Sheet = function(path) {
     this.references = 0;
 }
 
-Sheet.ERROR_CODE = {
+BufferableImage.ERROR_CODE = {
     NONE: 0,
     ERROR_IMAGE_LOAD: 1
 };
 
-Sheet.prototype.removeImage = function() {
+BufferableImage.prototype.removeImage = function() {
     if(!this.image) {
         return;
     }
@@ -21,7 +21,7 @@ Sheet.prototype.removeImage = function() {
     this.image = null;
 }
 
-Sheet.prototype.requestImage = async function() {
+BufferableImage.prototype.requestImage = function() {
     if(!this.path || this.image) {
         return;
     }
@@ -33,28 +33,28 @@ Sheet.prototype.requestImage = async function() {
             this.image = image;
             this.isLoaded = true;
 
-            resolve(image, Sheet.ERROR_CODE.NONE);
+            resolve(image, BufferableImage.ERROR_CODE.NONE);
         };
 
         image.onerror = () => {
             this.isLoaded = false;
 
-            reject(Sheet.ERROR_CODE.ERROR_IMAGE_LOAD);
+            reject(BufferableImage.ERROR_CODE.ERROR_IMAGE_LOAD);
         };
 
         image.src = this.path;
     });
 }
 
-Sheet.prototype.addReference = function() {
+BufferableImage.prototype.addReference = function() {
     this.references++;
 }
 
-Sheet.prototype.removeReference = function() {
+BufferableImage.prototype.removeReference = function() {
     this.references--;
 }
 
-Sheet.prototype.toBuffer = function() {
+BufferableImage.prototype.toBuffer = function() {
     if(this.isBuffered || !this.image) {
         return;
     }
@@ -80,7 +80,7 @@ Sheet.prototype.toBuffer = function() {
     this.isBuffered = true;
 }
 
-Sheet.prototype.getBuffer = function() {
+BufferableImage.prototype.getBuffer = function() {
     if(this.isBuffered) {
         return this.buffer;
     }
@@ -88,6 +88,6 @@ Sheet.prototype.getBuffer = function() {
     return this.image;
 }
 
-Sheet.prototype.getReferences = function() {
+BufferableImage.prototype.getReferences = function() {
     return this.references;
 }

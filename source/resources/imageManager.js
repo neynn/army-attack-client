@@ -1,4 +1,4 @@
-import { Sheet } from "./sheet.js";
+import { BufferableImage } from "./bufferableImage.js";
 
 export const ImageManager = function() {
     this.images = new Map();
@@ -25,12 +25,12 @@ ImageManager.prototype.loadImages = function(imageMeta, onLoad) {
             continue;
         }
 
-        const sheet = new Sheet(imagePath);
+        const bufferableImage = new BufferableImage(imagePath);
 
-        this.images.set(imageID, sheet);
+        this.images.set(imageID, bufferableImage);
 
-        sheet.requestImage()
-        .then((image, code) => onLoad(imageID, image, sheet))
+        bufferableImage.requestImage()
+        .then((image, code) => onLoad(imageID, image, bufferableImage))
         .catch((code) => console.error(`Image ${imageID} could not be loaded! Code: ${code}`));
     }
 }

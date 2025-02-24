@@ -248,13 +248,18 @@ MapEditor.prototype.paint = function(gameContext, mapID, layerID) {
 }
 
 MapEditor.prototype.resizeMap = function(worldMap, width, height) {
-    const defaultSetup = this.config.default.layers;
+    const layerConfigs = this.config.default.meta.graphics.layers;
 
     for(const [layerID, layer] of worldMap.layers) {
-        const layerSetup = defaultSetup[layerID];
-        const fill = layerSetup ? layerSetup.fill : 0;
+        const layerConfig = layerConfigs[layerID];
 
-        worldMap.resizeLayer(layerID, width, height, fill);
+        if(layerConfig) {
+            const fill = layerConfig.fill;
+
+            worldMap.resizeLayer(layerID, width, height, fill);
+        } else {
+            worldMap.resizeLayer(layerID, width, height, 0);
+        }
     }
 
     worldMap.setWidth(width);

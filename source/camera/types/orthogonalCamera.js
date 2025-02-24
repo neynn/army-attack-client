@@ -164,21 +164,19 @@ OrthogonalCamera.prototype.drawTileGraphics = function(tileManager, tileID, cont
     }
 
     const tileType = tileManager.getTileType(set);
-    const tileAnimation = tileType.getAnimation(animation);
-    const currentFrame = tileAnimation.getCurrentFrame();
+    const currentFrame = tileType.getCurrentFrame(animation);
 
     for(let i = 0; i < currentFrame.length; i++) {
         const component = currentFrame[i];
-        const { shiftX, shiftY, frame } = component;
-        const { x, y, w, h } = frame;
+        const { frameX, frameY, frameW, frameH, shiftX, shiftY } = component;
         const drawX = renderX + shiftX * scaleX;
         const drawY = renderY + shiftY * scaleY;
-        const drawWidth = w * scaleX;
-        const drawHeight = h * scaleY;
+        const drawWidth = frameW * scaleX;
+        const drawHeight = frameH * scaleY;
 
         context.drawImage(
             tileBuffer,
-            x, y, w, h,
+            frameX, frameY, frameW, frameH,
             drawX, drawY, drawWidth, drawHeight
         );
     }

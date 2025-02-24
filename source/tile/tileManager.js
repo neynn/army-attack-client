@@ -1,4 +1,4 @@
-import { ImageSheet } from "../graphics/imageSheet.js";
+import { TileSheet } from "../graphics/tileSheet.js";
 import { Logger } from "../logger.js";
 import { ImageManager } from "../resources/imageManager.js";
 import { TileMeta } from "./tileMeta.js";
@@ -50,37 +50,30 @@ TileManager.prototype.updateDynamicAnimations = function(timestamp) {
     for(let i = 0; i < this.dynamicAnimations.length; i++) {
         const { set, animation } = this.dynamicAnimations[i];
         const tileType = this.tileTypes[set];
-        const animationType = tileType.getAnimation(animation);
 
-        animationType.updateFrameIndex(timestamp);
+        tileType.updateFrameIndex(animation, timestamp);
     }
 }
 
 TileManager.prototype.loadTileTypes = function(tileTypes) {
     for(const typeID in tileTypes) {
         const tileType = tileTypes[typeID];
-        const imageSheet = new ImageSheet();
+        const tileSheet = new TileSheet();
 
-        imageSheet.load(tileType);
-        imageSheet.defineFrames();
-        imageSheet.definePatterns();
-        imageSheet.defineAnimations();
-        //imageSheet.defineDefaultAnimation();
+        tileSheet.init(tileType);
 
-        const animations = imageSheet.getAnimations();
+        const dynamicAnimations = tileSheet.getDynamicAnimations();
 
-        for(const [animationID, animation] of animations) {
-            const frameCount = animation.getFrameCount();
+        for(let i = 0; i < dynamicAnimations.length; i++) {
+            const animationID = dynamicAnimations[i];
 
-            if(frameCount > 1) {
-                this.dynamicAnimations.push({
-                    "set": typeID,
-                    "animation": animationID
-                });
-            }
+            this.dynamicAnimations.push({
+                "set": typeID,
+                "animation": animationID
+            });
         }
 
-        this.tileTypes[typeID] = imageSheet;
+        this.tileTypes[typeID] = tileSheet;
     }
 }
 
