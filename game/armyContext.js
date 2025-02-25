@@ -251,6 +251,7 @@ ArmyContext.prototype.createCamera = function(cameraID) {
     const settings = this.world.getConfig("Settings");
     const context = this.renderer.addCamera(cameraID, camera);
 
+    this.tileManager.loadTileDimensions(settings.tileWidth, settings.tileHeight);
     camera.loadTileDimensions(settings.tileWidth, settings.tileHeight);
 
     //context.initRenderer(640/2, 360/2);

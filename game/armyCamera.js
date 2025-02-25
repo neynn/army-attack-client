@@ -58,37 +58,17 @@ ArmyCamera.prototype.update = function(gameContext, renderContext) {
         renderContext.textAlign = "center";
 
         renderContext.fillStyle = "#ff0000";
-        this.drawLayerData(renderContext, worldBounds, worldMap.getLayer("type"), 16, 16);
+        this.drawBufferData(renderContext, worldBounds, worldMap.getLayer("type").getBuffer(), 16, 16);
 
         renderContext.fillStyle = "#00ff00";
-        this.drawLayerData(renderContext, worldBounds, worldMap.getLayer("team"), this.tileWidth - 16, 16);
+        this.drawBufferData(renderContext, worldBounds, worldMap.getLayer("team").getBuffer(), this.tileWidth - 16, 16);
 
         renderContext.fillStyle = "#0000ff";
-        this.drawLayerData(renderContext, worldBounds, worldMap.getLayer("border"), 16, this.tileHeight - 16);
+        this.drawBufferData(renderContext, worldBounds, worldMap.getLayer("border").getBuffer(), 16, this.tileHeight - 16);
 
         renderContext.fillStyle = "#ffff00";
-        this.drawLayerData(renderContext, worldBounds, worldMap.getLayer("ground"), this.tileWidth - 16, this.tileHeight - 16);
+        this.drawBufferData(renderContext, worldBounds, worldMap.getLayer("ground").getBuffer(), this.tileWidth - 16, this.tileHeight - 16);
 
-        this.drawTileOutlines(renderContext, worldBounds);
-    }
-}
-
-ArmyCamera.prototype.drawLayerData = function(context, worldBounds, layer, offsetX, offsetY) {
-    const { startX, startY, endX, endY } = worldBounds;
-    const drawX = offsetX - this.viewportX;
-    const drawY = offsetY - this.viewportY;
-    const buffer = layer.getBuffer();
-
-    for(let i = startY; i <= endY; i++) {
-        const renderY = i * this.tileHeight + drawY;
-        const tileRow = i * this.mapWidth;
-
-        for(let j = startX; j <= endX; j++) {
-            const renderX = j * this.tileWidth + drawX;
-            const index = tileRow + j;
-            const tileID = buffer[index];
-
-            context.fillText(tileID, renderX, renderY);
-        }
+        this.drawMapOutlines(renderContext, worldBounds);
     }
 }

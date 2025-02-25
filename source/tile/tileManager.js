@@ -8,7 +8,14 @@ export const TileManager = function() {
     this.resources = new ImageManager();
     this.dynamicAnimations = [];
     this.tileTypes = {};
+    this.tileWidth = 0;
+    this.tileHeight = 0;
 }
+
+TileManager.COLOR = {
+    EMPTY_TILE_FIRST: "#000000",
+    EMPTY_TILE_SECOND: "#701867"
+};
 
 TileManager.TILE_ID = {
     EMPTY: 0,
@@ -21,7 +28,7 @@ TileManager.prototype.load = function(tileTypes, tileMeta) {
 
         this.resources.loadImages(tileTypes, (key, image, sheet) => {
             sheet.toBuffer();
-            this.resources.addReference(key);
+            sheet.addReference();
         });
 
     } else {
@@ -33,6 +40,11 @@ TileManager.prototype.load = function(tileTypes, tileMeta) {
     } else {
         Logger.log(false, "TileMeta cannot be undefined!", "TileManager.prototype.load", null);
     }
+}
+
+TileManager.prototype.loadTileDimensions = function(tileWidth, tileHeight) {
+    this.tileWidth = tileWidth;
+    this.tileHeight = tileHeight;
 }
 
 TileManager.prototype.update = function(gameContext) {
@@ -74,12 +86,51 @@ TileManager.prototype.loadTileTypes = function(tileTypes) {
     }
 }
 
-TileManager.prototype.getTileType = function(typeID) {
-    const type = this.tileTypes[typeID];
+TileManager.prototype.drawEmptyTile = function(context, renderX, renderY, scaleX = 1, scaleY = 1) {
+    const scaledX = (this.tileWidth * 0.5) * scaleX;
+    const scaledY = (this.tileHeight * 0.5) * scaleY;
 
-    if(!type) {
-        return null;
+    context.fillStyle = TileManager.COLOR.EMPTY_TILE_FIRST;
+    context.fillRect(renderX, renderY, scaledX, scaledY);
+    context.fillRect(renderX + scaledX, renderY + scaledY, scaledX, scaledY);
+
+    context.fillStyle = TileManager.COLOR.EMPTY_TILE_SECOND;
+    context.fillRect(renderX + scaledX, renderY, scaledX, scaledY);
+    context.fillRect(renderX, renderY + scaledY, scaledX, scaledY);
+}
+
+TileManager.prototype.drawTileGraphics = function(tileID, context, renderX, renderY, scaleX = 1, scaleY = 1) {
+    const tileMeta = this.meta.getMeta(tileID);
+
+    if(tileMeta === null) {
+        this.drawEmptyTile(context, renderX, renderY, scaleX, scaleY);
+        return;
     }
 
-    return type;
+    const { set, animation } = tileMeta;
+    const tileBuffer = this.resources.getImage(set);
+
+    if(tileBuffer === null) {
+        this.drawEmptyTile(context, renderX, renderY, scaleX, scaleY);
+        return;
+    }
+
+    const tileType = this.tileTypes[set];
+    const animationType = tileType.getAnimation(animation);
+    const currentFrame = animationType.getCurrentFrame();
+
+    for(let i = 0; i < currentFrame.length; i++) {
+        const component = currentFrame[i];
+        const { frameX, frameY, frameW, frameH, shiftX, shiftY } = component;
+        const drawX = renderX + shiftX * scaleX;
+        const drawY = renderY + shiftY * scaleY;
+        const drawWidth = frameW * scaleX;
+        const drawHeight = frameH * scaleY;
+
+        context.drawImage(
+            tileBuffer,
+            frameX, frameY, frameW, frameH,
+            drawX, drawY, drawWidth, drawHeight
+        );
+    }
 }

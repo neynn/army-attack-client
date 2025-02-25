@@ -161,11 +161,11 @@ MapEditorState.prototype.loadButtonEvents = function(gameContext) {
 
         if(tileID === 0) {
             button.addDefer((context, localX, localY) => {
-                camera.drawEmptyTile(context, localX, localY, MapEditorState.GRAPHICS_BUTTON_SCALE, MapEditorState.GRAPHICS_BUTTON_SCALE);
+                tileManager.drawEmptyTile(context, localX, localY, MapEditorState.GRAPHICS_BUTTON_SCALE, MapEditorState.GRAPHICS_BUTTON_SCALE);
             });
         } else {
             button.addDefer((context, localX, localY) => {
-                camera.drawTileGraphics(tileManager, tileID, context, localX, localY, MapEditorState.GRAPHICS_BUTTON_SCALE, MapEditorState.GRAPHICS_BUTTON_SCALE);
+                tileManager.drawTileGraphics(tileID, context, localX, localY, MapEditorState.GRAPHICS_BUTTON_SCALE, MapEditorState.GRAPHICS_BUTTON_SCALE);
                 context.fillStyle = "#eeeeee";
                 context.textAlign = "center";
                 context.fillText(tileName, localX + 25, localY + 25);
@@ -242,9 +242,9 @@ MapEditorState.prototype.initializeRenderEvents = function(gameContext) {
                 const renderX = j * width - x;
 
                 if(tileID === 0) {
-                    camera.drawEmptyTile(context, renderX, renderY);
+                    tileManager.drawEmptyTile(context, renderX, renderY);
                 } else {
-                    camera.drawTileGraphics(tileManager, tileID, context, renderX, renderY);
+                    tileManager.drawTileGraphics(tileID, context, renderX, renderY);
                     context.fillStyle = this.mapEditor.config.overlayTextColor;
                     context.textAlign = "center";
                     context.fillText(tileName, renderX + halfWidth, renderY);  

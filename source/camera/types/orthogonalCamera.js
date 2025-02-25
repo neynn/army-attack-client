@@ -15,15 +15,13 @@ export const OrthogonalCamera = function() {
     this.overlays = [];
 }
 
+OrthogonalCamera.MAP_OUTLINE = {
+    LINE_SIZE: 2,
+    COLOR: "#dddddd"
+};
+
 OrthogonalCamera.prototype = Object.create(Camera.prototype);
 OrthogonalCamera.prototype.constructor = OrthogonalCamera;
-
-OrthogonalCamera.MAP_OUTLINE_COLOR = "#dddddd";
-
-OrthogonalCamera.EMPTY_TILE_COLOR = {
-    FIRST: "#000000",
-    SECOND: "#701867"
-};
 
 OrthogonalCamera.prototype.addToOverlay = function(index, tileID, positionX, positionY) {
     if(index < 0 || index >= this.overlays.length || tileID === TileManager.TILE_ID.EMPTY) {
@@ -66,7 +64,7 @@ OrthogonalCamera.prototype.drawOverlay = function(gameContext, renderContext, wo
             const renderX = drawX - this.viewportX;
             const renderY = drawY - this.viewportY;
     
-            this.drawTileGraphics(tileManager, id, renderContext, renderX, renderY);
+            tileManager.drawTileGraphics(id, renderContext, renderX, renderY);
         }
     }
 }
@@ -89,6 +87,7 @@ OrthogonalCamera.prototype.drawLayer = function(gameContext, renderContext, laye
 OrthogonalCamera.prototype.drawTileBuffer = function(gameContext, renderContext, buffer, worldBounds) {
     const { tileManager } = gameContext;
     const { startX, startY, endX, endY } = worldBounds;
+    const bufferSize = buffer.length;
 
     for(let i = startY; i <= endY; i++) {
         const tileRow = i * this.mapWidth;
@@ -96,12 +95,15 @@ OrthogonalCamera.prototype.drawTileBuffer = function(gameContext, renderContext,
 
         for(let j = startX; j <= endX; j++) {
             const index = tileRow + j;
-            const tileID = buffer[index];
 
-            if(tileID !== 0) {
-                const renderX = j * this.tileWidth - this.viewportX;
+            if(index >= 0 && index < bufferSize) {
+                const tileID = buffer[index];
 
-                this.drawTileGraphics(tileManager, tileID, renderContext, renderX, renderY);
+                if(tileID !== 0) {
+                    const renderX = j * this.tileWidth - this.viewportX;
+    
+                    tileManager.drawTileGraphics(tileID, renderContext, renderX, renderY);
+                }
             }
         }
     }
@@ -146,72 +148,46 @@ OrthogonalCamera.prototype.drawSpriteLayer = function(gameContext, renderContext
     }
 }
 
-OrthogonalCamera.prototype.drawTileGraphics = function(tileManager, tileID, context, renderX, renderY, scaleX = 1, scaleY = 1) {
-    const { meta, resources } = tileManager;
-    const tileMeta = meta.getMeta(tileID);
-
-    if(tileMeta === null) {
-        this.drawEmptyTile(context, renderX, renderY, scaleX, scaleY);
-        return;
-    }
-
-    const { set, animation } = tileMeta;
-    const tileBuffer = resources.getImage(set);
-
-    if(!tileBuffer) {
-        this.drawEmptyTile(context, renderX, renderY, scaleX, scaleY);
-        return;
-    }
-
-    const tileType = tileManager.getTileType(set);
-    const animationType = tileType.getAnimation(animation);
-    const currentFrame = animationType.getCurrentFrame();
-
-    for(let i = 0; i < currentFrame.length; i++) {
-        const component = currentFrame[i];
-        const { frameX, frameY, frameW, frameH, shiftX, shiftY } = component;
-        const drawX = renderX + shiftX * scaleX;
-        const drawY = renderY + shiftY * scaleY;
-        const drawWidth = frameW * scaleX;
-        const drawHeight = frameH * scaleY;
-
-        context.drawImage(
-            tileBuffer,
-            frameX, frameY, frameW, frameH,
-            drawX, drawY, drawWidth, drawHeight
-        );
-    }
-}
-
-OrthogonalCamera.prototype.drawEmptyTile = function(context, renderX, renderY, scaleX = 1, scaleY = 1) {
-    const scaledX = this.halfTileWidth * scaleX;
-    const scaledY = this.halfTileHeight * scaleY;
-
-    context.fillStyle = OrthogonalCamera.EMPTY_TILE_COLOR.FIRST;
-    context.fillRect(renderX, renderY, scaledX, scaledY);
-    context.fillRect(renderX + scaledX, renderY + scaledY, scaledX, scaledY);
-
-    context.fillStyle = OrthogonalCamera.EMPTY_TILE_COLOR.SECOND;
-    context.fillRect(renderX + scaledX, renderY, scaledX, scaledY);
-    context.fillRect(renderX, renderY + scaledY, scaledX, scaledY);
-}
-
-OrthogonalCamera.prototype.drawTileOutlines = function(context, worldBounds) {
+OrthogonalCamera.prototype.drawBufferData = function(context, worldBounds, buffer, offsetX, offsetY) {
     const { startX, startY, endX, endY } = worldBounds;
-    const adjustedEndX = endX + 1;
-    const adjustedEndY = endY + 1;
-    const LINE_SIZE = 2;
+    const bufferSize = buffer.length;
+    const drawX = offsetX - this.viewportX;
+    const drawY = offsetY - this.viewportY;
 
-    context.fillStyle = OrthogonalCamera.MAP_OUTLINE_COLOR;
+    for(let i = startY; i <= endY; i++) {
+        const renderY = i * this.tileHeight + drawY;
+        const tileRow = i * this.mapWidth;
 
-    for(let i = startY; i <= adjustedEndY; i++) {
+        for(let j = startX; j <= endX; j++) {
+            const index = tileRow + j;
+
+            if(index >= 0 && index < bufferSize) {
+                const renderX = j * this.tileWidth + drawX;
+                const tileID = buffer[index];
+
+                context.fillText(tileID, renderX, renderY);
+            }
+        }
+    }
+}
+
+OrthogonalCamera.prototype.drawMapOutlines = function(context, worldBounds) {
+    const { startX, startY, endX, endY } = worldBounds;
+    const trueEndX = endX + 1;
+    const trueEndY = endY + 1;
+
+    context.fillStyle = OrthogonalCamera.MAP_OUTLINE.COLOR;
+
+    for(let i = startY; i <= trueEndY; i++) {
         const renderY = i * this.tileHeight - this.viewportY;
-        context.fillRect(0, renderY, this.viewportWidth, LINE_SIZE);
+
+        context.fillRect(0, renderY, this.viewportWidth, OrthogonalCamera.MAP_OUTLINE.LINE_SIZE);
     }
 
-    for (let j = startX; j <= adjustedEndX; j++) {
+    for (let j = startX; j <= trueEndX; j++) {
         const renderX = j * this.tileWidth - this.viewportX;
-        context.fillRect(renderX, 0, LINE_SIZE, this.viewportHeight);
+
+        context.fillRect(renderX, 0, OrthogonalCamera.MAP_OUTLINE.LINE_SIZE, this.viewportHeight);
     }
 }
 
