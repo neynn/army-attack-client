@@ -12,6 +12,13 @@ PathfinderSystem.NODE_STATE = {
     INVALID_OCCUPIED: 3
 };
 
+PathfinderSystem.addNode = function(nodes, node, state) {
+    nodes.push({
+        "node": node,
+        "state": state
+    });
+}
+
 PathfinderSystem.generateNodeList = function(gameContext, entity) {
     const { world } = gameContext;
     const { mapManager, entityManager } = world;
@@ -21,38 +28,41 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
         return [];
     }
 
+    const nodes = [];
     const avianComponent = entity.getComponent(ArmyEntity.COMPONENT.AVIAN);
-    const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
     const moveComponent = entity.getComponent(ArmyEntity.COMPONENT.MOVE);
-    const teamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
+    const { tileX, tileY } = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
+    const { teamID } = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
 
     const tileTypes = world.getConfig("TileType");
 
-    const originTeamID = activeMap.getTile(ArmyMap.LAYER.TEAM, positionComponent.tileX, positionComponent.tileY);
-    const originAlliance = AllianceSystem.getAlliance(gameContext, teamComponent.teamID, ArmyMap.TEAM_TYPE[originTeamID]);
+    const originTeamID = activeMap.getTile(ArmyMap.LAYER.TEAM, tileX, tileY);
+    const originAlliance = AllianceSystem.getAlliance(gameContext, teamID, ArmyMap.TEAM_TYPE[originTeamID]);
     const isOriginWalkable = originAlliance.isWalkable || moveComponent.isStealth;
 
-    const nodeList = FloodFill.search_cross(positionComponent.tileX, positionComponent.tileY, moveComponent.range, activeMap.width, activeMap.height, (next, current) => {
-        const nextTypeID = activeMap.getTile(ArmyMap.LAYER.TYPE, next.positionX, next.positionY);
-        const nextTileType = tileTypes[nextTypeID];
-        const isNextPassable = moveComponent.hasPassability(nextTileType.passability);
+    FloodFill.search_cross(tileX, tileY, moveComponent.range, activeMap.width, activeMap.height, (next, current) => {
+        const { positionX, positionY } = next;
+        const nextTypeID = activeMap.getTile(ArmyMap.LAYER.TYPE, positionX, positionY);
+        const isNextPassable = moveComponent.hasPassability(tileTypes[nextTypeID].passability);
 
         if(!isNextPassable) {
-            next.state = PathfinderSystem.NODE_STATE.INVALID_PASSABILITY;
-            return FloodFill.IGNORE_NEXT;
+            PathfinderSystem.addNode(nodes, next, PathfinderSystem.NODE_STATE.INVALID_PASSABILITY);
+
+            return FloodFill.RESPONSE.IGNORE_NEXT;
         }
 
-        const entityID = activeMap.getTopEntity(next.positionX, next.positionY);
+        const entityID = activeMap.getTopEntity(positionX, positionY);
 
         if(entityID !== null) {
             if(activeMap.disablePassing) {
-                next.state = PathfinderSystem.NODE_STATE.INVALID_OCCUPIED;
-                return FloodFill.IGNORE_NEXT;
+                PathfinderSystem.addNode(nodes, next, PathfinderSystem.NODE_STATE.INVALID_OCCUPIED);
+
+                return FloodFill.RESPONSE.IGNORE_NEXT;
             }
 
             const tileEntity = entityManager.getEntity(entityID);
             const tileEntityTeamComponent = tileEntity.getComponent(ArmyEntity.COMPONENT.TEAM);
-            const tileEntityAlliance = AllianceSystem.getAlliance(gameContext, teamComponent.teamID, tileEntityTeamComponent.teamID);
+            const tileEntityAlliance = AllianceSystem.getAlliance(gameContext, teamID, tileEntityTeamComponent.teamID);
             const isPassable = tileEntityAlliance.isEntityPassingAllowed || moveComponent.isCloaked || (avianComponent && avianComponent.inFlying());
 
             if(!isPassable) {
@@ -60,14 +70,15 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
                 const isFlying = (tileEntityAvianComponent && tileEntityAvianComponent.isFlying());
         
                 if(!isFlying) {
-                    next.state = PathfinderSystem.NODE_STATE.INVALID_OCCUPIED;
-                    return FloodFill.IGNORE_NEXT;
+                    PathfinderSystem.addNode(nodes, next, PathfinderSystem.NODE_STATE.INVALID_OCCUPIED);
+
+                    return FloodFill.RESPONSE.IGNORE_NEXT;
                 }
             }
         }
 
-        const nextTeamID = activeMap.getTile(ArmyMap.LAYER.TEAM, next.positionX, next.positionY);
-        const nextAlliance = AllianceSystem.getAlliance(gameContext, teamComponent.teamID, ArmyMap.TEAM_TYPE[nextTeamID]);
+        const nextTeamID = activeMap.getTile(ArmyMap.LAYER.TEAM, positionX, positionY);
+        const nextAlliance = AllianceSystem.getAlliance(gameContext, teamID, ArmyMap.TEAM_TYPE[nextTeamID]);
         const isNextWalkable = nextAlliance.isWalkable || moveComponent.isStealth;
 
         /**
@@ -76,11 +87,13 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
          */
         if(!isOriginWalkable) {
             if(!isNextWalkable) {
-                next.state = PathfinderSystem.NODE_STATE.INVALID_WALKABILITY;
-                return FloodFill.IGNORE_NEXT;
+                PathfinderSystem.addNode(nodes, next, PathfinderSystem.NODE_STATE.INVALID_WALKABILITY);
+
+                return FloodFill.RESPONSE.IGNORE_NEXT;
             } else {
-                next.state = PathfinderSystem.NODE_STATE.VALID;
-                return FloodFill.USE_NEXT;
+                PathfinderSystem.addNode(nodes, next, PathfinderSystem.NODE_STATE.VALID);
+
+                return FloodFill.RESPONSE.USE_NEXT;
             }
         }
 
@@ -90,32 +103,33 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
          */
         if(!isNextWalkable) {
             if(!moveComponent.isCoward) {
-                next.state = PathfinderSystem.NODE_STATE.VALID;
+                PathfinderSystem.addNode(nodes, next, PathfinderSystem.NODE_STATE.VALID);
             } else {
-                next.state = PathfinderSystem.NODE_STATE.INVALID_WALKABILITY;
+                PathfinderSystem.addNode(nodes, next, PathfinderSystem.NODE_STATE.INVALID_WALKABILITY);
             }
 
-            return FloodFill.IGNORE_NEXT;
+            return FloodFill.RESPONSE.IGNORE_NEXT;
         }
 
-        next.state = PathfinderSystem.NODE_STATE.VALID;
-        return FloodFill.USE_NEXT;
+        PathfinderSystem.addNode(nodes, next, PathfinderSystem.NODE_STATE.VALID);
+
+        return FloodFill.RESPONSE.USE_NEXT;
     });
 
-    return nodeList;
+    return nodes;
 }
 
 PathfinderSystem.generateMovePath = function(nodeList, targetX, targetY) {
     for(let i = 0; i < nodeList.length; i++) {
-        const targetNode = nodeList[i];
-        const { positionX, positionY, state } = targetNode;
+        const { node, state } = nodeList[i];
+        const { positionX, positionY } = node;
 
         if(targetX !== positionX || targetY !== positionY || state !== PathfinderSystem.NODE_STATE.VALID) {
             continue;
         }
 
         const path = [];
-        const flatTree = FloodFill.walkTree(targetNode);
+        const flatTree = FloodFill.walkTree(node);
 
         // i = 1 to exclude the origin point!
         for(let i = 1; i < flatTree.length; i++) {

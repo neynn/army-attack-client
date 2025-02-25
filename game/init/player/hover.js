@@ -32,8 +32,8 @@ ControllerHover.prototype.updateNodes = function(gameContext, nodeList) {
     this.nodeMap.clear();
 
     for(let i = 0; i < nodeList.length; i++) {
-        const node = nodeList[i];
-        const { positionX, positionY, state } = node;
+        const { node, state } = nodeList[i];
+        const { positionX, positionY } = node;
         const nodeKey = this.getNodeKey(positionX, positionY);
 
         if(state !== PathfinderSystem.NODE_STATE.VALID) {

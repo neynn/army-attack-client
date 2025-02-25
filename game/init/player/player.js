@@ -146,7 +146,8 @@ PlayerController.prototype.addNodeOverlays = function(gameContext, nodeList) {
     camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.MOVE);
 
     for(let i = 0; i < nodeList.length; i++) {
-        const { positionX, positionY, state } = nodeList[i];
+        const { node, state } = nodeList[i];
+        const { positionX, positionY } = node;
 
         if(state !== PathfinderSystem.NODE_STATE.VALID) {
             if(ArmyContext.DEBUG.SHOW_INVALID_MOVE_TILES) {
