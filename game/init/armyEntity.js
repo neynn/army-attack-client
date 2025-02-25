@@ -3,6 +3,7 @@ import { EventEmitter } from "../../source/events/eventEmitter.js";
 import { DirectionComponent } from "../components/direction.js";
 import { SpriteComponent } from "../components/sprite.js";
 import { AllianceSystem } from "../systems/alliance.js";
+import { ArmyMap } from "./armyMap.js";
 
 export const ArmyEntity = function(DEBUG_NAME) {
     Entity.call(this, DEBUG_NAME);
@@ -61,6 +62,45 @@ ArmyEntity.SOUND_TYPE = {
 
 ArmyEntity.prototype = Object.create(Entity.prototype);
 ArmyEntity.prototype.constructor = ArmyEntity;
+
+ArmyEntity.prototype.isOnSafeGround = function(gameContext) {
+    const { world } = gameContext;
+    const { mapManager } = world;
+    const activeMap = mapManager.getActiveMap();
+
+    if(!activeMap) {
+        return false;
+    }
+
+    const { teamID } = this.getComponent(ArmyEntity.COMPONENT.TEAM);
+    const { tileX, tileY } = this.getComponent(ArmyEntity.COMPONENT.POSITION);
+    const { isStealth } = this.getComponent(ArmyEntity.COMPONENT.MOVE);
+
+    const tileTeamID = activeMap.getTile(ArmyMap.LAYER.TEAM, tileX, tileY);
+    const tileAlliance = AllianceSystem.getAlliance(gameContext, teamID, ArmyMap.TEAM_TYPE[tileTeamID]);
+    const isTileWalkable = tileAlliance.isWalkable || isStealth;
+
+    return isTileWalkable;
+}
+
+ArmyEntity.prototype.isBypassingAllowed = function(gameContext, entity) {
+    const avianComponent = this.getComponent(ArmyEntity.COMPONENT.AVIAN);
+    const passerAvianComponent = entity.getComponent(ArmyEntity.COMPONENT.AVIAN);
+    const isBypassByFlight = avianComponent && avianComponent.isFlying() || passerAvianComponent && passerAvianComponent.isFlying();
+
+    if(isBypassByFlight) {
+        return true;
+    }
+
+    const moveComponent = this.getComponent(ArmyEntity.COMPONENT.MOVE);
+    const teamComponent = this.getComponent(ArmyEntity.COMPONENT.TEAM);
+    const passerTeamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
+
+    const alliance = AllianceSystem.getAlliance(gameContext, teamComponent.teamID, passerTeamComponent.teamID);
+    const isBypassByAlliance = alliance.isEntityPassingAllowed || moveComponent.isCloaked;
+
+    return isBypassByAlliance;
+}
 
 ArmyEntity.prototype.updateSpriteHorizontal = function(gameContext) {
     const spriteComponent = this.getComponent(ArmyEntity.COMPONENT.SPRITE);

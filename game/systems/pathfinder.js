@@ -29,16 +29,11 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
     }
 
     const nodes = [];
-    const avianComponent = entity.getComponent(ArmyEntity.COMPONENT.AVIAN);
+    const tileTypes = world.getConfig("TileType");
     const moveComponent = entity.getComponent(ArmyEntity.COMPONENT.MOVE);
     const { tileX, tileY } = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
     const { teamID } = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
-
-    const tileTypes = world.getConfig("TileType");
-
-    const originTeamID = activeMap.getTile(ArmyMap.LAYER.TEAM, tileX, tileY);
-    const originAlliance = AllianceSystem.getAlliance(gameContext, teamID, ArmyMap.TEAM_TYPE[originTeamID]);
-    const isOriginWalkable = originAlliance.isWalkable || moveComponent.isStealth;
+    const isOnSafeGround = entity.isOnSafeGround(gameContext);
 
     FloodFill.search_cross(tileX, tileY, moveComponent.range, activeMap.width, activeMap.height, (next, current) => {
         const { positionX, positionY } = next;
@@ -61,19 +56,12 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
             }
 
             const tileEntity = entityManager.getEntity(entityID);
-            const tileEntityTeamComponent = tileEntity.getComponent(ArmyEntity.COMPONENT.TEAM);
-            const tileEntityAlliance = AllianceSystem.getAlliance(gameContext, teamID, tileEntityTeamComponent.teamID);
-            const isPassable = tileEntityAlliance.isEntityPassingAllowed || moveComponent.isCloaked || (avianComponent && avianComponent.inFlying());
+            const isBypassingAllowed = entity.isBypassingAllowed(gameContext, tileEntity);
 
-            if(!isPassable) {
-                const tileEntityAvianComponent = tileEntity.getComponent(ArmyEntity.COMPONENT.AVIAN);
-                const isFlying = (tileEntityAvianComponent && tileEntityAvianComponent.isFlying());
-        
-                if(!isFlying) {
-                    PathfinderSystem.addNode(nodes, next, PathfinderSystem.NODE_STATE.INVALID_OCCUPIED);
+            if(!isBypassingAllowed) {
+                PathfinderSystem.addNode(nodes, next, PathfinderSystem.NODE_STATE.INVALID_OCCUPIED);
 
-                    return FloodFill.RESPONSE.IGNORE_NEXT;
-                }
+                return FloodFill.RESPONSE.IGNORE_NEXT;
             }
         }
 
@@ -85,7 +73,7 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
          * RESCUE: Allows units to move on nearby conquered tiles if they are stranded,
          * but disallows them from capturing.
          */
-        if(!isOriginWalkable) {
+        if(!isOnSafeGround) {
             if(!isNextWalkable) {
                 PathfinderSystem.addNode(nodes, next, PathfinderSystem.NODE_STATE.INVALID_WALKABILITY);
 
