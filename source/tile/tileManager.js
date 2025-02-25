@@ -27,12 +27,7 @@ TileManager.prototype.load = function(tileTypes, tileMeta) {
         this.loadTileTypes(tileTypes);
 
         this.resources.createImages(tileTypes);
-        this.resources.requestAllImages((key, image, sheet) => {
-            sheet.toBuffer();
-            sheet.removeImage();
-            sheet.addReference();
-        });
-
+        this.resources.requestAllImages((key, image, sheet) => sheet.addReference());
     } else {
         Logger.log(false, "TileTypes cannot be undefined!", "TileManager.prototype.load", null);
     }

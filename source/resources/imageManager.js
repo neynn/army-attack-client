@@ -1,4 +1,4 @@
-import { BufferableImage } from "./bufferableImage.js";
+import { LoadableImage } from "./loadableImage.js";
 
 export const ImageManager = function() {
     this.images = new Map();
@@ -22,29 +22,29 @@ ImageManager.prototype.createImages = function(imageMeta) {
         const imagePath = this.getPath(directory, fileName);
 
         if(!this.images.has(imageID)) {
-            const bufferableImage = new BufferableImage(imagePath);
+            const loadableImage = new LoadableImage(imagePath);
 
-            this.images.set(imageID, bufferableImage);
+            this.images.set(imageID, loadableImage);
         }
     }
 }
 
 ImageManager.prototype.requestImage = function(imageID, onLoad) {
-    const bufferableImage = this.images.get(imageID);
+    const loadableImage = this.images.get(imageID);
 
-    if(!bufferableImage) {
+    if(!loadableImage) {
         return;
     }
 
-    bufferableImage.requestImage()
-    .then((image) => onLoad(imageID, image, bufferableImage))
+    loadableImage.requestImage()
+    .then((image) => onLoad(imageID, image, loadableImage))
     .catch((code) => console.error(`Image ${imageID} could not be loaded! Code: ${code}`));
 }
 
 ImageManager.prototype.requestAllImages = function(onLoad) {
-    for(const [imageID, bufferableImage] of this.images) {
-        bufferableImage.requestImage()
-        .then((image) => onLoad(imageID, image, bufferableImage))
+    for(const [imageID, loadableImage] of this.images) {
+        loadableImage.requestImage()
+        .then((image) => onLoad(imageID, image, loadableImage))
         .catch((code) => console.error(`Image ${imageID} could not be loaded! Code: ${code}`));
     }
 }

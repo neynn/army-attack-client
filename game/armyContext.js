@@ -313,10 +313,6 @@ ArmyContext.prototype.loadEntitySprites = function(entity) {
     for(const spriteType in sprites) {
         const spriteID = sprites[spriteType];
 
-        resources.requestImage(spriteID, (id, image, sheet) => {
-            sheet.toBuffer();
-            sheet.removeImage();
-            sheet.addReference();
-        });
+        resources.requestImage(spriteID, (id, image, sheet) => sheet.addReference());
     }
 }

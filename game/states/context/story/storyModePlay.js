@@ -56,7 +56,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
 
     SpawnSystem.createEntity(gameContext, { 
         "type": "blue_elite_commando",
-        "tileX": 6,
+        "tileX": 4,
         "tileY": 5,
         "team": "Allies",
         "owner": "neyn"
@@ -64,7 +64,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
 
     SpawnSystem.createEntity(gameContext, { 
         "type": "michie_war_machine",
-        "tileX": 7,
+        "tileX": 5,
         "tileY": 5,
         "team": "Allies",
         "owner": "neyn"
@@ -80,8 +80,8 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
 
     SpawnSystem.createEntity(gameContext, { 
         "type": "blue_commando",
-        "tileX": 13,
-        "tileY": 10,
+        "tileX": 5,
+        "tileY": 3,
         "team": "Allies",
         "owner": "neyn"
     });
@@ -104,8 +104,8 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
 
     SpawnSystem.createEntity(gameContext, { 
         "type": "blue_elite_infantry",
-        "tileX": 8,
-        "tileY": 6,
+        "tileX": 5,
+        "tileY": 4,
         "team": "Allies",
         "owner": "neyn"
     });
@@ -113,7 +113,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
     SpawnSystem.createEntity(gameContext, { 
         "type": "red_bulldozer",
         "tileX": 3,
-        "tileY": 1,
+        "tileY": 5,
         "team": "Allies",
         "owner": "neyn"
     });
@@ -128,8 +128,8 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
 
     const battleTank = SpawnSystem.createEntity(gameContext, { 
         "type": "blue_elite_battletank",
-        "tileX": 1,
-        "tileY": 1,
+        "tileX": 3,
+        "tileY": 4,
         "team": "Allies",
         "owner": "neyn"
     });
