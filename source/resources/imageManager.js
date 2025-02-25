@@ -14,23 +14,37 @@ ImageManager.prototype.getPath = function(directory, source) {
     return path;
 }
 
-ImageManager.prototype.loadImages = function(imageMeta, onLoad) {
+ImageManager.prototype.createImages = function(imageMeta) {
     for(const imageID in imageMeta) {
         const imageConfig = imageMeta[imageID];
         const { directory, source } = imageConfig;
         const fileName = source ? source : `${imageID}${ImageManager.DEFAULT_IMAGE_TYPE}`;
         const imagePath = this.getPath(directory, fileName);
 
-        if(this.images.has(imageID)) {
-            continue;
+        if(!this.images.has(imageID)) {
+            const bufferableImage = new BufferableImage(imagePath);
+
+            this.images.set(imageID, bufferableImage);
         }
+    }
+}
 
-        const bufferableImage = new BufferableImage(imagePath);
+ImageManager.prototype.requestImage = function(imageID, onLoad) {
+    const bufferableImage = this.images.get(imageID);
 
-        this.images.set(imageID, bufferableImage);
+    if(!bufferableImage) {
+        return;
+    }
 
+    bufferableImage.requestImage()
+    .then((image) => onLoad(imageID, image, bufferableImage))
+    .catch((code) => console.error(`Image ${imageID} could not be loaded! Code: ${code}`));
+}
+
+ImageManager.prototype.requestAllImages = function(onLoad) {
+    for(const [imageID, bufferableImage] of this.images) {
         bufferableImage.requestImage()
-        .then((image, code) => onLoad(imageID, image, bufferableImage))
+        .then((image) => onLoad(imageID, image, bufferableImage))
         .catch((code) => console.error(`Image ${imageID} could not be loaded! Code: ${code}`));
     }
 }

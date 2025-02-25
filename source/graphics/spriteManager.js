@@ -51,23 +51,25 @@ SpriteManager.prototype.load = function(spriteTypes) {
     const usedMB = [];
     const usedMBLarge = [];
 
-    this.resources.loadImages(spriteTypes, ((key, image) => {
+    this.resources.createImages(spriteTypes);
+    /*
+    this.resources.requestAllImages((imageID, image, sheet) => {
         const imageSize = image.width * image.height * 4;
         const imageSizeMB = imageSize / ImageManager.SIZE_MB;
     
         if(imageSize >= ImageManager.SIZE_BIG_IMAGE) {
           usedMBLarge.push({
-            "imageID": key,
+            "imageID": imageID,
             "imageSizeMB": imageSizeMB
           });
         }
     
         usedMB.push({
-          "imageID": key,
+          "imageID": imageID,
           "imageSizeMB": imageSizeMB
         });
-    }));
-
+    });
+*/
     console.log(usedMB, usedMBLarge);
 }
 

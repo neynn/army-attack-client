@@ -153,7 +153,10 @@ ArmyContext.prototype.init = function(resources) {
         this.world.events.subscribe(World.EVENT.CONTROLLER_CREATE, "DEBUG", (controller) => console.log(controller, "HAS BEEN CREATED"));
         this.world.events.subscribe(World.EVENT.CONTROLLER_DESTROY, "DEBUG", (controller) => console.log(controller, "HAS BEEN DESTROYED"));
         this.world.events.subscribe(World.EVENT.ENTITY_DESTROY, "DEBUG", (entity) => console.log(entity, "HAS BEEN DESTROYED"));
-        this.world.events.subscribe(World.EVENT.ENTITY_CREATE, "DEBUG", (entity) => console.log(entity, "HAS BEEN CREATED"));
+        this.world.events.subscribe(World.EVENT.ENTITY_CREATE, "DEBUG", (entity) => {
+            console.log(entity, "HAS BEEN CREATED");
+            this.loadEntitySprites(entity);
+        });
         this.world.events.subscribe(World.EVENT.MAP_CREATE, "DEBUG", (worldMap) => console.log(worldMap, "HAS BEEN LOADED"));
     }
 
@@ -286,4 +289,34 @@ ArmyContext.prototype.createCamera = function(cameraID) {
 ArmyContext.prototype.destroyCamera = function(cameraID) {
     this.renderer.removeCamera(cameraID);
     this.world.events.unsubscribe(World.EVENT.MAP_CREATE, cameraID);
+}
+
+ArmyContext.prototype.loadEntitySounds = function(entity) {
+    const { soundPlayer } = this.client;
+    const { sounds } = entity.config;
+
+    for(const soundType in sounds) {
+        const soundList = sounds[soundType];
+
+        for(let i = 0; i < soundList.length; i++) {
+            const soundID = soundList[i];
+
+            soundPlayer.loadSound(soundID);
+        }
+    }
+}
+
+ArmyContext.prototype.loadEntitySprites = function(entity) {
+    const { resources } = this.spriteManager;
+    const { sprites } = entity.config;
+
+    for(const spriteType in sprites) {
+        const spriteID = sprites[spriteType];
+
+        resources.requestImage(spriteID, (id, image, sheet) => {
+            sheet.toBuffer();
+            sheet.removeImage();
+            sheet.addReference();
+        });
+    }
 }

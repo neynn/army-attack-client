@@ -26,8 +26,10 @@ TileManager.prototype.load = function(tileTypes, tileMeta) {
     if(typeof tileTypes === "object") {
         this.loadTileTypes(tileTypes);
 
-        this.resources.loadImages(tileTypes, (key, image, sheet) => {
+        this.resources.createImages(tileTypes);
+        this.resources.requestAllImages((key, image, sheet) => {
             sheet.toBuffer();
+            sheet.removeImage();
             sheet.addReference();
         });
 

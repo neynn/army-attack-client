@@ -22,6 +22,10 @@ AudioManager.prototype.bufferAudio = function(meta) {
     const { id, directory, source } = meta;
     const path = this.getPath(directory, source);
     
+    if(this.audioBuffers.has(id)) {
+        return;
+    }
+    
     return this.promiseAudioBuffer(path)
     .then(audioBuffer => {
         this.audioBuffers.set(id, audioBuffer);

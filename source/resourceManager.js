@@ -49,9 +49,9 @@ ResourceManager.prototype.loadJSONList = async function(fileList) {
 
     for(const fileID in fileList) {
         const fileMeta = fileList[fileID];
-        const { id, directory, source } = fileMeta;
+        const { directory, source } = fileMeta;
         const path = this.getPath(directory, source);
-        const promise = this.promiseJSON(path).then(file => files[id] = file);
+        const promise = this.promiseJSON(path).then(file => files[fileID] = file);
 
         promises.push(promise);
     }
