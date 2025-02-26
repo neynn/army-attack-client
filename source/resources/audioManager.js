@@ -1,13 +1,9 @@
+import { PathHandler } from "./pathHandler.js";
+
 export const AudioManager = function() {
     this.audio = new Map();
     this.audioContext = new AudioContext();
     this.audioBuffers = new Map();
-}
-
-AudioManager.prototype.getPath = function(directory, source) {
-    const path = `${directory}/${source}`;
-
-    return path;
 }
 
 AudioManager.prototype.promiseAudioBuffer = function(path) {
@@ -18,7 +14,7 @@ AudioManager.prototype.promiseAudioBuffer = function(path) {
 
 AudioManager.prototype.bufferAudio = function(audioID, meta) {
     const { directory, source } = meta;
-    const path = this.getPath(directory, source);
+    const path = PathHandler.getPath(directory, source);
     
     if(this.audioBuffers.has(audioID)) {
         return;

@@ -1,4 +1,5 @@
 import { Logger } from "../../logger.js";
+import { PathHandler } from "../../resources/pathHandler.js";
 import { MusicTrack } from "./musicTrack.js";
 
 export const MusicPlayer = function() {
@@ -22,24 +23,23 @@ MusicPlayer.prototype.load = function(musicTypes) {
     for(const trackID in musicTypes) {
         const trackType = musicTypes[trackID];
 
-        this.createTrack(trackID, trackType);
+        if(!this.tracks.has(trackID)) {
+            const track = this.createTrack(trackType);
+
+            this.tracks.set(trackID, track);
+        }
     }
 }
 
-MusicPlayer.prototype.createTrack = function(trackID, trackType) {
-    if(this.tracks.has(trackID)) {
-        Logger.log(false, "Track is already loaded!", "MusicPlayer.prototype.createTrack", { trackID });
-        return;
-    }
-
+MusicPlayer.prototype.createTrack = function(trackType) {
     const { directory, source, isLooping, volume } = trackType;
-    const path = `${directory}/${source}`;
+    const path = PathHandler.getPath(directory, source);
     const track = new MusicTrack(path);
 
     track.setLooping(isLooping);
     track.setVolume(volume ?? this.defaultVolume);
 
-    this.tracks.set(trackID, track);
+    return track;
 }
 
 MusicPlayer.prototype.swapTrack = function(audioID, volume) {

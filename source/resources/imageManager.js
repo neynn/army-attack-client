@@ -1,4 +1,5 @@
 import { LoadableImage } from "./loadableImage.js";
+import { PathHandler } from "./pathHandler.js";
 
 export const ImageManager = function() {
     this.images = new Map();
@@ -8,18 +9,12 @@ ImageManager.SIZE_MB = 1048576;
 ImageManager.SIZE_BIG_IMAGE = 2048 * 2048 * 4;
 ImageManager.DEFAULT_IMAGE_TYPE = ".png";
 
-ImageManager.prototype.getPath = function(directory, source) {
-    const path = `${directory}/${source}`;
-
-    return path;
-}
-
 ImageManager.prototype.createImages = function(imageMeta) {
     for(const imageID in imageMeta) {
         const imageConfig = imageMeta[imageID];
         const { directory, source } = imageConfig;
         const fileName = source ? source : `${imageID}${ImageManager.DEFAULT_IMAGE_TYPE}`;
-        const imagePath = this.getPath(directory, fileName);
+        const imagePath = PathHandler.getPath(directory, fileName);
 
         if(!this.images.has(imageID)) {
             const loadableImage = new LoadableImage(imagePath);

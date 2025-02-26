@@ -1,3 +1,5 @@
+import { PathHandler } from "./pathHandler.js";
+
 export const JSONManager = function() {
     this.files = new Map();
     this.cacheEnabled = false;
@@ -9,11 +11,6 @@ JSONManager.prototype.enableCache = function() {
 
 JSONManager.prototype.disableCache = function() {
     this.cacheEnabled = false;
-}
-
-JSONManager.prototype.getPath = function(directory, source) {
-    const path = `${directory}/${source}`;
-    return path;
 }
 
 JSONManager.prototype.promiseJSON = function(path) {
@@ -31,7 +28,7 @@ JSONManager.prototype.loadFileData = async function(meta) {
         }
     }
 
-    const filePath = this.getPath(directory, source);
+    const filePath = PathHandler.getPath(directory, source);
     const fileData = await this.promiseJSON(filePath);
 
     if(!fileData) {

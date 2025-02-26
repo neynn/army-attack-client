@@ -1,11 +1,7 @@
+import { PathHandler } from "./resources/pathHandler.js";
+
 export const ResourceManager = function() {
     this.fonts = new Map();
-}
-
-ResourceManager.prototype.getPath = function(directory, source) {
-    const path = `${directory}/${source}`;
-
-    return path;
 }
 
 ResourceManager.prototype.promiseJSON = function(path) {
@@ -24,7 +20,7 @@ ResourceManager.prototype.addFont = function(id, font) {
 
 ResourceManager.prototype.loadCSSFont = function(meta) {
     const { id, directory, source } = meta;
-    const path = this.getPath(directory, source);
+    const path = PathHandler.getPath(directory, source);
     const fontFace = new FontFace(id, `url(${path})`);
 
     return fontFace.load().then(font => this.addFont(id, font));
@@ -50,7 +46,7 @@ ResourceManager.prototype.loadJSONList = async function(fileList) {
     for(const fileID in fileList) {
         const fileMeta = fileList[fileID];
         const { directory, source } = fileMeta;
-        const path = this.getPath(directory, source);
+        const path = PathHandler.getPath(directory, source);
         const promise = this.promiseJSON(path).then(file => files[fileID] = file);
 
         promises.push(promise);
