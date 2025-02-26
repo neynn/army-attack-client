@@ -152,7 +152,10 @@ ArmyContext.prototype.init = function(resources) {
     if(ArmyContext.DEBUG.LOG_WORLD_EVENTS) {
         this.world.events.subscribe(World.EVENT.CONTROLLER_CREATE, "DEBUG", (controller) => console.log(controller, "HAS BEEN CREATED"));
         this.world.events.subscribe(World.EVENT.CONTROLLER_DESTROY, "DEBUG", (controller) => console.log(controller, "HAS BEEN DESTROYED"));
-        this.world.events.subscribe(World.EVENT.ENTITY_DESTROY, "DEBUG", (entity) => console.log(entity, "HAS BEEN DESTROYED"));
+        this.world.events.subscribe(World.EVENT.ENTITY_DESTROY, "DEBUG", (entity) => {
+            console.log(entity, "HAS BEEN DESTROYED");
+            this.unloadEntitySprites(entity);
+        });
         this.world.events.subscribe(World.EVENT.ENTITY_CREATE, "DEBUG", (entity) => {
             console.log(entity, "HAS BEEN CREATED");
             this.loadEntitySprites(entity);
@@ -305,6 +308,17 @@ ArmyContext.prototype.loadEntitySounds = function(entity) {
     }
 }
 
+ArmyContext.prototype.unloadEntitySprites = function(entity) {
+    const { resources } = this.spriteManager;
+    const { sprites } = entity.config;
+
+    for(const spriteType in sprites) {
+        const spriteID = sprites[spriteType];
+
+        resources.removeReference(spriteID);
+    }
+}
+
 ArmyContext.prototype.loadEntitySprites = function(entity) {
     const { resources } = this.spriteManager;
     const { sprites } = entity.config;
@@ -312,6 +326,7 @@ ArmyContext.prototype.loadEntitySprites = function(entity) {
     for(const spriteType in sprites) {
         const spriteID = sprites[spriteType];
 
-        resources.requestImage(spriteID, (id, image, sheet) => sheet.addReference());
+        resources.requestImage(spriteID, (id, image, sheet) => console.log("LOADED IMAGE", id));
+        resources.addReference(spriteID);
     }
 }

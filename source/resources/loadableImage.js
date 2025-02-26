@@ -75,6 +75,11 @@ LoadableImage.prototype.addReference = function() {
 
 LoadableImage.prototype.removeReference = function() {
     this.references--;
+
+    if(this.references <= 0) {
+        console.log("REMOVED!", this.path);
+        this.removeImage();
+    }
 }
 
 LoadableImage.prototype.getBuffer = function() {

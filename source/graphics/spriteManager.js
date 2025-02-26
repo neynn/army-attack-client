@@ -52,6 +52,7 @@ SpriteManager.prototype.load = function(spriteTypes) {
     const usedMBLarge = [];
 
     this.resources.createImages(spriteTypes);
+    /*
     this.resources.requestAllImages((imageID, image, sheet) => {
         const imageSize = image.width * image.height * 4;
         const imageSizeMB = imageSize / ImageManager.SIZE_MB;
@@ -68,7 +69,7 @@ SpriteManager.prototype.load = function(spriteTypes) {
             });
         }
     });
-
+    */
     console.log(usedMB, usedMBLarge);
 }
 
@@ -105,7 +106,6 @@ SpriteManager.prototype.createSprite = function(typeID, layerID = null, animatio
     }
 
     this.updateSprite(sprite.id, typeID, animationID);
-    this.resources.addReference(typeID);
 
     return sprite;
 }
@@ -261,8 +261,5 @@ SpriteManager.prototype.updateSprite = function(spriteID, typeID, animationID = 
 
         sprite.init(typeID, animationID, frameCount, frameTime);
         sprite.setBounds(x, y, w, h);
-
-        this.resources.addReference(typeID);
-        this.resources.removeReference(drawData.typeID);
     }
 }
