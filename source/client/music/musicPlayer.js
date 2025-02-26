@@ -1,4 +1,4 @@
-import { Logger } from "../logger.js";
+import { Logger } from "../../logger.js";
 import { MusicTrack } from "./musicTrack.js";
 
 export const MusicPlayer = function() {

@@ -4,8 +4,6 @@ export const AudioManager = function() {
     this.audioBuffers = new Map();
 }
 
-AudioManager.DEFAULT_AUDIO_TYPE = ".mp3";
-
 AudioManager.prototype.getPath = function(directory, source) {
     const path = `${directory}/${source}`;
 
@@ -18,30 +16,28 @@ AudioManager.prototype.promiseAudioBuffer = function(path) {
     .then(arrayBuffer => this.audioContext.decodeAudioData(arrayBuffer));
 }
 
-AudioManager.prototype.bufferAudio = function(meta) {
-    const { id, directory, source } = meta;
+AudioManager.prototype.bufferAudio = function(audioID, meta) {
+    const { directory, source } = meta;
     const path = this.getPath(directory, source);
     
-    if(this.audioBuffers.has(id)) {
+    if(this.audioBuffers.has(audioID)) {
         return;
     }
     
     return this.promiseAudioBuffer(path)
     .then(audioBuffer => {
-        this.audioBuffers.set(id, audioBuffer);
+        this.audioBuffers.set(audioID, audioBuffer);
 
         return audioBuffer;
     });
 }
 
-AudioManager.prototype.getAudioSource = async function(meta, volume) {
-    const { id } = meta;
-
-    if(!this.audioBuffers.has(id)) {
+AudioManager.prototype.getAudioSource = async function(audioID, meta, volume) {
+    if(!this.audioBuffers.has(audioID)) {
         await this.bufferAudio(meta);
     }
 
-    const buffer = this.audioBuffers.get(id);
+    const buffer = this.audioBuffers.get(audioID);
     const gainNode = this.audioContext.createGain();
     const sourceNode = this.audioContext.createBufferSource();
 

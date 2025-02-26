@@ -1,4 +1,4 @@
-import { clampValue } from "../math/math.js";
+import { clampValue } from "../../math/math.js";
 
 export const MusicTrack = function(path) {
     this.path = path;
@@ -45,8 +45,13 @@ MusicTrack.prototype.play = function() {
 }
 
 MusicTrack.prototype.remove = function() {
-    this.reset();
-    this.audio = null;
+    if(this.audio) {
+        this.state = MusicTrack.STATE.NOT_STARTED;
+        this.audio.currentTime = 0;
+        this.audio.pause();
+        this.audio.src = "";
+        this.audio = null;
+    }
 }
 
 MusicTrack.prototype.pause = function() {

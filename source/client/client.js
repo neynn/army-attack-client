@@ -1,9 +1,9 @@
 import { Cursor } from "./cursor.js";
 import { Keyboard } from "./keyboard.js";
-import { MusicPlayer } from "./musicPlayer.js";
 import { Socket } from "../network/socket.js";
-import { SoundPlayer } from "./soundPlayer.js";
+import { SoundPlayer } from "./sound/soundPlayer.js";
 import { InputRouter } from "./inputRouter.js";
+import { MusicPlayer } from "./music/musicPlayer.js";
 
 export const Client = function() {
     this.router = new InputRouter();

@@ -191,12 +191,14 @@ WorldMap.prototype.clearTile = function(layerID, tileX, tileY) {
         return;
     }
 
-    const index = tileY * this.width + tileX;
-    const response = layer.setItem(0, index);
-
-    if(response === Layer.RESPONSE_CODE.OUT_OF_BOUNDS) {
+    if(this.isTileOutOfBounds(tileX, tileY)) {
         console.warn(`Tile ${tileY},${tileX} does not exist! Returning...`);
+        return;
     }
+
+    const index = tileY * this.width + tileX;
+    
+    layer.setItem(0, index);
 }
 
 WorldMap.prototype.placeTile = function(data, layerID, tileX, tileY) {
@@ -212,12 +214,14 @@ WorldMap.prototype.placeTile = function(data, layerID, tileX, tileY) {
         return;
     }
 
-    const index = tileY * this.width + tileX;
-    const response = layer.setItem(data, index);
-
-    if(response === Layer.RESPONSE_CODE.OUT_OF_BOUNDS) {
+    if(this.isTileOutOfBounds(tileX, tileY)) {
         console.warn(`Tile ${tileY},${tileX} does not exist! Returning...`);
+        return;
     }
+
+    const index = tileY * this.width + tileX;
+
+    layer.setItem(data, index);
 }
 
 WorldMap.prototype.isTileOutOfBounds = function(tileX, tileY) {
@@ -232,12 +236,13 @@ WorldMap.prototype.getTile = function(layerID, tileX, tileY) {
         return null;
     }
 
+    if(this.isTileOutOfBounds(tileX, tileY)) {
+        console.warn(`Tile ${tileX} ${tileY} is out of bounds! Returning null...`);
+        return null;
+    }
+
     const index = tileY * this.width + tileX;
     const item = layer.getItem(index);
-
-    if(item === null) {
-        console.warn(`Tile ${tileX} ${tileY} is out of bounds! Returning null...`);
-    }
 
     return item;
 }

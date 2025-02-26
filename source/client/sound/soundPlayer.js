@@ -1,19 +1,21 @@
-import { Logger } from "../logger.js";
-import { AudioManager } from "../resources/audioManager.js";
+import { Logger } from "../../logger.js";
+import { AudioManager } from "../../resources/audioManager.js";
 
 export const SoundPlayer = function() {
     this.activeSounds = new Map();
     this.soundTypes = {};
     this.defaultVolume = 0.3;
+    this.audioContext = new AudioContext();
     this.resouces = new AudioManager();
 }
 
 SoundPlayer.prototype.load = function(soundTypes) {
-    if(typeof soundTypes === "object") {
-        this.soundTypes = soundTypes; 
-    } else {
+    if(!soundTypes) {
         Logger.log(false, "SoundTypes cannot be undefined!", "SoundPlayer.prototype.load", null);
+        return;
     }
+
+    this.soundTypes = soundTypes; 
 }
 
 SoundPlayer.prototype.clear = function() {
@@ -62,7 +64,7 @@ SoundPlayer.prototype.playSound = function(audioID, volume = this.defaultVolume)
     }
 
     this.activeSounds.set(audioID, null);
-    this.resouces.getAudioSource(soundType, volume).then(source => {
+    this.resouces.getAudioSource(audioID, soundType, volume).then(source => {
         this.activeSounds.set(audioID, source);
 
         source.onended = () => this.activeSounds.delete(audioID);
@@ -94,7 +96,7 @@ SoundPlayer.prototype.loadSound = async function(audioID) {
         return null;
     }
 
-    return this.resouces.bufferAudio(soundType);
+    return this.resouces.bufferAudio(audioID, soundType);
 }
 
 SoundPlayer.prototype.loadAllSounds = function() {
