@@ -266,7 +266,6 @@ ArmyContext.prototype.createCamera = function(cameraID) {
         camera.loadWorld(width, height);
     
         if(music) {
-            this.client.musicPlayer.loadTrack(music);
             this.client.musicPlayer.swapTrack(music);
         }
 

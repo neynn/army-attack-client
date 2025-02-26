@@ -34,17 +34,6 @@ AudioManager.prototype.bufferAudio = function(meta) {
     });
 }
 
-AudioManager.prototype.loadHTMLAudio = function(meta) {
-    const { directory, source, isLooping } = meta;
-    const path = this.getPath(directory, source);
-    const audio = new Audio();
-
-    audio.loop = isLooping;
-    audio.src = path;
-
-    return audio;
-}
-
 AudioManager.prototype.getAudioSource = async function(meta, volume) {
     const { id } = meta;
 

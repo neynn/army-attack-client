@@ -1,9 +1,9 @@
 {
-    "music_homefront": { "id": "music_homefront", "directory": "assets/music/", "source": "army_mus_bg1.mp3", "isLooping": true, "defaultVolume": 0.7 },
-    "music_desertscorpion": { "id": "music_desertscorpion", "directory": "assets/music/", "source": "army_mus_desertscorpion.mp3", "isLooping": true, "defaultVolume": 0.5 },
-    "music_polarbear": { "id": "music_polarbear", "directory": "assets/music/", "source": "army_mus_polarbear.mp3", "isLooping": true, "defaultVolume": 0.5 },
-    "music_remastered": { "id": "music_remastered", "directory": "assets/music/", "source": "army_mus_bg1_remastered.mp3", "isLooping": true, "defaultVolume": 0.5 },
-    "music_intro": { "id": "music_intro", "directory": "assets/music/", "source": "army_mus_intro.mp3", "isLooping": false, "defaultVolume": 1 },
-    "music_credits": { "id": "music_credits", "directory": "assets/music/", "source": "army_mus_credits.mp3", "isLooping": true, "defaultVolume": 0.5 },
-    "music_pvp": { "id": "music_pvp", "directory": "assets/music/", "source": "army_mus_pvp.mp3", "isLooping": true, "defaultVolume": 0.2 }
+    "music_homefront": { "directory": "assets/music", "source": "army_mus_bg1.mp3", "isLooping": true, "volume": 0.7 },
+    "music_desertscorpion": { "directory": "assets/music", "source": "army_mus_desertscorpion.mp3", "isLooping": true, "volume": 0.5 },
+    "music_polarbear": { "directory": "assets/music", "source": "army_mus_polarbear.mp3", "isLooping": true, "volume": 0.5 },
+    "music_remastered": { "directory": "assets/music", "source": "army_mus_bg1_remastered.mp3", "isLooping": true, "volume": 0.5 },
+    "music_intro": { "directory": "assets/music", "source": "army_mus_intro.mp3", "isLooping": false, "volume": 1 },
+    "music_credits": { "directory": "assets/music", "source": "army_mus_credits.mp3", "isLooping": true, "volume": 0.5 },
+    "music_pvp": { "directory": "assets/music", "source": "army_mus_pvp.mp3", "isLooping": true, "volume": 0.2 }
 }

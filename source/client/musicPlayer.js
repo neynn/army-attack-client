@@ -1,132 +1,116 @@
 import { Logger } from "../logger.js";
-import { clampValue } from "../math/math.js";
-import { AudioManager } from "../resources/audioManager.js";
+import { MusicTrack } from "./musicTrack.js";
 
 export const MusicPlayer = function() {
-    this.currentTack = null;
+    this.defaultVolume = 1;
+    this.currentTrack = null;
     this.previousTrack = null;
-    this.musicTypes = {};
-    this.volume = 0.5;
-    this.resources = new AudioManager();
-}
-
-MusicPlayer.prototype.loadAllTracks = function() {
-    for(const trackID in this.musicTypes) {
-        this.loadTrack(trackID);
-    }
+    this.tracks = new Map();
 }
 
 MusicPlayer.prototype.clear = function() {
-    this.resources.audio.forEach((value, key) => this.resetTrack(key));
-    this.resources.audio.clear();
+    this.tracks.forEach(track => track.remove());
+    this.tracks.clear();
 }
 
 MusicPlayer.prototype.load = function(musicTypes) {
-    if(typeof musicTypes === "object") {
-        this.musicTypes = musicTypes;
-    } else {
+    if(!musicTypes) {
         Logger.log(false, "MusicTypes cannot be undefined!", "MusicPlayer.prototype.load", null);
-    }
-}
-
-MusicPlayer.prototype.swapTrack = function(audioID, volume = this.volume) {
-    if(!this.resources.audio.has(audioID)) {
-        Logger.log(false, "Track does not exist!", "MusicPlayer.prototype.swapTrack", {audioID});
         return;
     }
 
-    if(this.currentTack === audioID) {
+    for(const trackID in musicTypes) {
+        const trackType = musicTypes[trackID];
+
+        this.createTrack(trackID, trackType);
+    }
+}
+
+MusicPlayer.prototype.createTrack = function(trackID, trackType) {
+    if(this.tracks.has(trackID)) {
+        Logger.log(false, "Track is already loaded!", "MusicPlayer.prototype.createTrack", { trackID });
+        return;
+    }
+
+    const { directory, source, isLooping, volume } = trackType;
+    const path = `${directory}/${source}`;
+    const track = new MusicTrack(path);
+
+    track.setLooping(isLooping);
+    track.setVolume(volume ?? this.defaultVolume);
+
+    this.tracks.set(trackID, track);
+}
+
+MusicPlayer.prototype.swapTrack = function(audioID, volume) {
+    const nextTrack = this.tracks.get(audioID);
+
+    if(!nextTrack) {
+        return;
+    }
+
+    if(this.currentTrack === audioID) {
         Logger.log(false, "Track is already playing!", "MusicPlayer.prototype.swapTrack", {audioID});
         return;
     }
 
-    this.resetTrack(this.currentTack);
+    const currentTrack = this.tracks.get(this.currentTrack);
+
+    if(currentTrack) {
+        currentTrack.reset();
+    }
+
     this.playTrack(audioID, volume);
 }
 
-MusicPlayer.prototype.loadTrack = function(audioID) {
-    const musicType = this.musicTypes[audioID];
+MusicPlayer.prototype.playTrack = function(audioID = this.currentTrack, volume) {
+    const track = this.tracks.get(audioID);
 
-    if(!musicType) {
-        Logger.log(false, "Track does not exist!", "MusicPlayer.prototype.loadTrack", {audioID});
-        return;
-    }
-
-    if(this.resources.audio.has(audioID)) {
-        Logger.log(false, "Track is already loaded!", "MusicPlayer.prototype.loadTrack", {audioID});
-        return;
-    }
-
-    const audio = this.resources.loadHTMLAudio(musicType);
-
-    this.resources.audio.set(audioID, audio);
-}
-
-MusicPlayer.prototype.playTrack = function(audioID = this.currentTack, volume = this.volume) {
-    const audio = this.resources.audio.get(audioID);
-
-    if(!audio) {
+    if(!track) {
         Logger.log(false, "Track does not exist!", "MusicPlayer.prototype.playTrack", {audioID});
         return;
     }
 
-    if(!audio.paused) {
+    if(track.isPlaying()) {
         Logger.log(false, "Track is already playing!", "MusicPlayer.prototype.playTrack", {audioID});
         return;
     }
 
-    if(audioID !== this.currentTack) {
-        this.previousTrack = this.currentTack;
+    if(audioID !== this.currentTrack) {
+        this.previousTrack = this.currentTrack;
     }
 
-    this.currentTack = audioID;
+    this.currentTrack = audioID;
     
-    audio.volume = volume;
-    audio.play();
+    if(!track.isLoaded()) {
+        track.requestAudio();
+    }
+
+    if(typeof volume === "number") {
+        track.setVolume(volume);
+    }
+
+    track.play();
 }
 
-MusicPlayer.prototype.pauseTrack = function(audioID = this.currentTack) {
-    const audio = this.resources.audio.get(audioID);
+MusicPlayer.prototype.setVolume = function(volume = this.defaultVolume, audioID = this.currentTrack) {
+    const track = this.tracks.get(audioID);
 
-    if(!audio) {
-        Logger.log(false, "Track does not exist!", "MusicPlayer.prototype.pauseTrack", {audioID});
+    if(!track) {
+        Logger.log(false, "Track does not exist!", "MusicPlayer.prototype.setVolume", { audioID });
         return;
     }
 
-    audio.pause();
+    track.setVolume(volume);
 }
 
-MusicPlayer.prototype.resetTrack = function(audioID = this.currentTack) {
-    const audio = this.resources.audio.get(audioID);
+MusicPlayer.prototype.adjustVolume = function(delta = 0, audioID = this.currentTrack) {
+    const track = this.tracks.get(audioID);
 
-    if(!audio) {
-        Logger.log(false, "Track does not exist!", "MusicPlayer.prototype.resetTrack", {audioID});
+    if(!track) {
+        Logger.log(false, "Track does not exist!", "MusicPlayer.prototype.adjustVolume", { audioID });
         return;
     }
 
-    audio.currentTime = 0;
-    audio.pause();
-}
-
-MusicPlayer.prototype.setVolume = function(volume = this.volume, audioID = this.currentTack) {
-    const audio = this.resources.audio.get(audioID);
-
-    if(!audio) {
-        Logger.log(false, "Track does not exist!", "MusicPlayer.prototype.setVolume", {audioID});
-        return;
-    }
-
-    audio.volume = volume;
-}
-
-MusicPlayer.prototype.adjustVolume = function(byValue = 0, audioID = this.currentTack) {
-    const audio = this.resources.audio.get(audioID);
-    this.volume = clampValue(this.volume + byValue, 1, 0);
-
-    if(!audio) {
-        Logger.log(false, "Track does not exist!", "MusicPlayer.prototype.adjustVolume", {audioID});
-        return;
-    }
-
-    audio.volume = this.volume;
+    track.adjustVolume(delta);
 }
