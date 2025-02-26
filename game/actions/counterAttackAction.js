@@ -72,10 +72,10 @@ CounterAttackAction.prototype.getValidated = function(gameContext, template, mes
         return null;
     }
 
-    const counterComponent = entity.getComponent(ArmyEntity.COMPONENT.COUNTER);
+    const attackComponent = entity.getComponent(ArmyEntity.COMPONENT.ATTACK);
     const healthComponent = entity.getComponent(ArmyEntity.COMPONENT.HEALTH);
 
-    if(!counterComponent || !counterComponent.isAttackCounterable() || !healthComponent.isAlive()) {
+    if(!attackComponent || !attackComponent.isAttackCounterable() || !healthComponent.isAlive()) {
         return null;
     }
 

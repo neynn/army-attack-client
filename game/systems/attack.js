@@ -1,6 +1,5 @@
 import { isRectangleRectangleIntersect } from "../../source/math/math.js";
 import { AttackComponent } from "../components/attack.js";
-import { BulldozeComponent } from "../components/bulldoze.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { AllianceSystem } from "./alliance.js";
 
@@ -54,9 +53,8 @@ AttackSystem.pickAttackCounterTarget = function(gameContext, attacker, targetIDs
 
 AttackSystem.getAttackCounterTargets = function(gameContext, attacker) {
     const attackerAttackComponent = attacker.getComponent(ArmyEntity.COMPONENT.ATTACK);
-    const attackerCounterComponent = attacker.getComponent(ArmyEntity.COMPONENT.COUNTER);
 
-    if(!attackerAttackComponent || !attackerCounterComponent || !attackerCounterComponent.isAttackCounterable()) {
+    if(!attackerAttackComponent || !attackerAttackComponent.isAttackCounterable()) {
         return [];
     }
 
@@ -84,9 +82,8 @@ AttackSystem.getMoveCounterAttackers = function(gameContext, target) {
     const targetTeamComponent = target.getComponent(ArmyEntity.COMPONENT.TEAM);
     const attackers = this.findAttackersInMaxRange(gameContext, target, (attacker) => {
         const attackComponent = attacker.getComponent(ArmyEntity.COMPONENT.ATTACK);
-        const counterComponent = attacker.getComponent(ArmyEntity.COMPONENT.COUNTER);
 
-        if(!attackComponent || !counterComponent || !counterComponent.isMoveCounterable()) {
+        if(!attackComponent || !attackComponent.isMoveCounterable()) {
             return false;
         }
 
@@ -213,17 +210,12 @@ AttackSystem.getDamage = function(gameContext, target, attackerIDs) {
 AttackSystem.getBulldozed = function(gameContext, target, attackerIDs) {
     const { world } = gameContext;
     const { entityManager } = world;
-    const isBulldozeable = BulldozeComponent.isBulldozeable(target.config.archetype);
-
-    if(!isBulldozeable) {
-        return false;
-    }
 
     for(const attackerID of attackerIDs) {
         const attacker = entityManager.getEntity(attackerID);
-        const bulldozeComponent = attacker.getComponent(ArmyEntity.COMPONENT.BULLDOZE);
+        const attackComponent = attacker.getComponent(ArmyEntity.COMPONENT.ATTACK);
 
-        if(bulldozeComponent && bulldozeComponent.isBulldozed(target.config.archetype)) {
+        if(attackComponent && attackComponent.isBulldozed(target.config.archetype)) {
             return true;
         }
     }

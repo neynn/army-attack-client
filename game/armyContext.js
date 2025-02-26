@@ -20,10 +20,8 @@ import { MapEditorState } from "./states/context/mapEditor.js";
 import { StoryModeState } from "./states/context/storyMode.js";
 import { VersusModeState } from "./states/context/versusMode.js";
 import { AvianComponent } from "./components/avian.js";
-import { BulldozeComponent } from "./components/bulldoze.js";
 import { ConstructionAction } from "./actions/constructionAction.js";
 import { ReviveableComponent } from "./components/reviveable.js";
-import { CounterComponent } from "./components/counter.js";
 import { ResourceComponent } from "./components/resource.js";
 import { ArmyCamera } from "./armyCamera.js";
 import { SpawnSystem } from "./systems/spawn.js";
@@ -36,7 +34,6 @@ import { ArmyEntity } from "./init/armyEntity.js";
 import { SpriteComponent } from "./components/sprite.js";
 import { ProductionComponent } from "./components/production.js";
 import { DirectionComponent } from "./components/direction.js";
-import { TransparentComponent } from "./components/transparent.js";
 import { TileManager } from "../source/tile/tileManager.js";
 
 export const ArmyContext = function() {
@@ -100,12 +97,9 @@ ArmyContext.prototype.init = function(resources) {
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.ARMOR, ArmorComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.ATTACK, AttackComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.AVIAN, AvianComponent);
-    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.BULLDOZE, BulldozeComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.CONSTRUCTION, ConstructionComponent);
-    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.COUNTER, CounterComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.DIRECTION, DirectionComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.HEALTH, HealthComponent);
-    //INVENTORY
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.MOVE, MoveComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.POSITION, PositionComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.PRODUCTION, ProductionComponent);
@@ -113,7 +107,6 @@ ArmyContext.prototype.init = function(resources) {
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.REVIVEABLE, ReviveableComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.SPRITE, SpriteComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.TEAM, TeamComponent);
-    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.TRANSPARENT, TransparentComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.UNIT_SIZE, UnitSizeComponent);
 
     this.world.mapManager.registerFactory(ArmyContext.FACTORY.MAP, new ArmyMapFactory().load(resources.mapTypes));

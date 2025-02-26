@@ -109,14 +109,14 @@
         "id": "Counter",
         "description": "If an entity automatically counters.",
         "components": {
-            "Counter": { "move": true, "attack": true }
+            "Attack": { "counterMove": true, "counterAttack": true }
         }
     },
     "Bulldoze": {
         "id": "Bulldoze",
         "description": "Used by enemy bulldozers to ignore the revive of the specified entityTypes.",
         "components": {
-            "Bulldoze": { "unit": true }
+            "Attack": { "bulldozeUnit": true }
         }
     },
     "AoE": {

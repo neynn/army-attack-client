@@ -27,15 +27,12 @@ ArmyEntity.COMPONENT = {
     UNIT_SIZE: "UnitSize",
     ARMOR: "Armor",
     AVIAN: "Avian",
-    BULLDOZE: "Bulldoze",
-    COUNTER: "Counter",
     RESOURCE: "Resource",
     POSITION: "Position",
     SPRITE: "Sprite",
     DIRECTION: "Direction",
     TEAM: "Team",
-    PRODUCTION: "Production",
-    TRANSPARENT: "Transparent"
+    PRODUCTION: "Production"
 };
 
 ArmyEntity.SPRITE_TYPE = {

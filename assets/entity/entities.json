@@ -2707,7 +2707,7 @@
         "archetype": "Defense",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "stats": {
-            "story": { "health": 500, "damage": 1, "attackRange": 2, "traits": [] }, 
+            "story": { "health": 500, "damage": 1, "attackRange": 2, "traits": ["Counter"] }, 
             "versus": { "health": 5, "damage": 1, "attackRange": 2, "traits": ["Counter"] }
         },
         "sprites": {
