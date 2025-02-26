@@ -81,10 +81,6 @@ MusicPlayer.prototype.playTrack = function(audioID = this.currentTrack, volume) 
     }
 
     this.currentTrack = audioID;
-    
-    if(!track.isLoaded()) {
-        track.requestAudio();
-    }
 
     if(typeof volume === "number") {
         track.setVolume(volume);

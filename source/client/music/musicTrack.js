@@ -37,6 +37,10 @@ MusicTrack.prototype.play = function() {
         return;
     }
 
+    if(!this.audio) {
+        this.requestAudio();
+    }
+
     if(this.audio) {
         this.state = MusicTrack.STATE.PLAYING;
         this.audio.volume = this.volume;
