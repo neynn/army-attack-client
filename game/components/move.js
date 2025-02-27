@@ -7,13 +7,30 @@ export const MoveComponent = function() {
     this.path = [];
     this.distance = 0;
     this.passability = new Set();
-    this.isCoward = false;
-    this.isStealth = false;
-    this.isCloaked = false;
+    this.flags = MoveComponent.FLAGS.NONE;
 }
+
+MoveComponent.FLAGS = {
+    NONE: 0,
+    STEALTH: 1 << 0,
+    CLOAK: 1 << 1,
+    COWARD: 1 << 2
+};
 
 MoveComponent.prototype = Object.create(ActiveComponent.prototype);
 MoveComponent.prototype.constructor = MoveComponent;
+
+MoveComponent.prototype.isCoward = function() {
+    return (this.flags & MoveComponent.FLAGS.COWARD) !== 0;
+}
+
+MoveComponent.prototype.isStealth = function() {
+    return (this.flags & MoveComponent.FLAGS.STEALTH) !== 0;
+}
+
+MoveComponent.prototype.isCloaked = function() {
+    return (this.flags & MoveComponent.FLAGS.CLOAK) !== 0;
+}
 
 MoveComponent.prototype.update = function(gameContext, entity) {
     if(this.path.length !== 0) {
@@ -46,15 +63,15 @@ MoveComponent.prototype.init = function(config) {
     const { coward, stealth, cloak } = config;
 
     if(coward) {
-        this.isCoward = coward;
+        this.flags |= MoveComponent.FLAGS.COWARD;
     }
 
     if(stealth) {
-        this.isStealth = stealth;
+        this.flags |= MoveComponent.FLAGS.STEALTH;
     }
 
     if(cloak) {
-        this.isCloaked = cloak;
+        this.flags |= MoveComponent.FLAGS.CLOAK;
     }
 }
 

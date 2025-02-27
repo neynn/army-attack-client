@@ -315,9 +315,15 @@ ArmyContext.prototype.unloadEntitySprites = function(entity) {
 ArmyContext.prototype.loadEntitySprites = function(entity) {
     const { resources } = this.spriteManager;
     const { sprites } = entity.config;
+    const blocked = new Set(["airdrop"]);
 
     for(const spriteType in sprites) {
         const spriteID = sprites[spriteType];
+
+        if(blocked.has(spriteType)) {
+            console.log("BLOCKED", spriteID);
+            continue;
+        }
 
         resources.requestImage(spriteID, (id, image, sheet) => console.log("LOADED IMAGE", id));
         resources.addReference(spriteID);

@@ -60,7 +60,24 @@ ArmyEntity.SOUND_TYPE = {
 ArmyEntity.prototype = Object.create(Entity.prototype);
 ArmyEntity.prototype.constructor = ArmyEntity;
 
-ArmyEntity.prototype.isOnSafeGround = function(gameContext) {
+ArmyEntity.prototype.isTilePassable = function(gameContext, tileX, tileY) {
+    const { world } = gameContext;
+    const { mapManager } = world;
+    const activeMap = mapManager.getActiveMap();
+
+    if(!activeMap) {
+        return false;
+    }
+
+    const tileTypes = world.getConfig("TileType");
+    const tileTypeID = activeMap.getTile(ArmyMap.LAYER.TYPE, tileX, tileY);
+    const moveComponent = this.getComponent(ArmyEntity.COMPONENT.MOVE);
+    const isTilePassable = moveComponent.hasPassability(tileTypes[tileTypeID].passability);
+
+    return isTilePassable
+}
+
+ArmyEntity.prototype.isTileWalkable = function(gameContext, tileX, tileY) {
     const { world } = gameContext;
     const { mapManager } = world;
     const activeMap = mapManager.getActiveMap();
@@ -70,17 +87,24 @@ ArmyEntity.prototype.isOnSafeGround = function(gameContext) {
     }
 
     const { teamID } = this.getComponent(ArmyEntity.COMPONENT.TEAM);
-    const { tileX, tileY } = this.getComponent(ArmyEntity.COMPONENT.POSITION);
-    const { isStealth } = this.getComponent(ArmyEntity.COMPONENT.MOVE);
+    const moveComponent = this.getComponent(ArmyEntity.COMPONENT.MOVE);
 
     const tileTeamID = activeMap.getTile(ArmyMap.LAYER.TEAM, tileX, tileY);
     const tileAlliance = AllianceSystem.getAlliance(gameContext, teamID, ArmyMap.TEAM_TYPE[tileTeamID]);
-    const isTileWalkable = tileAlliance.isWalkable || isStealth;
+    const isTileWalkable = tileAlliance.isWalkable || moveComponent.isStealth();
 
     return isTileWalkable;
 }
 
 ArmyEntity.prototype.isBypassingAllowed = function(gameContext, entity) {
+    const { world } = gameContext;
+    const { mapManager } = world;
+    const activeMap = mapManager.getActiveMap();
+
+    if(!activeMap || activeMap.disablePassing) {
+        return false;
+    }
+
     const avianComponent = this.getComponent(ArmyEntity.COMPONENT.AVIAN);
     const passerAvianComponent = entity.getComponent(ArmyEntity.COMPONENT.AVIAN);
     const isBypassByFlight = avianComponent && avianComponent.isFlying() || passerAvianComponent && passerAvianComponent.isFlying();
@@ -94,7 +118,7 @@ ArmyEntity.prototype.isBypassingAllowed = function(gameContext, entity) {
     const passerTeamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
 
     const alliance = AllianceSystem.getAlliance(gameContext, teamComponent.teamID, passerTeamComponent.teamID);
-    const isBypassByAlliance = alliance.isEntityPassingAllowed || moveComponent.isCloaked;
+    const isBypassByAlliance = alliance.isEntityPassingAllowed || moveComponent.isCloaked();
 
     return isBypassByAlliance;
 }
@@ -237,9 +261,7 @@ ArmyEntity.prototype.canMoveThere = function(gameContext, tileX, tileY) {
             continue;
         }
 
-        if(!entity.hasComponent(ArmyEntity.COMPONENT.TRANSPARENT)) {
-            return false;
-        }
+        //TODO:
     }
 
     const healthComponent = this.getComponent(ArmyEntity.COMPONENT.HEALTH);
