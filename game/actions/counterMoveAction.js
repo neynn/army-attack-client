@@ -18,8 +18,8 @@ CounterMoveAction.prototype.onClear = function() {
 CounterMoveAction.prototype.onStart = function(gameContext, request, messengerID) {
     const { world } = gameContext;
     const { entityManager } = world;
-    const { entityID, attackers, damage, state } = request;
-    const target = entityManager.getEntity(entityID);
+    const { targetID, attackers, damage, state } = request;
+    const target = entityManager.getEntity(targetID);
 
     AnimationSystem.playFire(gameContext, target, attackers);
     target.reduceHealth(damage);
@@ -34,8 +34,8 @@ CounterMoveAction.prototype.onStart = function(gameContext, request, messengerID
 CounterMoveAction.prototype.onEnd = function(gameContext, request, messengerID) {
     const { world } = gameContext;
     const { entityManager } = world;
-    const { entityID, attackers, damage, state } = request;
-    const target = entityManager.getEntity(entityID);
+    const { targetID, attackers, damage, state } = request;
+    const target = entityManager.getEntity(targetID);
 
     AnimationSystem.revertToIdle(gameContext, attackers);
 
@@ -78,15 +78,9 @@ CounterMoveAction.prototype.getValidated = function(gameContext, template, messe
         return null;
     }
 
-    const damage = AttackSystem.getDamage(gameContext, targetEntity, attackers);
-    const state = AttackSystem.getOutcomeState(gameContext, damage, targetEntity, attackers);
-
-    return {
-        "entityID": entityID,
-        "attackers": attackers,
-        "damage": damage,
-        "state": state
-    }
+    const outcome = AttackSystem.getOutcome(targetEntity, attackers);
+    
+    return outcome;
 }
 
 CounterMoveAction.prototype.getTemplate = function(entityID) {

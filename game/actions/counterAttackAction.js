@@ -86,18 +86,10 @@ CounterAttackAction.prototype.getValidated = function(gameContext, template, mes
     }
 
     //TODO: Pick a target based on ai -> damage dealt, or guarantee kill.
-    const targetID = potentialTargets[0];
-    const target = entityManager.getEntity(targetID);
+    const pickedTarget = AttackSystem.pickAttackCounterTarget(entity, potentialTargets);
+    const outcome = AttackSystem.getOutcome(pickedTarget, [entity]);
 
-    const damage = AttackSystem.getDamage(gameContext, target, [entityID]);
-    const state = AttackSystem.getOutcomeState(gameContext, damage, target, [entityID]);
-    
-    return {
-        "targetID": targetID,
-        "attackers": [entityID],
-        "damage": damage,
-        "state": state
-    }
+    return outcome;
 }
 
 CounterAttackAction.prototype.getTemplate = function(entityID, attackers) {

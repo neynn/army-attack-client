@@ -35,6 +35,10 @@ AttackComponent.ARCHETYPE_BULLDOZE_MAP = {
     "Building": AttackComponent.BULLDOZE_TYPE.BUILDING
 };
 
+AttackComponent.prototype.isActive = function() {
+    return this.type === AttackComponent.ATTACK_TYPE.ACTIVE;
+}
+
 AttackComponent.prototype.isBulldozed = function(archetype) {
     const property = AttackComponent.ARCHETYPE_BULLDOZE_MAP[archetype];
 

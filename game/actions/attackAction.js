@@ -19,8 +19,8 @@ AttackAction.prototype.onClear = function() {
 AttackAction.prototype.onStart = function(gameContext, request, messengerID) {
     const { world } = gameContext;
     const { entityManager, eventManager } = world;
-    const { entityID, attackers, damage, state } = request;
-    const target = entityManager.getEntity(entityID);
+    const { targetID, attackers, damage, state } = request;
+    const target = entityManager.getEntity(targetID);
 
     AnimationSystem.playFire(gameContext, target, attackers);
     target.reduceHealth(damage);
@@ -28,7 +28,7 @@ AttackAction.prototype.onStart = function(gameContext, request, messengerID) {
     if(state === AttackSystem.OUTCOME_STATE.DOWN) {
         DecaySystem.beginDecay(gameContext, target);
         eventManager.emitEvent(EVENT_TYPES.COUNTER, {
-            "entityID": entityID,
+            "targetID": targetID,
             "attackers": attackers,
             "controllerID": messengerID
         });
@@ -40,8 +40,8 @@ AttackAction.prototype.onStart = function(gameContext, request, messengerID) {
 AttackAction.prototype.onEnd = function(gameContext, request, messengerID) {
     const { world } = gameContext;
     const { entityManager, eventManager, actionQueue } = world;
-    const { entityID, attackers, damage, state } = request;
-    const target = entityManager.getEntity(entityID);
+    const { targetID, attackers, damage, state } = request;
+    const target = entityManager.getEntity(targetID);
 
     AnimationSystem.revertToIdle(gameContext, attackers);
 
@@ -49,13 +49,13 @@ AttackAction.prototype.onEnd = function(gameContext, request, messengerID) {
         AnimationSystem.playDeath(gameContext, target);
         target.die(gameContext);
         eventManager.emitEvent(EVENT_TYPES.COUNTER, {
-            "entityID": entityID,
+            "targetID": targetID,
             "attackers": attackers,
             "controllerID": messengerID
         });
     } else if(state === AttackSystem.OUTCOME_STATE.IDLE) {
         target.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
-        actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.COUNTER_ATTACK, entityID, attackers));
+        actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.COUNTER_ATTACK, targetID, attackers));
     }
 }
 
@@ -78,27 +78,21 @@ AttackAction.prototype.getValidated = function(gameContext, request, messengerID
     const { entityID } = request;
     const { world } = gameContext; 
     const { entityManager } = world;
-    const targetEntity = entityManager.getEntity(entityID);
+    const target = entityManager.getEntity(entityID);
 
-    if(!targetEntity) {
+    if(!target) {
         return null;
     }
 
-    const attackers = AttackSystem.getActiveAttackers(gameContext, targetEntity);
+    const attackers = AttackSystem.getActiveAttackers(gameContext, target);
 
     if(attackers.length === 0) {
         return null;
     }
 
-    const damage = AttackSystem.getDamage(gameContext, targetEntity, attackers);
-    const state = AttackSystem.getOutcomeState(gameContext, damage, targetEntity, attackers);
-    
-    return {
-        "entityID": entityID,
-        "attackers": attackers,
-        "damage": damage,
-        "state": state
-    }
+    const outcome = AttackSystem.getOutcome(target, attackers);
+
+    return outcome;
 }
 
 AttackAction.prototype.getTemplate = function(entityID) {

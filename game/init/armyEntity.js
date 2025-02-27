@@ -1,5 +1,6 @@
 import { Entity } from "../../source/entity/entity.js";
 import { EventEmitter } from "../../source/events/eventEmitter.js";
+import { isRectangleRectangleIntersect } from "../../source/math/math.js";
 import { DirectionComponent } from "../components/direction.js";
 import { SpriteComponent } from "../components/sprite.js";
 import { AllianceSystem } from "../systems/alliance.js";
@@ -177,6 +178,30 @@ ArmyEntity.prototype.reduceHealth = function(damage) {
     healthComponent.reduceHealth(damage);
 
     this.events.emit(ArmyEntity.EVENT.HEALTH_UPDATE, healthComponent.health, healthComponent.maxHealth);
+}
+
+ArmyEntity.prototype.getHealth = function() {
+    const healthComponent = this.getComponent(ArmyEntity.COMPONENT.HEALTH);
+
+    return healthComponent.health;
+}
+
+ArmyEntity.prototype.isEntityInRange = function(entity, range) {
+    const position = this.getComponent(ArmyEntity.COMPONENT.POSITION);
+    const targetPosition = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
+
+    const collision = isRectangleRectangleIntersect(
+        position.tileX - range,
+        position.tileY - range,
+        this.config.dimX - 1 + range * 2,
+        this.config.dimY - 1 + range * 2,
+        targetPosition.tileX,
+        targetPosition.tileY,
+        entity.config.dimX - 1,
+        entity.config.dimY - 1
+    );
+
+    return collision;
 }
 
 ArmyEntity.prototype.getSurroundingEntities = function(gameContext, range = 0) {

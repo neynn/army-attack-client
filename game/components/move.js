@@ -20,6 +20,10 @@ MoveComponent.FLAGS = {
 MoveComponent.prototype = Object.create(ActiveComponent.prototype);
 MoveComponent.prototype.constructor = MoveComponent;
 
+MoveComponent.prototype.setPath = function(path) {
+    this.path = path;
+}
+
 MoveComponent.prototype.isCoward = function() {
     return (this.flags & MoveComponent.FLAGS.COWARD) !== 0;
 }

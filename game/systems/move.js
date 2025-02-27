@@ -12,24 +12,26 @@ MoveSystem.updatePath = function(gameContext, entity) {
     const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
     const moveComponent = entity.getComponent(ArmyEntity.COMPONENT.MOVE);
 
-    if(!moveComponent.isPathEmpty()) {
-        const { deltaX, deltaY, speed } = moveComponent.getCurrentStep();
-        const moveSpeed = moveComponent.speed * deltaTime / speed;
-        
-        positionComponent.updatePosition(deltaX * moveSpeed, deltaY * moveSpeed);
-        moveComponent.distance += moveSpeed;
+    if(moveComponent.isPathEmpty()) {
+        return;
+    }
 
-        while(moveComponent.distance >= width && !moveComponent.isPathEmpty()) {
-            const { deltaX, deltaY } = moveComponent.getCurrentStep();
-            const tileX = positionComponent.tileX + deltaX;
-            const tileY = positionComponent.tileY + deltaY;
-            const { x, y } = camera.transformTileToPositionCenter(tileX, tileY);
-            
-            positionComponent.setPosition(x, y);
-            positionComponent.setTile(tileX, tileY);
-            moveComponent.distance -= width;
-            moveComponent.path.pop();
-        }
+    const { deltaX, deltaY, speed } = moveComponent.getCurrentStep();
+    const moveSpeed = (moveComponent.speed / speed) * deltaTime;
+    
+    positionComponent.updatePosition(deltaX * moveSpeed, deltaY * moveSpeed);
+    moveComponent.distance += moveSpeed;
+
+    while(moveComponent.distance >= width && !moveComponent.isPathEmpty()) {
+        const { deltaX, deltaY } = moveComponent.getCurrentStep();
+        const tileX = positionComponent.tileX + deltaX;
+        const tileY = positionComponent.tileY + deltaY;
+        const { x, y } = camera.transformTileToPositionCenter(tileX, tileY);
+        
+        positionComponent.setPosition(x, y);
+        positionComponent.setTile(tileX, tileY);
+        moveComponent.distance -= width;
+        moveComponent.path.pop();
     }
 
     MoveSystem.updateSpritePosition(gameContext, entity);
@@ -41,14 +43,6 @@ MoveSystem.updateSpritePosition = function(gameContext, entity) {
     const { positionX, positionY } = positionComponent;
 
     spriteComponent.setPosition(gameContext, positionX, positionY);
-}
-
-MoveSystem.beginMove = function(gameContext, entity, path) {
-    const moveComponent = entity.getComponent(ArmyEntity.COMPONENT.MOVE);
-
-    moveComponent.path = path;
-    
-    entity.playSound(gameContext, ArmyEntity.SOUND_TYPE.MOVE);
 }
 
 MoveSystem.endMove = function(gameContext, entity, targetX, targetY) {

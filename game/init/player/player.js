@@ -108,7 +108,16 @@ PlayerController.prototype.updateAttackers = function(gameContext) {
     }
 
     const activeAttackers = AttackSystem.getActiveAttackers(gameContext, mouseEntity);
-    const newAttackers = new Set(activeAttackers);
+    const attackerIDs = [];
+
+    for(let i = 0; i < activeAttackers.length; i++) {
+        const attacker = activeAttackers[i];
+        const attackerID = attacker.getID();
+
+        attackerIDs.push(attackerID);
+    }
+
+    const newAttackers = new Set(attackerIDs);
 
     for(let i = 0; i < this.attackers.length; i++) {
         const attackerID = this.attackers[i];
@@ -118,7 +127,7 @@ PlayerController.prototype.updateAttackers = function(gameContext) {
         }
     }
 
-    this.attackers = activeAttackers;
+    this.attackers = attackerIDs;
     this.hightlightAttackers(gameContext, mouseEntity);
 }
 

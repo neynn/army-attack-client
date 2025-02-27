@@ -15,8 +15,10 @@ MoveAction.prototype.onStart = function(gameContext, request, messengerID) {
     const { world } = gameContext;
     const { entityManager } = world;
     const entity = entityManager.getEntity(entityID);
+    const moveComponent = entity.getComponent(ArmyEntity.COMPONENT.MOVE);
 
-    MoveSystem.beginMove(gameContext, entity, path);
+    moveComponent.setPath(path);
+    entity.playSound(gameContext, ArmyEntity.SOUND_TYPE.MOVE);
     entity.lookAtTile(targetX, targetY);
     entity.updateSpriteDirectonal(gameContext, ArmyEntity.SPRITE_TYPE.MOVE, ArmyEntity.SPRITE_TYPE.MOVE_UP);
     entity.removeFromMap(gameContext);
