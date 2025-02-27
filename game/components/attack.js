@@ -87,7 +87,6 @@ AttackComponent.prototype.load = function(blob) {
 }
 
 AttackComponent.prototype.init = function(config) {
-    const { damage, range } = config;
     const counterTypes = [
         { key: "counterMove", flag: AttackComponent.COUNTER_TYPE.MOVE },
         { key: "counterAttack", flag: AttackComponent.COUNTER_TYPE.ATTACK }
@@ -97,9 +96,6 @@ AttackComponent.prototype.init = function(config) {
         { key: "bulldozeDeco", flag: AttackComponent.BULLDOZE_TYPE.DECO },
         { key: "bulldozeBuilding", flag: AttackComponent.BULLDOZE_TYPE.BUILDING }
     ];
-
-    if(damage) this.damage = damage;
-    if(range) this.range = range;
 
     for(let i = 0; i < bulldozeTypes.length; i++) {
         const { key, flag } = bulldozeTypes[i];

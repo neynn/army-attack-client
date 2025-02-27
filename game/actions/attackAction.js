@@ -1,9 +1,6 @@
 import { Action } from "../../source/action/action.js";
-import { ACTION_TYPES, EVENT_TYPES } from "../enums.js";
-import { ArmyEntity } from "../init/armyEntity.js";
-import { AnimationSystem } from "../systems/animation.js";
+import { ACTION_TYPES } from "../enums.js";
 import { AttackSystem } from "../systems/attack.js";
-import { DecaySystem } from "../systems/decay.js";
 
 export const AttackAction = function() {
     this.timePassed = 0;
@@ -17,44 +14,17 @@ AttackAction.prototype.onClear = function() {
 }
 
 AttackAction.prototype.onStart = function(gameContext, request, messengerID) {
-    const { world } = gameContext;
-    const { entityManager, eventManager } = world;
-    const { targetID, attackers, damage, state } = request;
-    const target = entityManager.getEntity(targetID);
-
-    AnimationSystem.playFire(gameContext, target, attackers);
-    target.reduceHealth(damage);
-
-    if(state === AttackSystem.OUTCOME_STATE.DOWN) {
-        DecaySystem.beginDecay(gameContext, target);
-        eventManager.emitEvent(EVENT_TYPES.COUNTER, {
-            "targetID": targetID,
-            "attackers": attackers,
-            "controllerID": messengerID
-        });
-    } else {
-        target.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.HIT);
-    }
+    AttackSystem.beginAttack(gameContext, request);
 }
 
 AttackAction.prototype.onEnd = function(gameContext, request, messengerID) {
     const { world } = gameContext;
-    const { entityManager, eventManager, actionQueue } = world;
-    const { targetID, attackers, damage, state } = request;
-    const target = entityManager.getEntity(targetID);
+    const { actionQueue } = world;
+    const { targetID, attackers, state } = request;
 
-    AnimationSystem.revertToIdle(gameContext, attackers);
+    AttackSystem.endAttack(gameContext, request);
 
-    if(state === AttackSystem.OUTCOME_STATE.DEAD) {
-        AnimationSystem.playDeath(gameContext, target);
-        target.die(gameContext);
-        eventManager.emitEvent(EVENT_TYPES.COUNTER, {
-            "targetID": targetID,
-            "attackers": attackers,
-            "controllerID": messengerID
-        });
-    } else if(state === AttackSystem.OUTCOME_STATE.IDLE) {
-        target.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
+    if(state === AttackSystem.OUTCOME_STATE.IDLE) {
         actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.COUNTER_ATTACK, targetID, attackers));
     }
 }

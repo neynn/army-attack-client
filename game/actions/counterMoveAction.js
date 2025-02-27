@@ -1,8 +1,5 @@
 import { Action } from "../../source/action/action.js";
-import { ArmyEntity } from "../init/armyEntity.js";
-import { AnimationSystem } from "../systems/animation.js";
 import { AttackSystem } from "../systems/attack.js";
-import { DecaySystem } from "../systems/decay.js";
 
 export const CounterMoveAction = function() {
     this.timePassed = 0;
@@ -16,35 +13,11 @@ CounterMoveAction.prototype.onClear = function() {
 }
 
 CounterMoveAction.prototype.onStart = function(gameContext, request, messengerID) {
-    const { world } = gameContext;
-    const { entityManager } = world;
-    const { targetID, attackers, damage, state } = request;
-    const target = entityManager.getEntity(targetID);
-
-    AnimationSystem.playFire(gameContext, target, attackers);
-    target.reduceHealth(damage);
-
-    if(state === AttackSystem.OUTCOME_STATE.DOWN) {
-        DecaySystem.beginDecay(gameContext, target);
-    } else {
-        target.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.HIT);
-    }
+    AttackSystem.beginAttack(gameContext, request);
 }
 
 CounterMoveAction.prototype.onEnd = function(gameContext, request, messengerID) {
-    const { world } = gameContext;
-    const { entityManager } = world;
-    const { targetID, attackers, damage, state } = request;
-    const target = entityManager.getEntity(targetID);
-
-    AnimationSystem.revertToIdle(gameContext, attackers);
-
-    if(state === AttackSystem.OUTCOME_STATE.DEAD) {
-        AnimationSystem.playDeath(gameContext, target);
-        target.die(gameContext);
-    } else if(state === AttackSystem.OUTCOME_STATE.IDLE) {
-        target.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
-    }
+    AttackSystem.endAttack(gameContext, request);
 }
 
 CounterMoveAction.prototype.onUpdate = function(gameContext, request, messengerID) {

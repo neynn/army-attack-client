@@ -1,5 +1,7 @@
 import { ArmyEntity } from "../init/armyEntity.js";
 import { AllianceSystem } from "./alliance.js";
+import { AnimationSystem } from "./animation.js";
+import { DecaySystem } from "./decay.js";
 
 export const AttackSystem = function() {}
 
@@ -8,6 +10,51 @@ AttackSystem.OUTCOME_STATE = {
     DOWN: 1,
     DEAD: 2
 };
+
+AttackSystem.endAttack = function(gameContext, outcome) {
+    const { world } = gameContext;
+    const { entityManager } = world;
+    const { targetID, attackers, damage, state } = outcome;
+    const target = entityManager.getEntity(targetID);
+
+    AnimationSystem.revertToIdle(gameContext, attackers);
+
+    switch(state) {
+        case AttackSystem.OUTCOME_STATE.DEAD: {
+            AnimationSystem.playDeath(gameContext, target);
+            target.die(gameContext);
+            break;
+        }
+        case AttackSystem.OUTCOME_STATE.IDLE: {
+            target.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
+            break;
+        }
+        default: {
+            break;
+        }
+    }
+}
+
+AttackSystem.beginAttack = function(gameContext, outcome) {
+    const { world } = gameContext;
+    const { entityManager } = world;
+    const { attackers, targetID, state, damage } = outcome;
+    const target = entityManager.getEntity(targetID);
+
+    target.reduceHealth(damage);
+    AnimationSystem.playFire(gameContext, target, attackers);
+
+    switch(state) {
+        case AttackSystem.OUTCOME_STATE.DOWN: {
+            DecaySystem.beginDecay(gameContext, target);
+            break;
+        }
+        default: {
+            target.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.HIT);
+            break;
+        }
+    }
+}
 
 AttackSystem.pickAttackCounterTarget = function(attacker, targets) {
     let index = 0;
