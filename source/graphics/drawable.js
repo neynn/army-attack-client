@@ -4,14 +4,14 @@ import { Graph } from "./graph.js";
 
 export const Drawable = function(DEBUG_NAME = "") {
     this.DEBUG_NAME = DEBUG_NAME;
-    this.id = Drawable.LATEST_ID++;
+    this.id = Drawable.NEXT_ID++;
     this.state = Drawable.STATE.VISIBLE;
     this.position = new Vec2(0, 0);
     this.graph = null;
     this.opacity = 1;
 }
 
-Drawable.LATEST_ID = 0;
+Drawable.NEXT_ID = 0;
 
 Drawable.STATE = {
     HIDDEN: 0,

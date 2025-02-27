@@ -15,10 +15,10 @@ export const Client = function() {
 
     this.router.createKeyboardListener(Keyboard.EVENT.KEY_PRESSED, InputRouter.PREFIX.DOWN, this.keyboard);
     this.router.createKeyboardListener(Keyboard.EVENT.KEY_RELEASED, InputRouter.PREFIX.UP, this.keyboard);
-    this.router.createMouseListener(Cursor.EVENT.LEFT_MOUSE_CLICK, InputRouter.PREFIX.DOWN, this.cursor);
-    this.router.createMouseListener(Cursor.EVENT.LEFT_MOUSE_UP, InputRouter.PREFIX.UP, this.cursor);
-    this.router.createMouseListener(Cursor.EVENT.RIGHT_MOUSE_CLICK, InputRouter.PREFIX.DOWN, this.cursor);
-    this.router.createMouseListener(Cursor.EVENT.RIGHT_MOUSE_UP, InputRouter.PREFIX.UP, this.cursor);
+    this.router.createMouseListener(Cursor.EVENT.LEFT_MOUSE_CLICK, InputRouter.PREFIX.DOWN, Cursor.BUTTON_LEFT, this.cursor);
+    this.router.createMouseListener(Cursor.EVENT.LEFT_MOUSE_UP, InputRouter.PREFIX.UP, Cursor.BUTTON_LEFT, this.cursor);
+    this.router.createMouseListener(Cursor.EVENT.RIGHT_MOUSE_CLICK, InputRouter.PREFIX.DOWN, Cursor.BUTTON_RIGHT, this.cursor);
+    this.router.createMouseListener(Cursor.EVENT.RIGHT_MOUSE_UP, InputRouter.PREFIX.UP, Cursor.BUTTON_RIGHT, this.cursor);
 }
 
 Client.prototype.update = function() {

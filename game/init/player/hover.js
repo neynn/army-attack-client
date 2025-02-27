@@ -1,6 +1,6 @@
 import { PathfinderSystem } from "../../systems/pathfinder.js";
 
-export const ControllerHover = function() {
+export const Hover = function() {
     this.tileX = -1;
     this.tileY = -1;
     this.nodeMap = new Map();
@@ -9,7 +9,7 @@ export const ControllerHover = function() {
     this.targetChanged = false;
 }
 
-ControllerHover.prototype.getEntity = function(gameContext) {
+Hover.prototype.getEntity = function(gameContext) {
     const { world } = gameContext;
     const { entityManager } = world;
     
@@ -22,11 +22,11 @@ ControllerHover.prototype.getEntity = function(gameContext) {
     return entity;
 }
 
-ControllerHover.prototype.clearNodes = function() {
+Hover.prototype.clearNodes = function() {
     this.nodeMap.clear();
 }
 
-ControllerHover.prototype.updateNodes = function(gameContext, nodeList) {
+Hover.prototype.updateNodes = function(gameContext, nodeList) {
     const { world } = gameContext;
 
     this.nodeMap.clear();
@@ -48,21 +48,21 @@ ControllerHover.prototype.updateNodes = function(gameContext, nodeList) {
     }
 }
 
-ControllerHover.prototype.getNodeKey = function(nodeX, nodeY) {
+Hover.prototype.getNodeKey = function(nodeX, nodeY) {
     return `${nodeX}-${nodeY}`;
 }
 
-ControllerHover.prototype.isHoveringOnNode = function() {
+Hover.prototype.isHoveringOnNode = function() {
     const nodeKey = this.getNodeKey(this.tileX, this.tileY);
 
     return this.nodeMap.has(nodeKey);
 }
 
-ControllerHover.prototype.isHoveringOnEntity = function() {
+Hover.prototype.isHoveringOnEntity = function() {
     return this.currentTarget !== null;
 }
 
-ControllerHover.prototype.update = function(gameContext) {
+Hover.prototype.update = function(gameContext) {
     const { world } = gameContext;
     const { x, y } = gameContext.getMouseTile();
     const mouseEntity = world.getTileEntity(x, y);

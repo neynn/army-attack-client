@@ -1,16 +1,15 @@
 import { FactoryOwner } from "../factory/factoryOwner.js";
-import { IDGenerator } from "../idGenerator.js";
 import { Logger } from "../logger.js";
 
 export const EntityManager = function() {
     FactoryOwner.call(this);
 
     this.traitTypes = {};
-    this.idGenerator = new IDGenerator();
     this.componentTypes = new Map();
     this.entities = [];
 }
 
+EntityManager.NEXT_ID = 0;
 EntityManager.INVALID_ID = -1;
 
 EntityManager.prototype = Object.create(FactoryOwner.prototype);
@@ -27,7 +26,6 @@ EntityManager.prototype.load = function(traitTypes) {
 
 EntityManager.prototype.exit = function() {
     this.entities = [];
-    this.idGenerator.reset();
 }
 
 EntityManager.prototype.registerComponent = function(componentID, component) {
@@ -127,7 +125,7 @@ EntityManager.prototype.getEntity = function(entityID) {
     return null;
 }
 
-EntityManager.prototype.createEntity = function(gameContext, config, externalID) {
+EntityManager.prototype.createEntity = function(gameContext, config, externalID = -1) {
     const entity = this.createProduct(gameContext, config);
 
     if(!entity) {
@@ -135,9 +133,13 @@ EntityManager.prototype.createEntity = function(gameContext, config, externalID)
         return null;
     }
 
-    const entityID = externalID || this.idGenerator.getID();
+    if(externalID !== -1) {
+        entity.setID(externalID);
+    } else {
+        const entityID = EntityManager.NEXT_ID++;
 
-    entity.setID(entityID);
+        entity.setID(entityID);
+    }
     
     this.entities.push(entity);
 

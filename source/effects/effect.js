@@ -1,10 +1,8 @@
 export const Effect = function() {
-    this.id = null;
+    this.id = Effect.NEXT_ID++;
 }
 
-Effect.prototype.setID = function(id) {
-    this.id = id;
-}
+Effect.NEXT_ID = 0;
 
 Effect.prototype.getID = function() {
     return this.id;

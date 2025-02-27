@@ -8,7 +8,7 @@ import { ArmyMap } from "../armyMap.js";
 
 export const RangeShow = function() {
     this.isActive = true;
-    this.entityID = EntityManager.INVALID_ID;
+    this.lastTarget = EntityManager.INVALID_ID;
 }
 
 RangeShow.prototype.toggle = function(gameContext, entity) {
@@ -25,6 +25,10 @@ RangeShow.prototype.toggle = function(gameContext, entity) {
 
 RangeShow.prototype.isEnabled = function() {
     return this.isActive;
+}
+
+RangeShow.prototype.setLastTarget = function(entityID) {
+    this.lastTarget = entityID;
 }
 
 RangeShow.prototype.show = function(gameContext, entity) {
@@ -64,14 +68,18 @@ RangeShow.prototype.show = function(gameContext, entity) {
         }
     }
 
-    this.entityID = entityID;
+    this.setLastTarget(entityID);
 }
 
 RangeShow.prototype.reset = function(gameContext) {
+    if(this.lastTarget === EntityManager.INVALID_ID) {
+        return;
+    }
+    
     const { renderer, spriteManager, world } = gameContext;
     const { entityManager } = world;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
-    const entity = entityManager.getEntity(this.entityID);
+    const entity = entityManager.getEntity(this.lastTarget);
 
     camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.RANGE);
 
@@ -81,5 +89,5 @@ RangeShow.prototype.reset = function(gameContext) {
         spriteManager.swapLayer(SpriteManager.LAYER.MIDDLE, spriteID);
     }
 
-    this.entityID = EntityManager.INVALID_ID;
+    this.setLastTarget(EntityManager.INVALID_ID);
 }

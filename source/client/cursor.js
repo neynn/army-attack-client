@@ -98,12 +98,12 @@ Cursor.prototype.eventMouseDown = function(event) {
     const { button } = event;
 
     if(button === Cursor.BUTTON_LEFT) {
-        this.events.emit(Cursor.EVENT.LEFT_MOUSE_DOWN, Cursor.BUTTON_LEFT);
+        this.events.emit(Cursor.EVENT.LEFT_MOUSE_DOWN, this.positionX, this.positionY);
         this.isLeftMouseDown = true;
         this.leftMouseDownTime = Date.now();
 
     } else if(button === Cursor.BUTTON_RIGHT) {
-        this.events.emit(Cursor.EVENT.RIGHT_MOUSE_DOWN, Cursor.BUTTON_RIGHT);
+        this.events.emit(Cursor.EVENT.RIGHT_MOUSE_DOWN, this.positionX, this.positionY);
         this.isRightMouseDown = true;
         this.rightMouseDownTime = Date.now();
     }
@@ -114,20 +114,20 @@ Cursor.prototype.eventMouseUp = function(event) {
 
     if(button === Cursor.BUTTON_LEFT) {
         if(!this.leftDragHappened) {
-            this.events.emit(Cursor.EVENT.LEFT_MOUSE_CLICK, Cursor.BUTTON_LEFT);
+            this.events.emit(Cursor.EVENT.LEFT_MOUSE_CLICK, this.positionX, this.positionY);
         }
 
-        this.events.emit(Cursor.EVENT.LEFT_MOUSE_UP, Cursor.BUTTON_RIGHT);
+        this.events.emit(Cursor.EVENT.LEFT_MOUSE_UP, this.positionX, this.positionY);
         this.isLeftMouseDown = false;
         this.leftDragHappened = false;
         this.leftMouseDownTime = 0;
 
     } else if(button === Cursor.BUTTON_RIGHT) {
         if(!this.rightDragHappened) {
-            this.events.emit(Cursor.EVENT.RIGHT_MOUSE_CLICK, Cursor.BUTTON_RIGHT);
+            this.events.emit(Cursor.EVENT.RIGHT_MOUSE_CLICK, this.positionX, this.positionY);
         }
 
-        this.events.emit(Cursor.EVENT.RIGHT_MOUSE_UP, Cursor.BUTTON_RIGHT);
+        this.events.emit(Cursor.EVENT.RIGHT_MOUSE_UP, this.positionX, this.positionY);
         this.isRightMouseDown = false;
         this.rightDragHappened = false;
         this.rightMouseDownTime = 0;

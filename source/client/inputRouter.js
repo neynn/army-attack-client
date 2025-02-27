@@ -2,7 +2,7 @@ import { EventEmitter } from "../events/eventEmitter.js";
 import { Cursor } from "./cursor.js";
 
 export const InputRouter = function() {
-    this.commandBinds = new Map();
+    this.binds = new Map();
     this.commands = new Map();
 }
 
@@ -48,7 +48,7 @@ InputRouter.prototype.clearBinds = function(gameContext) {
     const { client } = gameContext;
     const { keyboard } = client;
 
-    for(const [inputID, commandID] of this.commandBinds) {
+    for(const [inputID, commandID] of this.binds) {
         const keyID = inputID.slice(1);
 
         if(InputRouter.CURSOR_INPUT[keyID] === undefined) {
@@ -56,7 +56,7 @@ InputRouter.prototype.clearBinds = function(gameContext) {
         }
     }
 
-    this.commandBinds.clear();
+    this.binds.clear();
 }
 
 InputRouter.prototype.load = function(gameContext, binds) {
@@ -92,11 +92,11 @@ InputRouter.prototype.load = function(gameContext, binds) {
 }
 
 InputRouter.prototype.bindInput = function(inputID, commandID) {
-    if(this.commandBinds.has(inputID)) {
+    if(this.binds.has(inputID)) {
         return;
     }
 
-    this.commandBinds.set(inputID, commandID);
+    this.binds.set(inputID, commandID);
 }
 
 InputRouter.prototype.on = function(commandID, command) {
@@ -110,11 +110,11 @@ InputRouter.prototype.on = function(commandID, command) {
 InputRouter.prototype.handleInput = function(inputID, prefix) {
     const prefixedID = prefix + inputID;
 
-    if(!this.commandBinds.has(prefixedID)) {
+    if(!this.binds.has(prefixedID)) {
         return;
     }
 
-    const commandID = this.commandBinds.get(prefixedID);
+    const commandID = this.binds.get(prefixedID);
     const command = this.commands.get(commandID);
 
     if(command) {
@@ -128,10 +128,10 @@ InputRouter.prototype.createKeyboardListener = function(eventID, prefixID, keybo
     events.subscribe(eventID, EventEmitter.SUPER_ID, (keyID) => this.handleInput(keyID, prefixID));
 }
 
-InputRouter.prototype.createMouseListener = function(eventID, prefixID, cursor) {
+InputRouter.prototype.createMouseListener = function(eventID, prefixID, buttonID, cursor) {
     const { events } = cursor;
 
-    events.subscribe(eventID, EventEmitter.SUPER_ID, (buttonID) => {
+    events.subscribe(eventID, EventEmitter.SUPER_ID, (cursorX, cursorY) => {
         const inputID = InputRouter.CURSOR_MAP[buttonID];
 
         if(inputID !== undefined) {

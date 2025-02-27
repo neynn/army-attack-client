@@ -1,12 +1,12 @@
 export const Graph = function(reference) {
-    this.id = Graph.LATEST_ID++;
+    this.id = Graph.NEXT_ID++;
     this.name = Graph.DEFAULT_NAME;
     this.reference = reference;
     this.parent = null;
     this.children = [];
 }
 
-Graph.LATEST_ID = 0;
+Graph.NEXT_ID = 0;
 
 Graph.DEFAULT_NAME = "DEFAULT";
 

@@ -115,7 +115,8 @@ UserInterface.prototype.updateCollisions = function(mouseX, mouseY, mouseRange) 
     const currentCollisions = new Set();
     const collidedElements = this.getCollidedElements(mouseX, mouseY, mouseRange);
 
-    for(const element of collidedElements) {
+    for(let i = 0; i < collidedElements.length; i++) {
+        const element = collidedElements[i];
         const elementID = element.getID();
         const hasPreviousCollision = this.previousCollisions.has(elementID);
 

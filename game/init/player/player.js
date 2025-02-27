@@ -3,7 +3,7 @@ import { ArmyCamera } from "../../armyCamera.js";
 import { AnimationSystem } from "../../systems/animation.js";
 import { PathfinderSystem } from "../../systems/pathfinder.js";
 import { AttackSystem } from "../../systems/attack.js";
-import { ControllerHover } from "./hover.js";
+import { Hover } from "./hover.js";
 import { ArmyEntity } from "../armyEntity.js";
 import { ConstructionSystem } from "../../systems/construction.js";
 import { Controller } from "../../../source/controller/controller.js";
@@ -16,10 +16,10 @@ export const PlayerController = function(id) {
 
     this.spriteID = null;
     this.teamID = null;
+    this.selectedEntityID = null;
     this.attackers = [];
-    this.hover = new ControllerHover();
+    this.hover = new Hover();
     this.rangeShow = new RangeShow();
-    this.selectedEntities = new Set();
     this.state = PlayerController.STATE.NONE;
 }
 
@@ -51,8 +51,8 @@ PlayerController.prototype = Object.create(Controller.prototype);
 PlayerController.prototype.constructor = PlayerController;
 
 PlayerController.prototype.onEntityRemove = function(entityID) {
-    if(this.selectedEntities.has(entityID)) {
-        this.selectedEntities.delete(entityID);
+    if(this.selectedEntityID === entityID) {
+        this.selectedEntityID = null;
     }
 }
 
@@ -194,26 +194,16 @@ PlayerController.prototype.updateSpritePosition = function(gameContext) {
 }
 
 PlayerController.prototype.onClick = function(gameContext) {
-    const { client, uiManager, world } = gameContext;
-    const { cursor } = client;
-    const { positionX, positionY, radius } = cursor;
-    const clickedElements = uiManager.getCollidedElements(positionX, positionY, radius);
-
-    if(clickedElements.length > 0) {
-        return;
-    }
-
     const mouseTile = gameContext.getMouseTile();
     const { x, y } = mouseTile;
-    const mouseEntity = world.getTileEntity(x, y);
 
     switch(this.state) {
         case PlayerController.STATE.IDLE: {
-            this.onIdleClick(gameContext, mouseTile, mouseEntity);
+            this.onIdleClick(gameContext, x, y);
             break;
         }
         case PlayerController.STATE.SELECTED: {
-            this.onSelectedClick(gameContext, mouseTile, mouseEntity);
+            this.onSelectedClick(gameContext, x, y);
             break;
         }
         case PlayerController.STATE.SHOP: {
@@ -231,7 +221,7 @@ PlayerController.prototype.selectEntity = function(gameContext, entity) {
 
     const nodeList = PathfinderSystem.generateNodeList(gameContext, entity);
 
-    this.selectedEntities.add(entityID);
+    this.selectedEntityID = entityID;
     this.hover.updateNodes(gameContext, nodeList);
     this.addNodeOverlays(gameContext, nodeList);
     this.setState(PlayerController.STATE.SELECTED);
@@ -239,17 +229,25 @@ PlayerController.prototype.selectEntity = function(gameContext, entity) {
     AnimationSystem.playSelect(gameContext, entity);
 }
 
-PlayerController.prototype.deselectEntity = function(gameContext, entity) {
-    const { renderer } = gameContext;
+PlayerController.prototype.deselectEntity = function(gameContext) {
+    if(this.selectedEntityID === null) {
+        return;
+    }
+
+    const { renderer, world } = gameContext;
+    const { entityManager } = world;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
+    const entity = entityManager.getEntity(this.selectedEntityID);
+
+    if(entity) {
+        AnimationSystem.stopSelect(gameContext, entity);
+    }
 
     camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.MOVE);
 
-    this.selectedEntities.clear();
+    this.selectedEntityID = null;
     this.hover.clearNodes();
     this.setState(PlayerController.STATE.IDLE);
-
-    AnimationSystem.stopSelect(gameContext, entity);
 }
 
 PlayerController.prototype.hideCursorSprite = function(gameContext) {
@@ -298,8 +296,7 @@ PlayerController.prototype.updateSelectedCursor = function(gameContext) {
 PlayerController.prototype.updateSelectedEntity = function(gameContext) {
     const { world } = gameContext;
     const { entityManager } = world;
-    const selectedEntityID = this.getFirstSelected();
-    const selectedEntity = entityManager.getEntity(selectedEntityID);
+    const selectedEntity = entityManager.getEntity(this.selectedEntityID);
 
     if(!selectedEntity) {
         return;
@@ -327,12 +324,11 @@ PlayerController.prototype.queueAttack = function(gameContext, entity) {
     return isAttackable;
 }
 
-PlayerController.prototype.onSelectedClick = function(gameContext, mouseTile, mouseEntity) {
+PlayerController.prototype.onSelectedClick = function(gameContext, tileX, tileY) {
     const { world, client } = gameContext;
-    const { actionQueue, entityManager } = world;
+    const { actionQueue } = world;
     const { soundPlayer } = client;
-    const selectedEntityID = this.getFirstSelected();
-    const selectedEntity = entityManager.getEntity(selectedEntityID);
+    const mouseEntity = world.getTileEntity(tileX, tileY);
 
     if(mouseEntity) {
         const success = this.queueAttack(gameContext, mouseEntity);
@@ -340,18 +336,17 @@ PlayerController.prototype.onSelectedClick = function(gameContext, mouseTile, mo
         if(!success) {
             soundPlayer.playSound("sound_error", 0.5); 
         }
-    } else {
-        const { x, y } = mouseTile;
-        
-        actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.MOVE, selectedEntityID, x, y));
+    } else {        
+        actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.MOVE, this.selectedEntityID, tileX, tileY));
     }
 
-    this.deselectEntity(gameContext, selectedEntity);
+    this.deselectEntity(gameContext);
 }
 
-PlayerController.prototype.onIdleClick = function(gameContext, mouseTile, mouseEntity) {
+PlayerController.prototype.onIdleClick = function(gameContext, tileX, tileY) {
     const { world } = gameContext;
     const { actionQueue } = world;
+    const mouseEntity = world.getTileEntity(tileX, tileY);
 
     if(!mouseEntity) {
         return;
@@ -373,17 +368,6 @@ PlayerController.prototype.onIdleClick = function(gameContext, mouseTile, mouseE
             this.selectEntity(gameContext, mouseEntity);
         }
     }
-}
-
-PlayerController.prototype.getFirstSelected = function() {
-    if(this.selectedEntities.size === 0) {
-        return null;
-    }
-
-    const iterator = this.selectedEntities.values();
-    const firstSelected = iterator.next().value;
-
-    return firstSelected;
 }
 
 PlayerController.prototype.toggleRangeShow = function(gameContext) {

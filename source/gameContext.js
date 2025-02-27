@@ -44,10 +44,12 @@ export const GameContext = function() {
 GameContext.prototype.addClickEvent = function() {
     const { cursor } = this.client;
 
-    cursor.events.subscribe(Cursor.EVENT.LEFT_MOUSE_CLICK, EventEmitter.SUPER_ID, () => {
-        const clickedElements = this.uiManager.getCollidedElements(cursor.positionX, cursor.positionY, cursor.radius);
+    cursor.events.subscribe(Cursor.EVENT.LEFT_MOUSE_CLICK, EventEmitter.SUPER_ID, (cursorX, cursorY) => {
+        const clickedElements = this.uiManager.getCollidedElements(cursorX, cursorY, cursor.radius);
 
-        for(const element of clickedElements) {
+        for(let i = 0; i < clickedElements.length; i++) {
+            const element = clickedElements[i];
+
             element.events.emit(Button.EVENT.CLICKED);
         }
     });

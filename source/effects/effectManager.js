@@ -1,8 +1,6 @@
-import { IDGenerator } from "../idGenerator.js";
 import { Effect } from "./effect.js";
 
 export const EffectManager = function() {
-    this.idGenerator = new IDGenerator();
     this.activeEffects = new Map();
 }
 
@@ -30,9 +28,7 @@ EffectManager.prototype.addEffect = function(effect) {
         return;
     }
     
-    const effectID = this.idGenerator.getID();
-
-    effect.setID(effectID);
+    const effectID = effect.getID();
 
     this.activeEffects.set(effectID, effect);
 }
