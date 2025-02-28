@@ -430,10 +430,6 @@
             }
         }
     },
-    "RewardType": {
-        "Resource": { "id": "Resource", "reference": "ResourceType" },
-        "Item": { "id": "Item", "reference": "ItemType" }
-    },
     "CollectionType": {
         "Scout": {
             "id": "Scout",

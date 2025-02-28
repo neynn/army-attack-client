@@ -24,9 +24,10 @@ AnimationSystem.revertToIdle = function(gameContext, entityIDs) {
     const { world } = gameContext;
     const { entityManager } = world;
     
-    for(const entityID of entityIDs) {
+    for(let i = 0; i < entityIDs.length; i++) {
+        const entityID = entityIDs[i];
         const entity = entityManager.getEntity(entityID);
-        
+
         if(entity) {
             entity.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
         }

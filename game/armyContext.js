@@ -22,7 +22,6 @@ import { VersusModeState } from "./states/context/versusMode.js";
 import { AvianComponent } from "./components/avian.js";
 import { ConstructionAction } from "./actions/constructionAction.js";
 import { ReviveableComponent } from "./components/reviveable.js";
-import { ResourceComponent } from "./components/resource.js";
 import { ArmyCamera } from "./armyCamera.js";
 import { SpawnSystem } from "./systems/spawn.js";
 import { CounterAttackAction } from "./actions/counterAttackAction.js";
@@ -103,7 +102,6 @@ ArmyContext.prototype.init = function(resources) {
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.MOVE, MoveComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.POSITION, PositionComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.PRODUCTION, ProductionComponent);
-    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.RESOURCE, ResourceComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.REVIVEABLE, ReviveableComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.SPRITE, SpriteComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.TEAM, TeamComponent);

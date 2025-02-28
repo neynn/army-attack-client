@@ -28,7 +28,6 @@ ArmyEntity.COMPONENT = {
     UNIT_SIZE: "UnitSize",
     ARMOR: "Armor",
     AVIAN: "Avian",
-    RESOURCE: "Resource",
     POSITION: "Position",
     SPRITE: "Sprite",
     DIRECTION: "Direction",

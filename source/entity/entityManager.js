@@ -10,7 +10,6 @@ export const EntityManager = function() {
 }
 
 EntityManager.NEXT_ID = 0;
-EntityManager.INVALID_ID = -1;
 
 EntityManager.prototype = Object.create(FactoryOwner.prototype);
 EntityManager.prototype.constructor = EntityManager;

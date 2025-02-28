@@ -1,4 +1,4 @@
-import { PathfinderSystem } from "../../systems/pathfinder.js";
+import { PathfinderSystem } from "../systems/pathfinder.js";
 
 export const Hover = function() {
     this.tileX = -1;

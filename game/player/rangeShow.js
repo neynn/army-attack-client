@@ -1,14 +1,13 @@
-import { EntityManager } from "../../../source/entity/entityManager.js";
-import { SpriteManager } from "../../../source/graphics/spriteManager.js";
-import { Autotiler } from "../../../source/tile/autotiler.js";
-import { ArmyCamera } from "../../armyCamera.js";
-import { CAMERA_TYPES } from "../../enums.js";
-import { ArmyEntity } from "../armyEntity.js";
-import { ArmyMap } from "../armyMap.js";
+import { SpriteManager } from "../../source/graphics/spriteManager.js";
+import { Autotiler } from "../../source/tile/autotiler.js";
+import { ArmyCamera } from "../armyCamera.js";
+import { CAMERA_TYPES } from "../enums.js";
+import { ArmyEntity } from "../init/armyEntity.js";
+import { ArmyMap } from "../init/armyMap.js";
 
 export const RangeShow = function() {
     this.isActive = true;
-    this.lastTarget = EntityManager.INVALID_ID;
+    this.lastTarget = null;
 }
 
 RangeShow.prototype.toggle = function(gameContext, entity) {
@@ -72,7 +71,7 @@ RangeShow.prototype.show = function(gameContext, entity) {
 }
 
 RangeShow.prototype.reset = function(gameContext) {
-    if(this.lastTarget === EntityManager.INVALID_ID) {
+    if(this.lastTarget === null) {
         return;
     }
     
@@ -89,5 +88,5 @@ RangeShow.prototype.reset = function(gameContext) {
         spriteManager.swapLayer(SpriteManager.LAYER.MIDDLE, spriteID);
     }
 
-    this.setLastTarget(EntityManager.INVALID_ID);
+    this.setLastTarget(null);
 }

@@ -1,66 +1,66 @@
-import { ACTION_TYPES, CAMERA_TYPES } from "../../enums.js";
-import { ArmyCamera } from "../../armyCamera.js";
-import { AnimationSystem } from "../../systems/animation.js";
-import { PathfinderSystem } from "../../systems/pathfinder.js";
-import { AttackSystem } from "../../systems/attack.js";
+import { ACTION_TYPES, CAMERA_TYPES } from "../enums.js";
+import { ArmyCamera } from "../armyCamera.js";
+import { AnimationSystem } from "../systems/animation.js";
+import { PathfinderSystem } from "../systems/pathfinder.js";
+import { AttackSystem } from "../systems/attack.js";
+import { ArmyEntity } from "../init/armyEntity.js";
+import { ConstructionSystem } from "../systems/construction.js";
+import { Controller } from "../../source/controller/controller.js";
+import { ArmyContext } from "../armyContext.js";
+import { TileManager } from "../../source/tile/tileManager.js";
 import { Hover } from "./hover.js";
-import { ArmyEntity } from "../armyEntity.js";
-import { ConstructionSystem } from "../../systems/construction.js";
-import { Controller } from "../../../source/controller/controller.js";
-import { ArmyContext } from "../../armyContext.js";
 import { RangeShow } from "./rangeShow.js";
-import { TileManager } from "../../../source/tile/tileManager.js";
+import { Inventory } from "./inventory.js";
 
-export const PlayerController = function(id) {
+export const Player = function(id) {
     Controller.call(this, id);
 
     this.spriteID = null;
     this.teamID = null;
     this.selectedEntityID = null;
+    this.selectedFireMissionID = null;
     this.attackers = [];
+    this.state = Player.STATE.NONE;
     this.hover = new Hover();
     this.rangeShow = new RangeShow();
-    this.state = PlayerController.STATE.NONE;
+    this.inventory = new Inventory();
 }
 
-PlayerController.COMMAND = {
+Player.COMMAND = {
     CLICK: "CLICK",
     TOGGLE_RANGE: "TOGGLE_RANGE"
 };
 
-PlayerController.STATE = {
+Player.STATE = {
     NONE: 0,
     IDLE: 1,
     SELECTED: 2,
-    BUILD: 3,
-    SHOP: 4
+    FIRE_MISSION: 3,
+    BUILD: 4,
+    SHOP: 5
 };
 
-PlayerController.SPRITE_TYPE = {
+Player.SPRITE_TYPE = {
     MOVE: "move",
     SELECT: "select",
     ATTACK: "attack" 
 };
 
-PlayerController.OVERLAY_TYPE = {
+Player.OVERLAY_TYPE = {
     ENABLE: "enable",
     ATTACK: "attack"
 };
 
-PlayerController.prototype = Object.create(Controller.prototype);
-PlayerController.prototype.constructor = PlayerController;
+Player.prototype = Object.create(Controller.prototype);
+Player.prototype.constructor = Player;
 
-PlayerController.prototype.onEntityRemove = function(entityID) {
+Player.prototype.onEntityRemove = function(entityID) {
     if(this.selectedEntityID === entityID) {
         this.selectedEntityID = null;
     }
 }
 
-PlayerController.prototype.setState = function(state) {
-    this.state = state;
-}
-
-PlayerController.prototype.clearAttackers = function(gameContext) {
+Player.prototype.clearAttackers = function(gameContext) {
     const { renderer } = gameContext;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
 
@@ -69,7 +69,7 @@ PlayerController.prototype.clearAttackers = function(gameContext) {
     this.attackers.length = 0;
 }
 
-PlayerController.prototype.resetAttacker = function(gameContext, attackerID) {
+Player.prototype.resetAttacker = function(gameContext, attackerID) {
     const { world } = gameContext;
     const { entityManager } = world;
     const attacker = entityManager.getEntity(attackerID);
@@ -79,10 +79,10 @@ PlayerController.prototype.resetAttacker = function(gameContext, attackerID) {
     }
 }
 
-PlayerController.prototype.highlightAttackers = function(gameContext, target, attackers) {
+Player.prototype.highlightAttackers = function(gameContext, target, attackers) {
     const { renderer } = gameContext;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
-    const tileID = this.getOverlayID(gameContext, PlayerController.OVERLAY_TYPE.ATTACK);
+    const tileID = this.getOverlayID(gameContext, Player.OVERLAY_TYPE.ATTACK);
 
     camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.ATTACK);
 
@@ -96,7 +96,7 @@ PlayerController.prototype.highlightAttackers = function(gameContext, target, at
     }
 }
 
-PlayerController.prototype.updateAttackers = function(gameContext) {
+Player.prototype.updateAttackers = function(gameContext) {
     const mouseEntity = this.hover.getEntity(gameContext);
 
     if(!mouseEntity || !mouseEntity.isAttackable(gameContext, this.teamID)) {
@@ -128,7 +128,7 @@ PlayerController.prototype.updateAttackers = function(gameContext) {
     this.highlightAttackers(gameContext, mouseEntity, activeAttackers);
 }
 
-PlayerController.prototype.getOverlayID = function(gameContext, typeID) {
+Player.prototype.getOverlayID = function(gameContext, typeID) {
     const { tileManager } = gameContext;
     const { meta } = tileManager; 
     const overlay = this.config.overlays[typeID];
@@ -143,11 +143,11 @@ PlayerController.prototype.getOverlayID = function(gameContext, typeID) {
     return tileID;
 }
 
-PlayerController.prototype.addNodeOverlays = function(gameContext, nodeList) {
+Player.prototype.addNodeOverlays = function(gameContext, nodeList) {
     const { world, renderer } = gameContext;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
-    const enableTileID = this.getOverlayID(gameContext, PlayerController.OVERLAY_TYPE.ENABLE);
-    const attackTileID = this.getOverlayID(gameContext, PlayerController.OVERLAY_TYPE.ATTACK);
+    const enableTileID = this.getOverlayID(gameContext, Player.OVERLAY_TYPE.ENABLE);
+    const attackTileID = this.getOverlayID(gameContext, Player.OVERLAY_TYPE.ATTACK);
 
     camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.MOVE);
 
@@ -170,55 +170,63 @@ PlayerController.prototype.addNodeOverlays = function(gameContext, nodeList) {
     }
 }
 
-PlayerController.prototype.setSpriteTilePosition = function(gameContext, tileX, tileY) {
+Player.prototype.alignSpriteWithHover = function(gameContext) {
     const { renderer, spriteManager } = gameContext;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
     const sprite = spriteManager.getSprite(this.spriteID);
+    const { x, y } = camera.transformTileToPositionCenter(this.hover.tileX, this.hover.tileY);
+
+    sprite.setPosition(x, y);
+}
+
+Player.prototype.alignSpriteWithEntity = function(gameContext, entity) {
+    const { renderer, spriteManager } = gameContext;
+    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
+    const sprite = spriteManager.getSprite(this.spriteID);
+    const { tileX, tileY } = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
     const { x, y } = camera.transformTileToPositionCenter(tileX, tileY);
 
     sprite.setPosition(x, y);
 }
 
-PlayerController.prototype.updateSpritePosition = function(gameContext) {
+Player.prototype.autoUpdateSpritePosition = function(gameContext) {
     const hoverState = this.hover.getState();
 
     switch(hoverState) {
         case Hover.STATE.HOVER_ON_ENTITY: {
             const hoverEntity = this.hover.getEntity(gameContext);
-            const { tileX, tileY } = hoverEntity.getComponent(ArmyEntity.COMPONENT.POSITION);
-    
-            this.setSpriteTilePosition(gameContext, tileX, tileY);
+
+            this.alignSpriteWithEntity(gameContext, hoverEntity);
             break;
         }
         default: {
-            const { tileX, tileY } = this.hover;
-
-            this.setSpriteTilePosition(gameContext, tileX, tileY);
+            this.alignSpriteWithHover(gameContext);
             break;
         }
     }
 }
 
-PlayerController.prototype.onClick = function(gameContext) {
+Player.prototype.onClick = function(gameContext) {
     const mouseTile = gameContext.getMouseTile();
     const { x, y } = mouseTile;
 
     switch(this.state) {
-        case PlayerController.STATE.IDLE: {
+        case Player.STATE.IDLE: {
             this.onIdleClick(gameContext, x, y);
             break;
         }
-        case PlayerController.STATE.SELECTED: {
+        case Player.STATE.SELECTED: {
             this.onSelectedClick(gameContext, x, y);
             break;
         }
-        case PlayerController.STATE.SHOP: {
+        case Player.STATE.FIRE_MISSION: {
+            this.onFireMissionClick(gameContext, x, y);
             break;
         }
     }
 }
 
-PlayerController.prototype.selectEntity = function(gameContext, entity) {
+Player.prototype.selectEntity = function(gameContext, entity) {
     if(this.selectedEntityID !== null) {
         return;
     }
@@ -234,12 +242,11 @@ PlayerController.prototype.selectEntity = function(gameContext, entity) {
     this.selectedEntityID = entityID;
     this.hover.updateNodes(gameContext, nodeList);
     this.addNodeOverlays(gameContext, nodeList);
-    this.setState(PlayerController.STATE.SELECTED);
 
     AnimationSystem.playSelect(gameContext, entity);
 }
 
-PlayerController.prototype.deselectEntity = function(gameContext) {
+Player.prototype.deselectEntity = function(gameContext) {
     if(this.selectedEntityID === null) {
         return;
     }
@@ -257,17 +264,16 @@ PlayerController.prototype.deselectEntity = function(gameContext) {
 
     this.selectedEntityID = null;
     this.hover.clearNodes();
-    this.setState(PlayerController.STATE.IDLE);
 }
 
-PlayerController.prototype.hideCursorSprite = function(gameContext) {
+Player.prototype.hideCursorSprite = function(gameContext) {
     const { spriteManager } = gameContext;
     const sprite = spriteManager.getSprite(this.spriteID);
 
     sprite.hide();
 }
 
-PlayerController.prototype.updateCursorSprite = function(gameContext, typeID, spriteKey) {
+Player.prototype.updateCursorSprite = function(gameContext, typeID, spriteKey) {
     const { spriteManager } = gameContext;
     const spriteType = this.config.sprites[typeID];
     const spriteID = spriteType[spriteKey];
@@ -280,13 +286,13 @@ PlayerController.prototype.updateCursorSprite = function(gameContext, typeID, sp
     }
 }
 
-PlayerController.prototype.updateIdleCursor = function(gameContext) {
+Player.prototype.updateIdleCursor = function(gameContext) {
     const hoverState = this.hover.getState();
 
     switch(hoverState) {
         case Hover.STATE.HOVER_ON_ENTITY: {
             const hoveredEntity = this.hover.getEntity(gameContext);
-            const typeID = this.attackers.length > 0 ? PlayerController.SPRITE_TYPE.ATTACK : PlayerController.SPRITE_TYPE.SELECT;
+            const typeID = this.attackers.length > 0 ? Player.SPRITE_TYPE.ATTACK : Player.SPRITE_TYPE.SELECT;
             const spriteKey = `${hoveredEntity.config.dimX}-${hoveredEntity.config.dimY}`;
         
             this.updateCursorSprite(gameContext, typeID, spriteKey);
@@ -299,7 +305,7 @@ PlayerController.prototype.updateIdleCursor = function(gameContext) {
     }
 }
 
-PlayerController.prototype.updateSelectedCursor = function(gameContext) {
+Player.prototype.updateSelectedCursor = function(gameContext) {
     const hoverState = this.hover.getState();
 
     switch(hoverState) {
@@ -308,7 +314,7 @@ PlayerController.prototype.updateSelectedCursor = function(gameContext) {
             break;
         }
         case Hover.STATE.HOVER_ON_NODE: {
-            this.updateCursorSprite(gameContext, PlayerController.SPRITE_TYPE.MOVE, "1-1");
+            this.updateCursorSprite(gameContext, Player.SPRITE_TYPE.MOVE, "1-1");
             break;
         }
         default: {
@@ -318,7 +324,13 @@ PlayerController.prototype.updateSelectedCursor = function(gameContext) {
     }
 }
 
-PlayerController.prototype.updateSelectedEntity = function(gameContext) {
+Player.prototype.selectFireMission = function(gameContext, fireMission) {
+    const { world } = gameContext;
+    const fireCallTypes = world.getConfig("FireCallType");
+
+}
+
+Player.prototype.updateSelectedEntity = function(gameContext) {
     const { world } = gameContext;
     const { entityManager } = world;
     const selectedEntity = entityManager.getEntity(this.selectedEntityID);
@@ -336,7 +348,7 @@ PlayerController.prototype.updateSelectedEntity = function(gameContext) {
     }
 }
 
-PlayerController.prototype.queueAttack = function(gameContext, entity) {
+Player.prototype.queueAttack = function(gameContext, entity) {
     const { world } = gameContext;
     const { actionQueue } = world;
     const isAttackable = entity.isAttackable(gameContext, this.teamID);
@@ -350,7 +362,7 @@ PlayerController.prototype.queueAttack = function(gameContext, entity) {
     return isAttackable;
 }
 
-PlayerController.prototype.onSelectedClick = function(gameContext, tileX, tileY) {
+Player.prototype.onSelectedClick = function(gameContext, tileX, tileY) {
     const { world, client } = gameContext;
     const { actionQueue } = world;
     const { soundPlayer } = client;
@@ -367,9 +379,10 @@ PlayerController.prototype.onSelectedClick = function(gameContext, tileX, tileY)
     }
 
     this.deselectEntity(gameContext);
+    this.swapState(gameContext, Player.STATE.IDLE);
 }
 
-PlayerController.prototype.onIdleClick = function(gameContext, tileX, tileY) {
+Player.prototype.onIdleClick = function(gameContext, tileX, tileY) {
     const { world } = gameContext;
     const { actionQueue } = world;
     const mouseEntity = world.getTileEntity(tileX, tileY);
@@ -390,17 +403,22 @@ PlayerController.prototype.onIdleClick = function(gameContext, tileX, tileY) {
     if(!actionQueue.isRunning()) {
         if(mouseEntity.isMoveable()) {
             this.selectEntity(gameContext, mouseEntity);
+            this.swapState(gameContext, Player.STATE.SELECTED);
         }
     }
 }
 
-PlayerController.prototype.toggleRangeShow = function(gameContext) {
+Player.prototype.onFireMissionClick = function(gameContext, tileX, tileY) {
+
+}
+
+Player.prototype.toggleRangeShow = function(gameContext) {
     const hoverEntity = this.hover.getEntity(gameContext);
 
     this.rangeShow.toggle(gameContext, hoverEntity);
 }
 
-PlayerController.prototype.updateRangeIndicator = function(gameContext) {
+Player.prototype.updateRangeIndicator = function(gameContext) {
     if(!this.rangeShow.isEnabled() || !this.hover.targetChanged) {
         return;
     }
@@ -416,15 +434,14 @@ PlayerController.prototype.updateRangeIndicator = function(gameContext) {
     }
 }
 
-PlayerController.prototype.update = function(gameContext) {
+Player.prototype.update = function(gameContext) {
     const { world } = gameContext;
     const { actionQueue } = world;
 
     this.hover.update(gameContext);
-    this.updateSpritePosition(gameContext);
 
     switch(this.state) {
-        case PlayerController.STATE.IDLE: {
+        case Player.STATE.IDLE: {
             if(actionQueue.isRunning()) {
                 this.clearAttackers(gameContext);
             } else {
@@ -433,17 +450,51 @@ PlayerController.prototype.update = function(gameContext) {
         
             this.updateIdleCursor(gameContext);
             this.updateRangeIndicator(gameContext);
+            this.autoUpdateSpritePosition(gameContext);
             break;
         }
-        case PlayerController.STATE.SELECTED: {
+        case Player.STATE.SELECTED: {
             this.updateAttackers(gameContext);
             this.updateSelectedEntity(gameContext);
             this.updateSelectedCursor(gameContext);
             this.updateRangeIndicator(gameContext);
+            this.autoUpdateSpritePosition(gameContext);
             break;
         }
-        case PlayerController.STATE.SHOP: {
+        case Player.STATE.FIRE_MISSION: {
+            this.updateFireMissionCursor(gameContext);
+            this.alignSpriteWithHover(gameContext);
             break;
         }
     }
+}
+
+Player.prototype.exitState = function(gameContext) {
+    switch(this.state) {
+        default: {
+            break;
+        }
+    }
+
+    this.state = Player.STATE.NONE;
+}
+
+Player.prototype.enterState = function(gameContext, stateID) {
+    switch(stateID) {
+        case Player.STATE.FIRE_MISSION: {
+            this.rangeShow.reset(gameContext);
+            this.clearAttackers(gameContext);
+            break;
+        }
+        default: {
+            break;
+        }
+    }
+
+    this.state = stateID;
+}
+
+Player.prototype.swapState = function(gameContext, stateID) {
+    this.exitState(gameContext);
+    this.enterState(gameContext, stateID);
 }

@@ -2,7 +2,7 @@ import { Cursor } from "../../source/client/cursor.js";
 import { Factory } from "../../source/factory/factory.js";
 import { SpriteManager } from "../../source/graphics/spriteManager.js";
 import { CAMERA_TYPES } from "../enums.js";
-import { PlayerController } from "./player/player.js";
+import { Player } from "../player/player.js";
 
 export const ArmyControllerFactory = function() {
     Factory.call(this, "ARMY_CONTROLLER_FACOTRY");
@@ -36,7 +36,7 @@ ArmyControllerFactory.prototype.onCreate = function(gameContext, config) {
 
     switch(type) {
         case ArmyControllerFactory.TYPE.PLAYER: {
-            const controller = new PlayerController(id);
+            const controller = new Player(id);
             const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
             const controllerSprite = spriteManager.createSprite("cursor_attack_1x1", SpriteManager.LAYER.UI);
             const { x, y } = camera.transformTileToPositionCenter(0, 0);
@@ -44,16 +44,17 @@ ArmyControllerFactory.prototype.onCreate = function(gameContext, config) {
             
             controllerSprite.setPosition(x, y);
         
+            controller.inventory.init(gameContext);
             controller.spriteID = spriteID;
             controller.teamID = team ?? null;
             controller.setConfig(controllerType);
-            controller.setState(PlayerController.STATE.IDLE);
+            controller.enterState(gameContext, Player.STATE.IDLE);
             
             this.addDragEvent(gameContext);
 
             router.load(gameContext, controllerType.binds);
-            router.on(PlayerController.COMMAND.TOGGLE_RANGE, () => controller.toggleRangeShow(gameContext));
-            router.on(PlayerController.COMMAND.CLICK, () => controller.onClick(gameContext));
+            router.on(Player.COMMAND.TOGGLE_RANGE, () => controller.toggleRangeShow(gameContext));
+            router.on(Player.COMMAND.CLICK, () => controller.onClick(gameContext));
 
             return controller;
         }

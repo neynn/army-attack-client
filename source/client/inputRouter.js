@@ -71,8 +71,9 @@ InputRouter.prototype.load = function(gameContext, binds) {
         }
 
         const prefixID = inputID[0];
-        
-        if(inputID.length > 1 && (prefixID === InputRouter.PREFIX.DOWN || prefixID === InputRouter.PREFIX.UP)) {
+        const isPrefixed = inputID.length > 1 && (prefixID === InputRouter.PREFIX.DOWN || prefixID === InputRouter.PREFIX.UP);
+
+        if(isPrefixed) {
             const keyID = inputID.slice(1);
 
             this.bindInput(inputID, commandID);
