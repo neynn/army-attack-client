@@ -79,17 +79,15 @@ PlayerController.prototype.resetAttacker = function(gameContext, attackerID) {
     }
 }
 
-PlayerController.prototype.hightlightAttackers = function(gameContext, target) {
-    const { world, renderer } = gameContext;
-    const { entityManager } = world;
+PlayerController.prototype.highlightAttackers = function(gameContext, target, attackers) {
+    const { renderer } = gameContext;
     const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
     const tileID = this.getOverlayID(gameContext, PlayerController.OVERLAY_TYPE.ATTACK);
 
     camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.ATTACK);
 
-    for(let i = 0; i < this.attackers.length; i++) {
-        const attackerID = this.attackers[i];
-        const attacker = entityManager.getEntity(attackerID);
+    for(let i = 0; i < attackers.length; i++) {
+        const attacker = attackers[i];
         const { tileX, tileY } = attacker.getComponent(ArmyEntity.COMPONENT.POSITION);
 
         attacker.lookAtEntity(target);
@@ -107,28 +105,27 @@ PlayerController.prototype.updateAttackers = function(gameContext) {
         return;
     }
 
+    const newAttackers = [];
     const activeAttackers = AttackSystem.getActiveAttackers(gameContext, mouseEntity);
-    const attackerIDs = [];
 
     for(let i = 0; i < activeAttackers.length; i++) {
         const attacker = activeAttackers[i];
         const attackerID = attacker.getID();
 
-        attackerIDs.push(attackerID);
+        newAttackers.push(attackerID);
     }
 
-    const newAttackers = new Set(attackerIDs);
-
     for(let i = 0; i < this.attackers.length; i++) {
-        const attackerID = this.attackers[i];
+        const oldAttackerID = this.attackers[i];
+        const isAttacking = newAttackers.includes(oldAttackerID);
 
-        if(!newAttackers.has(attackerID)) {
-            this.resetAttacker(gameContext, attackerID);
+        if(!isAttacking) {
+            this.resetAttacker(gameContext, oldAttackerID);
         }
     }
 
-    this.attackers = attackerIDs;
-    this.hightlightAttackers(gameContext, mouseEntity);
+    this.attackers = newAttackers;
+    this.highlightAttackers(gameContext, mouseEntity, activeAttackers);
 }
 
 PlayerController.prototype.getOverlayID = function(gameContext, typeID) {
@@ -183,13 +180,22 @@ PlayerController.prototype.setSpriteTilePosition = function(gameContext, tileX, 
 }
 
 PlayerController.prototype.updateSpritePosition = function(gameContext) {
-    if(this.hover.isHoveringOnEntity()) {
-        const hoverEntity = this.hover.getEntity(gameContext);
-        const { tileX, tileY } = hoverEntity.getComponent(ArmyEntity.COMPONENT.POSITION);
+    const hoverState = this.hover.getState();
 
-        this.setSpriteTilePosition(gameContext, tileX, tileY);
-    } else {
-        this.setSpriteTilePosition(gameContext, this.hover.tileX, this.hover.tileY);
+    switch(hoverState) {
+        case Hover.STATE.HOVER_ON_ENTITY: {
+            const hoverEntity = this.hover.getEntity(gameContext);
+            const { tileX, tileY } = hoverEntity.getComponent(ArmyEntity.COMPONENT.POSITION);
+    
+            this.setSpriteTilePosition(gameContext, tileX, tileY);
+            break;
+        }
+        default: {
+            const { tileX, tileY } = this.hover;
+
+            this.setSpriteTilePosition(gameContext, tileX, tileY);
+            break;
+        }
     }
 }
 
@@ -213,6 +219,10 @@ PlayerController.prototype.onClick = function(gameContext) {
 }
 
 PlayerController.prototype.selectEntity = function(gameContext, entity) {
+    if(this.selectedEntityID !== null) {
+        return;
+    }
+
     const entityID = entity.getID();
 
     if(!this.hasEntity(entityID)) {
@@ -271,25 +281,40 @@ PlayerController.prototype.updateCursorSprite = function(gameContext, typeID, sp
 }
 
 PlayerController.prototype.updateIdleCursor = function(gameContext) {
-    if(!this.hover.isHoveringOnEntity()) {
-        this.hideCursorSprite(gameContext);
-        return;
+    const hoverState = this.hover.getState();
+
+    switch(hoverState) {
+        case Hover.STATE.HOVER_ON_ENTITY: {
+            const hoveredEntity = this.hover.getEntity(gameContext);
+            const typeID = this.attackers.length > 0 ? PlayerController.SPRITE_TYPE.ATTACK : PlayerController.SPRITE_TYPE.SELECT;
+            const spriteKey = `${hoveredEntity.config.dimX}-${hoveredEntity.config.dimY}`;
+        
+            this.updateCursorSprite(gameContext, typeID, spriteKey);
+            break;
+        }
+        default: {
+            this.hideCursorSprite(gameContext);
+            break;
+        }
     }
-
-    const hoveredEntity = this.hover.getEntity(gameContext);
-    const typeID = this.attackers.length > 0 ? PlayerController.SPRITE_TYPE.ATTACK : PlayerController.SPRITE_TYPE.SELECT;
-    const spriteKey = `${hoveredEntity.config.dimX}-${hoveredEntity.config.dimY}`;
-
-    this.updateCursorSprite(gameContext, typeID, spriteKey);
 }
 
 PlayerController.prototype.updateSelectedCursor = function(gameContext) {
-    if(this.hover.isHoveringOnEntity()) {
-        this.updateIdleCursor(gameContext);
-    } else if(!this.hover.isHoveringOnNode()) {
-        this.hideCursorSprite(gameContext);
-    } else {
-        this.updateCursorSprite(gameContext, PlayerController.SPRITE_TYPE.MOVE, "1-1");
+    const hoverState = this.hover.getState();
+
+    switch(hoverState) {
+        case Hover.STATE.HOVER_ON_ENTITY: {
+            this.updateIdleCursor(gameContext);
+            break;
+        }
+        case Hover.STATE.HOVER_ON_NODE: {
+            this.updateCursorSprite(gameContext, PlayerController.SPRITE_TYPE.MOVE, "1-1");
+            break;
+        }
+        default: {
+            this.hideCursorSprite(gameContext);
+            break;
+        }
     }
 }
 
@@ -302,10 +327,11 @@ PlayerController.prototype.updateSelectedEntity = function(gameContext) {
         return;
     }
 
+    const hoverTileX = this.hover.tileX;
     const { tileX } = selectedEntity.getComponent(ArmyEntity.COMPONENT.POSITION);
     
-    if(this.hover.tileX !== tileX) {
-        selectedEntity.lookHorizontal(this.hover.tileX < tileX);
+    if(hoverTileX !== tileX) {
+        selectedEntity.lookHorizontal(hoverTileX < tileX);
         selectedEntity.updateSpriteHorizontal(gameContext, selectedEntity);
     }
 }
@@ -359,9 +385,7 @@ PlayerController.prototype.onIdleClick = function(gameContext, tileX, tileY) {
         return;
     }
 
-    if(mouseEntity.hasComponent(ArmyEntity.COMPONENT.CONSTRUCTION)) {
-        ConstructionSystem.onInteract(gameContext, mouseEntity);
-    }
+    ConstructionSystem.onInteract(gameContext, mouseEntity);
 
     if(!actionQueue.isRunning()) {
         if(mouseEntity.isMoveable()) {
@@ -383,7 +407,9 @@ PlayerController.prototype.updateRangeIndicator = function(gameContext) {
 
     this.rangeShow.reset(gameContext);
 
-    if(this.hover.isHoveringOnEntity()) {
+    const hoverState = this.hover.getState();
+
+    if(hoverState === Hover.STATE.HOVER_ON_ENTITY) {
         const entity = this.hover.getEntity(gameContext);
 
         this.rangeShow.show(gameContext, entity);

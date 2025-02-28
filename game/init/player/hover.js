@@ -7,6 +7,31 @@ export const Hover = function() {
     this.currentTarget = null;
     this.lastTarget = null;
     this.targetChanged = false;
+    this.state = Hover.STATE.NONE;
+}
+
+Hover.STATE = {
+    NONE: 0,
+    HOVER_ON_ENTITY: 1,
+    HOVER_ON_NODE: 2
+};
+
+Hover.prototype.getState = function() {
+    return this.state;
+}
+
+Hover.prototype.setState = function() {
+    const onEntity = this.currentTarget !== null;
+    const nodeKey = this.getNodeKey(this.tileX, this.tileY)
+    const onNode = this.nodeMap.has(nodeKey);
+
+    if(onEntity) {
+        this.state = Hover.STATE.HOVER_ON_ENTITY;
+    } else if(onNode) {
+        this.state = Hover.STATE.HOVER_ON_NODE;
+    } else {
+        this.state = Hover.STATE.NONE;
+    }
 }
 
 Hover.prototype.getEntity = function(gameContext) {
@@ -52,16 +77,6 @@ Hover.prototype.getNodeKey = function(nodeX, nodeY) {
     return `${nodeX}-${nodeY}`;
 }
 
-Hover.prototype.isHoveringOnNode = function() {
-    const nodeKey = this.getNodeKey(this.tileX, this.tileY);
-
-    return this.nodeMap.has(nodeKey);
-}
-
-Hover.prototype.isHoveringOnEntity = function() {
-    return this.currentTarget !== null;
-}
-
 Hover.prototype.update = function(gameContext) {
     const { world } = gameContext;
     const { x, y } = gameContext.getMouseTile();
@@ -84,4 +99,6 @@ Hover.prototype.update = function(gameContext) {
     if(this.targetChanged) {
         this.lastTarget = previous;
     }
+
+    this.setState();
 }

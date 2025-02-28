@@ -5,13 +5,14 @@ import { SpawnSystem } from "./spawn.js";
 export const ConstructionSystem = function() {}
 
 ConstructionSystem.onInteract = function(gameContext, entity) {
-    const { world } = gameContext;
-    const { actionQueue } = world;
     const constructionComponent = entity.getComponent(ArmyEntity.COMPONENT.CONSTRUCTION);
 
     if(!constructionComponent) {
         return;
     }
+    
+    const { world } = gameContext;
+    const { actionQueue } = world;
     
     if(constructionComponent.isComplete()) {
         if(!actionQueue.isRunning()) {
