@@ -1,3 +1,4 @@
+import { Logger } from "../logger.js";
 import { Animation } from "./animation.js";
 
 export const TileSheet = function() {
@@ -30,7 +31,8 @@ TileSheet.prototype.addAnimation = function(animationID, animation) {
     const frameCount = animation.getFrameCount();
 
     if(frameCount < 1) {
-        console.error(`Animation ${animationID} has no frames!`);
+        Logger.log(Logger.CODE.ENGINE_WARN, "Animation has no frames!", "TileSheet.prototype.addAnimation", { animationID });
+
         return;
     }
 
@@ -49,7 +51,8 @@ TileSheet.prototype.createPatternFrame = function(pattern, frames) {
         const frameData = frames[id];
 
         if(!frameData) {
-            console.error(`Frame ${id} does not exist!`);
+            Logger.log(Logger.CODE.ENGINE_WARN, "Frame does not exist!", "TileSheet.prototype.createPatternFrame", { "frameID": id });
+
             continue;
         }
 
@@ -72,7 +75,8 @@ TileSheet.prototype.createPatternFrame = function(pattern, frames) {
 
 TileSheet.prototype.createFrame = function(frameData) {
     if(!frameData) {
-        console.error(`Frame ${id} does not exist!`);
+        Logger.log(Logger.CODE.ENGINE_WARN, "FrameData does not exist!", "TileSheet.prototype.createFrame");
+
         return [];
     }
 

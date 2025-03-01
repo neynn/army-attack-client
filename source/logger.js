@@ -1,88 +1,120 @@
-export const Logger = {
-    successfulLogs: 0,
-    failedLogs: 0,
-    logs: [],
-    log: function(isSuccess, reason, script, attachments) {},
-    warn: function(isSuccess, reason, script, attachments) {},
-    error: function(isSuccess, reason, script, attachments) {},
-    clear: function() {},
-    exportLogs: function() {}
+import { saveTemplateAsFile } from "../helpers.js";
+
+export const Logger = function() {
+    this.engineLogs = 0;
+    this.gameLogs = 0;
+    this.logs = [];
 }
 
-Logger.SHOW_LOGS = false;
+Logger.INSTANCE = new Logger();
 
-Logger.log = function(isSuccess, reason, script, attachments) {
+Logger.EXPORT_CODE_ALL = -1;
+
+Logger.SHOW_LOGS = true;
+
+Logger.CODE = {
+    INFO: 0,
+    WARN: 1,
+    ERROR: 2,
+    ENGINE_INFO: 3,
+    ENGINE_WARN: 4,
+    ENGINE_ERROR: 5
+};
+
+Logger.prototype.clear = function() {
+    this.engineLogs = 0;
+    this.gameLogs = 0;
+    this.logs.length = 0;
+}
+
+Logger.prototype.exportLogs = function(exportCode) {
+    if(exportCode === Logger.EXPORT_CODE_ALL) {
+        return JSON.stringify(this.logs, null, 4);
+    }
+
+    const filteredLogs = [];
+
+    for(let i = 0; i < this.logs.length; i++) {
+        const log = this.logs[i];
+        const { code } = log;
+
+        if(code === exportCode) {
+            filteredLogs.push(log);
+        }
+    }
+
+    return JSON.stringify(filteredLogs, null, 4);
+}
+
+Logger.prototype.log = function(code, reason, script, attachments) {
     const logEntry = {
-        "success": isSuccess,
+        "code": code,
+        "timestamp": new Date().toISOString(),
         "reason": reason,
         "script": script,
         "attachments": attachments
-    }
+    };
 
-    if(!isSuccess) {
-        logEntry.timestamp = new Date().toISOString();
-        Logger.failedLogs++;
-        Logger.logs.push(logEntry);
-        if(Logger.SHOW_LOGS) {
-            console.log(logEntry);
+    switch(code) {
+        case Logger.CODE.INFO: {
+            this.gameLogs++;
+            break;
         }
-    } else {
-        Logger.successfulLogs++;
-    }
-
-    return logEntry;
-}
-
-Logger.warn = function(isSuccess, reason, script, attachments) {
-    const logEntry = {
-        "success": isSuccess,
-        "reason": reason,
-        "script": script,
-        "attachments": attachments
-    }
-
-    if(!isSuccess) {
-        logEntry.timestamp = new Date().toISOString();
-        Logger.failedLogs++;
-        Logger.logs.push(logEntry);
-        if(Logger.SHOW_LOGS) {
-            console.warn(logEntry);
+        case Logger.CODE.WARN: {
+            this.gameLogs++;
+            this.logs.push(logEntry);
+            break;
         }
-    } else {
-        Logger.successfulLogs++;
-    }
-
-    return logEntry;
-}
-
-Logger.error = function(isSuccess, reason, script, attachments) {
-    const logEntry = {
-        "success": isSuccess,
-        "reason": reason,
-        "script": script,
-        "attachments": attachments
-    }
-
-    if(!isSuccess) {
-        logEntry.timestamp = new Date().toISOString();
-        Logger.failedLogs++;
-        Logger.logs.push(logEntry);
-        if(Logger.SHOW_LOGS) {
-            console.error(logEntry);
+        case Logger.CODE.ERROR: {
+            this.gameLogs++;
+            this.logs.push(logEntry);
+            break;
         }
-    } else {
-        Logger.successfulLogs++;
+        case Logger.CODE.ENGINE_INFO: {
+            this.engineLogs++;
+            break;
+        }
+        case Logger.CODE.ENGINE_WARN: {
+            this.engineLogs++;
+            break;
+        }
+        case Logger.CODE.ENGINE_ERROR: {
+            this.engineLogs++;
+            this.logs.push(logEntry);
+            break;
+        }
     }
-
-    return logEntry;
+   
+    if(Logger.SHOW_LOGS) {
+        switch(code) {
+            case Logger.CODE.INFO: {
+                console.log(logEntry)
+                break;
+            }
+            case Logger.CODE.ENGINE_INFO: {
+                console.info(logEntry);
+                break;
+            }
+            case Logger.CODE.WARN:
+            case Logger.CODE.ENGINE_WARN: {
+                console.warn(logEntry);
+                break;
+            }
+            case Logger.CODE.ERROR:
+            case Logger.CODE.ENGINE_ERROR: {
+                console.error(logEntry);
+                break;
+            }
+        }
+    }
 }
 
-Logger.clear = function() {
-    Logger.successfulLogs = 0;
-    Logger.failedLogs = 0;
-    Logger.logs = [];
+Logger.exportLogs = function(exportCode) {
+    const logs = Logger.INSTANCE.exportLogs(exportCode);
+
+    saveTemplateAsFile("logger.json", logs);
 }
 
-Logger.exportLogs = function() {
-    return JSON.stringify(Logger.logs, null, 4);
+Logger.log = function(code, reason, script, attachments) {
+    Logger.INSTANCE.log(code, reason, script, attachments);
 }

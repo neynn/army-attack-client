@@ -1,3 +1,4 @@
+import { Logger } from "../logger.js";
 import { Animation } from "./animation.js";
 
 export const SpriteSheet = function() {
@@ -41,7 +42,8 @@ SpriteSheet.prototype.createFrame = function(frameID) {
     const frameData = this.frames[frameID];
 
     if(!frameData) {
-        console.error(`Frame ${id} does not exist!`);
+        Logger.log(Logger.CODE.ENGINE_WARN, "Frame does not exist!", "SpriteSheet.prototype.createFrame", { frameID });
+
         return frame;
     }
 
@@ -63,7 +65,8 @@ SpriteSheet.prototype.addAnimation = function(animationID, animation) {
     const frameCount = animation.getFrameCount();
 
     if(frameCount < 1) {
-        console.error(`Animation ${animationID} has no frames!`);
+        Logger.log(Logger.CODE.ENGINE_WARN, "Animation has no frames!", "SpriteSheet.prototype.addAnimation", { animationID });
+
         return;
     }
 

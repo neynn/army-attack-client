@@ -81,7 +81,7 @@ World.prototype.getTileEntity = function(tileX, tileY) {
 
 World.prototype.createController = function(gameContext, config) {
     if(!config) {
-        Logger.error(false, "Config must be an object!", "World.prototype.createController", null);
+        Logger.log(false, "Config must be an object!", "World.prototype.createController", null);
         return null;
     }
 
@@ -110,7 +110,7 @@ World.prototype.destroyController = function(controllerID) {
 
 World.prototype.createEntity = function(gameContext, config) {
     if(!config) {
-        Logger.error(false, "Config does not exist!", "World.prototype.createEntity", null);
+        Logger.log(false, "Config does not exist!", "World.prototype.createEntity", null);
         return null;
     }
 
@@ -118,7 +118,7 @@ World.prototype.createEntity = function(gameContext, config) {
     const entity = this.entityManager.createEntity(gameContext, config, id);
 
     if(!entity) {
-        Logger.error(false, "Entity creation failed!", "World.prototype.createEntity", null);
+        Logger.log(false, "Entity creation failed!", "World.prototype.createEntity", null);
         return null;
     }
 
@@ -149,7 +149,7 @@ World.prototype.getConfig = function(elementID) {
         return this.config[elementID];
     }
 
-    Logger.error(false, "Element does not exist!", "World.prototype.getConfig", { elementID });
+    Logger.log(false, "Element does not exist!", "World.prototype.getConfig", { elementID });
 
     return null;
 }

@@ -1,3 +1,4 @@
+import { Logger } from "../logger.js";
 import { LoadableImage } from "./loadableImage.js";
 import { PathHandler } from "./pathHandler.js";
 
@@ -33,14 +34,14 @@ ImageManager.prototype.requestImage = function(imageID, onLoad) {
 
     loadableImage.requestImage()
     .then((image) => onLoad(imageID, image, loadableImage))
-    .catch((code) => console.error(`Image ${imageID} could not be loaded! Code: ${code}`));
+    .catch((code) => Logger.log(Logger.CODE.ENGINE_WARN, "Image could not be loaded!", "ImageManager.prototype.requestImage", { imageID, "error": code }));
 }
 
 ImageManager.prototype.requestAllImages = function(onLoad) {
     for(const [imageID, loadableImage] of this.images) {
         loadableImage.requestImage()
         .then((image) => onLoad(imageID, image, loadableImage))
-        .catch((code) => console.error(`Image ${imageID} could not be loaded! Code: ${code}`));
+        .catch((code) => Logger.log(Logger.CODE.ENGINE_WARN, "Image could not be loaded!", "ImageManager.prototype.requestImage", { imageID, "error": code }));
     }
 }
 

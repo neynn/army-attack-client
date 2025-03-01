@@ -1,3 +1,4 @@
+import { Logger } from "../logger.js";
 import { clampValue } from "../math/math.js";
 import { Layer } from "./layer.js";
 import { Tracker } from "./tracker.js";
@@ -232,12 +233,14 @@ WorldMap.prototype.getTile = function(layerID, tileX, tileY) {
     const layer = this.layers.get(layerID);
 
     if(!layer) {
-        console.warn(`Layer ${layerID} does not exist or tile ${tileX} ${tileY} is out of bounds! Returning null...`);
+        Logger.log(Logger.CODE.ENGINE_WARN, "Layer does not exist or tile is out of bounds!", "WorldMap.prototype.getTile", { layerID, tileX, tileY });
+
         return null;
     }
 
     if(this.isTileOutOfBounds(tileX, tileY)) {
-        console.warn(`Tile ${tileX} ${tileY} is out of bounds! Returning null...`);
+        Logger.log(Logger.CODE.ENGINE_WARN, "Layer does not exist or tile is out of bounds!", "WorldMap.prototype.getTile", { layerID, tileX, tileY });
+
         return null;
     }
 

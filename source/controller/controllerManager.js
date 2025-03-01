@@ -76,14 +76,14 @@ ControllerManager.prototype.addEntity = function(controllerID, entityID) {
     const controller = this.controllers.get(controllerID);
 
     if(!controller) {
-        Logger.error(false, "Controller does not exist!", "ControllerManager.prototype.addEntity", { controllerID, entityID });
+        Logger.log(false, "Controller does not exist!", "ControllerManager.prototype.addEntity", { controllerID, entityID });
         return;
     }
 
     const currentOwner = this.getOwnerOf(entityID);
 
     if(currentOwner !== null) {
-        Logger.warn(false, "Entity is already linked to controller! Transferring ownership!", { controllerID, entityID });
+        Logger.log(false, "Entity is already linked to controller! Transferring ownership!", { controllerID, entityID });
 
         currentOwner.removeEntity(entityID);
     }

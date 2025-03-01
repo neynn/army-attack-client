@@ -1,3 +1,4 @@
+import { Logger } from "../logger.js";
 import { Animation } from "./animation.js";
 
 export const ImageSheet = function() {
@@ -39,7 +40,8 @@ ImageSheet.prototype.createFrame = function(frameID) {
     const frameData = this.frames[frameID];
 
     if(!frameData) {
-        console.error(`Frame ${id} does not exist!`);
+        Logger.log(Logger.CODE.ENGINE_WARN, "Frame does not exist!", "ImageSheet.prototype.createFrame", { frameID });
+
         return frame;
     }
 
@@ -62,7 +64,8 @@ ImageSheet.prototype.createPatternFrame = function(patternID) {
     const pattern = this.patterns[patternID];
 
     if(!pattern) {
-        console.error(`Pattern ${patternID} does not exist!`);
+        Logger.log(Logger.CODE.ENGINE_WARN, "Pattern does not exist!", "ImageSheet.prototype.createPatternFrame", { patternID });
+
         return frame;
     }
 
@@ -71,7 +74,8 @@ ImageSheet.prototype.createPatternFrame = function(patternID) {
         const frameData = this.frames[id];
 
         if(!frameData) {
-            console.error(`Frame ${id} does not exist!`);
+            Logger.log(Logger.CODE.ENGINE_WARN, "Frame does not exist!", "ImageSheet.prototype.createPatternFrame", { "frameID": id });
+
             continue;
         }
 
@@ -94,7 +98,8 @@ ImageSheet.prototype.addAnimation = function(animationID, animation) {
     const frameCount = animation.getFrameCount();
 
     if(frameCount < 1) {
-        console.error(`Animation ${animationID} has no frames!`);
+        Logger.log(Logger.CODE.ENGINE_WARN, "Animation has no frames!", "ImageSheet.prototype.addAnimation", { animationID });
+        
         return;
     }
 
