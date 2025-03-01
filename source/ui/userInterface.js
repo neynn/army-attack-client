@@ -20,8 +20,8 @@ export const UserInterface = function(id) {
 
 UserInterface.ELEMENT_BEHAVIOR = {
     NONE: 0,
-    COLLIDEABLE: 1,
-    CLICKABLE: 2
+    COLLIDEABLE: 1 << 0,
+    CLICKABLE: 1 << 1
 };
 
 UserInterface.ELEMENT_TYPE = {
@@ -168,15 +168,50 @@ UserInterface.prototype.getCollidedElements = function(mouseX, mouseY, mouseRang
 
 UserInterface.prototype.createElement = function(typeID, DEBUG_NAME) {
     switch(typeID) {
-        case UserInterface.ELEMENT_TYPE.BUTTON: return new Button(UserInterface.ELEMENT_BEHAVIOR.CLICKABLE, DEBUG_NAME);
-        case UserInterface.ELEMENT_TYPE.CONTAINER: return new Container(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE, DEBUG_NAME);
-        case UserInterface.ELEMENT_TYPE.DYNAMIC_TEXT: return new DynamicTextElement(UserInterface.ELEMENT_BEHAVIOR.NONE, DEBUG_NAME);
-        case UserInterface.ELEMENT_TYPE.ICON: return new Icon(UserInterface.ELEMENT_BEHAVIOR.NONE, DEBUG_NAME);
-        case UserInterface.ELEMENT_TYPE.SCROLLBAR: return new Scrollbar(UserInterface.ELEMENT_BEHAVIOR.CLICKABLE, DEBUG_NAME);
-        case UserInterface.ELEMENT_TYPE.TEXT: return new TextElement(UserInterface.ELEMENT_BEHAVIOR.NONE, DEBUG_NAME);
+        case UserInterface.ELEMENT_TYPE.BUTTON: {
+            const element = new Button(DEBUG_NAME);
+
+            element.addBehaviorFlag(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE);
+            element.addBehaviorFlag(UserInterface.ELEMENT_BEHAVIOR.CLICKABLE);
+
+            return element
+        }
+        case UserInterface.ELEMENT_TYPE.CONTAINER: {
+            const element = new Container(DEBUG_NAME);
+
+            element.addBehaviorFlag(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE);
+
+            return element;
+        }
+        case UserInterface.ELEMENT_TYPE.DYNAMIC_TEXT: {
+            const element = new DynamicTextElement(DEBUG_NAME);
+
+            return element;
+        }
+        case UserInterface.ELEMENT_TYPE.ICON: {
+            const element = new Icon(DEBUG_NAME);
+
+            return element;
+        }
+        case UserInterface.ELEMENT_TYPE.SCROLLBAR: {
+            const element = new Scrollbar(DEBUG_NAME);
+
+            element.addBehaviorFlag(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE);
+            element.addBehaviorFlag(UserInterface.ELEMENT_BEHAVIOR.CLICKABLE);
+
+            return element;
+        }
+        case UserInterface.ELEMENT_TYPE.TEXT: {
+            const element = new TextElement(DEBUG_NAME);
+
+            return element;
+        }
         default: {
             Logger.log(Logger.CODE.ENGINE_WARN, "ElementType does not exist!", "UserInterface.prototype.createElement", { typeID });
-            return new UIElement(UserInterface.ELEMENT_BEHAVIOR.NONE, DEBUG_NAME);
+
+            const element = new UIElement(DEBUG_NAME);
+    
+            return element;
         }
     }
 }

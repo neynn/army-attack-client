@@ -1,9 +1,10 @@
 import { Outline } from "../../graphics/applyable/outline.js";
+import { Logger } from "../../logger.js";
 import { isCircleCicleIntersect, isRectangleRectangleIntersect } from "../../math/math.js";
 import { UIElement } from "../uiElement.js";
 
-export const Button = function(behavior, DEBUG_NAME) {
-    UIElement.call(this, behavior, DEBUG_NAME);
+export const Button = function(DEBUG_NAME) {
+    UIElement.call(this, DEBUG_NAME);
 
     this.defers = [];
     this.shape = Button.SHAPE.RECTANGLE;
@@ -63,7 +64,8 @@ Button.prototype.init = function(config) {
             break;
         }
         default: {
-            console.warn(`Shape ${shape} does not exist!`);
+            Logger.log(Logger.CODE.ENGINE_WARN, "Shape does not exist!", "Button.prototype.init", { "shapeID": shape });
+            break;
         }
     }
 }
@@ -90,9 +92,19 @@ Button.prototype.isColliding = function(mouseX, mouseY, mouseRange) {
     const { x, y } = this.position;
 
     switch(this.shape) {
-        case Button.SHAPE.RECTANGLE: return isRectangleRectangleIntersect(x, y, this.width, this.height, mouseX, mouseY, mouseRange, mouseRange);
-        case Button.SHAPE.CIRCLE: return isCircleCicleIntersect(x, y, this.width, mouseX, mouseY, mouseRange);
-        default: return false;
+        case Button.SHAPE.RECTANGLE: {
+            const isColliding = isRectangleRectangleIntersect(x, y, this.width, this.height, mouseX, mouseY, mouseRange, mouseRange);
+
+            return isColliding;
+        }
+        case Button.SHAPE.CIRCLE: {
+            const isColliding = isCircleCicleIntersect(x, y, this.width, mouseX, mouseY, mouseRange);
+
+            return isColliding;
+        }
+        default: {
+            return false;
+        }
     }
 }
 

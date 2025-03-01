@@ -1,12 +1,13 @@
 import { EventEmitter } from "../events/eventEmitter.js";
 import { Drawable } from "../graphics/drawable.js";
 import { Logger } from "../logger.js";
+import { UserInterface } from "./userInterface.js";
 
-export const UIElement = function(behavior, DEBUG_NAME) {
+export const UIElement = function(DEBUG_NAME) {
     Drawable.call(this, DEBUG_NAME);
 
     this.anchor = UIElement.ANCHOR_TYPE.TOP_LEFT;
-    this.behavior = behavior;
+    this.behavior = 0;
     this.originX = 0;
     this.originY = 0;
     this.width = 0;
@@ -27,29 +28,37 @@ UIElement.EVENT = {
 };
 
 UIElement.ANCHOR_TYPE = {
-    "TOP_CENTER": 0,
-    "TOP_LEFT": 1,
-    "TOP_RIGHT": 2,
-    "BOTTOM_CENTER": 3,
-    "BOTTOM_LEFT": 4,
-    "BOTTOM_RIGHT": 5,
-    "CENTER": 6,
-    "LEFT": 7,
-    "RIGHT": 8
+    TOP_CENTER: 0,
+    TOP_LEFT: 1,
+    TOP_RIGHT: 2,
+    BOTTOM_CENTER: 3,
+    BOTTOM_LEFT: 4,
+    BOTTOM_RIGHT: 5,
+    CENTER: 6,
+    LEFT: 7,
+    RIGHT: 8
 };
 
 UIElement.prototype = Object.create(Drawable.prototype);
 UIElement.prototype.constructor = UIElement;
 
+UIElement.prototype.hasBehaviorFlag = function(flag) {
+    return (this.behavior & flag) !== 0;
+}
+
+UIElement.prototype.addBehaviorFlag = function(flag) {
+    this.behavior |= flag;
+}
+
 UIElement.prototype.init = function(config) {
     Logger.log(Logger.CODE.ENGINE_WARN, "Method has not been defined", "UIElement.prototype.init", null);
 }
 
-UIElement.prototype.isColliding = function(mouseX, mouseY, mouseRange) {
-    return false;
-}
-
 UIElement.prototype.getCollisions = function(mouseX, mouseY, mouseRange) {
+    if(!this.hasBehaviorFlag(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE)) {
+        return [];
+    }
+
     const collidedElements = [];
     const referenceStack = [this];
     const positionStack = [mouseX, mouseY];
@@ -71,11 +80,15 @@ UIElement.prototype.getCollisions = function(mouseX, mouseY, mouseRange) {
         for(let i = 0; i < children.length; i++) {
             const child = children[i];
             const reference = child.getReference();
-
+            
             if(reference instanceof UIElement) {
-                referenceStack.push(reference);
-                positionStack.push(nextX);
-                positionStack.push(nextY);
+                const hasFlag = reference.hasBehaviorFlag(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE);
+
+                if(hasFlag) {
+                    referenceStack.push(reference);
+                    positionStack.push(nextX);
+                    positionStack.push(nextY);
+                }
             }
         }
 

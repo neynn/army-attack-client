@@ -1,7 +1,7 @@
 import { UIElement } from "../uiElement.js";
 
-export const Scrollbar = function(behavior, DEBUG_NAME) {
-    UIElement.call(this, behavior, DEBUG_NAME);
+export const Scrollbar = function(DEBUG_NAME) {
+    UIElement.call(this, DEBUG_NAME);
 
     this.events.listen(UIElement.EVENT.CLICKED);
 }

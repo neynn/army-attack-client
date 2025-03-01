@@ -1,7 +1,7 @@
 import { UIElement } from "../uiElement.js";
 
-export const Icon = function(behavior, DEBUG_NAME) {
-    UIElement.call(this, behavior, DEBUG_NAME);
+export const Icon = function(DEBUG_NAME) {
+    UIElement.call(this, DEBUG_NAME);
     
     this.image = null;
 }

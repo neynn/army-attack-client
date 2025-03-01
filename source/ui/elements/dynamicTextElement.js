@@ -1,8 +1,8 @@
 import { TextStyle } from "../../graphics/applyable/textStyle.js";
 import { UIElement } from "../uiElement.js";
 
-export const DynamicTextElement = function(behavior, DEBUG_NAME) {
-    UIElement.call(this, behavior, DEBUG_NAME);
+export const DynamicTextElement = function(DEBUG_NAME) {
+    UIElement.call(this, DEBUG_NAME);
 
     this.fullText = "";
     this.style = new TextStyle();
