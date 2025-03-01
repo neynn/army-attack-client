@@ -10,7 +10,7 @@ export const EntityManager = function() {
     this.entityMap = new Map();
 }
 
-EntityManager.NEXT_ID = 5;
+EntityManager.NEXT_ID = 0;
 
 EntityManager.prototype = Object.create(FactoryOwner.prototype);
 EntityManager.prototype.constructor = EntityManager;
@@ -133,7 +133,7 @@ EntityManager.prototype.getEntity = function(entityID) {
 
         if(currentID === entityID) {
             this.entityMap.set(entityID, i);
-            
+
             return entity;
         }
     }
