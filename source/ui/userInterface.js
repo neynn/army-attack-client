@@ -167,7 +167,7 @@ UserInterface.prototype.addClick = function(buttonID, onClick) {
         return;
     }
 
-    button.events.subscribe(Button.EVENT.CLICKED, this.id, onClick);
+    button.events.subscribe(UIElement.EVENT.CLICKED, this.id, onClick);
 }
 
 UserInterface.prototype.removeClick = function(buttonID) {
@@ -177,7 +177,7 @@ UserInterface.prototype.removeClick = function(buttonID) {
         return;
     }
 
-    button.events.mute(Button.EVENT.CLICKED);
+    button.events.mute(UIElement.EVENT.CLICKED);
 }
 
 UserInterface.prototype.setText = function(textID, message) {
@@ -197,7 +197,7 @@ UserInterface.prototype.addDynamicText = function(textID, onCall) {
         return;
     }
 
-    text.events.subscribe(DynamicTextElement.EVENT_REQUEST_TEXT, this.id, (element) => onCall(element));
+    text.events.subscribe(UIElement.EVENT.REQUEST_TEXT, this.id, (element) => onCall(element));
 }
 
 UserInterface.prototype.removeDynamicText = function(textID) {
@@ -207,7 +207,7 @@ UserInterface.prototype.removeDynamicText = function(textID) {
         return;
     }
 
-    text.events.mute(DynamicTextElement.EVENT_REQUEST_TEXT);
+    text.events.mute(UIElement.EVENT.REQUEST_TEXT);
 }
 
 UserInterface.prototype.createElement = function(name, typeID, config) {

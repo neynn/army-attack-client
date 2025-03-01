@@ -14,14 +14,10 @@ export const Button = function(DEBUG_NAME) {
     this.outline.color.setColor(255, 255, 255, 1);
     this.outline.enable();
 
-    this.events.listen(Button.EVENT.CLICKED);
+    this.events.listen(UIElement.EVENT.CLICKED);
     this.events.subscribe(UIElement.EVENT.FIRST_COLLISION, this.DEBUG_NAME, () => this.highlight.enable());
     this.events.subscribe(UIElement.EVENT.FINAL_COLLISION, this.DEBUG_NAME, () => this.highlight.disable());
 }
-
-Button.EVENT = {
-    CLICKED: "EVENT_CLICKED"
-};
 
 Button.SHAPE = {
     RECTANGLE: 0,
@@ -35,6 +31,10 @@ Button.prototype.setShape = function(shape) {
     if(shape !== undefined) {
         this.shape = shape;
     }
+}
+
+Button.prototype.onClick = function() {
+    this.events.emit(UIElement.EVENT.CLICKED);
 }
 
 Button.prototype.init = function(config) {

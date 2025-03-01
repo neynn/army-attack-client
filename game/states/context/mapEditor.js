@@ -3,12 +3,12 @@ import { Cursor } from "../../../source/client/cursor.js";
 import { CameraContext } from "../../../source/camera/cameraContext.js";
 import { MapEditor } from "../../../source/map/mapEditor.js";
 import { clampValue } from "../../../source/math/math.js";
-import { Button } from "../../../source/ui/elements/button.js";
 import { saveMap } from "../../../helpers.js";
 import { ArmyContext } from "../../armyContext.js";
 import { Renderer } from "../../../source/renderer.js";
 import { ArmyCamera } from "../../armyCamera.js";
 import { World } from "../../../source/world.js";
+import { UIElement } from "../../../source/ui/uiElement.js";
 
 export const MapEditorState = function() {
     this.id = "MAP_EDITOR_STATE";
@@ -177,7 +177,7 @@ MapEditorState.prototype.loadButtonEvents = function(gameContext) {
     for(const buttonID of slots) {
         const button = editorInterface.getElement(buttonID);
 
-        button.events.unsubscribe(Button.EVENT.CLICKED, this.id);
+        button.events.unsubscribe(UIElement.EVENT.CLICKED, this.id);
         button.clearDefers();
     }
 
@@ -187,7 +187,7 @@ MapEditorState.prototype.loadButtonEvents = function(gameContext) {
         const button = editorInterface.getElement(buttonID);
         const { tileName, tileID } = brushData;
 
-        button.events.subscribe(Button.EVENT.CLICKED, this.id, () => this.mapEditor.setBrush(brushData));
+        button.events.subscribe(UIElement.EVENT.CLICKED, this.id, () => this.mapEditor.setBrush(brushData));
 
         if(tileID === 0) {
             button.addDefer((context, localX, localY) => {

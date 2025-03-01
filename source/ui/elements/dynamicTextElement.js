@@ -6,10 +6,9 @@ export const DynamicTextElement = function(DEBUG_NAME) {
 
     this.fullText = "";
     this.style = new TextStyle();
-    this.events.listen(DynamicTextElement.EVENT_REQUEST_TEXT);
+    
+    this.events.listen(UIElement.EVENT.REQUEST_TEXT);
 }
-
-DynamicTextElement.EVENT_REQUEST_TEXT = "EVENT_REQUEST_TEXT";
 
 DynamicTextElement.prototype = Object.create(UIElement.prototype);
 DynamicTextElement.prototype.constructor = DynamicTextElement;
@@ -34,7 +33,7 @@ DynamicTextElement.prototype.setText = function(text) {
 }
 
 DynamicTextElement.prototype.onDraw = function(context, localX, localY) {
-    this.events.emit(DynamicTextElement.EVENT_REQUEST_TEXT, this);
+    this.events.emit(UIElement.EVENT.REQUEST_TEXT, this);
     this.style.apply(context);
 
     context.fillText(this.fullText, localX, localY);

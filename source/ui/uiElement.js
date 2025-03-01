@@ -1,5 +1,6 @@
 import { EventEmitter } from "../events/eventEmitter.js";
 import { Drawable } from "../graphics/drawable.js";
+import { Logger } from "../logger.js";
 
 export const UIElement = function(DEBUG_NAME) {
     Drawable.call(this, DEBUG_NAME);
@@ -19,26 +20,32 @@ export const UIElement = function(DEBUG_NAME) {
 UIElement.EVENT = {
     FINAL_COLLISION: "FINAL_COLLISION",
     FIRST_COLLISION: "FIRST_COLLISION",
-    COLLISION: "COLLISION"
+    COLLISION: "COLLISION",
+    CLICKED: "CLICKED",
+    REQUEST_TEXT: "REQUEST_TEXT"
 };
 
 UIElement.ANCHOR_TYPE = {
-    "TOP_CENTER": "TOP_CENTER",
-    "TOP_LEFT": "TOP_LEFT",
-    "TOP_RIGHT": "TOP_RIGHT",
-    "BOTTOM_CENTER": "BOTTOM_CENTER",
-    "BOTTOM_LEFT": "BOTTOM_LEFT",
-    "BOTTOM_RIGHT": "BOTTOM_RIGHT",
-    "CENTER": "CENTER",
-    "LEFT": "LEFT",
-    "RIGHT": "RIGHT"
+    "TOP_CENTER": 0,
+    "TOP_LEFT": 1,
+    "TOP_RIGHT": 2,
+    "BOTTOM_CENTER": 3,
+    "BOTTOM_LEFT": 4,
+    "BOTTOM_RIGHT": 5,
+    "CENTER": 6,
+    "LEFT": 7,
+    "RIGHT": 8
 };
 
 UIElement.prototype = Object.create(Drawable.prototype);
 UIElement.prototype.constructor = UIElement;
 
 UIElement.prototype.init = function(config) {
-    console.warn(`Method init has not been defined!`);
+    Logger.log(Logger.CODE.ENGINE_WARN, "Method has not been defined", "UIElement.prototype.init", null);
+}
+
+UIElement.prototype.onClick = function() {
+    Logger.log(Logger.CODE.ENGINE_WARN, "Method has not been defined", "UIElement.prototype.onClick", null);
 }
 
 UIElement.prototype.isColliding = function(mouseX, mouseY, mouseRange) {
@@ -88,7 +95,7 @@ UIElement.prototype.setOrigin = function(originX, originY) {
 
 UIElement.prototype.setAnchor = function(anchor) {
     if(UIElement.ANCHOR_TYPE[anchor] !== undefined) {
-        this.anchor = anchor;
+        this.anchor = UIElement.ANCHOR_TYPE[anchor];
     }
 }
 

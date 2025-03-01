@@ -8,7 +8,7 @@ import { Timer } from "./timer.js";
 import { TileManager } from "./tile/tileManager.js";
 import { Renderer } from "./renderer.js";
 import { World } from "./world.js";
-import { Button } from "./ui/elements/button.js";
+import { UIElement } from "./ui/uiElement.js";
 
 export const GameContext = function() {
     this.id = "GAME_CONTEXT";
@@ -44,15 +44,7 @@ export const GameContext = function() {
 GameContext.prototype.addClickEvent = function() {
     const { cursor } = this.client;
 
-    cursor.events.subscribe(Cursor.EVENT.LEFT_MOUSE_CLICK, EventEmitter.SUPER_ID, (cursorX, cursorY) => {
-        const clickedElements = this.uiManager.getCollidedElements(cursorX, cursorY, cursor.radius);
-
-        for(let i = 0; i < clickedElements.length; i++) {
-            const element = clickedElements[i];
-
-            element.events.emit(Button.EVENT.CLICKED);
-        }
-    });
+    cursor.events.subscribe(Cursor.EVENT.LEFT_MOUSE_CLICK, EventEmitter.SUPER_ID, (cursorX, cursorY) => this.uiManager.propagateClick(cursorX, cursorY, cursor.radius));
 }
 
 GameContext.prototype.start = function() {

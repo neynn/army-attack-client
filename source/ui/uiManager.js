@@ -63,6 +63,16 @@ UIManager.prototype.exit = function() {
     this.interfaceStack = [];
 }
 
+UIManager.prototype.propagateClick = function(mouseX, mouseY, mouseRange) {
+    const clickedElements = this.getCollidedElements(mouseX, mouseY, mouseRange);
+
+    for(let i = 0; i < clickedElements.length; i++) {
+        const element = clickedElements[i];
+
+        element.onClick();
+    }
+}
+
 UIManager.prototype.getCollidedElements = function(mouseX, mouseY, mouseRange) {
     for(let i = this.interfaceStack.length - 1; i >= 0; i--) {
         const userInterface = this.interfaceStack[i];
