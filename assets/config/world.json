@@ -435,11 +435,11 @@
             "id": "Scout",
             "name": "#CONFIG_COLLECTION_SCOUT",
             "items": [
-                {"id": "scout_binoculars", "value": 1},
-                {"id": "scout_camo", "value": 1},
-                {"id": "scout_canteen", "value": 1},
-                {"id": "scout_field_radio", "value": 1},
-                {"id": "scout_tactical_map", "value": 1}
+                {"type": "Item", "id": "scout_binoculars", "value": 1},
+                {"type": "Item", "id": "scout_camo", "value": 1},
+                {"type": "Item", "id": "scout_canteen", "value": 1},
+                {"type": "Item", "id": "scout_field_radio", "value": 1},
+                {"type": "Item", "id": "scout_tactical_map", "value": 1}
             ],
             "rewards": [
                 {"type": "Resource", "id": "Energy", "value": 3}
@@ -449,11 +449,11 @@
             "id": "Infantry",
             "name": "#CONFIG_COLLECTION_INFANTRY",
             "items": [
-                {"id": "infantry_combat_boots", "value": 1},
-                {"id": "infantry_dog_tags", "value": 1},
-                {"id": "infantry_grenade", "value": 1},
-                {"id": "infantry_mre", "value": 1},
-                {"id": "infantry_sergeant_hat", "value": 1}
+                {"type": "Item", "id": "infantry_combat_boots", "value": 1},
+                {"type": "Item", "id": "infantry_dog_tags", "value": 1},
+                {"type": "Item", "id": "infantry_grenade", "value": 1},
+                {"type": "Item", "id": "infantry_mre", "value": 1},
+                {"type": "Item", "id": "infantry_sergeant_hat", "value": 1}
             ],
             "rewards": [
                 {"type": "Resource", "id": "Supplies", "value": 150},
@@ -464,11 +464,11 @@
             "id": "APC",
             "name": "#CONFIG_COLLECTION_APC",
             "items": [
-                {"id": "apc_ammo_shells", "value": 1},
-                {"id": "apc_blueprints", "value": 1},
-                {"id": "apc_duct_tape", "value": 1},
-                {"id": "apc_gas_canister", "value": 1},
-                {"id": "apc_tires", "value": 1}
+                {"type": "Item", "id": "apc_ammo_shells", "value": 1},
+                {"type": "Item", "id": "apc_blueprints", "value": 1},
+                {"type": "Item", "id": "apc_duct_tape", "value": 1},
+                {"type": "Item", "id": "apc_gas_canister", "value": 1},
+                {"type": "Item", "id": "apc_tires", "value": 1}
             ],
             "rewards": [
                 {"type": "Resource", "id": "Money", "value": 500},
@@ -479,11 +479,11 @@
             "id": "Artillery",
             "name": "#CONFIG_COLLECTION_ARTILLERY",
             "items": [
-                {"id": "artillery_ammo", "value": 1},
-                {"id": "artillery_fire_mission", "value": 1},
-                {"id": "artillery_mortar_base_plate", "value": 1},
-                {"id": "artillery_rangefinder", "value": 1},
-                {"id": "artillery_smoke_marker", "value": 1}
+                {"type": "Item", "id": "artillery_ammo", "value": 1},
+                {"type": "Item", "id": "artillery_fire_mission", "value": 1},
+                {"type": "Item", "id": "artillery_mortar_base_plate", "value": 1},
+                {"type": "Item", "id": "artillery_rangefinder", "value": 1},
+                {"type": "Item", "id": "artillery_smoke_marker", "value": 1}
             ],
             "rewards": [
                 {"type": "Resource", "id": "Energy", "value": 5},
@@ -495,11 +495,11 @@
             "id": "BattleTank",
             "name": "#CONFIG_COLLECTION_BATTLETANK",
             "items": [
-                {"id": "battle_tank_armor_plates", "value": 1},
-                {"id": "battle_tank_blueprints", "value": 1},
-                {"id": "battle_tank_broken_track", "value": 1},
-                {"id": "battle_tank_driver_goggles", "value": 1},
-                {"id": "battle_tank_heat_ammunition", "value": 1}
+                {"type": "Item", "id": "battle_tank_armor_plates", "value": 1},
+                {"type": "Item", "id": "battle_tank_blueprints", "value": 1},
+                {"type": "Item", "id": "battle_tank_broken_track", "value": 1},
+                {"type": "Item", "id": "battle_tank_driver_goggles", "value": 1},
+                {"type": "Item", "id": "battle_tank_heat_ammunition", "value": 1}
             ],
             "rewards": [
                 {"type": "Resource", "id": "Supplies", "value": 500},
@@ -510,11 +510,11 @@
             "id": "Stormtroop",
             "name": "#CONFIG_COLLECTION_STORMTROOP",
             "items": [
-                {"id": "stormtroop_ammo_crate", "value": 1},
-                {"id": "stormtroop_balaclava", "value": 1},
-                {"id": "stormtroop_beret", "value": 1},
-                {"id": "stormtroop_combat_knife", "value": 1},
-                {"id": "stormtroop_supressor", "value": 1}
+                {"type": "Item", "id": "stormtroop_ammo_crate", "value": 1},
+                {"type": "Item", "id": "stormtroop_balaclava", "value": 1},
+                {"type": "Item", "id": "stormtroop_beret", "value": 1},
+                {"type": "Item", "id": "stormtroop_combat_knife", "value": 1},
+                {"type": "Item", "id": "stormtroop_supressor", "value": 1}
             ],
             "rewards": [
                 {"type": "Resource", "id": "Energy", "value": 7},
@@ -525,11 +525,11 @@
             "id": "RocketBattery",
             "name": "#CONFIG_COLLECTION_ROCKETBATTERY",
             "items": [
-                {"id": "rocket_battery_headphones", "value": 1},
-                {"id": "rocket_battery_radar", "value": 1},
-                {"id": "rocket_battery_rockets", "value": 1},
-                {"id": "rocket_battery_shock_and_awe", "value": 1},
-                {"id": "rocket_battery_strategic_map", "value": 1}
+                {"type": "Item", "id": "rocket_battery_headphones", "value": 1},
+                {"type": "Item", "id": "rocket_battery_radar", "value": 1},
+                {"type": "Item", "id": "rocket_battery_rockets", "value": 1},
+                {"type": "Item", "id": "rocket_battery_shock_and_awe", "value": 1},
+                {"type": "Item", "id": "rocket_battery_strategic_map", "value": 1}
             ],
             "rewards": [
                 {"type": "Resource", "id": "Energy", "value": 10},
@@ -540,11 +540,11 @@
             "id": "PVP",
             "name": "#CONFIG_COLLECTION_PVP",
             "items": [
-                {"id": "pvp_compass", "value": 1},
-                {"id": "pvp_survival_shovel", "value": 1},
-                {"id": "pvp_tent", "value": 1},
-                {"id": "pvp_torn_flag", "value": 1},
-                {"id": "pvp_war_loot", "value": 1}
+                {"type": "Item", "id": "pvp_compass", "value": 1},
+                {"type": "Item", "id": "pvp_survival_shovel", "value": 1},
+                {"type": "Item", "id": "pvp_tent", "value": 1},
+                {"type": "Item", "id": "pvp_torn_flag", "value": 1},
+                {"type": "Item", "id": "pvp_war_loot", "value": 1}
             ],
             "rewards": []
         }

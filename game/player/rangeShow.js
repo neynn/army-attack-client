@@ -1,7 +1,6 @@
 import { SpriteManager } from "../../source/graphics/spriteManager.js";
 import { Autotiler } from "../../source/tile/autotiler.js";
 import { ArmyCamera } from "../armyCamera.js";
-import { CAMERA_TYPES } from "../enums.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { ArmyMap } from "../init/armyMap.js";
 
@@ -30,16 +29,15 @@ RangeShow.prototype.setLastTarget = function(entityID) {
     this.lastTarget = entityID;
 }
 
-RangeShow.prototype.show = function(gameContext, entity) {
+RangeShow.prototype.show = function(gameContext, entity, camera) {
     const attackComponent = entity.getComponent(ArmyEntity.COMPONENT.ATTACK);
 
     if(!attackComponent) {
         return;
     }
 
-    const { renderer, tileManager, spriteManager } = gameContext;
+    const { tileManager, spriteManager } = gameContext;
     const { meta } = tileManager;
-    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
     const entityID = entity.getID();
     const autotiler = meta.getAutotilerByID(ArmyMap.AUTOTILER.RANGE);
     const { range } = attackComponent;
@@ -70,14 +68,13 @@ RangeShow.prototype.show = function(gameContext, entity) {
     this.setLastTarget(entityID);
 }
 
-RangeShow.prototype.reset = function(gameContext) {
+RangeShow.prototype.reset = function(gameContext, camera) {
     if(this.lastTarget === null) {
         return;
     }
     
-    const { renderer, spriteManager, world } = gameContext;
+    const { spriteManager, world } = gameContext;
     const { entityManager } = world;
-    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
     const entity = entityManager.getEntity(this.lastTarget);
 
     camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.RANGE);

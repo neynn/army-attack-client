@@ -1,6 +1,5 @@
 import { StateMachine } from "../../../source/state/stateMachine.js";
 import { ArmyContext } from "../../armyContext.js";
-import { CAMERA_TYPES } from "../../enums.js";
 import { StoryModeIntroState } from "./story/storyModeIntro.js";
 import { StoryModePlayState } from "./story/storyModePlay.js";
 
@@ -18,7 +17,6 @@ StoryModeState.prototype.onEnter = function(stateMachine) {
     const gameContext = stateMachine.getContext();
 
     gameContext.setGameMode(ArmyContext.GAME_MODE.STORY);
-    gameContext.createCamera(CAMERA_TYPES.ARMY_CAMERA);
 
     this.setNextState(ArmyContext.STATE.STORY_MODE_PLAY);
 }
@@ -27,5 +25,4 @@ StoryModeState.prototype.onExit = function(stateMachine) {
     const gameContext = stateMachine.getContext();
 
     gameContext.setGameMode(ArmyContext.GAME_MODE.NONE);
-    gameContext.destroyCamera(CAMERA_TYPES.ARMY_CAMERA);
 }

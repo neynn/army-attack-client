@@ -1,8 +1,7 @@
 import { saveTemplateAsFile } from "../../../../helpers.js";
 import { State } from "../../../../source/state/state.js";
-import { ACTION_TYPES, CAMERA_TYPES } from "../../../enums.js";
+import { ACTION_TYPES } from "../../../enums.js";
 import { SpawnSystem } from "../../../systems/spawn.js";
-import { VersusSystem } from "../../../systems/versus.js";
 
 export const StoryModePlayState = function() {}
 
@@ -12,25 +11,26 @@ StoryModePlayState.prototype.constructor = StoryModePlayState;
 StoryModePlayState.prototype.onEnter = async function(stateMachine) {
     console.time();
     const gameContext = stateMachine.getContext();
-    const { uiManager, world, renderer } = gameContext;
+    const { uiManager, world } = gameContext;
     const { actionQueue } = world;
-    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
-    const worldMap = await world.createMapByID(gameContext, "oasis");
 
-    if(!worldMap) {
-        return;
-    }
-
-    console.log(VersusSystem.pickRandomMap(gameContext, 2));
-    
     const controller = world.createController(gameContext, {
         "type": "Player",
         "team": "Allies",
         "id": "neyn"
     });
 
+    const worldMap = await world.createMapByID(gameContext, "oasis");
+
+    if(!worldMap) {
+        return;
+    }
+
+    const camera = controller.getCamera();
     //camera.centerWorld();
     camera.bindViewport();
+
+    //console.log(VersusSystem.pickRandomMap(gameContext, 2));
 
     gameContext.player = controller.getID();
 

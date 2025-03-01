@@ -20,7 +20,7 @@ Hover.prototype.getState = function() {
     return this.state;
 }
 
-Hover.prototype.setState = function() {
+Hover.prototype.determineState = function() {
     const onEntity = this.currentTarget !== null;
     const nodeKey = this.getNodeKey(this.tileX, this.tileY)
     const onNode = this.nodeMap.has(nodeKey);
@@ -100,5 +100,5 @@ Hover.prototype.update = function(gameContext) {
         this.lastTarget = previous;
     }
 
-    this.setState();
+    this.determineState();
 }

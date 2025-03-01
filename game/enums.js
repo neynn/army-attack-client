@@ -26,7 +26,3 @@ export const ACTION_TYPES = Object.freeze({
     "COUNTER_ATTACK": "CounterAttack",
     "COUNTER_MOVE": "CounterMove"
 });
-
-export const CAMERA_TYPES = Object.freeze({
-    "ARMY_CAMERA": "ARMY_CAMERA"
-});

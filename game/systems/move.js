@@ -1,11 +1,11 @@
-import { CAMERA_TYPES } from "../enums.js";
 import { ArmyEntity } from "../init/armyEntity.js";
+import { Player } from "../player/player.js";
 
 export const MoveSystem = function() {}
 
 MoveSystem.updatePath = function(gameContext, entity) {
     const { timer, renderer } = gameContext;
-    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
+    const camera = renderer.getContext(Player.CAMERA_ID).getCamera();
     const { width } = camera.getTileDimensions();
     const deltaTime = timer.getFixedDeltaTime();
 
@@ -47,7 +47,7 @@ MoveSystem.updateSpritePosition = function(gameContext, entity) {
 
 MoveSystem.endMove = function(gameContext, entity, targetX, targetY) {
     const { renderer } = gameContext;
-    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
+    const camera = renderer.getContext(Player.CAMERA_ID).getCamera();
     const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
     const moveComponent = entity.getComponent(ArmyEntity.COMPONENT.MOVE);
 

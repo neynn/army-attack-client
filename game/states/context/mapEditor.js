@@ -4,11 +4,11 @@ import { CameraContext } from "../../../source/camera/cameraContext.js";
 import { MapEditor } from "../../../source/map/mapEditor.js";
 import { clampValue } from "../../../source/math/math.js";
 import { Button } from "../../../source/ui/elements/button.js";
-
-import { CAMERA_TYPES } from "../../enums.js";
 import { saveMap } from "../../../helpers.js";
 import { ArmyContext } from "../../armyContext.js";
 import { Renderer } from "../../../source/renderer.js";
+import { ArmyControllerFactory } from "../../init/armyControllerFactory.js";
+import { ArmyCamera } from "../../armyCamera.js";
 
 export const MapEditorState = function() {
     this.id = "MAP_EDITOR_STATE";
@@ -16,6 +16,8 @@ export const MapEditorState = function() {
     this.currentLayer = null;
     this.currentLayerButtonID = null;
     this.currentMapID = null;
+    this.camera = null;
+    this.context = null;
 }
 
 MapEditorState.GRAPHICS_BUTTON_SCALE = 50 / 96;
@@ -34,12 +36,13 @@ MapEditorState.prototype.onEnter = function(stateMachine) {
     const { uiManager, tileManager, settings, client } = gameContext;
     const { router } = client;
     const { meta } = tileManager;
-    const context = gameContext.createCamera(CAMERA_TYPES.ARMY_CAMERA);
-    const camera = context.getCamera();
 
     gameContext.setGameMode(ArmyContext.GAME_MODE.EDIT);
-    context.setPositionMode(CameraContext.POSITION_MODE.FIXED_ORIGIN);
-    camera.unbindViewport();
+
+    this.camera = new ArmyCamera();
+    this.camera.unbindViewport();
+    this.context = ArmyControllerFactory.prototype.initPlayerCamera(gameContext, this.camera);
+    this.context.setPositionMode(CameraContext.POSITION_MODE.FIXED_ORIGIN);
 
     uiManager.parseUI("MAP_EDITOR", gameContext);
     uiManager.unparseUI("FPS_COUNTER", gameContext);
@@ -64,10 +67,14 @@ MapEditorState.prototype.onEnter = function(stateMachine) {
 MapEditorState.prototype.onExit = function(stateMachine) {
     const gameContext = stateMachine.getContext();
     const { renderer, uiManager } = gameContext;
+    const contextID = this.context.getID();
 
     gameContext.setGameMode(ArmyContext.GAME_MODE.NONE);
     uiManager.unparseUI("MAP_EDITOR", gameContext);
-    renderer.removeCamera(CAMERA_TYPES.ARMY_CAMERA);
+    renderer.destroyContext(contextID);
+
+    this.camera = null;
+    this.context = null;
 }
 
 MapEditorState.prototype.updateLayerOpacity = function(gameContext) {
@@ -138,10 +145,9 @@ MapEditorState.prototype.scrollLayerButton = function(gameContext, buttonID) {
 }
 
 MapEditorState.prototype.loadButtonEvents = function(gameContext) {
-    const { uiManager, renderer, tileManager } = gameContext;
+    const { uiManager, tileManager } = gameContext;
     const { slots, id } = this.mapEditor.config.interface;
     const pageElements = this.mapEditor.getPage();
-    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
     const editorInterface = uiManager.getInterface(id);
 
     for(const buttonID of slots) {
@@ -204,11 +210,10 @@ MapEditorState.prototype.updateButtonText = function(gameContext) {
 }
 
 MapEditorState.prototype.initializeRenderEvents = function(gameContext) {
-    const { renderer, tileManager } = gameContext;
+    const { tileManager } = gameContext;
     const { layerButtons } = this.mapEditor.config.interface;
-    const cameraContext = renderer.getContext(CAMERA_TYPES.ARMY_CAMERA);
 
-    cameraContext.events.subscribe(CameraContext.EVENT.RENDER_COMPLETE, this.id, (camera, context) => {
+    this.context.events.subscribe(CameraContext.EVENT.RENDER_COMPLETE, this.id, (camera, context) => {
         const cursorTile = gameContext.getMouseTile();
         const brushSize = this.mapEditor.getBrushSize();
         const brush = this.mapEditor.getBrush();
@@ -335,8 +340,6 @@ MapEditorState.prototype.createNewMap = function(gameContext) {
 MapEditorState.prototype.resizeMap = function(gameContext) {
     const { world, renderer } = gameContext;
     const { mapManager } = world;
-    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
-
     const gameMap = mapManager.getLoadedMap(this.currentMapID);
     const { maxMapWidth, maxMapHeight } = this.mapEditor.config;
 
@@ -351,9 +354,11 @@ MapEditorState.prototype.resizeMap = function(gameContext) {
     const newHeight = clampValue(parsedHeight, maxMapHeight, 1);
   
     this.mapEditor.resizeMap(gameMap, newWidth, newHeight);
+    this.camera.loadWorld(newWidth, newHeight);
 
-    camera.loadWorld(newWidth, newHeight);
-    renderer.refreshCamera(CAMERA_TYPES.ARMY_CAMERA);
+    const contextID = this.context.getID();
+
+    renderer.refreshContext(contextID);
 }
 
 MapEditorState.prototype.initializeUIEvents = function(gameContext) {

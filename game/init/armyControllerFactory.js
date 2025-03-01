@@ -1,7 +1,8 @@
+import { CameraContext } from "../../source/camera/cameraContext.js";
 import { Cursor } from "../../source/client/cursor.js";
 import { Factory } from "../../source/factory/factory.js";
 import { SpriteManager } from "../../source/graphics/spriteManager.js";
-import { CAMERA_TYPES } from "../enums.js";
+import { World } from "../../source/world.js";
 import { Player } from "../player/player.js";
 
 export const ArmyControllerFactory = function() {
@@ -28,8 +29,48 @@ ArmyControllerFactory.prototype.addDragEvent = function(gameContext) {
     });
 }
 
+ArmyControllerFactory.prototype.initPlayerCamera = function(gameContext, camera) {
+    const { world, renderer, tileManager, client } = gameContext;
+    const settings = world.getConfig("Settings");
+    const context = renderer.createContext(Player.CAMERA_ID, camera);
+
+    tileManager.loadTileDimensions(settings.tileWidth, settings.tileHeight);
+    camera.loadTileDimensions(settings.tileWidth, settings.tileHeight);
+
+    //context.initRenderer(640/2, 360/2);
+    //context.setDisplayMode(CameraContext.DISPLAY_MODE.RESOLUTION_FIXED);
+
+    world.events.subscribe(World.EVENT.MAP_CREATE, Player.CAMERA_ID, (worldMap) => {
+        const { width, height, music } = worldMap;
+    
+        camera.loadWorld(width, height);
+    
+        if(music) {
+            client.musicPlayer.swapTrack(music);
+        }
+
+        renderer.refreshContext(Player.CAMERA_ID);
+    });
+
+    context.events.subscribe(CameraContext.EVENT.REMOVE, Player.CAMERA_ID, () => {
+        world.events.unsubscribe(World.EVENT.MAP_CREATE, Player.CAMERA_ID);
+    });
+
+    /*
+    let x = false;
+
+    this.client.cursor.events.subscribe(Cursor.LEFT_MOUSE_CLICK, "TEST", () => {
+        x = !x;
+        let mode = x ? CameraContext.DISPLAY_MODE.RESOLUTION_DEPENDENT : CameraContext.DISPLAY_MODE.RESOLUTION_FIXED;
+        this.renderer.getContext(cameraID).setDisplayMode(mode);
+    });
+    */
+
+    return context;
+}
+
 ArmyControllerFactory.prototype.onCreate = function(gameContext, config) {
-    const { spriteManager, renderer, client } = gameContext;
+    const { spriteManager, client } = gameContext;
     const { router } = client;
     const { type, id, team } = config;
     const controllerType = this.getType(type);
@@ -37,19 +78,16 @@ ArmyControllerFactory.prototype.onCreate = function(gameContext, config) {
     switch(type) {
         case ArmyControllerFactory.TYPE.PLAYER: {
             const controller = new Player(id);
-            const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
             const controllerSprite = spriteManager.createSprite("cursor_attack_1x1", SpriteManager.LAYER.UI);
-            const { x, y } = camera.transformTileToPositionCenter(0, 0);
             const spriteID = controllerSprite.getID();
-            
-            controllerSprite.setPosition(x, y);
-        
+
             controller.inventory.init(gameContext);
             controller.spriteID = spriteID;
             controller.teamID = team ?? null;
             controller.setConfig(controllerType);
             controller.enterState(gameContext, Player.STATE.IDLE);
             
+            this.initPlayerCamera(gameContext, controller.getCamera());
             this.addDragEvent(gameContext);
 
             router.load(gameContext, controllerType.binds);

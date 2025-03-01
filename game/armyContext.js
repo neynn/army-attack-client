@@ -243,47 +243,6 @@ ArmyContext.prototype.loadSnapshot = function(snapshot) {
     }
 }
 
-ArmyContext.prototype.createCamera = function(cameraID) {
-    const camera = new ArmyCamera();
-    const settings = this.world.getConfig("Settings");
-    const context = this.renderer.addCamera(cameraID, camera);
-
-    this.tileManager.loadTileDimensions(settings.tileWidth, settings.tileHeight);
-    camera.loadTileDimensions(settings.tileWidth, settings.tileHeight);
-
-    //context.initRenderer(640/2, 360/2);
-    //context.setDisplayMode(CameraContext.DISPLAY_MODE.RESOLUTION_FIXED);
-    
-    this.world.events.subscribe(World.EVENT.MAP_CREATE, cameraID, (worldMap) => {
-        const { width, height, music } = worldMap;
-    
-        camera.loadWorld(width, height);
-    
-        if(music) {
-            this.client.musicPlayer.swapTrack(music);
-        }
-
-        this.renderer.refreshCamera(cameraID);
-    });
-
-    /*
-    let x = false;
-
-    this.client.cursor.events.subscribe(Cursor.LEFT_MOUSE_CLICK, "TEST", () => {
-        x = !x;
-        let mode = x ? CameraContext.DISPLAY_MODE.RESOLUTION_DEPENDENT : CameraContext.DISPLAY_MODE.RESOLUTION_FIXED;
-        this.renderer.getContext(cameraID).setDisplayMode(mode);
-    });
-    */
-
-    return context;
-}
-
-ArmyContext.prototype.destroyCamera = function(cameraID) {
-    this.renderer.removeCamera(cameraID);
-    this.world.events.unsubscribe(World.EVENT.MAP_CREATE, cameraID);
-}
-
 ArmyContext.prototype.loadEntitySounds = function(entity) {
     const { soundPlayer } = this.client;
     const { sounds } = entity.config;

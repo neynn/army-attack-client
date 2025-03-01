@@ -15,13 +15,15 @@ export const CameraContext = function(id, camera) {
     this.events = new EventEmitter();
     this.events.listen(CameraContext.EVENT.RENDER_COMPLETE);
     this.events.listen(CameraContext.EVENT.REQUEST_WINDOW);
+    this.events.listen(CameraContext.EVENT.REMOVE);
 }
 
 CameraContext.BASE_SCALE = 1;
 
 CameraContext.EVENT = {
     RENDER_COMPLETE: 0,
-    REQUEST_WINDOW: 1
+    REQUEST_WINDOW: 1,
+    REMOVE: 2
 };
 
 CameraContext.POSITION_MODE = {

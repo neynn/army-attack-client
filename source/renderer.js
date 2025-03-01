@@ -33,12 +33,12 @@ Renderer.DEBUG = {
     MAP: false
 };
 
-Renderer.prototype.getContext = function(id) {
+Renderer.prototype.getContext = function(contextID) {
     for(let i = 0; i < this.contexts.length; i++) {
         const context = this.contexts[i];
-        const contextID = context.getID();
+        const id = context.getID();
 
-        if(contextID === id) {
+        if(id === contextID) {
             return context;
         }
     }
@@ -46,22 +46,12 @@ Renderer.prototype.getContext = function(id) {
     return null;
 }
 
-Renderer.prototype.getCamera = function(id) {
-    const context = this.getContext(id);
-
-    if(!context) {
-        return null;
-    }
-
-    return context.getCamera();
-}
-
-Renderer.prototype.hasContext = function(id) {
+Renderer.prototype.hasContext = function(contextID) {
     for(let i = 0; i < this.contexts.length; i++) {
         const context = this.contexts[i];
-        const contextID = context.getID();
+        const id = context.getID();
 
-        if(contextID === id) {
+        if(id === contextID) {
             return true;
         }
     }
@@ -69,8 +59,8 @@ Renderer.prototype.hasContext = function(id) {
     return false;
 }
 
-Renderer.prototype.refreshCamera = function(cameraID) {
-    const context = this.getContext(cameraID);
+Renderer.prototype.refreshContext = function(contextID) {
+    const context = this.getContext(contextID);
 
     if(!context) {
         return;
@@ -79,12 +69,12 @@ Renderer.prototype.refreshCamera = function(cameraID) {
     context.refresh(this.windowWidth, this.windowHeight);
 }
 
-Renderer.prototype.addCamera = function(cameraID, camera) {
-    if(!(camera instanceof Camera) || this.hasContext(cameraID)) {
+Renderer.prototype.createContext = function(contextID, camera) {
+    if(this.hasContext(contextID) || !(camera instanceof Camera)) {
         return null;
     }
 
-    const context = new CameraContext(cameraID, camera);
+    const context = new CameraContext(contextID, camera);
 
     camera.setViewport(this.windowWidth, this.windowHeight);
 
@@ -95,13 +85,14 @@ Renderer.prototype.addCamera = function(cameraID, camera) {
     return context;
 }
 
-Renderer.prototype.removeCamera = function(id) {
+Renderer.prototype.destroyContext = function(contextID) {
     for(let i = 0; i < this.contexts.length; i++) {
         const context = this.contexts[i];
-        const contextID = context.getID();
+        const id = context.getID();
 
-        if(contextID === id) {
+        if(id === contextID) {
             this.contexts.splice(i, 1);
+            context.events.emit(CameraContext.EVENT.REMOVE);
             return;
         }
     }
@@ -173,16 +164,15 @@ Renderer.prototype.update = function(gameContext) {
 }
 
 Renderer.prototype.resizeDisplay = function(width, height) {
-    this.windowWidth = width;
-    this.windowHeight = height;
-    this.display.resize(width, height);
-
     for(let i = 0; i < this.contexts.length; i++) {
         const context = this.contexts[i];
 
         context.onWindowResize(width, height)
     }
-
+    
+    this.windowWidth = width;
+    this.windowHeight = height;
+    this.display.resize(width, height);
     this.events.emit(Renderer.EVENT.SCREEN_RESIZE, width, height);
 }
 

@@ -1,7 +1,7 @@
 import { SpriteManager } from "../../source/graphics/spriteManager.js";
 import { getRandomOffset } from "../../source/math/math.js";
-import { CAMERA_TYPES } from "../enums.js";
 import { ArmyEntity } from "../init/armyEntity.js";
+import { Player } from "../player/player.js";
 
 export const AnimationSystem = function() {}
 
@@ -105,7 +105,7 @@ AnimationSystem.stopSelect = function(gameContext, entity) {
 
 AnimationSystem.playConstruction = function(gameContext, entity) {
     const { spriteManager, renderer } = gameContext;
-    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
+    const camera = renderer.getContext(Player.CAMERA_ID).getCamera();
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const entitySprite = spriteManager.getSprite(spriteComponent.spriteID);
     const delaySprite = spriteManager.createSprite(AnimationSystem.SPRITE_TYPE.DELAY);

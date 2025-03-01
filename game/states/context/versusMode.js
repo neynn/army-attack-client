@@ -1,7 +1,7 @@
 import { ROOM_EVENTS } from "../../../source/network/events.js";
 import { Socket } from "../../../source/network/socket.js";
 import { StateMachine } from "../../../source/state/stateMachine.js";
-import { CAMERA_TYPES, GAME_EVENTS } from "../../enums.js";
+import { GAME_EVENTS } from "../../enums.js";
 import { VersusModeLobbyState } from "./versus/versusModeLobby.js";
 import { VersusModePlayState } from "./versus/versusModePlay.js";
 import { instanceMapFromData } from "../../serverEvents/instanceMapFromData.js";
@@ -52,7 +52,6 @@ VersusModeState.prototype.onEnter = function(stateMachine) {
     const { socket } = client;
 
     gameContext.setGameMode(ArmyContext.GAME_MODE.VERSUS);
-    gameContext.createCamera(CAMERA_TYPES.ARMY_CAMERA);
     socket.events.subscribe(Socket.EVENT_MESSAGE_FROM_SERVER, contextID, (type, payload) => this.onServerMessage(gameContext, type, payload));
     socket.connect();
 
@@ -63,5 +62,4 @@ VersusModeState.prototype.onExit = function(stateMachine) {
     const gameContext = stateMachine.getContext();
 
     gameContext.setGameMode(ArmyContext.GAME_MODE.NONE);
-    gameContext.destroyCamera(CAMERA_TYPES.ARMY_CAMERA);
 }

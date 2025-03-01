@@ -5,12 +5,12 @@ import { TeamComponent } from "../components/team.js";
 import { SpriteComponent } from "../components/sprite.js";
 import { DirectionComponent } from "../components/direction.js";
 import { PositionComponent } from "../components/position.js";
-import { CAMERA_TYPES } from "../enums.js";
 import { AttackComponent } from "../components/attack.js";
 import { MoveComponent } from "../components/move.js";
 import { ConstructionComponent } from "../components/construction.js";
 import { ProductionComponent } from "../components/production.js";
 import { ArmyEntity } from "./armyEntity.js";
+import { Player } from "../player/player.js";
 
 export const ArmyEntityFactory = function() {
     Factory.call(this, "ARMY_ENTITY_FACTORY");
@@ -64,7 +64,7 @@ ArmyEntityFactory.prototype.createDefaultSprite = function(gameContext, entity, 
     const { tileX, tileY } = config;
 
     const spriteType = entity.getSpriteID(ArmyEntity.SPRITE_TYPE.IDLE);
-    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
+    const camera = renderer.getContext(Player.CAMERA_ID).getCamera();
     const sprite = spriteManager.createSprite(spriteType, SpriteManager.LAYER.MIDDLE);
     const { x, y } = camera.transformTileToPositionCenter(tileX, tileY);
 

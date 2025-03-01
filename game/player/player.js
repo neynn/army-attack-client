@@ -1,4 +1,4 @@
-import { ACTION_TYPES, CAMERA_TYPES } from "../enums.js";
+import { ACTION_TYPES } from "../enums.js";
 import { ArmyCamera } from "../armyCamera.js";
 import { AnimationSystem } from "../systems/animation.js";
 import { PathfinderSystem } from "../systems/pathfinder.js";
@@ -24,7 +24,10 @@ export const Player = function(id) {
     this.hover = new Hover();
     this.rangeShow = new RangeShow();
     this.inventory = new Inventory();
+    this.camera = new ArmyCamera();
 }
+
+Player.CAMERA_ID = "ARMY_CAMERA";
 
 Player.COMMAND = {
     CLICK: "CLICK",
@@ -54,18 +57,18 @@ Player.OVERLAY_TYPE = {
 Player.prototype = Object.create(Controller.prototype);
 Player.prototype.constructor = Player;
 
+Player.prototype.getCamera = function() {
+    return this.camera;
+}
+
 Player.prototype.onEntityRemove = function(entityID) {
     if(this.selectedEntityID === entityID) {
         this.selectedEntityID = null;
     }
 }
 
-Player.prototype.clearAttackers = function(gameContext) {
-    const { renderer } = gameContext;
-    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
-
-    camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.ATTACK);
-
+Player.prototype.clearAttackers = function() {
+    this.camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.ATTACK);
     this.attackers.length = 0;
 }
 
@@ -80,11 +83,9 @@ Player.prototype.resetAttacker = function(gameContext, attackerID) {
 }
 
 Player.prototype.highlightAttackers = function(gameContext, target, attackers) {
-    const { renderer } = gameContext;
-    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
     const tileID = this.getOverlayID(gameContext, Player.OVERLAY_TYPE.ATTACK);
 
-    camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.ATTACK);
+    this.camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.ATTACK);
 
     for(let i = 0; i < attackers.length; i++) {
         const attacker = attackers[i];
@@ -92,7 +93,7 @@ Player.prototype.highlightAttackers = function(gameContext, target, attackers) {
 
         attacker.lookAtEntity(target);
         attacker.updateSpriteDirectonal(gameContext, ArmyEntity.SPRITE_TYPE.AIM, ArmyEntity.SPRITE_TYPE.AIM_UP);
-        camera.addToOverlay(ArmyCamera.OVERLAY_TYPE.ATTACK, tileID, tileX, tileY);
+        this.camera.addToOverlay(ArmyCamera.OVERLAY_TYPE.ATTACK, tileID, tileX, tileY);
     }
 }
 
@@ -101,7 +102,7 @@ Player.prototype.updateAttackers = function(gameContext) {
 
     if(!mouseEntity || !mouseEntity.isAttackable(gameContext, this.teamID)) {
         AnimationSystem.revertToIdle(gameContext, this.attackers);
-        this.clearAttackers(gameContext);
+        this.clearAttackers();
         return;
     }
 
@@ -144,12 +145,11 @@ Player.prototype.getOverlayID = function(gameContext, typeID) {
 }
 
 Player.prototype.addNodeOverlays = function(gameContext, nodeList) {
-    const { world, renderer } = gameContext;
-    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
+    const { world } = gameContext;
     const enableTileID = this.getOverlayID(gameContext, Player.OVERLAY_TYPE.ENABLE);
     const attackTileID = this.getOverlayID(gameContext, Player.OVERLAY_TYPE.ATTACK);
 
-    camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.MOVE);
+    this.camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.MOVE);
 
     for(let i = 0; i < nodeList.length; i++) {
         const { node, state } = nodeList[i];
@@ -157,34 +157,32 @@ Player.prototype.addNodeOverlays = function(gameContext, nodeList) {
 
         if(state !== PathfinderSystem.NODE_STATE.VALID) {
             if(ArmyContext.DEBUG.SHOW_INVALID_MOVE_TILES) {
-                camera.addToOverlay(ArmyCamera.OVERLAY_TYPE.MOVE, attackTileID, positionX, positionY);
+                this.camera.addToOverlay(ArmyCamera.OVERLAY_TYPE.MOVE, attackTileID, positionX, positionY);
             }
 
         } else {
             const tileEntity = world.getTileEntity(positionX, positionY);
 
             if(!tileEntity) {
-                camera.addToOverlay(ArmyCamera.OVERLAY_TYPE.MOVE, enableTileID, positionX, positionY);
+                this.camera.addToOverlay(ArmyCamera.OVERLAY_TYPE.MOVE, enableTileID, positionX, positionY);
             }
         } 
     }
 }
 
 Player.prototype.alignSpriteWithHover = function(gameContext) {
-    const { renderer, spriteManager } = gameContext;
-    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
+    const { spriteManager } = gameContext;
     const sprite = spriteManager.getSprite(this.spriteID);
-    const { x, y } = camera.transformTileToPositionCenter(this.hover.tileX, this.hover.tileY);
+    const { x, y } = this.camera.transformTileToPositionCenter(this.hover.tileX, this.hover.tileY);
 
     sprite.setPosition(x, y);
 }
 
 Player.prototype.alignSpriteWithEntity = function(gameContext, entity) {
-    const { renderer, spriteManager } = gameContext;
-    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
+    const { spriteManager } = gameContext;
     const sprite = spriteManager.getSprite(this.spriteID);
     const { tileX, tileY } = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
-    const { x, y } = camera.transformTileToPositionCenter(tileX, tileY);
+    const { x, y } = this.camera.transformTileToPositionCenter(tileX, tileY);
 
     sprite.setPosition(x, y);
 }
@@ -251,17 +249,15 @@ Player.prototype.deselectEntity = function(gameContext) {
         return;
     }
 
-    const { renderer, world } = gameContext;
+    const { world } = gameContext;
     const { entityManager } = world;
-    const camera = renderer.getCamera(CAMERA_TYPES.ARMY_CAMERA);
     const entity = entityManager.getEntity(this.selectedEntityID);
 
     if(entity) {
         AnimationSystem.stopSelect(gameContext, entity);
     }
 
-    camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.MOVE);
-
+    this.camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.MOVE);
     this.selectedEntityID = null;
     this.hover.clearNodes();
 }
@@ -423,14 +419,14 @@ Player.prototype.updateRangeIndicator = function(gameContext) {
         return;
     }
 
-    this.rangeShow.reset(gameContext);
+    this.rangeShow.reset(gameContext, this.camera);
 
     const hoverState = this.hover.getState();
 
     if(hoverState === Hover.STATE.HOVER_ON_ENTITY) {
         const entity = this.hover.getEntity(gameContext);
 
-        this.rangeShow.show(gameContext, entity);
+        this.rangeShow.show(gameContext, entity, this.camera);
     }
 }
 
@@ -443,7 +439,7 @@ Player.prototype.update = function(gameContext) {
     switch(this.state) {
         case Player.STATE.IDLE: {
             if(actionQueue.isRunning()) {
-                this.clearAttackers(gameContext);
+                this.clearAttackers();
             } else {
                 this.updateAttackers(gameContext);   
             }
@@ -482,8 +478,8 @@ Player.prototype.exitState = function(gameContext) {
 Player.prototype.enterState = function(gameContext, stateID) {
     switch(stateID) {
         case Player.STATE.FIRE_MISSION: {
-            this.rangeShow.reset(gameContext);
-            this.clearAttackers(gameContext);
+            this.rangeShow.reset(gameContext, this.camera);
+            this.clearAttackers();
             break;
         }
         default: {
