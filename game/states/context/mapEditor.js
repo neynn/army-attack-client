@@ -7,11 +7,12 @@ import { Button } from "../../../source/ui/elements/button.js";
 import { saveMap } from "../../../helpers.js";
 import { ArmyContext } from "../../armyContext.js";
 import { Renderer } from "../../../source/renderer.js";
-import { ArmyControllerFactory } from "../../init/armyControllerFactory.js";
 import { ArmyCamera } from "../../armyCamera.js";
+import { World } from "../../../source/world.js";
 
 export const MapEditorState = function() {
     this.id = "MAP_EDITOR_STATE";
+    this.contextID = "MAP_EDITOR_CAMERA";
     this.mapEditor = new MapEditor();
     this.currentLayer = null;
     this.currentLayerButtonID = null;
@@ -31,6 +32,33 @@ MapEditorState.BUTTON_TYPE_TYPE = "2";
 MapEditorState.prototype = Object.create(State.prototype);
 MapEditorState.prototype.constructor = MapEditorState;
 
+MapEditorState.prototype.initEditorCamera = function(gameContext) {
+    const { world, renderer, client } = gameContext;
+    const settings = world.getConfig("Settings");
+
+    this.camera = new ArmyCamera();
+    this.camera.unbindViewport();
+    this.context = renderer.createContext(this.contextID, this.camera);
+    this.context.setPositionMode(CameraContext.POSITION_MODE.FIXED_ORIGIN);
+    this.camera.loadTileDimensions(settings.tileWidth, settings.tileHeight);
+
+    world.events.subscribe(World.EVENT.MAP_CREATE, this.contextID, (worldMap) => {
+        const { width, height, music } = worldMap;
+    
+        this.camera.loadWorld(width, height);
+    
+        if(music) {
+            //client.musicPlayer.swapTrack(music);
+        }
+
+        renderer.refreshContext(this.contextID);
+    });
+
+    this.context.events.subscribe(CameraContext.EVENT.REMOVE, this.contextID, () => {
+        world.events.unsubscribe(World.EVENT.MAP_CREATE, this.contextID);
+    });
+}
+
 MapEditorState.prototype.onEnter = function(stateMachine) {
     const gameContext = stateMachine.getContext();
     const { uiManager, tileManager, settings, client } = gameContext;
@@ -39,10 +67,7 @@ MapEditorState.prototype.onEnter = function(stateMachine) {
 
     gameContext.setGameMode(ArmyContext.GAME_MODE.EDIT);
 
-    this.camera = new ArmyCamera();
-    this.camera.unbindViewport();
-    this.context = ArmyControllerFactory.prototype.initPlayerCamera(gameContext, this.camera);
-    this.context.setPositionMode(CameraContext.POSITION_MODE.FIXED_ORIGIN);
+    this.initEditorCamera(gameContext);
 
     uiManager.parseUI("MAP_EDITOR", gameContext);
     uiManager.unparseUI("FPS_COUNTER", gameContext);
@@ -67,11 +92,10 @@ MapEditorState.prototype.onEnter = function(stateMachine) {
 MapEditorState.prototype.onExit = function(stateMachine) {
     const gameContext = stateMachine.getContext();
     const { renderer, uiManager } = gameContext;
-    const contextID = this.context.getID();
 
     gameContext.setGameMode(ArmyContext.GAME_MODE.NONE);
     uiManager.unparseUI("MAP_EDITOR", gameContext);
-    renderer.destroyContext(contextID);
+    renderer.destroyContext(this.contextID);
 
     this.camera = null;
     this.context = null;
@@ -171,7 +195,7 @@ MapEditorState.prototype.loadButtonEvents = function(gameContext) {
             });
         } else {
             button.addDefer((context, localX, localY) => {
-                this.camera.drawTileGraphics(tileManager, tileID, context, localX, localY, MapEditorState.GRAPHICS_BUTTON_SCALE, MapEditorState.GRAPHICS_BUTTON_SCALE);
+                this.camera.drawTileGraphics(tileManager, context, tileID, localX, localY, MapEditorState.GRAPHICS_BUTTON_SCALE, MapEditorState.GRAPHICS_BUTTON_SCALE);
                 context.fillStyle = "#eeeeee";
                 context.textAlign = "center";
                 context.fillText(tileName, localX + 25, localY + 25);
@@ -249,7 +273,7 @@ MapEditorState.prototype.initializeRenderEvents = function(gameContext) {
                 if(tileID === 0) {
                     this.camera.drawEmptyTile(context, renderX, renderY);
                 } else {
-                    this.camera.drawTileGraphics(tileManager, tileID, context, renderX, renderY);
+                    this.camera.drawTileGraphics(tileManager, context, tileID, renderX, renderY);
 
                     context.fillStyle = this.mapEditor.config.overlayTextColor;
                     context.textAlign = "center";
@@ -357,9 +381,7 @@ MapEditorState.prototype.resizeMap = function(gameContext) {
     this.mapEditor.resizeMap(gameMap, newWidth, newHeight);
     this.camera.loadWorld(newWidth, newHeight);
 
-    const contextID = this.context.getID();
-
-    renderer.refreshContext(contextID);
+    renderer.refreshContext(this.contextID);
 }
 
 MapEditorState.prototype.initializeUIEvents = function(gameContext) {

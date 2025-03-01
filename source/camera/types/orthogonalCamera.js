@@ -66,7 +66,7 @@ OrthogonalCamera.prototype.drawEmptyTile = function(context, renderX, renderY, s
     context.fillRect(renderX, renderY + scaledY, scaledX, scaledY);
 }
 
-OrthogonalCamera.prototype.drawTileGraphics = function(tileManager, tileID, context, renderX, renderY, scaleX = 1, scaleY = 1) {
+OrthogonalCamera.prototype.drawTileGraphics = function(tileManager, context, tileID, renderX, renderY, scaleX = 1, scaleY = 1) {
     const { meta, resources, tileTypes } = tileManager;
     const tileMeta = meta.getMeta(tileID);
 
@@ -119,7 +119,7 @@ OrthogonalCamera.prototype.drawOverlay = function(gameContext, renderContext, wo
             const renderX = drawX - this.viewportX;
             const renderY = drawY - this.viewportY;
     
-            this.drawTileGraphics(tileManager, id, renderContext, renderX, renderY);
+            this.drawTileGraphics(tileManager, renderContext, id, renderX, renderY);
         }
     }
 }
@@ -157,7 +157,7 @@ OrthogonalCamera.prototype.drawTileBuffer = function(gameContext, renderContext,
                 if(tileID !== 0) {
                     const renderX = j * this.tileWidth - this.viewportX;
     
-                    this.drawTileGraphics(tileManager, tileID, renderContext, renderX, renderY);
+                    this.drawTileGraphics(tileManager, renderContext, tileID, renderX, renderY);
                 }
             }
         }
