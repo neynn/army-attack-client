@@ -18,7 +18,6 @@ export const MapEditorState = function() {
     this.currentLayerButtonID = null;
     this.currentMapID = null;
     this.camera = null;
-    this.context = null;
 }
 
 MapEditorState.GRAPHICS_BUTTON_SCALE = 50 / 96;
@@ -38,9 +37,11 @@ MapEditorState.prototype.initEditorCamera = function(gameContext) {
 
     this.camera = new ArmyCamera();
     this.camera.unbindViewport();
-    this.context = renderer.createContext(this.contextID, this.camera);
-    this.context.setPositionMode(CameraContext.POSITION_MODE.FIXED_ORIGIN);
-    this.camera.loadTileDimensions(settings.tileWidth, settings.tileHeight);
+    this.camera.loadTileDimensions(settings.tileWidth, settings.tileHeight)
+
+    const context = renderer.createContext(this.contextID, this.camera);
+    
+    context.setPositionMode(CameraContext.POSITION_MODE.FIXED_ORIGIN);
 
     world.events.subscribe(World.EVENT.MAP_CREATE, this.contextID, (worldMap) => {
         const { width, height, music } = worldMap;
@@ -54,7 +55,7 @@ MapEditorState.prototype.initEditorCamera = function(gameContext) {
         renderer.refreshContext(this.contextID);
     });
 
-    this.context.events.subscribe(CameraContext.EVENT.REMOVE, this.contextID, () => {
+    context.events.subscribe(CameraContext.EVENT.REMOVE, this.contextID, () => {
         world.events.unsubscribe(World.EVENT.MAP_CREATE, this.contextID);
     });
 }
@@ -98,7 +99,6 @@ MapEditorState.prototype.onExit = function(stateMachine) {
     renderer.destroyContext(this.contextID);
 
     this.camera = null;
-    this.context = null;
 }
 
 MapEditorState.prototype.updateLayerOpacity = function(gameContext) {
@@ -234,10 +234,11 @@ MapEditorState.prototype.updateButtonText = function(gameContext) {
 }
 
 MapEditorState.prototype.initializeRenderEvents = function(gameContext) {
-    const { tileManager } = gameContext;
+    const { tileManager, renderer } = gameContext;
     const { layerButtons } = this.mapEditor.config.interface;
+    const cameraContext = renderer.getContext(this.contextID);
 
-    this.context.events.subscribe(CameraContext.EVENT.RENDER_COMPLETE, this.id, (camera, context) => {
+    cameraContext.events.subscribe(CameraContext.EVENT.RENDER_COMPLETE, this.id, (camera, context) => {
         const cursorTile = gameContext.getMouseTile();
         const brushSize = this.mapEditor.getBrushSize();
         const brush = this.mapEditor.getBrush();
