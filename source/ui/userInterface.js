@@ -1,9 +1,11 @@
 import { createFadeInEffect } from "../effects/example/fadeIn.js";
 import { createFadeOutEffect } from "../effects/example/fadeOut.js";
+import { Logger } from "../logger.js";
 import { Button } from "./elements/button.js";
 import { Container } from "./elements/container.js";
 import { DynamicTextElement } from "./elements/dynamicTextElement.js";
 import { Icon } from "./elements/icon.js";
+import { Scrollbar } from "./elements/scrollbar.js";
 import { TextElement } from "./elements/textElement.js";
 import { UIElement } from "./uiElement.js";
 
@@ -16,36 +18,40 @@ export const UserInterface = function(id) {
     this.state = UserInterface.STATE.VISIBLE;
 }
 
-UserInterface.EFFECT_TYPE = {
-    FADE_IN: "FADE_IN",
-    FADE_OUT: "FADE_OUT"
-};
-
-UserInterface.EFFECT_CLASS = {
-    [UserInterface.EFFECT_TYPE.FADE_IN]: createFadeInEffect,
-    [UserInterface.EFFECT_TYPE.FADE_OUT]: createFadeOutEffect
+UserInterface.ELEMENT_BEHAVIOR = {
+    NONE: 0,
+    COLLIDEABLE: 1,
+    CLICKABLE: 2
 };
 
 UserInterface.ELEMENT_TYPE = {
-    TEXT: "TEXT",
-    DYNAMIC_TEXT: "DYNAMIC_TEXT",
-    BUTTON: "BUTTON",
-    ICON: "ICON",
-    CONTAINER: "CONTAINER"
-};
-
-UserInterface.ELEMENT_CLASS = {
-    [UserInterface.ELEMENT_TYPE.BUTTON]: Button,
-    [UserInterface.ELEMENT_TYPE.TEXT]: TextElement,
-    [UserInterface.ELEMENT_TYPE.DYNAMIC_TEXT]: DynamicTextElement,
-    [UserInterface.ELEMENT_TYPE.ICON]: Icon,
-    [UserInterface.ELEMENT_TYPE.CONTAINER]: Container
+    NONE: 0,
+    TEXT: 1,
+    DYNAMIC_TEXT: 2,
+    BUTTON: 3,
+    ICON: 4,
+    CONTAINER: 5,
+    SCROLLBAR: 6
 };
 
 UserInterface.STATE = {
     HIDDEN: 0,
     VISIBLE: 1,
     VISIBLE_NO_INTERACT: 2
+};
+
+UserInterface.EFFECT_CLASS = {
+    "FADE_IN": createFadeInEffect,
+    "FADE_OUT": createFadeOutEffect
+};
+
+UserInterface.ELEMENT_TYPE_MAP = {
+    "BUTTON": UserInterface.ELEMENT_TYPE.BUTTON,
+    "TEXT": UserInterface.ELEMENT_TYPE.TEXT,
+    "DYNAMIC_TEXT": UserInterface.ELEMENT_TYPE.DYNAMIC_TEXT,
+    "ICON": UserInterface.ELEMENT_TYPE.ICON,
+    "CONTAINER": UserInterface.ELEMENT_TYPE.CONTAINER,
+    "SCROLLBAR": UserInterface.ELEMENT_TYPE.SCROLLBAR
 };
 
 UserInterface.prototype.clear = function() {
@@ -160,70 +166,44 @@ UserInterface.prototype.getCollidedElements = function(mouseX, mouseY, mouseRang
     return [];
 }
 
-UserInterface.prototype.addClick = function(buttonID, onClick) {
-    const button = this.getElement(buttonID);
+UserInterface.prototype.createElement = function(typeID, DEBUG_NAME) {
+    switch(typeID) {
+        case UserInterface.ELEMENT_TYPE.BUTTON: return new Button(UserInterface.ELEMENT_BEHAVIOR.CLICKABLE, DEBUG_NAME);
+        case UserInterface.ELEMENT_TYPE.CONTAINER: return new Container(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE, DEBUG_NAME);
+        case UserInterface.ELEMENT_TYPE.DYNAMIC_TEXT: return new DynamicTextElement(UserInterface.ELEMENT_BEHAVIOR.NONE, DEBUG_NAME);
+        case UserInterface.ELEMENT_TYPE.ICON: return new Icon(UserInterface.ELEMENT_BEHAVIOR.NONE, DEBUG_NAME);
+        case UserInterface.ELEMENT_TYPE.SCROLLBAR: return new Scrollbar(UserInterface.ELEMENT_BEHAVIOR.CLICKABLE, DEBUG_NAME);
+        case UserInterface.ELEMENT_TYPE.TEXT: return new TextElement(UserInterface.ELEMENT_BEHAVIOR.NONE, DEBUG_NAME);
+        default: {
+            Logger.log(Logger.CODE.ENGINE_WARN, "ElementType does not exist!", "UserInterface.prototype.createElement", { typeID });
+            return new UIElement(UserInterface.ELEMENT_BEHAVIOR.NONE, DEBUG_NAME);
+        }
+    }
+}
 
-    if(!(button instanceof Button)) {
+UserInterface.prototype.addElement = function(element, elementName) {
+    if(this.idTranslate.has(elementName)) {
         return;
     }
 
-    button.events.subscribe(UIElement.EVENT.CLICKED, this.id, onClick);
+    const elementID = element.getID();
+
+    this.idTranslate.set(elementName, elementID);
+    this.elements.set(elementID, element);
 }
 
-UserInterface.prototype.removeClick = function(buttonID) {
-    const button = this.getElement(buttonID);
+UserInterface.prototype.initElement = function(elementName, typeName, config) {
+    const typeID = UserInterface.ELEMENT_TYPE_MAP[typeName];
 
-    if(!(button instanceof Button)) {
-        return;
-    }
-
-    button.events.mute(UIElement.EVENT.CLICKED);
-}
-
-UserInterface.prototype.setText = function(textID, message) {
-    const text = this.getElement(textID);
-
-    if(!(text instanceof TextElement)) {
-        return;
-    }
-
-    text.setText(message);
-}
-
-UserInterface.prototype.addDynamicText = function(textID, onCall) {
-    const text = this.getElement(textID);
-
-    if(!(text instanceof DynamicTextElement)) {
-        return;
-    }
-
-    text.events.subscribe(UIElement.EVENT.REQUEST_TEXT, this.id, (element) => onCall(element));
-}
-
-UserInterface.prototype.removeDynamicText = function(textID) {
-    const text = this.getElement(textID);
-
-    if(!(text instanceof DynamicTextElement)) {
-        return;
-    }
-
-    text.events.mute(UIElement.EVENT.REQUEST_TEXT);
-}
-
-UserInterface.prototype.createElement = function(name, typeID, config) {
-    const ElementType = UserInterface.ELEMENT_CLASS[typeID];
-
-    if(!ElementType || this.idTranslate.has(name)) {
+    if(typeID === undefined || this.idTranslate.has(elementName)) {
         return null;
     }
 
-    const element = new ElementType(name);
-    const elementID = element.getID();
+    const element = this.createElement(typeID, elementName);
 
     element.init(config);
 
-    this.idTranslate.set(name, elementID);
-    this.elements.set(elementID, element);
+    this.addElement(element, elementName);
 
     return element;
 }
@@ -235,13 +215,11 @@ UserInterface.prototype.addEffects = function(gameContext, element, effects = []
         const { type, value, threshold } = effects[i];
         const effectBuilder = UserInterface.EFFECT_CLASS[type];
 
-        if(!effectBuilder) {
-            continue;
+        if(effectBuilder) {
+            const effect = effectBuilder(element, value, threshold);
+
+            renderer.effects.addEffect(effect);
         }
-
-        const effect = effectBuilder(element, value, threshold);
-
-        renderer.effects.addEffect(effect);
     }
 }
 
@@ -253,7 +231,7 @@ UserInterface.prototype.fromConfig = function(gameContext, userInterface) {
         const config = userInterface[elementID];
         const { type } = config;
 
-        this.createElement(elementID, type, config);
+        this.initElement(elementID, type, config);
     }
     
     for(const elementID in userInterface) {
@@ -305,4 +283,54 @@ UserInterface.prototype.updateRootAnchors = function(width, height) {
 
 UserInterface.prototype.getID = function() {
     return this.id;
+}
+
+UserInterface.prototype.addClick = function(buttonID, onClick) {
+    const button = this.getElement(buttonID);
+
+    if(!(button instanceof Button)) {
+        return;
+    }
+
+    button.events.subscribe(UIElement.EVENT.CLICKED, this.id, onClick);
+}
+
+UserInterface.prototype.removeClick = function(buttonID) {
+    const button = this.getElement(buttonID);
+
+    if(!(button instanceof Button)) {
+        return;
+    }
+
+    button.events.mute(UIElement.EVENT.CLICKED);
+}
+
+UserInterface.prototype.setText = function(textID, message) {
+    const text = this.getElement(textID);
+
+    if(!(text instanceof TextElement)) {
+        return;
+    }
+
+    text.setText(message);
+}
+
+UserInterface.prototype.addDynamicText = function(textID, onCall) {
+    const text = this.getElement(textID);
+
+    if(!(text instanceof DynamicTextElement)) {
+        return;
+    }
+
+    text.events.subscribe(UIElement.EVENT.REQUEST_TEXT, this.id, (element) => onCall(element));
+}
+
+UserInterface.prototype.removeDynamicText = function(textID) {
+    const text = this.getElement(textID);
+
+    if(!(text instanceof DynamicTextElement)) {
+        return;
+    }
+
+    text.events.mute(UIElement.EVENT.REQUEST_TEXT);
 }

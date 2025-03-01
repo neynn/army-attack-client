@@ -2,10 +2,11 @@ import { EventEmitter } from "../events/eventEmitter.js";
 import { Drawable } from "../graphics/drawable.js";
 import { Logger } from "../logger.js";
 
-export const UIElement = function(DEBUG_NAME) {
+export const UIElement = function(behavior, DEBUG_NAME) {
     Drawable.call(this, DEBUG_NAME);
 
     this.anchor = UIElement.ANCHOR_TYPE.TOP_LEFT;
+    this.behavior = behavior;
     this.originX = 0;
     this.originY = 0;
     this.width = 0;
@@ -42,10 +43,6 @@ UIElement.prototype.constructor = UIElement;
 
 UIElement.prototype.init = function(config) {
     Logger.log(Logger.CODE.ENGINE_WARN, "Method has not been defined", "UIElement.prototype.init", null);
-}
-
-UIElement.prototype.onClick = function() {
-    Logger.log(Logger.CODE.ENGINE_WARN, "Method has not been defined", "UIElement.prototype.onClick", null);
 }
 
 UIElement.prototype.isColliding = function(mouseX, mouseY, mouseRange) {
