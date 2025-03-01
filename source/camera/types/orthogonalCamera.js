@@ -15,6 +15,11 @@ export const OrthogonalCamera = function() {
     this.overlays = [];
 }
 
+OrthogonalCamera.COLOR = {
+    EMPTY_TILE_FIRST: "#000000",
+    EMPTY_TILE_SECOND: "#701867"
+};
+
 OrthogonalCamera.MAP_OUTLINE = {
     LINE_SIZE: 2,
     COLOR: "#dddddd"
@@ -48,6 +53,56 @@ OrthogonalCamera.prototype.clearOverlay = function(index) {
     this.overlays[index].length = 0;
 }
 
+OrthogonalCamera.prototype.drawEmptyTile = function(context, renderX, renderY, scaleX = 1, scaleY = 1) {
+    const scaledX = this.halfTileWidth * scaleX;
+    const scaledY = this.halfTileHeight * scaleY;
+
+    context.fillStyle = OrthogonalCamera.COLOR.EMPTY_TILE_FIRST;
+    context.fillRect(renderX, renderY, scaledX, scaledY);
+    context.fillRect(renderX + scaledX, renderY + scaledY, scaledX, scaledY);
+
+    context.fillStyle = OrthogonalCamera.COLOR.EMPTY_TILE_SECOND;
+    context.fillRect(renderX + scaledX, renderY, scaledX, scaledY);
+    context.fillRect(renderX, renderY + scaledY, scaledX, scaledY);
+}
+
+OrthogonalCamera.prototype.drawTileGraphics = function(tileManager, tileID, context, renderX, renderY, scaleX = 1, scaleY = 1) {
+    const { meta, resources, tileTypes } = tileManager;
+    const tileMeta = meta.getMeta(tileID);
+
+    if(tileMeta === null) {
+        this.drawEmptyTile(context, renderX, renderY, scaleX, scaleY);
+        return;
+    }
+
+    const { set, animation } = tileMeta;
+    const tileBuffer = resources.getImage(set);
+
+    if(tileBuffer === null) {
+        this.drawEmptyTile(context, renderX, renderY, scaleX, scaleY);
+        return;
+    }
+
+    const tileType = tileTypes[set];
+    const animationType = tileType.getAnimation(animation);
+    const currentFrame = animationType.getCurrentFrame();
+
+    for(let i = 0; i < currentFrame.length; i++) {
+        const component = currentFrame[i];
+        const { frameX, frameY, frameW, frameH, shiftX, shiftY } = component;
+        const drawX = renderX + shiftX * scaleX;
+        const drawY = renderY + shiftY * scaleY;
+        const drawWidth = frameW * scaleX;
+        const drawHeight = frameH * scaleY;
+
+        context.drawImage(
+            tileBuffer,
+            frameX, frameY, frameW, frameH,
+            drawX, drawY, drawWidth, drawHeight
+        );
+    }
+}
+
 OrthogonalCamera.prototype.drawOverlay = function(gameContext, renderContext, worldBounds, index) {
     if(index < 0 || index >= this.overlays.length) {
         return;
@@ -64,7 +119,7 @@ OrthogonalCamera.prototype.drawOverlay = function(gameContext, renderContext, wo
             const renderX = drawX - this.viewportX;
             const renderY = drawY - this.viewportY;
     
-            tileManager.drawTileGraphics(id, renderContext, renderX, renderY);
+            this.drawTileGraphics(tileManager, id, renderContext, renderX, renderY);
         }
     }
 }
@@ -102,7 +157,7 @@ OrthogonalCamera.prototype.drawTileBuffer = function(gameContext, renderContext,
                 if(tileID !== 0) {
                     const renderX = j * this.tileWidth - this.viewportX;
     
-                    tileManager.drawTileGraphics(tileID, renderContext, renderX, renderY);
+                    this.drawTileGraphics(tileManager, tileID, renderContext, renderX, renderY);
                 }
             }
         }

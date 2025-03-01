@@ -167,11 +167,11 @@ MapEditorState.prototype.loadButtonEvents = function(gameContext) {
 
         if(tileID === 0) {
             button.addDefer((context, localX, localY) => {
-                tileManager.drawEmptyTile(context, localX, localY, MapEditorState.GRAPHICS_BUTTON_SCALE, MapEditorState.GRAPHICS_BUTTON_SCALE);
+                this.camera.drawEmptyTile(context, localX, localY, MapEditorState.GRAPHICS_BUTTON_SCALE, MapEditorState.GRAPHICS_BUTTON_SCALE);
             });
         } else {
             button.addDefer((context, localX, localY) => {
-                tileManager.drawTileGraphics(tileID, context, localX, localY, MapEditorState.GRAPHICS_BUTTON_SCALE, MapEditorState.GRAPHICS_BUTTON_SCALE);
+                this.camera.drawTileGraphics(tileManager, tileID, context, localX, localY, MapEditorState.GRAPHICS_BUTTON_SCALE, MapEditorState.GRAPHICS_BUTTON_SCALE);
                 context.fillStyle = "#eeeeee";
                 context.textAlign = "center";
                 context.fillText(tileName, localX + 25, localY + 25);
@@ -232,7 +232,7 @@ MapEditorState.prototype.initializeRenderEvents = function(gameContext) {
     
         const { tileName, tileID } = brush;
         const { x, y } = camera.getViewport();
-        const { width, height, halfWidth } = camera.getTileDimensions();
+        const { width, height, halfWidth, halfHeight } = camera.getTileDimensions();
         const startX = cursorTile.x - brushSize;
         const startY = cursorTile.y - brushSize;
         const endX = cursorTile.x + brushSize;
@@ -247,9 +247,10 @@ MapEditorState.prototype.initializeRenderEvents = function(gameContext) {
                 const renderX = j * width - x;
 
                 if(tileID === 0) {
-                    tileManager.drawEmptyTile(context, renderX, renderY);
+                    this.camera.drawEmptyTile(context, renderX, renderY);
                 } else {
-                    tileManager.drawTileGraphics(tileID, context, renderX, renderY);
+                    this.camera.drawTileGraphics(tileManager, tileID, context, renderX, renderY);
+
                     context.fillStyle = this.mapEditor.config.overlayTextColor;
                     context.textAlign = "center";
                     context.fillText(tileName, renderX + halfWidth, renderY);  
