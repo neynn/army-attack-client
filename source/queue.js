@@ -7,6 +7,11 @@ export const Queue = function(size = 0) {
     this.clearAllElements();
 }
 
+Queue.FILTER = {
+    NO_SUCCESS: 0,
+    SUCCESS: 1
+};
+
 Queue.prototype.clearAllElements = function() {
     for(let i = 0; i < this.size; i++) {
         this.elements[i] = null;
@@ -41,11 +46,11 @@ Queue.prototype.filterUntilFirstHit = function(onCheck) {
         const next = this.getNext();
 
         if(onCheck(next)) {
-            return true;
+            return Queue.FILTER.SUCCESS;
         }
     }
 
-    return false;
+    return Queue.FILTER.NO_SUCCESS;
 }
 
 Queue.prototype.enqueueLast = function(element) {

@@ -16,16 +16,20 @@ ServerQueue.prototype.processUserRequest = function(gameContext, request, messen
 }
 
 ServerQueue.prototype.processElement = function(gameContext, element) {
-    const isValid = this.validateExecution(gameContext, element);
+    const executionItem = this.getExecutionItem(gameContext, element);
 
-    if(isValid) {
-        const processNext = () => {
-            if(!this.isEmpty()) {
-                this.update(gameContext);
-                setTimeout(processNext, 0);
-            }
-        };
-
-        processNext();
+    if(!executionItem) {
+        return;
     }
+
+    this.enqueueExecutionItem(executionItem, element);
+
+    const processNext = () => {
+        if(!this.isEmpty()) {
+            this.update(gameContext);
+            setTimeout(processNext, 0);
+        }
+    };
+
+    processNext();
 }
