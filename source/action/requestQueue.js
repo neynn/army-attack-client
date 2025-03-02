@@ -8,7 +8,6 @@ export const RequestQueue = function() {
     this.executionQueue = new Queue(100);
     this.requestQueues = new Map([
         [RequestQueue.PRIORITY.HIGH, new Queue(10)],
-        [RequestQueue.PRIORITY.MEDIUM, new Queue(10)],
         [RequestQueue.PRIORITY.LOW, new Queue(10)]
     ]);
     this.current = null;
@@ -37,9 +36,8 @@ RequestQueue.MODE = {
 };
 
 RequestQueue.PRIORITY = {
-    HIGH: "HIGH",
-    MEDIUM: "MEDIUM",
-    LOW: "LOW"
+    LOW: "LOW",
+    HIGH: "HIGH"
 };
 
 RequestQueue.EVENT = {

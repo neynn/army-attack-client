@@ -1,91 +1,89 @@
 export const Queue = function(size = 0) {
     this.size = size;
     this.elements = [];
+    this.head = 0;
+    this.tail = 0;
+    this.count = 0;
+    this.clearAllElements();
 }
 
-Queue.prototype.getNext = function() {
-    if(this.elements.length === 0) {
-        return null;
+Queue.prototype.clearAllElements = function() {
+    for(let i = 0; i < this.size; i++) {
+        this.elements[i] = null;
     }
 
-    const element = this.elements.shift();
-    const item = element.item;
-
-    return item;
-}
-
-Queue.prototype.filterAll = function(onCheck) {
-    for(let i = 0; i < this.elements.length; i++) {
-        const element = this.elements[i];
-        const { item } = element;
-
-        onCheck(item);
-    }
-
-    this.clear();
-}
-
-Queue.prototype.clearElements = function(indices) {
-    for(let i = indices.length - 1; i >= 0; i--) {
-        const index = indices[i];
-        this.elements.splice(index, 1);
-    }
-}
-
-Queue.prototype.filterUntilFirstHit = function(onCheck) {
-    const processedIndices = [];
-
-    for(let i = 0; i < this.elements.length; i++) {
-        const element = this.elements[i];
-        const { item } = element;
-        const isValid = onCheck(item);
-
-        processedIndices.push(i);
-
-        if(isValid) {
-            this.clearElements(processedIndices);
-            return true;
-        }
-    }
-
-    this.clearElements(processedIndices);
-    return false;
+    this.count = 0;
 }
 
 Queue.prototype.setSize = function(size = 0) {
     this.size = size;
+    this.head = 0;
+    this.tail = 0;
+    this.clearAllElements();
+}
 
-    if(this.elements.length > size) {
-        this.elements.length = size;
+Queue.prototype.getNext = function() {
+    if(this.count === 0) {
+        return null;
     }
+
+    const element = this.elements[this.head];
+    const item = element.item;
+
+    this.head = (this.head + 1) % this.size;
+    this.count--;
+
+    return item;
+}
+
+Queue.prototype.filterUntilFirstHit = function(onCheck) {
+    while(this.count > 0) {
+        const next = this.getNext();
+
+        if(onCheck(next)) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 Queue.prototype.enqueueLast = function(element) {
-    if(this.elements.length < this.size) {
-        this.elements.push({
-            "time": Date.now(),
-            "item": element 
-        });
+    if(this.isFull()) {
+        return;
     }
+
+    this.elements[this.tail] = {
+        "time": Date.now(), 
+        "item": element 
+    };
+    this.tail = (this.tail + 1) % this.size;
+    this.count++;
 }
 
 Queue.prototype.enqueueFirst = function(element) {
-    if(this.elements.length < this.size) {
-        this.elements.unshift({
-            "time": Date.now(),
-            "item": element 
-        });
+    if(this.isFull()) {
+        return;
     }
+
+    this.head = (this.head - 1 + this.size) % this.size;
+    this.elements[this.head] = {
+        "time": Date.now(), 
+        "item": element 
+    };
+    this.count++;
 }
 
 Queue.prototype.clear = function() {
-    this.elements = [];
+    this.head = 0;
+    this.tail = 0;
+    this.clearAllElements();
 }
 
 Queue.prototype.getSize = function() {
-    return this.elements.length;
+    return this.count;
 }
 
 Queue.prototype.isFull = function() {
-    return this.elements.length >= this.size;
+    return this.count >= this.size;
 }
