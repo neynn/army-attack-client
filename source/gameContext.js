@@ -8,7 +8,6 @@ import { Timer } from "./timer.js";
 import { TileManager } from "./tile/tileManager.js";
 import { Renderer } from "./renderer.js";
 import { World } from "./world.js";
-import { UIElement } from "./ui/uiElement.js";
 
 export const GameContext = function() {
     this.id = "GAME_CONTEXT";

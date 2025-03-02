@@ -127,9 +127,9 @@ UserInterface.prototype.updateCollisions = function(mouseX, mouseY, mouseRange) 
         const hasPreviousCollision = this.previousCollisions.has(elementID);
 
         if(hasPreviousCollision) {
-            element.events.emit(UIElement.EVENT.COLLISION, mouseX, mouseY, mouseRange);
+            element.onCollision(UIElement.COLLISION_TYPE.REPEATED, mouseX, mouseY, mouseRange);
         } else {
-            element.events.emit(UIElement.EVENT.FIRST_COLLISION, mouseX, mouseY, mouseRange);
+            element.onCollision(UIElement.COLLISION_TYPE.FIRST, mouseX, mouseY, mouseRange);
         }
 
         currentCollisions.add(elementID);
@@ -141,7 +141,7 @@ UserInterface.prototype.updateCollisions = function(mouseX, mouseY, mouseRange) 
         if(!hasCurrentCollision) {
             const element = this.elements.get(elementID);
 
-            element.events.emit(UIElement.EVENT.FINAL_COLLISION, mouseX, mouseY, mouseRange);
+            element.onCollision(UIElement.COLLISION_TYPE.LAST, mouseX, mouseY, mouseRange);
         }
     }
 
@@ -174,7 +174,7 @@ UserInterface.prototype.createElement = function(typeID, DEBUG_NAME) {
             element.addBehaviorFlag(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE);
             element.addBehaviorFlag(UserInterface.ELEMENT_BEHAVIOR.CLICKABLE);
 
-            return element
+            return element;
         }
         case UserInterface.ELEMENT_TYPE.CONTAINER: {
             const element = new Container(DEBUG_NAME);
@@ -207,7 +207,7 @@ UserInterface.prototype.createElement = function(typeID, DEBUG_NAME) {
             return element;
         }
         default: {
-            Logger.log(Logger.CODE.ENGINE_WARN, "ElementType does not exist!", "UserInterface.prototype.createElement", { typeID });
+            Logger.log(Logger.CODE.ENGINE_WARN, "ElementType does not exist!", "UserInterface.prototype.createElement", { "type": typeID });
 
             const element = new UIElement(DEBUG_NAME);
     

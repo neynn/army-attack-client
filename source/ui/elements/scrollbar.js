@@ -14,6 +14,8 @@ Scrollbar.TYPE = {
 Scrollbar.prototype = Object.create(UIElement.prototype);
 Scrollbar.prototype.constructor = Scrollbar;
 
+Scrollbar.prototype.onCollision = function(type, mouseX, mouseY, mouseRange) {}
+
 Scrollbar.prototype.onClick = function() {
     this.events.emit(UIElement.EVENT.CLICKED);
 }

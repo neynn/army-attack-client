@@ -25,6 +25,8 @@ Container.prototype.init = function(config) {
     this.setOpacity(opacity);
 }
 
+Container.prototype.onCollision = function(type, mouseX, mouseY, mouseRange) {}   
+
 Container.prototype.isColliding = function(mouseX, mouseY, mouseRange) {
     const isIntersection = isRectangleRectangleIntersect(this.position.x, this.position.y, this.width, this.height, mouseX, mouseY, mouseRange, mouseRange);
     

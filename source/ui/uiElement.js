@@ -14,15 +14,18 @@ export const UIElement = function(DEBUG_NAME) {
     this.height = 0;
     
     this.events = new EventEmitter();
-    this.events.listen(UIElement.EVENT.FIRST_COLLISION);
-    this.events.listen(UIElement.EVENT.FINAL_COLLISION);
-    this.events.listen(UIElement.EVENT.COLLISION);
 }
 
+UIElement.COLLISION_TYPE = {
+    FIRST: 0,
+    LAST: 1,
+    REPEATED: 2
+};
+
 UIElement.EVENT = {
-    FINAL_COLLISION: "FINAL_COLLISION",
+    LAST_COLLISION: "LAST_COLLISION",
     FIRST_COLLISION: "FIRST_COLLISION",
-    COLLISION: "COLLISION",
+    REPEATED_COLLISION: "REPEATED_COLLISION",
     CLICKED: "CLICKED",
     REQUEST_TEXT: "REQUEST_TEXT"
 };
@@ -41,6 +44,10 @@ UIElement.ANCHOR_TYPE = {
 
 UIElement.prototype = Object.create(Drawable.prototype);
 UIElement.prototype.constructor = UIElement;
+
+UIElement.prototype.removeBehaviorFlag = function(flag) {
+    this.behavior &= (~flag);
+}
 
 UIElement.prototype.hasBehaviorFlag = function(flag) {
     return (this.behavior & flag) !== 0;

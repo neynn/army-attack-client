@@ -15,9 +15,10 @@ export const Button = function(DEBUG_NAME) {
     this.outline.color.setColor(255, 255, 255, 1);
     this.outline.enable();
 
+    this.events.listen(UIElement.EVENT.FIRST_COLLISION);
+    this.events.listen(UIElement.EVENT.LAST_COLLISION);
+    this.events.listen(UIElement.EVENT.REPEATED_COLLISION);
     this.events.listen(UIElement.EVENT.CLICKED);
-    this.events.subscribe(UIElement.EVENT.FIRST_COLLISION, this.DEBUG_NAME, () => this.highlight.enable());
-    this.events.subscribe(UIElement.EVENT.FINAL_COLLISION, this.DEBUG_NAME, () => this.highlight.disable());
 }
 
 Button.SHAPE = {
@@ -33,6 +34,29 @@ Button.prototype.setShape = function(shape) {
         this.shape = shape;
     }
 }
+
+Button.prototype.onCollision = function(type, mouseX, mouseY, mouseRange) {
+    switch(type) {
+        case UIElement.COLLISION_TYPE.FIRST: {
+            this.highlight.enable();
+            this.events.emit(UIElement.EVENT.FIRST_COLLISION);
+            break;
+        }
+        case UIElement.COLLISION_TYPE.LAST: {
+            this.highlight.disable();
+            this.events.emit(UIElement.EVENT.LAST_COLLISION);
+            break;
+        }
+        case UIElement.COLLISION_TYPE.REPEATED: {
+            this.events.emit(UIElement.EVENT.REPEATED_COLLISION);
+            break;
+        }
+        default: {
+            Logger.log(Logger.CODE.ENGINE_WARN, "CollisionType does not exist!", "Button.prototype.onCollision", { "type": type });
+            break;
+        }
+    }
+}   
 
 Button.prototype.onClick = function() {
     this.events.emit(UIElement.EVENT.CLICKED);
