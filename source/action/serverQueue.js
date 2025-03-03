@@ -1,17 +1,18 @@
-import { RequestQueue } from "./requestQueue.js";
+import { ActionQueue } from "./actionQueue.js";
 
 export const ServerQueue = function() {
-    RequestQueue.call(this);
+    ActionQueue.call(this);
 
-    this.setMode(RequestQueue.MODE.DIRECT);
-    this.setState(RequestQueue.STATE.FLUSH);
+    this.setMode(ActionQueue.MODE.DIRECT);
+    this.setState(ActionQueue.STATE.FLUSH);
 }
 
-ServerQueue.prototype = Object.create(RequestQueue.prototype);
+ServerQueue.prototype = Object.create(ActionQueue.prototype);
 ServerQueue.prototype.constructor = ServerQueue;
 
 ServerQueue.prototype.processUserRequest = function(gameContext, request, messengerID) {
-    const element = this.createElement(request, RequestQueue.PRIORITY.LOW, messengerID);
+    const element = this.createElement(request, ActionQueue.PRIORITY.LOW, messengerID);
+    
     this.processElement(gameContext, element);
 }
 

@@ -25,7 +25,7 @@ AttackAction.prototype.onEnd = function(gameContext, request, messengerID) {
     AttackSystem.endAttack(gameContext, request);
 
     if(state === AttackSystem.OUTCOME_STATE.IDLE) {
-        actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.COUNTER_ATTACK, targetID, attackers));
+        actionQueue.addRequest(ACTION_TYPES.COUNTER_ATTACK, targetID, attackers);
     }
 }
 

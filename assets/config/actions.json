@@ -1,16 +1,13 @@
 {
     "Attack": {
-        "id": "Attack",
         "description": "Attacking action",
         "priority": "LOW",
-        "errorSound": "sound_error",
         "message": {
             "send": true,
             "receive": false
         }
     },
     "Construction": {
-        "id": "Construction",
         "description": "Building action",
         "priority": "LOW",
         "message": {
@@ -19,7 +16,6 @@
         }
     },
     "Move": {
-        "id": "Move",
         "description": "Moving action",
         "priority": "LOW",
         "message": {
@@ -28,7 +24,6 @@
         }
     },
     "CounterAttack": {
-        "id": "CounterAttack",
         "description": "CounterAttack action",
         "priority": "HIGH",
         "message": {
@@ -37,7 +32,6 @@
         }
     },
     "CounterMove": {
-        "id": "CounterMove",
         "description": "CounterMove action",
         "priority": "HIGH",
         "message": {

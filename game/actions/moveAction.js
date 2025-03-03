@@ -34,7 +34,7 @@ MoveAction.prototype.onEnd = function(gameContext, request, messengerID) {
     MoveSystem.endMove(gameContext, entity, targetX, targetY);
     entity.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
     entity.placeOnMap(gameContext);
-    actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.COUNTER_MOVE, entityID));
+    actionQueue.addRequest(ACTION_TYPES.COUNTER_MOVE, entityID);
 }
 
 MoveAction.prototype.isFinished = function(gameContext, request, messengerID) {

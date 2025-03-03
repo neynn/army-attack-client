@@ -196,9 +196,11 @@ MapEditorState.prototype.loadButtonEvents = function(gameContext) {
         } else {
             button.addDefer((context, localX, localY) => {
                 this.camera.drawTileGraphics(tileManager, context, tileID, localX, localY, MapEditorState.GRAPHICS_BUTTON_SCALE, MapEditorState.GRAPHICS_BUTTON_SCALE);
+                /*
                 context.fillStyle = "#eeeeee";
                 context.textAlign = "center";
                 context.fillText(tileName, localX + 25, localY + 25);
+                */
             });
         }
     }

@@ -75,6 +75,15 @@ UserInterface.prototype.destroyElement = function(name) {
 
     this.elements.delete(elementID);
     this.nameMap.delete(name);
+
+    for(let i = 0; i < this.roots.length; i++) {
+        const rootID = this.roots[i];
+
+        if(rootID === elementID) {
+            this.roots.splice(i, 1);
+            break;
+        }
+    }
 }
 
 UserInterface.prototype.update = function(gameContext) {

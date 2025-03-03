@@ -26,7 +26,7 @@ ConstructionSystem.onInteract = function(gameContext, entity) {
     } else {
         const entityID = entity.getID();
         
-        actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.CONSTRUCTION, entityID));
+        actionQueue.addRequest(ACTION_TYPES.CONSTRUCTION, entityID);
     }
 }
 

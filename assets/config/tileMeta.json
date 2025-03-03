@@ -12,31 +12,31 @@
         { "defaultType": 0, "set": "ground", "animation": "Bg_DebrisTile_01" },
         { "defaultType": 0, "set": "ground", "animation": "Bg_FogTile_01" },
 
-        { "autotiler": "shore", "defaultType": 3, "set": "coast", "animation": "Bg_WaterTile_01_desert" },
+        { "defaultType": 3, "set": "coast", "animation": "Bg_WaterTile_01_desert" },
         { "autotiler": "shore", "defaultType": 3, "set": "coast", "animation": "Bg_CoastTile_ne_01" },
-        { "autotiler": "shore", "defaultType": 3, "set": "coast", "animation": "Bg_CoastTile_ne_02" },
+        { "autotiler": "shore_bad", "defaultType": 3, "set": "coast", "animation": "Bg_CoastTile_ne_02" },
         { "autotiler": "shore", "defaultType": 3, "set": "coast", "animation": "Bg_CoastTile_w_01" },
-        { "autotiler": "shore", "defaultType": 3, "set": "coast", "animation": "Bg_CoastTile_w_02" },
+        { "autotiler": "shore_bad", "defaultType": 3, "set": "coast", "animation": "Bg_CoastTile_w_02" },
         { "autotiler": "shore", "defaultType": 3, "set": "coast", "animation": "Bg_CoastTile_nw_inside_01" },
-        { "autotiler": "shore", "defaultType": 3, "set": "coast", "animation": "Bg_CoastTile_nw_inside_02" },
-        { "autotiler": "shore", "defaultType": 3, "set": "coast", "animation": "Bg_CoastTile_ne_inside_02" },
+        { "autotiler": "shore_bad", "defaultType": 3, "set": "coast", "animation": "Bg_CoastTile_nw_inside_02" },
+        { "autotiler": "shore_bad", "defaultType": 3, "set": "coast", "animation": "Bg_CoastTile_ne_inside_02" },
         { "autotiler": "shore", "defaultType": 3, "set": "coast", "animation": "Bg_CoastTile_ne_inside_01" },
         { "autotiler": "shore", "defaultType": 3, "set": "coast", "animation": "Bg_CoastTile_sw_01" },
-        { "autotiler": "shore", "defaultType": 3, "set": "coast", "animation": "Bg_CoastTile_sw_02" },
+        { "autotiler": "shore_bad", "defaultType": 3, "set": "coast", "animation": "Bg_CoastTile_sw_02" },
         { "autotiler": "shore", "defaultType": 3, "set": "coast", "animation": "Bg_CoastTile_e_01" },
-        { "autotiler": "shore", "defaultType": 3, "set": "coast", "animation": "Bg_CoastTile_e_02" },
+        { "autotiler": "shore_bad", "defaultType": 3, "set": "coast", "animation": "Bg_CoastTile_e_02" },
         { "autotiler": "shore", "defaultType": 3, "set": "coast", "animation": "Bg_CoastTile_sw_inside_01" },
-        { "autotiler": "shore", "defaultType": 3, "set": "coast", "animation": "Bg_CoastTile_sw_inside_02" },
+        { "autotiler": "shore_bad", "defaultType": 3, "set": "coast", "animation": "Bg_CoastTile_sw_inside_02" },
         { "autotiler": "shore", "defaultType": 3, "set": "coast", "animation": "Bg_CoastTile_s_01" },
-        { "autotiler": "shore", "defaultType": 3, "set": "coast", "animation": "Bg_CoastTile_s_02" },
+        { "autotiler": "shore_bad", "defaultType": 3, "set": "coast", "animation": "Bg_CoastTile_s_02" },
         { "autotiler": "shore", "defaultType": 3, "set": "coast", "animation": "Bg_CoastTile_se_inside_01" },
-        { "autotiler": "shore", "defaultType": 3, "set": "coast", "animation": "Bg_CoastTile_se_inside_02" },
+        { "autotiler": "shore_bad", "defaultType": 3, "set": "coast", "animation": "Bg_CoastTile_se_inside_02" },
         { "autotiler": "shore", "defaultType": 3, "set": "coast", "animation": "Bg_CoastTile_n_01" },
-        { "autotiler": "shore", "defaultType": 3, "set": "coast", "animation": "Bg_CoastTile_n_02" },
+        { "autotiler": "shore_bad", "defaultType": 3, "set": "coast", "animation": "Bg_CoastTile_n_02" },
         { "autotiler": "shore", "defaultType": 3, "set": "coast", "animation": "Bg_CoastTile_nw_01" },
-        { "autotiler": "shore", "defaultType": 3, "set": "coast", "animation": "Bg_CoastTile_nw_02" },
+        { "autotiler": "shore_bad", "defaultType": 3, "set": "coast", "animation": "Bg_CoastTile_nw_02" },
         { "autotiler": "shore", "defaultType": 3, "set": "coast", "animation": "Bg_CoastTile_se_01" },
-        { "autotiler": "shore", "defaultType": 3, "set": "coast", "animation": "Bg_CoastTile_se_02" },
+        { "autotiler": "shore_bad", "defaultType": 3, "set": "coast", "animation": "Bg_CoastTile_se_02" },
 
         { "set": "deco_bad", "animation": "Bg_DeadTrees_01" },
         { "set": "deco_bad", "animation": "Bg_BadTile_Deco_11" },
@@ -193,34 +193,21 @@
         { "set": "border", "animation": "47" }
     ],
     "autotilers": {
-        "shore": {
-            "id": "shore",
+        "shore_bad": {
             "type": "MIN_8",
             "members": [
                 { "set": "coast", "animation": "Bg_WaterTile_01_desert" },
-                { "set": "coast", "animation": "Bg_CoastTile_ne_01" },
                 { "set": "coast", "animation": "Bg_CoastTile_ne_02" },
-                { "set": "coast", "animation": "Bg_CoastTile_w_01" },
                 { "set": "coast", "animation": "Bg_CoastTile_w_02" },
-                { "set": "coast", "animation": "Bg_CoastTile_nw_inside_01" },
                 { "set": "coast", "animation": "Bg_CoastTile_nw_inside_02" },
                 { "set": "coast", "animation": "Bg_CoastTile_ne_inside_02" },
-                { "set": "coast", "animation": "Bg_CoastTile_ne_inside_01" },
-                { "set": "coast", "animation": "Bg_CoastTile_sw_01" },
                 { "set": "coast", "animation": "Bg_CoastTile_sw_02" },
-                { "set": "coast", "animation": "Bg_CoastTile_e_01" },
                 { "set": "coast", "animation": "Bg_CoastTile_e_02" },
-                { "set": "coast", "animation": "Bg_CoastTile_sw_inside_01" },
                 { "set": "coast", "animation": "Bg_CoastTile_sw_inside_02" },
-                { "set": "coast", "animation": "Bg_CoastTile_s_01" },
                 { "set": "coast", "animation": "Bg_CoastTile_s_02" },
-                { "set": "coast", "animation": "Bg_CoastTile_se_inside_01" },
                 { "set": "coast", "animation": "Bg_CoastTile_se_inside_02" },
-                { "set": "coast", "animation": "Bg_CoastTile_n_01" },
                 { "set": "coast", "animation": "Bg_CoastTile_n_02" },
-                { "set": "coast", "animation": "Bg_CoastTile_nw_01" },
                 { "set": "coast", "animation": "Bg_CoastTile_nw_02" },
-                { "set": "coast", "animation": "Bg_CoastTile_se_01" },
                 { "set": "coast", "animation": "Bg_CoastTile_se_02" }
             ],
             "values": {
@@ -239,8 +226,40 @@
                 "46": { "set": "coast", "animation": "Bg_WaterTile_01_desert" }
             }
         },
+        "shore": {
+            "type": "MIN_8",
+            "members": [
+                { "set": "coast", "animation": "Bg_WaterTile_01_desert" },
+                { "set": "coast", "animation": "Bg_CoastTile_ne_01" },
+                { "set": "coast", "animation": "Bg_CoastTile_w_01" },
+                { "set": "coast", "animation": "Bg_CoastTile_nw_inside_01" },
+                { "set": "coast", "animation": "Bg_CoastTile_ne_inside_01" },
+                { "set": "coast", "animation": "Bg_CoastTile_sw_01" },
+                { "set": "coast", "animation": "Bg_CoastTile_e_01" },
+                { "set": "coast", "animation": "Bg_CoastTile_sw_inside_01" },
+                { "set": "coast", "animation": "Bg_CoastTile_s_01" },
+                { "set": "coast", "animation": "Bg_CoastTile_se_inside_01" },
+                { "set": "coast", "animation": "Bg_CoastTile_n_01" },
+                { "set": "coast", "animation": "Bg_CoastTile_nw_01" },
+                { "set": "coast", "animation": "Bg_CoastTile_se_01" }
+            ],
+            "values": {
+                "4": { "set": "coast", "animation": "Bg_CoastTile_se_inside_01" },
+                "7": { "set": "coast", "animation": "Bg_CoastTile_sw_inside_01" },
+                "12": { "set": "coast", "animation": "Bg_CoastTile_n_01" },
+                "26": { "set": "coast", "animation": "Bg_CoastTile_ne_inside_01" },
+                "28": { "set": "coast", "animation": "Bg_CoastTile_w_01" },
+                "33": { "set": "coast", "animation": "Bg_CoastTile_nw_01" },
+                "34": { "set": "coast", "animation": "Bg_CoastTile_nw_inside_01" },
+                "36": { "set": "coast", "animation": "Bg_CoastTile_e_01" },
+                "41": { "set": "coast", "animation": "Bg_CoastTile_ne_01" },
+                "42": { "set": "coast", "animation": "Bg_CoastTile_s_01" },
+                "44": { "set": "coast", "animation": "Bg_CoastTile_sw_01" },
+                "45": { "set": "coast", "animation": "Bg_CoastTile_se_01" },
+                "46": { "set": "coast", "animation": "Bg_WaterTile_01_desert" }
+            }
+        },
         "border": {
-            "id": "border",
             "type": "MIN_8",
             "values": {
                 "1": { "set": "border", "animation": "1" },
@@ -292,7 +311,6 @@
             }
         },
         "cloud": {
-            "id": "cloud",
             "type": "MIN_8",
             "members": [
                 { "set": "clouds", "animation": "Bg_CloudTile_17" },
@@ -326,7 +344,6 @@
             }
         },
         "range": {
-            "id": "range",
             "type": "MIN_4",
             "values": {
                 "3": { "set": "range", "animation": "bottom_right" },

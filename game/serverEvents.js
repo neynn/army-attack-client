@@ -1,4 +1,4 @@
-import { RequestQueue } from "../source/action/requestQueue.js";
+import { ActionQueue } from "../source/action/actionQueue.js";
 import { CLIENT_EVENTS } from "./enums.js";
 import { SpawnSystem } from "./systems/spawn.js";
 
@@ -77,8 +77,8 @@ ServerEvents.startVersusInstance = async function(gameContext, payload) {
 
     ServerEvents.instanceEntityBatch(gameContext, payload);
 
-    actionQueue.setMode(RequestQueue.MODE.DEFERRED);
-    actionQueue.events.subscribe(RequestQueue.EVENT.EXECUTION_DEFER, contextID, (execution, request, type) => {
+    actionQueue.setMode(ActionQueue.MODE.DEFERRED);
+    actionQueue.events.subscribe(ActionQueue.EVENT.EXECUTION_DEFER, contextID, (execution, request, type) => {
         if(type.message.send) {
             socket.messageRoom(CLIENT_EVENTS.ACTION, request);
         }

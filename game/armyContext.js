@@ -1,4 +1,4 @@
-import { RequestQueue } from "../source/action/requestQueue.js";
+import { ActionQueue } from "../source/action/actionQueue.js";
 import { GameContext } from "../source/gameContext.js";
 import { Socket } from "../source/network/socket.js";
 import { World } from "../source/world.js";
@@ -87,11 +87,13 @@ ArmyContext.prototype.getGameMode = function() {
 ArmyContext.prototype.init = function(resources) {
     this.updateConversions();
 
-    this.world.actionQueue.registerActionHandler(ACTION_TYPES.ATTACK, new AttackAction());
-    this.world.actionQueue.registerActionHandler(ACTION_TYPES.CONSTRUCTION, new ConstructionAction());
-    this.world.actionQueue.registerActionHandler(ACTION_TYPES.COUNTER_ATTACK, new CounterAttackAction());
-    this.world.actionQueue.registerActionHandler(ACTION_TYPES.COUNTER_MOVE, new CounterMoveAction());
-    this.world.actionQueue.registerActionHandler(ACTION_TYPES.MOVE, new MoveAction());
+    this.world.actionQueue.registerAction(ACTION_TYPES.ATTACK, new AttackAction());
+    this.world.actionQueue.registerAction(ACTION_TYPES.CONSTRUCTION, new ConstructionAction());
+    this.world.actionQueue.registerAction(ACTION_TYPES.COUNTER_ATTACK, new CounterAttackAction());
+    this.world.actionQueue.registerAction(ACTION_TYPES.COUNTER_MOVE, new CounterMoveAction());
+    this.world.actionQueue.registerAction(ACTION_TYPES.MOVE, new MoveAction());
+
+    this.world.actionQueue.load(resources.actions);
 
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.ARMOR, ArmorComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.ATTACK, AttackComponent);
@@ -124,9 +126,9 @@ ArmyContext.prototype.init = function(resources) {
     this.client.soundPlayer.loadAllSounds();
     
     if(ArmyContext.DEBUG.LOG_QUEUE_EVENTS) {
-        this.world.actionQueue.events.subscribe(RequestQueue.EVENT.QUEUE_ERROR, "DEBUG", (error) => console.log(error));
-        this.world.actionQueue.events.subscribe(RequestQueue.EVENT.EXECUTION_RUNNING, "DEBUG", (item) => console.log(item, "IS PROCESSING"));
-        this.world.actionQueue.events.subscribe(RequestQueue.EVENT.EXECUTION_ERROR, "DEBUG",  (request, actionType) => console.log(request, "IS INVALID"));
+        this.world.actionQueue.events.subscribe(ActionQueue.EVENT.QUEUE_ERROR, "DEBUG", (error) => console.log(error));
+        this.world.actionQueue.events.subscribe(ActionQueue.EVENT.EXECUTION_RUNNING, "DEBUG", (item) => console.log(item, "IS PROCESSING"));
+        this.world.actionQueue.events.subscribe(ActionQueue.EVENT.EXECUTION_ERROR, "DEBUG",  (request, actionType) => console.log(request, "IS INVALID"));
     }
 
     if(ArmyContext.DEBUG.LOG_SOCKET_EVENTS) {
