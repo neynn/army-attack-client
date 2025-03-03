@@ -16,24 +16,6 @@ export const TextElement = function(DEBUG_NAME) {
 TextElement.prototype = Object.create(UIElement.prototype);
 TextElement.prototype.constructor = TextElement;
 
-TextElement.prototype.init = function(config) {
-    if(!config) {
-        return;
-    }
-
-    const { anchor, opacity, position, font, align, color = [0, 0, 0, 0], text } = config;
-    const { x, y } = position;
-
-    this.setText(text);
-    this.setOpacity(opacity);
-    this.setPosition(x, y);
-    this.setOrigin(x, y);
-    this.setAnchor(anchor);
-    this.style.setFont(font);
-    this.style.setAlignment(align);
-    this.style.color.setColorArray(color);
-}
-
 TextElement.prototype.setRevealSpeed = function(revealSpeed) {
     if(revealSpeed !== undefined) {
         this.textRevealSpeed = revealSpeed;

@@ -9,20 +9,6 @@ export const Icon = function(DEBUG_NAME) {
 Icon.prototype = Object.create(UIElement.prototype);
 Icon.prototype.constructor = Icon;
 
-Icon.prototype.init = function(config) {
-    if(!config) {
-        return;
-    }
-
-    const { anchor, opacity, position } = config;
-    const { x, y } = position;
-
-    this.setPosition(x, y);
-    this.setOpacity(opacity);
-    this.setOrigin(x, y);
-    this.setAnchor(anchor);
-}
-
 Icon.prototype.onDraw = function(context, localX, localY) {
     if(!this.image) {
         return;

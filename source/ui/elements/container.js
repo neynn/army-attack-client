@@ -13,21 +13,6 @@ export const Container = function(DEBUG_NAME) {
 Container.prototype = Object.create(UIElement.prototype);
 Container.prototype.constructor = Container;
 
-Container.prototype.init = function(config) {
-    if(!config) {
-        return;
-    }
-
-    const { anchor, width, height, opacity, position } = config;
-    const { x, y } = position;
-
-    this.setSize(width, height);
-    this.setPosition(x, y);
-    this.setOpacity(opacity);
-    this.setOrigin(x, y);
-    this.setAnchor(anchor);
-}
-
 Container.prototype.onCollision = function(type, mouseX, mouseY, mouseRange) {} 
 
 Container.prototype.isColliding = function(mouseX, mouseY, mouseRange) {

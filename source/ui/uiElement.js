@@ -1,6 +1,5 @@
 import { EventEmitter } from "../events/eventEmitter.js";
 import { Drawable } from "../graphics/drawable.js";
-import { Logger } from "../logger.js";
 
 export const UIElement = function(DEBUG_NAME) {
     Drawable.call(this, DEBUG_NAME);
@@ -54,10 +53,6 @@ UIElement.prototype.hasBehaviorFlag = function(flag) {
 
 UIElement.prototype.addBehaviorFlag = function(flag) {
     this.behavior |= flag;
-}
-
-UIElement.prototype.init = function(config) {
-    Logger.log(Logger.CODE.ENGINE_WARN, "Method has not been defined", "UIElement.prototype.init", null);
 }
 
 UIElement.prototype.setSize = function(width, height) {

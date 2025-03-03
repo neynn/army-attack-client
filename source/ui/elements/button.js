@@ -62,41 +62,6 @@ Button.prototype.onClick = function() {
     this.events.emit(UIElement.EVENT.CLICKED);
 }
 
-Button.prototype.init = function(config) {
-    if(!config) {
-        return;
-    }
-
-    const { anchor, opacity, position, shape } = config;
-    const { x, y } = position;
-
-    this.setPosition(x, y);
-    this.setOpacity(opacity);
-    this.setOrigin(x, y);
-    this.setAnchor(anchor);
-
-    switch(shape) {
-        case Button.SHAPE.RECTANGLE: {
-            const { width, height } = config;
-
-            this.setSize(width, height);
-            this.setShape(Button.SHAPE.RECTANGLE);
-            break;
-        }
-        case Button.SHAPE.CIRCLE: {
-            const { radius } = config;
-
-            this.setSize(radius, radius);
-            this.setShape(Button.SHAPE.CIRCLE);
-            break;
-        }
-        default: {
-            Logger.log(Logger.CODE.ENGINE_WARN, "Shape does not exist!", "Button.prototype.init", { "shapeID": shape });
-            break;
-        }
-    }
-}
-
 Button.prototype.onDebug = function(context, localX, localY) {
     context.globalAlpha = 0.2;
     context.fillStyle = "#ff00ff";

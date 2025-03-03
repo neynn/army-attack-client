@@ -3,11 +3,14 @@ import { Color } from "../color.js";
 export const TextStyle = function() {
     this.color = new Color();
     this.fontSize = 10;
-    this.fontType = "sans-serif";
-    this.font = "10px sans-serif";
+    this.fontType = TextStyle.DEFAULT_FONT_TYPE;
+    this.font = TextStyle.DEFAULT_FONT;
     this.baseline = TextStyle.TEXT_BASELINE.MIDDLE;
     this.alignment = TextStyle.TEXT_ALIGNMENT.LEFT;
 }
+
+TextStyle.DEFAULT_FONT = "10px sans-serif";
+TextStyle.DEFAULT_FONT_TYPE = "sans-serif";
 
 TextStyle.TEXT_BASELINE = {
     MIDDLE: "middle"

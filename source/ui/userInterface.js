@@ -1,5 +1,6 @@
 import { createFadeInEffect } from "../effects/example/fadeIn.js";
 import { createFadeOutEffect } from "../effects/example/fadeOut.js";
+import { TextStyle } from "../graphics/applyable/textStyle.js";
 import { Logger } from "../logger.js";
 import { Button } from "./elements/button.js";
 import { Container } from "./elements/container.js";
@@ -211,13 +212,45 @@ UserInterface.prototype.getCollidedElements = function(mouseX, mouseY, mouseRang
 }
 
 UserInterface.prototype.createElement = function(typeID, config, DEBUG_NAME) {
+    const {
+        position = { x: 0, y: 0 },
+        width = 0,
+        height = 0,
+        anchor = UIElement.ANCHOR_TYPE.TOP_LEFT,
+        opacity = 1
+    } = config;
+
+    const { x, y } = position;
+
     switch(typeID) {
         case UserInterface.ELEMENT_TYPE.BUTTON: {
             const element = new Button(DEBUG_NAME);
+            const { shape = Button.SHAPE.RECTANGLE, radius = width } = config;
 
             element.addBehaviorFlag(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE);
             element.addBehaviorFlag(UserInterface.ELEMENT_BEHAVIOR.CLICKABLE);
-            element.init(config);
+
+            element.setPosition(x, y);
+            element.setOpacity(opacity);
+            element.setOrigin(x, y);
+            element.setAnchor(anchor);
+
+            switch(shape) {
+                case Button.SHAPE.RECTANGLE: {
+                    element.setSize(width, height);
+                    element.setShape(Button.SHAPE.RECTANGLE);
+                    break;
+                }
+                case Button.SHAPE.CIRCLE: {
+                    element.setSize(radius, radius);
+                    element.setShape(Button.SHAPE.CIRCLE);
+                    break;
+                }
+                default: {
+                    Logger.log(Logger.CODE.ENGINE_WARN, "Shape does not exist!", "Button.prototype.init", { "shapeID": shape });
+                    break;
+                }
+            }
 
             return element;
         }
@@ -225,21 +258,44 @@ UserInterface.prototype.createElement = function(typeID, config, DEBUG_NAME) {
             const element = new Container(DEBUG_NAME);
 
             element.addBehaviorFlag(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE);
-            element.init(config);
+
+            element.setPosition(x, y);
+            element.setOpacity(opacity);
+            element.setOrigin(x, y);
+            element.setAnchor(anchor);
+
+            element.setSize(width, height);
 
             return element;
         }
         case UserInterface.ELEMENT_TYPE.DYNAMIC_TEXT: {
             const element = new DynamicTextElement(DEBUG_NAME);
+            const { 
+                text = "ERROR",
+                font = TextStyle.DEFAULT_FONT,
+                align = TextStyle.TEXT_ALIGNMENT.LEFT,
+                color = [0, 0, 0, 1]
+            } = config;
 
-            element.init(config);
+            element.setPosition(x, y);
+            element.setOpacity(opacity);
+            element.setOrigin(x, y);
+            element.setAnchor(anchor);
+
+            element.setText(text);
+            element.style.setFont(font);
+            element.style.setAlignment(align);
+            element.style.color.setColorArray(color);
 
             return element;
         }
         case UserInterface.ELEMENT_TYPE.ICON: {
             const element = new Icon(DEBUG_NAME);
 
-            element.init(config);
+            element.setPosition(x, y);
+            element.setOpacity(opacity);
+            element.setOrigin(x, y);
+            element.setAnchor(anchor);
 
             return element;
         }
@@ -248,14 +304,32 @@ UserInterface.prototype.createElement = function(typeID, config, DEBUG_NAME) {
 
             element.addBehaviorFlag(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE);
             element.addBehaviorFlag(UserInterface.ELEMENT_BEHAVIOR.CLICKABLE);
-            element.init(config);
+
+            element.setPosition(x, y);
+            element.setOpacity(opacity);
+            element.setOrigin(x, y);
+            element.setAnchor(anchor);
 
             return element;
         }
         case UserInterface.ELEMENT_TYPE.TEXT: {
             const element = new TextElement(DEBUG_NAME);
+            const { 
+                text = "ERROR",
+                font = TextStyle.DEFAULT_FONT,
+                align = TextStyle.TEXT_ALIGNMENT.LEFT,
+                color = [0, 0, 0, 1]
+            } = config;
 
-            element.init(config);
+            element.setPosition(x, y);
+            element.setOpacity(opacity);
+            element.setOrigin(x, y);
+            element.setAnchor(anchor);
+
+            element.setText(text);
+            element.style.setFont(font);
+            element.style.setAlignment(align);
+            element.style.color.setColorArray(color);
 
             return element;
         }
@@ -264,7 +338,10 @@ UserInterface.prototype.createElement = function(typeID, config, DEBUG_NAME) {
 
             const element = new UIElement(DEBUG_NAME);
     
-            element.init(config);
+            element.setPosition(x, y);
+            element.setOpacity(opacity);
+            element.setOrigin(x, y);
+            element.setAnchor(anchor);
 
             return element;
         }
@@ -344,10 +421,7 @@ UserInterface.prototype.fromConfig = function(gameContext, userInterface) {
     }
 
     for(const elementKey in userInterface) {
-        const { effects } = userInterface[elementKey];
         const element = this.getElement(elementKey);
-
-        this.addEffects(gameContext, element, effects);
 
         if(!element.hasParent()) {
             const elementID = element.getID();
