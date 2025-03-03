@@ -21,8 +21,7 @@ Container.prototype.init = function(config) {
     const { anchor, width, height, opacity, position } = config;
     const { x, y } = position;
 
-    this.width = width;
-    this.height = height;
+    this.setSize(width, height);
     this.setPosition(x, y);
     this.setOpacity(opacity);
     this.setOrigin(x, y);

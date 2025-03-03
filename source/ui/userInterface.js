@@ -148,6 +148,50 @@ UserInterface.prototype.updateCollisions = function(mouseX, mouseY, mouseRange) 
     this.previousCollisions = currentCollisions;
 }
 
+UserInterface.prototype.getCollisionsOf = function(element, mouseX, mouseY, mouseRange) {
+    if(!element.hasBehaviorFlag(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE)) {
+        return [];
+    }
+
+    const collidedElements = [];
+    const referenceStack = [element];
+    const positionStack = [mouseX, mouseY];
+
+    while(referenceStack.length !== 0) {
+        const positionY = positionStack.pop();
+        const positionX = positionStack.pop();
+        const reference = referenceStack.pop();
+        const isColliding = reference.isColliding(positionX, positionY, mouseRange);
+
+        if(!isColliding) {
+            continue;
+        }
+
+        const children = reference.getChildren();
+        const nextX = positionX - reference.position.x;
+        const nextY = positionY - reference.position.y;
+
+        for(let i = 0; i < children.length; i++) {
+            const child = children[i];
+            const reference = child.getReference();
+            
+            if(reference instanceof UIElement) {
+                const hasFlag = reference.hasBehaviorFlag(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE);
+
+                if(hasFlag) {
+                    referenceStack.push(reference);
+                    positionStack.push(nextX);
+                    positionStack.push(nextY);
+                }
+            }
+        }
+
+        collidedElements.push(reference);
+    }
+
+    return collidedElements;
+}
+
 UserInterface.prototype.getCollidedElements = function(mouseX, mouseY, mouseRange) {
     if(this.state !== UserInterface.STATE.VISIBLE) {
         return [];
@@ -156,7 +200,7 @@ UserInterface.prototype.getCollidedElements = function(mouseX, mouseY, mouseRang
     for(let i = 0; i < this.roots.length; i++) {
         const elementID = this.roots[i];
         const element = this.elements.get(elementID);
-        const collisions = element.getCollisions(mouseX, mouseY, mouseRange);
+        const collisions = this.getCollisionsOf(element, mouseX, mouseY, mouseRange);
 
         if(collisions.length > 0) {
             return collisions;

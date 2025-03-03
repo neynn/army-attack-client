@@ -1,7 +1,6 @@
 import { EventEmitter } from "../events/eventEmitter.js";
 import { Drawable } from "../graphics/drawable.js";
 import { Logger } from "../logger.js";
-import { UserInterface } from "./userInterface.js";
 
 export const UIElement = function(DEBUG_NAME) {
     Drawable.call(this, DEBUG_NAME);
@@ -61,49 +60,10 @@ UIElement.prototype.init = function(config) {
     Logger.log(Logger.CODE.ENGINE_WARN, "Method has not been defined", "UIElement.prototype.init", null);
 }
 
-UIElement.prototype.getCollisions = function(mouseX, mouseY, mouseRange) {
-    if(!this.hasBehaviorFlag(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE)) {
-        return [];
-    }
-
-    const collidedElements = [];
-    const referenceStack = [this];
-    const positionStack = [mouseX, mouseY];
-
-    while(referenceStack.length !== 0) {
-        const positionY = positionStack.pop();
-        const positionX = positionStack.pop();
-        const reference = referenceStack.pop();
-        const isColliding = reference.isColliding(positionX, positionY, mouseRange);
-
-        if(!isColliding) {
-            continue;
-        }
-
-        const children = reference.getChildren();
-        const nextX = positionX - reference.position.x;
-        const nextY = positionY - reference.position.y;
-
-        for(let i = 0; i < children.length; i++) {
-            const child = children[i];
-            const reference = child.getReference();
-            
-            if(reference instanceof UIElement) {
-                const hasFlag = reference.hasBehaviorFlag(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE);
-
-                if(hasFlag) {
-                    referenceStack.push(reference);
-                    positionStack.push(nextX);
-                    positionStack.push(nextY);
-                }
-            }
-        }
-
-        collidedElements.push(reference);
-    }
-
-    return collidedElements;
-}
+UIElement.prototype.setSize = function(width, height) {
+    this.width = width;
+    this.height = height;
+} 
 
 UIElement.prototype.setOrigin = function(originX, originY) {
     this.originX = originX;

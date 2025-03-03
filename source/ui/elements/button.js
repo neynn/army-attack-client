@@ -79,16 +79,14 @@ Button.prototype.init = function(config) {
         case Button.SHAPE.RECTANGLE: {
             const { width, height } = config;
 
-            this.width = width;
-            this.height = height;
+            this.setSize(width, height);
             this.setShape(Button.SHAPE.RECTANGLE);
             break;
         }
         case Button.SHAPE.CIRCLE: {
             const { radius } = config;
 
-            this.width = radius;
-            this.height = radius;
+            this.setSize(radius, radius);
             this.setShape(Button.SHAPE.CIRCLE);
             break;
         }
