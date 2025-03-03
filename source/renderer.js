@@ -29,7 +29,7 @@ Renderer.EVENT = {
 Renderer.DEBUG = {
     CONTEXT: true,
     INTERFACE: false,
-    SPRITES: false,
+    SPRITES: true,
     MAP: false
 };
 

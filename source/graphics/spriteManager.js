@@ -252,9 +252,9 @@ SpriteManager.prototype.updateSprite = function(spriteID, typeID, animationID = 
         return;
     }
 
-    const drawData = sprite.getDrawData();
+    const isEqual = sprite.isEqual(typeID, animationID);
 
-    if(drawData.typeID !== typeID || drawData.animationID !== animationID) {
+    if(!isEqual) {
         const { x, y, w, h } = spriteType.getBounds();
         const frameCount = animationType.getFrameCount();
         const frameTime = animationType.getFrameTime();

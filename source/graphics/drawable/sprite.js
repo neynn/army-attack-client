@@ -1,10 +1,8 @@
-import { Rectangle } from "../../math/rect.js";
 import { Drawable } from "../drawable.js";
 
 export const Sprite = function(DEBUG_NAME) {
     Drawable.call(this, DEBUG_NAME);
     
-    this.bounds = new Rectangle();
     this.typeID = null;
     this.animationID = null;
     this.lastCallTime = 0;
@@ -14,6 +12,10 @@ export const Sprite = function(DEBUG_NAME) {
     this.currentFrame = 0;
     this.loopCount = 0;
     this.loopLimit = 0;
+    this.boundsX = 0;
+    this.boundsY = 0;
+    this.boundsW = 0;
+    this.boundsH = 0;
     this.isRepeating = true;
     this.isStatic = false;
     this.isFlipped = false;
@@ -37,7 +39,6 @@ Sprite.prototype.init = function(typeID, animationID, frameCount, frameTime) {
     this.loopLimit = 0;
     this.isRepeating = true;
     this.isStatic = false;
-    this.bounds.clear();
 }
 
 Sprite.prototype.setLastCallTime = function(lastCallTime) {
@@ -45,30 +46,25 @@ Sprite.prototype.setLastCallTime = function(lastCallTime) {
 }
 
 Sprite.prototype.setBounds = function(x, y, w, h) {
-    this.bounds.set(x, y, w, h);
+    this.boundsX = x;
+    this.boundsY = y;
+    this.boundsW = w;
+    this.boundsH = h;
 }
 
-Sprite.prototype.getDrawData = function() {
-    return {
-        "typeID": this.typeID,
-        "animationID": this.animationID,
-        "currentFrame": this.currentFrame,
-        "isFlipped": this.isFlipped
-    }
+Sprite.prototype.isEqual = function(typeID, animationID) {
+    return this.typeID === typeID && this.animationID === animationID;
 }
 
-Sprite.prototype.getBounds = function() {
-    const { x, y, w, h } = this.bounds;
-    const adjustedX = this.isFlipped ? -(x + w) : x;
-    const boundsX = this.position.x + adjustedX;
-    const boundsY = this.position.y + y;
+Sprite.prototype.isVisible = function(viewportRight, viewportLeft, viewportBottom, viewportTop) {
+    const adjustedX = this.isFlipped ? -(this.boundsX + this.boundsW) : this.boundsX;
+    const x = this.position.x + adjustedX;
+    const y = this.position.y + this.boundsY;
+    const w = this.boundsW;
+    const h = this.boundsH;
+    const isVisible = x < viewportRight && x + w > viewportLeft && y < viewportBottom && y + h > viewportTop;
 
-    return {
-        "x": boundsX,
-        "y": boundsY,
-        "w": w,
-        "h": h
-    }
+    return isVisible;
 }
 
 Sprite.prototype.onUpdate = function(timestamp, deltaTime) {
@@ -80,24 +76,22 @@ Sprite.prototype.onUpdate = function(timestamp, deltaTime) {
 }
 
 Sprite.prototype.onDebug = function(context, localX, localY) {
-    const { x, y, w, h } = this.bounds;
-    
     if(this.isFlipped) {
-        const drawX = localX - (x + w);
-        const drawY = localY + y;
+        const drawX = localX - this.boundsX;
+        const drawY = localY + this.boundsY;
 
-        context.translate(drawX + w, 0);
+        context.translate(drawX, 0);
         context.scale(-1, 1);
         context.strokeStyle = "black";
         context.lineWidth = 3;
-        context.strokeRect(0, drawY, w, h);
+        context.strokeRect(0, drawY, this.boundsW, this.boundsH);
     } else {
-        const drawX = localX + x;
-        const drawY = localY + y;
+        const drawX = localX + this.boundsX;
+        const drawY = localY + this.boundsY;
 
         context.strokeStyle = "black";
         context.lineWidth = 3;
-        context.strokeRect(drawX, drawY, w, h);
+        context.strokeRect(drawX, drawY, this.boundsW, this.boundsH);
     }
 }
 

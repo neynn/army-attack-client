@@ -177,10 +177,9 @@ OrthogonalCamera.prototype.drawSpriteLayer = function(gameContext, renderContext
 
     for(let j = 0; j < spriteLayer.length; j++) {
         const sprite = spriteLayer[j];
-        const { x, y, w, h } = sprite.getBounds();
-        const inBounds = x < viewportRightEdge && x + w > viewportLeftEdge && y < viewportBottomEdge && y + h > viewportTopEdge;
+        const isVisible = sprite.isVisible(viewportRightEdge, viewportLeftEdge, viewportBottomEdge, viewportTopEdge);
 
-        if(inBounds) {
+        if(isVisible) {
             visibleSprites.push(sprite);
         }
     }

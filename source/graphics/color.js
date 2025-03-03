@@ -4,6 +4,9 @@ export const Color = function() {
 }
 
 Color.FORMAT = {
+    NONE: 0,
+    R: 1,
+    RG: 2,
     RGB: 3,
     RGBA: 4
 };
@@ -28,6 +31,16 @@ Color.prototype.setColorArray = function(color) {
     }
 
     switch(color.length) {
+        case Color.FORMAT.R: {
+            const [r] = color;
+            this.setColor(r, 0, 0, 1);
+            break;
+        }
+        case Color.FORMAT.RG: {
+            const [r, g] = color;
+            this.setColor(r, g, 0, 1);
+            break;
+        }
         case Color.FORMAT.RGB: {
             const [r, g, b] = color;
             this.setColor(r, g, b, 1);

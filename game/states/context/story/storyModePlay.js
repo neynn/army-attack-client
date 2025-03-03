@@ -1,6 +1,5 @@
 import { saveTemplateAsFile } from "../../../../helpers.js";
 import { State } from "../../../../source/state/state.js";
-import { ACTION_TYPES } from "../../../enums.js";
 import { SpawnSystem } from "../../../systems/spawn.js";
 
 export const StoryModePlayState = function() {}
@@ -12,7 +11,6 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
     console.time();
     const gameContext = stateMachine.getContext();
     const { uiManager, world } = gameContext;
-    const { actionQueue } = world;
 
     const controller = world.createController(gameContext, {
         "type": "Player",
@@ -47,14 +45,6 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
     });
 
     SpawnSystem.createEntity(gameContext, { 
-        "type": "red_battlefortress",
-        "tileX": 6,
-        "tileY": 8,
-        "team": "Crimson",
-        "owner": null
-    });
-
-    SpawnSystem.createEntity(gameContext, { 
         "type": "blue_elite_commando",
         "tileX": 4,
         "tileY": 5,
@@ -68,14 +58,6 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "tileY": 5,
         "team": "Allies",
         "owner": "neyn"
-    });
-
-    const battery = SpawnSystem.createEntity(gameContext, { 
-        "type": "blue_elite_battery",
-        "tileX": 4,
-        "tileY": 3,
-        "team": "Crimson",
-        "owner": null
     });
 
     SpawnSystem.createEntity(gameContext, { 
@@ -118,24 +100,13 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "owner": "neyn"
     });
 
-    const redBattletank = SpawnSystem.createEntity(gameContext, { 
-        "type": "red_battletank",
-        "tileX": 4,
-        "tileY": 1,
-        "team": "Crimson",
-        "owner": null
-    });
-
-    const battleTank = SpawnSystem.createEntity(gameContext, { 
+    SpawnSystem.createEntity(gameContext, { 
         "type": "blue_elite_battletank",
         "tileX": 3,
         "tileY": 4,
         "team": "Allies",
         "owner": "neyn"
     });
-
-    actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.MOVE, battleTank.id, 7, 1));
-    actionQueue.addRequest(actionQueue.createRequest(ACTION_TYPES.MOVE, battleTank.id, 3, 0));
 
     /*
     const s = gameContext.saveSnapshot();

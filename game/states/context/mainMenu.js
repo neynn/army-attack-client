@@ -1,7 +1,5 @@
-import { Renderer } from "../../../source/renderer.js";
 import { State } from "../../../source/state/state.js";
 import { UIElement } from "../../../source/ui/uiElement.js";
-import { UserInterface } from "../../../source/ui/userInterface.js";
 import { ArmyContext } from "../../armyContext.js";
 
 export const MainMenuState = function() {}
@@ -24,7 +22,7 @@ MainMenuState.prototype.onEnter = function(stateMachine) {
 
         element.setText(text);
 
-        if(fps > 60) {
+        if(fps >= 60) {
             element.style.color.setColorRGB(0, 255, 0);
         } else {
             element.style.color.setColorRGB(255, 0, 0);
@@ -61,7 +59,8 @@ MainMenuState.prototype.onEnter = function(stateMachine) {
 
 MainMenuState.prototype.onExit = function(stateMachine) {
     const gameContext = stateMachine.getContext();
-    const { uiManager } = gameContext;
+    const { uiManager, spriteManager } = gameContext;
 
     uiManager.unparseUI("MAIN_MENU");
+    spriteManager.clear();
 }

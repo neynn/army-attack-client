@@ -53,21 +53,24 @@ ArmyCamera.prototype.update = function(gameContext, renderContext) {
     }
 
     if(Renderer.DEBUG.MAP) {
-        renderContext.font = "16px Arial";
+        const scaleX = Math.floor(this.tileWidth / 6);
+        const scaleY = Math.floor(this.tileHeight / 6);
+
+        renderContext.font = `${scaleX}px Arial`;
         renderContext.textBaseline = "middle";
         renderContext.textAlign = "center";
 
         renderContext.fillStyle = "#ff0000";
-        this.drawBufferData(renderContext, worldBounds, worldMap.getLayer("type").getBuffer(), 16, 16);
+        this.drawBufferData(renderContext, worldBounds, worldMap.getLayer("type").getBuffer(), scaleX, scaleY);
 
         renderContext.fillStyle = "#00ff00";
-        this.drawBufferData(renderContext, worldBounds, worldMap.getLayer("team").getBuffer(), this.tileWidth - 16, 16);
+        this.drawBufferData(renderContext, worldBounds, worldMap.getLayer("team").getBuffer(), this.tileWidth - scaleX, scaleY);
 
         renderContext.fillStyle = "#0000ff";
-        this.drawBufferData(renderContext, worldBounds, worldMap.getLayer("border").getBuffer(), 16, this.tileHeight - 16);
+        this.drawBufferData(renderContext, worldBounds, worldMap.getLayer("border").getBuffer(), scaleX, this.tileHeight - scaleY);
 
         renderContext.fillStyle = "#ffff00";
-        this.drawBufferData(renderContext, worldBounds, worldMap.getLayer("ground").getBuffer(), this.tileWidth - 16, this.tileHeight - 16);
+        this.drawBufferData(renderContext, worldBounds, worldMap.getLayer("ground").getBuffer(), this.tileWidth - scaleX, this.tileHeight - scaleY);
 
         this.drawMapOutlines(renderContext, worldBounds);
     }
