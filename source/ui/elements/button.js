@@ -1,3 +1,4 @@
+import { EventEmitter } from "../../events/eventEmitter.js";
 import { Outline } from "../../graphics/applyable/outline.js";
 import { Logger } from "../../logger.js";
 import { isCircleCicleIntersect, isRectangleRectangleIntersect } from "../../math/math.js";
@@ -15,6 +16,7 @@ export const Button = function(DEBUG_NAME) {
     this.outline.color.setColor(255, 255, 255, 1);
     this.outline.enable();
 
+    this.events = new EventEmitter();
     this.events.listen(UIElement.EVENT.FIRST_COLLISION);
     this.events.listen(UIElement.EVENT.LAST_COLLISION);
     this.events.listen(UIElement.EVENT.REPEATED_COLLISION);

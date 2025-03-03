@@ -1,4 +1,3 @@
-import { EventEmitter } from "../events/eventEmitter.js";
 import { Drawable } from "../graphics/drawable.js";
 
 export const UIElement = function(DEBUG_NAME) {
@@ -10,8 +9,6 @@ export const UIElement = function(DEBUG_NAME) {
     this.originY = 0;
     this.width = 0;
     this.height = 0;
-    
-    this.events = new EventEmitter();
 }
 
 UIElement.COLLISION_TYPE = {

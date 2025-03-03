@@ -1,8 +1,10 @@
+import { EventEmitter } from "../../events/eventEmitter.js";
 import { UIElement } from "../uiElement.js";
 
 export const Scrollbar = function(DEBUG_NAME) {
     UIElement.call(this, DEBUG_NAME);
 
+    this.events = new EventEmitter();
     this.events.listen(UIElement.EVENT.CLICKED);
 }
 

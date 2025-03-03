@@ -1,3 +1,4 @@
+import { EventEmitter } from "../../events/eventEmitter.js";
 import { TextStyle } from "../../graphics/applyable/textStyle.js";
 import { UIElement } from "../uiElement.js";
 
@@ -7,6 +8,7 @@ export const DynamicTextElement = function(DEBUG_NAME) {
     this.fullText = "";
     this.style = new TextStyle();
 
+    this.events = new EventEmitter();
     this.events.listen(UIElement.EVENT.REQUEST_TEXT);
 }
 
