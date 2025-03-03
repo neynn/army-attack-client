@@ -2,7 +2,6 @@ import { CameraContext } from "../../source/camera/cameraContext.js";
 import { Cursor } from "../../source/client/cursor.js";
 import { Factory } from "../../source/factory/factory.js";
 import { SpriteManager } from "../../source/graphics/spriteManager.js";
-import { Logger } from "../../source/logger.js";
 import { World } from "../../source/world.js";
 import { Player } from "../player/player.js";
 
@@ -93,7 +92,6 @@ ArmyControllerFactory.prototype.onCreate = function(gameContext, config) {
             router.load(gameContext, controllerType.binds);
             router.on(Player.COMMAND.TOGGLE_RANGE, () => controller.toggleRangeShow(gameContext));
             router.on(Player.COMMAND.CLICK, () => controller.onClick(gameContext));
-            router.on("EXPORT_LOGS", () => Logger.exportLogs(Logger.EXPORT_CODE_ALL));
 
             return controller;
         }

@@ -2,7 +2,6 @@
     "Player": {
         "id": "Player",
         "binds": {
-            "EXPORT_LOGS": "+F1",
             "TOGGLE_RANGE": "+v",
             "CLICK": "+M1"
         },

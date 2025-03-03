@@ -32,6 +32,8 @@ import { SpriteComponent } from "./components/sprite.js";
 import { ProductionComponent } from "./components/production.js";
 import { DirectionComponent } from "./components/direction.js";
 import { TileManager } from "../source/tile/tileManager.js";
+import { Renderer } from "../source/renderer.js";
+import { Logger } from "../source/logger.js";
 
 export const ArmyContext = function() {
     GameContext.call(this);
@@ -283,4 +285,22 @@ ArmyContext.prototype.loadEntitySprites = function(entity) {
         resources.requestImage(spriteID, (id, image, sheet) => console.log("LOADED IMAGE", id));
         resources.addReference(spriteID);
     }
+}
+
+ArmyContext.prototype.addDebug = function() {
+    const { router } = this.client;
+
+    router.load(this, {
+        "DEBUG_MAP": "+F1",
+        "DEBUG_CONTEXT": "+F2",
+        "DEBUG_INTERFACE": "+F3",
+        "DEBUG_SPRITES": "+F4",
+        "EXPORT_LOGS": "+F6"
+    });
+
+    router.on("DEBUG_MAP", () => Renderer.DEBUG.MAP = !Renderer.DEBUG.MAP);
+    router.on("DEBUG_CONTEXT", () => Renderer.DEBUG.CONTEXT = !Renderer.DEBUG.CONTEXT);
+    router.on("DEBUG_INTERFACE", () => Renderer.DEBUG.INTERFACE = !Renderer.DEBUG.INTERFACE);
+    router.on("DEBUG_SPRITES", () => Renderer.DEBUG.SPRITES = !Renderer.DEBUG.SPRITES);
+    router.on("EXPORT_LOGS", () => Logger.exportLogs(Logger.EXPORT_CODE_ALL));
 }

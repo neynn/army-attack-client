@@ -74,12 +74,12 @@ MapEditorState.prototype.onEnter = function(stateMachine) {
     uiManager.unparseUI("FPS_COUNTER");
 
     router.load(gameContext, {
-        "TOGGLE_AUTOTILER": "+a",
-        "DEBUG_MAP": "+F1"
+        "TOGGLE_AUTOTILER": "+a"
     });
 
     router.on("TOGGLE_AUTOTILER", () => this.mapEditor.toggleAutotiling());
-    router.on("DEBUG_MAP", () => Renderer.DEBUG.MAP = !Renderer.DEBUG.MAP);
+
+    gameContext.addDebug();
     
     this.mapEditor.loadConfig(settings.mapEditor);
     this.mapEditor.loadBrushSets(meta.getInversion());
