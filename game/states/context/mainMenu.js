@@ -1,6 +1,7 @@
 import { Renderer } from "../../../source/renderer.js";
 import { State } from "../../../source/state/state.js";
 import { UIElement } from "../../../source/ui/uiElement.js";
+import { UserInterface } from "../../../source/ui/userInterface.js";
 import { ArmyContext } from "../../armyContext.js";
 
 export const MainMenuState = function() {}

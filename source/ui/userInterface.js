@@ -12,7 +12,7 @@ import { UIElement } from "./uiElement.js";
 export const UserInterface = function(id) {
     this.id = id;
     this.roots = [];
-    this.idTranslate = new Map();
+    this.nameMap = new Map();
     this.elements = new Map();
     this.previousCollisions = new Set();
     this.state = UserInterface.STATE.VISIBLE;
@@ -57,7 +57,7 @@ UserInterface.ELEMENT_TYPE_MAP = {
 UserInterface.prototype.clear = function() {
     this.elements.forEach(element => element.closeFamily());
     this.elements.clear();
-    this.idTranslate.clear();
+    this.nameMap.clear();
     this.roots.length = 0;
 }
 
@@ -73,7 +73,7 @@ UserInterface.prototype.destroyElement = function(name) {
     element.closeFamily();
 
     this.elements.delete(elementID);
-    this.idTranslate.delete(name);
+    this.nameMap.delete(name);
 }
 
 UserInterface.prototype.update = function(gameContext) {
@@ -107,7 +107,7 @@ UserInterface.prototype.draw = function(context, realTime, deltaTime) {
 }
 
 UserInterface.prototype.getElement = function(name) {
-    const elementID = this.idTranslate.get(name);
+    const elementID = this.nameMap.get(name);
     const element = this.elements.get(elementID);
 
     if(!element) {
@@ -166,13 +166,14 @@ UserInterface.prototype.getCollidedElements = function(mouseX, mouseY, mouseRang
     return [];
 }
 
-UserInterface.prototype.createElement = function(typeID, DEBUG_NAME) {
+UserInterface.prototype.createElement = function(typeID, config, DEBUG_NAME) {
     switch(typeID) {
         case UserInterface.ELEMENT_TYPE.BUTTON: {
             const element = new Button(DEBUG_NAME);
 
             element.addBehaviorFlag(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE);
             element.addBehaviorFlag(UserInterface.ELEMENT_BEHAVIOR.CLICKABLE);
+            element.init(config);
 
             return element;
         }
@@ -180,16 +181,21 @@ UserInterface.prototype.createElement = function(typeID, DEBUG_NAME) {
             const element = new Container(DEBUG_NAME);
 
             element.addBehaviorFlag(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE);
+            element.init(config);
 
             return element;
         }
         case UserInterface.ELEMENT_TYPE.DYNAMIC_TEXT: {
             const element = new DynamicTextElement(DEBUG_NAME);
 
+            element.init(config);
+
             return element;
         }
         case UserInterface.ELEMENT_TYPE.ICON: {
             const element = new Icon(DEBUG_NAME);
+
+            element.init(config);
 
             return element;
         }
@@ -198,11 +204,14 @@ UserInterface.prototype.createElement = function(typeID, DEBUG_NAME) {
 
             element.addBehaviorFlag(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE);
             element.addBehaviorFlag(UserInterface.ELEMENT_BEHAVIOR.CLICKABLE);
+            element.init(config);
 
             return element;
         }
         case UserInterface.ELEMENT_TYPE.TEXT: {
             const element = new TextElement(DEBUG_NAME);
+
+            element.init(config);
 
             return element;
         }
@@ -211,36 +220,20 @@ UserInterface.prototype.createElement = function(typeID, DEBUG_NAME) {
 
             const element = new UIElement(DEBUG_NAME);
     
+            element.init(config);
+
             return element;
         }
     }
 }
 
-UserInterface.prototype.addElement = function(element, elementName) {
-    if(this.idTranslate.has(elementName)) {
-        return;
+UserInterface.prototype.addElement = function(element, name) {
+    if(!this.nameMap.has(name)) {
+        const elementID = element.getID();
+
+        this.nameMap.set(name, elementID);
+        this.elements.set(elementID, element);
     }
-
-    const elementID = element.getID();
-
-    this.idTranslate.set(elementName, elementID);
-    this.elements.set(elementID, element);
-}
-
-UserInterface.prototype.initElement = function(elementName, typeName, config) {
-    const typeID = UserInterface.ELEMENT_TYPE_MAP[typeName];
-
-    if(typeID === undefined || this.idTranslate.has(elementName)) {
-        return null;
-    }
-
-    const element = this.createElement(typeID, elementName);
-
-    element.init(config);
-
-    this.addElement(element, elementName);
-
-    return element;
 }
 
 UserInterface.prototype.addEffects = function(gameContext, element, effectList) {
@@ -270,16 +263,29 @@ UserInterface.prototype.fromConfig = function(gameContext, userInterface) {
     for(const elementID in userInterface) {
         const config = userInterface[elementID];
         const { type } = config;
+        const typeID = UserInterface.ELEMENT_TYPE_MAP[type];
 
-        this.initElement(elementID, type, config);
+        if(typeID === undefined) {
+            continue;
+        }
+
+        const element = this.createElement(typeID, config, elementID);
+
+        this.addElement(element, elementID);
     }
     
     for(const elementID in userInterface) {
         const config = userInterface[elementID];
-        const { children } = config;
+        const { children, effects } = config;
         const element = this.getElement(elementID);
 
-        if(!element || !Array.isArray(children)) {
+        if(!element) {
+            continue;
+        }
+
+        this.addEffects(gameContext, element, effects);
+
+        if(!Array.isArray(children)) {
             continue;
         }
 
@@ -294,22 +300,29 @@ UserInterface.prototype.fromConfig = function(gameContext, userInterface) {
     }
 
     for(const elementKey in userInterface) {
-        const { anchor, effects, position } = userInterface[elementKey];
+        const { effects } = userInterface[elementKey];
         const element = this.getElement(elementKey);
-        const elementID = element.getID();
 
         this.addEffects(gameContext, element, effects);
 
         if(!element.hasParent()) {
-            const { x, y } = position;
-
-            element.setOrigin(x, y);
-            element.setAnchor(anchor);
-            element.updateAnchor(w, h);
+            const elementID = element.getID();
 
             this.roots.push(elementID);
         }
     }
+
+    this.updateRootAnchors(w, h);
+}
+
+UserInterface.prototype.rootElement = function(gameContext, element) {
+    const { renderer } = gameContext;
+    const { w, h } = renderer.getWindow();
+    const elementID = element.getID();
+    
+    element.updateAnchor(w, h);
+
+    this.roots.push(elementID);
 }
 
 UserInterface.prototype.updateRootAnchors = function(width, height) {

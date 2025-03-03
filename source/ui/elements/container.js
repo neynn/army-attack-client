@@ -14,18 +14,22 @@ Container.prototype = Object.create(UIElement.prototype);
 Container.prototype.constructor = Container;
 
 Container.prototype.init = function(config) {
-    const { id, width, height, opacity, position } = config;
-    const { x, y } = position;
+    if(!config) {
+        return;
+    }
 
-    this.DEBUG_NAME = id;
+    const { anchor, width, height, opacity, position } = config;
+    const { x, y } = position;
 
     this.width = width;
     this.height = height;
     this.setPosition(x, y);
     this.setOpacity(opacity);
+    this.setOrigin(x, y);
+    this.setAnchor(anchor);
 }
 
-Container.prototype.onCollision = function(type, mouseX, mouseY, mouseRange) {}   
+Container.prototype.onCollision = function(type, mouseX, mouseY, mouseRange) {} 
 
 Container.prototype.isColliding = function(mouseX, mouseY, mouseRange) {
     const isIntersection = isRectangleRectangleIntersect(this.position.x, this.position.y, this.width, this.height, mouseX, mouseY, mouseRange, mouseRange);

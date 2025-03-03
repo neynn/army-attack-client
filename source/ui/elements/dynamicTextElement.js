@@ -14,13 +14,18 @@ DynamicTextElement.prototype = Object.create(UIElement.prototype);
 DynamicTextElement.prototype.constructor = DynamicTextElement;
 
 DynamicTextElement.prototype.init = function(config) {
-    const { id, opacity, position, font, align, color = [0, 0, 0, 0], text } = config;
+    if(!config) {
+        return;
+    }
+
+    const { anchor, opacity, position, font, align, color = [0, 0, 0, 0], text } = config;
     const { x, y } = position;
 
-    this.DEBUG_NAME = id;
     this.setText(text);
     this.setOpacity(opacity);
     this.setPosition(x, y);
+    this.setOrigin(x, y);
+    this.setAnchor(anchor);
     this.style.setFont(font);
     this.style.setAlignment(align);
     this.style.color.setColorArray(color);

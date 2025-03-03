@@ -63,12 +63,17 @@ Button.prototype.onClick = function() {
 }
 
 Button.prototype.init = function(config) {
-    const { id, opacity, position, shape } = config;
+    if(!config) {
+        return;
+    }
+
+    const { anchor, opacity, position, shape } = config;
     const { x, y } = position;
 
-    this.DEBUG_NAME = id;
     this.setPosition(x, y);
     this.setOpacity(opacity);
+    this.setOrigin(x, y);
+    this.setAnchor(anchor);
 
     switch(shape) {
         case Button.SHAPE.RECTANGLE: {

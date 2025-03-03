@@ -10,12 +10,17 @@ Icon.prototype = Object.create(UIElement.prototype);
 Icon.prototype.constructor = Icon;
 
 Icon.prototype.init = function(config) {
-    const { id, opacity, position } = config;
+    if(!config) {
+        return;
+    }
+
+    const { anchor, opacity, position } = config;
     const { x, y } = position;
 
-    this.DEBUG_NAME = id;
     this.setPosition(x, y);
     this.setOpacity(opacity);
+    this.setOrigin(x, y);
+    this.setAnchor(anchor);
 }
 
 Icon.prototype.onDraw = function(context, localX, localY) {
