@@ -243,17 +243,22 @@ UserInterface.prototype.initElement = function(elementName, typeName, config) {
     return element;
 }
 
-UserInterface.prototype.addEffects = function(gameContext, element, effects = []) {
-    const { renderer } = gameContext;
+UserInterface.prototype.addEffects = function(gameContext, element, effectList) {
+    if(!effectList) {
+        return;
+    }
 
-    for(let i = 0; i < effects.length; i++) {
-        const { type, value, threshold } = effects[i];
+    const { renderer } = gameContext;
+    const { effects } = renderer;
+
+    for(let i = 0; i < effectList.length; i++) {
+        const { type, value, threshold } = effectList[i];
         const effectBuilder = UserInterface.EFFECT_CLASS[type];
 
         if(effectBuilder) {
             const effect = effectBuilder(element, value, threshold);
 
-            renderer.effects.addEffect(effect);
+            effects.addEffect(effect);
         }
     }
 }

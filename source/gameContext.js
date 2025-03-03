@@ -37,13 +37,13 @@ export const GameContext = function() {
         this.renderer.update(this);
     }
 
-    this.addClickEvent();
-}
+    this.renderer.events.subscribe(Renderer.EVENT.SCREEN_RESIZE, EventEmitter.SUPER_ID, (width, height) => {
+        this.uiManager.onWindowResize(width, height);
+    });
 
-GameContext.prototype.addClickEvent = function() {
-    const { cursor } = this.client;
-
-    cursor.events.subscribe(Cursor.EVENT.LEFT_MOUSE_CLICK, EventEmitter.SUPER_ID, (cursorX, cursorY) => this.uiManager.propagateClick(cursorX, cursorY, cursor.radius));
+    this.client.cursor.events.subscribe(Cursor.EVENT.LEFT_MOUSE_CLICK, EventEmitter.SUPER_ID, (cursorX, cursorY) => {
+        this.uiManager.onClick(cursorX, cursorY, this.client.cursor.radius);
+    });
 }
 
 GameContext.prototype.start = function() {

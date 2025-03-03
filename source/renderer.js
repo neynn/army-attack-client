@@ -59,16 +59,6 @@ Renderer.prototype.hasContext = function(contextID) {
     return false;
 }
 
-Renderer.prototype.refreshContext = function(contextID) {
-    const context = this.getContext(contextID);
-
-    if(!context) {
-        return;
-    }
-
-    context.refresh(this.windowWidth, this.windowHeight);
-}
-
 Renderer.prototype.createContext = function(contextID, camera) {
     if(this.hasContext(contextID) || !(camera instanceof Camera)) {
         return null;
@@ -78,7 +68,7 @@ Renderer.prototype.createContext = function(contextID, camera) {
 
     camera.setViewport(this.windowWidth, this.windowHeight);
 
-    context.events.subscribe(CameraContext.EVENT.REQUEST_WINDOW, EventEmitter.SUPER_ID, (onRequest) => onRequest(this.windowWidth, this.windowHeight));
+    context.setWindow(this.windowWidth, this.windowHeight);
 
     this.contexts.push(context);
 
@@ -167,7 +157,7 @@ Renderer.prototype.resizeDisplay = function(width, height) {
     for(let i = 0; i < this.contexts.length; i++) {
         const context = this.contexts[i];
 
-        context.onWindowResize(width, height)
+        context.onWindowResize(width, height);
     }
     
     this.windowWidth = width;

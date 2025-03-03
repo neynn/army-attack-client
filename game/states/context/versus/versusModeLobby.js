@@ -38,5 +38,5 @@ VersusModeLobbyState.prototype.onExit = function(stateMachine) {
     const gameContext = stateMachine.getContext();
     const { uiManager } = gameContext;
 
-    uiManager.unparseUI("VERSUS_MODE_HUB", gameContext);
+    uiManager.unparseUI("VERSUS_MODE_HUB");
 }

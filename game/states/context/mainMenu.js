@@ -62,5 +62,5 @@ MainMenuState.prototype.onExit = function(stateMachine) {
     const gameContext = stateMachine.getContext();
     const { uiManager } = gameContext;
 
-    uiManager.unparseUI("MAIN_MENU", gameContext);
+    uiManager.unparseUI("MAIN_MENU");
 }

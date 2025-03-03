@@ -63,7 +63,7 @@ UIManager.prototype.exit = function() {
     this.interfaceStack = [];
 }
 
-UIManager.prototype.propagateClick = function(mouseX, mouseY, mouseRange) {
+UIManager.prototype.onClick = function(mouseX, mouseY, mouseRange) {
     const clickedElements = this.getCollidedElements(mouseX, mouseY, mouseRange);
 
     for(let i = 0; i < clickedElements.length; i++) {
@@ -99,8 +99,15 @@ UIManager.prototype.getInterface = function(interfaceID) {
     return this.interfaceStack[interfaceIndex];
 }
 
+UIManager.prototype.onWindowResize = function(windowWidth, windowHeight) {
+    for(let i = 0; i < this.interfaceStack.length; i++) {
+        const userInterface = this.interfaceStack[i];
+
+        userInterface.updateRootAnchors(windowWidth, windowHeight);
+    }
+}
+
 UIManager.prototype.parseUI = function(interfaceID, gameContext) {
-    const { renderer } = gameContext;
     const config = this.interfaceTypes[interfaceID];
 
     if(!config) {
@@ -112,15 +119,12 @@ UIManager.prototype.parseUI = function(interfaceID, gameContext) {
 
     userInterface.fromConfig(gameContext, config);
 
-    renderer.events.subscribe(Renderer.EVENT.SCREEN_RESIZE, interfaceID, (width, height) => userInterface.updateRootAnchors(width, height));
-
     this.interfaceStack.push(userInterface);
 
     return userInterface;
 }
 
-UIManager.prototype.unparseUI = function(interfaceID, gameContext) {
-    const { renderer } = gameContext;
+UIManager.prototype.unparseUI = function(interfaceID) {
     const interfaceIndex = this.getInterfaceIndex(interfaceID);
 
     if(interfaceIndex === -1) {
@@ -131,8 +135,6 @@ UIManager.prototype.unparseUI = function(interfaceID, gameContext) {
     const userInterface = this.interfaceStack[interfaceIndex];
 
     userInterface.clear();
-
-    renderer.events.unsubscribe(Renderer.EVENT.SCREEN_RESIZE, interfaceID);
 
     this.interfaceStack.splice(interfaceIndex, 1);
 }

@@ -49,7 +49,7 @@ ArmyControllerFactory.prototype.initPlayerCamera = function(gameContext, camera)
             client.musicPlayer.swapTrack(music);
         }
 
-        renderer.refreshContext(Player.CAMERA_ID);
+        context.refreshCamera();
     });
 
     context.events.subscribe(CameraContext.EVENT.REMOVE, Player.CAMERA_ID, () => {

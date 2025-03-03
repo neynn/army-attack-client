@@ -41,7 +41,7 @@ MapEditorState.prototype.initEditorCamera = function(gameContext) {
 
     const context = renderer.createContext(this.contextID, this.camera);
     
-    context.setPositionMode(CameraContext.POSITION_MODE.FIXED_ORIGIN);
+    context.setPositionMode(CameraContext.POSITION_MODE.ORIGIN);
 
     world.events.subscribe(World.EVENT.MAP_CREATE, this.contextID, (worldMap) => {
         const { width, height, music } = worldMap;
@@ -52,7 +52,7 @@ MapEditorState.prototype.initEditorCamera = function(gameContext) {
             //client.musicPlayer.swapTrack(music);
         }
 
-        renderer.refreshContext(this.contextID);
+        context.refreshCamera();
     });
 
     context.events.subscribe(CameraContext.EVENT.REMOVE, this.contextID, () => {
@@ -71,7 +71,7 @@ MapEditorState.prototype.onEnter = function(stateMachine) {
     this.initEditorCamera(gameContext);
 
     uiManager.parseUI("MAP_EDITOR", gameContext);
-    uiManager.unparseUI("FPS_COUNTER", gameContext);
+    uiManager.unparseUI("FPS_COUNTER");
 
     router.load(gameContext, {
         "TOGGLE_AUTOTILER": "+a",
@@ -95,7 +95,7 @@ MapEditorState.prototype.onExit = function(stateMachine) {
     const { renderer, uiManager } = gameContext;
 
     gameContext.setGameMode(ArmyContext.GAME_MODE.NONE);
-    uiManager.unparseUI("MAP_EDITOR", gameContext);
+    uiManager.unparseUI("MAP_EDITOR");
     renderer.destroyContext(this.contextID);
 
     this.camera = null;
@@ -382,7 +382,7 @@ MapEditorState.prototype.resizeMap = function(gameContext) {
     this.mapEditor.resizeMap(gameMap, newWidth, newHeight);
     this.camera.loadWorld(newWidth, newHeight);
 
-    renderer.refreshContext(this.contextID);
+    renderer.getContext(this.contextID).refreshCamera();
 }
 
 MapEditorState.prototype.initializeUIEvents = function(gameContext) {
