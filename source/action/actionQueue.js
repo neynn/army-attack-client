@@ -88,8 +88,7 @@ ActionQueue.prototype.flushExecution = function(gameContext) {
     this.events.emit(ActionQueue.EVENT.EXECUTION_RUNNING, this.current);
     
     actionType.onStart(gameContext, data, messengerID);
-    actionType.onEnd(gameContext, data, messengerID);
-    actionType.onClear();
+    actionType.onEnd(gameContext, data, messengerID);;
 
     this.clearCurrent();
 }
@@ -122,7 +121,6 @@ ActionQueue.prototype.processExecution = function(gameContext) {
 
     if(this.isSkipping || isFinished) {
         actionType.onEnd(gameContext, data, messengerID);
-        actionType.onClear();
 
         this.clearCurrent();
         this.setState(ActionQueue.STATE.ACTIVE);

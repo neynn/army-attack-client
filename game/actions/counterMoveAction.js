@@ -1,16 +1,10 @@
 import { Action } from "../../source/action/action.js";
 import { AttackSystem } from "../systems/attack.js";
 
-export const CounterMoveAction = function() {
-    this.timePassed = 0;
-}
+export const CounterMoveAction = function() {}
 
 CounterMoveAction.prototype = Object.create(Action.prototype);
 CounterMoveAction.prototype.constructor = CounterMoveAction;
-
-CounterMoveAction.prototype.onClear = function() {
-    this.timePassed = 0;
-}
 
 CounterMoveAction.prototype.onStart = function(gameContext, request, messengerID) {
     AttackSystem.beginAttack(gameContext, request);
@@ -24,7 +18,7 @@ CounterMoveAction.prototype.onUpdate = function(gameContext, request, messengerI
     const { timer } = gameContext;
     const deltaTime = timer.getFixedDeltaTime();
 
-    this.timePassed += deltaTime;
+    request.timePassed += deltaTime;
 }
 
 CounterMoveAction.prototype.isFinished = function(gameContext, request, messengerID) {
@@ -32,7 +26,7 @@ CounterMoveAction.prototype.isFinished = function(gameContext, request, messenge
     const settings = world.getConfig("Settings");
     const timeRequired = settings.hitDuration;
 
-    return this.timePassed >= timeRequired;
+    return request.timePassed >= timeRequired;
 }
 
 CounterMoveAction.prototype.getValidated = function(gameContext, template, messengerID) {
@@ -53,7 +47,13 @@ CounterMoveAction.prototype.getValidated = function(gameContext, template, messe
 
     const outcome = AttackSystem.getOutcome(targetEntity, attackers);
     
-    return outcome;
+    return {
+        "timePassed": 0,
+        "state": outcome.state,
+        "damage": outcome.damage,
+        "attackers": outcome.attackers,
+        "targetID": outcome.targetID
+    }
 }
 
 CounterMoveAction.prototype.getTemplate = function(entityID) {

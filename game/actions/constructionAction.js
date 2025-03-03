@@ -2,16 +2,10 @@ import { Action } from "../../source/action/action.js";
 import { AnimationSystem } from "../systems/animation.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 
-export const ConstructionAction = function() {
-    this.timePassed = 0;
-}
+export const ConstructionAction = function() {}
 
 ConstructionAction.prototype = Object.create(Action.prototype);
 ConstructionAction.prototype.constructor = ConstructionAction;
-
-ConstructionAction.prototype.onClear = function() {
-    this.timePassed = 0;
-}
 
 ConstructionAction.prototype.onStart = function(gameContext, request, messengerID) {
     const { world } = gameContext;
@@ -37,7 +31,7 @@ ConstructionAction.prototype.onUpdate = function(gameContext, request, messenger
     const { timer } = gameContext;
     const deltaTime = timer.getFixedDeltaTime();
 
-    this.timePassed += deltaTime;
+    request.timePassed += deltaTime;
 }
 
 ConstructionAction.prototype.isFinished = function(gameContext, request, messengerID) {
@@ -45,7 +39,7 @@ ConstructionAction.prototype.isFinished = function(gameContext, request, messeng
     const settings = world.getConfig("Settings");
     const constructionDuration = settings.iconDuration;
 
-    return this.timePassed >= constructionDuration;
+    return request.timePassed >= constructionDuration;
 }
 
 ConstructionAction.prototype.getValidated = function(gameContext, request, messengerID) {
@@ -60,6 +54,7 @@ ConstructionAction.prototype.getValidated = function(gameContext, request, messe
     }
 
     return {
+        "timePassed": 0,
         "entityID": entityID,
         "deltaSteps": 1
     }

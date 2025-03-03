@@ -2,9 +2,7 @@ import { Action } from "../../source/action/action.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { AttackSystem } from "../systems/attack.js";
 
-export const CounterAttackAction = function() {
-    this.timePassed = 0;
-}
+export const CounterAttackAction = function() {}
 
 CounterAttackAction.prototype = Object.create(Action.prototype);
 CounterAttackAction.prototype.constructor = CounterAttackAction;
@@ -17,15 +15,11 @@ CounterAttackAction.prototype.onEnd = function(gameContext, request, messengerID
     AttackSystem.endAttack(gameContext, request);
 }
 
-CounterAttackAction.prototype.onClear = function() {
-    this.timePassed = 0;
-}
-
 CounterAttackAction.prototype.onUpdate = function(gameContext, request, messengerID) {
     const { timer } = gameContext;
     const deltaTime = timer.getFixedDeltaTime();
 
-    this.timePassed += deltaTime;
+    request.timePassed += deltaTime;
 }
 
 CounterAttackAction.prototype.isFinished = function(gameContext, request, messengerID) {
@@ -33,7 +27,7 @@ CounterAttackAction.prototype.isFinished = function(gameContext, request, messen
     const settings = world.getConfig("Settings");
     const timeRequired = settings.hitDuration;
 
-    return this.timePassed >= timeRequired;
+    return request.timePassed >= timeRequired;
 }
 
 CounterAttackAction.prototype.getValidated = function(gameContext, template, messengerID) {
@@ -63,7 +57,13 @@ CounterAttackAction.prototype.getValidated = function(gameContext, template, mes
     const pickedTarget = AttackSystem.pickAttackCounterTarget(entity, potentialTargets);
     const outcome = AttackSystem.getOutcome(pickedTarget, [entity]);
 
-    return outcome;
+    return {
+        "timePassed": 0,
+        "state": outcome.state,
+        "damage": outcome.damage,
+        "attackers": outcome.attackers,
+        "targetID": outcome.targetID
+    }
 }
 
 CounterAttackAction.prototype.getTemplate = function(entityID, attackers) {

@@ -2,16 +2,10 @@ import { Action } from "../../source/action/action.js";
 import { ACTION_TYPES } from "../enums.js";
 import { AttackSystem } from "../systems/attack.js";
 
-export const AttackAction = function() {
-    this.timePassed = 0;
-}
+export const AttackAction = function() {}
 
 AttackAction.prototype = Object.create(Action.prototype);
 AttackAction.prototype.constructor = AttackAction;
-
-AttackAction.prototype.onClear = function() {
-    this.timePassed = 0;
-}
 
 AttackAction.prototype.onStart = function(gameContext, request, messengerID) {
     AttackSystem.beginAttack(gameContext, request);
@@ -33,7 +27,7 @@ AttackAction.prototype.onUpdate = function(gameContext, request, messengerID) {
     const { timer } = gameContext;
     const deltaTime = timer.getFixedDeltaTime();
 
-    this.timePassed += deltaTime;
+    request.timePassed += deltaTime;
 }
 
 AttackAction.prototype.isFinished = function(gameContext, request, messengerID) {
@@ -41,7 +35,7 @@ AttackAction.prototype.isFinished = function(gameContext, request, messengerID) 
     const settings = world.getConfig("Settings");
     const timeRequired = settings.hitDuration;
 
-    return this.timePassed >= timeRequired;
+    return request.timePassed >= timeRequired;
 }
 
 AttackAction.prototype.getValidated = function(gameContext, request, messengerID) {
@@ -54,15 +48,21 @@ AttackAction.prototype.getValidated = function(gameContext, request, messengerID
         return null;
     }
 
-    const attackers = AttackSystem.getActiveAttackers(gameContext, target);
+    const attackerEntities = AttackSystem.getActiveAttackers(gameContext, target);
 
-    if(attackers.length === 0) {
+    if(attackerEntities.length === 0) {
         return null;
     }
 
-    const outcome = AttackSystem.getOutcome(target, attackers);
+    const outcome = AttackSystem.getOutcome(target, attackerEntities);
 
-    return outcome;
+    return {
+        "timePassed": 0,
+        "state": outcome.state,
+        "damage": outcome.damage,
+        "attackers": outcome.attackers,
+        "targetID": outcome.targetID
+    }
 }
 
 AttackAction.prototype.getTemplate = function(entityID) {

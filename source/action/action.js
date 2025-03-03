@@ -1,6 +1,5 @@
 export const Action = function() {}
 
-Action.prototype.onClear = function() {}
 Action.prototype.onStart = function(gameContext, data, messengerID) {}
 Action.prototype.onEnd = function(gameContext, data, messengerID) {}
 Action.prototype.onUpdate = function(gameContext, data, messengerID) {}

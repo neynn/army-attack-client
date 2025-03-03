@@ -1,18 +1,18 @@
 import { ActionQueue } from "./action/actionQueue.js";
 import { ControllerManager } from "./controller/controllerManager.js";
 import { EntityManager } from "./entity/entityManager.js";
-import { EventManager } from "./eventManager.js";
 import { EventEmitter } from "./events/eventEmitter.js";
+import { EventQueue } from "./events/eventQueue.js";
 import { Logger } from "./logger.js";
 import { MapManager } from "./map/mapManager.js";
 
 export const World = function() {
     this.config = {};
+    this.eventQueue = new EventQueue();
     this.actionQueue = new ActionQueue();
     this.controllerManager = new ControllerManager();
     this.entityManager = new EntityManager();
     this.mapManager = new MapManager();
-    this.eventManager = new EventManager();
 
     this.events = new EventEmitter();
     this.events.listen(World.EVENT.MAP_CREATE);
