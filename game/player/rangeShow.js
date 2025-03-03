@@ -9,16 +9,10 @@ export const RangeShow = function() {
     this.lastTarget = null;
 }
 
-RangeShow.prototype.toggle = function(gameContext, entity) {
+RangeShow.prototype.toggle = function() {
     this.isActive = !this.isActive;
 
-    if(this.isActive) {
-        if(entity) {
-            this.show(gameContext, entity);
-        }
-    } else {
-        this.reset(gameContext);
-    }
+    return this.isActive;
 }
 
 RangeShow.prototype.isEnabled = function() {

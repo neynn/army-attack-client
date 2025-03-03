@@ -410,8 +410,15 @@ Player.prototype.onFireMissionClick = function(gameContext, tileX, tileY) {
 
 Player.prototype.toggleRangeShow = function(gameContext) {
     const hoverEntity = this.hover.getEntity(gameContext);
+    const isActive = this.rangeShow.toggle();
 
-    this.rangeShow.toggle(gameContext, hoverEntity);
+    if(isActive) {
+        if(hoverEntity) {
+            this.rangeShow.show(gameContext, hoverEntity, this.camera);
+        }
+    } else {
+        this.rangeShow.reset(gameContext, this.camera);
+    }
 }
 
 Player.prototype.updateRangeIndicator = function(gameContext) {

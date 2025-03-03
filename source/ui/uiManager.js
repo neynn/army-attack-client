@@ -1,5 +1,4 @@
 import { Logger } from "../logger.js";
-import { Renderer } from "../renderer.js";
 import { ImageManager } from "../resources/imageManager.js";
 import { UserInterface } from "./userInterface.js";
 
@@ -34,8 +33,24 @@ UIManager.prototype.load = function(interfaceTypes, iconTypes, fontTypes) {
     }
 }
 
-UIManager.prototype.getInterfaceStack = function() {
-    return this.interfaceStack;
+UIManager.prototype.debug = function(context) {
+    for(let i = this.interfaceStack.length - 1; i >= 0; i--) {
+        const userInterface = this.interfaceStack[i];
+
+        userInterface.debug(context);
+    }
+}
+
+UIManager.prototype.draw = function(gameContext, context) {
+    const { timer } = gameContext;
+    const realTime = timer.getRealTime();
+    const deltaTime = timer.getDeltaTime();
+
+    for(let i = this.interfaceStack.length - 1; i >= 0; i--) {
+        const userInterface = this.interfaceStack[i];
+
+        userInterface.draw(context, realTime, deltaTime);
+    }
 }
 
 UIManager.prototype.getInterfaceIndex = function(interfaceID) {

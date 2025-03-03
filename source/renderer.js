@@ -27,7 +27,7 @@ Renderer.EVENT = {
 };
 
 Renderer.DEBUG = {
-    CAMERA: true,
+    CONTEXT: true,
     INTERFACE: false,
     SPRITES: false,
     MAP: false
@@ -88,31 +88,7 @@ Renderer.prototype.destroyContext = function(contextID) {
     }
 }
 
-Renderer.prototype.drawUI = function(gameContext) {
-    const { uiManager, timer } = gameContext;
-    const realTime = timer.getRealTime();
-    const deltaTime = timer.getDeltaTime();
-    const interfaceStack = uiManager.getInterfaceStack();
-
-    for(let i = interfaceStack.length - 1; i >= 0; i--) {
-        const userInterface = interfaceStack[i];
-
-        userInterface.draw(this.display.context, realTime, deltaTime);
-    }
-}
-
-Renderer.prototype.drawUIDebug = function(gameContext) {
-    const { uiManager } = gameContext;
-    const interfaceStack = uiManager.getInterfaceStack();
-
-    for(let i = interfaceStack.length - 1; i >= 0; i--) {
-        const userInterface = interfaceStack[i];
-
-        userInterface.debug(this.display.context);
-    }
-}
-
-Renderer.prototype.drawCameraDebug = function() {
+Renderer.prototype.drawContextDebug = function() {
     this.display.context.strokeStyle = "#eeeeee";
     this.display.context.lineWidth = 3;
 
@@ -125,7 +101,7 @@ Renderer.prototype.drawCameraDebug = function() {
 }
 
 Renderer.prototype.update = function(gameContext) {
-    const { timer } = gameContext; 
+    const { timer, uiManager } = gameContext; 
     const drawContext = this.display.context;
     const deltaTime = timer.getDeltaTime();
 
@@ -142,14 +118,14 @@ Renderer.prototype.update = function(gameContext) {
 
     this.effects.update(drawContext, deltaTime);
 
-    if(Renderer.DEBUG.CAMERA) {
-        this.drawCameraDebug();
+    if(Renderer.DEBUG.CONTEXT) {
+        this.drawContextDebug();
     }
 
-    this.drawUI(gameContext);
+    uiManager.draw(gameContext, drawContext);
 
     if(Renderer.DEBUG.INTERFACE) {
-        this.drawUIDebug(gameContext);
+        uiManager.debug(drawContext);
     }
 }
 

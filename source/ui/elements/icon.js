@@ -14,7 +14,7 @@ Icon.prototype.onDraw = function(context, localX, localY) {
         return;
     }
 
-    context.drawImage(this.image, localX, localY, this.width, this.height);
+    context.drawImage(this.image, 0, 0, this.width, this.height, localX, localY, this.width, this.height);
 }
 
 Icon.prototype.onDebug = function(context, localX, localY) {
