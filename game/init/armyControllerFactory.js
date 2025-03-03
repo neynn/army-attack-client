@@ -71,12 +71,12 @@ ArmyControllerFactory.prototype.initPlayerCamera = function(gameContext, camera)
 ArmyControllerFactory.prototype.onCreate = function(gameContext, config) {
     const { spriteManager, client } = gameContext;
     const { router } = client;
-    const { type, id, team } = config;
+    const { type, team } = config;
     const controllerType = this.getType(type);
 
     switch(type) {
         case ArmyControllerFactory.TYPE.PLAYER: {
-            const controller = new Player(id);
+            const controller = new Player();
             const controllerSprite = spriteManager.createSprite("cursor_attack_1x1", SpriteManager.LAYER.UI);
             const spriteID = controllerSprite.getID();
 

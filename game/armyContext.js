@@ -130,12 +130,12 @@ ArmyContext.prototype.init = function(resources) {
     }
 
     if(ArmyContext.DEBUG.LOG_SOCKET_EVENTS) {
-        this.client.socket.events.subscribe(Socket.EVENT_CONNECTED_TO_SERVER, "DEBUG", (socketID) => {
+        this.client.socket.events.subscribe(Socket.EVENT.CONNECTED_TO_SERVER, "DEBUG", (socketID) => {
             this.client.socket.emit(NETWORK_EVENTS.REGISTER, { "user-id": "neyn!" }, (response) => console.log(response));
             console.log(`${socketID} is connected to the server!`);
         });
     
-        this.client.socket.events.subscribe(Socket.EVENT_DISCONNECTED_FROM_SERVER, "DEBUG", (reason) => {
+        this.client.socket.events.subscribe(Socket.EVENT.DISCONNECTED_FROM_SERVER, "DEBUG", (reason) => {
             console.log(`${reason} is disconnected from the server!`);
         });
     }
@@ -234,6 +234,7 @@ ArmyContext.prototype.saveSnapshot = function() {
 ArmyContext.prototype.loadSnapshot = function(snapshot) {
     const { time, entities, controllers } = snapshot;
 
+    //TODO
     for(const controller of controllers) {
         this.world.createController(this, controller);
     }

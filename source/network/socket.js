@@ -7,21 +7,23 @@ export const Socket = function() {
     this.isConnected = false;
     this.events = new EventEmitter();
 
-    this.events.listen(Socket.EVENT_CONNECTED_TO_SERVER);
-    this.events.listen(Socket.EVENT_DISCONNECTED_FROM_SERVER);
-    this.events.listen(Socket.EVENT_MESSAGE_FROM_SERVER);
+    this.events.listen(Socket.EVENT.CONNECTED_TO_SERVER);
+    this.events.listen(Socket.EVENT.DISCONNECTED_FROM_SERVER);
+    this.events.listen(Socket.EVENT.MESSAGE_FROM_SERVER);
 }
 
-Socket.EVENT_CONNECTED_TO_SERVER = 0;
-Socket.EVENT_DISCONNECTED_FROM_SERVER = 1;
-Socket.EVENT_MESSAGE_FROM_SERVER = 2;
+Socket.EVENT = {
+    CONNECTED_TO_SERVER: "CONNECTED_TO_SERVER",
+    DISCONNECTED_FROM_SERVER: "DISCONNECTED_FROM_SERVER",
+    MESSAGE_FROM_SERVER: "MESSAGE_FROM_SERVER"
+};
 
 Socket.prototype.load = function(config) {
-    if(typeof config === "object") {
-        this.config = config;
-    } else {
-        //TODO
+    if(!config) {
+        return;
     }
+    
+    this.config = config;
 }
 
 Socket.prototype.connect = async function() {
@@ -36,9 +38,14 @@ Socket.prototype.connect = async function() {
     socket.on(NETWORK_EVENTS.CONNECT, () => {
         this.isConnected = true;
         this.socket = socket;
-        this.events.emit(Socket.EVENT_CONNECTED_TO_SERVER, socket.id);
+        this.events.emit(Socket.EVENT.CONNECTED_TO_SERVER, socket.id);
     });
 
+    socket.on(NETWORK_EVENTS.DISCONNECT, (reason) => {
+        this.isConnected = false;
+        this.events.emit(Socket.EVENT.DISCONNECTED_FROM_SERVER, reason);
+    });
+    
     socket.on(NETWORK_EVENTS.MESSAGE, (message) => {
         if(typeof message !== "object") {
             return;
@@ -50,12 +57,7 @@ Socket.prototype.connect = async function() {
             return;
         }
         
-        this.events.emit(Socket.EVENT_MESSAGE_FROM_SERVER, type, payload);
-    });
-
-    socket.on(NETWORK_EVENTS.DISCONNECT, (reason) => {
-        this.isConnected = false;
-        this.events.emit(Socket.EVENT_DISCONNECTED_FROM_SERVER, reason);
+        this.events.emit(Socket.EVENT.MESSAGE_FROM_SERVER, type, payload);
     });
 }
 

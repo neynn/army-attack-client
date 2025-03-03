@@ -9,6 +9,7 @@ export const ArmyMap = function() {
     this.music = null;
     this.disablePassing = false;
     this.disableBorder = false;
+    this.disableItemDrops = false;
 }
 
 ArmyMap.TEAM_TO_WORLD = {
@@ -66,23 +67,19 @@ ArmyMap.prototype.loadMeta = function(meta) {
         return;
     }
 
-    const { disableBorder, disablePassing, graphics, music } = meta;
+    const {
+        disableBorder = false,
+        disablePassing = false,
+        disableItemDrops = false,
+        graphics = null,
+        music = null
+    } = meta;
 
-    if(disableBorder) {
-        this.disableBorder = true;
-    }
-
-    if(disablePassing) {
-        this.disablePassing = true;
-    }
-
-    if(graphics) {
-        this.loadGraphics(graphics);
-    }
-
-    if(music) {
-        this.music = music;
-    }
+    this.music = music;
+    this.disableBorder = disableBorder;
+    this.disablePassing = disablePassing;
+    this.disableItemDrops = disableItemDrops;
+    this.loadGraphics(graphics);
 }
 
 ArmyMap.prototype.reload = function(gameContext) {

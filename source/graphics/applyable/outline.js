@@ -3,7 +3,7 @@ import { Color } from "../color.js";
 export const Outline = function() {
     this.color = new Color();
     this.state = Outline.STATE.INACTIVE;
-    this.width = 0;
+    this.width = 1;
 }
 
 Outline.STATE = {

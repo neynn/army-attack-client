@@ -72,13 +72,7 @@ Inventory.prototype.init = function(gameContext) {
     }
 } 
 
-Inventory.prototype.remove = function(config) {
-    if(!config) {
-        return;
-    }
-
-    const { type, id, value } = config;
-
+Inventory.prototype.remove = function(type, id, value) {
     switch(type) {
         case Inventory.TYPE.ITEM: {
             if(this.items.has(id)) {
@@ -105,13 +99,8 @@ Inventory.prototype.remove = function(config) {
     }
 }
 
-Inventory.prototype.addReward = function(gameContext, reward) {
-    if(!reward) {
-        return;
-    }
-
+Inventory.prototype.add = function(gameContext, type, id, value) {
     const { world } = gameContext;
-    const { type, id, value } = reward;
 
     switch(type) {
         case Inventory.TYPE.ITEM: {

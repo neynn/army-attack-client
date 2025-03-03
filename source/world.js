@@ -79,14 +79,13 @@ World.prototype.getTileEntity = function(tileX, tileY) {
     return this.entityManager.getEntity(entityID);
 }
 
-World.prototype.createController = function(gameContext, config) {
+World.prototype.createController = function(gameContext, controllerID, config) {
     if(!config) {
         Logger.log(false, "Config must be an object!", "World.prototype.createController", null);
         return null;
     }
 
-    const { id } = config;
-    const controller = this.controllerManager.createController(gameContext, config, id);
+    const controller = this.controllerManager.createController(gameContext, controllerID, config);
 
     if(!controller) {
         return null;

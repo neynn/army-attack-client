@@ -1,7 +1,11 @@
-export const Controller = function(id) {
-    this.id = id;
+export const Controller = function() {
+    this.id = null;
     this.config = {};
     this.entities = new Set();
+}
+
+Controller.prototype.setID = function(id) {
+    this.id = id;
 }
 
 Controller.prototype.update = function(gameContext) {}

@@ -12,8 +12,8 @@ import { Hover } from "./hover.js";
 import { RangeShow } from "./rangeShow.js";
 import { Inventory } from "./inventory.js";
 
-export const Player = function(id) {
-    Controller.call(this, id);
+export const Player = function() {
+    Controller.call(this);
 
     this.spriteID = null;
     this.teamID = null;
@@ -323,7 +323,6 @@ Player.prototype.updateSelectedCursor = function(gameContext) {
 Player.prototype.selectFireMission = function(gameContext, fireMission) {
     const { world } = gameContext;
     const fireCallTypes = world.getConfig("FireCallType");
-
 }
 
 Player.prototype.updateSelectedEntity = function(gameContext) {
