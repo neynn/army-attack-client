@@ -5,7 +5,6 @@ import { MapEditor } from "../../../source/map/mapEditor.js";
 import { clampValue } from "../../../source/math/math.js";
 import { saveMap } from "../../../helpers.js";
 import { ArmyContext } from "../../armyContext.js";
-import { Renderer } from "../../../source/renderer.js";
 import { ArmyCamera } from "../../armyCamera.js";
 import { World } from "../../../source/world.js";
 import { UIElement } from "../../../source/ui/uiElement.js";
@@ -19,6 +18,55 @@ export const MapEditorState = function() {
     this.currentMapID = null;
     this.camera = null;
 }
+
+MapEditorState.CONFIG = {
+    "id": "MAP_EDITOR",
+    "maxMapWidth": 10000,
+    "maxMapHeight": 10000,
+    "overlayOpacity": 0.75,
+    "overlayTextColor": "#eeeeee",
+    "brushSizes": [0, 1, 2, 3, 4],
+    "interface": {
+        "id": "MAP_EDITOR",
+        "buttonStates": {
+            "HIDDEN": { "id": "HIDDEN", "description": "HIDDEN", "textColor": [207, 55, 35, 1], "opacity": 0, "nextState": "VISIBLE" },
+            "VISIBLE": { "id": "VISIBLE", "description": "VISIBLE", "textColor": [238, 238, 238, 1], "opacity": 1, "nextState": "EDIT" },
+            "EDIT": { "id": "EDIT", "description": "EDIT", "textColor": [252, 252, 63, 1], "opacity": 1, "nextState": "HIDDEN" }
+        },
+        "layerButtons": {
+            "L1": { "id": "L1", "layer": "ground", "text": "TEXT_L1", "state": "VISIBLE", "type": "1" },
+            "L2": { "id": "L2", "layer": "decoration", "text": "TEXT_L2", "state": "VISIBLE", "type": "1" },
+            "L3": { "id": "L3", "layer": "cloud", "text": "TEXT_L3", "state": "VISIBLE", "type": "1" },
+            "LC": { "id": "LC", "layer": "type", "text": "TEXT_LC", "state": "VISIBLE", "type": "2" }
+        },
+        "slots": ["BUTTON_0", "BUTTON_1", "BUTTON_2", "BUTTON_3", "BUTTON_4", "BUTTON_5", "BUTTON_6", "BUTTON_7", "BUTTON_8"]
+    },
+    "hiddenSets": {
+        "overlay": 1,
+        "border": 1,
+        "range": 1
+    },
+    "default": {
+        "meta": {
+            "type": "EmptyVersus",
+            "music": "music_remastered",
+            "width": 20,
+            "height": 20,
+            "graphics": {
+                "layers": {
+                    "ground": { "fill": 1, "opacity": 1, "autoGenerate": false },
+                    "border": { "fill": 0, "opacity": 1, "autoGenerate": true },
+                    "decoration": { "fill": 0, "opacity": 1, "autoGenerate": false },
+                    "cloud": { "fill": 0, "opacity": 1, "autoGenerate": true },
+                    "type": { "fill": 0, "opacity": 1, "autoGenerate": false },
+                    "team": { "fill": 0, "opacity": 1, "autoGenerate": false }
+                },
+                "background": ["ground", "border", "decoration"],
+                "foreground": ["cloud"]
+            }
+        }
+    }
+};
 
 MapEditorState.GRAPHICS_BUTTON_SCALE = 50 / 96;
 
@@ -81,7 +129,7 @@ MapEditorState.prototype.onEnter = function(stateMachine) {
 
     gameContext.addDebug();
     
-    this.mapEditor.loadConfig(settings.mapEditor);
+    this.mapEditor.loadConfig(MapEditorState.CONFIG);
     this.mapEditor.loadBrushSets(meta.getInversion());
     this.initializeRenderEvents(gameContext);
     this.initializeCursorEvents(gameContext);

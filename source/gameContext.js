@@ -11,7 +11,6 @@ import { World } from "./world.js";
 
 export const GameContext = function() {
     this.id = "GAME_CONTEXT";
-    this.settings = {};
     this.client = new Client();
     this.renderer = new Renderer();
     this.timer = new Timer();
@@ -60,14 +59,13 @@ GameContext.prototype.exit = function() {
 GameContext.prototype.loadResources = function(resources) {
     this.client.musicPlayer.load(resources.music);
     this.client.soundPlayer.load(resources.sounds);
-    this.client.socket.load(resources.settings.socket);
+    this.client.socket.load(resources.network.socket);
     this.world.actionQueue.load(resources.actions);
     this.world.mapManager.load(resources.maps);
     this.spriteManager.load(resources.sprites);
     this.tileManager.load(resources.tiles, resources.tileMeta);
     this.uiManager.load(resources.interfaces, resources.icons, resources.fonts);
     this.world.entityManager.load(resources.traits);
-    this.settings = resources.settings;
     this.world.config = resources.world;
 }
 
@@ -106,10 +104,6 @@ GameContext.prototype.clearEvents = function() {
     this.client.socket.events.unsubscribeAll(this.id);
     this.renderer.events.unsubscribeAll(this.id);
     this.world.actionQueue.events.unsubscribeAll(this.id);
-}
-
-GameContext.prototype.getID = function() {
-    return this.id;
 }
 
 GameContext.prototype.switchState = function(stateID) {

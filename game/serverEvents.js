@@ -1,4 +1,3 @@
-import { ActionQueue } from "../source/action/actionQueue.js";
 import { CLIENT_EVENTS } from "./enums.js";
 import { SpawnSystem } from "./systems/spawn.js";
 
@@ -66,23 +65,11 @@ ServerEvents.roomUpdate = function(gameContext, payload) {
 }
 
 ServerEvents.startVersusInstance = async function(gameContext, payload) {
-    const { world, client } = gameContext;
-    const { actionQueue } = world;
-    const { socket } = client;
-    const contextID = gameContext.getID();
-
     ServerEvents.instanceController(gameContext, payload);
 
     await ServerEvents.instanceMapFromID(gameContext, payload);
 
     ServerEvents.instanceEntityBatch(gameContext, payload);
-
-    actionQueue.setMode(ActionQueue.MODE.DEFERRED);
-    actionQueue.events.subscribe(ActionQueue.EVENT.EXECUTION_DEFER, contextID, (execution, request, type) => {
-        if(type.message.send) {
-            socket.messageRoom(CLIENT_EVENTS.ACTION, request);
-        }
-    });
 }
 
 ServerEvents.gameEvent = function(gameContext, payload) {

@@ -188,9 +188,7 @@ Player.prototype.alignSpriteWithEntity = function(gameContext, entity) {
 }
 
 Player.prototype.autoUpdateSpritePosition = function(gameContext) {
-    const hoverState = this.hover.getState();
-
-    switch(hoverState) {
+    switch(this.hover.state) {
         case Hover.STATE.HOVER_ON_ENTITY: {
             const hoverEntity = this.hover.getEntity(gameContext);
 
@@ -283,9 +281,7 @@ Player.prototype.updateCursorSprite = function(gameContext, typeID, spriteKey) {
 }
 
 Player.prototype.updateIdleCursor = function(gameContext) {
-    const hoverState = this.hover.getState();
-
-    switch(hoverState) {
+    switch(this.hover.state) {
         case Hover.STATE.HOVER_ON_ENTITY: {
             const hoveredEntity = this.hover.getEntity(gameContext);
             const typeID = this.attackers.length > 0 ? Player.SPRITE_TYPE.ATTACK : Player.SPRITE_TYPE.SELECT;
@@ -302,9 +298,7 @@ Player.prototype.updateIdleCursor = function(gameContext) {
 }
 
 Player.prototype.updateSelectedCursor = function(gameContext) {
-    const hoverState = this.hover.getState();
-
-    switch(hoverState) {
+    switch(this.hover.state) {
         case Hover.STATE.HOVER_ON_ENTITY: {
             this.updateIdleCursor(gameContext);
             break;
@@ -427,9 +421,7 @@ Player.prototype.updateRangeIndicator = function(gameContext) {
 
     this.rangeShow.reset(gameContext, this.camera);
 
-    const hoverState = this.hover.getState();
-
-    if(hoverState === Hover.STATE.HOVER_ON_ENTITY) {
+    if(this.hover.state === Hover.STATE.HOVER_ON_ENTITY) {
         const entity = this.hover.getEntity(gameContext);
 
         this.rangeShow.show(gameContext, entity, this.camera);

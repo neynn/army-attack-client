@@ -2,7 +2,7 @@
     "actions": { "directory": "assets/config", "source": "actions.json" },
     "controllers": { "directory": "assets/config", "source": "controllers.json" },
     "interfaces": { "directory": "assets/config", "source": "interfaces.json" },
-    "settings": { "directory": "assets/config", "source": "settings.json" },
+    "network": { "directory": "assets/config", "source": "network.json" },
     "tileMeta": { "directory": "assets/config", "source": "tileMeta.json" },
     "mapTypes": { "directory": "assets/config", "source": "mapTypes.json" },
     "world": { "directory": "assets/config", "source": "world.json" },
