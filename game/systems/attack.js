@@ -155,7 +155,7 @@ AttackSystem.filterAliveEntitiesInMaxRange = function(gameContext, entity, onChe
         return entities;
     }
 
-    const settings = world.getConfig("Settings");
+    const settings = gameContext.getConfig("Settings");
     const nearbyEntities = entity.getSurroundingEntities(gameContext, settings.maxAttackRange);
 
     for(let i = 0; i < nearbyEntities.length; i++) {

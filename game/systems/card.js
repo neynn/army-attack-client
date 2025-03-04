@@ -65,7 +65,7 @@ CardSystem.createNormalCard = function(gameContext, entity, cardType) {
 
 CardSystem.getTeamSprites = function(gameContext, entity) {
     const { world } = gameContext;
-    const teamTypes = world.getConfig("TeamType");
+    const teamTypes = gameContext.getConfig("TeamType");
     const teamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
     const teamSprites = teamTypes[teamComponent.teamID].sprites;
 
@@ -114,7 +114,7 @@ CardSystem.createStatCard = function(gameContext, entity) {
 
 CardSystem.generateStatCard = function(gameContext, entity) {
     const { spriteManager, world } = gameContext;
-    const entityTypes = world.getConfig("EntityType");
+    const entityTypes = gameContext.getConfig("EntityType");
     const entityType = entityTypes[entity.config.archetype];
 
     if(entityType.disableCard || entity.config.disableCard) {

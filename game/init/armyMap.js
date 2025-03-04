@@ -83,8 +83,7 @@ ArmyMap.prototype.loadMeta = function(meta) {
 }
 
 ArmyMap.prototype.reload = function(gameContext) {
-    const { world } = gameContext;
-    const tileTypes = world.getConfig("TileType");
+    const tileTypes = gameContext.getConfig("TileType");
 
     for(let i = 0; i < this.height; i++) {
         for(let j = 0; j < this.width; j++) {
@@ -109,7 +108,7 @@ ArmyMap.prototype.reload = function(gameContext) {
 }
 
 ArmyMap.prototype.getAnimationForm = function(gameContext, tileID) {
-    const { tileManager, world } = gameContext;
+    const { tileManager } = gameContext;
     const { meta } = tileManager;
     const tileMeta = meta.getMeta(tileID);
 
@@ -117,7 +116,7 @@ ArmyMap.prototype.getAnimationForm = function(gameContext, tileID) {
         return null;
     }
 
-    const formConditions = world.getConfig("TileFormCondition");
+    const formConditions = gameContext.getConfig("TileFormCondition");
     const { set, animation } = tileMeta;
     const setForm = formConditions[set];
 
@@ -189,9 +188,7 @@ ArmyMap.prototype.autotile = function(gameContext, centerX, centerY, tileID, lay
 }
 
 ArmyMap.prototype.getConversionID = function(gameContext, tileID, teamID) {
-    const { world } = gameContext;
-    const tileConversions = world.getConfig("TeamTileConversion");
-    const teamConversions = tileConversions[ArmyMap.TEAM_TYPE[teamID]];
+    const teamConversions = gameContext.tileConversions[ArmyMap.TEAM_TYPE[teamID]];
 
     if(!teamConversions) {
         return TileManager.TILE_ID.EMPTY;
@@ -268,20 +265,20 @@ ArmyMap.prototype.updateBorder = function(gameContext, centerX, centerY, range) 
     const { tileManager, world } = gameContext;
     const { controllerManager } = world;
     const { meta } = tileManager;
-    const settings = world.getConfig("Settings");
+    const settings = gameContext.getConfig("Settings");
 
     if(!settings.drawBorder || this.disableBorder) {
         return;
     }
 
-    const player = controllerManager.getController(gameContext.player);
+    const player = controllerManager.getController(gameContext.playerID);
 
     if(!player || !player.teamID) {
         return;
     }
 
     const autotiler = meta.getAutotilerByID(ArmyMap.AUTOTILER.BORDER);
-    const tileTypes = world.getConfig("TileType");
+    const tileTypes = gameContext.getConfig("TileType");
 
     this.updateArea(centerX, centerY, range, (index, tileX, tileY) => {
         const centerTypeID = this.getTile(ArmyMap.LAYER.TYPE, tileX, tileY);

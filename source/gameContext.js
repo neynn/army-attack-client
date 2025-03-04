@@ -57,19 +57,16 @@ GameContext.prototype.exit = function() {
 }
 
 GameContext.prototype.loadResources = function(resources) {
+    this.spriteManager.load(resources.sprites);
+    this.tileManager.load(resources.tiles, resources.tileMeta);
+    this.uiManager.load(resources.interfaces, resources.icons, resources.fonts);
     this.client.musicPlayer.load(resources.music);
     this.client.soundPlayer.load(resources.sounds);
     this.client.socket.load(resources.network.socket);
     this.world.actionQueue.load(resources.actions);
     this.world.mapManager.load(resources.maps);
-    this.spriteManager.load(resources.sprites);
-    this.tileManager.load(resources.tiles, resources.tileMeta);
-    this.uiManager.load(resources.interfaces, resources.icons, resources.fonts);
     this.world.entityManager.load(resources.traits);
-    this.world.config = resources.world;
 }
-
-GameContext.prototype.init = function() {}
 
 GameContext.prototype.getContextAtMouse = function() {
     const context = this.renderer.getCollidedContext(this.client.cursor.positionX, this.client.cursor.positionY, this.client.cursor.radius);

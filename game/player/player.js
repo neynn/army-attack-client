@@ -316,7 +316,7 @@ Player.prototype.updateSelectedCursor = function(gameContext) {
 
 Player.prototype.selectFireMission = function(gameContext, fireMission) {
     const { world } = gameContext;
-    const fireCallTypes = world.getConfig("FireCallType");
+    const fireCallTypes = gameContext.getConfig("FireCallType");
 }
 
 Player.prototype.updateSelectedEntity = function(gameContext) {

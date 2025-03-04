@@ -69,7 +69,7 @@ ArmyEntity.prototype.isTilePassable = function(gameContext, tileX, tileY) {
         return false;
     }
 
-    const tileTypes = world.getConfig("TileType");
+    const tileTypes = gameContext.getConfig("TileType");
     const tileTypeID = activeMap.getTile(ArmyMap.LAYER.TYPE, tileX, tileY);
     const moveComponent = this.getComponent(ArmyEntity.COMPONENT.MOVE);
     const isTilePassable = moveComponent.hasPassability(tileTypes[tileTypeID].passability);

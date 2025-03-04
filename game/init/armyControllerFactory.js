@@ -31,7 +31,7 @@ ArmyControllerFactory.prototype.addDragEvent = function(gameContext) {
 
 ArmyControllerFactory.prototype.initPlayerCamera = function(gameContext, camera) {
     const { world, renderer, client } = gameContext;
-    const settings = world.getConfig("Settings");
+    const settings = gameContext.getConfig("Settings");
     const context = renderer.createContext(Player.CAMERA_ID, camera);
 
     camera.loadTileDimensions(settings.tileWidth, settings.tileHeight);

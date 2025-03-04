@@ -7,7 +7,6 @@ import { Logger } from "./logger.js";
 import { MapManager } from "./map/mapManager.js";
 
 export const World = function() {
-    this.config = {};
     this.eventQueue = new EventQueue();
     this.actionQueue = new ActionQueue();
     this.controllerManager = new ControllerManager();
@@ -137,18 +136,4 @@ World.prototype.destroyEntity = function(entityID) {
         this.entityManager.destroyEntity(entityID);
         this.events.emit(World.EVENT.ENTITY_DESTROY, entity);
     }
-}
-
-World.prototype.getConfig = function(elementID) {
-    if(!elementID) {
-        return this.config;
-    }
-
-    if(this.config[elementID]) {
-        return this.config[elementID];
-    }
-
-    Logger.log(false, "Element does not exist!", "World.prototype.getConfig", { elementID });
-
-    return null;
 }

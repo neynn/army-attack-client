@@ -38,7 +38,10 @@ import { Logger } from "../source/logger.js";
 export const ArmyContext = function() {
     GameContext.call(this);
 
-    this.player = null;
+    this.armyConfig = {};
+    this.tileConversions = {};
+    this.tileTypes = {};
+    this.playerID = null;
     this.gameMode = ArmyContext.GAME_MODE.NONE;
 }
 
@@ -85,15 +88,15 @@ ArmyContext.prototype.getGameMode = function() {
 }
 
 ArmyContext.prototype.init = function(resources) {
-    this.updateConversions();
+    this.armyConfig = resources.world;
+    this.tileConversions = this.initConversions(this.armyConfig["TeamTileConversion"]);
+    this.tileTypes = 0;
 
     this.world.actionQueue.registerAction(ACTION_TYPES.ATTACK, new AttackAction());
     this.world.actionQueue.registerAction(ACTION_TYPES.CONSTRUCTION, new ConstructionAction());
     this.world.actionQueue.registerAction(ACTION_TYPES.COUNTER_ATTACK, new CounterAttackAction());
     this.world.actionQueue.registerAction(ACTION_TYPES.COUNTER_MOVE, new CounterMoveAction());
     this.world.actionQueue.registerAction(ACTION_TYPES.MOVE, new MoveAction());
-
-    this.world.actionQueue.load(resources.actions);
 
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.ARMOR, ArmorComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.ATTACK, AttackComponent);
@@ -159,9 +162,20 @@ ArmyContext.prototype.init = function(resources) {
     this.switchState(ArmyContext.STATE.MAIN_MENU);
 }
 
-ArmyContext.prototype.updateConversions = function() {
+ArmyContext.prototype.getConfig = function(elementID) {
+    const element = this.armyConfig[elementID];
+
+    if(element === undefined) {
+        Logger.log(false, "Element does not exist!", "ArmyContext.prototype.getConfig", { elementID });
+
+        return null;
+    }
+
+    return element;
+}
+
+ArmyContext.prototype.initConversions = function(teamConversions) {
     const { meta } = this.tileManager;
-    const teamConversions = this.world.getConfig("TeamTileConversion");
     const updatedConversions = {};
 
     for(const teamID in teamConversions) {
@@ -192,7 +206,7 @@ ArmyContext.prototype.updateConversions = function() {
         updatedConversions[teamID] = teamConversion;
     }
 
-    this.world.config["TeamTileConversion"] = updatedConversions;
+    return updatedConversions;
 }
 
 ArmyContext.prototype.saveSnapshot = function() {

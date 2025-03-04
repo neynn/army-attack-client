@@ -10,11 +10,8 @@ MainMenuState.prototype.constructor = MainMenuState;
 MainMenuState.prototype.onEnter = function(stateMachine) {
     const gameContext = stateMachine.getContext();
     const { uiManager, renderer, spriteManager } = gameContext;
-
-    uiManager.parseUI("FPS_COUNTER", gameContext);
-    uiManager.parseUI("MAIN_MENU", gameContext);
-
-    const fpsInterface = uiManager.getInterface("FPS_COUNTER");
+    const fpsInterface = uiManager.parseUI("FPS_COUNTER", gameContext);
+    const mainMenuInterface = uiManager.parseUI("MAIN_MENU", gameContext);
 
     fpsInterface.addDynamicText("TEXT_FPS", (element) => {
         const fps = Math.floor(renderer.fpsCounter.getSmoothFPS());
@@ -28,8 +25,6 @@ MainMenuState.prototype.onEnter = function(stateMachine) {
             element.style.color.setColorRGB(255, 0, 0);
         }
     });
-
-    const mainMenuInterface = uiManager.getInterface("MAIN_MENU");
 
     mainMenuInterface.addClick("BUTTON_PLAY", () => gameContext.switchState(ArmyContext.STATE.STORY_MODE));
     mainMenuInterface.addClick("BUTTON_EDIT", () => gameContext.switchState(ArmyContext.STATE.EDIT_MODE));

@@ -9,10 +9,7 @@ VersusModeLobbyState.prototype.constructor = VersusModeLobbyState;
 VersusModeLobbyState.prototype.onEnter = function(stateMachine) {
     const gameContext = stateMachine.getContext();
     const { uiManager, client } = gameContext;
-
-    uiManager.parseUI("VERSUS_MODE_HUB", gameContext);
-
-    const versusInterface = uiManager.getInterface("VERSUS_MODE_HUB");
+    const versusInterface = uiManager.parseUI("VERSUS_MODE_HUB", gameContext);
 
     versusInterface.addClick("BUTTON_CREATE_ROOM", () => {
         client.socket.createRoom("VERSUS"); //TODO

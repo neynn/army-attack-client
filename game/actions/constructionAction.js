@@ -35,8 +35,7 @@ ConstructionAction.prototype.onUpdate = function(gameContext, request, messenger
 }
 
 ConstructionAction.prototype.isFinished = function(gameContext, request, messengerID) {
-    const { world } = gameContext;
-    const settings = world.getConfig("Settings");
+    const settings = gameContext.getConfig("Settings");
     const constructionDuration = settings.iconDuration;
 
     return request.timePassed >= constructionDuration;

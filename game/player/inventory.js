@@ -60,8 +60,8 @@ Inventory.prototype.load = function(blob) {
 
 Inventory.prototype.init = function(gameContext) {
     const { world } = gameContext;
-    const itemTypes = world.getConfig("ItemType");
-    const resourceTypes = world.getConfig("ResourceType");
+    const itemTypes = gameContext.getConfig("ItemType");
+    const resourceTypes = gameContext.getConfig("ResourceType");
 
     for(const itemID in itemTypes) {
         this.items.set(itemID, 0);
@@ -104,7 +104,7 @@ Inventory.prototype.add = function(gameContext, type, id, value) {
 
     switch(type) {
         case Inventory.TYPE.ITEM: {
-            const itemTypes = world.getConfig("ItemType");
+            const itemTypes = gameContext.getConfig("ItemType");
             const itemType = itemTypes[id];
 
             if(itemType && this.items.has(id)) {
@@ -117,7 +117,7 @@ Inventory.prototype.add = function(gameContext, type, id, value) {
             break;
         }
         case Inventory.TYPE.RESOURCE: {
-            const resourceTypes = world.getConfig("ResourceType");
+            const resourceTypes = gameContext.getConfig("ResourceType");
             const resourceType = resourceTypes[id];
 
             if(resourceType && this.resources.has(id)) {

@@ -32,7 +32,7 @@ ReviveableComponent.prototype.beginDecay = function() {
 ReviveableComponent.prototype.update = function(gameContext, entity) {
     if(this.state === ReviveableComponent.STATE.DECAY) {
         const { timer, world } = gameContext;
-        const settings = world.getConfig("Settings");
+        const settings = gameContext.getConfig("Settings");
         const fixedDeltaTime = timer.getFixedDeltaTime();
 
         this.passedTime += fixedDeltaTime;

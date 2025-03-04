@@ -18,37 +18,35 @@
         "availableMaps": ["pvp_valleys"],
         "TeamType": {
             "Crimson": {
-                "id": "Crimson",
                 "entities": {
-                    "red_artillery": { "id": "red_artillery", "type": "red_artillery", "buyResource": "Supplies", "buyValue": 0 },
-                    "red_battery": { "id": "red_battery", "type": "red_battery", "buyResource": "Supplies", "buyValue": 0 },
-                    "red_bulldozer": { "id": "red_bulldozer", "type": "red_bulldozer", "buyResource": "Supplies", "buyValue": 0 },
-                    "red_killdozer": { "id": "red_killdozer", "type": "red_killdozer", "buyResource": "Supplies", "buyValue": 0 },
-                    "red_battletank": { "id": "red_battletank", "type": "red_battletank", "buyResource": "Supplies", "buyValue": 0 },
-                    "red_infantry": { "id": "red_infantry", "type": "red_infantry", "buyResource": "Supplies", "buyValue": 0 },
-                    "red_warfly": { "id": "red_warfly", "type": "red_warfly", "buyResource": "Supplies", "buyValue": 0 },
-                    "red_scout": { "id": "red_scout", "type": "red_scout", "buyResource": "Supplies", "buyValue": 0 },
-                    "red_stormtrooper": { "id": "red_stormtrooper", "type": "red_stormtrooper", "buyResource": "Supplies", "buyValue": 0 },
-                    "red_droid": { "id": "red_droid", "type": "red_droid", "buyResource": "Supplies", "buyValue": 0 },
-                    "red_supplytruck": { "id": "red_supplytruck", "type": "red_supplytruck", "buyResource": "Supplies", "buyValue": 0 },
-                    "red_tank": { "id": "red_tank", "type": "red_tank", "buyResource": "Supplies", "buyValue": 0 }
+                    "red_artillery": { "type": "red_artillery", "buyResource": "Supplies", "buyValue": 0 },
+                    "red_battery": { "type": "red_battery", "buyResource": "Supplies", "buyValue": 0 },
+                    "red_bulldozer": { "type": "red_bulldozer", "buyResource": "Supplies", "buyValue": 0 },
+                    "red_killdozer": { "type": "red_killdozer", "buyResource": "Supplies", "buyValue": 0 },
+                    "red_battletank": { "type": "red_battletank", "buyResource": "Supplies", "buyValue": 0 },
+                    "red_infantry": { "type": "red_infantry", "buyResource": "Supplies", "buyValue": 0 },
+                    "red_warfly": { "type": "red_warfly", "buyResource": "Supplies", "buyValue": 0 },
+                    "red_scout": {  "type": "red_scout", "buyResource": "Supplies", "buyValue": 0 },
+                    "red_stormtrooper": { "type": "red_stormtrooper", "buyResource": "Supplies", "buyValue": 0 },
+                    "red_droid": { "type": "red_droid", "buyResource": "Supplies", "buyValue": 0 },
+                    "red_supplytruck": { "type": "red_supplytruck", "buyResource": "Supplies", "buyValue": 0 },
+                    "red_tank": { "type": "red_tank", "buyResource": "Supplies", "buyValue": 0 }
                 }
             },
             "Allies": {
-                "id": "Allies",
                 "entities": {
-                    "blue_artillery": { "id": "blue_artillery", "type": "blue_artillery", "buyResource": "Supplies", "buyValue": 0 },
-                    "blue_battery": { "id": "blue_battery", "type": "blue_battery", "buyResource": "Supplies", "buyValue": 0 },
-                    "blue_battletank": { "id": "blue_battletank", "type": "blue_battletank", "buyResource": "Supplies", "buyValue": 0 },
-                    "blue_commando": { "id": "blue_commando", "type": "blue_commando", "buyResource": "Supplies", "buyValue": 0 },
-                    "blue_infantry": { "id": "blue_infantry", "type": "blue_infantry", "buyResource": "Supplies", "buyValue": 0 },
-                    "blue_landkreuzer": { "id": "blue_landkreuzer", "type": "blue_landkreuzer", "buyResource": "Supplies", "buyValue": 0 },
-                    "blue_sniper": { "id": "blue_sniper", "type": "blue_sniper", "buyResource": "Supplies", "buyValue": 0 },
-                    "blue_tank": { "id": "blue_tank", "type": "blue_tank", "buyResource": "Supplies", "buyValue": 0 },
-                    "blue_elite_battery": { "id": "blue_elite_battery", "type": "blue_elite_battery", "buyResource": "Supplies", "buyValue": 0 },
-                    "blue_elite_battletank": { "id": "blue_elite_battletank", "type": "blue_elite_battletank", "buyResource": "Supplies", "buyValue": 0 },
-                    "blue_elite_commando": { "id": "blue_elite_commando", "type": "blue_elite_commando", "buyResource": "Supplies", "buyValue": 0 },
-                    "blue_elite_infantry": { "id": "blue_elite_infantry", "type": "blue_elite_infantry", "buyResource": "Supplies", "buyValue": 0 }
+                    "blue_artillery": { "type": "blue_artillery", "buyResource": "Supplies", "buyValue": 0 },
+                    "blue_battery": { "type": "blue_battery", "buyResource": "Supplies", "buyValue": 0 },
+                    "blue_battletank": { "type": "blue_battletank", "buyResource": "Supplies", "buyValue": 0 },
+                    "blue_commando": { "type": "blue_commando", "buyResource": "Supplies", "buyValue": 0 },
+                    "blue_infantry": { "type": "blue_infantry", "buyResource": "Supplies", "buyValue": 0 },
+                    "blue_landkreuzer": { "type": "blue_landkreuzer", "buyResource": "Supplies", "buyValue": 0 },
+                    "blue_sniper": { "type": "blue_sniper", "buyResource": "Supplies", "buyValue": 0 },
+                    "blue_tank": { "type": "blue_tank", "buyResource": "Supplies", "buyValue": 0 },
+                    "blue_elite_battery": { "type": "blue_elite_battery", "buyResource": "Supplies", "buyValue": 0 },
+                    "blue_elite_battletank": { "type": "blue_elite_battletank", "buyResource": "Supplies", "buyValue": 0 },
+                    "blue_elite_commando": { "type": "blue_elite_commando", "buyResource": "Supplies", "buyValue": 0 },
+                    "blue_elite_infantry": { "type": "blue_elite_infantry", "buyResource": "Supplies", "buyValue": 0 }
                 }
             }
         }

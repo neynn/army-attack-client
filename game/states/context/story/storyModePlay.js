@@ -29,7 +29,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
 
     //console.log(VersusSystem.pickRandomMap(gameContext, 2));
 
-    gameContext.player = controller.getID();
+    gameContext.playerID = controller.getID();
 
     worldMap.reload(gameContext);
 
