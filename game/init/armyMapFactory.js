@@ -6,16 +6,16 @@ export const ArmyMapFactory = function() {
 }
 
 ArmyMapFactory.TYPE = {
-    "STORY": "Story",
-    "VERSUS": "Versus",
-    "EMPTY_STORY": "EmptyStory",
-    "EMPTY_VERUS": "EmptyVersus"
-}
+    STORY: "Story",
+    VERSUS: "Versus",
+    EMPTY_STORY: "EmptyStory",
+    EMPTY_VERUS: "EmptyVersus"
+};
 
 ArmyMapFactory.prototype = Object.create(Factory.prototype);
 ArmyMapFactory.prototype.constructor = Factory;
 
-ArmyMapFactory.prototype.createBuffer = function(gameContext, width, height) {
+const createBuffer = function(gameContext, width, height) {
     const { tileManager } = gameContext;
     const { meta } = tileManager;
     const bufferSize = width * height;
@@ -24,7 +24,7 @@ ArmyMapFactory.prototype.createBuffer = function(gameContext, width, height) {
     return buffer;
 }
 
-ArmyMapFactory.prototype.parseMap2D = function(gameContext, map2D, meta, layerData) {
+const parseMap2D = function(gameContext, map2D, meta, layerData) {
     const { 
         width = 0,
         height = 0,
@@ -37,7 +37,7 @@ ArmyMapFactory.prototype.parseMap2D = function(gameContext, map2D, meta, layerDa
 
     for(const layerID in layers) {
         const config = layers[layerID];
-        const buffer = this.createBuffer(gameContext, width, height);
+        const buffer = createBuffer(gameContext, width, height);
         const layer = map2D.createLayer(layerID, buffer);
 
         layer.decode(layerData[layerID]);
@@ -49,7 +49,7 @@ ArmyMapFactory.prototype.parseMap2D = function(gameContext, map2D, meta, layerDa
     map2D.loadMeta(meta);
 }
 
-ArmyMapFactory.prototype.parseMap2DEmpty = function(gameContext, map2D, meta) {
+const parseMap2DEmpty = function(gameContext, map2D, meta) {
     const { 
         width = 0,
         height = 0,
@@ -63,7 +63,7 @@ ArmyMapFactory.prototype.parseMap2DEmpty = function(gameContext, map2D, meta) {
     for(const layerID in layers) {
         const config = layers[layerID];
         const { fill } = config;
-        const buffer = this.createBuffer(gameContext, width, height);
+        const buffer = createBuffer(gameContext, width, height);
 
         if(fill) {
             for(let i = 0; i < buffer.length; i++) {
@@ -88,19 +88,19 @@ ArmyMapFactory.prototype.onCreate = function(gameContext, config) {
 
     switch(type) {
         case ArmyMapFactory.TYPE.STORY: {
-            this.parseMap2D(gameContext, worldMap, meta, layers);
+            parseMap2D(gameContext, worldMap, meta, layers);
             break;
         }
         case ArmyMapFactory.TYPE.VERSUS: {
-            this.parseMap2D(gameContext, worldMap, meta, layers);
+            parseMap2D(gameContext, worldMap, meta, layers);
             break;
         }
         case ArmyMapFactory.TYPE.EMPTY_STORY: {
-            this.parseMap2DEmpty(gameContext, worldMap, meta);
+            parseMap2DEmpty(gameContext, worldMap, meta);
             break;
         }
         case ArmyMapFactory.TYPE.EMPTY_VERUS: {
-            this.parseMap2DEmpty(gameContext, worldMap, meta);
+            parseMap2DEmpty(gameContext, worldMap, meta);
             break;
         }
         default: {

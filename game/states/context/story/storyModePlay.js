@@ -12,10 +12,10 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
     const gameContext = stateMachine.getContext();
     const { uiManager, world } = gameContext;
 
-    const controller = world.createController(gameContext, "neyn", {
+    const controller = world.createController(gameContext, {
         "type": "Player",
         "team": "Allies"
-    });
+    }, "neyn");
 
     const worldMap = await world.createMapByID(gameContext, "oasis");
 

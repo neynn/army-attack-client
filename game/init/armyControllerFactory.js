@@ -1,7 +1,7 @@
 import { CameraContext } from "../../source/camera/cameraContext.js";
 import { Cursor } from "../../source/client/cursor.js";
 import { Factory } from "../../source/factory/factory.js";
-import { SpriteManager } from "../../source/graphics/spriteManager.js";
+import { SpriteManager } from "../../source/sprite/spriteManager.js";
 import { World } from "../../source/world.js";
 import { Player } from "../player/player.js";
 
@@ -16,11 +16,11 @@ ArmyControllerFactory.TYPE = {
 ArmyControllerFactory.prototype = Object.create(Factory.prototype);
 ArmyControllerFactory.prototype.constructor = ArmyControllerFactory;
 
-ArmyControllerFactory.prototype.addDragEvent = function(gameContext) {
+const addDragEvent = function(gameContext) {
     const { client } = gameContext;
     const { cursor } = client;
 
-    cursor.events.subscribe(Cursor.EVENT.LEFT_MOUSE_DRAG, this.id, (deltaX, deltaY) => {
+    cursor.events.subscribe(Cursor.EVENT.LEFT_MOUSE_DRAG, "ARMY_CONTROLLER_FACOTRY", (deltaX, deltaY) => {
         const context = gameContext.getContextAtMouse();
 
         if(context) {
@@ -29,7 +29,7 @@ ArmyControllerFactory.prototype.addDragEvent = function(gameContext) {
     });
 }
 
-ArmyControllerFactory.prototype.initPlayerCamera = function(gameContext, camera) {
+const initPlayerCamera = function(gameContext, camera) {
     const { world, renderer, client } = gameContext;
     const settings = gameContext.getConfig("Settings");
     const context = renderer.createContext(Player.CAMERA_ID, camera);
@@ -86,8 +86,8 @@ ArmyControllerFactory.prototype.onCreate = function(gameContext, config) {
             controller.setConfig(controllerType);
             controller.enterState(gameContext, Player.STATE.IDLE);
             
-            this.initPlayerCamera(gameContext, controller.getCamera());
-            this.addDragEvent(gameContext);
+            initPlayerCamera(gameContext, controller.getCamera());
+            addDragEvent(gameContext);
 
             router.load(gameContext, controllerType.binds);
             router.on(Player.COMMAND.TOGGLE_RANGE, () => controller.toggleRangeShow(gameContext));

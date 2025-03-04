@@ -3,6 +3,14 @@ import { Player } from "../player/player.js";
 
 export const MoveSystem = function() {}
 
+const updateSpritePosition = function(gameContext, entity) {
+    const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
+    const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
+    const { positionX, positionY } = positionComponent;
+
+    spriteComponent.setPosition(gameContext, positionX, positionY);
+}
+
 MoveSystem.updatePath = function(gameContext, entity) {
     const { timer, renderer } = gameContext;
     const camera = renderer.getContext(Player.CAMERA_ID).getCamera();
@@ -34,15 +42,7 @@ MoveSystem.updatePath = function(gameContext, entity) {
         moveComponent.path.pop();
     }
 
-    MoveSystem.updateSpritePosition(gameContext, entity);
-}
-
-MoveSystem.updateSpritePosition = function(gameContext, entity) {
-    const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
-    const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
-    const { positionX, positionY } = positionComponent;
-
-    spriteComponent.setPosition(gameContext, positionX, positionY);
+    updateSpritePosition(gameContext, entity);
 }
 
 MoveSystem.endMove = function(gameContext, entity, targetX, targetY) {
@@ -60,5 +60,5 @@ MoveSystem.endMove = function(gameContext, entity, targetX, targetY) {
     positionComponent.setTile(targetX, targetY);
     moveComponent.clear();
 
-    MoveSystem.updateSpritePosition(gameContext, entity);
+    updateSpritePosition(gameContext, entity);
 }

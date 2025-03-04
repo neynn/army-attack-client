@@ -11,6 +11,7 @@ export const EntityManager = function() {
 }
 
 EntityManager.NEXT_ID = 0;
+EntityManager.INVALID_ID = -1;
 
 EntityManager.prototype = Object.create(FactoryOwner.prototype);
 EntityManager.prototype.constructor = EntityManager;
@@ -141,7 +142,7 @@ EntityManager.prototype.getEntity = function(entityID) {
     return null;
 }
 
-EntityManager.prototype.createEntity = function(gameContext, config, externalID = -1) {
+EntityManager.prototype.createEntity = function(gameContext, config, externalID) {
     const entity = this.createProduct(gameContext, config);
 
     if(!entity) {
@@ -149,7 +150,7 @@ EntityManager.prototype.createEntity = function(gameContext, config, externalID 
         return null;
     }
 
-    const entityID = externalID !== -1 ? externalID : EntityManager.NEXT_ID++;
+    const entityID = externalID !== EntityManager.INVALID_ID ? externalID : EntityManager.NEXT_ID++;
 
     entity.setID(entityID);
 

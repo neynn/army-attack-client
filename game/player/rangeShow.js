@@ -1,4 +1,4 @@
-import { SpriteManager } from "../../source/graphics/spriteManager.js";
+import { SpriteManager } from "../../source/sprite/spriteManager.js";
 import { Autotiler } from "../../source/tile/autotiler.js";
 import { ArmyCamera } from "../armyCamera.js";
 import { ArmyEntity } from "../init/armyEntity.js";

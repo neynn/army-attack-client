@@ -1,4 +1,4 @@
-import { Drawable } from "../drawable.js";
+import { Drawable } from "../graphics/drawable.js";
 
 export const Sprite = function(DEBUG_NAME) {
     Drawable.call(this, DEBUG_NAME);

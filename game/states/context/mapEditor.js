@@ -338,8 +338,6 @@ MapEditorState.prototype.initializeRenderEvents = function(gameContext) {
 }
 
 MapEditorState.prototype.paint = function(gameContext) {
-    const { world } = gameContext;
-
     if(this.currentLayerButtonID === null) {
         return;
     }

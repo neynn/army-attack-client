@@ -7,7 +7,7 @@ ServerEvents.instanceController = function(gameContext, payload) {
     const { world } = gameContext;
     const { controllerID, controllerSetup } = payload;
 
-    world.createController(gameContext, controllerID, controllerSetup);
+    world.createController(gameContext, controllerSetup, controllerID);
 }
 
 ServerEvents.instanceEntityBatch = function(gameContext, payload) {

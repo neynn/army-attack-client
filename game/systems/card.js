@@ -16,7 +16,7 @@ CardSystem.SPRITE_TYPE = {
     SMALL: "stat_card_small"
 };
 
-CardSystem.addHealthText = function(entity, statCard) {
+const addHealthText = function(entity, statCard) {
     const healthComponent = entity.getComponent(ArmyEntity.COMPONENT.HEALTH);
     const healthText = new SimpleText();
     
@@ -30,7 +30,7 @@ CardSystem.addHealthText = function(entity, statCard) {
     entity.events.subscribe(ArmyEntity.EVENT.HEALTH_UPDATE, CardSystem.TYPE.STAT_CARD, (health, maxHealth) => healthText.setText(`${health}/${maxHealth}`));
 }
 
-CardSystem.addDamageText = function(entity, statCard) {
+const addDamageText = function(entity, statCard) {
     const attackComponent = entity.getComponent(ArmyEntity.COMPONENT.ATTACK);
     const damageText = new SimpleText();
 
@@ -44,27 +44,26 @@ CardSystem.addDamageText = function(entity, statCard) {
     entity.events.subscribe(ArmyEntity.EVENT.DAMAGE_UPDATE, CardSystem.TYPE.STAT_CARD, (damage) => damageText.setText(`${damage}`));
 }
 
-CardSystem.createAttackerCard = function(gameContext, entity, cardType) {
+const createAttackerCard = function(gameContext, entity, cardType) {
     const { spriteManager } = gameContext;
     const statCard = spriteManager.createSprite(cardType, null);
 
-    CardSystem.addHealthText(entity, statCard);
-    CardSystem.addDamageText(entity, statCard);
+    addHealthText(entity, statCard);
+    addDamageText(entity, statCard);
 
     return statCard;
 }
 
-CardSystem.createNormalCard = function(gameContext, entity, cardType) {
+const createNormalCard = function(gameContext, entity, cardType) {
     const { spriteManager } = gameContext;
     const statCard = spriteManager.createSprite(cardType, null);
 
-    CardSystem.addHealthText(entity, statCard);
+    addHealthText(entity, statCard);
 
     return statCard;
 }
 
-CardSystem.getTeamSprites = function(gameContext, entity) {
-    const { world } = gameContext;
+const getTeamSprites = function(gameContext, entity) {
     const teamTypes = gameContext.getConfig("TeamType");
     const teamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
     const teamSprites = teamTypes[teamComponent.teamID].sprites;
@@ -72,7 +71,7 @@ CardSystem.getTeamSprites = function(gameContext, entity) {
     return teamSprites;
 }
 
-CardSystem.getCardOffset = function(gameContext, entity) {
+const getCardOffset = function(gameContext, entity) {
     const { renderer } = gameContext;
     const camera = renderer.getContext(Player.CAMERA_ID).getCamera();
     const { x, y } = camera.transformSizeToPositionOffset(entity.config.dimX, entity.config.dimY);
@@ -83,15 +82,15 @@ CardSystem.getCardOffset = function(gameContext, entity) {
     }
 }
 
-CardSystem.createStatCard = function(gameContext, entity) {
-    const { x, y } = CardSystem.getCardOffset(gameContext, entity);
-    const teamSprites = CardSystem.getTeamSprites(gameContext, entity);
+const createStatCard = function(gameContext, entity) {
+    const { x, y } = getCardOffset(gameContext, entity);
+    const teamSprites = getTeamSprites(gameContext, entity);
     
     if(entity.hasComponent(ArmyEntity.COMPONENT.ATTACK)) {
         const statCardType = teamSprites[CardSystem.SPRITE_TYPE.LARGE];
 
         if(statCardType) {
-            const statCard = CardSystem.createAttackerCard(gameContext, entity, statCardType);
+            const statCard = createAttackerCard(gameContext, entity, statCardType);
 
             statCard.setPosition(x, y);
 
@@ -101,7 +100,7 @@ CardSystem.createStatCard = function(gameContext, entity) {
         const statCardType = teamSprites[CardSystem.SPRITE_TYPE.SMALL];
 
         if(statCardType) {
-            const statCard = CardSystem.createNormalCard(gameContext, entity, statCardType);
+            const statCard = createNormalCard(gameContext, entity, statCardType);
 
             statCard.setPosition(x, y);
 
@@ -113,7 +112,7 @@ CardSystem.createStatCard = function(gameContext, entity) {
 }
 
 CardSystem.generateStatCard = function(gameContext, entity) {
-    const { spriteManager, world } = gameContext;
+    const { spriteManager } = gameContext;
     const entityTypes = gameContext.getConfig("EntityType");
     const entityType = entityTypes[entity.config.archetype];
 
@@ -123,7 +122,7 @@ CardSystem.generateStatCard = function(gameContext, entity) {
 
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const sprite = spriteManager.getSprite(spriteComponent.spriteID);
-    const statCard = CardSystem.createStatCard(gameContext, entity);
+    const statCard = createStatCard(gameContext, entity);
 
     if(statCard) {
         sprite.addChild(statCard, CardSystem.TYPE.STAT_CARD);

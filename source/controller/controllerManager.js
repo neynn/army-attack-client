@@ -20,9 +20,10 @@ ControllerManager.prototype.getOwnerOf = function(entityID) {
     return null;
 }
 
-ControllerManager.prototype.createController = function(gameContext, controllerID, config) {
+ControllerManager.prototype.createController = function(gameContext, config, controllerID) {
     if(this.controllers.has(controllerID)) {
         Logger.log(false, "ControllerID is already taken!", "ControllerManager.prototype.createController", { controllerID });
+
         return null;
     }
 
@@ -30,6 +31,7 @@ ControllerManager.prototype.createController = function(gameContext, controllerI
 
     if(!controller) {
         Logger.log(false, "Factory has not returned a controller!", "ControllerManager.prototype.createController", { config, controllerID });
+        
         return null;
     }
     

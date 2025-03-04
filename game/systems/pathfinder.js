@@ -10,11 +10,8 @@ PathfinderSystem.NODE_STATE = {
     INVALID_OCCUPIED: 3
 };
 
-PathfinderSystem.addNode = function(nodes, node, state) {
-    nodes.push({
-        "node": node,
-        "state": state
-    });
+const addNode = function(nodeList, node, state) {
+    nodeList.push({ "node": node, "state": state });
 }
 
 PathfinderSystem.generateNodeList = function(gameContext, entity) {
@@ -36,7 +33,7 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
         const isNextPassable = entity.isTilePassable(gameContext, positionX, positionY);
 
         if(!isNextPassable) {
-            PathfinderSystem.addNode(nodes, next, PathfinderSystem.NODE_STATE.INVALID_PASSABILITY);
+            addNode(nodes, next, PathfinderSystem.NODE_STATE.INVALID_PASSABILITY);
 
             return FloodFill.RESPONSE.IGNORE_NEXT;
         }
@@ -48,7 +45,7 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
             const isBypassingAllowed = entity.isBypassingAllowed(gameContext, tileEntity);
 
             if(!isBypassingAllowed) {
-                PathfinderSystem.addNode(nodes, next, PathfinderSystem.NODE_STATE.INVALID_OCCUPIED);
+                addNode(nodes, next, PathfinderSystem.NODE_STATE.INVALID_OCCUPIED);
 
                 return FloodFill.RESPONSE.IGNORE_NEXT;
             }
@@ -62,11 +59,11 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
          */
         if(!isOriginWalkable) {
             if(!isNextWalkable) {
-                PathfinderSystem.addNode(nodes, next, PathfinderSystem.NODE_STATE.INVALID_WALKABILITY);
+                addNode(nodes, next, PathfinderSystem.NODE_STATE.INVALID_WALKABILITY);
 
                 return FloodFill.RESPONSE.IGNORE_NEXT;
             } else {
-                PathfinderSystem.addNode(nodes, next, PathfinderSystem.NODE_STATE.VALID);
+                addNode(nodes, next, PathfinderSystem.NODE_STATE.VALID);
 
                 return FloodFill.RESPONSE.USE_NEXT;
             }
@@ -78,15 +75,15 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
          */
         if(!isNextWalkable) {
             if(!moveComponent.isCoward()) {
-                PathfinderSystem.addNode(nodes, next, PathfinderSystem.NODE_STATE.VALID);
+                addNode(nodes, next, PathfinderSystem.NODE_STATE.VALID);
             } else {
-                PathfinderSystem.addNode(nodes, next, PathfinderSystem.NODE_STATE.INVALID_WALKABILITY);
+                addNode(nodes, next, PathfinderSystem.NODE_STATE.INVALID_WALKABILITY);
             }
 
             return FloodFill.RESPONSE.IGNORE_NEXT;
         }
 
-        PathfinderSystem.addNode(nodes, next, PathfinderSystem.NODE_STATE.VALID);
+        addNode(nodes, next, PathfinderSystem.NODE_STATE.VALID);
 
         return FloodFill.RESPONSE.USE_NEXT;
     });

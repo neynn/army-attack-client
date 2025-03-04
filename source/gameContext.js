@@ -1,7 +1,7 @@
 import { Client } from "./client/client.js";
 import { Cursor } from "./client/cursor.js";
 import { EventEmitter } from "./events/eventEmitter.js";
-import { SpriteManager } from "./graphics/spriteManager.js";
+import { SpriteManager } from "./sprite/spriteManager.js";
 import { UIManager } from "./ui/uiManager.js";
 import { StateMachine } from "./state/stateMachine.js";
 import { Timer } from "./timer.js";

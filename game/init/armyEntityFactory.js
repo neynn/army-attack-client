@@ -1,4 +1,4 @@
-import { SpriteManager } from "../../source/graphics/spriteManager.js";
+import { SpriteManager } from "../../source/sprite/spriteManager.js";
 import { Factory } from "../../source/factory/factory.js";
 import { HealthComponent } from "../components/health.js";
 import { TeamComponent } from "../components/team.js";
@@ -26,7 +26,7 @@ ArmyEntityFactory.TYPE = {
 ArmyEntityFactory.prototype = Object.create(Factory.prototype);
 ArmyEntityFactory.prototype.constructor = ArmyEntityFactory;
 
-ArmyEntityFactory.prototype.createDefaultEntity = function(defaultConfig, config, gameMode) {
+const createDefaultEntity = function(defaultConfig, config, gameMode) {
     const { tileX = 0, tileY = 0, team = null, type } = config;
     const { stats } = defaultConfig;
     const entity = new ArmyEntity(type);
@@ -59,7 +59,7 @@ ArmyEntityFactory.prototype.createDefaultEntity = function(defaultConfig, config
     return entity;
 }
 
-ArmyEntityFactory.prototype.createDefaultSprite = function(gameContext, entity, config) {
+const createDefaultSprite = function(gameContext, entity, config) {
     const { spriteManager, renderer } = gameContext;
     const { tileX, tileY } = config;
 
@@ -92,8 +92,8 @@ ArmyEntityFactory.prototype.onCreate = function(gameContext, config) {
         return null;
     }
 
-    const entity = this.createDefaultEntity(entityType, config, gameMode);
-    const sprite = this.createDefaultSprite(gameContext, entity, config);
+    const entity = createDefaultEntity(entityType, config, gameMode);
+    const sprite = createDefaultSprite(gameContext, entity, config);
     const { archetype, stats } = entityType;
     const statConfig = stats[gameMode];
 

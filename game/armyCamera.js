@@ -1,6 +1,6 @@
 import { Renderer } from "../source/renderer.js";
 import { OrthogonalCamera } from "../source/camera/types/orthogonalCamera.js";
-import { SpriteManager } from "../source/graphics/spriteManager.js";
+import { SpriteManager } from "../source/sprite/spriteManager.js";
 
 export const ArmyCamera = function() {
     OrthogonalCamera.call(this);

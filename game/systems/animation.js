@@ -1,4 +1,4 @@
-import { SpriteManager } from "../../source/graphics/spriteManager.js";
+import { SpriteManager } from "../../source/sprite/spriteManager.js";
 import { getRandomOffset } from "../../source/math/math.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { Player } from "../player/player.js";

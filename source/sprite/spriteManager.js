@@ -1,8 +1,8 @@
 import { Logger } from "../logger.js";
-import { ImageSheet } from "./imageSheet.js";
-import { Sprite } from "./drawable/sprite.js";
+import { ImageSheet } from "../graphics/imageSheet.js";
+import { Sprite } from "./sprite.js";
 import { ImageManager } from "../resources/imageManager.js";
-import { SpriteSheet } from "./spriteSheet.js";
+import { SpriteSheet } from "../graphics/spriteSheet.js";
 
 export const SpriteManager = function() {
     this.resources = new ImageManager();
