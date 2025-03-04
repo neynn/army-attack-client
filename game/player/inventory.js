@@ -2,6 +2,7 @@ import { clampValue } from "../../source/math/math.js";
 
 export const Inventory = function() {
     this.items = new Map();
+    this.maxItemStacks = new Map();
     this.resources = new Map();
 }
 
@@ -59,12 +60,15 @@ Inventory.prototype.load = function(blob) {
 }
 
 Inventory.prototype.init = function(gameContext) {
-    const { world } = gameContext;
     const itemTypes = gameContext.getConfig("ItemType");
     const resourceTypes = gameContext.getConfig("ResourceType");
 
     for(const itemID in itemTypes) {
+        const itemType = itemTypes[itemID];
+        const { maxStack = 0 } = itemType;
+
         this.items.set(itemID, 0);
+        this.maxItemStacks.set(itemID, maxStack);
     }
 
     for(const resourceID in resourceTypes) {
@@ -99,17 +103,12 @@ Inventory.prototype.remove = function(type, id, value) {
     }
 }
 
-Inventory.prototype.add = function(gameContext, type, id, value) {
-    const { world } = gameContext;
-
+Inventory.prototype.add = function(type, id, value) {
     switch(type) {
         case Inventory.TYPE.ITEM: {
-            const itemTypes = gameContext.getConfig("ItemType");
-            const itemType = itemTypes[id];
-
-            if(itemType && this.items.has(id)) {
-                const { maxStack = 0 } = itemType; 
+            if(this.items.has(id)) {
                 const count = this.items.get(id);
+                const maxStack = this.maxItemStacks.get(id);
                 const nextValue = clampValue(count + value, maxStack, count);
 
                 this.items.set(id, nextValue);
@@ -117,10 +116,7 @@ Inventory.prototype.add = function(gameContext, type, id, value) {
             break;
         }
         case Inventory.TYPE.RESOURCE: {
-            const resourceTypes = gameContext.getConfig("ResourceType");
-            const resourceType = resourceTypes[id];
-
-            if(resourceType && this.resources.has(id)) {
+            if(this.resources.has(id)) {
                 const count = this.resources.get(id);
                 const nextValue = clampValue(count + value, Number.MAX_SAFE_INTEGER, count);
 
