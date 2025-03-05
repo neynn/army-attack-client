@@ -256,11 +256,10 @@ ArmyContext.prototype.saveSnapshot = function() {
     });
 
     this.world.entityManager.entities.forEach(entity => {
-        const entityID = entity.getID();
         const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
         const teamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
         const savedComponents = entity.save();
-        const ownerID = this.world.controllerManager.getOwnerID(entityID);
+        const ownerID = entity.getOwner();
         
         entities.push({
             "type": entity.config.id,

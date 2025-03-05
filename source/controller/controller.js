@@ -4,15 +4,15 @@ export const Controller = function() {
     this.entities = new Set();
 }
 
-Controller.prototype.setID = function(id) {
-    this.id = id;
-}
-
 Controller.prototype.update = function(gameContext) {}
 
 Controller.prototype.onEntityAdd = function(entityID) {}
 
 Controller.prototype.onEntityRemove = function(entityID) {}
+
+Controller.prototype.setID = function(id) {
+    this.id = id;
+}
 
 Controller.prototype.addEntity = function(entityID) {
     if(!this.entities.has(entityID)) {

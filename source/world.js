@@ -107,6 +107,18 @@ World.prototype.destroyController = function(controllerID) {
         return;
     }
 
+    for(const entityID of controller.entities) {
+        const entity = this.entityManager.getEntity(entityID);
+
+        if(entity) {
+            const ownerID = entity.getOwner();
+
+            if(ownerID === controllerID) {
+                entity.setOwner(null);
+            }
+        }
+    }
+
     this.controllerManager.destroyController(controllerID);
     this.events.emit(World.EVENT.CONTROLLER_DESTROY, controller);
 }
@@ -124,6 +136,9 @@ World.prototype.createEntity = function(gameContext, config, ownerID, externalID
     const entityID = entity.getID();
 
     this.controllerManager.addEntity(ownerID, entityID);
+
+    entity.setOwner(ownerID);
+
     this.events.emit(World.EVENT.ENTITY_CREATE, entity);
 
     return entity;
@@ -138,7 +153,9 @@ World.prototype.destroyEntity = function(entityID) {
         return;
     }
 
-    this.controllerManager.removeEntity(entityID);
+    const ownerID = entity.getOwner();
+
+    this.controllerManager.removeEntity(ownerID, entityID);
     this.entityManager.destroyEntity(entityID);
     this.events.emit(World.EVENT.ENTITY_DESTROY, entity);
 }

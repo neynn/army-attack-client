@@ -10,19 +10,9 @@ export const ControllerManager = function() {
 ControllerManager.prototype = Object.create(FactoryOwner.prototype);
 ControllerManager.prototype.constructor = ControllerManager;
 
-ControllerManager.prototype.getOwnerID = function(entityID) {
-    for(const [controllerID, controller] of this.controllers) {
-        if(controller.hasEntity(entityID)) {
-            return controllerID;
-        }
-    }
-
-    return null;
-}
-
 ControllerManager.prototype.createController = function(gameContext, config, controllerID) {
     if(this.controllers.has(controllerID)) {
-        Logger.log(false, "ControllerID is already taken!", "ControllerManager.prototype.createController", { controllerID });
+        Logger.log(Logger.CODE.ENGINE_WARN, "ControllerID is already taken!", "ControllerManager.prototype.createController", { "controllerID": controllerID });
 
         return null;
     }
@@ -30,7 +20,7 @@ ControllerManager.prototype.createController = function(gameContext, config, con
     const controller = this.createProduct(gameContext, config);
 
     if(!controller) {
-        Logger.log(false, "Factory has not returned a controller!", "ControllerManager.prototype.createController", { config, controllerID });
+        Logger.log(Logger.CODE.ENGINE_WARN, "Controller could not be created!", "ControllerManager.prototype.createController", { "controllerID": controllerID });
         
         return null;
     }
@@ -44,7 +34,8 @@ ControllerManager.prototype.createController = function(gameContext, config, con
 
 ControllerManager.prototype.destroyController = function(controllerID) {
     if(!this.controllers.has(controllerID)) {
-        Logger.log(false, "Controller does not exist!", "ControllerManager.prototype.destroyController", { controllerID });
+        Logger.log(Logger.CODE.ENGINE_WARN, "Controller does not exist!", "ControllerManager.prototype.destroyController", { "controllerID": controllerID });
+
         return;
     }
 
@@ -65,35 +56,24 @@ ControllerManager.prototype.update = function(gameContext) {
     this.controllers.forEach(controller => controller.update(gameContext));
 }
 
-ControllerManager.prototype.removeEntity = function(entityID) {
-    const ownerID = this.getOwnerID(entityID);
+ControllerManager.prototype.removeEntity = function(controllerID, entityID) {
+    const owner = this.controllers.get(controllerID);
 
-    if(ownerID === null) {
+    if(!owner) {
         return;
     }
-
-    const owner = this.controllers.get(ownerID);
 
     owner.removeEntity(entityID);
 }
 
 ControllerManager.prototype.addEntity = function(controllerID, entityID) {
-    const controller = this.controllers.get(controllerID);
+    const owner = this.controllers.get(controllerID);
 
-    if(!controller) {
-        Logger.log(false, "Controller does not exist!", "ControllerManager.prototype.addEntity", { controllerID, entityID });
+    if(!owner) {
+        Logger.log(Logger.CODE.ENGINE_WARN, "Controller does not exist!", "ControllerManager.prototype.addEntity", { "controllerID": controllerID });
+
         return;
     }
 
-    const ownerID = this.getOwnerID(entityID);
-
-    if(ownerID !== null) {
-        const owner = this.getController(ownerID);
-
-        owner.removeEntity(entityID);
-
-        Logger.log(false, "Entity is already linked to controller! Transferring ownership!", { controllerID, entityID });
-    }
-
-    controller.addEntity(entityID);
+    owner.addEntity(entityID);
 }
