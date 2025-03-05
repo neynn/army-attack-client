@@ -1,6 +1,7 @@
 import { ArmyEntity } from "../init/armyEntity.js";
 import { AllianceSystem } from "./alliance.js";
 import { AnimationSystem } from "./animation.js";
+import { DeathSystem } from "./death.js";
 import { DecaySystem } from "./decay.js";
 import { DropSystem } from "./drop.js";
 
@@ -72,9 +73,8 @@ AttackSystem.endAttack = function(gameContext, outcome, attackerClientID) {
 
     switch(state) {
         case AttackSystem.OUTCOME_STATE.DEAD: {
-            AnimationSystem.playDeath(gameContext, target);
             DropSystem.dropKillReward(gameContext, target, attackerClientID);
-            target.die(gameContext);
+            DeathSystem.killEntity(gameContext, target);
             break;
         }
         case AttackSystem.OUTCOME_STATE.IDLE: {

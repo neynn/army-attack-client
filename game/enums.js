@@ -28,5 +28,6 @@ export const ACTION_TYPES = {
 
 export const GAME_EVENT = {
     DROP_HIT_ITEMS: 0,
-    DROP_KILL_ITEMS: 1
+    DROP_KILL_ITEMS: 1,
+    ENTITY_DEATH: 2
 };

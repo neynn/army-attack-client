@@ -1,27 +1,27 @@
-export const EventQueue = function() {
-    this.state = EventQueue.STATE.UNMUTED;
+export const EventBus = function() {
+    this.state = EventBus.STATE.UNMUTED;
     this.events = new Map();
 }
 
-EventQueue.RESPONSE = {
+EventBus.RESPONSE = {
     NONE: 0,
     DELETE: 1
 };
 
-EventQueue.STATE = {
+EventBus.STATE = {
     UNMUTED: 0,
     MUTED: 1
 };
 
-EventQueue.prototype.mute = function() {
-    this.state = EventQueue.STATE.MUTED;
+EventBus.prototype.mute = function() {
+    this.state = EventBus.STATE.MUTED;
 }
 
-EventQueue.prototype.unmute = function() {
-    this.state = EventQueue.STATE.UNMUTED;
+EventBus.prototype.unmute = function() {
+    this.state = EventBus.STATE.UNMUTED;
 }
 
-EventQueue.prototype.register = function(eventID) {
+EventBus.prototype.register = function(eventID) {
     if(this.events.has(eventID)) {
         return;
     }
@@ -29,13 +29,13 @@ EventQueue.prototype.register = function(eventID) {
     this.events.set(eventID, []);
 }
 
-EventQueue.prototype.remove = function(eventID) {
+EventBus.prototype.remove = function(eventID) {
     if(this.events.has(eventID)) {
         this.events.delete(eventID);
     }
 }
 
-EventQueue.prototype.on = function(eventID, onEvent) {
+EventBus.prototype.on = function(eventID, onEvent) {
     const eventList = this.events.get(eventID);
 
     if(!eventList) {
@@ -45,8 +45,8 @@ EventQueue.prototype.on = function(eventID, onEvent) {
     eventList.push(onEvent);
 }
 
-EventQueue.prototype.emit = function(eventID, ...eventData) {
-    if(this.state === EventQueue.STATE.MUTED) {
+EventBus.prototype.emit = function(eventID, ...eventData) {
+    if(this.state === EventBus.STATE.MUTED) {
         return;
     }
 
@@ -63,7 +63,7 @@ EventQueue.prototype.emit = function(eventID, ...eventData) {
         const response = onEvent(...eventData);
 
         switch(response) {
-            case EventQueue.RESPONSE.DELETE: {
+            case EventBus.RESPONSE.DELETE: {
                 toRemove.push(i);
                 break;
             }
@@ -75,7 +75,7 @@ EventQueue.prototype.emit = function(eventID, ...eventData) {
     }
 }
 
-EventQueue.prototype.force = function(eventID, eventData) {
+EventBus.prototype.force = function(eventID, eventData) {
     const eventList = this.events.get(eventID);
 
     if(!eventList) {
@@ -89,7 +89,7 @@ EventQueue.prototype.force = function(eventID, eventData) {
         const response = onEvent(...eventData);
 
         switch(response) {
-            case EventQueue.RESPONSE.DELETE: {
+            case EventBus.RESPONSE.DELETE: {
                 toRemove.push(i);
                 break;
             }

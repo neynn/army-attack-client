@@ -342,17 +342,6 @@ ArmyEntity.prototype.lookAtTile = function(targetX, targetY) {
     }
 }
 
-ArmyEntity.prototype.die = function(gameContext) {
-    const { world, spriteManager } = gameContext;
-    const spriteComponent = this.getComponent(ArmyEntity.COMPONENT.SPRITE);
-
-    this.removeFromMap(gameContext);
-
-    spriteManager.destroySprite(spriteComponent.spriteID);
-
-    world.destroyEntity(this.id);
-}
-
 ArmyEntity.prototype.isAttackable = function(gameContext, attackerTeamID) {
     const healthComponent = this.getComponent(ArmyEntity.COMPONENT.HEALTH);
 

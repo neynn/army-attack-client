@@ -2,12 +2,12 @@ import { ActionQueue } from "./action/actionQueue.js";
 import { ControllerManager } from "./controller/controllerManager.js";
 import { EntityManager } from "./entity/entityManager.js";
 import { EventEmitter } from "./events/eventEmitter.js";
-import { EventQueue } from "./events/eventQueue.js";
+import { EventBus } from "./events/eventBus.js";
 import { Logger } from "./logger.js";
 import { MapManager } from "./map/mapManager.js";
 
 export const World = function() {
-    this.eventQueue = new EventQueue();
+    this.eventBus = new EventBus();
     this.actionQueue = new ActionQueue();
     this.controllerManager = new ControllerManager();
     this.entityManager = new EntityManager();

@@ -176,21 +176,21 @@ ArmyContext.prototype.init = function(resources) {
 }
 
 ArmyContext.prototype.setGameMode = function(modeID) {
-    const { eventQueue } = this.world;
+    const { eventBus } = this.world;
 
     this.modeID = modeID;
 
     switch(modeID) {
         case ArmyContext.GAME_MODE.STORY: {
-            eventQueue.register(GAME_EVENT.DROP_HIT_ITEMS);
-            eventQueue.register(GAME_EVENT.DROP_KILL_ITEMS);
-            eventQueue.on(GAME_EVENT.DROP_HIT_ITEMS, (items, receiverID) => dropItemsEvent(this, items, receiverID));
-            eventQueue.on(GAME_EVENT.DROP_KILL_ITEMS, (items, receiverID) => dropItemsEvent(this, items, receiverID));
+            eventBus.register(GAME_EVENT.DROP_HIT_ITEMS);
+            eventBus.register(GAME_EVENT.DROP_KILL_ITEMS);
+            eventBus.on(GAME_EVENT.DROP_HIT_ITEMS, (items, receiverID) => dropItemsEvent(this, items, receiverID));
+            eventBus.on(GAME_EVENT.DROP_KILL_ITEMS, (items, receiverID) => dropItemsEvent(this, items, receiverID));
             break;
         }
         case ArmyContext.GAME_MODE.VERSUS: {
-            eventQueue.register(GAME_EVENT.DROP_KILL_ITEMS);
-            eventQueue.on(GAME_EVENT.DROP_KILL_ITEMS, (items, receiverID) => dropItemsEvent(this, items, receiverID));
+            eventBus.register(GAME_EVENT.DROP_KILL_ITEMS);
+            eventBus.on(GAME_EVENT.DROP_KILL_ITEMS, (items, receiverID) => dropItemsEvent(this, items, receiverID));
             break;
         }
     }

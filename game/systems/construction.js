@@ -1,5 +1,6 @@
 import { ACTION_TYPES } from "../enums.js";
 import { ArmyEntity } from "../init/armyEntity.js";
+import { DeathSystem } from "./death.js";
 import { SpawnSystem } from "./spawn.js";
 
 export const ConstructionSystem = function() {}
@@ -19,7 +20,7 @@ ConstructionSystem.onInteract = function(gameContext, entity) {
             const result = ConstructionSystem.getResult(gameContext, entity);
 
             if(result) {
-                entity.die(gameContext);
+                DeathSystem.remove(gameContext, entity);
                 SpawnSystem.createEntity(gameContext, result);
             }
         }

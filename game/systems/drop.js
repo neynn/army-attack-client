@@ -11,7 +11,7 @@ DropSystem.dropHitReward = function(gameContext, entity, receiverID) {
     }
 
     const { world } = gameContext;
-    const { eventQueue } = world;
+    const { eventBus } = world;
     const drops = [];
     
     for(let i = 0; i < hitRewards.length; i++) {
@@ -26,7 +26,7 @@ DropSystem.dropHitReward = function(gameContext, entity, receiverID) {
     }
 
     if(drops.length !== 0) {
-        eventQueue.emit(GAME_EVENT.DROP_HIT_ITEMS, drops, receiverID);
+        eventBus.emit(GAME_EVENT.DROP_HIT_ITEMS, drops, receiverID);
     }
 }
 
@@ -38,7 +38,7 @@ DropSystem.dropKillReward = function(gameContext, entity, receiverID) {
     }
 
     const { world } = gameContext;
-    const { eventQueue } = world;
+    const { eventBus } = world;
     const drops = [];
 
     for(let i = 0; i < killRewards.length; i++) {
@@ -69,6 +69,6 @@ DropSystem.dropKillReward = function(gameContext, entity, receiverID) {
     }
 
     if(drops.length !== 0) {
-        eventQueue.emit(GAME_EVENT.DROP_KILL_ITEMS, drops, receiverID);
+        eventBus.emit(GAME_EVENT.DROP_KILL_ITEMS, drops, receiverID);
     }
 }
