@@ -12,7 +12,7 @@ CounterAttackAction.prototype.onStart = function(gameContext, request, messenger
 }
 
 CounterAttackAction.prototype.onEnd = function(gameContext, request, messengerID) {
-    AttackSystem.endAttack(gameContext, request);
+    AttackSystem.endAttack(gameContext, request, messengerID);
 }
 
 CounterAttackAction.prototype.onUpdate = function(gameContext, request, messengerID) {

@@ -3,7 +3,7 @@ import { GameContext } from "../source/gameContext.js";
 import { Socket } from "../source/network/socket.js";
 import { World } from "../source/world.js";
 import { NETWORK_EVENTS } from "../source/network/events.js";
-import { ACTION_TYPES } from "./enums.js";
+import { ACTION_TYPES, GAME_EVENT } from "./enums.js";
 import { AttackAction } from "./actions/attackAction.js";
 import { MoveAction } from "./actions/moveAction.js";
 import { ArmorComponent } from "./components/armor.js";
@@ -34,6 +34,7 @@ import { DirectionComponent } from "./components/direction.js";
 import { TileManager } from "../source/tile/tileManager.js";
 import { Renderer } from "../source/renderer.js";
 import { Logger } from "../source/logger.js";
+import { dropItemsEvent } from "./events/dropItem.js";
 
 export const ArmyContext = function() {
     GameContext.call(this);
@@ -78,10 +79,6 @@ ArmyContext.GAME_MODE = {
     VERSUS: "versus",
     EDIT: "edit"
 };
-
-ArmyContext.prototype.setGameMode = function(modeID) {
-    this.gameMode = modeID;
-}
 
 ArmyContext.prototype.getGameMode = function() {
     return this.gameMode;
@@ -162,6 +159,27 @@ ArmyContext.prototype.init = function(resources) {
     this.switchState(ArmyContext.STATE.MAIN_MENU);
 }
 
+ArmyContext.prototype.setGameMode = function(modeID) {
+    const { eventQueue } = this.world;
+
+    this.gameMode = modeID;
+
+    switch(modeID) {
+        case ArmyContext.GAME_MODE.STORY: {
+            eventQueue.register(GAME_EVENT.DROP_HIT_ITEMS);
+            eventQueue.register(GAME_EVENT.DROP_KILL_ITEMS);
+            eventQueue.on(GAME_EVENT.DROP_HIT_ITEMS, (items, receiverID) => dropItemsEvent(this, items, receiverID));
+            eventQueue.on(GAME_EVENT.DROP_KILL_ITEMS, (items, receiverID) => dropItemsEvent(this, items, receiverID));
+            break;
+        }
+        case ArmyContext.GAME_MODE.VERSUS: {
+            eventQueue.register(GAME_EVENT.DROP_KILL_ITEMS);
+            eventQueue.on(GAME_EVENT.DROP_KILL_ITEMS, (items, receiverID) => dropItemsEvent(this, items, receiverID));
+            break;
+        }
+    }
+}
+
 ArmyContext.prototype.getConfig = function(elementID) {
     const element = this.armyConfig[elementID];
 
@@ -228,14 +246,14 @@ ArmyContext.prototype.saveSnapshot = function() {
         const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
         const teamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
         const savedComponents = entity.save();
-        const owner = this.world.controllerManager.getOwnerOf(entityID);
+        const ownerID = this.world.controllerManager.getOwnerID(entityID);
         
         entities.push({
             "type": entity.config.id,
             "tileX": positionComponent.tileX,
             "tileY": positionComponent.tileY,
             "team": teamComponent.teamID,
-            "owner": owner ? owner.getID() : null,
+            "owner": ownerID,
             "components": savedComponents
         });
     });

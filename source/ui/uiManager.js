@@ -6,30 +6,20 @@ export const UIManager = function() {
     this.resources = new ImageManager();
     this.interfaceStack = [];
     this.interfaceTypes = {};
-    this.iconTypes = {};
-    this.fontTypes = {};
 }
 
 UIManager.prototype.load = function(interfaceTypes, iconTypes, fontTypes) {
     if(typeof interfaceTypes === "object") {
         this.interfaceTypes = interfaceTypes;
-
-        this.resources.createImages(iconTypes);
-        //this.resources.loadImages(iconTypes, (imageID, image) => console.log(imageID));
     } else {
         Logger.log(false, "InterfaceTypes cannot be undefined!", "UIManager.prototype.load", null);
     }
 
     if(typeof iconTypes === "object") {
-        this.iconTypes = iconTypes;
+        this.resources.createImages(iconTypes);
+        this.resources.requestAllImages((id, image, sheet) => null);
     } else {
         Logger.log(false, "IconTypes cannot be undefined!", "UIManager.prototype.load", null);
-    }
-
-    if(typeof fontTypes === "object") {
-        this.fontTypes = fontTypes;
-    } else {
-        Logger.log(false, "FontTypes cannot be undefined!", "UIManager.prototype.load", null);
     }
 }
 

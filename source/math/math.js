@@ -96,3 +96,10 @@ export const getRandomOffset = function(maxOffsetX = 0, maxOffsetY = 0) {
         "y": randomY
     }
 }   
+
+export const getRandomChance = function() {
+	const random = Math.random() * 100;
+	const chance = Math.floor(random) + 1;
+
+	return chance;
+}

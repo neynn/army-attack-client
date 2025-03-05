@@ -10,10 +10,10 @@ export const ControllerManager = function() {
 ControllerManager.prototype = Object.create(FactoryOwner.prototype);
 ControllerManager.prototype.constructor = ControllerManager;
 
-ControllerManager.prototype.getOwnerOf = function(entityID) {
+ControllerManager.prototype.getOwnerID = function(entityID) {
     for(const [controllerID, controller] of this.controllers) {
         if(controller.hasEntity(entityID)) {
-            return controller;
+            return controllerID;
         }
     }
 
@@ -66,10 +66,15 @@ ControllerManager.prototype.update = function(gameContext) {
 }
 
 ControllerManager.prototype.removeEntity = function(entityID) {
-    const owner = this.getOwnerOf(entityID);
+    const ownerID = this.getOwnerID(entityID);
+
+    if(ownerID === null) {
+        return;
+    }
+
+    const owner = this.controllers.get(ownerID);
 
     if(!owner) {
-        //TODO: ERROR
         return;
     }
 
@@ -84,12 +89,16 @@ ControllerManager.prototype.addEntity = function(controllerID, entityID) {
         return;
     }
 
-    const currentOwner = this.getOwnerOf(entityID);
+    const ownerID = this.getOwnerID(entityID);
 
-    if(currentOwner !== null) {
+    if(ownerID !== null) {
+        const owner = this.getController(ownerID);
+
+        if(owner) {
+            owner.removeEntity(entityID);
+        }
+
         Logger.log(false, "Entity is already linked to controller! Transferring ownership!", { controllerID, entityID });
-
-        currentOwner.removeEntity(entityID);
     }
 
     controller.addEntity(entityID);

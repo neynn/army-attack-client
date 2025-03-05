@@ -344,7 +344,7 @@ Player.prototype.queueAttack = function(gameContext, entity) {
     if(isAttackable) {
         const entityID = entity.getID();
 
-        actionQueue.addRequest(ACTION_TYPES.ATTACK, entityID);
+        actionQueue.addRequest(ACTION_TYPES.ATTACK, this.id, entityID);
     }
 
     return isAttackable;
@@ -362,8 +362,8 @@ Player.prototype.onSelectedClick = function(gameContext, tileX, tileY) {
         if(!success) {
             soundPlayer.playSound("sound_error", 0.5); 
         }
-    } else {        
-        actionQueue.addRequest(ACTION_TYPES.MOVE, this.selectedEntityID, tileX, tileY);
+    } else {
+        actionQueue.addRequest(ACTION_TYPES.MOVE, this.id, this.selectedEntityID, tileX, tileY);
     }
 
     this.deselectEntity(gameContext);

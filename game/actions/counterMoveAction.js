@@ -11,7 +11,7 @@ CounterMoveAction.prototype.onStart = function(gameContext, request, messengerID
 }
 
 CounterMoveAction.prototype.onEnd = function(gameContext, request, messengerID) {
-    AttackSystem.endAttack(gameContext, request);
+    AttackSystem.endAttack(gameContext, request, messengerID);
 }
 
 CounterMoveAction.prototype.onUpdate = function(gameContext, request, messengerID) {

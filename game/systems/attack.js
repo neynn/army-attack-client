@@ -2,6 +2,7 @@ import { ArmyEntity } from "../init/armyEntity.js";
 import { AllianceSystem } from "./alliance.js";
 import { AnimationSystem } from "./animation.js";
 import { DecaySystem } from "./decay.js";
+import { DropSystem } from "./drop.js";
 
 export const AttackSystem = function() {}
 
@@ -62,7 +63,7 @@ const getState = function(target, damage, isBulldozed) {
     return AttackSystem.OUTCOME_STATE.IDLE;
 }
 
-AttackSystem.endAttack = function(gameContext, outcome) {
+AttackSystem.endAttack = function(gameContext, outcome, attackerClientID) {
     const { world } = gameContext;
     const { entityManager } = world;
     const { targetID, attackers, damage, state } = outcome;
@@ -73,14 +74,13 @@ AttackSystem.endAttack = function(gameContext, outcome) {
     switch(state) {
         case AttackSystem.OUTCOME_STATE.DEAD: {
             AnimationSystem.playDeath(gameContext, target);
+            DropSystem.dropKillReward(gameContext, target, attackerClientID);
             target.die(gameContext);
             break;
         }
         case AttackSystem.OUTCOME_STATE.IDLE: {
+            DropSystem.dropHitReward(gameContext, target, attackerClientID);
             target.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
-            break;
-        }
-        default: {
             break;
         }
     }

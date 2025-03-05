@@ -12,7 +12,7 @@ ConstructionSystem.onInteract = function(gameContext, entity) {
     }
     
     const { world } = gameContext;
-    const { actionQueue } = world;
+    const { actionQueue, controllerManager } = world;
     
     if(constructionComponent.isComplete()) {
         if(!actionQueue.isRunning()) {
@@ -25,8 +25,9 @@ ConstructionSystem.onInteract = function(gameContext, entity) {
         }
     } else {
         const entityID = entity.getID();
-        
-        actionQueue.addRequest(ACTION_TYPES.CONSTRUCTION, entityID);
+        const ownerID = controllerManager.getOwnerID(entityID);
+
+        actionQueue.addRequest(ACTION_TYPES.CONSTRUCTION, ownerID, entityID);
     }
 }
 
@@ -42,7 +43,7 @@ ConstructionSystem.getResult = function(gameContext, entity) {
     const { tileX, tileY } = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
     const { teamID } = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
     const entityID = entity.getID();
-    const ownerID = controllerManager.getOwnerOf(entityID).getID();
+    const ownerID = controllerManager.getOwnerID(entityID);
     const type = entity.config.constructionResult;
 
     return {

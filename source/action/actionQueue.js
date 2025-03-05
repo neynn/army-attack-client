@@ -135,7 +135,7 @@ ActionQueue.prototype.createElement = function(request, priority, messengerID = 
     };
 }
 
-ActionQueue.prototype.addRequest = function(type, ...args) {
+ActionQueue.prototype.addRequest = function(type, messengerID, ...args) {
     const actionHandler = this.actionHandlers.get(type);
 
     if(!actionHandler) {
@@ -154,7 +154,7 @@ ActionQueue.prototype.addRequest = function(type, ...args) {
     const element = this.createElement({
         "type": type,
         "data": template
-    }, priority);
+    }, priority, messengerID);
 
     priorityQueue.enqueueLast(element);
 }

@@ -25,3 +25,8 @@ export const ACTION_TYPES = {
     COUNTER_ATTACK: "CounterAttack",
     COUNTER_MOVE: "CounterMove"
 };
+
+export const GAME_EVENT = {
+    DROP_HIT_ITEMS: 0,
+    DROP_KILL_ITEMS: 1
+};

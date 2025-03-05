@@ -13,13 +13,15 @@ AttackAction.prototype.onStart = function(gameContext, request, messengerID) {
 
 AttackAction.prototype.onEnd = function(gameContext, request, messengerID) {
     const { world } = gameContext;
-    const { actionQueue } = world;
+    const { actionQueue, controllerManager } = world;
     const { targetID, attackers, state } = request;
 
-    AttackSystem.endAttack(gameContext, request);
+    AttackSystem.endAttack(gameContext, request, messengerID);
 
     if(state === AttackSystem.OUTCOME_STATE.IDLE) {
-        actionQueue.addRequest(ACTION_TYPES.COUNTER_ATTACK, targetID, attackers);
+        const ownerID = controllerManager.getOwnerID(targetID);
+        
+        actionQueue.addRequest(ACTION_TYPES.COUNTER_ATTACK, ownerID, targetID, attackers);
     }
 }
 
