@@ -73,5 +73,8 @@ ServerEvents.startVersusInstance = async function(gameContext, payload) {
 }
 
 ServerEvents.gameEvent = function(gameContext, payload) {
-    console.log(payload);
+    const { world } = gameContext;
+    const { eventBus } = world;
+
+    eventBus.force(gameContext, payload);
 }

@@ -1,9 +1,5 @@
 export const Component = function() {}
 
-Component.prototype.custom = function(items) {
-    console.log("Custom not implemented for:", this);
-}
-
 Component.prototype.save = function() {
     console.log("Save not implemented for:", this);
 }

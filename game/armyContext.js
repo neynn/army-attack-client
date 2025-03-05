@@ -35,6 +35,7 @@ import { TileManager } from "../source/tile/tileManager.js";
 import { Renderer } from "../source/renderer.js";
 import { Logger } from "../source/logger.js";
 import { dropItemsEvent } from "./events/dropItem.js";
+import { EventBus } from "../source/events/eventBus.js";
 
 export const ArmyContext = function() {
     GameContext.call(this);
@@ -82,14 +83,21 @@ ArmyContext.STATE = {
 };
 
 ArmyContext.GAME_MODE = {
-    NONE: "none",
-    STORY: "story",
-    VERSUS: "versus",
-    EDIT: "edit"
+    NONE: 0,
+    STORY: 1,
+    VERSUS: 2,
+    EDIT: 3
 };
 
-ArmyContext.prototype.getGameMode = function() {
-    return this.modeID;
+ArmyContext.GAME_MODE_NAME = {
+    [ArmyContext.GAME_MODE.NONE]: "none",
+    [ArmyContext.GAME_MODE.STORY]: "story",
+    [ArmyContext.GAME_MODE.VERSUS]: "versus",
+    [ArmyContext.GAME_MODE.EDIT]: "edit"
+};
+
+ArmyContext.prototype.getGameModeName = function() {
+    return ArmyContext.GAME_MODE_NAME[this.modeID];
 }
 
 ArmyContext.prototype.init = function(resources) {
@@ -180,16 +188,18 @@ ArmyContext.prototype.setGameMode = function(modeID) {
 
     this.modeID = modeID;
 
+    eventBus.clear();
+
     switch(modeID) {
         case ArmyContext.GAME_MODE.STORY: {
-            eventBus.register(GAME_EVENT.DROP_HIT_ITEMS);
-            eventBus.register(GAME_EVENT.DROP_KILL_ITEMS);
+            eventBus.register(GAME_EVENT.DROP_HIT_ITEMS, EventBus.STATUS.EMITABLE);
+            eventBus.register(GAME_EVENT.DROP_KILL_ITEMS, EventBus.STATUS.EMITABLE);
             eventBus.on(GAME_EVENT.DROP_HIT_ITEMS, (items, receiverID) => dropItemsEvent(this, items, receiverID));
             eventBus.on(GAME_EVENT.DROP_KILL_ITEMS, (items, receiverID) => dropItemsEvent(this, items, receiverID));
             break;
         }
         case ArmyContext.GAME_MODE.VERSUS: {
-            eventBus.register(GAME_EVENT.DROP_KILL_ITEMS);
+            eventBus.register(GAME_EVENT.DROP_KILL_ITEMS, EventBus.STATUS.NOT_EMITABLE);
             eventBus.on(GAME_EVENT.DROP_KILL_ITEMS, (items, receiverID) => dropItemsEvent(this, items, receiverID));
             break;
         }

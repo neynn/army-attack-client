@@ -113,13 +113,3 @@ AttackComponent.prototype.init = function(config) {
         }
     }
 }
-
-AttackComponent.prototype.custom = function(stats) {
-    const {
-        damage = 0,
-        attackRange = 0
-    } = stats;
-
-    this.damage = damage;
-    this.range = attackRange;
-}

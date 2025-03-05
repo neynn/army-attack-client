@@ -78,21 +78,3 @@ MoveComponent.prototype.init = function(config) {
         this.flags |= MoveComponent.FLAGS.CLOAK;
     }
 }
-
-MoveComponent.prototype.custom = function(config, type) {
-    const {
-        passability = []
-    } = type;
-
-    const {
-        moveRange = 0,
-        moveSpeed = 480
-    } = config;
-
-    for(let i = 0; i < passability.length; i++) {
-        this.passability.add(passability[i]);
-    }
-
-    this.range = moveRange;
-    this.speed = moveSpeed;
-}

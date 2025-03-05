@@ -26,6 +26,44 @@ ArmyEntityFactory.TYPE = {
 ArmyEntityFactory.prototype = Object.create(Factory.prototype);
 ArmyEntityFactory.prototype.constructor = ArmyEntityFactory;
 
+const initAttackComponent = function(component, stats) {
+    const {
+        damage = 0,
+        attackRange = 0
+    } = stats;
+
+    component.damage = damage;
+    component.range = attackRange;
+}
+
+const initConstructionComponent = function(component, type) {
+    const {
+        constructionSteps,
+        constructionResult
+    } = type;
+
+    component.stepsRequired = constructionSteps;
+    component.result = constructionResult;
+}
+
+const initMoveComponent = function(component, config, type) {
+    const {
+        passability = []
+    } = type;
+
+    const {
+        moveRange = 0,
+        moveSpeed = 480
+    } = config;
+
+    for(let i = 0; i < passability.length; i++) {
+        component.passability.add(passability[i]);
+    }
+
+    component.range = moveRange;
+    component.speed = moveSpeed;
+}
+
 const createDefaultEntity = function(defaultConfig, config, gameMode) {
     const { tileX = 0, tileY = 0, team = null, type } = config;
     const { stats } = defaultConfig;
@@ -85,7 +123,7 @@ ArmyEntityFactory.prototype.onCreate = function(gameContext, config) {
     const { world } = gameContext;
     const { entityManager } = world;
     const { components, type } = config;
-    const gameMode = gameContext.getGameMode();
+    const gameMode = gameContext.getGameModeName();
     const entityType = this.getType(type);
 
     if(!entityType) {
@@ -95,16 +133,17 @@ ArmyEntityFactory.prototype.onCreate = function(gameContext, config) {
     const entity = createDefaultEntity(entityType, config, gameMode);
     const sprite = createDefaultSprite(gameContext, entity, config);
     const { archetype, stats } = entityType;
-    const statConfig = stats[gameMode];
+    const statConfig = stats[gameMode] || {};
 
     switch(archetype) {
         case ArmyEntityFactory.TYPE.UNIT: {
             const attackComponent = new AttackComponent();
             const moveComponent = new MoveComponent();
             
-            moveComponent.custom(statConfig, entityType);
-            attackComponent.custom(statConfig);
             attackComponent.toActive();
+
+            initMoveComponent(moveComponent, statConfig, entityType);
+            initAttackComponent(attackComponent, statConfig);
         
             entity.addComponent(ArmyEntity.COMPONENT.ATTACK, attackComponent);
             entity.addComponent(ArmyEntity.COMPONENT.MOVE, moveComponent);
@@ -114,8 +153,9 @@ ArmyEntityFactory.prototype.onCreate = function(gameContext, config) {
         case ArmyEntityFactory.TYPE.DEFENSE: {
             const attackComponent = new AttackComponent();
     
-            attackComponent.custom(statConfig);
             attackComponent.toPassive();
+
+            initAttackComponent(attackComponent, statConfig);
                 
             entity.addComponent(ArmyEntity.COMPONENT.ATTACK, attackComponent);
             break;
@@ -123,7 +163,8 @@ ArmyEntityFactory.prototype.onCreate = function(gameContext, config) {
         case ArmyEntityFactory.TYPE.CONSTRUCTION: {
             const constructionComponent = new ConstructionComponent();
 
-            constructionComponent.custom(entityType);
+            initConstructionComponent(constructionComponent, entityType);
+
             entity.addComponent(ArmyEntity.COMPONENT.CONSTRUCTION, constructionComponent);
         
             sprite.freeze();

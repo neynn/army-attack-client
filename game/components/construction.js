@@ -46,11 +46,3 @@ ConstructionComponent.prototype.load = function(blob) {
 
     this.stepsCompleted = stepsCompleted;
 }
-
-ConstructionComponent.prototype.custom = function(type) {
-    const { constructionSteps, constructionResult } = type;
-
-    this.stepsCompleted = 0;
-    this.stepsRequired = constructionSteps;
-    this.result = constructionResult;
-}

@@ -62,10 +62,6 @@ SoundPlayer.prototype.clear = function() {
     this.activeSounds.forEach((sound, audioID) => this.stopSound(audioID));
 }
 
-SoundPlayer.prototype.isPlaying = function(audioID) {
-    return this.activeSounds.has(audioID);
-}
-
 SoundPlayer.prototype.getRandomSoundID = function(soundList) {
     const validIndices = [];
 
@@ -77,7 +73,7 @@ SoundPlayer.prototype.getRandomSoundID = function(soundList) {
             continue;
         }
 
-        if(this.isPlaying(soundID) && !soundType.allowStacking) {
+        if(this.activeSounds.has(soundID) && !soundType.allowStacking) {
             continue;
         }
 
@@ -88,7 +84,8 @@ SoundPlayer.prototype.getRandomSoundID = function(soundList) {
         return null;
     }
 
-    const randomIndex = Math.floor(Math.random() * validIndices.length);
+    const randomIndexIndex = Math.floor(Math.random() * validIndices.length);
+    const randomIndex = validIndices[randomIndexIndex];
 
     return soundList[randomIndex];
 }
@@ -117,7 +114,7 @@ SoundPlayer.prototype.playSound = function(audioID, volume = this.defaultVolume)
         return;
     }
 
-    if(this.isPlaying(audioID) && !soundType.allowStacking) {
+    if(this.activeSounds.has(audioID) && !soundType.allowStacking) {
         Logger.log(false, "Sound is already playing!", "SoundPlayer.prototype.playSound", {audioID});
         return;
     }
