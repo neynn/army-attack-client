@@ -3,8 +3,7 @@ export const VersusSystem = {};
 VersusSystem.pickRandomMap = function(gameContext, playerCount) {
     const { world } = gameContext;
     const { mapManager } = world;
-    const versusMode = gameContext.getConfig("VersusMode");
-    const { availableMaps } = versusMode;
+    const { availableMaps } = gameContext.versusConfig;
     const pickableMaps = [];
 
     for(let i = 0; i < availableMaps.length; i++) {

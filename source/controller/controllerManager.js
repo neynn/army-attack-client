@@ -74,10 +74,6 @@ ControllerManager.prototype.removeEntity = function(entityID) {
 
     const owner = this.controllers.get(ownerID);
 
-    if(!owner) {
-        return;
-    }
-
     owner.removeEntity(entityID);
 }
 
@@ -94,9 +90,7 @@ ControllerManager.prototype.addEntity = function(controllerID, entityID) {
     if(ownerID !== null) {
         const owner = this.getController(ownerID);
 
-        if(owner) {
-            owner.removeEntity(entityID);
-        }
+        owner.removeEntity(entityID);
 
         Logger.log(false, "Entity is already linked to controller! Transferring ownership!", { controllerID, entityID });
     }

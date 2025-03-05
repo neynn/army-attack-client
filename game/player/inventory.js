@@ -2,8 +2,9 @@ import { clampValue } from "../../source/math/math.js";
 
 export const Inventory = function() {
     this.items = new Map();
-    this.maxItemStacks = new Map();
+    this.itemLimits = new Map();
     this.resources = new Map();
+    this.resourceLimits = new Map();
 }
 
 Inventory.TYPE = {
@@ -35,12 +36,13 @@ Inventory.prototype.save = function() {
 
     return {
         "items": items,
-        "resources": resources
+        "resources": resources,
+        "resourceLimits": []
     }
 }
 
 Inventory.prototype.load = function(blob) {
-    const { items, resources } = blob;
+    const { items, resources, resourceLimits } = blob;
 
     for(let i = 0; i < items.length; i++) {
         const { id, value } = items[i];
@@ -57,24 +59,25 @@ Inventory.prototype.load = function(blob) {
             this.resources.set(id, value);
         }
     }
+
+    for(let i = 0; i < resourceLimits.length; i++) {
+
+    }
 }
 
 Inventory.prototype.init = function(gameContext) {
-    const itemTypes = gameContext.getConfig("ItemType");
-    const resourceTypes = gameContext.getConfig("ResourceType");
-
-    for(const itemID in itemTypes) {
-        const itemType = itemTypes[itemID];
+    for(const itemID in gameContext.itemTypes) {
+        const itemType = gameContext.itemTypes[itemID];
         const { maxStack = 0 } = itemType;
 
         this.items.set(itemID, 0);
-        this.maxItemStacks.set(itemID, maxStack);
+        this.itemLimits.set(itemID, maxStack);
     }
 
-    for(const resourceID in resourceTypes) {
+    for(const resourceID in gameContext.resourceTypes) {
         this.resources.set(resourceID, 0);
     }
-} 
+}
 
 Inventory.prototype.remove = function(type, id, value) {
     switch(type) {
@@ -108,7 +111,7 @@ Inventory.prototype.add = function(type, id, value) {
         case Inventory.TYPE.ITEM: {
             if(this.items.has(id)) {
                 const count = this.items.get(id);
-                const maxStack = this.maxItemStacks.get(id);
+                const maxStack = this.itemLimits.get(id);
                 const nextValue = clampValue(count + value, maxStack, count);
 
                 this.items.set(id, nextValue);

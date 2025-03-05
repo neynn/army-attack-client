@@ -8,11 +8,11 @@
         "maxAttackRange": 5,
         "hitDuration": 1,
         "iconDuration": 1.8,
-        "downDuration": 10,
-        "languages": { 
-            "german": { "directory": "assets/config/language", "source": "de.json" },
-            "english": { "directory": "assets/config/language", "source": "en.json" }
-        }
+        "downDuration": 10
+    },
+    "LanguageType": {
+        "german": { "directory": "assets/config/language", "source": "de.json" },
+        "english": { "directory": "assets/config/language", "source": "en.json" }
     },
     "VersusMode": {
         "availableMaps": ["pvp_valleys"],
@@ -71,7 +71,7 @@
         "PVP_XP": { "id": "PVP_XP", "maxDrop": 5, "icon": "pvp_rank_icon" },
         "SocialEnergy": { "id": "SocialEnergy", "maxDrop": 1, "icon": "resource_icon_social_energy" },
         "Dollor": { "id": "Dollor", "maxDrop": 1, "icon": "icon_dollor" },
-        "BackgroundEnergy": { "id": "BackgroundEnergy", "maxDrop": 0, "icon": null }
+        "EnergyCounter": { "id": "EnergyCounter", "maxDrop": 0, "icon": null }
     },
     "TileType": {
         "0": { "id": 0, "color": "#000000", "name": "Ground", "passability": "Land", "defaultTeam": null, "hasBorder": true },

@@ -23,8 +23,7 @@ CounterAttackAction.prototype.onUpdate = function(gameContext, request, messenge
 }
 
 CounterAttackAction.prototype.isFinished = function(gameContext, request, messengerID) {
-    const settings = gameContext.getConfig("Settings");
-    const timeRequired = settings.hitDuration;
+    const timeRequired = gameContext.settings.hitDuration;
 
     return request.timePassed >= timeRequired;
 }

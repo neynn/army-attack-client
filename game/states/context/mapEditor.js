@@ -81,11 +81,10 @@ MapEditorState.prototype.constructor = MapEditorState;
 
 MapEditorState.prototype.initEditorCamera = function(gameContext) {
     const { world, renderer, client } = gameContext;
-    const settings = gameContext.getConfig("Settings");
 
     this.camera = new ArmyCamera();
     this.camera.unbindViewport();
-    this.camera.loadTileDimensions(settings.tileWidth, settings.tileHeight)
+    this.camera.loadTileDimensions(gameContext.settings.tileWidth, gameContext.settings.tileHeight)
 
     const context = renderer.createContext(this.contextID, this.camera);
     
@@ -351,10 +350,9 @@ MapEditorState.prototype.paint = function(gameContext) {
             break;
         }
         case MapEditorState.BUTTON_TYPE_TYPE: {
-            const types = gameContext.getConfig("TileType");
             const layerID = "type";
 
-            this.mapEditor.incrementTypeIndex(gameContext, types, this.currentMapID, layerID);
+            this.mapEditor.incrementTypeIndex(gameContext, this.currentMapID, layerID);
             break;
         }
         default: {

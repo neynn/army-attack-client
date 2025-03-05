@@ -39,11 +39,19 @@ import { dropItemsEvent } from "./events/dropItem.js";
 export const ArmyContext = function() {
     GameContext.call(this);
 
-    this.armyConfig = {};
-    this.tileConversions = {};
+    this.settings = {};
+    this.itemTypes = {};
+    this.resourceTypes = {};
+    this.entityTypes = {};
+    this.teamTypes = {};
     this.tileTypes = {};
+    this.allianceTypes = {};
+    this.languageTypes = {};
+    this.tileConversions = {};
+    this.tileFormConditions = {};
+    this.versusConfig = {};
     this.playerID = null;
-    this.gameMode = ArmyContext.GAME_MODE.NONE;
+    this.modeID = ArmyContext.GAME_MODE.NONE;
 }
 
 ArmyContext.prototype = Object.create(GameContext.prototype);
@@ -81,13 +89,21 @@ ArmyContext.GAME_MODE = {
 };
 
 ArmyContext.prototype.getGameMode = function() {
-    return this.gameMode;
+    return this.modeID;
 }
 
 ArmyContext.prototype.init = function(resources) {
-    this.armyConfig = resources.world;
-    this.tileConversions = this.initConversions(this.armyConfig["TeamTileConversion"]);
-    this.tileTypes = 0;
+    this.tileConversions = this.initConversions(resources.world["TeamTileConversion"]);
+    this.itemTypes = resources.world["ItemType"];
+    this.resourceTypes = resources.world["ResourceType"];
+    this.tileTypes = resources.world["TileType"];
+    this.teamTypes = resources.world["TeamType"];
+    this.entityTypes = resources.world["EntityType"];
+    this.allianceTypes = resources.world["AllianceType"];
+    this.languageTypes = resources.world["LanguageType"];
+    this.versusConfig = resources.world["VersusMode"];
+    this.tileFormConditions = resources.world["TileFormCondition"];
+    this.settings = resources.world["Settings"];
 
     this.world.actionQueue.registerAction(ACTION_TYPES.ATTACK, new AttackAction());
     this.world.actionQueue.registerAction(ACTION_TYPES.CONSTRUCTION, new ConstructionAction());
@@ -162,7 +178,7 @@ ArmyContext.prototype.init = function(resources) {
 ArmyContext.prototype.setGameMode = function(modeID) {
     const { eventQueue } = this.world;
 
-    this.gameMode = modeID;
+    this.modeID = modeID;
 
     switch(modeID) {
         case ArmyContext.GAME_MODE.STORY: {
@@ -178,18 +194,6 @@ ArmyContext.prototype.setGameMode = function(modeID) {
             break;
         }
     }
-}
-
-ArmyContext.prototype.getConfig = function(elementID) {
-    const element = this.armyConfig[elementID];
-
-    if(element === undefined) {
-        Logger.log(false, "Element does not exist!", "ArmyContext.prototype.getConfig", { elementID });
-
-        return null;
-    }
-
-    return element;
 }
 
 ArmyContext.prototype.initConversions = function(teamConversions) {

@@ -31,14 +31,13 @@ ReviveableComponent.prototype.beginDecay = function() {
 
 ReviveableComponent.prototype.update = function(gameContext, entity) {
     if(this.state === ReviveableComponent.STATE.DECAY) {
-        const { timer, world } = gameContext;
-        const settings = gameContext.getConfig("Settings");
+        const { timer } = gameContext;
         const fixedDeltaTime = timer.getFixedDeltaTime();
 
         this.passedTime += fixedDeltaTime;
 
-        if(this.passedTime >= settings.downDuration) {
-            this.passedTime = settings.downDuration;
+        if(this.passedTime >= gameContext.settings.downDuration) {
+            this.passedTime = gameContext.settings.downDuration;
             this.state = ReviveableComponent.STATE.DEAD;
             //TODO: Emit ENTITY_DEATH event!
             console.error(entity, "IS DEAD!");

@@ -648,13 +648,13 @@
         "hitRewards": [
             { "type": "Resource", "id": "XP", "value": 5 },
             { "type": "Resource", "id": "Money", "value": 20 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 10 }
+            { "type": "Resource", "id": "EnergyCounter", "value": 10 }
         ],
         "killRewards": [
             { "type": "Resource", "id": "Gold", "value": 1, "chance": 1},
             { "type": "Resource", "id": "XP", "value": 5 },
             { "type": "Resource", "id": "Money", "value": 200 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 20 },
+            { "type": "Resource", "id": "EnergyCounter", "value": 20 },
             { "type": "Item", "id": "intel", "value": 1 },
             { "type": "Item", "id": "intel", "value": 1, "chance": 5 },
             { "type": "Item", "id": "construction_artillery_tubes", "value": 1, "chance": 10 },
@@ -697,13 +697,13 @@
         "hitRewards": [
             { "type": "Resource", "id": "XP", "value": 5 },
             { "type": "Resource", "id": "Money", "value": 20 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 10 }
+            { "type": "Resource", "id": "EnergyCounter", "value": 10 }
         ],
         "killRewards": [
             { "type": "Resource", "id": "Gold", "value": 1, "chance": 1},
             { "type": "Resource", "id": "XP", "value": 5 },
             { "type": "Resource", "id": "Money", "value": 200 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 20 },
+            { "type": "Resource", "id": "EnergyCounter", "value": 20 },
             { "type": "Item", "id": "intel", "value": 1 },
             { "type": "Item", "id": "intel", "value": 1, "chance": 5 },
             { "type": "Item", "id": "construction_artillery_tubes", "value": 1, "chance": 10 },
@@ -746,13 +746,13 @@
         "hitRewards": [
             { "type": "Resource", "id": "XP", "value": 7 },
             { "type": "Resource", "id": "Money", "value": 30 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 10 }
+            { "type": "Resource", "id": "EnergyCounter", "value": 10 }
         ],
         "killRewards": [
             { "type": "Resource", "id": "Gold", "value": 1, "chance": 1},
             { "type": "Resource", "id": "XP", "value": 10 },
             { "type": "Resource", "id": "Money", "value": 400 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 20 },
+            { "type": "Resource", "id": "EnergyCounter", "value": 20 },
             { "type": "Item", "id": "intel", "value": 1 },
             { "type": "Item", "id": "intel", "value": 1, "chance": 5 },
             { "type": "Item", "id": "construction_pilot_helmet", "value": 1, "chance": 10 },
@@ -796,13 +796,13 @@
         "hitRewards": [
             { "type": "Resource", "id": "XP", "value": 7 },
             { "type": "Resource", "id": "Money", "value": 30 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 10 }
+            { "type": "Resource", "id": "EnergyCounter", "value": 10 }
         ],
         "killRewards": [
             { "type": "Resource", "id": "Gold", "value": 1, "chance": 1},
             { "type": "Resource", "id": "XP", "value": 10 },
             { "type": "Resource", "id": "Money", "value": 400 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 20 },
+            { "type": "Resource", "id": "EnergyCounter", "value": 20 },
             { "type": "Item", "id": "intel", "value": 1 },
             { "type": "Item", "id": "construction_pilot_helmet", "value": 1, "chance": 10 },
             { "type": "Item", "id": "construction_artillery_tubes", "value": 1, "chance": 10 },
@@ -846,13 +846,13 @@
         "hitRewards": [
             { "type": "Resource", "id": "XP", "value": 1 },
             { "type": "Resource", "id": "Money", "value": 10 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 10 }
+            { "type": "Resource", "id": "EnergyCounter", "value": 10 }
         ],
         "killRewards": [
             { "type": "Resource", "id": "Gold", "value": 1, "chance": 1},
             { "type": "Resource", "id": "XP", "value": 10 },
             { "type": "Resource", "id": "Money", "value": 300 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 20 },
+            { "type": "Resource", "id": "EnergyCounter", "value": 20 },
             { "type": "Item", "id": "intel", "value": 1 },
             { "type": "Item", "id": "construction_pilot_helmet", "value": 1, "chance": 10 },
             { "type": "Item", "id": "construction_artillery_tubes", "value": 1, "chance": 10 },
@@ -898,13 +898,13 @@
         "hitRewards": [
             { "type": "Resource", "id": "XP", "value": 1 },
             { "type": "Resource", "id": "Money", "value": 10 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 10 }
+            { "type": "Resource", "id": "EnergyCounter", "value": 10 }
         ],
         "killRewards": [
             { "type": "Resource", "id": "Gold", "value": 1, "chance": 1},
             { "type": "Resource", "id": "XP", "value": 10 },
             { "type": "Resource", "id": "Money", "value": 300 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 20 },
+            { "type": "Resource", "id": "EnergyCounter", "value": 20 },
             { "type": "Item", "id": "intel", "value": 1 },
             { "type": "Item", "id": "construction_pilot_helmet", "value": 1, "chance": 10 },
             { "type": "Item", "id": "construction_artillery_tubes", "value": 1, "chance": 10 },
@@ -950,13 +950,13 @@
         "hitRewards": [
             { "type": "Resource", "id": "XP", "value": 1 },
             { "type": "Resource", "id": "Money", "value": 10 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 10 }
+            { "type": "Resource", "id": "EnergyCounter", "value": 10 }
         ],
         "killRewards": [
             { "type": "Resource", "id": "Gold", "value": 1, "chance": 1},
             { "type": "Resource", "id": "XP", "value": 10 },
             { "type": "Resource", "id": "Money", "value": 300 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 20 },
+            { "type": "Resource", "id": "EnergyCounter", "value": 20 },
             { "type": "Item", "id": "intel", "value": 1 },
             { "type": "Item", "id": "construction_pilot_helmet", "value": 1, "chance": 10 },
             { "type": "Item", "id": "construction_artillery_tubes", "value": 1, "chance": 10 },
@@ -1002,13 +1002,13 @@
         "hitRewards": [
             { "type": "Resource", "id": "XP", "value": 2 },
             { "type": "Resource", "id": "Money", "value": 30 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 10 }
+            { "type": "Resource", "id": "EnergyCounter", "value": 10 }
         ],
         "killRewards": [
             { "type": "Resource", "id": "Gold", "value": 1, "chance": 1},
             { "type": "Resource", "id": "XP", "value": 10 },
             { "type": "Resource", "id": "Money", "value": 400 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 20 },
+            { "type": "Resource", "id": "EnergyCounter", "value": 20 },
             { "type": "Item", "id": "intel", "value": 1 },
             { "type": "Item", "id": "construction_steel_plates", "value": 1, "chance": 20 },
             { "type": "Item", "id": "construction_black_box", "value": 1, "chance": 15 },
@@ -1052,13 +1052,13 @@
         "hitRewards": [
             { "type": "Resource", "id": "XP", "value": 2 },
             { "type": "Resource", "id": "Money", "value": 30 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 10 }
+            { "type": "Resource", "id": "EnergyCounter", "value": 10 }
         ],
         "killRewards": [
             { "type": "Resource", "id": "Gold", "value": 1, "chance": 1},
             { "type": "Resource", "id": "XP", "value": 10 },
             { "type": "Resource", "id": "Money", "value": 400 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 20 },
+            { "type": "Resource", "id": "EnergyCounter", "value": 20 },
             { "type": "Item", "id": "intel", "value": 1 },
             { "type": "Item", "id": "construction_steel_plates", "value": 1, "chance": 20 },
             { "type": "Item", "id": "construction_black_box", "value": 1, "chance": 15 },
@@ -1102,13 +1102,13 @@
         "hitRewards": [
             { "type": "Resource", "id": "XP", "value": 3 },
             { "type": "Resource", "id": "Money", "value": 15 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 10 }
+            { "type": "Resource", "id": "EnergyCounter", "value": 10 }
         ],
         "killRewards": [
             { "type": "Resource", "id": "Gold", "value": 1, "chance": 1},
             { "type": "Resource", "id": "XP", "value": 5 },
             { "type": "Resource", "id": "Money", "value": 300 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 20 },
+            { "type": "Resource", "id": "EnergyCounter", "value": 20 },
             { "type": "Item", "id": "intel", "value": 1 },
             { "type": "Item", "id": "construction_rebar", "value": 1, "chance": 5 },
             { "type": "Item", "id": "intel", "value": 1, "chance": 5 },
@@ -1147,13 +1147,13 @@
         "hitRewards": [
             { "type": "Resource", "id": "XP", "value": 3 },
             { "type": "Resource", "id": "Money", "value": 15 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 10 }
+            { "type": "Resource", "id": "EnergyCounter", "value": 10 }
         ],
         "killRewards": [
             { "type": "Resource", "id": "Gold", "value": 1, "chance": 1},
             { "type": "Resource", "id": "XP", "value": 5 },
             { "type": "Resource", "id": "Money", "value": 300 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 20 },
+            { "type": "Resource", "id": "EnergyCounter", "value": 20 },
             { "type": "Item", "id": "intel", "value": 1 },
             { "type": "Item", "id": "construction_rebar", "value": 1, "chance": 5 },
             { "type": "Item", "id": "intel", "value": 1, "chance": 5 },
@@ -1192,13 +1192,13 @@
         "hitRewards": [
             { "type": "Resource", "id": "XP", "value": 2 },
             { "type": "Resource", "id": "Money", "value": 20 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 10 }
+            { "type": "Resource", "id": "EnergyCounter", "value": 10 }
         ], 
         "killRewards": [
             { "type": "Resource", "id": "Gold", "value": 1, "chance": 1 },
             { "type": "Resource", "id": "XP", "value": 2 },
             { "type": "Resource", "id": "Money", "value": 80 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 20 },
+            { "type": "Resource", "id": "EnergyCounter", "value": 20 },
             { "type": "Item", "id": "intel", "value": 1 },
             { "type": "Item", "id": "intel", "value": 1, "chance": 5 },
             { "type": "Item", "id": "construction_hard_hat", "value": 1, "chance": 5 },
@@ -1243,13 +1243,13 @@
         "hitRewards": [
             { "type": "Resource", "id": "XP", "value": 2 },
             { "type": "Resource", "id": "Money", "value": 20 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 10 }
+            { "type": "Resource", "id": "EnergyCounter", "value": 10 }
         ],
         "killRewards": [
             { "type": "Resource", "id": "Gold", "value": 1, "chance": 1 },
             { "type": "Resource", "id": "XP", "value": 2 },
             { "type": "Resource", "id": "Money", "value": 80 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 20 },
+            { "type": "Resource", "id": "EnergyCounter", "value": 20 },
             { "type": "Item", "id": "intel", "value": 1 },
             { "type": "Item", "id": "intel", "value": 1, "chance": 5 },
             { "type": "Item", "id": "construction_hard_hat", "value": 1, "chance": 5 },
@@ -1294,13 +1294,13 @@
         "hitRewards": [
             { "type": "Resource", "id": "XP", "value": 2 },
             { "type": "Resource", "id": "Money", "value": 15 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 10 }
+            { "type": "Resource", "id": "EnergyCounter", "value": 10 }
         ],
         "killRewards": [
             { "type": "Resource", "id": "Gold", "value": 1, "chance": 1 },
             { "type": "Resource", "id": "XP", "value": 4 },
             { "type": "Resource", "id": "Money", "value": 100 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 20 },
+            { "type": "Resource", "id": "EnergyCounter", "value": 20 },
             { "type": "Item", "id": "intel", "value": 1 },
             { "type": "Item", "id": "intel", "value": 1, "chance": 5 },
             { "type": "Item", "id": "construction_commando_knife", "value": 1, "chance": 1 },
@@ -1339,13 +1339,13 @@
         "hitRewards": [
             { "type": "Resource", "id": "XP", "value": 2 },
             { "type": "Resource", "id": "Money", "value": 15 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 10 }
+            { "type": "Resource", "id": "EnergyCounter", "value": 10 }
         ],
         "killRewards": [
             { "type": "Resource", "id": "Gold", "value": 1, "chance": 1 },
             { "type": "Resource", "id": "XP", "value": 4 },
             { "type": "Resource", "id": "Money", "value": 100 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 20 },
+            { "type": "Resource", "id": "EnergyCounter", "value": 20 },
             { "type": "Item", "id": "intel", "value": 1 },
             { "type": "Item", "id": "intel", "value": 1, "chance": 5 },
             { "type": "Item", "id": "construction_commando_knife", "value": 1, "chance": 1 },
@@ -1383,13 +1383,13 @@
         },
         "hitRewards": [
             { "type": "Resource", "id": "XP", "value": 1 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 10 }
+            { "type": "Resource", "id": "EnergyCounter", "value": 10 }
         ],
         "killRewards": [
             { "type": "Resource", "id": "Gold", "value": 1, "chance": 1 },
             { "type": "Resource", "id": "XP", "value": 2 },
             { "type": "Resource", "id": "Money", "value": 70 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 20 },
+            { "type": "Resource", "id": "EnergyCounter", "value": 20 },
             { "type": "Item", "id": "intel", "value": 1 },
             { "type": "Item", "id": "intel", "value": 1, "chance": 5 },
             { "type": "Item", "id": "construction_hard_hat", "value": 1, "chance": 5 },
@@ -1433,13 +1433,13 @@
         },
         "hitRewards": [
             { "type": "Resource", "id": "XP", "value": 1 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 10 }
+            { "type": "Resource", "id": "EnergyCounter", "value": 10 }
         ],
         "killRewards": [
             { "type": "Resource", "id": "Gold", "value": 1, "chance": 1 },
             { "type": "Resource", "id": "XP", "value": 2 },
             { "type": "Resource", "id": "Money", "value": 70 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 20 },
+            { "type": "Resource", "id": "EnergyCounter", "value": 20 },
             { "type": "Item", "id": "intel", "value": 1 },
             { "type": "Item", "id": "intel", "value": 1, "chance": 5 },
             { "type": "Item", "id": "construction_hard_hat", "value": 1, "chance": 5 },
@@ -1484,13 +1484,13 @@
         "hitRewards": [
             { "type": "Resource", "id": "XP", "value": 2 },
             { "type": "Resource", "id": "Money", "value": 25 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 10 }
+            { "type": "Resource", "id": "EnergyCounter", "value": 10 }
         ],
         "killRewards": [
             { "type": "Resource", "id": "Gold", "value": 1, "chance": 1 },
             { "type": "Resource", "id": "XP", "value": 5 },
             { "type": "Resource", "id": "Money", "value": 200 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 20 },
+            { "type": "Resource", "id": "EnergyCounter", "value": 20 },
             { "type": "Item", "id": "intel", "value": 1 },
             { "type": "Item", "id": "construction_commando_knife", "value": 1, "chance": 20 },
             { "type": "Item", "id": "construction_rebar", "value": 1, "chance": 10 },
@@ -1534,13 +1534,13 @@
         "hitRewards": [
             { "type": "Resource", "id": "XP", "value": 2 },
             { "type": "Resource", "id": "Money", "value": 25 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 10 }
+            { "type": "Resource", "id": "EnergyCounter", "value": 10 }
         ],
         "killRewards": [
             { "type": "Resource", "id": "Gold", "value": 1, "chance": 1 },
             { "type": "Resource", "id": "XP", "value": 5 },
             { "type": "Resource", "id": "Money", "value": 200 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 20 },
+            { "type": "Resource", "id": "EnergyCounter", "value": 20 },
             { "type": "Item", "id": "intel", "value": 1 },
             { "type": "Item", "id": "construction_commando_knife", "value": 1, "chance": 20 },
             { "type": "Item", "id": "construction_rebar", "value": 1, "chance": 10 },
@@ -1584,11 +1584,11 @@
         "hitRewards": [
             { "type": "Resource", "id": "XP", "value": 1 },
             { "type": "Resource", "id": "Money", "value": 20 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 10 }
+            { "type": "Resource", "id": "EnergyCounter", "value": 10 }
         ],
         "killRewards": [
             { "type": "Resource", "id": "XP", "value": 4 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 20 },
+            { "type": "Resource", "id": "EnergyCounter", "value": 20 },
             { "type": "Item", "id": "intel", "value": 1 },
             { "type": "Item", "id": "intel", "value": 1, "chance": 5 },
             { "type": "Item", "id": "construction_steel_plates", "value": 1, "chance": 20 },
@@ -1627,11 +1627,11 @@
         "hitRewards": [
             { "type": "Resource", "id": "XP", "value": 1 },
             { "type": "Resource", "id": "Money", "value": 20 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 10 }
+            { "type": "Resource", "id": "EnergyCounter", "value": 10 }
         ],
         "killRewards": [
             { "type": "Resource", "id": "XP", "value": 4 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 20 },
+            { "type": "Resource", "id": "EnergyCounter", "value": 20 },
             { "type": "Item", "id": "intel", "value": 1 },
             { "type": "Item", "id": "intel", "value": 1, "chance": 5 },
             { "type": "Item", "id": "construction_steel_plates", "value": 1, "chance": 20 },
@@ -1670,11 +1670,11 @@
         "hitRewards": [
             { "type": "Resource", "id": "XP", "value": 1 },
             { "type": "Resource", "id": "Money", "value": 20 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 10 }
+            { "type": "Resource", "id": "EnergyCounter", "value": 10 }
         ],
         "killRewards": [
             { "type": "Resource", "id": "XP", "value": 4 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 20 },
+            { "type": "Resource", "id": "EnergyCounter", "value": 20 },
             { "type": "Item", "id": "intel", "value": 1 },
             { "type": "Item", "id": "intel", "value": 1, "chance": 5 },
             { "type": "Item", "id": "battle_tank_armor_plates", "value": 1, "chance": 5 },
@@ -1714,11 +1714,11 @@
         "hitRewards": [
             { "type": "Resource", "id": "XP", "value": 1 },
             { "type": "Resource", "id": "Money", "value": 20 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 10 }
+            { "type": "Resource", "id": "EnergyCounter", "value": 10 }
         ],
         "killRewards": [
             { "type": "Resource", "id": "XP", "value": 4 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 20 },
+            { "type": "Resource", "id": "EnergyCounter", "value": 20 },
             { "type": "Item", "id": "intel", "value": 1 },
             { "type": "Item", "id": "intel", "value": 1, "chance": 5 },
             { "type": "Item", "id": "battle_tank_armor_plates", "value": 1, "chance": 5 },
@@ -1758,13 +1758,13 @@
         "hitRewards": [
             { "type": "Resource", "id": "XP", "value": 1 },
             { "type": "Resource", "id": "Supplies", "value": 10 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 10 }
+            { "type": "Resource", "id": "EnergyCounter", "value": 10 }
         ],
         "killRewards": [
             { "type": "Resource", "id": "Gold", "value": 1, "chance": 1 },
             { "type": "Resource", "id": "XP", "value": 2 },
             { "type": "Resource", "id": "Supplies", "value": 100 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 20 },
+            { "type": "Resource", "id": "EnergyCounter", "value": 20 },
             { "type": "Item", "id": "intel", "value": 1 },
             { "type": "Item", "id": "intel", "value": 1, "chance": 5 },
             { "type": "Item", "id": "construction_hard_hat", "value": 1, "chance": 1 },
@@ -1802,13 +1802,13 @@
         "hitRewards": [
             { "type": "Resource", "id": "XP", "value": 1 },
             { "type": "Resource", "id": "Supplies", "value": 10 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 10 }
+            { "type": "Resource", "id": "EnergyCounter", "value": 10 }
         ],
         "killRewards": [
             { "type": "Resource", "id": "Gold", "value": 1, "chance": 1 },
             { "type": "Resource", "id": "XP", "value": 2 },
             { "type": "Resource", "id": "Supplies", "value": 100 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 20 },
+            { "type": "Resource", "id": "EnergyCounter", "value": 20 },
             { "type": "Item", "id": "intel", "value": 1 },
             { "type": "Item", "id": "intel", "value": 1, "chance": 5 },
             { "type": "Item", "id": "construction_hard_hat", "value": 1, "chance": 1 },
@@ -1846,13 +1846,13 @@
         "hitRewards": [
             { "type": "Resource", "id": "XP", "value": 2 },
             { "type": "Resource", "id": "Money", "value": 25 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 10 }
+            { "type": "Resource", "id": "EnergyCounter", "value": 10 }
         ],
         "killRewards": [
             { "type": "Resource", "id": "Gold", "value": 1, "chance": 1 },
             { "type": "Resource", "id": "XP", "value": 3 },
             { "type": "Resource", "id": "Money", "value": 150 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 20 },
+            { "type": "Resource", "id": "EnergyCounter", "value": 20 },
             { "type": "Item", "id": "intel", "value": 1 },
             { "type": "Item", "id": "intel", "value": 1, "chance": 5 },
             { "type": "Item", "id": "construction_pilot_helmet", "value": 1, "chance": 10 },
@@ -1898,13 +1898,13 @@
         "hitRewards": [
             { "type": "Resource", "id": "XP", "value": 2 },
             { "type": "Resource", "id": "Money", "value": 25 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 10 }
+            { "type": "Resource", "id": "EnergyCounter", "value": 10 }
         ],
         "killRewards": [
             { "type": "Resource", "id": "Gold", "value": 1, "chance": 1},
             { "type": "Resource", "id": "XP", "value": 3 },
             { "type": "Resource", "id": "Money", "value": 150 },
-            { "type": "Resource", "id": "BackgroundEnergy", "value": 20 },
+            { "type": "Resource", "id": "EnergyCounter", "value": 20 },
             { "type": "Item", "id": "intel", "value": 1 },
             { "type": "Item", "id": "intel", "value": 1, "chance": 5 },
             { "type": "Item", "id": "construction_pilot_helmet", "value": 1, "chance": 10 },

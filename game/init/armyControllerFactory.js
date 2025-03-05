@@ -31,10 +31,9 @@ const addDragEvent = function(gameContext) {
 
 const initPlayerCamera = function(gameContext, camera) {
     const { world, renderer, client } = gameContext;
-    const settings = gameContext.getConfig("Settings");
     const context = renderer.createContext(Player.CAMERA_ID, camera);
 
-    camera.loadTileDimensions(settings.tileWidth, settings.tileHeight);
+    camera.loadTileDimensions(gameContext.settings.tileWidth, gameContext.settings.tileHeight);
 
     //context.initRenderer(640/2, 360/2);
     //context.setDisplayMode(CameraContext.DISPLAY_MODE.RESOLUTION_FIXED);

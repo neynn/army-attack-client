@@ -266,9 +266,10 @@ MapEditor.prototype.resizeMap = function(worldMap, width, height) {
     worldMap.setHeight(height);
 }
 
-MapEditor.prototype.incrementTypeIndex = function(gameContext, types, mapID, layerID) {
+MapEditor.prototype.incrementTypeIndex = function(gameContext, mapID, layerID) {
     const { world } = gameContext;
     const { mapManager } = world;
+    const types = gameContext.tileTypes;
     const worldMap = mapManager.getLoadedMap(mapID);
 
     if(!worldMap) {

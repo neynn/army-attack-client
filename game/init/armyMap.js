@@ -83,15 +83,16 @@ ArmyMap.prototype.loadMeta = function(meta) {
 }
 
 ArmyMap.prototype.reload = function(gameContext) {
-    const tileTypes = gameContext.getConfig("TileType");
+    const tileTypes = gameContext.tileTypes;
 
     for(let i = 0; i < this.height; i++) {
         for(let j = 0; j < this.width; j++) {
             const typeID = this.getTile(ArmyMap.LAYER.TYPE, j, i);
             const tileType = tileTypes[typeID];
+            const { defaultTeam } = tileType;
 
-            if(tileType.defaultTeam) {
-                const teamID = ArmyMap.TEAM_TO_WORLD[tileType.defaultTeam];
+            if(defaultTeam) {
+                const teamID = ArmyMap.TEAM_TO_WORLD[defaultTeam];
 
                 this.placeTile(teamID, ArmyMap.LAYER.TEAM, j, i);
             }
@@ -116,9 +117,8 @@ ArmyMap.prototype.getAnimationForm = function(gameContext, tileID) {
         return null;
     }
 
-    const formConditions = gameContext.getConfig("TileFormCondition");
     const { set, animation } = tileMeta;
-    const setForm = formConditions[set];
+    const setForm = gameContext.tileFormConditions[set];
 
     if(!setForm) {
         return null;
@@ -265,9 +265,8 @@ ArmyMap.prototype.updateBorder = function(gameContext, centerX, centerY, range) 
     const { tileManager, world } = gameContext;
     const { controllerManager } = world;
     const { meta } = tileManager;
-    const settings = gameContext.getConfig("Settings");
 
-    if(!settings.drawBorder || this.disableBorder) {
+    if(!gameContext.settings.drawBorder || this.disableBorder) {
         return;
     }
 
@@ -278,7 +277,7 @@ ArmyMap.prototype.updateBorder = function(gameContext, centerX, centerY, range) 
     }
 
     const autotiler = meta.getAutotilerByID(ArmyMap.AUTOTILER.BORDER);
-    const tileTypes = gameContext.getConfig("TileType");
+    const tileTypes = gameContext.tileTypes;
 
     this.updateArea(centerX, centerY, range, (index, tileX, tileY) => {
         const centerTypeID = this.getTile(ArmyMap.LAYER.TYPE, tileX, tileY);

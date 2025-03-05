@@ -1,23 +1,20 @@
 import { Inventory } from "../player/inventory.js";
 
 const getMaxDrop = function(gameContext, type, id) {
-    const itemTypes = gameContext.getConfig("ItemType");
-    const resourceTypes = gameContext.getConfig("ResourceType");
-
     switch(type) {
         case Inventory.TYPE.ITEM: {
-            const item = itemTypes[id];
+            const item = gameContext.itemTypes[id];
 
-            if(!item) {
+            if(!item || !item.maxDrop) {
                 return 0;
             }
 
             return item.maxDrop;
         }
         case Inventory.TYPE.RESOURCE: {
-            const resource = resourceTypes[id];
+            const resource = gameContext.resourceTypes[id];
 
-            if(!resource) {
+            if(!resource || !resource.maxDrop) {
                 return 0;
             }
 
@@ -38,13 +35,15 @@ export const dropItemsEvent = function(gameContext, items, controllerID) {
         return;
     }
 
+    const inventory = receiver.inventory;
+
     for(let i = 0; i < items.length; i++) {
         const item = items[i];
         const { type, id, value } = item;
         const maxDrop = getMaxDrop(gameContext, type, id);
 
         if(maxDrop === 0) {
-            receiver.inventory.add(type, id, value);
+            inventory.add(type, id, value);
             continue;
         }
 
@@ -53,13 +52,24 @@ export const dropItemsEvent = function(gameContext, items, controllerID) {
         while(toDrop >= maxDrop) {
             toDrop -= maxDrop;
 
-            receiver.inventory.add(type, id, maxDrop);
+            inventory.add(type, id, maxDrop);
         }
 
         if(toDrop !== 0) {
-            receiver.inventory.add(type, id, toDrop);
+            inventory.add(type, id, toDrop);
         }
     }
 
-    //TODO: Check inventory for overflow of "BackgroundEnergy" and drop it.
+    let energyDrops = 0;
+    let energyCounter = inventory.resources.get("EnergyCounter");
+
+    while(energyCounter >= 100) {
+        energyCounter -= 100;
+        energyDrops++;
+    }
+
+    if(energyDrops > 0) {
+        inventory.resources.set("EnergyCounter", energyCounter);
+        inventory.add(Inventory.TYPE.RESOURCE, "Energy", energyDrops);
+    }
 }

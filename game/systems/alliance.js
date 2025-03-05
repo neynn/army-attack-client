@@ -3,9 +3,7 @@ import { Logger } from "../../source/logger.js";
 export const AllianceSystem = function() {}
 
 AllianceSystem.getAlliance = function(gameContext, actorTeamID, reactorTeamID) {
-    const teamTypes = gameContext.getConfig("TeamType");
-    const allianceTypes = gameContext.getConfig("AllianceType"); 
-    const actorTeam = teamTypes[actorTeamID];
+    const actorTeam = gameContext.teamTypes[actorTeamID];
 
     if(!actorTeam) {
         Logger.log(Logger.CODE.WARN, "TeamType does not exist", "getAlliance", { actorTeamID });
@@ -14,7 +12,7 @@ AllianceSystem.getAlliance = function(gameContext, actorTeamID, reactorTeamID) {
     }
 
     const allianceID = actorTeam.alliances[reactorTeamID];
-    const alliance = allianceTypes[allianceID];
+    const alliance = gameContext.allianceTypes[allianceID];
 
     if(!alliance) {
         Logger.log(Logger.CODE.WARN, "AllianceType does not exist", "getAlliance", { actorTeamID, allianceID });

@@ -20,7 +20,7 @@ AttackAction.prototype.onEnd = function(gameContext, request, messengerID) {
 
     if(state === AttackSystem.OUTCOME_STATE.IDLE) {
         const ownerID = controllerManager.getOwnerID(targetID);
-        
+
         actionQueue.addRequest(ACTION_TYPES.COUNTER_ATTACK, ownerID, targetID, attackers);
     }
 }
@@ -33,8 +33,7 @@ AttackAction.prototype.onUpdate = function(gameContext, request, messengerID) {
 }
 
 AttackAction.prototype.isFinished = function(gameContext, request, messengerID) {
-    const settings = gameContext.getConfig("Settings");
-    const timeRequired = settings.hitDuration;
+    const timeRequired = gameContext.settings.hitDuration;
 
     return request.timePassed >= timeRequired;
 }

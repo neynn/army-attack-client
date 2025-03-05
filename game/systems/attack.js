@@ -22,8 +22,7 @@ const filterAliveEntitiesInMaxRange = function(gameContext, entity, onCheck) {
         return entities;
     }
 
-    const settings = gameContext.getConfig("Settings");
-    const nearbyEntities = entity.getSurroundingEntities(gameContext, settings.maxAttackRange);
+    const nearbyEntities = entity.getSurroundingEntities(gameContext, gameContext.settings.maxAttackRange);
 
     for(let i = 0; i < nearbyEntities.length; i++) {
         const nearbyEntity = entityManager.getEntity(nearbyEntities[i]);

@@ -22,9 +22,7 @@ CounterMoveAction.prototype.onUpdate = function(gameContext, request, messengerI
 }
 
 CounterMoveAction.prototype.isFinished = function(gameContext, request, messengerID) {
-    const { world } = gameContext;
-    const settings = gameContext.getConfig("Settings");
-    const timeRequired = settings.hitDuration;
+    const timeRequired = gameContext.settings.hitDuration;
 
     return request.timePassed >= timeRequired;
 }
