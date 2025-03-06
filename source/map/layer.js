@@ -34,9 +34,9 @@ Layer.prototype.init = function(config) {
     this.autoGenerate = autoGenerate ?? this.autoGenerate;
 }
 
-Layer.prototype.resize = function(oldWidth, oldHeight, width, height, fill = 0) {
+Layer.prototype.resize = function(oldWidth, oldHeight, newWidth, newHeight, fill = 0) {
+    const layerSize = newWidth * newHeight;
     const ArrayType = this.buffer.constructor;
-    const layerSize = width * height;
     const newBuffer = new ArrayType(layerSize);
     
     if(fill !== 0) {
@@ -45,11 +45,14 @@ Layer.prototype.resize = function(oldWidth, oldHeight, width, height, fill = 0) 
         }
     }
 
-    for(let i = 0; i < oldHeight && i < height; ++i) {
-        const newRow = i * width;
+    const copyWidth = newWidth < oldWidth ? newWidth : oldWidth;
+    const copyHeight = newHeight < oldHeight ? newHeight : oldHeight;
+
+    for(let i = 0; i < copyHeight; ++i) {
+        const newRow = i * newWidth;
         const oldRow = i * oldWidth;
 
-        for(let j = 0; j < oldWidth && j < width; ++j) {
+        for(let j = 0; j < copyWidth; ++j) {
             const newIndex = newRow + j;
             const oldIndex = oldRow + j;
 
@@ -67,8 +70,9 @@ Layer.prototype.decode = function(encodedLayer) {
 
     let index = 0;
     const MAX_INDEX = this.buffer.length;
+    const layerLength = encodedLayer.length;
 
-    for(let i = 0; i < encodedLayer.length; i += 2) {
+    for(let i = 0; i < layerLength; i += 2) {
         const typeID = encodedLayer[i];
         const typeCount = encodedLayer[i + 1];
         const copies = Math.min(typeCount, MAX_INDEX - index);
@@ -89,18 +93,21 @@ Layer.prototype.encode = function() {
         return [];
     }
 
-    let index = 0;
+    let typeIndex = 0;
+    let countIndex = 1;
     const encodedLayer = [this.buffer[0], 1];
+    const bufferLength = this.buffer.length;
 
-    for(let i = 1; i < this.buffer.length; ++i) {
+    for(let i = 1; i < bufferLength; ++i) {
         const currentID = this.buffer[i];
 
-        if(currentID === encodedLayer[index]) {
-            ++encodedLayer[index + 1];
+        if(currentID === encodedLayer[typeIndex]) {
+            ++encodedLayer[countIndex];
         } else {
             encodedLayer.push(currentID);
             encodedLayer.push(1);
-            index += 2;
+            typeIndex += 2;
+            countIndex += 2;
         }
     }
 

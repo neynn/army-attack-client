@@ -19,19 +19,13 @@ LoadableImage.ERROR_CODE = {
     ERROR_IMAGE_IS_LOADING: 4
 };
 
-LoadableImage.prototype.removeImage = function() {
+LoadableImage.prototype.clear = function() {
     if(this.state !== LoadableImage.STATE.LOADED) {
         return;
     }
 
     this.state = LoadableImage.STATE.EMPTY;
-
-    if(this.image) {
-        this.image.onload = null;
-        this.image.onerror = null;
-        this.image.src = "";
-        this.image = null;
-    }
+    this.bitmap = null;
 }
 
 LoadableImage.prototype.requestImage = function () {
@@ -49,29 +43,27 @@ LoadableImage.prototype.requestImage = function () {
 
     this.state = LoadableImage.STATE.LOADING;
 
-    return new Promise((resolve, reject) => {
-        fetch(this.path)
-            .then(response => {
-                if(!response.ok) {
-                    reject(LoadableImage.ERROR_CODE.ERROR_IMAGE_LOAD);
-                }
+    return fetch(this.path)
+    .then((response) => {
+        if(!response.ok) {
+            return Promise.reject(LoadableImage.ERROR_CODE.ERROR_IMAGE_LOAD);
+        }
 
-                return response.blob();
-            })
-            .then(blob => {
-                return createImageBitmap(blob);
-            })
-            .then(bitmap => {
-                this.bitmap = bitmap;
-                this.state = LoadableImage.STATE.LOADED;
+        return response.blob();
+    })
+    .then((blob) => {
+        return createImageBitmap(blob);
+    })
+    .then((bitmap) => {
+        this.bitmap = bitmap;
+        this.state = LoadableImage.STATE.LOADED;
 
-                resolve(bitmap);
-            })
-            .catch(err => {
-                this.state = LoadableImage.STATE.EMPTY;
+        return bitmap;
+    })
+    .catch((error) => {
+        this.state = LoadableImage.STATE.EMPTY;
 
-                reject(LoadableImage.ERROR_CODE.ERROR_IMAGE_LOAD);
-            });
+        return Promise.reject(LoadableImage.ERROR_CODE.ERROR_IMAGE_LOAD);
     });
 };
 
@@ -83,8 +75,7 @@ LoadableImage.prototype.removeReference = function() {
     this.references--;
 
     if(this.references <= 0) {
-        console.log("REMOVED!", this.path);
-        this.removeImage();
+        this.clear();
     }
 }
 
