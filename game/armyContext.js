@@ -330,7 +330,9 @@ ArmyContext.prototype.loadEntitySprites = function(entity) {
             continue;
         }
 
-        resources.requestImage(spriteID, (id, image, sheet) => console.log("LOADED IMAGE", id));
+        resources.requestImage(spriteID, (id, image, sheet) => {
+            console.log("LOADED IMAGE", id);
+        });
         resources.addReference(spriteID);
     }
 }

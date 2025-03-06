@@ -1,6 +1,6 @@
 export const LoadableImage = function(path) {
     this.path = path;
-    this.image = null;
+    this.bitmap = null;
     this.references = 0;
     this.state = LoadableImage.STATE.EMPTY;
 }
@@ -34,40 +34,46 @@ LoadableImage.prototype.removeImage = function() {
     }
 }
 
-LoadableImage.prototype.requestImage = function() {
+LoadableImage.prototype.requestImage = function () {
     if(!this.path) {
         return Promise.reject(LoadableImage.ERROR_CODE.ERROR_NO_PATH);
     }
 
-    if(this.image) {
-        return Promise.reject(LoadableImage.ERROR_CODE.ERROR_IMAGE_ALREADY_LOADED);
-    }
-
-    if(this.state === LoadableImage.STATE.LOADING || this.state !== LoadableImage.STATE.EMPTY) {
+    if(this.state === LoadableImage.STATE.LOADING) {
         return Promise.reject(LoadableImage.ERROR_CODE.ERROR_IMAGE_IS_LOADING);
     }
 
+    if(this.bitmap) {
+        return Promise.reject(LoadableImage.ERROR_CODE.ERROR_IMAGE_ALREADY_LOADED);
+    }
+
+    this.state = LoadableImage.STATE.LOADING;
+
     return new Promise((resolve, reject) => {
-        this.state = LoadableImage.STATE.LOADING;
+        fetch(this.path)
+            .then(response => {
+                if(!response.ok) {
+                    reject(LoadableImage.ERROR_CODE.ERROR_IMAGE_LOAD);
+                }
 
-        const image = new Image();
+                return response.blob();
+            })
+            .then(blob => {
+                return createImageBitmap(blob);
+            })
+            .then(bitmap => {
+                this.bitmap = bitmap;
+                this.state = LoadableImage.STATE.LOADED;
 
-        image.onload = () => {
-            this.state = LoadableImage.STATE.LOADED;
-            this.image = image;
+                resolve(bitmap);
+            })
+            .catch(err => {
+                this.state = LoadableImage.STATE.EMPTY;
 
-            resolve(image);
-        };
-
-        image.onerror = () => {
-            this.state = LoadableImage.STATE.EMPTY;
-
-            reject(LoadableImage.ERROR_CODE.ERROR_IMAGE_LOAD);
-        };
-
-        image.src = this.path;
+                reject(LoadableImage.ERROR_CODE.ERROR_IMAGE_LOAD);
+            });
     });
-}
+};
 
 LoadableImage.prototype.addReference = function() {
     this.references++;
@@ -88,11 +94,8 @@ LoadableImage.prototype.getBuffer = function() {
             this.requestImage();
             return null;
         }
-        case LoadableImage.STATE.LOADING: {
-            return null;
-        }
         case LoadableImage.STATE.LOADED: {
-            return this.image;
+            return this.bitmap;
         }
         default: {
             return null;
