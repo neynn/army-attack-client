@@ -91,13 +91,14 @@ SpriteManager.prototype.createSprite = function(typeID, layerID = null, animatio
 }
 
 SpriteManager.prototype.drawSprite = function(sprite, context, localX, localY) {
-    const { typeID, animationID, currentFrame, isFlipped } = sprite;
+    const { typeID, animationID, currentFrame, flags } = sprite;
     const spriteBuffer = this.resources.getImage(typeID);
 
     if(!spriteBuffer) {
         return;
     }
 
+    const isFlipped = (flags & Sprite.FLAG.FLIP) !== 0;
     const spriteType = this.spriteTypes[typeID];
     const spriteBounds = spriteType.getBounds();
     const animationType = spriteType.getAnimation(animationID);

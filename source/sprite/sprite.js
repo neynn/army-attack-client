@@ -7,7 +7,7 @@ export const Sprite = function(DEBUG_NAME) {
     this.animationID = null;
     this.lastCallTime = 0;
     this.frameCount = 0;
-    this.frameTime = 0;
+    this.frameTime = 1;
     this.floatFrame = 0;
     this.currentFrame = 0;
     this.loopCount = 0;
@@ -16,10 +16,15 @@ export const Sprite = function(DEBUG_NAME) {
     this.boundsY = 0;
     this.boundsW = 0;
     this.boundsH = 0;
-    this.isRepeating = true;
-    this.isStatic = false;
-    this.isFlipped = false;
+    this.flags = Sprite.FLAG.NONE;
 }
+
+Sprite.FLAG = {
+    NONE: 0b00000000,
+    FLIP: 1 << 0,
+    STATIC: 1 << 1,
+    EXPIRE: 1 << 2
+};
 
 Sprite.prototype = Object.create(Drawable.prototype);
 Sprite.prototype.constructor = Sprite;
@@ -33,7 +38,7 @@ Sprite.prototype.reset = function() {
     this.animationID = null;
     this.lastCallTime = 0;
     this.frameCount = 0;
-    this.frameTime = 0;
+    this.frameTime = 1;
     this.floatFrame = 0;
     this.currentFrame = 0;
     this.loopCount = 0;
@@ -42,9 +47,7 @@ Sprite.prototype.reset = function() {
     this.boundsY = 0;
     this.boundsW = 0;
     this.boundsH = 0;
-    this.isRepeating = true;
-    this.isStatic = false;
-    this.isFlipped = false;
+    this.flags = Sprite.FLAG.NONE;
     this.setPosition(0, 0);
     this.show();
 }
@@ -74,7 +77,8 @@ Sprite.prototype.isEqual = function(typeID, animationID) {
 }
 
 Sprite.prototype.isVisible = function(viewportRight, viewportLeft, viewportBottom, viewportTop) {
-    const adjustedX = this.isFlipped ? -(this.boundsX + this.boundsW) : this.boundsX;
+    const isFlipped = (this.flags & Sprite.FLAG.FLIP) !== 0;
+    const adjustedX = isFlipped ? -(this.boundsX + this.boundsW) : this.boundsX;
     const x = this.position.x + adjustedX;
     const y = this.position.y + this.boundsY;
     const w = this.boundsW;
@@ -93,7 +97,9 @@ Sprite.prototype.onUpdate = function(timestamp, deltaTime) {
 }
 
 Sprite.prototype.onDebug = function(context, localX, localY) {
-    if(this.isFlipped) {
+    const isFlipped = (this.flags & Sprite.FLAG.FLIP) !== 0;
+
+    if(isFlipped) {
         const drawX = localX - this.boundsX;
         const drawY = localY + this.boundsY;
 
@@ -125,33 +131,35 @@ Sprite.prototype.terminate = function() {
     this.onTerminate(this.id);
 }
 
-Sprite.prototype.repeat = function() {
-    this.isRepeating = true;
-}
-
 Sprite.prototype.expire = function(loops = 0) {
     this.loopLimit = this.loopCount + loops;
-    this.isRepeating = false;
+    this.flags |= Sprite.FLAG.EXPIRE;
+}
+
+Sprite.prototype.repeat = function() {
+    this.flags &= ~Sprite.FLAG.EXPIRE;
 }
 
 Sprite.prototype.freeze = function() {
-    this.isStatic = true;
+    this.flags |= Sprite.FLAG.STATIC;
 }
 
 Sprite.prototype.thaw = function() {
-    this.isStatic = false;
-}
-
-Sprite.prototype.unflip = function() {
-    this.isFlipped = false;
+    this.flags &= ~Sprite.FLAG.STATIC;
 }
 
 Sprite.prototype.flip = function() {
-    this.isFlipped = true;
+    this.flags |= Sprite.FLAG.FLIP;
 }
 
-Sprite.prototype.updateFrame = function(floatFrames = 0) {
-    if(this.isStatic) {
+Sprite.prototype.unflip = function() {
+    this.flags &= ~Sprite.FLAG.FLIP;
+}
+
+Sprite.prototype.updateFrame = function(floatFrames) {
+    const isStatic = (this.flags & Sprite.FLAG.STATIC) !== 0;
+
+    if(isStatic) {
         return;
     }
 
@@ -169,7 +177,9 @@ Sprite.prototype.updateFrame = function(floatFrames = 0) {
         this.loopCount += skippedLoops;
     }
 
-    if(this.loopCount > this.loopLimit && !this.isRepeating) {
+    const isExpiring = (this.flags & Sprite.FLAG.EXPIRE) !== 0;
+
+    if(isExpiring && this.loopCount > this.loopLimit) {
         this.terminate();
     }
 }
