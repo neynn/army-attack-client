@@ -112,7 +112,7 @@ const createDefaultSprite = function(gameContext, entity, config) {
     positionComponent.positionX = x;
     positionComponent.positionY = y;
 
-    spriteComponent.spriteID = sprite.getID();
+    spriteComponent.spriteID = sprite.getIndex();
 
     sprite.setPosition(x, y);
 

@@ -7,11 +7,11 @@ import { ObjectPool } from "../objectPool.js";
 
 export const SpriteManager = function() {
     this.resources = new ImageManager();
-    this.sprites = new ObjectPool(1000);
+    this.sprites = new ObjectPool(2000);
     this.spriteTypes = {};
     this.timestamp = 0;
 
-    this.sprites.allocate((index) => new Sprite(index));
+    this.sprites.allocate((index) => new Sprite(index, index));
 
     this.layers = [];
     this.layers[SpriteManager.LAYER.BOTTOM] = [];
@@ -79,13 +79,13 @@ SpriteManager.prototype.createSprite = function(typeID, layerID = null, animatio
 
     sprite.reset();
     sprite.onDraw = (context, localX, localY) => this.drawSprite(sprite, context, localX, localY);
-    sprite.onTerminate = (id) => this.destroySprite(id);
+    sprite.onTerminate = () => this.destroySprite(sprite.index);
 
     if(layerID !== null) {
         this.addToLayer(layerID, sprite);
     }
 
-    this.updateSprite(sprite.id, typeID, animationID);
+    this.updateSprite(sprite.index, typeID, animationID);
 
     return sprite;
 }
@@ -126,11 +126,11 @@ SpriteManager.prototype.drawSprite = function(sprite, context, localX, localY) {
     }
 }
 
-SpriteManager.prototype.destroySprite = function(spriteID) {
-    const sprite = this.sprites.getReservedElement(spriteID);
+SpriteManager.prototype.destroySprite = function(spriteIndex) {
+    const sprite = this.sprites.getReservedElement(spriteIndex);
 
     if(!sprite) {
-        Logger.log(Logger.CODE.ENGINE_WARN, "Sprite is not reserved!", "SpriteManager.prototype.destroySprite", { "spriteID": spriteID });
+        Logger.log(Logger.CODE.ENGINE_WARN, "Sprite is not reserved!", "SpriteManager.prototype.destroySprite", { "spriteID": spriteIndex });
         return [];
     }
     
@@ -145,8 +145,8 @@ SpriteManager.prototype.destroySprite = function(spriteID) {
             continue;
         }
 
-        const elementID = element.getID();
-        const isReserved = this.sprites.isReserved(elementID);
+        const index = element.getIndex();
+        const isReserved = this.sprites.isReserved(index);
 
         if(!isReserved) {
             continue;
@@ -154,33 +154,33 @@ SpriteManager.prototype.destroySprite = function(spriteID) {
 
         element.closeFamily();
 
-        this.removeSpriteFromLayers(elementID);
-        this.sprites.freeElement(elementID);
+        this.removeSpriteFromLayers(index);
+        this.sprites.freeElement(index);
     }
     
     return invalidElements;
 }
 
-SpriteManager.prototype.getSprite = function(spriteID) {
-    const sprite = this.sprites.getReservedElement(spriteID);
+SpriteManager.prototype.getSprite = function(spriteIndex) {
+    const sprite = this.sprites.getReservedElement(spriteIndex);
 
     return sprite;
 }
 
-SpriteManager.prototype.swapLayer = function(layerIndex, spriteID) {
+SpriteManager.prototype.swapLayer = function(layerIndex, spriteIndex) {
     if(layerIndex < 0 || layerIndex >= this.layers.length) {
         Logger.log(Logger.CODE.ENGINE_WARN, "Layer does not exist!", "SpriteManager.prototype.swapLayer", { "layer": layerIndex });
         return;
     }
 
-    const sprite = this.sprites.getReservedElement(spriteID);
+    const sprite = this.sprites.getReservedElement(spriteIndex);
 
     if(!sprite) {
-        Logger.log(Logger.CODE.ENGINE_WARN, "Sprite is not reserved!", "SpriteManager.prototype.swapLayer", { "spriteID": spriteID });
+        Logger.log(Logger.CODE.ENGINE_WARN, "Sprite is not reserved!", "SpriteManager.prototype.swapLayer", { "spriteID": spriteIndex });
         return;
     }
 
-    this.removeSpriteFromLayers(spriteID);
+    this.removeSpriteFromLayers(spriteIndex);
     this.addToLayer(layerIndex, sprite);
 }
 
@@ -191,7 +191,7 @@ SpriteManager.prototype.addToLayer = function(layerIndex, sprite) {
     }
 
     const layer = this.layers[layerIndex];
-    const index = layer.findIndex(member => member.id === sprite.id);
+    const index = layer.findIndex(member => member.index === sprite.index);
 
     if(index !== -1) {
         Logger.log(Logger.CODE.ENGINE_WARN, "Sprite already exists on layer!", "SpriteManager.prototype.addToLayer", { "layer": layerIndex });
@@ -201,10 +201,10 @@ SpriteManager.prototype.addToLayer = function(layerIndex, sprite) {
     layer.push(sprite);
 }
 
-SpriteManager.prototype.removeSpriteFromLayers = function(spriteID) {
+SpriteManager.prototype.removeSpriteFromLayers = function(spriteIndex) {
     for(let i = 0; i < this.layers.length; i++) {
         const layer = this.layers[i];
-        const index = layer.findIndex(member => member.id === spriteID);
+        const index = layer.findIndex(member => member.index === spriteIndex);
 
         if(index !== -1) {
             layer[index] = layer[layer.length - 1];
@@ -213,11 +213,11 @@ SpriteManager.prototype.removeSpriteFromLayers = function(spriteID) {
     }
 }
 
-SpriteManager.prototype.updateSprite = function(spriteID, typeID, animationID = ImageSheet.DEFAULT_ANIMATION_ID) {
-    const sprite = this.sprites.getReservedElement(spriteID);
+SpriteManager.prototype.updateSprite = function(spriteIndex, typeID, animationID = ImageSheet.DEFAULT_ANIMATION_ID) {
+    const sprite = this.sprites.getReservedElement(spriteIndex);
     
     if(!sprite) {
-        Logger.log(Logger.CODE.ENGINE_WARN, "Sprite is not reserved!", "SpriteManager.prototype.updateSprite", { "spriteID": spriteID });
+        Logger.log(Logger.CODE.ENGINE_WARN, "Sprite is not reserved!", "SpriteManager.prototype.updateSprite", { "spriteID": spriteIndex });
         return;
     }
 

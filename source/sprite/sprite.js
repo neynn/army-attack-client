@@ -1,8 +1,9 @@
 import { Drawable } from "../graphics/drawable.js";
 
-export const Sprite = function(DEBUG_NAME) {
+export const Sprite = function(DEBUG_NAME, index) {
     Drawable.call(this, DEBUG_NAME);
     
+    this.index = index;
     this.typeID = null;
     this.animationID = null;
     this.lastCallTime = 0;
@@ -31,6 +32,10 @@ Sprite.prototype.constructor = Sprite;
 
 Sprite.prototype.onTerminate = function(spriteID) {
     console.warn(`Method onTerminate has not been implemented by sprite ${spriteID}`);
+}
+
+Sprite.prototype.getIndex = function() {
+    return this.index;
 }
 
 Sprite.prototype.reset = function() {
@@ -128,7 +133,7 @@ Sprite.prototype.setFrame = function(frameIndex = this.currentFrame) {
 Sprite.prototype.terminate = function() {
     this.hide();
     this.freeze();
-    this.onTerminate(this.id);
+    this.onTerminate();
 }
 
 Sprite.prototype.expire = function(loops = 0) {

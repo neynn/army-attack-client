@@ -11,7 +11,7 @@ export const Drawable = function(DEBUG_NAME = "") {
     this.opacity = 1;
 }
 
-Drawable.NEXT_ID = 0;
+Drawable.NEXT_ID = 69420;
 
 Drawable.STATE = {
     HIDDEN: 0,

@@ -56,7 +56,7 @@ AnimationSystem.playFire = function(gameContext, target, attackersIDs) {
         const attacker = entityManager.getEntity(attackerID);
         const unitSizeComponent = attacker.getComponent(ArmyEntity.COMPONENT.UNIT_SIZE);
         const weaponSprite = spriteManager.createSprite(attacker.config.sprites.weapon);
-        const weaponSpriteID = weaponSprite.getID();
+        const weaponSpriteID = weaponSprite.getIndex();
         const { x, y } = getRandomOffset(AnimationSystem.FIRE_OFFSET.REGULAR, AnimationSystem.FIRE_OFFSET.REGULAR);
 
         attacker.lookAtEntity(target);
@@ -68,7 +68,7 @@ AnimationSystem.playFire = function(gameContext, target, attackersIDs) {
 
         if(unitSizeComponent && unitSizeComponent.artillery) {
             const artillerySprite = spriteManager.createSprite(attacker.config.sprites.weapon);
-            const artillerySpriteID = artillerySprite.getID();
+            const artillerySpriteID = artillerySprite.getIndex();
             const { x, y } = getRandomOffset(AnimationSystem.FIRE_OFFSET.ARTILLERY, AnimationSystem.FIRE_OFFSET.ARTILLERY);
 
             entitySprite.addChild(artillerySprite, artillerySpriteID);
@@ -98,9 +98,9 @@ AnimationSystem.stopSelect = function(gameContext, entity) {
     const moveSprite = entitySprite.getChild(AnimationSystem.SPRITE_ID.MOVE);
 
     if(moveSprite) {
-        const spriteID = moveSprite.getID();
+        const spriteIndex = moveSprite.getIndex();
 
-        spriteManager.destroySprite(spriteID);
+        spriteManager.destroySprite(spriteIndex);
     }
 }
 

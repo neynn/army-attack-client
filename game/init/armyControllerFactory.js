@@ -77,7 +77,7 @@ ArmyControllerFactory.prototype.onCreate = function(gameContext, config) {
         case ArmyControllerFactory.TYPE.PLAYER: {
             const controller = new Player();
             const controllerSprite = spriteManager.createSprite("cursor_attack_1x1", SpriteManager.LAYER.UI);
-            const spriteID = controllerSprite.getID();
+            const spriteID = controllerSprite.getIndex();
 
             controller.inventory.init(gameContext);
             controller.spriteID = spriteID;
