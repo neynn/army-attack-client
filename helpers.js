@@ -46,12 +46,14 @@ export const saveMap = function(mapID, map2D) {
 
     const graphics = map2D.saveMeta();
     const layers = map2D.saveLayers();
+    const flags = JSON.stringify(map2D.saveFlags());
 
     const downloadableString = 
 `{
     "music": "${map2D.music}",
     "width": ${map2D.width},
     "height": ${map2D.height},
+    "flags": ${flags},
     "graphics": {
         "layers": {
             ${graphics.join(",\n            ")}

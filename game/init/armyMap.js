@@ -7,10 +7,25 @@ export const ArmyMap = function() {
     WorldMap.call(this, null);
 
     this.music = null;
-    this.disablePassing = false;
-    this.disableBorder = false;
-    this.disableItemDrops = false;
+    this.type = ArmyMap.TYPE.NONE;
+    this.flags = ArmyMap.FLAG.NONE;
 }
+
+ArmyMap.FLAG = {
+    NONE: 0,
+    ALLOW_PASSING: 1 << 0,
+    ALLOW_BORDER: 1 << 1,
+    ALLOW_DROPS: 1 << 2
+};
+
+ArmyMap.TYPE = {
+    NONE: 0,
+    VERSUS: 1,
+    STORY: 2,
+    STRIKE: 3,
+    EMPTY_STORY: 4,
+    EMPTY_VERSUS: 5
+};
 
 ArmyMap.TEAM_TO_WORLD = {
     "Crimson": 0,
@@ -62,23 +77,42 @@ ArmyMap.UPDATE_RANGE = {
 ArmyMap.prototype = Object.create(WorldMap.prototype);
 ArmyMap.prototype.constructor = ArmyMap;
 
+ArmyMap.prototype.saveFlags = function() {
+    const flags = [];
+
+    for(const flagID in ArmyMap.FLAG) {
+        const flag = ArmyMap.FLAG[flagID];
+
+        if((this.flags & flag) !== 0) {
+            flags.push(flagID);
+        }
+    }
+
+    return flags;
+}
+
 ArmyMap.prototype.loadMeta = function(meta) {
     if(!meta) {
         return;
     }
 
     const {
-        disableBorder = false,
-        disablePassing = false,
-        disableItemDrops = false,
+        flags = [],
         graphics = null,
         music = null
     } = meta;
 
     this.music = music;
-    this.disableBorder = disableBorder;
-    this.disablePassing = disablePassing;
-    this.disableItemDrops = disableItemDrops;
+
+    for(let i = 0; i < flags.length; i++) {
+        const flagID = flags[i];
+        const flag = ArmyMap.FLAG[flagID];
+        
+        if(flag) {
+            this.flags |= flag;
+        }
+    }
+
     this.loadGraphics(graphics);
 }
 
@@ -266,7 +300,7 @@ ArmyMap.prototype.updateBorder = function(gameContext, centerX, centerY, range) 
     const { controllerManager } = world;
     const { meta } = tileManager;
 
-    if(!gameContext.settings.drawBorder || this.disableBorder) {
+    if(!gameContext.settings.drawBorder || (this.flags & ArmyMap.FLAG.ALLOW_BORDER) === 0) {
         return;
     }
 

@@ -107,7 +107,7 @@ ArmyEntity.prototype.isBypassingAllowed = function(gameContext, entity) {
     const { mapManager } = world;
     const activeMap = mapManager.getActiveMap();
 
-    if(!activeMap || activeMap.disablePassing) {
+    if(!activeMap || (activeMap.flags & ArmyMap.FLAG.ALLOW_PASSING) === 0) {
         return false;
     }
 

@@ -52,26 +52,26 @@
         }
     },
     "EntityType": {
-        "Building": { "id": "Building", "disableCard": false },
-        "Construction": { "id": "Construction", "disableCard": false },
-        "Deco": { "id": "Deco", "disableCard": false },
-        "Defense": { "id": "Defense", "disableCard": false },
-        "HFE": { "id": "HFE", "disableCard": false },
-        "Town": { "id": "Town", "disableCard": false },
-        "Unit": { "id": "Unit", "disableCard": false }
+        "Building": { "disableCard": false },
+        "Construction": { "disableCard": false },
+        "Deco": { "disableCard": false },
+        "Defense": { "disableCard": false },
+        "HFE": { "disableCard": false },
+        "Town": { "disableCard": false },
+        "Unit": { "disableCard": false }
     },
     "ResourceType": {
-        "Money": { "id": "Money", "maxDrop": 50, "icon": "resource_icon_cash" },
-        "Gold": { "id": "Gold", "maxDrop": 1, "icon": "resource_icon_credits" },
-        "Energy": { "id": "Energy", "maxDrop": 1, "icon": "resource_icon_energy" },
-        "Supplies": { "id": "Supplies", "maxDrop": 50, "icon": "resource_icon_supplies" },
-        "Water": { "id": "Water", "maxDrop": 1, "icon": "resource_icon_water" },
-        "XP": { "id": "XP", "maxDrop": 5, "icon": "resource_icon_xp" },
-        "Honor": { "id": "Honor", "maxDrop": 1, "icon": "resource_icon_honor" },
-        "PVP_XP": { "id": "PVP_XP", "maxDrop": 5, "icon": "pvp_rank_icon" },
-        "SocialEnergy": { "id": "SocialEnergy", "maxDrop": 1, "icon": "resource_icon_social_energy" },
-        "Dollor": { "id": "Dollor", "maxDrop": 1, "icon": "icon_dollor" },
-        "EnergyCounter": { "id": "EnergyCounter", "maxDrop": 0, "icon": null }
+        "Money": { "maxDrop": 50, "icon": "resource_icon_cash" },
+        "Gold": { "maxDrop": 1, "icon": "resource_icon_credits" },
+        "Energy": { "maxDrop": 1, "icon": "resource_icon_energy" },
+        "Supplies": { "maxDrop": 50, "icon": "resource_icon_supplies" },
+        "Water": { "maxDrop": 1, "icon": "resource_icon_water" },
+        "XP": { "maxDrop": 5, "icon": "resource_icon_xp" },
+        "Honor": { "maxDrop": 1, "icon": "resource_icon_honor" },
+        "PVP_XP": { "maxDrop": 5, "icon": "pvp_rank_icon" },
+        "SocialEnergy": { "maxDrop": 1, "icon": "resource_icon_social_energy" },
+        "Dollor": { "maxDrop": 1, "icon": "icon_dollor" },
+        "EnergyCounter": { "maxDrop": 0, "icon": null }
     },
     "TileType": {
         "0": { "id": 0, "color": "#000000", "name": "Ground", "passability": "Land", "defaultTeam": null, "hasBorder": true },
@@ -80,9 +80,9 @@
         "3": { "id": 3, "color": "#00ffff", "name": "Shore", "passability": "Shore", "defaultTeam": "Neutral", "hasBorder": false }
     },
     "AllianceType": {
-        "Enemy": { "id": "Enemy", "isWalkable": false, "isEntityPassingAllowed": false, "isEnemy": true },
-        "Ally": { "id": "Ally", "isWalkable": true, "isEntityPassingAllowed": true, "isEnemy": false },
-        "Neutral": { "id": "Neutral", "isWalkable": true, "isEntityPassingAllowed": true, "isEnemy": false }
+        "Enemy": { "isWalkable": false, "isEntityPassingAllowed": false, "isEnemy": true },
+        "Ally": { "isWalkable": true, "isEntityPassingAllowed": true, "isEnemy": false },
+        "Neutral": { "isWalkable": true, "isEntityPassingAllowed": true, "isEnemy": false }
     },
     "TeamType": {
         "Crimson": {

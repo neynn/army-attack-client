@@ -7,6 +7,7 @@ export const WorldMap = function(id) {
     this.id = id;
     this.width = 0;
     this.height = 0;
+    this.flags = 0;
     this.layers = new Map();
     this.tracker = new Tracker();
     this.background = [];

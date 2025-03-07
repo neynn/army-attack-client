@@ -4,8 +4,6 @@
         "directory": "assets/maps/pvp",
         "source": "valleys.json",
         "music": "music_polarbear",
-        "disablePassing": false,
-        "disableBorder": false,
         "width": 11,
         "height": 11,
         "author": "neyn",
@@ -76,6 +74,7 @@
         "width": 20,
         "height": 20,
         "type": "Versus",
+        "flags": ["ALLOW_PASSINsG", "ALLOW_BORDER", "ALLOW_DROPS"],
         "graphics": {
             "layers": {
                 "ground": { "opacity": 1, "autoGenerate": false },
