@@ -123,7 +123,6 @@ Drawable.prototype.getReferenceStack = function() {
 
     while(referenceStack.length !== 0) {
         const drawable = referenceStack.pop();
-        const drawableID = drawable.getID();
         const children = drawable.getChildren();
 
         for(let i = children.length - 1; i >= 0; i--) {
@@ -133,7 +132,7 @@ Drawable.prototype.getReferenceStack = function() {
             referenceStack.push(reference);
         }
 
-        referenceIDStack.push(drawableID);
+        referenceIDStack.push(drawable);
     }
 
     return referenceIDStack;
@@ -220,7 +219,7 @@ Drawable.prototype.openFamily = function(name) {
         return;
     }
 
-    this.graph = new Graph(this);
+    this.graph = new Graph(this.id, this);
     this.graph.setName(name);
 }
 

@@ -74,7 +74,7 @@
         "width": 20,
         "height": 20,
         "type": "Versus",
-        "flags": ["ALLOW_PASSINsG", "ALLOW_BORDER", "ALLOW_DROPS"],
+        "flags": ["ALLOW_PASSING", "ALLOW_BORDER", "ALLOW_DROPS"],
         "graphics": {
             "layers": {
                 "ground": { "opacity": 1, "autoGenerate": false },

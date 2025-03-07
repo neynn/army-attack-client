@@ -28,17 +28,34 @@ Sprite.prototype.onTerminate = function(spriteID) {
     console.warn(`Method onTerminate has not been implemented by sprite ${spriteID}`);
 }
 
-Sprite.prototype.init = function(typeID, animationID, frameCount, frameTime) {
-    this.typeID = typeID;
-    this.animationID = animationID;
-    this.frameCount = frameCount;
-    this.frameTime = frameTime;
+Sprite.prototype.reset = function() {
+    this.typeID = null;
+    this.animationID = null;
+    this.lastCallTime = 0;
+    this.frameCount = 0;
+    this.frameTime = 0;
     this.floatFrame = 0;
     this.currentFrame = 0;
     this.loopCount = 0;
     this.loopLimit = 0;
+    this.boundsX = 0;
+    this.boundsY = 0;
+    this.boundsW = 0;
+    this.boundsH = 0;
     this.isRepeating = true;
     this.isStatic = false;
+    this.isFlipped = false;
+    this.setPosition(0, 0);
+    this.show();
+}
+
+Sprite.prototype.init = function(typeID, animationID, frameCount, frameTime, lastCallTime) {
+    this.DEBUG_NAME = typeID;
+    this.typeID = typeID;
+    this.animationID = animationID;
+    this.frameCount = frameCount;
+    this.frameTime = frameTime;
+    this.lastCallTime = lastCallTime;
 }
 
 Sprite.prototype.setLastCallTime = function(lastCallTime) {

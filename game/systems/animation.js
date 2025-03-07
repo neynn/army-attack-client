@@ -40,9 +40,9 @@ AnimationSystem.playDeath = function(gameContext, entity) {
     const spriteType = entity.getSpriteID(ArmyEntity.SPRITE_TYPE.DEATH);
     const deathAnimation = spriteManager.createSprite(spriteType, SpriteManager.LAYER.MIDDLE);
 
-    deathAnimation.expire();
     deathAnimation.setPosition(positionComponent.positionX, positionComponent.positionY);
-    
+    deathAnimation.expire();
+  
     entity.playSound(gameContext, ArmyEntity.SOUND_TYPE.DEATH);
 }
 
@@ -63,7 +63,7 @@ AnimationSystem.playFire = function(gameContext, target, attackersIDs) {
         attacker.updateSpriteDirectonal(gameContext, ArmyEntity.SPRITE_TYPE.FIRE, ArmyEntity.SPRITE_TYPE.FIRE_UP);
         attacker.playSound(gameContext, ArmyEntity.SOUND_TYPE.FIRE);
         entitySprite.addChild(weaponSprite, weaponSpriteID);
-        weaponSprite.updatePosition(x, y);
+        weaponSprite.setPosition(x, y);
         weaponSprite.expire();
 
         if(unitSizeComponent && unitSizeComponent.artillery) {
@@ -72,7 +72,7 @@ AnimationSystem.playFire = function(gameContext, target, attackersIDs) {
             const { x, y } = getRandomOffset(AnimationSystem.FIRE_OFFSET.ARTILLERY, AnimationSystem.FIRE_OFFSET.ARTILLERY);
 
             entitySprite.addChild(artillerySprite, artillerySpriteID);
-            artillerySprite.updatePosition(x, y);
+            artillerySprite.setPosition(x, y);
             artillerySprite.flip();
             artillerySprite.expire();
         }
@@ -86,7 +86,8 @@ AnimationSystem.playSelect = function(gameContext, entity) {
     const moveSprite = spriteManager.createSprite(AnimationSystem.SPRITE_TYPE.SELECT);
     
     entitySprite.addChild(moveSprite, AnimationSystem.SPRITE_ID.MOVE);
-
+    moveSprite.setPosition(0, 0);
+    
     entity.playSound(gameContext, ArmyEntity.SOUND_TYPE.SELECT);
 }
 

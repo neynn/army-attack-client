@@ -1,12 +1,10 @@
-export const Graph = function(reference) {
-    this.id = Graph.NEXT_ID++;
+export const Graph = function(id, reference) {
+    this.id = id;
     this.name = Graph.DEFAULT_NAME;
     this.reference = reference;
     this.parent = null;
     this.children = [];
 }
-
-Graph.NEXT_ID = 0;
 
 Graph.DEFAULT_NAME = "DEFAULT";
 
@@ -72,7 +70,7 @@ Graph.prototype.addChild = function(child) {
     for(let i = 0; i < this.children.length; i++) {
         const element = this.children[i];
 
-        if(element.id === child.id || element.name === child.name) {
+        if(element.id === child.id) {
             return;
         }
     }
