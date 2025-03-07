@@ -1,7 +1,7 @@
 import { Drawable } from "../graphics/drawable.js";
 
 export const Sprite = function(DEBUG_NAME, index) {
-    Drawable.call(this, DEBUG_NAME);
+    Drawable.call(this, Drawable.TYPE.SPRITE, DEBUG_NAME);
     
     this.index = index;
     this.typeID = null;
@@ -84,8 +84,8 @@ Sprite.prototype.isEqual = function(typeID, animationID) {
 Sprite.prototype.isVisible = function(viewportRight, viewportLeft, viewportBottom, viewportTop) {
     const isFlipped = (this.flags & Sprite.FLAG.FLIP) !== 0;
     const adjustedX = isFlipped ? -(this.boundsX + this.boundsW) : this.boundsX;
-    const x = this.position.x + adjustedX;
-    const y = this.position.y + this.boundsY;
+    const x = this.positionX + adjustedX;
+    const y = this.positionY + this.boundsY;
     const w = this.boundsW;
     const h = this.boundsH;
     const isVisible = x < viewportRight && x + w > viewportLeft && y < viewportBottom && y + h > viewportTop;

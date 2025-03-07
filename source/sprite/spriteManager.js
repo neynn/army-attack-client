@@ -4,6 +4,7 @@ import { Sprite } from "./sprite.js";
 import { ImageManager } from "../resources/imageManager.js";
 import { SpriteSheet } from "../graphics/spriteSheet.js";
 import { ObjectPool } from "../objectPool.js";
+import { Drawable } from "../graphics/drawable.js";
 
 export const SpriteManager = function() {
     this.resources = new ImageManager();
@@ -140,7 +141,7 @@ SpriteManager.prototype.destroySprite = function(spriteIndex) {
     for(let i = familyStack.length - 1; i >= 0; i--) {
         const element = familyStack[i];
 
-        if(!(element instanceof Sprite)) {
+        if(element.type !== Drawable.TYPE.SPRITE) {
             invalidElements.push(element);
             continue;
         }

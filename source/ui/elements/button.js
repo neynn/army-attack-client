@@ -83,16 +83,14 @@ Button.prototype.onDebug = function(context, localX, localY) {
 }
 
 Button.prototype.isColliding = function(mouseX, mouseY, mouseRange) {
-    const { x, y } = this.position;
-
     switch(this.shape) {
         case Button.SHAPE.RECTANGLE: {
-            const isColliding = isRectangleRectangleIntersect(x, y, this.width, this.height, mouseX, mouseY, mouseRange, mouseRange);
+            const isColliding = isRectangleRectangleIntersect(this.positionX, this.positionY, this.width, this.height, mouseX, mouseY, mouseRange, mouseRange);
 
             return isColliding;
         }
         case Button.SHAPE.CIRCLE: {
-            const isColliding = isCircleCicleIntersect(x, y, this.width, mouseX, mouseY, mouseRange);
+            const isColliding = isCircleCicleIntersect(this.positionX, this.positionY, this.width, mouseX, mouseY, mouseRange);
 
             return isColliding;
         }

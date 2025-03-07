@@ -1,7 +1,8 @@
 import { Drawable } from "../graphics/drawable.js";
+import { UserInterface } from "./userInterface.js";
 
 export const UIElement = function(DEBUG_NAME) {
-    Drawable.call(this, DEBUG_NAME);
+    Drawable.call(this, Drawable.TYPE.UI_ELEMENT, DEBUG_NAME);
 
     this.anchor = UIElement.ANCHOR_TYPE.TOP_LEFT;
     this.behavior = 0;
@@ -66,6 +67,50 @@ UIElement.prototype.setAnchor = function(anchor) {
     if(UIElement.ANCHOR_TYPE[anchor] !== undefined) {
         this.anchor = UIElement.ANCHOR_TYPE[anchor];
     }
+}
+
+UIElement.prototype.getCollisions = function(mouseX, mouseY, mouseRange) {
+    if(!this.hasBehaviorFlag(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE)) {
+        return [];
+    }
+
+    const collidedElements = [];
+    const referenceStack = [this];
+    const positionStack = [mouseX, mouseY];
+
+    while(referenceStack.length !== 0) {
+        const positionY = positionStack.pop();
+        const positionX = positionStack.pop();
+        const reference = referenceStack.pop();
+        const isColliding = reference.isColliding(positionX, positionY, mouseRange);
+
+        if(!isColliding) {
+            continue;
+        }
+
+        const children = reference.getChildren();
+        const nextX = positionX - reference.positionX;
+        const nextY = positionY - reference.positionY;
+
+        for(let i = 0; i < children.length; i++) {
+            const child = children[i];
+            const reference = child.getReference();
+            
+            if(reference.type === Drawable.TYPE.UI_ELEMENT) {
+                const hasFlag = reference.hasBehaviorFlag(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE);
+
+                if(hasFlag) {
+                    referenceStack.push(reference);
+                    positionStack.push(nextX);
+                    positionStack.push(nextY);
+                }
+            }
+        }
+
+        collidedElements.push(reference);
+    }
+
+    return collidedElements;
 }
 
 UIElement.prototype.updateAnchor = function(windowWidth, windowHeight) {    

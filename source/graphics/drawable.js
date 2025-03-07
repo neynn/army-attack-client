@@ -1,17 +1,25 @@
 import { clampValue } from "../math/math.js";
-import { Vec2 } from "../math/vec2.js";
 import { Graph } from "./graph.js";
 
-export const Drawable = function(DEBUG_NAME = "") {
+export const Drawable = function(type, DEBUG_NAME = "") {
     this.DEBUG_NAME = DEBUG_NAME;
+    this.type = type ?? Drawable.TYPE.NONE;
     this.id = Drawable.NEXT_ID++;
     this.state = Drawable.STATE.VISIBLE;
-    this.position = new Vec2(0, 0);
-    this.graph = null;
+    this.positionX = 0;
+    this.positionY = 0;
     this.opacity = 1;
+    this.graph = null;
 }
 
 Drawable.NEXT_ID = 69420;
+
+Drawable.TYPE = {
+    NONE: 0,
+    SPRITE: 1,
+    UI_ELEMENT: 2,
+    OTHER: 3
+};
 
 Drawable.STATE = {
     HIDDEN: 0,
@@ -62,7 +70,7 @@ Drawable.prototype.drizzle = function(onCall) {
 
 Drawable.prototype.debug = function(context, viewportX, viewportY) {
     const referenceStack = [this];
-    const positionStack = [this.position.x - viewportX, this.position.y - viewportY];
+    const positionStack = [this.positionX - viewportX, this.positionY - viewportY];
 
     while(referenceStack.length !== 0) {
         const positionY = positionStack.pop();
@@ -79,8 +87,8 @@ Drawable.prototype.debug = function(context, viewportX, viewportY) {
             const reference = child.getReference();
 
             referenceStack.push(reference);
-            positionStack.push(positionX + reference.position.x);
-            positionStack.push(positionY + reference.position.y);
+            positionStack.push(positionX + reference.positionX);
+            positionStack.push(positionY + reference.positionY);
         }
     }
 }
@@ -91,7 +99,7 @@ Drawable.prototype.draw = function(context, viewportX, viewportY) {
     }
 
     const referenceStack = [this];
-    const positionStack = [this.position.x - viewportX, this.position.y - viewportY];
+    const positionStack = [this.positionX - viewportX, this.positionY - viewportY];
 
     while(referenceStack.length !== 0) {
         const positionY = positionStack.pop();
@@ -110,8 +118,8 @@ Drawable.prototype.draw = function(context, viewportX, viewportY) {
 
             if(reference.state === Drawable.STATE.VISIBLE) {
                 referenceStack.push(reference);
-                positionStack.push(positionX + reference.position.x);
-                positionStack.push(positionY + reference.position.y);
+                positionStack.push(positionX + reference.positionX);
+                positionStack.push(positionY + reference.positionY);
             }
         }
     }
@@ -143,13 +151,13 @@ Drawable.prototype.getID = function() {
 }
 
 Drawable.prototype.updatePosition = function(deltaX, deltaY) {
-    this.position.x += deltaX;
-    this.position.y += deltaY;
+    this.positionX += deltaX;
+    this.positionY += deltaY;
 }
 
 Drawable.prototype.setPosition = function(positionX, positionY) {
-    this.position.x = positionX;
-    this.position.y = positionY;
+    this.positionX = positionX;
+    this.positionY = positionY;
 }
 
 Drawable.prototype.hide = function() {

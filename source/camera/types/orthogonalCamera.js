@@ -184,7 +184,7 @@ OrthogonalCamera.prototype.drawSpriteLayer = function(gameContext, renderContext
         }
     }
 
-    visibleSprites.sort((current, next) => current.position.y - next.position.y);
+    visibleSprites.sort((current, next) => current.positionY - next.positionY);
     
     for(let j = 0; j < visibleSprites.length; j++) {
         const sprite = visibleSprites[j];
