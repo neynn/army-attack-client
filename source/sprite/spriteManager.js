@@ -1,5 +1,4 @@
 import { Logger } from "../logger.js";
-import { ImageSheet } from "../graphics/imageSheet.js";
 import { Sprite } from "./sprite.js";
 import { ImageManager } from "../resources/imageManager.js";
 import { SpriteSheet } from "../graphics/spriteSheet.js";
@@ -39,6 +38,7 @@ SpriteManager.prototype.getLayer = function(layerIndex) {
 SpriteManager.prototype.load = function(spriteTypes) {
     if(!spriteTypes) {
         Logger.log(Logger.CODE.ENGINE_WARN, "SpriteTypes does not exist!", "SpriteManager.prototype.load", null);
+
         return;
     }
 
@@ -75,6 +75,7 @@ SpriteManager.prototype.createSprite = function(typeID, layerID = null, animatio
 
     if(!sprite) {
         Logger.log(Logger.CODE.ENGINE_ERROR, "SpritePool is full!", "SpriteManager.prototype.createSprite", null);
+
         return null;
     }
 
@@ -92,7 +93,7 @@ SpriteManager.prototype.createSprite = function(typeID, layerID = null, animatio
 }
 
 SpriteManager.prototype.drawSprite = function(sprite, context, localX, localY) {
-    const { typeID, animationID, currentFrame, flags } = sprite;
+    const { typeID, animationID, currentFrame, flags, boundsX, boundsY } = sprite;
     const spriteBuffer = this.resources.getImage(typeID);
 
     if(!spriteBuffer) {
@@ -101,28 +102,26 @@ SpriteManager.prototype.drawSprite = function(sprite, context, localX, localY) {
 
     const isFlipped = (flags & Sprite.FLAG.FLIP) !== 0;
     const spriteType = this.spriteTypes[typeID];
-    const spriteBounds = spriteType.getBounds();
     const animationType = spriteType.getAnimation(animationID);
     const animationFrame = animationType.getFrame(currentFrame);
 
     for(let i = 0; i < animationFrame.length; i++) {
-        const { shiftX, shiftY, frame } = animationFrame[i];
-        const { x, y, w, h, offset } = frame;
-        const renderX = localX + offset.x + shiftX;
-        const renderY = localY + offset.y + shiftY;
+        const { frameX, frameY, frameW, frameH, shiftX, shiftY } = animationFrame[i];
+        const renderX = localX + shiftX;
+        const renderY = localY + shiftY;
 
         if(isFlipped) {
-            const drawX = renderX - (spriteBounds.x + w);
-            const drawY = renderY + spriteBounds.y;
+            const drawX = renderX - boundsX;
+            const drawY = renderY + boundsY;
     
-            context.translate(drawX + w, 0);
+            context.translate(drawX, 0);
             context.scale(-1, 1);
-            context.drawImage(spriteBuffer, x, y, w, h, 0, drawY, w, h);
+            context.drawImage(spriteBuffer, frameX, frameY, frameW, frameH, 0, drawY, frameW, frameH);
         } else {
-            const drawX = renderX + spriteBounds.x;
-            const drawY = renderY + spriteBounds.y;
+            const drawX = renderX + boundsX;
+            const drawY = renderY + boundsY;
     
-            context.drawImage(spriteBuffer, x, y, w, h, drawX, drawY, w, h);
+            context.drawImage(spriteBuffer, frameX, frameY, frameW, frameH, drawX, drawY, frameW, frameH);
         }
     }
 }
@@ -132,6 +131,7 @@ SpriteManager.prototype.destroySprite = function(spriteIndex) {
 
     if(!sprite) {
         Logger.log(Logger.CODE.ENGINE_WARN, "Sprite is not reserved!", "SpriteManager.prototype.destroySprite", { "spriteID": spriteIndex });
+
         return [];
     }
     
@@ -171,6 +171,7 @@ SpriteManager.prototype.getSprite = function(spriteIndex) {
 SpriteManager.prototype.swapLayer = function(layerIndex, spriteIndex) {
     if(layerIndex < 0 || layerIndex >= this.layers.length) {
         Logger.log(Logger.CODE.ENGINE_WARN, "Layer does not exist!", "SpriteManager.prototype.swapLayer", { "layer": layerIndex });
+
         return;
     }
 
@@ -178,6 +179,7 @@ SpriteManager.prototype.swapLayer = function(layerIndex, spriteIndex) {
 
     if(!sprite) {
         Logger.log(Logger.CODE.ENGINE_WARN, "Sprite is not reserved!", "SpriteManager.prototype.swapLayer", { "spriteID": spriteIndex });
+
         return;
     }
 
@@ -188,6 +190,7 @@ SpriteManager.prototype.swapLayer = function(layerIndex, spriteIndex) {
 SpriteManager.prototype.addToLayer = function(layerIndex, sprite) {
     if(layerIndex < 0 || layerIndex >= this.layers.length) {
         Logger.log(Logger.CODE.ENGINE_WARN, "Layer does not exist!", "SpriteManager.prototype.addToLayer", { "layer": layerIndex });
+
         return;
     }
 
@@ -196,6 +199,7 @@ SpriteManager.prototype.addToLayer = function(layerIndex, sprite) {
 
     if(index !== -1) {
         Logger.log(Logger.CODE.ENGINE_WARN, "Sprite already exists on layer!", "SpriteManager.prototype.addToLayer", { "layer": layerIndex });
+
         return;
     }
 
@@ -214,11 +218,12 @@ SpriteManager.prototype.removeSpriteFromLayers = function(spriteIndex) {
     }
 }
 
-SpriteManager.prototype.updateSprite = function(spriteIndex, typeID, animationID = ImageSheet.DEFAULT_ANIMATION_ID) {
+SpriteManager.prototype.updateSprite = function(spriteIndex, typeID, animationID = SpriteSheet.DEFAULT_ANIMATION_ID) {
     const sprite = this.sprites.getReservedElement(spriteIndex);
     
     if(!sprite) {
         Logger.log(Logger.CODE.ENGINE_WARN, "Sprite is not reserved!", "SpriteManager.prototype.updateSprite", { "spriteID": spriteIndex });
+
         return;
     }
 
@@ -226,6 +231,7 @@ SpriteManager.prototype.updateSprite = function(spriteIndex, typeID, animationID
 
     if(!spriteType) {
         Logger.log(Logger.CODE.ENGINE_WARN, "SpriteType does not exist!", "SpriteManager.prototype.updateSprite", { "typeID": typeID });
+
         return;
     }
 
@@ -233,17 +239,18 @@ SpriteManager.prototype.updateSprite = function(spriteIndex, typeID, animationID
 
     if(!animationType) {
         Logger.log(Logger.CODE.ENGINE_WARN, "AnimationType does not exist!", "SpriteManager.prototype.updateSprite", { "animationID": animationID, "typeID": typeID });
+        
         return;
     }
 
     const isEqual = sprite.isEqual(typeID, animationID);
 
     if(!isEqual) {
-        const { x, y, w, h } = spriteType.getBounds();
+        const { boundsX, boundsY, boundsW, boundsH } = spriteType;
         const frameCount = animationType.getFrameCount();
         const frameTime = animationType.getFrameTime();
 
         sprite.init(typeID, animationID, frameCount, frameTime, this.timestamp);
-        sprite.setBounds(x, y, w, h);
+        sprite.setBounds(boundsX, boundsY, boundsW, boundsH);
     }
 }

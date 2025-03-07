@@ -3,16 +3,15 @@ import { Animation } from "./animation.js";
 
 export const SpriteSheet = function() {
     this.frames = {};
-    this.bounds = {"x":0,"y": 0,"w":0,"h":0};
+    this.boundsX = 0;
+    this.boundsY = 0;
+    this.boundsW = 0;
+    this.boundsH = 0;
     this.frameTime = 1;
     this.animations = new Map();
 }
 
 SpriteSheet.DEFAULT_ANIMATION_ID = "default";
-
-SpriteSheet.prototype.getBounds = function() {
-    return this.bounds;
-}
 
 SpriteSheet.prototype.getAnimations = function() {
     return this.animations;
@@ -30,10 +29,10 @@ SpriteSheet.prototype.load = function(config) {
     }
 
     if(bounds) {
-        this.bounds.x = bounds.x;
-        this.bounds.y = bounds.y;
-        this.bounds.w = bounds.w;
-        this.bounds.h = bounds.h;
+        this.boundsX = bounds.x;
+        this.boundsY = bounds.y;
+        this.boundsW = bounds.w;
+        this.boundsH = bounds.h;
     }
 }
 
@@ -47,13 +46,15 @@ SpriteSheet.prototype.createFrame = function(frameID) {
         return frame;
     }
 
-    const { offset } = frameData;
-    const { x, y } = offset;
+    const { x, y, w, h, offset } = frameData;
 
     const component = {
-        "frame": frameData,
-        "shiftX": x,
-        "shiftY": y
+        "frameX": x,
+        "frameY": y,
+        "frameW": w,
+        "frameH": h,
+        "shiftX": offset?.x ?? 0,
+        "shiftY": offset?.y ?? 0
     };
     
     frame.push(component);

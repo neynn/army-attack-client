@@ -125,8 +125,6 @@ MapEditorState.prototype.onEnter = function(stateMachine) {
     });
 
     router.on("TOGGLE_AUTOTILER", () => this.mapEditor.toggleAutotiling());
-
-    gameContext.addDebug();
     
     this.mapEditor.loadConfig(MapEditorState.CONFIG);
     this.mapEditor.loadBrushSets(meta.getInversion());
