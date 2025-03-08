@@ -1,5 +1,5 @@
 import { ActionQueue } from "./action/actionQueue.js";
-import { ControllerManager } from "./controller/controllerManager.js";
+import { TurnManager } from "./controller/turnManager.js";
 import { EntityManager } from "./entity/entityManager.js";
 import { EventEmitter } from "./events/eventEmitter.js";
 import { EventBus } from "./events/eventBus.js";
@@ -9,7 +9,7 @@ import { MapManager } from "./map/mapManager.js";
 export const World = function() {
     this.eventBus = new EventBus();
     this.actionQueue = new ActionQueue();
-    this.controllerManager = new ControllerManager();
+    this.turnManager = new TurnManager();
     this.entityManager = new EntityManager();
     this.mapManager = new MapManager();
 
@@ -36,7 +36,7 @@ World.prototype.exit = function() {
 
 World.prototype.update = function(gameContext) {
     this.actionQueue.update(gameContext);
-    this.controllerManager.update(gameContext);
+    this.turnManager.update(gameContext);
     this.entityManager.update(gameContext);
 }
 
@@ -85,7 +85,7 @@ World.prototype.getTileEntity = function(tileX, tileY) {
 }
 
 World.prototype.createController = function(gameContext, config, controllerID) {
-    const controller = this.controllerManager.createController(gameContext, config, controllerID);
+    const controller = this.turnManager.createController(gameContext, config, controllerID);
 
     if(!controller) {
         Logger.log(Logger.CODE.ENGINE_WARN, "Controller could not be created!", "World.prototype.createController", { "controllerID": controllerID });
@@ -99,7 +99,7 @@ World.prototype.createController = function(gameContext, config, controllerID) {
 }
 
 World.prototype.destroyController = function(controllerID) {
-    const controller = this.controllerManager.getController(controllerID);
+    const controller = this.turnManager.getController(controllerID);
 
     if(!controller) {
         Logger.log(Logger.CODE.ENGINE_WARN, "Controller does not exist!", "World.prototype.destroyController", { "controllerID": controllerID });
@@ -119,7 +119,7 @@ World.prototype.destroyController = function(controllerID) {
         }
     }
 
-    this.controllerManager.destroyController(controllerID);
+    this.turnManager.destroyController(controllerID);
     this.events.emit(World.EVENT.CONTROLLER_DESTROY, controller);
 }
 
@@ -133,11 +133,14 @@ World.prototype.createEntity = function(gameContext, config, ownerID, externalID
         return null;
     }
 
-    const entityID = entity.getID();
+    if(ownerID !== undefined && ownerID !== null) {
+        const entityID = entity.getID();
+        
+        this.turnManager.addEntity(ownerID, entityID);
 
-    this.controllerManager.addEntity(ownerID, entityID);
-
-    entity.setOwner(ownerID);
+        entity.setOwner(ownerID);
+    
+    }
 
     this.events.emit(World.EVENT.ENTITY_CREATE, entity);
 
@@ -155,7 +158,7 @@ World.prototype.destroyEntity = function(entityID) {
 
     const ownerID = entity.getOwner();
 
-    this.controllerManager.removeEntity(ownerID, entityID);
+    this.turnManager.removeEntity(ownerID, entityID);
     this.entityManager.destroyEntity(entityID);
     this.events.emit(World.EVENT.ENTITY_DESTROY, entity);
 }

@@ -1,3 +1,4 @@
+import { isRectangleRectangleIntersect } from "../../source/math/math.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { AllianceSystem } from "./alliance.js";
 import { AnimationSystem } from "./animation.js";
@@ -12,6 +13,24 @@ AttackSystem.OUTCOME_STATE = {
     DOWN: 1,
     DEAD: 2
 };
+
+const hasEnoughRange = function(attacker, target, range) {
+    const position = attacker.getComponent(ArmyEntity.COMPONENT.POSITION);
+    const targetPosition = target.getComponent(ArmyEntity.COMPONENT.POSITION);
+
+    const collision = isRectangleRectangleIntersect(
+        position.tileX - range,
+        position.tileY - range,
+        attacker.config.dimX - 1 + range * 2,
+        attacker.config.dimY - 1 + range * 2,
+        targetPosition.tileX,
+        targetPosition.tileY,
+        target.config.dimX - 1,
+        target.config.dimY - 1
+    );
+
+    return collision;
+}
 
 const filterAliveEntitiesInMaxRange = function(gameContext, entity, onCheck) {
     const { world } = gameContext;
@@ -123,7 +142,7 @@ AttackSystem.pickAttackCounterTarget = function(attacker, targets) {
     return targets[index];
 }
 
-AttackSystem.getAttackCounterTargets = function(gameContext, attacker) {
+AttackSystem.getAttackCounterTargets = function(gameContext, attacker, attackers) {
     const attackComponent = attacker.getComponent(ArmyEntity.COMPONENT.ATTACK);
 
     if(!attackComponent || !attackComponent.isAttackCounterable()) {
@@ -132,7 +151,7 @@ AttackSystem.getAttackCounterTargets = function(gameContext, attacker) {
 
     const attackerTeamComponent = attacker.getComponent(ArmyEntity.COMPONENT.TEAM);
     const targets = filterAliveEntitiesInMaxRange(gameContext, attacker, (target) => {
-        const hasRange = attacker.isEntityInRange(target, attackComponent.range);
+        const hasRange = hasEnoughRange(attacker, target, attackComponent.range);
 
         if(!hasRange) {
             return false;
@@ -156,7 +175,7 @@ AttackSystem.getMoveCounterAttackers = function(gameContext, target) {
             return false;
         }
 
-        const hasRange = attacker.isEntityInRange(target, attackComponent.range);
+        const hasRange = hasEnoughRange(attacker, target, attackComponent.range);
 
         if(!hasRange) {
             return false;
@@ -171,16 +190,22 @@ AttackSystem.getMoveCounterAttackers = function(gameContext, target) {
     return attackers;
 }
 
-AttackSystem.getActiveAttackers = function(gameContext, target) {
+AttackSystem.getActiveAttackers = function(gameContext, target, ownerID) {
     const targetTeamComponent = target.getComponent(ArmyEntity.COMPONENT.TEAM);
     const attackers = filterAliveEntitiesInMaxRange(gameContext, target, (attacker) => {
+        const attackerOwnerID = attacker.getOwner();
+
+        if(attackerOwnerID !== ownerID) {
+            return false;
+        }
+
         const attackComponent = attacker.getComponent(ArmyEntity.COMPONENT.ATTACK);
 
         if(!attackComponent || !attackComponent.isActive()) {
             return false;
         }
 
-        const hasRange = attacker.isEntityInRange(target, attackComponent.range);
+        const hasRange = hasEnoughRange(attacker, target, attackComponent.range);
 
         if(!hasRange) {
             return false;

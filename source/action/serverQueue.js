@@ -11,19 +11,13 @@ ServerQueue.prototype = Object.create(ActionQueue.prototype);
 ServerQueue.prototype.constructor = ServerQueue;
 
 ServerQueue.prototype.processUserRequest = function(gameContext, request, messengerID) {
-    const element = this.createElement(request, ActionQueue.PRIORITY.LOW, messengerID);
-    
-    this.processElement(gameContext, element);
-}
-
-ServerQueue.prototype.processElement = function(gameContext, element) {
-    const executionItem = this.getExecutionItem(gameContext, element);
+    const executionItem = this.getExecutionItem(gameContext, request, messengerID);
 
     if(!executionItem) {
         return;
     }
 
-    this.enqueueExecutionItem(executionItem, element);
+    this.enqueueExecutionItem(executionItem, request);
 
     const processNext = () => {
         if(!this.isEmpty()) {

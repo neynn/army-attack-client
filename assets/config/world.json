@@ -15,8 +15,9 @@
         "english": { "directory": "assets/config/language", "source": "en.json" }
     },
     "VersusMode": {
-        "availableMaps": ["pvp_valleys"],
-        "TeamType": {
+        "availableMaps": ["oasis"],
+        "actionsPerTurn": 5,
+        "teamSetup": {
             "Crimson": {
                 "entities": {
                     "red_artillery": { "type": "red_artillery", "buyResource": "Supplies", "buyValue": 0 },

@@ -1,7 +1,6 @@
 import { createFadeInEffect } from "../effects/example/fadeIn.js";
 import { createFadeOutEffect } from "../effects/example/fadeOut.js";
 import { TextStyle } from "../graphics/applyable/textStyle.js";
-import { Drawable } from "../graphics/drawable.js";
 import { Logger } from "../logger.js";
 import { Button } from "./elements/button.js";
 import { Container } from "./elements/container.js";

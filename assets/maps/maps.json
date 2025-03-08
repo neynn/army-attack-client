@@ -1,24 +1,42 @@
 {
-    "pvp_valleys": { 
-        "id": "pvp_valleys",
-        "directory": "assets/maps/pvp",
-        "source": "valleys.json",
-        "music": "music_polarbear",
-        "width": 11,
-        "height": 11,
-        "author": "neyn",
+    "oasis": {
+        "id": "oasis",
+        "directory": "assets/maps",
+        "source": "oasis.json",
+        "music": "music_desertscorpion",
+        "width": 20,
+        "height": 20,
         "type": "Versus",
-        "maxPlayers": 2,
+        "flags": ["ALLOW_PASSING", "ALLOW_BORDER", "ALLOW_DROPS"],
+        "totalPlayers": 2,
+        "teamSetup": {
+            "Allies": {
+                "maxPlayers": 1,
+                "availableUnits": 4,
+                "resouceCap": 9000,
+                "spawnLocations": [2, 2, 3, 2, 2, 3, 3, 3]
+            },
+            "Crimson": {
+                "maxPlayers": 1,
+                "availableUnits": 4,
+                "resouceCap": 9000,
+                "spawnLocations": [2, 2, 3, 2, 2, 3, 3, 3]
+            }
+        },
+        "randomEvents": [
+            { "type": "red_guardtower", "team": "Wrath", "tileX": 5, "tileY": 4, "chance": 100 },
+            { "type": "blue_guardtower", "team": "Wrath", "tileX": 5, "tileY": 6, "chance": 50 }
+        ],
         "graphics": {
             "layers": {
                 "ground": { "opacity": 1, "autoGenerate": false },
                 "border": { "opacity": 1, "autoGenerate": true },
                 "decoration": { "opacity": 1, "autoGenerate": false },
-                "cloud": { "opacity": 1, "autoGenerate": false },
+                "cloud": { "opacity": 1, "autoGenerate": true },
                 "type": { "opacity": 1, "autoGenerate": false },
                 "team": { "opacity": 1, "autoGenerate": false }
             },
-            "background": ["ground", "border", "decoration"],
+            "background": ["ground","border","decoration"],
             "foreground": ["cloud"]
         }
     },
@@ -63,28 +81,6 @@
                 "team": { "opacity": 1, "autoGenerate": false }
             },
             "background": ["ground", "border", "decoration"],
-            "foreground": ["cloud"]
-        }
-    },
-    "oasis": {
-        "id": "oasis",
-        "directory": "assets/maps",
-        "source": "oasis.json",
-        "music": "music_desertscorpion",
-        "width": 20,
-        "height": 20,
-        "type": "Versus",
-        "flags": ["ALLOW_PASSING", "ALLOW_BORDER", "ALLOW_DROPS"],
-        "graphics": {
-            "layers": {
-                "ground": { "opacity": 1, "autoGenerate": false },
-                "border": { "opacity": 1, "autoGenerate": true },
-                "decoration": { "opacity": 1, "autoGenerate": false },
-                "cloud": { "opacity": 1, "autoGenerate": true },
-                "type": { "opacity": 1, "autoGenerate": false },
-                "team": { "opacity": 1, "autoGenerate": false }
-            },
-            "background": ["ground","border","decoration"],
             "foreground": ["cloud"]
         }
     }

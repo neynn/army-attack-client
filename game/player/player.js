@@ -11,6 +11,7 @@ import { TileManager } from "../../source/tile/tileManager.js";
 import { Hover } from "./hover.js";
 import { RangeShow } from "./rangeShow.js";
 import { Inventory } from "./inventory.js";
+import { Queue } from "../../source/queue.js";
 
 export const Player = function() {
     Controller.call(this);
@@ -25,6 +26,7 @@ export const Player = function() {
     this.rangeShow = new RangeShow();
     this.inventory = new Inventory();
     this.camera = new ArmyCamera();
+    this.inputQueue = new Queue(10);
 }
 
 Player.CAMERA_ID = "ARMY_CAMERA";
@@ -107,7 +109,7 @@ Player.prototype.updateAttackers = function(gameContext) {
     }
 
     const newAttackers = [];
-    const activeAttackers = AttackSystem.getActiveAttackers(gameContext, mouseEntity);
+    const activeAttackers = AttackSystem.getActiveAttackers(gameContext, mouseEntity, this.id);
 
     for(let i = 0; i < activeAttackers.length; i++) {
         const attacker = activeAttackers[i];
@@ -341,8 +343,11 @@ Player.prototype.queueAttack = function(gameContext, entity) {
 
     if(isAttackable) {
         const entityID = entity.getID();
+        const request = actionQueue.createRequest(ACTION_TYPES.ATTACK, entityID);
 
-        actionQueue.addRequest(ACTION_TYPES.ATTACK, this.id, entityID);
+        if(request) {
+            this.inputQueue.enqueueLast(request);
+        }
     }
 
     return isAttackable;
@@ -361,7 +366,11 @@ Player.prototype.onSelectedClick = function(gameContext, tileX, tileY) {
             soundPlayer.playSound("sound_error", 0.5); 
         }
     } else {
-        actionQueue.addRequest(ACTION_TYPES.MOVE, this.id, this.selectedEntityID, tileX, tileY);
+        const request = actionQueue.createRequest(ACTION_TYPES.MOVE, this.selectedEntityID, tileX, tileY);
+
+        if(request) {
+            this.inputQueue.enqueueLast(request);
+        }
     }
 
     this.deselectEntity(gameContext);
@@ -384,7 +393,11 @@ Player.prototype.onIdleClick = function(gameContext, tileX, tileY) {
         return;
     }
 
-    ConstructionSystem.onInteract(gameContext, mouseEntity);
+    const constructionRequest = ConstructionSystem.onInteract(gameContext, mouseEntity);
+
+    if(constructionRequest) {
+        this.inputQueue.enqueueLast(constructionRequest);
+    }
 
     if(!actionQueue.isRunning()) {
         if(mouseEntity.isMoveable()) {
@@ -423,6 +436,25 @@ Player.prototype.updateRangeIndicator = function(gameContext) {
 
         this.rangeShow.show(gameContext, entity, this.camera);
     }
+}
+
+Player.prototype.makeChoice = function(gameContext) {
+    const { world } = gameContext;
+    const { actionQueue } = world;
+
+    const choiceMade = this.inputQueue.filterUntilFirstHit((request) => {
+        const executionItem = actionQueue.getExecutionItem(gameContext, request, this.id);
+
+        if(!executionItem) {
+            return Queue.FILTER.NO_SUCCESS;
+        }
+
+        actionQueue.enqueueExecutionItem(executionItem, request);
+
+        return Queue.FILTER.SUCCESS;
+    });
+
+    return choiceMade;
 }
 
 Player.prototype.update = function(gameContext) {

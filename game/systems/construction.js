@@ -32,7 +32,7 @@ ConstructionSystem.onInteract = function(gameContext, entity) {
     const constructionComponent = entity.getComponent(ArmyEntity.COMPONENT.CONSTRUCTION);
 
     if(!constructionComponent) {
-        return;
+        return null;
     }
     
     const { world } = gameContext;
@@ -49,8 +49,10 @@ ConstructionSystem.onInteract = function(gameContext, entity) {
         }
     } else {
         const entityID = entity.getID();
-        const ownerID = entity.getOwner();
+        const request = actionQueue.createRequest(ACTION_TYPES.CONSTRUCTION, entityID);
 
-        actionQueue.addRequest(ACTION_TYPES.CONSTRUCTION, ownerID, entityID);
+        return request;
     }
+
+    return null;
 }

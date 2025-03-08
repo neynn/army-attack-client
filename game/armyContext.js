@@ -36,6 +36,7 @@ import { Renderer } from "../source/renderer.js";
 import { Logger } from "../source/logger.js";
 import { dropItemsEvent } from "./events/dropItem.js";
 import { EventBus } from "../source/events/eventBus.js";
+import { VersusMode } from "./versusMode.js";
 
 export const ArmyContext = function() {
     GameContext.call(this);
@@ -50,8 +51,8 @@ export const ArmyContext = function() {
     this.languageTypes = {};
     this.tileConversions = {};
     this.tileFormConditions = {};
-    this.versusConfig = {};
     this.playerID = null;
+    this.versusMode = new VersusMode();
     this.modeID = ArmyContext.GAME_MODE.NONE;
 }
 
@@ -109,9 +110,10 @@ ArmyContext.prototype.init = function(resources) {
     this.entityTypes = resources.world["EntityType"];
     this.allianceTypes = resources.world["AllianceType"];
     this.languageTypes = resources.world["LanguageType"];
-    this.versusConfig = resources.world["VersusMode"];
     this.tileFormConditions = resources.world["TileFormCondition"];
     this.settings = resources.world["Settings"];
+
+    this.versusMode.setConfig(resources.world["VersusMode"]);
 
     this.world.actionQueue.registerAction(ACTION_TYPES.ATTACK, new AttackAction());
     this.world.actionQueue.registerAction(ACTION_TYPES.CONSTRUCTION, new ConstructionAction());
@@ -139,8 +141,8 @@ ArmyContext.prototype.init = function(resources) {
     this.world.entityManager.registerFactory(ArmyContext.FACTORY.ENTITY, new ArmyEntityFactory().load(resources.entities));
     this.world.entityManager.selectFactory(ArmyContext.FACTORY.ENTITY);
 
-    this.world.controllerManager.registerFactory(ArmyContext.FACTORY.CONTROLLER, new ArmyControllerFactory().load(resources.controllers));
-    this.world.controllerManager.selectFactory(ArmyContext.FACTORY.CONTROLLER);
+    this.world.turnManager.registerFactory(ArmyContext.FACTORY.CONTROLLER, new ArmyControllerFactory().load(resources.controllers));
+    this.world.turnManager.selectFactory(ArmyContext.FACTORY.CONTROLLER);
     
     this.states.addState(ArmyContext.STATE.MAIN_MENU, new MainMenuState());
     this.states.addState(ArmyContext.STATE.STORY_MODE, new StoryModeState());
@@ -152,7 +154,7 @@ ArmyContext.prototype.init = function(resources) {
     if(ArmyContext.DEBUG.LOG_QUEUE_EVENTS) {
         this.world.actionQueue.events.subscribe(ActionQueue.EVENT.QUEUE_ERROR, "DEBUG", (error) => console.log(error));
         this.world.actionQueue.events.subscribe(ActionQueue.EVENT.EXECUTION_RUNNING, "DEBUG", (item) => console.log(item, "IS PROCESSING"));
-        this.world.actionQueue.events.subscribe(ActionQueue.EVENT.EXECUTION_ERROR, "DEBUG",  (request, actionType) => console.log(request, "IS INVALID"));
+        this.world.actionQueue.events.subscribe(ActionQueue.EVENT.EXECUTION_ERROR, "DEBUG",  (request) => console.log(request, "IS INVALID"));
     }
 
     if(ArmyContext.DEBUG.LOG_SOCKET_EVENTS) {
@@ -245,7 +247,7 @@ ArmyContext.prototype.saveSnapshot = function() {
     const entities = [];
     const controllers = [];
 
-    this.world.controllerManager.controllers.forEach(controller => {
+    this.world.turnManager.controllers.forEach(controller => {
         const controllerID = controller.getID();
         const saveData = controller.save();
 

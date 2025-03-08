@@ -28,8 +28,8 @@ const getMaxDrop = function(gameContext, type, id) {
 
 export const dropItemsEvent = function(gameContext, items, controllerID) {
     const { world } = gameContext;
-    const { controllerManager } = world;
-    const receiver = controllerManager.getController(controllerID);
+    const { turnManager } = world;
+    const receiver = turnManager.getController(controllerID);
 
     if(!receiver || !receiver.inventory) {
         return;

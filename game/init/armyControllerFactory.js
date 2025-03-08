@@ -3,6 +3,7 @@ import { Cursor } from "../../source/client/cursor.js";
 import { Factory } from "../../source/factory/factory.js";
 import { SpriteManager } from "../../source/sprite/spriteManager.js";
 import { World } from "../../source/world.js";
+import { Enemy } from "../enemy/enemy.js";
 import { Player } from "../player/player.js";
 
 export const ArmyControllerFactory = function() {
@@ -10,7 +11,8 @@ export const ArmyControllerFactory = function() {
 }
 
 ArmyControllerFactory.TYPE = {
-    PLAYER: "Player"
+    PLAYER: "Player",
+    ENEMY: "Enemy"
 };
 
 ArmyControllerFactory.prototype = Object.create(Factory.prototype);
@@ -91,6 +93,11 @@ ArmyControllerFactory.prototype.onCreate = function(gameContext, config) {
             router.load(gameContext, controllerType.binds);
             router.on(Player.COMMAND.TOGGLE_RANGE, () => controller.toggleRangeShow(gameContext));
             router.on(Player.COMMAND.CLICK, () => controller.onClick(gameContext));
+
+            return controller;
+        }
+        case ArmyControllerFactory.TYPE.ENEMY: {
+            const controller = new Enemy();
 
             return controller;
         }

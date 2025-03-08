@@ -175,8 +175,8 @@ OrthogonalCamera.prototype.drawSpriteLayer = function(gameContext, renderContext
     const viewportBottomEdge = viewportTopEdge + this.viewportHeight;
     const visibleSprites = [];
 
-    for(let j = 0; j < spriteLayer.length; j++) {
-        const sprite = spriteLayer[j];
+    for(let i = 0; i < spriteLayer.length; i++) {
+        const sprite = spriteLayer[i];
         const isVisible = sprite.isVisible(viewportRightEdge, viewportLeftEdge, viewportBottomEdge, viewportTopEdge);
 
         if(isVisible) {
@@ -186,16 +186,16 @@ OrthogonalCamera.prototype.drawSpriteLayer = function(gameContext, renderContext
 
     visibleSprites.sort((current, next) => current.positionY - next.positionY);
     
-    for(let j = 0; j < visibleSprites.length; j++) {
-        const sprite = visibleSprites[j];
+    for(let i = 0; i < visibleSprites.length; i++) {
+        const sprite = visibleSprites[i];
 
         sprite.update(realTime, deltaTime);
         sprite.draw(renderContext, viewportLeftEdge, viewportTopEdge);
     }
 
     if(Renderer.DEBUG.SPRITES) {
-        for(let j = 0; j < visibleSprites.length; j++) {
-            const sprite = visibleSprites[j];
+        for(let i = 0; i < visibleSprites.length; i++) {
+            const sprite = visibleSprites[i];
     
             sprite.debug(renderContext, viewportLeftEdge, viewportTopEdge);
         }

@@ -297,14 +297,14 @@ ArmyMap.prototype.convertGraphicToTeam = function(gameContext, tileX, tileY) {
 
 ArmyMap.prototype.updateBorder = function(gameContext, centerX, centerY, range) {
     const { tileManager, world } = gameContext;
-    const { controllerManager } = world;
+    const { turnManager } = world;
     const { meta } = tileManager;
 
     if(!gameContext.settings.drawBorder || (this.flags & ArmyMap.FLAG.ALLOW_BORDER) === 0) {
         return;
     }
 
-    const player = controllerManager.getController(gameContext.playerID);
+    const player = turnManager.getController(gameContext.playerID);
 
     if(!player || !player.teamID) {
         return;

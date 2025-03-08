@@ -64,6 +64,8 @@ Sprite.prototype.init = function(typeID, animationID, frameCount, frameTime, las
     this.frameCount = frameCount;
     this.frameTime = frameTime;
     this.lastCallTime = lastCallTime;
+    this.currentFrame = 0;
+    this.floatFrame = 0;
 }
 
 Sprite.prototype.setLastCallTime = function(lastCallTime) {

@@ -45,7 +45,7 @@ CounterAttackAction.prototype.getValidated = function(gameContext, template, mes
         return null;
     }
 
-    const potentialTargets = AttackSystem.getAttackCounterTargets(gameContext, entity);
+    const potentialTargets = AttackSystem.getAttackCounterTargets(gameContext, entity, attackers);
 
     if(potentialTargets.length === 0) {
         return null;

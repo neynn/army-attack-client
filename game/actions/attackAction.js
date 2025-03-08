@@ -22,7 +22,7 @@ AttackAction.prototype.onEnd = function(gameContext, request, messengerID) {
         const target = entityManager.getEntity(targetID);
         const ownerID = target.getOwner();
 
-        actionQueue.addRequest(ACTION_TYPES.COUNTER_ATTACK, ownerID, targetID, attackers);
+        actionQueue.addImmediateRequest(ACTION_TYPES.COUNTER_ATTACK, ownerID, targetID, attackers);
     }
 }
 
@@ -49,7 +49,7 @@ AttackAction.prototype.getValidated = function(gameContext, request, messengerID
         return null;
     }
 
-    const attackerEntities = AttackSystem.getActiveAttackers(gameContext, target);
+    const attackerEntities = AttackSystem.getActiveAttackers(gameContext, target, messengerID);
 
     if(attackerEntities.length === 0) {
         return null;
