@@ -98,11 +98,11 @@ World.prototype.createController = function(gameContext, config, controllerID) {
     return controller;
 }
 
-World.prototype.destroyController = function(controllerID) {
+World.prototype.removeOwners = function(controllerID) {
     const controller = this.turnManager.getController(controllerID);
 
     if(!controller) {
-        Logger.log(Logger.CODE.ENGINE_WARN, "Controller does not exist!", "World.prototype.destroyController", { "controllerID": controllerID });
+        Logger.log(Logger.CODE.ENGINE_WARN, "Controller does not exist!", "World.prototype.removeOwners", { "controllerID": controllerID });
 
         return;
     }
@@ -118,7 +118,18 @@ World.prototype.destroyController = function(controllerID) {
             }
         }
     }
+}
 
+World.prototype.destroyController = function(controllerID) {
+    const controller = this.turnManager.getController(controllerID);
+
+    if(!controller) {
+        Logger.log(Logger.CODE.ENGINE_WARN, "Controller does not exist!", "World.prototype.destroyController", { "controllerID": controllerID });
+
+        return;
+    }
+
+    this.removeOwners(controllerID);
     this.turnManager.destroyController(controllerID);
     this.events.emit(World.EVENT.CONTROLLER_DESTROY, controller);
 }
@@ -139,7 +150,6 @@ World.prototype.createEntity = function(gameContext, config, ownerID, externalID
         this.turnManager.addEntity(ownerID, entityID);
 
         entity.setOwner(ownerID);
-    
     }
 
     this.events.emit(World.EVENT.ENTITY_CREATE, entity);

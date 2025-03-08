@@ -1,3 +1,4 @@
+import { EventEmitter } from "../events/eventEmitter.js";
 import { FactoryOwner } from "../factory/factoryOwner.js";
 import { Logger } from "../logger.js";
 
@@ -7,7 +8,14 @@ export const TurnManager = function() {
     this.controllers = new Map();
     this.actorOrder = [];
     this.actorIndex = 0;
+
+    this.events = new EventEmitter();
+    this.events.listen(TurnManager.EVENT.ACTOR_CHANGE);
 }
+
+TurnManager.EVENT = {
+    ACTOR_CHANGE: "ACTOR_CHANGE"
+};
 
 TurnManager.prototype = Object.create(FactoryOwner.prototype);
 TurnManager.prototype.constructor = TurnManager;
@@ -54,6 +62,17 @@ TurnManager.prototype.getController = function(controllerID) {
     return controller;
 }
 
+TurnManager.prototype.isActor = function(actorID) {
+    if(this.actorOrder.length === 0) {
+        return false;
+    }
+
+    const currentActorID = this.actorOrder[this.actorIndex];
+    const isActor = actorID === currentActorID;
+
+    return isActor;
+}
+
 TurnManager.prototype.getNextActor = function() {
     if(this.actorOrder.length === 0) {
         return null;
@@ -65,13 +84,17 @@ TurnManager.prototype.getNextActor = function() {
 
     if(hasActionsLeft) {
         return currentActor;
+    } else {
+        currentActor.refreshActions();
     }
 
     this.actorIndex++;
     this.actorIndex %= this.actorOrder.length;
 
     const actorID = this.actorOrder[this.actorIndex];
-    const actor = this.constructor.get(actorID);
+    const actor = this.controllers.get(actorID);
+
+    this.events.emit(TurnManager.EVENT.ACTOR_CHANGE, currentActorID, actorID);
 
     return actor;
 }
@@ -109,11 +132,7 @@ TurnManager.prototype.update = function(gameContext) {
         const hasActionsLeft = actor.hasActionsLeft();
 
         if(hasActionsLeft) {
-            const choiceMade = actor.makeChoice(gameContext);
-
-            if(choiceMade) {
-                console.log("A choice has been made!");
-            }
+            actor.makeChoice(gameContext)
         }
     }
 }

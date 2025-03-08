@@ -442,7 +442,7 @@ Player.prototype.makeChoice = function(gameContext) {
     const { world } = gameContext;
     const { actionQueue } = world;
 
-    const choiceMade = this.inputQueue.filterUntilFirstHit((request) => {
+    this.inputQueue.filterUntilFirstHit((request) => {
         const executionItem = actionQueue.getExecutionItem(gameContext, request, this.id);
 
         if(!executionItem) {
@@ -451,19 +451,30 @@ Player.prototype.makeChoice = function(gameContext) {
 
         actionQueue.enqueueExecutionItem(executionItem, request);
 
+        this.remainingActions--;
+        
         return Queue.FILTER.SUCCESS;
     });
-
-    return choiceMade;
 }
 
 Player.prototype.update = function(gameContext) {
     const { world } = gameContext;
-    const { actionQueue } = world;
+    const { actionQueue, turnManager } = world;
+    const isActor = turnManager.isActor(this.id);
+
+    if(!isActor) {
+        this.swapState(gameContext, Player.STATE.NONE);
+    } else if(this.state === Player.STATE.NONE) {
+        this.swapState(gameContext, Player.STATE.IDLE);
+    }
 
     this.hover.update(gameContext);
 
     switch(this.state) {
+        case Player.STATE.NONE: {
+            this.updateRangeIndicator(gameContext);
+            break;
+        }
         case Player.STATE.IDLE: {
             if(actionQueue.isRunning()) {
                 this.clearAttackers();
@@ -504,9 +515,13 @@ Player.prototype.exitState = function(gameContext) {
 
 Player.prototype.enterState = function(gameContext, stateID) {
     switch(stateID) {
-        case Player.STATE.FIRE_MISSION: {
-            this.rangeShow.reset(gameContext, this.camera);
+        case Player.STATE.NONE: {
             this.clearAttackers();
+            break;
+        }
+        case Player.STATE.FIRE_MISSION: {
+            this.clearAttackers();
+            this.rangeShow.reset(gameContext, this.camera);
             break;
         }
         default: {
@@ -518,6 +533,8 @@ Player.prototype.enterState = function(gameContext, stateID) {
 }
 
 Player.prototype.swapState = function(gameContext, stateID) {
-    this.exitState(gameContext);
-    this.enterState(gameContext, stateID);
+    if(this.state !== stateID) {
+        this.exitState(gameContext);
+        this.enterState(gameContext, stateID);
+    }
 }

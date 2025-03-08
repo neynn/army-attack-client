@@ -8,3 +8,7 @@ export const Enemy = function() {
 
 Enemy.prototype = Object.create(Controller.prototype);
 Enemy.prototype.constructor = Enemy;
+
+Enemy.prototype.makeChoice = function(gameContext) {
+    this.remainingActions--;
+}

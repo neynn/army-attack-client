@@ -61,4 +61,6 @@ Controller.prototype.getConfig = function() {
     return this.config;
 }
 
-Controller.prototype.makeChoice = function() {}
+Controller.prototype.makeChoice = function() {
+    this.remainingActions--;
+}
