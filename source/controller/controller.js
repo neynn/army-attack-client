@@ -3,7 +3,6 @@ export const Controller = function() {
     this.config = {};
     this.entities = new Set();
     this.maxActions = 1;
-    this.remainingActions = 1;
 }
 
 Controller.prototype.update = function(gameContext) {}
@@ -12,17 +11,8 @@ Controller.prototype.onEntityAdd = function(entityID) {}
 
 Controller.prototype.onEntityRemove = function(entityID) {}
 
-Controller.prototype.refreshActions = function() {
-    this.remainingActions = this.maxActions;
-}
-
 Controller.prototype.setMaxActions = function(maxActions) {
     this.maxActions = maxActions;
-    this.remainingActions = maxActions;
-}
-
-Controller.prototype.hasActionsLeft = function() {
-    return this.remainingActions > 0;
 }
 
 Controller.prototype.getID = function() {
@@ -61,6 +51,9 @@ Controller.prototype.getConfig = function() {
     return this.config;
 }
 
-Controller.prototype.makeChoice = function() {
-    this.remainingActions--;
+Controller.prototype.makeChoice = function(gameContext) {
+    const { world } = gameContext;
+    const { turnManager } = world;
+
+    turnManager.reduceActorActions(1);
 }

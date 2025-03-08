@@ -8,13 +8,18 @@ export const TurnManager = function() {
     this.controllers = new Map();
     this.actorOrder = [];
     this.actorIndex = 0;
+    this.actionsLeft = 0;
 
     this.events = new EventEmitter();
     this.events.listen(TurnManager.EVENT.ACTOR_CHANGE);
+    this.events.listen(TurnManager.EVENT.ACTIONS_REDUCE);
+    this.events.listen(TurnManager.EVENT.ACTIONS_CLEAR);
 }
 
 TurnManager.EVENT = {
-    ACTOR_CHANGE: "ACTOR_CHANGE"
+    ACTOR_CHANGE: "ACTOR_CHANGE",
+    ACTIONS_REDUCE: "ACTIONS_REDUCE",
+    ACTIONS_CLEAR: "ACTIONS_CLEAR"
 };
 
 TurnManager.prototype = Object.create(FactoryOwner.prototype);
@@ -80,12 +85,9 @@ TurnManager.prototype.getNextActor = function() {
 
     const currentActorID = this.actorOrder[this.actorIndex];
     const currentActor = this.controllers.get(currentActorID);
-    const hasActionsLeft = currentActor.hasActionsLeft();
 
-    if(hasActionsLeft) {
+    if(this.actionsLeft > 0) {
         return currentActor;
-    } else {
-        currentActor.refreshActions();
     }
 
     this.actorIndex++;
@@ -94,12 +96,55 @@ TurnManager.prototype.getNextActor = function() {
     const actorID = this.actorOrder[this.actorIndex];
     const actor = this.controllers.get(actorID);
 
+    this.actionsLeft = actor.maxActions;
     this.events.emit(TurnManager.EVENT.ACTOR_CHANGE, currentActorID, actorID);
 
     return actor;
 }
 
+TurnManager.prototype.getCurrentActor = function() {
+    if(this.actorOrder.length === 0) {
+        return null;
+    }
+
+    const currentActorID = this.actorOrder[this.actorIndex];
+    const currentActor = this.controllers.get(currentActorID);
+
+    return currentActor;
+}
+
+TurnManager.prototype.cancelActorActions = function() {
+    const currentActor = this.getCurrentActor();
+
+    if(!currentActor) {
+        return;
+    }
+
+    this.actionsLeft = 0;
+    this.events.emit(TurnManager.EVENT.ACTIONS_CLEAR, currentActor, this.actionsLeft);
+}
+
+TurnManager.prototype.reduceActorActions = function(value) {
+    const currentActor = this.getCurrentActor();
+
+    if(!currentActor) {
+        return;
+    }
+
+    this.actionsLeft -= value;
+
+    if(this.actionsLeft < 0) {
+        this.actionsLeft = 0;
+    }
+
+    this.events.emit(TurnManager.EVENT.ACTIONS_REDUCE, currentActor, this.actionsLeft);
+}
+
 TurnManager.prototype.setActorOrder = function(order) {
+    if(order.length === 0) {
+        return false;
+    }
+
     for(let i = 0; i < order.length; i++) {
         const actorID = order[i];
 
@@ -110,6 +155,12 @@ TurnManager.prototype.setActorOrder = function(order) {
 
     this.actorOrder = order;
     this.actorIndex = 0;
+
+    const currentActor = this.getCurrentActor();
+
+    if(currentActor) {
+        this.actionsLeft = currentActor.maxActions;
+    }
 
     return true;
 }
@@ -128,12 +179,8 @@ TurnManager.prototype.update = function(gameContext) {
 
     const actor = this.getNextActor();
 
-    if(actor) {
-        const hasActionsLeft = actor.hasActionsLeft();
-
-        if(hasActionsLeft) {
-            actor.makeChoice(gameContext)
-        }
+    if(actor && this.actionsLeft > 0) {
+        actor.makeChoice(gameContext)
     }
 }
 

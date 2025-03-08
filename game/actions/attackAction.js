@@ -20,9 +20,8 @@ AttackAction.prototype.onEnd = function(gameContext, request, messengerID) {
 
     if(state === AttackSystem.OUTCOME_STATE.IDLE) {
         const target = entityManager.getEntity(targetID);
-        const ownerID = target.getOwner();
 
-        actionQueue.addImmediateRequest(ACTION_TYPES.COUNTER_ATTACK, ownerID, targetID, attackers);
+        actionQueue.addImmediateRequest(ACTION_TYPES.COUNTER_ATTACK, null, targetID, attackers);
     }
 }
 

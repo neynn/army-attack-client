@@ -5,6 +5,7 @@ import { SpriteManager } from "../../source/sprite/spriteManager.js";
 import { World } from "../../source/world.js";
 import { Enemy } from "../enemy/enemy.js";
 import { Player } from "../player/player.js";
+import { OtherPlayer } from "./otherPlayer.js";
 
 export const ArmyControllerFactory = function() {
     Factory.call(this, "ARMY_CONTROLLER_FACOTRY");
@@ -12,7 +13,8 @@ export const ArmyControllerFactory = function() {
 
 ArmyControllerFactory.TYPE = {
     PLAYER: "Player",
-    ENEMY: "Enemy"
+    ENEMY: "Enemy",
+    OTHER_PLAYER: "OtherPlayer"
 };
 
 ArmyControllerFactory.prototype = Object.create(Factory.prototype);
@@ -98,6 +100,11 @@ ArmyControllerFactory.prototype.onCreate = function(gameContext, config) {
         }
         case ArmyControllerFactory.TYPE.ENEMY: {
             const controller = new Enemy();
+
+            return controller;
+        }
+        case ArmyControllerFactory.TYPE.OTHER_PLAYER: {
+            const controller = new OtherPlayer();
 
             return controller;
         }

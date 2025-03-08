@@ -11,7 +11,9 @@ CounterMoveAction.prototype.onStart = function(gameContext, request, messengerID
 }
 
 CounterMoveAction.prototype.onEnd = function(gameContext, request, messengerID) {
-    AttackSystem.endAttack(gameContext, request, messengerID);
+
+    //TODO: Get owner of majority attackers OR drop for every owner/attacker
+    AttackSystem.endAttack(gameContext, request, null);
 }
 
 CounterMoveAction.prototype.onUpdate = function(gameContext, request, messengerID) {

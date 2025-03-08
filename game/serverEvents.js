@@ -65,11 +65,25 @@ ServerEvents.roomUpdate = function(gameContext, payload) {
 }
 
 ServerEvents.startVersusInstance = async function(gameContext, payload) {
-    ServerEvents.instanceController(gameContext, payload);
+    const { entitySetup, mapSetup, controllerSetup, playerID } = payload;
 
-    await ServerEvents.instanceMapFromID(gameContext, payload);
+    /**
+     * entitySetup = { entityBatch },
+     * mapSetup = { mapID },
+     * controllerSetup = [ ...{ controllerID, controllerSetup }],
+     * playerID <- The controllerID of the PLAYER.
+     */
+    for(let i = 0; i < controllerSetup.length; i++) {
+        const controllerPayload = controllerSetup[i];
 
-    ServerEvents.instanceEntityBatch(gameContext, payload);
+        ServerEvents.instanceController(gameContext, controllerPayload);
+    }
+
+    await ServerEvents.instanceMapFromID(gameContext, mapSetup);
+
+    ServerEvents.instanceEntityBatch(gameContext, entitySetup);
+
+    gameContext.playerID = playerID;
 }
 
 ServerEvents.gameEvent = function(gameContext, payload) {

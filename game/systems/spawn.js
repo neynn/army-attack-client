@@ -1,3 +1,4 @@
+import { ArmyEntity } from "../init/armyEntity.js";
 import { CardSystem } from "./card.js";
 
 export const SpawnSystem = function() {}
@@ -20,4 +21,15 @@ SpawnSystem.createEntity = function(gameContext, config) {
     CardSystem.generateStatCard(gameContext, entity);
 
     return entity;
+}
+
+SpawnSystem.destroyEntity = function(gameContext, entity) {
+    const { world, spriteManager } = gameContext;
+    const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
+    
+    entity.removeFromMap(gameContext);
+
+    spriteManager.destroySprite(spriteComponent.spriteID);
+
+    world.destroyEntity(entity.id);
 }

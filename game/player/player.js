@@ -440,7 +440,7 @@ Player.prototype.updateRangeIndicator = function(gameContext) {
 
 Player.prototype.makeChoice = function(gameContext) {
     const { world } = gameContext;
-    const { actionQueue } = world;
+    const { actionQueue, turnManager } = world;
 
     this.inputQueue.filterUntilFirstHit((request) => {
         const executionItem = actionQueue.getExecutionItem(gameContext, request, this.id);
@@ -451,7 +451,10 @@ Player.prototype.makeChoice = function(gameContext) {
 
         actionQueue.enqueueExecutionItem(executionItem, request);
 
-        this.remainingActions--;
+        //If i am not in a multiplayer context, then I can freely subtract remaining actions.
+        if(gameContext.modeID !== ArmyContext.GAME_MODE.VERSUS) {
+            turnManager.reduceActorActions(1);
+        }
         
         return Queue.FILTER.SUCCESS;
     });

@@ -73,3 +73,9 @@ export const dropItemsEvent = function(gameContext, items, controllerID) {
         inventory.add(Inventory.TYPE.RESOURCE, "Energy", energyDrops);
     }
 }
+
+export const entityDeathEvent = function(gameContext, entity) {
+    const { world } = gameContext;
+    
+    console.log(entity, "has died");
+}

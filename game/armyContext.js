@@ -34,7 +34,7 @@ import { DirectionComponent } from "./components/direction.js";
 import { TileManager } from "../source/tile/tileManager.js";
 import { Renderer } from "../source/renderer.js";
 import { Logger } from "../source/logger.js";
-import { dropItemsEvent } from "./events/dropItem.js";
+import { dropItemsEvent, entityDeathEvent } from "./events/dropItem.js";
 import { EventBus } from "../source/events/eventBus.js";
 import { VersusMode } from "./versusMode.js";
 
@@ -196,12 +196,16 @@ ArmyContext.prototype.setGameMode = function(modeID) {
         case ArmyContext.GAME_MODE.STORY: {
             eventBus.register(GAME_EVENT.DROP_HIT_ITEMS, EventBus.STATUS.EMITABLE);
             eventBus.register(GAME_EVENT.DROP_KILL_ITEMS, EventBus.STATUS.EMITABLE);
+            eventBus.register(GAME_EVENT.ENTITY_DEATH, EventBus.STATUS.EMITABLE);
+
             eventBus.on(GAME_EVENT.DROP_HIT_ITEMS, (items, receiverID) => dropItemsEvent(this, items, receiverID));
             eventBus.on(GAME_EVENT.DROP_KILL_ITEMS, (items, receiverID) => dropItemsEvent(this, items, receiverID));
+            eventBus.on(GAME_EVENT.ENTITY_DEATH, (entity) => entityDeathEvent(this, entity));
             break;
         }
         case ArmyContext.GAME_MODE.VERSUS: {
             eventBus.register(GAME_EVENT.DROP_KILL_ITEMS, EventBus.STATUS.NOT_EMITABLE);
+
             eventBus.on(GAME_EVENT.DROP_KILL_ITEMS, (items, receiverID) => dropItemsEvent(this, items, receiverID));
             break;
         }
