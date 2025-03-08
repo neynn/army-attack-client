@@ -34,9 +34,9 @@ import { DirectionComponent } from "./components/direction.js";
 import { TileManager } from "../source/tile/tileManager.js";
 import { Renderer } from "../source/renderer.js";
 import { Logger } from "../source/logger.js";
-import { dropItemsEvent, entityDeathEvent } from "./events/dropItem.js";
 import { EventBus } from "../source/events/eventBus.js";
 import { VersusMode } from "./versusMode.js";
+import { choiceMadeEvent, dropItemsEvent, entityDeathEvent, skipTurnEvent } from "./clientEvents.js";
 
 export const ArmyContext = function() {
     GameContext.call(this);
@@ -197,16 +197,22 @@ ArmyContext.prototype.setGameMode = function(modeID) {
             eventBus.register(GAME_EVENT.DROP_HIT_ITEMS, EventBus.STATUS.EMITABLE);
             eventBus.register(GAME_EVENT.DROP_KILL_ITEMS, EventBus.STATUS.EMITABLE);
             eventBus.register(GAME_EVENT.ENTITY_DEATH, EventBus.STATUS.EMITABLE);
+            eventBus.register(GAME_EVENT.CHOICE_MADE, EventBus.STATUS.EMITABLE);
 
             eventBus.on(GAME_EVENT.DROP_HIT_ITEMS, (items, receiverID) => dropItemsEvent(this, items, receiverID));
             eventBus.on(GAME_EVENT.DROP_KILL_ITEMS, (items, receiverID) => dropItemsEvent(this, items, receiverID));
             eventBus.on(GAME_EVENT.ENTITY_DEATH, (entity) => entityDeathEvent(this, entity));
+            eventBus.on(GAME_EVENT.CHOICE_MADE, (controllerID) => choiceMadeEvent(this, controllerID));
             break;
         }
         case ArmyContext.GAME_MODE.VERSUS: {
             eventBus.register(GAME_EVENT.DROP_KILL_ITEMS, EventBus.STATUS.NOT_EMITABLE);
+            eventBus.register(GAME_EVENT.CHOICE_MADE, EventBus.STATUS.NOT_EMITABLE);
+            eventBus.register(GAME_EVENT.SKIP_TURN, EventBus.STATUS.NOT_EMITABLE);
 
             eventBus.on(GAME_EVENT.DROP_KILL_ITEMS, (items, receiverID) => dropItemsEvent(this, items, receiverID));
+            eventBus.on(GAME_EVENT.CHOICE_MADE, (controllerID) => choiceMadeEvent(this, controllerID));
+            eventBus.on(GAME_EVENT.SKIP_TURN, (controllerID) => skipTurnEvent(this, controllerID));
             break;
         }
     }

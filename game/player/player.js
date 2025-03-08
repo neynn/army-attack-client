@@ -1,4 +1,4 @@
-import { ACTION_TYPES } from "../enums.js";
+import { ACTION_TYPES, GAME_EVENT } from "../enums.js";
 import { ArmyCamera } from "../armyCamera.js";
 import { AnimationSystem } from "../systems/animation.js";
 import { PathfinderSystem } from "../systems/pathfinder.js";
@@ -440,7 +440,7 @@ Player.prototype.updateRangeIndicator = function(gameContext) {
 
 Player.prototype.makeChoice = function(gameContext) {
     const { world } = gameContext;
-    const { actionQueue, turnManager } = world;
+    const { actionQueue, turnManager, eventBus } = world;
 
     this.inputQueue.filterUntilFirstHit((request) => {
         const executionItem = actionQueue.getExecutionItem(gameContext, request, this.id);
@@ -450,11 +450,7 @@ Player.prototype.makeChoice = function(gameContext) {
         }
 
         actionQueue.enqueueExecutionItem(executionItem, request);
-
-        //If i am not in a multiplayer context, then I can freely subtract remaining actions.
-        if(gameContext.modeID !== ArmyContext.GAME_MODE.VERSUS) {
-            turnManager.reduceActorActions(1);
-        }
+        eventBus.emit(GAME_EVENT.CHOICE_MADE, this.id);
         
         return Queue.FILTER.SUCCESS;
     });

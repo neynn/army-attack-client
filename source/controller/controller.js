@@ -51,9 +51,4 @@ Controller.prototype.getConfig = function() {
     return this.config;
 }
 
-Controller.prototype.makeChoice = function(gameContext) {
-    const { world } = gameContext;
-    const { turnManager } = world;
-
-    turnManager.reduceActorActions(1);
-}
+Controller.prototype.makeChoice = function(gameContext) {}

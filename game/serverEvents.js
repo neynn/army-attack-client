@@ -1,4 +1,4 @@
-import { CLIENT_EVENTS } from "./enums.js";
+import { CLIENT_EVENTS, GAME_EVENT } from "./enums.js";
 import { SpawnSystem } from "./systems/spawn.js";
 
 export const ServerEvents = {};
@@ -54,10 +54,12 @@ ServerEvents.instanceMapFromID = async function(gameContext, payload) {
 
 ServerEvents.queueAction = function(gameContext, payload) {
     const { world } = gameContext;
-    const { actionQueue } = world;
+    const { actionQueue, eventBus } = world;
     const { executionItem } = payload;
+    const { messengerID } = executionItem;
 
     actionQueue.enqueue(executionItem);
+    eventBus.force(GAME_EVENT.CHOICE_MADE, messengerID);
 }
 
 ServerEvents.roomUpdate = function(gameContext, payload) {
@@ -89,6 +91,7 @@ ServerEvents.startVersusInstance = async function(gameContext, payload) {
 ServerEvents.gameEvent = function(gameContext, payload) {
     const { world } = gameContext;
     const { eventBus } = world;
+    const { type, data } = payload;
 
-    eventBus.force(gameContext, payload);
+    eventBus.force(type, data);
 }

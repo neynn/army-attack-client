@@ -140,7 +140,7 @@ TurnManager.prototype.reduceActorActions = function(value) {
     this.events.emit(TurnManager.EVENT.ACTIONS_REDUCE, currentActor, this.actionsLeft);
 }
 
-TurnManager.prototype.setActorOrder = function(order) {
+TurnManager.prototype.setActorOrder = function(order, index) {
     if(order.length === 0) {
         return false;
     }
@@ -154,7 +154,12 @@ TurnManager.prototype.setActorOrder = function(order) {
     }
 
     this.actorOrder = order;
-    this.actorIndex = 0;
+
+    if(index) {
+        this.actorIndex = index;
+    } else {
+        this.actorIndex = 0;
+    }
 
     const currentActor = this.getCurrentActor();
 

@@ -1,4 +1,4 @@
-import { Inventory } from "../player/inventory.js";
+import { Inventory } from "./player/inventory.js";
 
 const getMaxDrop = function(gameContext, type, id) {
     switch(type) {
@@ -78,4 +78,24 @@ export const entityDeathEvent = function(gameContext, entity) {
     const { world } = gameContext;
     
     console.log(entity, "has died");
+}
+
+export const choiceMadeEvent = function(gameContext, controllerID) {
+    const { world } = gameContext;
+    const { turnManager } = world;
+    const isActor = turnManager.isActor(controllerID);
+
+    if(isActor) {
+        turnManager.reduceActorActions(1);
+    }
+}
+
+export const skipTurnEvent = function(gameContext, controllerID) {
+    const { world } = gameContext;
+    const { turnManager } = world;
+    const isActor = turnManager.isActor(controllerID);
+
+    if(isActor) {
+        turnManager.cancelActorActions(0);
+    }
 }
