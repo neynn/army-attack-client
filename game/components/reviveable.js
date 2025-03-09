@@ -1,4 +1,5 @@
 import { ActiveComponent } from "../../source/component/activeComponent.js";
+import { ACTION_TYPES } from "../enums.js";
 
 export const ReviveableComponent = function() {
     this.isElite = false;
@@ -31,16 +32,18 @@ ReviveableComponent.prototype.beginDecay = function() {
 
 ReviveableComponent.prototype.update = function(gameContext, entity) {
     if(this.state === ReviveableComponent.STATE.DECAY) {
-        const { timer } = gameContext;
+        const { timer, world } = gameContext;
         const fixedDeltaTime = timer.getFixedDeltaTime();
 
         this.passedTime += fixedDeltaTime;
 
         if(this.passedTime >= gameContext.settings.downDuration) {
+            const { actionQueue } = world;
+
             this.passedTime = gameContext.settings.downDuration;
             this.state = ReviveableComponent.STATE.DEAD;
-            //TODO: Emit ENTITY_DEATH event!
-            console.error(entity, "IS DEAD!");
+
+            actionQueue.addImmediateRequest(ACTION_TYPES.DEATH, null, entity.getID());
         }
     }
 }

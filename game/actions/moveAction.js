@@ -32,8 +32,10 @@ MoveAction.prototype.onEnd = function(gameContext, request, messengerID) {
 
     ConquerSystem.tryConquering(gameContext, targetX, targetY, entity);
     MoveSystem.endMove(gameContext, entity, targetX, targetY);
+    
     entity.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
     entity.placeOnMap(gameContext);
+
     actionQueue.addImmediateRequest(ACTION_TYPES.COUNTER_MOVE, null, entityID);
 }
 

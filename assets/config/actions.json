@@ -38,5 +38,13 @@
             "send": false,
             "receive": true
         }
+    },
+    "Death": {
+        "description": "Death action",
+        "priority": "HIGH",
+        "message": {
+            "send": false,
+            "receive": true
+        }
     }
 }

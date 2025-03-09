@@ -7,11 +7,11 @@ import { Logger } from "./logger.js";
 import { MapManager } from "./map/mapManager.js";
 
 export const World = function() {
-    this.eventBus = new EventBus();
     this.actionQueue = new ActionQueue();
     this.turnManager = new TurnManager();
     this.entityManager = new EntityManager();
     this.mapManager = new MapManager();
+    this.eventBus = new EventBus();
 
     this.events = new EventEmitter();
     this.events.listen(World.EVENT.MAP_CREATE);

@@ -3,7 +3,7 @@ import { Cursor } from "../../source/client/cursor.js";
 import { Factory } from "../../source/factory/factory.js";
 import { SpriteManager } from "../../source/sprite/spriteManager.js";
 import { World } from "../../source/world.js";
-import { Enemy } from "../enemy/enemy.js";
+import { Enemy } from "./enemy.js";
 import { Player } from "../player/player.js";
 import { OtherPlayer } from "./otherPlayer.js";
 

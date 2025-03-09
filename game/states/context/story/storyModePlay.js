@@ -59,7 +59,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
     }
 
     SpawnSystem.createEntity(gameContext, { 
-        "type": "red_guardtower",
+        "type": "blue_battery",
         "tileX": 4,
         "tileY": 4,
         "team": "Crimson",
@@ -123,7 +123,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
     });
 
     SpawnSystem.createEntity(gameContext, { 
-        "type": "red_bulldozer",
+        "type": "red_battletank",
         "tileX": 3,
         "tileY": 5,
         "team": "Allies",

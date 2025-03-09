@@ -23,13 +23,13 @@ export const ACTION_TYPES = {
     ATTACK: "Attack",
     CONSTRUCTION: "Construction",
     COUNTER_ATTACK: "CounterAttack",
-    COUNTER_MOVE: "CounterMove"
+    COUNTER_MOVE: "CounterMove",
+    DEATH: "Death"
 };
 
 export const GAME_EVENT = {
     DROP_HIT_ITEMS: 0,
     DROP_KILL_ITEMS: 1,
-    ENTITY_DEATH: 2,
-    CHOICE_MADE: 3,
-    SKIP_TURN: 4
+    CHOICE_MADE: 2,
+    SKIP_TURN: 3
 };

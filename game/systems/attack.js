@@ -2,9 +2,9 @@ import { isRectangleRectangleIntersect } from "../../source/math/math.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { AllianceSystem } from "./alliance.js";
 import { AnimationSystem } from "./animation.js";
-import { DeathSystem } from "./death.js";
 import { DecaySystem } from "./decay.js";
 import { DropSystem } from "./drop.js";
+import { SpawnSystem } from "./spawn.js";
 
 export const AttackSystem = function() {}
 
@@ -93,7 +93,8 @@ AttackSystem.endAttack = function(gameContext, outcome, attackerClientID) {
     switch(state) {
         case AttackSystem.OUTCOME_STATE.DEAD: {
             DropSystem.dropKillReward(gameContext, target, attackerClientID);
-            DeathSystem.killEntity(gameContext, target);
+            AnimationSystem.playDeath(gameContext, target);
+            SpawnSystem.destroyEntity(gameContext, target);
             break;
         }
         case AttackSystem.OUTCOME_STATE.IDLE: {
@@ -142,7 +143,7 @@ AttackSystem.pickAttackCounterTarget = function(attacker, targets) {
     return targets[index];
 }
 
-AttackSystem.getAttackCounterTargets = function(gameContext, attacker, attackers) {
+AttackSystem.getAttackCounterTargets = function(gameContext, attacker, targetList) {
     const attackComponent = attacker.getComponent(ArmyEntity.COMPONENT.ATTACK);
 
     if(!attackComponent || !attackComponent.isAttackCounterable()) {

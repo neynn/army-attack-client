@@ -74,12 +74,6 @@ export const dropItemsEvent = function(gameContext, items, controllerID) {
     }
 }
 
-export const entityDeathEvent = function(gameContext, entity) {
-    const { world } = gameContext;
-    
-    console.log(entity, "has died");
-}
-
 export const choiceMadeEvent = function(gameContext, controllerID) {
     const { world } = gameContext;
     const { turnManager } = world;

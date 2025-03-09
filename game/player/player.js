@@ -440,7 +440,7 @@ Player.prototype.updateRangeIndicator = function(gameContext) {
 
 Player.prototype.makeChoice = function(gameContext) {
     const { world } = gameContext;
-    const { actionQueue, turnManager, eventBus } = world;
+    const { actionQueue, eventBus } = world;
 
     this.inputQueue.filterUntilFirstHit((request) => {
         const executionItem = actionQueue.getExecutionItem(gameContext, request, this.id);

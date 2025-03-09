@@ -93,7 +93,7 @@
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
         "stats": {
-            "story": { "health": 8, "damage": 2, "attackRange": 2, "moveRange": 4, "traits": ["Artillery"] }, 
+            "story": { "health": 8, "damage": 2, "attackRange": 2, "moveRange": 4, "traits": ["Artillery", "Reviveable"] }, 
             "versus": { "health": 8, "damage": 2, "attackRange": 2, "moveRange": 4, "traits": ["Artillery"] }
         },
         "sprites": {

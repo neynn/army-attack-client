@@ -36,7 +36,8 @@ import { Renderer } from "../source/renderer.js";
 import { Logger } from "../source/logger.js";
 import { EventBus } from "../source/events/eventBus.js";
 import { VersusMode } from "./versusMode.js";
-import { choiceMadeEvent, dropItemsEvent, entityDeathEvent, skipTurnEvent } from "./clientEvents.js";
+import { choiceMadeEvent, dropItemsEvent, skipTurnEvent } from "./clientEvents.js";
+import { DeathAction } from "./actions/death.js";
 
 export const ArmyContext = function() {
     GameContext.call(this);
@@ -115,6 +116,7 @@ ArmyContext.prototype.init = function(resources) {
 
     this.versusMode.setConfig(resources.world["VersusMode"]);
 
+    this.world.actionQueue.registerAction(ACTION_TYPES.DEATH, new DeathAction())
     this.world.actionQueue.registerAction(ACTION_TYPES.ATTACK, new AttackAction());
     this.world.actionQueue.registerAction(ACTION_TYPES.CONSTRUCTION, new ConstructionAction());
     this.world.actionQueue.registerAction(ACTION_TYPES.COUNTER_ATTACK, new CounterAttackAction());
@@ -196,12 +198,10 @@ ArmyContext.prototype.setGameMode = function(modeID) {
         case ArmyContext.GAME_MODE.STORY: {
             eventBus.register(GAME_EVENT.DROP_HIT_ITEMS, EventBus.STATUS.EMITABLE);
             eventBus.register(GAME_EVENT.DROP_KILL_ITEMS, EventBus.STATUS.EMITABLE);
-            eventBus.register(GAME_EVENT.ENTITY_DEATH, EventBus.STATUS.EMITABLE);
             eventBus.register(GAME_EVENT.CHOICE_MADE, EventBus.STATUS.EMITABLE);
 
             eventBus.on(GAME_EVENT.DROP_HIT_ITEMS, (items, receiverID) => dropItemsEvent(this, items, receiverID));
             eventBus.on(GAME_EVENT.DROP_KILL_ITEMS, (items, receiverID) => dropItemsEvent(this, items, receiverID));
-            eventBus.on(GAME_EVENT.ENTITY_DEATH, (entity) => entityDeathEvent(this, entity));
             eventBus.on(GAME_EVENT.CHOICE_MADE, (controllerID) => choiceMadeEvent(this, controllerID));
             break;
         }
