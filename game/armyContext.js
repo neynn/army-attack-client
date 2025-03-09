@@ -37,7 +37,7 @@ import { Logger } from "../source/logger.js";
 import { EventBus } from "../source/events/eventBus.js";
 import { VersusMode } from "./versusMode.js";
 import { choiceMadeEvent, dropItemsEvent, skipTurnEvent } from "./clientEvents.js";
-import { DeathAction } from "./actions/death.js";
+import { DeathAction } from "./actions/deathAction.js";
 
 export const ArmyContext = function() {
     GameContext.call(this);

@@ -11,6 +11,7 @@ export const ActionQueue = function() {
     this.isSkipping = false;
     this.state = ActionQueue.STATE.INACTIVE;
     this.mode = ActionQueue.MODE.DIRECT;
+    this.maxInstantActions = 10;
 
     this.events = new EventEmitter();
     this.events.listen(ActionQueue.EVENT.EXECUTION_DEFER);
@@ -54,9 +55,24 @@ ActionQueue.prototype.load = function(actionTypes) {
 }
 
 ActionQueue.prototype.update = function(gameContext) {
+    if(!this.current) {
+        this.current = this.executionQueue.getNext();
+    }
+
+    let i = 0;
+
+    while(i < this.maxInstantActions && this.current && this.current.isInstant) {
+        this.flushExecution(gameContext);
+        this.current = this.executionQueue.getNext();
+        i++;
+    }
+
+    if(i === this.maxInstantActions && this.current && this.current.isInstant) {
+        return;
+    }
+
     switch(this.state) {
         case ActionQueue.STATE.ACTIVE: {
-            this.current = this.executionQueue.getNext();
             this.startExecution(gameContext);
             break;
         }
@@ -65,7 +81,6 @@ ActionQueue.prototype.update = function(gameContext) {
             break;
         }
         case ActionQueue.STATE.FLUSH: {
-            this.current = this.executionQueue.getNext();
             this.flushExecution(gameContext);
             break;
         }
@@ -189,7 +204,7 @@ ActionQueue.prototype.getExecutionItem = function(gameContext, request, messenge
         return null;
     }
 
-    const { priority } = actionType;
+    const { priority, isInstant } = actionType;
     const validatedData = actionHandler.getValidated(gameContext, data, messengerID);
 
     if(!validatedData) {
@@ -202,6 +217,7 @@ ActionQueue.prototype.getExecutionItem = function(gameContext, request, messenge
         "type": type,
         "data": validatedData,
         "priority": priority,
+        "isInstant": isInstant,
         "messengerID": messengerID
     };
 
