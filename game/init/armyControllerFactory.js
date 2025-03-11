@@ -6,6 +6,7 @@ import { World } from "../../source/world.js";
 import { Enemy } from "./enemy.js";
 import { Player } from "../player/player.js";
 import { OtherPlayer } from "./otherPlayer.js";
+import { createStoryModeUI } from "../storyUI.js";
 
 export const ArmyControllerFactory = function() {
     Factory.call(this, "ARMY_CONTROLLER_FACOTRY");
@@ -96,6 +97,8 @@ ArmyControllerFactory.prototype.onCreate = function(gameContext, config) {
             router.on(Player.COMMAND.TOGGLE_RANGE, () => controller.toggleRangeShow(gameContext));
             router.on(Player.COMMAND.CLICK, () => controller.onClick(gameContext));
 
+            createStoryModeUI(gameContext);
+            
             return controller;
         }
         case ArmyControllerFactory.TYPE.ENEMY: {

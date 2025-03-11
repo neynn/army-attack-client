@@ -237,7 +237,8 @@ UserInterface.prototype.createElement = function(typeID, config, DEBUG_NAME) {
             const element = new DynamicTextElement(DEBUG_NAME);
             const { 
                 text = "ERROR",
-                font = TextStyle.DEFAULT_FONT,
+                fontType = TextStyle.DEFAULT.FONT_TYPE,
+                fontSize = TextStyle.DEFAULT.FONT_SIZE,
                 align = TextStyle.TEXT_ALIGNMENT.LEFT,
                 color = [0, 0, 0, 1]
             } = config;
@@ -248,7 +249,8 @@ UserInterface.prototype.createElement = function(typeID, config, DEBUG_NAME) {
             element.setAnchor(anchor);
 
             element.setText(text);
-            element.style.setFont(font);
+            element.style.setFontType(fontType);
+            element.style.setFontSize(fontSize);
             element.style.setAlignment(align);
             element.style.color.setColorArray(color);
 
@@ -281,7 +283,8 @@ UserInterface.prototype.createElement = function(typeID, config, DEBUG_NAME) {
             const element = new TextElement(DEBUG_NAME);
             const { 
                 text = "ERROR",
-                font = TextStyle.DEFAULT_FONT,
+                fontType = TextStyle.DEFAULT.FONT_TYPE,
+                fontSize = TextStyle.DEFAULT.FONT_SIZE,
                 align = TextStyle.TEXT_ALIGNMENT.LEFT,
                 color = [0, 0, 0, 1]
             } = config;
@@ -292,7 +295,8 @@ UserInterface.prototype.createElement = function(typeID, config, DEBUG_NAME) {
             element.setAnchor(anchor);
 
             element.setText(text);
-            element.style.setFont(font);
+            element.style.setFontType(fontType);
+            element.style.setFontSize(fontSize);
             element.style.setAlignment(align);
             element.style.color.setColorArray(color);
 
@@ -320,6 +324,35 @@ UserInterface.prototype.addElement = function(element, name) {
         this.nameMap.set(name, elementID);
         this.elements.set(elementID, element);
     }
+}
+
+UserInterface.prototype.linkElements = function(parentID, children) {
+    if(!children) {
+        return;
+    }
+
+    const parent = this.getElement(parentID);
+
+    if(!parent) {
+        return;
+    }
+
+    for(let i = 0; i < children.length; i++) {
+        const childID = children[i];
+        const child = this.getElement(childID);
+
+        if(child) {
+            parent.addChild(child, childID);
+        }
+    }
+}
+
+UserInterface.prototype.constructElement = function(elementID, typeID, config) {
+    const element = this.createElement(typeID, config, elementID);
+
+    this.addElement(element, elementID);
+
+    return element;
 }
 
 UserInterface.prototype.addEffects = function(gameContext, element, effectList) {
@@ -355,9 +388,7 @@ UserInterface.prototype.fromConfig = function(gameContext, userInterface) {
             continue;
         }
 
-        const element = this.createElement(typeID, config, elementID);
-
-        this.addElement(element, elementID);
+        this.constructElement(elementID, typeID, config);
     }
     
     for(const elementID in userInterface) {
@@ -370,19 +401,7 @@ UserInterface.prototype.fromConfig = function(gameContext, userInterface) {
         }
 
         this.addEffects(gameContext, element, effects);
-
-        if(!Array.isArray(children)) {
-            continue;
-        }
-
-        for(let i = 0; i < children.length; i++) {
-            const childID = children[i];
-            const child = this.getElement(childID);
-
-            if(child) {
-                element.addChild(child, childID);
-            }
-        }
+        this.linkElements(elementID, children);
     }
 
     for(const elementKey in userInterface) {
@@ -398,8 +417,14 @@ UserInterface.prototype.fromConfig = function(gameContext, userInterface) {
     this.updateRootAnchors(w, h);
 }
 
-UserInterface.prototype.rootElement = function(gameContext, element) {
+UserInterface.prototype.rootElement = function(gameContext, name) {
     const { renderer } = gameContext;
+    const element = this.getElement(name);
+
+    if(!element) {
+        return;
+    }
+
     const { w, h } = renderer.getWindow();
     const elementID = element.getID();
     

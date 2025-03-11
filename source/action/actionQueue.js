@@ -5,13 +5,13 @@ import { Queue } from "../queue.js";
 export const ActionQueue = function() {
     this.actionHandlers = new Map();
     this.actionTypes = {};
-    this.immediateQueue = new Queue(10);
+    this.maxInstantActions = 100;
+    this.immediateQueue = new Queue(100);
     this.executionQueue = new Queue(100);
     this.current = null;
     this.isSkipping = false;
-    this.state = ActionQueue.STATE.INACTIVE;
+    this.state = ActionQueue.STATE.ACTIVE;
     this.mode = ActionQueue.MODE.DIRECT;
-    this.maxInstantActions = 10;
 
     this.events = new EventEmitter();
     this.events.listen(ActionQueue.EVENT.EXECUTION_DEFER);
@@ -21,7 +21,7 @@ export const ActionQueue = function() {
 }
 
 ActionQueue.STATE = {
-    INACTIVE: 0,
+    NONE: 0,
     ACTIVE: 1,
     PROCESSING: 2,
     FLUSH: 3
@@ -113,7 +113,7 @@ ActionQueue.prototype.startExecution = function(gameContext) {
     const { type, data, messengerID } = this.current;
     const actionType = this.actionHandlers.get(type);
 
-    this.setState(ActionQueue.STATE.PROCESSING);
+    this.state = ActionQueue.STATE.PROCESSING;
     this.events.emit(ActionQueue.EVENT.EXECUTION_RUNNING, this.current);
         
     actionType.onStart(gameContext, data, messengerID);
@@ -134,8 +134,8 @@ ActionQueue.prototype.processExecution = function(gameContext) {
     if(this.isSkipping || isFinished) {
         actionType.onEnd(gameContext, data, messengerID);
 
+        this.state = ActionQueue.STATE.ACTIVE;
         this.clearCurrent();
-        this.setState(ActionQueue.STATE.ACTIVE);
     }
 }
 
@@ -233,16 +233,25 @@ ActionQueue.prototype.enqueueExecutionItem = function(executionItem, request) {
         case ActionQueue.MODE.DEFERRED: {
             const { type } = request;
             const actionType = this.actionTypes[type];
+            const { message } = actionType;
 
-            this.events.emit(ActionQueue.EVENT.EXECUTION_DEFER, executionItem, request, actionType);
+            if(message.send) {
+                this.events.emit(ActionQueue.EVENT.EXECUTION_DEFER, executionItem, request);
+            }
+
             break;
         }
         case ActionQueue.MODE.TELL: {
             const { type } = request;
             const actionType = this.actionTypes[type];
+            const { message } = actionType;
 
             this.enqueue(executionItem);
-            this.events.emit(ActionQueue.EVENT.EXECUTION_DEFER, executionItem, request, actionType);
+
+            if(message.send) {
+                this.events.emit(ActionQueue.EVENT.EXECUTION_DEFER, executionItem, request);
+            }
+
             break;
         }
         default: {
@@ -266,16 +275,12 @@ ActionQueue.prototype.registerAction = function(typeID, handler) {
     this.actionHandlers.set(typeID, handler);
 }
 
-ActionQueue.prototype.start = function() {
-    this.setState(ActionQueue.STATE.ACTIVE);
-}
-
 ActionQueue.prototype.reset = function() {
     this.immediateQueue.clear();
     this.executionQueue.clear();
     this.clearCurrent();
-    this.setMode(ActionQueue.MODE.DIRECT);
-    this.setState(ActionQueue.STATE.INACTIVE);
+    this.mode = ActionQueue.MODE.DIRECT;
+    this.state = ActionQueue.STATE.ACTIVE;
 }
 
 ActionQueue.prototype.clearCurrent = function() {
@@ -284,8 +289,6 @@ ActionQueue.prototype.clearCurrent = function() {
 }
 
 ActionQueue.prototype.enqueue = function(executionItem) {
-    const { priority } = executionItem;
-
     if(this.executionQueue.isFull()) {
         this.events.emit(ActionQueue.EVENT.QUEUE_ERROR, {
             "error": "The execution queue is full. Item has been discarded!",
@@ -295,6 +298,8 @@ ActionQueue.prototype.enqueue = function(executionItem) {
         return;
     }
 
+    const { priority } = executionItem;
+    
     switch(priority) {
         case ActionQueue.PRIORITY.HIGH: {
             this.executionQueue.enqueueFirst(executionItem);
@@ -319,12 +324,12 @@ ActionQueue.prototype.isRunning = function() {
     return this.executionQueue.getSize() !== 0 || this.current !== null;
 }
 
-ActionQueue.prototype.setMode = function(mode = ActionQueue.MODE.DIRECT) {
-    this.mode = mode;
+ActionQueue.prototype.toDeferred = function() {
+    this.mode = ActionQueue.MODE.DEFERRED;
 }
 
-ActionQueue.prototype.setState = function(state = ActionQueue.STATE.INACTIVE) {
-    this.state = state;
+ActionQueue.prototype.toDirect = function() {
+    this.mode = ActionQueue.MODE.DIRECT;
 }
 
 ActionQueue.prototype.skip = function() {

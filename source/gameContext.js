@@ -45,11 +45,6 @@ export const GameContext = function() {
     });
 }
 
-GameContext.prototype.start = function() {
-    this.world.actionQueue.start();
-    this.timer.start();
-}
-
 GameContext.prototype.exit = function() {
     this.world.exit();
     this.spriteManager.clear();

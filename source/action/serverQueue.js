@@ -3,8 +3,8 @@ import { ActionQueue } from "./actionQueue.js";
 export const ServerQueue = function() {
     ActionQueue.call(this);
 
-    this.setMode(ActionQueue.MODE.DIRECT);
-    this.setState(ActionQueue.STATE.FLUSH);
+    this.mode = ActionQueue.MODE.DIRECT;
+    this.state = ActionQueue.STATE.FLUSH;
 }
 
 ServerQueue.prototype = Object.create(ActionQueue.prototype);

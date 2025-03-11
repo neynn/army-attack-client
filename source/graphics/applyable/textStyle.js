@@ -2,15 +2,19 @@ import { Color } from "../color.js";
 
 export const TextStyle = function() {
     this.color = new Color();
-    this.fontSize = 10;
-    this.fontType = TextStyle.DEFAULT_FONT_TYPE;
-    this.font = TextStyle.DEFAULT_FONT;
+    this.fontSize = TextStyle.DEFAULT.FONT_SIZE;
+    this.fontType = TextStyle.DEFAULT.FONT_TYPE;
     this.baseline = TextStyle.TEXT_BASELINE.MIDDLE;
     this.alignment = TextStyle.TEXT_ALIGNMENT.LEFT;
+    this.font = null;
+
+    this.updateFont();
 }
 
-TextStyle.DEFAULT_FONT = "10px sans-serif";
-TextStyle.DEFAULT_FONT_TYPE = "sans-serif";
+TextStyle.DEFAULT = {
+    FONT_SIZE: 10,
+    FONT_TYPE: "sans-serif"
+};
 
 TextStyle.TEXT_BASELINE = {
     MIDDLE: "middle"
@@ -58,14 +62,6 @@ TextStyle.prototype.setFontSize = function(fontSize) {
 
     this.fontSize = fontSize;
     this.updateFont();
-}
-
-TextStyle.prototype.setFont = function(font) {
-    if(font === undefined) {
-        return;
-    }
-
-    this.font = font;
 }
 
 TextStyle.prototype.apply = function(context) {

@@ -70,13 +70,8 @@ VersusModeState.prototype.onEnter = function(stateMachine) {
     const { socket } = client;
 
     gameContext.setGameMode(ArmyContext.GAME_MODE.VERSUS);
-    actionQueue.setMode(ActionQueue.MODE.DEFERRED);
-    actionQueue.events.subscribe(ActionQueue.EVENT.EXECUTION_DEFER, "VERSUS", (execution, request, type) => {
-        if(type.message.send) {
-            socket.messageRoom(CLIENT_EVENTS.ACTION, request);
-        }
-    });
-
+    actionQueue.toDeferred();
+    actionQueue.events.subscribe(ActionQueue.EVENT.EXECUTION_DEFER, "VERSUS", (execution, request) => socket.messageRoom(CLIENT_EVENTS.ACTION, request));
     socket.events.subscribe(Socket.EVENT.MESSAGE_FROM_SERVER, "VERSUS", (type, payload) => this.onServerMessage(gameContext, type, payload));
     socket.connect();
 
@@ -90,7 +85,7 @@ VersusModeState.prototype.onExit = function(stateMachine) {
     const { socket } = client;
 
     gameContext.setGameMode(ArmyContext.GAME_MODE.NONE);
-    actionQueue.setMode(ActionQueue.MODE.DIRECT);
+    actionQueue.toDirect();
     actionQueue.events.unsubscribe(ActionQueue.EVENT.EXECUTION_DEFER, "VERSUS");
     socket.events.unsubscribe(Socket.EVENT.MESSAGE_FROM_SERVER, "VERSUS");
 }
