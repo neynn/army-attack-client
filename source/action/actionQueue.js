@@ -54,20 +54,34 @@ ActionQueue.prototype.load = function(actionTypes) {
     this.actionTypes = actionTypes;
 }
 
+ActionQueue.prototype.updateInstant = function(gameContext) {
+    let instantActionsExecuted = 0;
+
+    while(instantActionsExecuted < this.maxInstantActions && this.current && this.current.isInstant) {
+        this.flushExecution(gameContext);
+        this.current = this.executionQueue.getNext();
+
+        if(!this.current && !this.immediateQueue.isEmpty()) {
+            this.updateImmediateQueue(gameContext);
+            this.current = this.executionQueue.getNext();
+        }
+
+        instantActionsExecuted++;
+    }
+
+    const limitReached = instantActionsExecuted === this.maxInstantActions && this.current && this.current.isInstant;
+
+    return limitReached;
+}
+
 ActionQueue.prototype.update = function(gameContext) {
     if(!this.current) {
         this.current = this.executionQueue.getNext();
     }
 
-    let i = 0;
+    const limitReached = this.updateInstant(gameContext);
 
-    while(i < this.maxInstantActions && this.current && this.current.isInstant) {
-        this.flushExecution(gameContext);
-        this.current = this.executionQueue.getNext();
-        i++;
-    }
-
-    if(i === this.maxInstantActions && this.current && this.current.isInstant) {
+    if(limitReached) {
         return;
     }
 

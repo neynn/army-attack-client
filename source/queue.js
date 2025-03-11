@@ -92,3 +92,7 @@ Queue.prototype.getSize = function() {
 Queue.prototype.isFull = function() {
     return this.count >= this.size;
 }
+
+Queue.prototype.isEmpty = function() {
+    return this.count === 0;
+}

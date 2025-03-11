@@ -204,6 +204,21 @@ Player.prototype.autoUpdateSpritePosition = function(gameContext) {
     }
 }
 
+/**
+ * Helper function for killing all.
+ * @param {*} gameContext 
+ */
+const killAll = function(gameContext) {
+    const { world } = gameContext;
+    const { entityManager, actionQueue } = world;
+
+    for(const entity of entityManager.entities) {
+        const entityID = entity.getID();
+
+        actionQueue.addImmediateRequest(ACTION_TYPES.DEATH, null, entityID);
+    }
+}
+
 Player.prototype.onClick = function(gameContext) {
     const mouseTile = gameContext.getMouseTile();
     const { x, y } = mouseTile;

@@ -17,10 +17,6 @@ DeathAction.prototype.onEnd = function(gameContext, request, messengerID) {
     SpawnSystem.destroyEntity(gameContext, entity);
 }
 
-DeathAction.prototype.isFinished = function(gameContext, request, messengerID) {
-    return true;
-}
-
 DeathAction.prototype.getValidated = function(gameContext, request, messengerID) {
     const { entityID } = request;
     const { world } = gameContext; 
