@@ -42,7 +42,10 @@ SpriteManager.prototype.load = function(spriteTypes) {
         return;
     }
 
-    for(const typeID in spriteTypes) {
+    const spriteKeys = Object.keys(spriteTypes);
+
+    for(let i = 0; i < spriteKeys.length; i++) {
+        const typeID = spriteKeys[i];
         const spriteType = spriteTypes[typeID];
         const imageSheet = new SpriteSheet();
 

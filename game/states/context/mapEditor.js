@@ -113,8 +113,6 @@ MapEditorState.prototype.onEnter = function(stateMachine) {
     const { router } = client;
     const { meta } = tileManager;
 
-    gameContext.setGameMode(ArmyContext.GAME_MODE.EDIT);
-
     this.initEditorCamera(gameContext);
 
     uiManager.parseUI("MAP_EDITOR", gameContext);
@@ -139,7 +137,6 @@ MapEditorState.prototype.onExit = function(stateMachine) {
     const gameContext = stateMachine.getContext();
     const { renderer, uiManager } = gameContext;
 
-    gameContext.setGameMode(ArmyContext.GAME_MODE.NONE);
     uiManager.unparseUI("MAP_EDITOR");
     renderer.destroyContext(this.contextID);
 

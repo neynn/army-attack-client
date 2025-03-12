@@ -26,9 +26,9 @@ MainMenuState.prototype.onEnter = function(stateMachine) {
         }
     });
 
-    mainMenuInterface.addClick("BUTTON_PLAY", () => gameContext.switchState(ArmyContext.STATE.STORY_MODE));
-    mainMenuInterface.addClick("BUTTON_EDIT", () => gameContext.switchState(ArmyContext.STATE.EDIT_MODE));
-    mainMenuInterface.addClick("BUTTON_VERSUS", () => gameContext.switchState(ArmyContext.STATE.VERSUS_MODE));
+    mainMenuInterface.addClick("BUTTON_PLAY", () => gameContext.setGameMode(ArmyContext.GAME_MODE.STORY));
+    mainMenuInterface.addClick("BUTTON_EDIT", () => gameContext.setGameMode(ArmyContext.GAME_MODE.EDIT));
+    mainMenuInterface.addClick("BUTTON_VERSUS", () => gameContext.setGameMode(ArmyContext.GAME_MODE.VERSUS));
 
     const buttonPlay = mainMenuInterface.getElement("BUTTON_PLAY");
     const buttonVersus = mainMenuInterface.getElement("BUTTON_VERSUS");

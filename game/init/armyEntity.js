@@ -95,10 +95,10 @@ ArmyEntity.prototype.isTileWalkable = function(gameContext, tileX, tileY) {
     const moveComponent = this.getComponent(ArmyEntity.COMPONENT.MOVE);
 
     const tileTeamID = activeMap.getTile(ArmyMap.LAYER.TEAM, tileX, tileY);
-    const tileAlliance = AllianceSystem.getAlliance(gameContext, teamID, ArmyMap.TEAM_TYPE[tileTeamID]);
-    const isTileWalkable = tileAlliance.isWalkable || moveComponent.isStealth();
+    const isTileWalkable = AllianceSystem.isWalkable(gameContext, teamID, ArmyMap.TEAM_TYPE[tileTeamID]);
+    const isWalkable = isTileWalkable || moveComponent.isStealth();
 
-    return isTileWalkable;
+    return isWalkable;
 }
 
 ArmyEntity.prototype.isBypassingAllowed = function(gameContext, entity) {
@@ -122,10 +122,10 @@ ArmyEntity.prototype.isBypassingAllowed = function(gameContext, entity) {
     const teamComponent = this.getComponent(ArmyEntity.COMPONENT.TEAM);
     const passerTeamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
 
-    const alliance = AllianceSystem.getAlliance(gameContext, teamComponent.teamID, passerTeamComponent.teamID);
-    const isBypassByAlliance = alliance.isEntityPassingAllowed || moveComponent.isCloaked();
+    const isBypassable = AllianceSystem.isBypassable(gameContext, teamComponent.teamID, passerTeamComponent.teamID);
+    const isBypassingAllowed = isBypassable || moveComponent.isCloaked();
 
-    return isBypassByAlliance;
+    return isBypassingAllowed;
 }
 
 ArmyEntity.prototype.updateSpriteHorizontal = function(gameContext) {

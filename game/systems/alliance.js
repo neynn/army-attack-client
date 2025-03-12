@@ -2,12 +2,11 @@ import { Logger } from "../../source/logger.js";
 
 export const AllianceSystem = function() {}
 
-AllianceSystem.getAlliance = function(gameContext, actorTeamID, reactorTeamID) {
+const getAlliance = function(gameContext, actorTeamID, reactorTeamID) {
     const actorTeam = gameContext.teamTypes[actorTeamID];
 
     if(!actorTeam) {
         Logger.log(Logger.CODE.WARN, "TeamType does not exist", "getAlliance", { actorTeamID });
-
         return null;
     }
 
@@ -16,17 +15,36 @@ AllianceSystem.getAlliance = function(gameContext, actorTeamID, reactorTeamID) {
 
     if(!alliance) {
         Logger.log(Logger.CODE.WARN, "AllianceType does not exist", "getAlliance", { actorTeamID, allianceID });
-
         return null;
     }
 
     return alliance;
 }
 
-AllianceSystem.isEnemy = function(gameContext, actorTeamID, reactorTeamID) {
-    const alliance = AllianceSystem.getAlliance(gameContext, actorTeamID, reactorTeamID);
+AllianceSystem.isBypassable = function(gameContext, actorTeamID, reactorTeamID) {
+    const alliance = getAlliance(gameContext, actorTeamID, reactorTeamID);
 
-    if(alliance === null) {
+    if(!alliance) {
+        return false;
+    }
+
+    return alliance.isEntityPassingAllowed;
+}
+
+AllianceSystem.isWalkable = function(gameContext, actorTeamID, reactorTeamID) {
+    const alliance = getAlliance(gameContext, actorTeamID, reactorTeamID);
+
+    if(!alliance) {
+        return false;
+    }
+
+    return alliance.isWalkable;
+}
+
+AllianceSystem.isEnemy = function(gameContext, actorTeamID, reactorTeamID) {
+    const alliance = getAlliance(gameContext, actorTeamID, reactorTeamID);
+
+    if(!alliance) {
         return false;
     }
 

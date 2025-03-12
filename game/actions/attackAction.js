@@ -53,7 +53,7 @@ AttackAction.prototype.getValidated = function(gameContext, request, messengerID
     }
 
     const outcome = AttackSystem.getOutcome(target, attackerEntities);
-
+    
     return {
         "timePassed": 0,
         "state": outcome.state,

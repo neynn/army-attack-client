@@ -173,14 +173,8 @@ ArmyContext.prototype.init = function(resources) {
     if(ArmyContext.DEBUG.LOG_WORLD_EVENTS) {
         this.world.events.subscribe(World.EVENT.CONTROLLER_CREATE, "DEBUG", (controller) => console.log(controller, "HAS BEEN CREATED"));
         this.world.events.subscribe(World.EVENT.CONTROLLER_DESTROY, "DEBUG", (controller) => console.log(controller, "HAS BEEN DESTROYED"));
-        this.world.events.subscribe(World.EVENT.ENTITY_DESTROY, "DEBUG", (entity) => {
-            console.log(entity, "HAS BEEN DESTROYED");
-            this.unloadEntitySprites(entity);
-        });
-        this.world.events.subscribe(World.EVENT.ENTITY_CREATE, "DEBUG", (entity) => {
-            console.log(entity, "HAS BEEN CREATED");
-            this.loadEntitySprites(entity);
-        });
+        this.world.events.subscribe(World.EVENT.ENTITY_DESTROY, "DEBUG", (entity) => console.log(entity, "HAS BEEN DESTROYED"));
+        this.world.events.subscribe(World.EVENT.ENTITY_CREATE, "DEBUG", (entity) => console.log(entity, "HAS BEEN CREATED"));
         this.world.events.subscribe(World.EVENT.MAP_CREATE, "DEBUG", (worldMap) => console.log(worldMap, "HAS BEEN LOADED"));
     }
 
@@ -188,6 +182,10 @@ ArmyContext.prototype.init = function(resources) {
 }
 
 ArmyContext.prototype.setGameMode = function(modeID) {
+    if(this.modeID === modeID) {
+        return;
+    }
+
     const { eventBus } = this.world;
 
     this.modeID = modeID;
@@ -195,6 +193,13 @@ ArmyContext.prototype.setGameMode = function(modeID) {
     eventBus.clear();
 
     switch(modeID) {
+        case ArmyContext.GAME_MODE.NONE: {
+            break;
+        }
+        case ArmyContext.GAME_MODE.EDIT: {
+            this.switchState(ArmyContext.STATE.EDIT_MODE);
+            break;
+        }
         case ArmyContext.GAME_MODE.STORY: {
             eventBus.register(GAME_EVENT.DROP_HIT_ITEMS, EventBus.STATUS.EMITABLE);
             eventBus.register(GAME_EVENT.DROP_KILL_ITEMS, EventBus.STATUS.EMITABLE);
@@ -203,6 +208,8 @@ ArmyContext.prototype.setGameMode = function(modeID) {
             eventBus.on(GAME_EVENT.DROP_HIT_ITEMS, (items, receiverID) => dropItemsEvent(this, items, receiverID));
             eventBus.on(GAME_EVENT.DROP_KILL_ITEMS, (items, receiverID) => dropItemsEvent(this, items, receiverID));
             eventBus.on(GAME_EVENT.CHOICE_MADE, (controllerID) => choiceMadeEvent(this, controllerID));
+
+            this.switchState(ArmyContext.STATE.STORY_MODE);
             break;
         }
         case ArmyContext.GAME_MODE.VERSUS: {
@@ -213,6 +220,8 @@ ArmyContext.prototype.setGameMode = function(modeID) {
             eventBus.on(GAME_EVENT.DROP_KILL_ITEMS, (items, receiverID) => dropItemsEvent(this, items, receiverID));
             eventBus.on(GAME_EVENT.CHOICE_MADE, (controllerID) => choiceMadeEvent(this, controllerID));
             eventBus.on(GAME_EVENT.SKIP_TURN, (controllerID) => skipTurnEvent(this, controllerID));
+
+            this.switchState(ArmyContext.STATE.VERSUS_MODE);
             break;
         }
     }
@@ -300,52 +309,6 @@ ArmyContext.prototype.loadSnapshot = function(snapshot) {
 
     for(const entity of entities) {
         SpawnSystem.createEntity(this, entity);
-    }
-}
-
-ArmyContext.prototype.loadEntitySounds = function(entity) {
-    const { soundPlayer } = this.client;
-    const { sounds } = entity.config;
-
-    for(const soundType in sounds) {
-        const soundList = sounds[soundType];
-
-        for(let i = 0; i < soundList.length; i++) {
-            const soundID = soundList[i];
-
-            soundPlayer.loadSound(soundID);
-        }
-    }
-}
-
-ArmyContext.prototype.unloadEntitySprites = function(entity) {
-    const { resources } = this.spriteManager;
-    const { sprites } = entity.config;
-
-    for(const spriteType in sprites) {
-        const spriteID = sprites[spriteType];
-
-        resources.removeReference(spriteID);
-    }
-}
-
-ArmyContext.prototype.loadEntitySprites = function(entity) {
-    const { resources } = this.spriteManager;
-    const { sprites } = entity.config;
-    const blocked = new Set(["airdrop"]);
-
-    for(const spriteType in sprites) {
-        const spriteID = sprites[spriteType];
-
-        if(blocked.has(spriteType)) {
-            console.log("BLOCKED", spriteID);
-            continue;
-        }
-
-        resources.requestImage(spriteID, (id, image, sheet) => {
-            console.log("LOADED IMAGE", id);
-        });
-        resources.addReference(spriteID);
     }
 }
 

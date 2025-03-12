@@ -1,6 +1,7 @@
 import { State } from "./state.js";
 
 export const StateMachine = function(context) {
+    this.currentType = StateMachine.TYPE.NONE;
     this.currentState = null;
     this.previousState = null;
     this.nextState = null;
@@ -11,6 +12,12 @@ export const StateMachine = function(context) {
         console.warn(`No context given to state machine!`);
     }
 }
+
+StateMachine.TYPE = {
+    NONE: 0,
+    STATE: 1,
+    MACHINE: 2
+};
 
 StateMachine.prototype = Object.create(State.prototype);
 StateMachine.prototype.constructor = StateMachine;
@@ -38,8 +45,8 @@ StateMachine.prototype.update = function(gameContext) {
     if(this.currentState !== null) {
         this.currentState.onUpdate(gameContext, this);
 
-        if(this.currentState.update) {
-            this.currentState.update(gameContext);
+        if(this.currentType === StateMachine.TYPE.MACHINE) {
+            this.currentState.update();
         }
     }
 }
@@ -52,7 +59,7 @@ StateMachine.prototype.eventEnter = function(...event) {
 
 StateMachine.prototype.exit = function() {
     if(this.currentState !== null) {
-        if(this.currentState.exit) {
+        if(this.currentType === StateMachine.TYPE.MACHINE) {
             this.currentState.exit();
         }
         
@@ -65,6 +72,15 @@ StateMachine.prototype.exit = function() {
 StateMachine.prototype.changeState = function(state) {
     this.exit();
     this.currentState = state;
+
+    if(state instanceof StateMachine) {
+        this.currentType = StateMachine.TYPE.MACHINE;
+    } else if(state instanceof State) {
+        this.currentType = StateMachine.TYPE.STATE;
+    } else {
+        this.currentType = StateMachine.TYPE.NONE;
+    }
+
     this.currentState.onEnter(this);
 }
 
@@ -80,22 +96,6 @@ StateMachine.prototype.getContext = function() {
     return this.context;
 }
 
-StateMachine.prototype.applyContext = function(state) {
-    if(!this.context) {
-        return;
-    }
-
-    if(!(state instanceof StateMachine)) {
-        return;
-    }
-    
-    const context = state.getContext();
-
-    if(!context) {
-        state.setContext(this.context);
-    }
-}
-
 StateMachine.prototype.addState = function(stateID, state) {
     if(this.hasState(stateID)) {
         console.warn(`State (${stateID}) already exists!`);
@@ -107,7 +107,14 @@ StateMachine.prototype.addState = function(stateID, state) {
         return;
     }
 
-    this.applyContext(state);
+    if(this.context !== null && state instanceof StateMachine) {
+        const context = state.getContext();
+
+        if(!context) {
+            state.setContext(this.context);
+        }
+    }
+
     this.states.set(stateID, state);
 }
 
