@@ -119,11 +119,11 @@ Player.prototype.updateAttackers = function(gameContext) {
     }
 
     for(let i = 0; i < this.attackers.length; i++) {
-        const oldAttackerID = this.attackers[i];
-        const isAttacking = newAttackers.includes(oldAttackerID);
+        const attackerID = this.attackers[i];
+        const isAttacking = newAttackers.includes(attackerID);
 
         if(!isAttacking) {
-            this.resetAttacker(gameContext, oldAttackerID);
+            this.resetAttacker(gameContext, attackerID);
         }
     }
 

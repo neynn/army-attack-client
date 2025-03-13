@@ -13,6 +13,10 @@ export const OrthogonalCamera = function() {
     this.mapWidth = 0;
     this.mapHeight = 0;
     this.overlays = [];
+    this.startX = -1;
+    this.startY = -1;
+    this.endX = -1;
+    this.endY = -1;
 }
 
 OrthogonalCamera.COLOR = {
@@ -103,19 +107,18 @@ OrthogonalCamera.prototype.drawTileGraphics = function(tileManager, context, til
     }
 }
 
-OrthogonalCamera.prototype.drawOverlay = function(gameContext, renderContext, worldBounds, index) {
+OrthogonalCamera.prototype.drawOverlay = function(gameContext, renderContext, index) {
     if(index < 0 || index >= this.overlays.length) {
         return;
     }
 
     const { tileManager } = gameContext;
-    const { startX, startY, endX, endY } = worldBounds;
     const overlay = this.overlays[index];
 
     for(let i = 0; i < overlay.length; i++) {
         const { id, x, y, drawX, drawY } = overlay[i];
 
-        if(x >= startX && x <= endX && y >= startY && y <= endY) {
+        if(x >= this.startX && x <= this.endX && y >= this.startY && y <= this.endY) {
             const renderX = drawX - this.viewportX;
             const renderY = drawY - this.viewportY;
     
@@ -124,7 +127,7 @@ OrthogonalCamera.prototype.drawOverlay = function(gameContext, renderContext, wo
     }
 }
 
-OrthogonalCamera.prototype.drawLayer = function(gameContext, renderContext, layer, worldBounds) {
+OrthogonalCamera.prototype.drawLayer = function(gameContext, renderContext, layer) {
     const opacity = layer.getOpacity();
 
     if(opacity > 0) {
@@ -133,42 +136,33 @@ OrthogonalCamera.prototype.drawLayer = function(gameContext, renderContext, laye
 
         renderContext.globalAlpha = opacity;
 
-        this.drawTileBuffer(gameContext, renderContext, buffer, worldBounds);
+        this.drawTileBuffer(gameContext, renderContext, buffer);
 
         renderContext.globalAlpha = previousAlpha;
     }
 }
 
-OrthogonalCamera.prototype.drawTileBuffer = function(gameContext, renderContext, buffer, worldBounds) {
+OrthogonalCamera.prototype.drawTileBuffer = function(gameContext, renderContext, buffer) {
     const { tileManager } = gameContext;
-    const { startX, startY, endX, endY } = worldBounds;
-    const bufferSize = buffer.length;
 
-    for(let i = startY; i <= endY; i++) {
+    for(let i = this.startY; i <= this.endY; i++) {
         const tileRow = i * this.mapWidth;
         const renderY = i * this.tileHeight - this.viewportY;
 
-        for(let j = startX; j <= endX; j++) {
+        for(let j = this.startX; j <= this.endX; j++) {
             const index = tileRow + j;
+            const tileID = buffer[index];
 
-            if(index >= 0 && index < bufferSize) {
-                const tileID = buffer[index];
+            if(tileID !== 0) {
+                const renderX = j * this.tileWidth - this.viewportX;
 
-                if(tileID !== 0) {
-                    const renderX = j * this.tileWidth - this.viewportX;
-    
-                    this.drawTileGraphics(tileManager, renderContext, tileID, renderX, renderY);
-                }
+                this.drawTileGraphics(tileManager, renderContext, tileID, renderX, renderY);
             }
         }
     }
 }
 
-OrthogonalCamera.prototype.drawSpriteLayer = function(gameContext, renderContext, layerID) {
-    const { timer, spriteManager } = gameContext;
-    const spriteLayer = spriteManager.getLayer(layerID);
-    const realTime = timer.getRealTime();
-    const deltaTime = timer.getDeltaTime();
+OrthogonalCamera.prototype.drawSpriteLayer = function(context, spriteLayer, realTime, deltaTime) {
     const viewportLeftEdge = this.viewportX;
     const viewportTopEdge = this.viewportY;
     const viewportRightEdge = viewportLeftEdge + this.viewportWidth;
@@ -190,55 +184,49 @@ OrthogonalCamera.prototype.drawSpriteLayer = function(gameContext, renderContext
         const sprite = visibleSprites[i];
 
         sprite.update(realTime, deltaTime);
-        sprite.draw(renderContext, viewportLeftEdge, viewportTopEdge);
+        sprite.draw(context, viewportLeftEdge, viewportTopEdge);
     }
 
     if(Renderer.DEBUG.SPRITES) {
         for(let i = 0; i < visibleSprites.length; i++) {
             const sprite = visibleSprites[i];
     
-            sprite.debug(renderContext, viewportLeftEdge, viewportTopEdge);
+            sprite.debug(context, viewportLeftEdge, viewportTopEdge);
         }
     }
 }
 
-OrthogonalCamera.prototype.drawBufferData = function(context, worldBounds, buffer, offsetX, offsetY) {
-    const { startX, startY, endX, endY } = worldBounds;
-    const bufferSize = buffer.length;
+OrthogonalCamera.prototype.drawBufferData = function(context, buffer, offsetX, offsetY) {
     const drawX = offsetX - this.viewportX;
     const drawY = offsetY - this.viewportY;
 
-    for(let i = startY; i <= endY; i++) {
+    for(let i = this.startY; i <= this.endY; i++) {
         const renderY = i * this.tileHeight + drawY;
         const tileRow = i * this.mapWidth;
 
-        for(let j = startX; j <= endX; j++) {
+        for(let j = this.startX; j <= this.endX; j++) {
+            const renderX = j * this.tileWidth + drawX;
             const index = tileRow + j;
+            const tileID = buffer[index];
 
-            if(index >= 0 && index < bufferSize) {
-                const renderX = j * this.tileWidth + drawX;
-                const tileID = buffer[index];
-
-                context.fillText(tileID, renderX, renderY);
-            }
+            context.fillText(tileID, renderX, renderY);
         }
     }
 }
 
-OrthogonalCamera.prototype.drawMapOutlines = function(context, worldBounds) {
-    const { startX, startY, endX, endY } = worldBounds;
-    const trueEndX = endX + 1;
-    const trueEndY = endY + 1;
+OrthogonalCamera.prototype.drawMapOutlines = function(context) {
+    const endX = this.endX + 1;
+    const endY = this.endY + 1;
 
     context.fillStyle = OrthogonalCamera.MAP_OUTLINE.COLOR;
 
-    for(let i = startY; i <= trueEndY; i++) {
+    for(let i = this.startY; i <= endY; i++) {
         const renderY = i * this.tileHeight - this.viewportY;
 
         context.fillRect(0, renderY, this.viewportWidth, OrthogonalCamera.MAP_OUTLINE.LINE_SIZE);
     }
 
-    for (let j = startX; j <= trueEndX; j++) {
+    for (let j = this.startX; j <= endX; j++) {
         const renderX = j * this.tileWidth - this.viewportX;
 
         context.fillRect(renderX, 0, OrthogonalCamera.MAP_OUTLINE.LINE_SIZE, this.viewportHeight);
@@ -264,24 +252,18 @@ OrthogonalCamera.prototype.loadWorld = function(mapWidth, mapHeight) {
     this.reloadViewport();
 }
 
-OrthogonalCamera.prototype.getWorldBounds = function() {
+OrthogonalCamera.prototype.updateWorldBounds = function() {
     const offsetX = 0;
     const offsetY = 1;
     const startX = Math.floor(this.viewportX / this.tileWidth);
     const startY = Math.floor(this.viewportY / this.tileHeight);
     const endX = Math.floor((this.viewportX + this.viewportWidth) / this.tileWidth) + offsetX;
     const endY = Math.floor((this.viewportY + this.viewportHeight) / this.tileHeight) + offsetY;
-    const clampedStartX = clampValue(startX, this.mapWidth - 1, 0);
-    const clampedStartY = clampValue(startY, this.mapHeight - 1, 0);
-    const clampedEndX = clampValue(endX, this.mapWidth - 1, 0);
-    const clampedEndY = clampValue(endY, this.mapHeight - 1, 0);
 
-    return {
-        "startX": clampedStartX,
-        "startY": clampedStartY,
-        "endX": clampedEndX,
-        "endY": clampedEndY
-    }
+    this.startX = clampValue(startX, this.mapWidth - 1, 0);
+    this.startY = clampValue(startY, this.mapHeight - 1, 0);
+    this.endX = clampValue(endX, this.mapWidth - 1, 0);
+    this.endY = clampValue(endY, this.mapHeight - 1, 0);
 }
 
 OrthogonalCamera.prototype.getTileDimensions = function() {

@@ -23,8 +23,8 @@ export const CameraContext = function(id, camera) {
 CameraContext.BASE_SCALE = 1;
 
 CameraContext.EVENT = {
-    RENDER_COMPLETE: 0,
-    REMOVE: 1
+    RENDER_COMPLETE: "RENDER_COMPLETE",
+    REMOVE: "REMOVE"
 };
 
 CameraContext.POSITION_MODE = {

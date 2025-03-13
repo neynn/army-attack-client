@@ -20,7 +20,7 @@ ArmyCamera.prototype = Object.create(OrthogonalCamera.prototype);
 ArmyCamera.prototype.constructor = ArmyCamera;
 
 ArmyCamera.prototype.update = function(gameContext, renderContext) {
-    const { world } = gameContext;
+    const { world, timer, spriteManager } = gameContext;
     const { mapManager } = world;
     const worldMap = mapManager.getActiveMap();
 
@@ -28,28 +28,31 @@ ArmyCamera.prototype.update = function(gameContext, renderContext) {
         return;
     }
     
+    const deltaTime = timer.getDeltaTime();
+    const realTime = timer.getRealTime();
     const background = worldMap.getBackgroundLayers();
     const foreground = worldMap.getForegroundLayers();
-    const worldBounds = this.getWorldBounds();
+
+    this.updateWorldBounds();
 
     for(let i = 0; i < background.length; i++) {
         const layer = worldMap.getLayer(background[i]);
 
-        this.drawLayer(gameContext, renderContext, layer, worldBounds);
+        this.drawLayer(gameContext, renderContext, layer);
     }
     
-    this.drawOverlay(gameContext, renderContext, worldBounds, ArmyCamera.OVERLAY_TYPE.MOVE);
-    this.drawOverlay(gameContext, renderContext, worldBounds, ArmyCamera.OVERLAY_TYPE.ATTACK);
-    this.drawSpriteLayer(gameContext, renderContext, SpriteManager.LAYER.BOTTOM);
-    this.drawSpriteLayer(gameContext, renderContext, SpriteManager.LAYER.MIDDLE);
-    this.drawOverlay(gameContext, renderContext, worldBounds, ArmyCamera.OVERLAY_TYPE.RANGE);
-    this.drawSpriteLayer(gameContext, renderContext, SpriteManager.LAYER.TOP);
-    this.drawSpriteLayer(gameContext, renderContext, SpriteManager.LAYER.UI);
+    this.drawOverlay(gameContext, renderContext, ArmyCamera.OVERLAY_TYPE.MOVE);
+    this.drawOverlay(gameContext, renderContext, ArmyCamera.OVERLAY_TYPE.ATTACK);
+    this.drawSpriteLayer(renderContext, spriteManager.getLayer(SpriteManager.LAYER.BOTTOM), realTime, deltaTime);
+    this.drawSpriteLayer(renderContext, spriteManager.getLayer(SpriteManager.LAYER.MIDDLE), realTime, deltaTime);
+    this.drawOverlay(gameContext, renderContext, ArmyCamera.OVERLAY_TYPE.RANGE);
+    this.drawSpriteLayer(renderContext, spriteManager.getLayer(SpriteManager.LAYER.TOP), realTime, deltaTime);
+    this.drawSpriteLayer(renderContext, spriteManager.getLayer(SpriteManager.LAYER.UI), realTime, deltaTime);
 
     for(let i = 0; i < foreground.length; i++) {
         const layer = worldMap.getLayer(foreground[i]);
 
-        this.drawLayer(gameContext, renderContext, layer, worldBounds);
+        this.drawLayer(gameContext, renderContext, layer);
     }
 
     if(Renderer.DEBUG.MAP) {
@@ -61,17 +64,17 @@ ArmyCamera.prototype.update = function(gameContext, renderContext) {
         renderContext.textAlign = "center";
 
         renderContext.fillStyle = "#ff0000";
-        this.drawBufferData(renderContext, worldBounds, worldMap.getLayer("type").getBuffer(), scaleX, scaleY);
+        this.drawBufferData(renderContext, worldMap.getLayer("type").getBuffer(), scaleX, scaleY);
 
         renderContext.fillStyle = "#00ff00";
-        this.drawBufferData(renderContext, worldBounds, worldMap.getLayer("team").getBuffer(), this.tileWidth - scaleX, scaleY);
+        this.drawBufferData(renderContext, worldMap.getLayer("team").getBuffer(), this.tileWidth - scaleX, scaleY);
 
         renderContext.fillStyle = "#0000ff";
-        this.drawBufferData(renderContext, worldBounds, worldMap.getLayer("border").getBuffer(), scaleX, this.tileHeight - scaleY);
+        this.drawBufferData(renderContext, worldMap.getLayer("border").getBuffer(), scaleX, this.tileHeight - scaleY);
 
         renderContext.fillStyle = "#ffff00";
-        this.drawBufferData(renderContext, worldBounds, worldMap.getLayer("ground").getBuffer(), this.tileWidth - scaleX, this.tileHeight - scaleY);
+        this.drawBufferData(renderContext, worldMap.getLayer("ground").getBuffer(), this.tileWidth - scaleX, this.tileHeight - scaleY);
 
-        this.drawMapOutlines(renderContext, worldBounds);
+        this.drawMapOutlines(renderContext);
     }
 }

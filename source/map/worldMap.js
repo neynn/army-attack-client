@@ -107,7 +107,7 @@ WorldMap.prototype.setHeight = function(height) {
 
 WorldMap.prototype.createLayer = function(id, buffer) {
     if(this.layers.has(id)) {
-        return;
+        return null;
     }
 
     const layer = new Layer(buffer);
