@@ -137,7 +137,7 @@ Player.prototype.getOverlayID = function(gameContext, typeID) {
     const overlay = this.config.overlays[typeID];
 
     if(!overlay) {
-        return TileManager.TILE_ID.INVALID;
+        return TileManager.TILE_ID.EMPTY;
     }
 
     const { set, animation } = overlay;

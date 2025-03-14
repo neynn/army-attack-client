@@ -9,12 +9,12 @@ MainMenuState.prototype.constructor = MainMenuState;
 
 MainMenuState.prototype.onEnter = function(stateMachine) {
     const gameContext = stateMachine.getContext();
-    const { uiManager, renderer, spriteManager } = gameContext;
+    const { uiManager, spriteManager, timer } = gameContext;
     const fpsInterface = uiManager.parseUI("FPS_COUNTER", gameContext);
     const mainMenuInterface = uiManager.parseUI("MAIN_MENU", gameContext);
 
     fpsInterface.addDynamicText("TEXT_FPS", (element) => {
-        const fps = Math.floor(renderer.fpsCounter.getSmoothFPS());
+        const fps = Math.round(timer.getFPS());
         const text = `FPS: ${fps}`;
 
         element.setText(text);

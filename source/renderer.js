@@ -1,6 +1,5 @@
 import { Camera } from "./camera/camera.js";
 import { RenderContext } from "./camera/renderContext.js";
-import { FPSCounter } from "./camera/fpsCounter.js";
 import { EffectManager } from "./effects/effectManager.js";
 import { EventEmitter } from "./events/eventEmitter.js";
 import { isRectangleRectangleIntersect } from "./math/math.js";
@@ -12,7 +11,6 @@ export const Renderer = function() {
     this.windowHeight = window.innerHeight;
 
     this.effects = new EffectManager();
-    this.fpsCounter = new FPSCounter();
     this.display = new RenderContext();
     this.display.init(this.windowWidth, this.windowHeight, RenderContext.TYPE.DISPLAY);
 
@@ -106,7 +104,6 @@ Renderer.prototype.update = function(gameContext) {
     const deltaTime = timer.getDeltaTime();
 
     this.display.clear();
-    this.fpsCounter.update(deltaTime);
 
     for(let i = 0; i < this.contexts.length; i++) {
         const context = this.contexts[i];

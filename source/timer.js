@@ -4,18 +4,24 @@ export const Timer = function() {
     this.lastTime = 0;
     this.deltaTime = 0;
     this.accumulatedTime = 0;
+    this.rawFPS = Timer.VALUE.TARGET_FPS;
+    this.smoothFPS = Timer.VALUE.TARGET_FPS;
+    this.smoothFactor = 0.05;
 
     this.updateProxy = (timestamp) => {
         this.realTime = timestamp / 1000;
         this.deltaTime = this.realTime - this.lastTime;
         this.accumulatedTime += this.deltaTime;
-        
+        this.rawFPS = 1 / this.deltaTime;
+        this.smoothFPS = (1 - this.smoothFactor) * this.smoothFPS + this.smoothFactor * this.rawFPS;
+
         this.input();
     
-        while(this.accumulatedTime > Timer.FIXED_SECONDS_PER_FRAME) {
-            this.tick = (this.tick + 1) % Timer.FIXED_FRAMES_PER_SECOND;
+        while(this.accumulatedTime > Timer.VALUE.FIXED_SPF) {
+            this.tick = ++this.tick % Timer.VALUE.FIXED_FPS;
+            this.accumulatedTime -= Timer.VALUE.FIXED_SPF;
+
             this.update();
-            this.accumulatedTime -= Timer.FIXED_SECONDS_PER_FRAME;
         }
     
         this.render();
@@ -25,17 +31,22 @@ export const Timer = function() {
     }
 }
 
-Timer.FIXED_FRAMES_PER_SECOND = 60;
-Timer.FIXED_SECONDS_PER_FRAME = 1 / Timer.FIXED_FRAMES_PER_SECOND;
+Timer.VALUE = {
+    TARGET_FPS: 120,
+    FIXED_FPS: 60,
+    FIXED_SPF: 1 / 60
+};
 
-Timer.prototype.input = function(realTime, deltaTime) {}
-
-Timer.prototype.update = function(gameTime, fixedDeltaTime) {}
-
-Timer.prototype.render = function(realTime, deltaTime) {}
+Timer.prototype.input = function() {}
+Timer.prototype.update = function() {}
+Timer.prototype.render = function() {}
 
 Timer.prototype.queue = function() {
     requestAnimationFrame(this.updateProxy);
+}
+
+Timer.prototype.getFPS = function() {
+    return this.smoothFPS;
 }
 
 Timer.prototype.getTick = function() {
@@ -51,7 +62,7 @@ Timer.prototype.getRealTime = function() {
 }
 
 Timer.prototype.getFixedDeltaTime = function() {
-    return Timer.FIXED_SECONDS_PER_FRAME;
+    return Timer.VALUE.FIXED_SPF;
 }
 
 Timer.prototype.getDeltaTime = function() {

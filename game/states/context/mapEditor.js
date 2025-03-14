@@ -282,7 +282,7 @@ MapEditorState.prototype.initializeRenderEvents = function(gameContext) {
     const { layerButtons } = this.mapEditor.config.interface;
     const cameraContext = renderer.getContext(this.contextID);
 
-    cameraContext.events.subscribe(CameraContext.EVENT.RENDER_COMPLETE, this.id, (camera, context) => {
+    cameraContext.addPostDraw((camera, context) => {
         const cursorTile = gameContext.getMouseTile();
         const brushSize = this.mapEditor.getBrushSize();
         const brush = this.mapEditor.getBrush();

@@ -23,15 +23,13 @@ TileMeta.prototype.getCorrectBuffer = function(bufferSize) {
 }
 
 TileMeta.prototype.init = function(tileMeta) {
-    const { graphics, autotilers } = tileMeta;
-
-    for(let i = 0; i < graphics.length; i++) {
-        const element = graphics[i];
-        const { autotiler, set, animation } = element;
-
-        this.graphics[i] = element;
+    if(!tileMeta) {
+        return;
     }
 
+    const { graphics, autotilers } = tileMeta;
+
+    this.graphics = graphics;
     this.graphicsInversion = this.createInversion(graphics);
 
     for(const autotilerID in autotilers) {

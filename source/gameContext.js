@@ -13,13 +13,13 @@ export const GameContext = function() {
     this.id = "GAME_CONTEXT";
     this.client = new Client();
     this.renderer = new Renderer();
-    this.timer = new Timer();
     this.tileManager = new TileManager();
     this.spriteManager = new SpriteManager();
     this.uiManager = new UIManager();
     this.world = new World();
     this.states = new StateMachine(this);
-
+    this.timer = new Timer();
+    
     this.timer.input = () => {
         this.client.update();
     }

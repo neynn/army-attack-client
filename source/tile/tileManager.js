@@ -11,25 +11,21 @@ export const TileManager = function() {
 }
 
 TileManager.TILE_ID = {
-    EMPTY: 0,
-    INVALID: -1
+    EMPTY: 0
 };
 
 TileManager.prototype.load = function(tileTypes, tileMeta) {
-    if(typeof tileTypes === "object") {
-        this.loadTileTypes(tileTypes);
+    this.meta.init(tileMeta);
 
-        this.resources.createImages(tileTypes);
-        this.resources.requestAllImages((key, image, sheet) => sheet.addReference());
-    } else {
+    if(!tileTypes) {
         Logger.log(false, "TileTypes cannot be undefined!", "TileManager.prototype.load", null);
+        return;
     }
 
-    if(typeof tileMeta === "object") {
-        this.meta.init(tileMeta);
-    } else {
-        Logger.log(false, "TileMeta cannot be undefined!", "TileManager.prototype.load", null);
-    }
+    this.loadTileTypes(tileTypes);
+
+    this.resources.createImages(tileTypes);
+    this.resources.requestAllImages((key, image, sheet) => sheet.addReference());
 }
 
 TileManager.prototype.update = function(gameContext) {

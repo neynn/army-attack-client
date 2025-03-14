@@ -1,23 +1,33 @@
 export const RenderContext = function() {
     this.canvas = null;
     this.context = null;
-    this.width = null;
-    this.height = null;
-    this.centerX = null;
-    this.centerY = null;
     this.imageData = null;
+    this.width = 0;
+    this.height = 0;
+    this.centerX = 0;
+    this.centerY = 0;
+    this.type = RenderContext.TYPE.NONE;
 }
 
 RenderContext.TYPE = {
-    BUFFER: 0,
-    DISPLAY: 1
+    NONE: 0,
+    BUFFER: 1,
+    DISPLAY: 2
 };
 
 RenderContext.prototype.clear = function() {
+    if(this.type === RenderContext.TYPE.NONE) {
+        return;
+    }
+
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 }
 
 RenderContext.prototype.resize = function(width, height) {
+    if(this.type === RenderContext.TYPE.NONE) {
+        return;
+    }
+
     this.clear();
     this.canvas.width = width;
     this.canvas.height = height;
@@ -29,24 +39,42 @@ RenderContext.prototype.resize = function(width, height) {
 }
 
 RenderContext.prototype.init = function(width, height, type) {
+    if(this.type !== RenderContext.TYPE.NONE) {
+        return;
+    }
+    
     this.canvas = document.createElement("canvas");
 
-    if(type === RenderContext.TYPE.DISPLAY) {
-        this.canvas.oncontextmenu = (event) => { 
-            event.preventDefault();
-            event.stopPropagation();
+    switch(type) {
+        case RenderContext.TYPE.DISPLAY: {
+            this.type = RenderContext.TYPE.DISPLAY;
+            this.canvas.oncontextmenu = (event) => { 
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
+            document.body.appendChild(this.canvas);
+            break;
         }
-        document.body.appendChild(this.canvas);
+        case RenderContext.TYPE.BUFFER: {
+            this.type = RenderContext.TYPE.BUFFER;
+            break;
+        }
+        default: {
+            this.type = RenderContext.TYPE.NONE;
+            break;
+        }
     }
 
-    this.canvas.width = width;
-    this.canvas.height = height;
     this.context = this.canvas.getContext("2d");
-
     this.resize(width, height);
 }
 
 RenderContext.prototype.getImageData = function() {
+    if(this.type === RenderContext.TYPE.NONE) {
+        return null;
+    }
+
     if(!this.canvas) {
         return null;
     }
