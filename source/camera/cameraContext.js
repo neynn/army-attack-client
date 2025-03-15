@@ -14,7 +14,6 @@ export const CameraContext = function(id, camera) {
     this.displayMode = CameraContext.DISPLAY_MODE.RESOLUTION_DEPENDENT;
     this.windowWidth = 0;
     this.windowHeight = 0;
-    this.postDraw = [];
 
     this.events = new EventEmitter();
     this.events.listen(CameraContext.EVENT.REMOVE);
@@ -261,29 +260,12 @@ CameraContext.prototype.destroyRenderer = function() {
     this.setDisplayMode(CameraContext.DISPLAY_MODE.RESOLUTION_DEPENDENT);
 }
 
-CameraContext.prototype.handlePostUpdate = function(context) {
-    for(let i = 0; i < this.postDraw.length; i++) {
-        const onDraw = this.postDraw[i];
-
-        onDraw(this.camera, context);
-    }
-}
-
-CameraContext.prototype.addPostDraw = function(onDraw) {
-    if(typeof onDraw !== "function") {
-        return;
-    }
-
-    this.postDraw.push(onDraw);
-}
-
 CameraContext.prototype.update = function(gameContext, mainContext) {
     switch(this.displayMode) { 
         case CameraContext.DISPLAY_MODE.RESOLUTION_DEPENDENT: {
             mainContext.translate(this.positionX, this.positionY);
 
             this.camera.update(gameContext, mainContext);
-            this.handlePostUpdate(mainContext);
             break;
         }
         case CameraContext.DISPLAY_MODE.RESOLUTION_FIXED: {
@@ -292,7 +274,6 @@ CameraContext.prototype.update = function(gameContext, mainContext) {
 
             this.context.clear();
             this.camera.update(gameContext, context);
-            this.handlePostUpdate(context);
 
             mainContext.drawImage(canvas, 0, 0, width, height, x, y, w, h);
             break;

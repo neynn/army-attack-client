@@ -20,6 +20,11 @@ export const Sprite = function(DEBUG_NAME, index) {
     this.flags = Sprite.FLAG.NONE;
 }
 
+Sprite.DEBUG = {
+    COLOR: "#ff00ff",
+    LINE_SIZE: 2
+};
+
 Sprite.FLAG = {
     NONE: 0b00000000,
     FLIP: 1 << 0,
@@ -110,17 +115,16 @@ Sprite.prototype.onDebug = function(context, localX, localY) {
         const drawX = localX - this.boundsX;
         const drawY = localY + this.boundsY;
 
-        context.translate(drawX, 0);
         context.scale(-1, 1);
-        context.strokeStyle = "black";
-        context.lineWidth = 3;
-        context.strokeRect(0, drawY, this.boundsW, this.boundsH);
+        context.strokeStyle = Sprite.DEBUG.COLOR;
+        context.lineWidth = Sprite.DEBUG.LINE_SIZE;
+        context.strokeRect(-drawX, drawY, this.boundsW, this.boundsH);
     } else {
         const drawX = localX + this.boundsX;
         const drawY = localY + this.boundsY;
 
-        context.strokeStyle = "black";
-        context.lineWidth = 3;
+        context.strokeStyle = Sprite.DEBUG.COLOR;
+        context.lineWidth = Sprite.DEBUG.LINE_SIZE;
         context.strokeRect(drawX, drawY, this.boundsW, this.boundsH);
     }
 }

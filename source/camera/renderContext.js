@@ -7,7 +7,13 @@ export const RenderContext = function() {
     this.centerX = 0;
     this.centerY = 0;
     this.type = RenderContext.TYPE.NONE;
+    this.color = RenderContext.COLOR.DARK_GRAY;
 }
+
+RenderContext.COLOR = {
+    BLACK: "#000000",
+    DARK_GRAY: "#111111"
+};
 
 RenderContext.TYPE = {
     NONE: 0,
@@ -20,7 +26,8 @@ RenderContext.prototype.clear = function() {
         return;
     }
 
-    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.context.fillStyle = this.color;
+    this.context.fillRect(0, 0, this.width, this.height);
 }
 
 RenderContext.prototype.resize = function(width, height) {

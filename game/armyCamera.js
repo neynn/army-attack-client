@@ -8,6 +8,7 @@ export const ArmyCamera = function() {
     this.overlays[ArmyCamera.OVERLAY_TYPE.ATTACK] = [];
     this.overlays[ArmyCamera.OVERLAY_TYPE.MOVE] = [];
     this.overlays[ArmyCamera.OVERLAY_TYPE.RANGE] = [];
+    this.postDraw = [];
 }
 
 ArmyCamera.OVERLAY_TYPE = {
@@ -18,6 +19,22 @@ ArmyCamera.OVERLAY_TYPE = {
 
 ArmyCamera.prototype = Object.create(OrthogonalCamera.prototype);
 ArmyCamera.prototype.constructor = ArmyCamera;
+
+ArmyCamera.prototype.handlePostDraw = function(context) {
+    for(let i = 0; i < this.postDraw.length; i++) {
+        const onDraw = this.postDraw[i];
+
+        onDraw(context);
+    }
+}
+
+ArmyCamera.prototype.addPostDraw = function(onDraw) {
+    if(typeof onDraw !== "function") {
+        return;
+    }
+
+    this.postDraw.push(onDraw);
+}
 
 ArmyCamera.prototype.update = function(gameContext, renderContext) {
     const { world, timer, spriteManager } = gameContext;
@@ -77,4 +94,6 @@ ArmyCamera.prototype.update = function(gameContext, renderContext) {
 
         this.drawMapOutlines(renderContext);
     }
+
+    this.handlePostDraw(renderContext);
 }

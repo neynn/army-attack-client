@@ -117,9 +117,8 @@ SpriteManager.prototype.drawSprite = function(sprite, context, localX, localY) {
             const drawX = renderX - boundsX;
             const drawY = renderY + boundsY;
     
-            context.translate(drawX, 0);
             context.scale(-1, 1);
-            context.drawImage(spriteBuffer, frameX, frameY, frameW, frameH, 0, drawY, frameW, frameH);
+            context.drawImage(spriteBuffer, frameX, frameY, frameW, frameH, -drawX, drawY, frameW, frameH);
         } else {
             const drawX = renderX + boundsX;
             const drawY = renderY + boundsY;

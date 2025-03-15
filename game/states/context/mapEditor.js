@@ -278,11 +278,10 @@ MapEditorState.prototype.updateButtonText = function(gameContext) {
 }
 
 MapEditorState.prototype.initializeRenderEvents = function(gameContext) {
-    const { tileManager, renderer } = gameContext;
+    const { tileManager } = gameContext;
     const { layerButtons } = this.mapEditor.config.interface;
-    const cameraContext = renderer.getContext(this.contextID);
 
-    cameraContext.addPostDraw((camera, context) => {
+    this.camera.addPostDraw((context) => {
         const cursorTile = gameContext.getMouseTile();
         const brushSize = this.mapEditor.getBrushSize();
         const brush = this.mapEditor.getBrush();
@@ -299,9 +298,9 @@ MapEditorState.prototype.initializeRenderEvents = function(gameContext) {
             }
         }
     
+        const { x, y } = this.camera.getViewport();
+        const { width, height, halfWidth } = this.camera.getTileDimensions();
         const { tileName, tileID } = brush;
-        const { x, y } = camera.getViewport();
-        const { width, height, halfWidth, halfHeight } = camera.getTileDimensions();
         const startX = cursorTile.x - brushSize;
         const startY = cursorTile.y - brushSize;
         const endX = cursorTile.x + brushSize;
