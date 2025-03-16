@@ -12,6 +12,7 @@ import { Hover } from "./hover.js";
 import { RangeShow } from "./rangeShow.js";
 import { Inventory } from "./inventory.js";
 import { Queue } from "../../source/queue.js";
+import { DebugHelper } from "../debug.js";
 
 export const Player = function() {
     Controller.call(this);
@@ -204,21 +205,6 @@ Player.prototype.autoUpdateSpritePosition = function(gameContext) {
     }
 }
 
-/**
- * Helper function for killing all.
- * @param {*} gameContext 
- */
-const killAll = function(gameContext) {
-    const { world } = gameContext;
-    const { entityManager, actionQueue } = world;
-
-    for(const entity of entityManager.entities) {
-        const entityID = entity.getID();
-
-        actionQueue.addImmediateRequest(ACTION_TYPES.DEATH, null, entityID);
-    }
-}
-
 Player.prototype.onClick = function(gameContext) {
     const mouseTile = gameContext.getMouseTile();
     const { x, y } = mouseTile;
@@ -388,7 +374,6 @@ Player.prototype.onSelectedClick = function(gameContext, tileX, tileY) {
         }
     }
 
-    this.deselectEntity(gameContext);
     this.swapState(gameContext, Player.STATE.IDLE);
 }
 
@@ -471,16 +456,19 @@ Player.prototype.makeChoice = function(gameContext) {
     });
 }
 
-Player.prototype.update = function(gameContext) {
-    const { world } = gameContext;
-    const { actionQueue, turnManager } = world;
-    const isActor = turnManager.isActor(this.id);
-
-    if(!isActor) {
-        this.swapState(gameContext, Player.STATE.NONE);
-    } else if(this.state === Player.STATE.NONE) {
+Player.prototype.onTurnStart = function(gameContext) {
+    if(this.state === Player.STATE.NONE) {
         this.swapState(gameContext, Player.STATE.IDLE);
     }
+}
+
+Player.prototype.onTurnEnd = function(gameContext) {
+    this.swapState(gameContext, Player.STATE.NONE);
+}
+
+Player.prototype.update = function(gameContext) {
+    const { world } = gameContext;
+    const { actionQueue } = world;
 
     this.hover.update(gameContext);
 
@@ -490,10 +478,12 @@ Player.prototype.update = function(gameContext) {
             break;
         }
         case Player.STATE.IDLE: {
-            if(actionQueue.isRunning()) {
-                this.clearAttackers();
+            const isShowable = !actionQueue.isRunning() && this.inputQueue.isEmpty();
+
+            if(isShowable) {
+                this.updateAttackers(gameContext); 
             } else {
-                this.updateAttackers(gameContext);   
+                this.clearAttackers();
             }
         
             this.updateIdleCursor(gameContext);
@@ -519,7 +509,8 @@ Player.prototype.update = function(gameContext) {
 
 Player.prototype.exitState = function(gameContext) {
     switch(this.state) {
-        default: {
+        case Player.STATE.SELECTED: {
+            this.deselectEntity(gameContext);
             break;
         }
     }
@@ -536,9 +527,6 @@ Player.prototype.enterState = function(gameContext, stateID) {
         case Player.STATE.FIRE_MISSION: {
             this.clearAttackers();
             this.rangeShow.reset(gameContext, this.camera);
-            break;
-        }
-        default: {
             break;
         }
     }

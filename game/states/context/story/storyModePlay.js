@@ -25,7 +25,7 @@ const initStoryMode = async function(gameContext) {
     player.setMaxActions(1);
     enemy.setMaxActions(1);
 
-    turnManager.setActorOrder([ArmyControllerFactory.TYPE.PLAYER, ArmyControllerFactory.TYPE.ENEMY]);
+    turnManager.setActorOrder(gameContext, [ArmyControllerFactory.TYPE.PLAYER, ArmyControllerFactory.TYPE.ENEMY]);
 
     const worldMap = await world.createMapByID(gameContext, "oasis");
 

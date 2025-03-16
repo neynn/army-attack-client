@@ -44,6 +44,15 @@ EntityManager.prototype.registerComponent = function(componentID, component) {
     this.componentTypes.set(componentID, component);
 }
 
+EntityManager.prototype.forAllEntities = function(onCall) {
+    for(let i = 0; i < this.entities.length; i++) {
+        const entity = this.entities[i];
+        const entityID = entity.getID();
+
+        onCall(entity, entityID);
+    }
+}
+
 EntityManager.prototype.update = function(gameContext) {
     for(let i = 0; i < this.entities.length; i++) {
         const entity = this.entities[i];

@@ -88,7 +88,6 @@ ArmyControllerFactory.prototype.onCreate = function(gameContext, config) {
             controller.spriteID = spriteID;
             controller.teamID = team ?? null;
             controller.setConfig(controllerType);
-            controller.enterState(gameContext, Player.STATE.IDLE);
             
             initPlayerCamera(gameContext, controller.getCamera());
             addDragEvent(gameContext);

@@ -33,12 +33,11 @@ Queue.prototype.getNext = function() {
     }
 
     const element = this.elements[this.head];
-    const item = element.item;
 
     this.head = (this.head + 1) % this.size;
     this.count--;
 
-    return item;
+    return element;
 }
 
 Queue.prototype.filterUntilFirstHit = function(onCheck) {
@@ -58,10 +57,7 @@ Queue.prototype.enqueueLast = function(element) {
         return;
     }
 
-    this.elements[this.tail] = {
-        "time": Date.now(), 
-        "item": element 
-    };
+    this.elements[this.tail] = element;
     this.tail = (this.tail + 1) % this.size;
     this.count++;
 }
@@ -72,10 +68,7 @@ Queue.prototype.enqueueFirst = function(element) {
     }
 
     this.head = (this.head - 1 + this.size) % this.size;
-    this.elements[this.head] = {
-        "time": Date.now(), 
-        "item": element 
-    };
+    this.elements[this.head] = element;
     this.count++;
 }
 

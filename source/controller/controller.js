@@ -7,6 +7,10 @@ export const Controller = function() {
 
 Controller.prototype.update = function(gameContext) {}
 
+Controller.prototype.onTurnStart = function(gameContext) {}
+
+Controller.prototype.onTurnEnd = function(gameContext) {}
+
 Controller.prototype.onEntityAdd = function(entityID) {}
 
 Controller.prototype.onEntityRemove = function(entityID) {}

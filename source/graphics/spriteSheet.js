@@ -2,7 +2,6 @@ import { Logger } from "../logger.js";
 import { Animation } from "./animation.js";
 
 export const SpriteSheet = function() {
-    this.frames = {};
     this.boundsX = 0;
     this.boundsY = 0;
     this.boundsW = 0;
@@ -24,21 +23,20 @@ SpriteSheet.prototype.load = function(config) {
         this.frameTime = frameTime;
     }
 
-    if(frames) {
-        this.frames = frames;
-    }
-
     if(bounds) {
         this.boundsX = bounds.x;
         this.boundsY = bounds.y;
         this.boundsW = bounds.w;
         this.boundsH = bounds.h;
     }
+
+    if(frames) {
+        this.defineDefaultAnimation(frames);
+    }
 }
 
-SpriteSheet.prototype.createFrame = function(frameID) {
+SpriteSheet.prototype.createFrame = function(frameData) {
     const frame = [];
-    const frameData = this.frames[frameID];
 
     if(!frameData) {
         Logger.log(Logger.CODE.ENGINE_WARN, "Frame does not exist!", "SpriteSheet.prototype.createFrame", { frameID });
@@ -74,13 +72,14 @@ SpriteSheet.prototype.addAnimation = function(animationID, animation) {
     this.animations.set(animationID, animation);
 }
 
-SpriteSheet.prototype.defineDefaultAnimation = function() {
+SpriteSheet.prototype.defineDefaultAnimation = function(frames) {
     const defaultAnimation = new Animation();
 
     defaultAnimation.setFrameTime(this.frameTime);
 
-    for(const frameID in this.frames) {
-        const frame = this.createFrame(frameID);
+    for(const frameID in frames) {
+        const frameData = frames[frameID];
+        const frame = this.createFrame(frameData);
         
         defaultAnimation.addFrame(frame);
     }

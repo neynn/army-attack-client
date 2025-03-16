@@ -7,7 +7,7 @@ export const TurnManager = function() {
 
     this.controllers = new Map();
     this.actorOrder = [];
-    this.actorIndex = 0;
+    this.actorIndex = -1;
     this.actionsLeft = 0;
 
     this.events = new EventEmitter();
@@ -68,7 +68,7 @@ TurnManager.prototype.getController = function(controllerID) {
 }
 
 TurnManager.prototype.isActor = function(actorID) {
-    if(this.actorOrder.length === 0) {
+    if(this.actorIndex === -1) {
         return false;
     }
 
@@ -78,9 +78,20 @@ TurnManager.prototype.isActor = function(actorID) {
     return isActor;
 }
 
-TurnManager.prototype.getNextActor = function() {
+TurnManager.prototype.getNextActor = function(gameContext) {
     if(this.actorOrder.length === 0) {
         return null;
+    }
+
+    if(this.actorIndex === -1) {
+        this.actorIndex++;
+
+        const firstActorID = this.actorOrder[this.actorIndex];
+        const firstActor = this.controllers.get(firstActorID);
+        
+        firstActor.onTurnStart(gameContext);   
+
+        this.actionsLeft = firstActor.maxActions;
     }
 
     const currentActorID = this.actorOrder[this.actorIndex];
@@ -96,6 +107,11 @@ TurnManager.prototype.getNextActor = function() {
     const actorID = this.actorOrder[this.actorIndex];
     const actor = this.controllers.get(actorID);
 
+    if(currentActorID !== actorID) {
+        currentActor.onTurnEnd(gameContext);
+        actor.onTurnStart(gameContext);   
+    }
+
     this.actionsLeft = actor.maxActions;
     this.events.emit(TurnManager.EVENT.ACTOR_CHANGE, currentActorID, actorID);
 
@@ -103,7 +119,7 @@ TurnManager.prototype.getNextActor = function() {
 }
 
 TurnManager.prototype.getCurrentActor = function() {
-    if(this.actorOrder.length === 0) {
+    if(this.actorIndex === -1) {
         return null;
     }
 
@@ -140,7 +156,7 @@ TurnManager.prototype.reduceActorActions = function(value) {
     this.events.emit(TurnManager.EVENT.ACTIONS_REDUCE, currentActor, this.actionsLeft);
 }
 
-TurnManager.prototype.setActorOrder = function(order, index) {
+TurnManager.prototype.setActorOrder = function(gameContext, order, index = -1) {
     if(order.length === 0) {
         return false;
     }
@@ -153,18 +169,19 @@ TurnManager.prototype.setActorOrder = function(order, index) {
         }
     }
 
-    this.actorOrder = order;
-
-    if(index) {
-        this.actorIndex = index;
-    } else {
-        this.actorIndex = 0;
+    if(index >= order.length) {
+        return false;
     }
+
+    this.actorOrder = order;
+    this.actorIndex = index;
 
     const currentActor = this.getCurrentActor();
 
     if(currentActor) {
         this.actionsLeft = currentActor.maxActions;
+
+        currentActor.onTurnStart(gameContext);
     }
 
     return true;
@@ -182,7 +199,7 @@ TurnManager.prototype.update = function(gameContext) {
         return;
     }
 
-    const actor = this.getNextActor();
+    const actor = this.getNextActor(gameContext);
 
     if(actor && this.actionsLeft > 0) {
         actor.makeChoice(gameContext)
