@@ -25,7 +25,7 @@ import { SpawnSystem } from "./systems/spawn.js";
 import { CounterAttackAction } from "./actions/counterAttackAction.js";
 import { CounterMoveAction } from "./actions/counterMoveAction.js";
 import { ArmyEntityFactory } from "./init/armyEntityFactory.js";
-import { ArmyControllerFactory } from "./init/armyControllerFactory.js";
+import { ArmyActorFactory } from "./init/armyActorFactory.js";
 import { ArmyMapFactory } from "./init/armyMapFactory.js";
 import { ArmyEntity } from "./init/armyEntity.js";
 import { SpriteComponent } from "./components/sprite.js";
@@ -70,7 +70,7 @@ ArmyContext.DEBUG = {
 ArmyContext.FACTORY = {
     MAP: "MAP",
     ENTITY: "ENTITY",
-    CONTROLLER: "CONTROLLER"
+    ACTOR: "ACTOR"
 };
 
 ArmyContext.STATE = {
@@ -143,8 +143,8 @@ ArmyContext.prototype.init = function(resources) {
     this.world.entityManager.registerFactory(ArmyContext.FACTORY.ENTITY, new ArmyEntityFactory().load(resources.entities));
     this.world.entityManager.selectFactory(ArmyContext.FACTORY.ENTITY);
 
-    this.world.turnManager.registerFactory(ArmyContext.FACTORY.CONTROLLER, new ArmyControllerFactory().load(resources.controllers));
-    this.world.turnManager.selectFactory(ArmyContext.FACTORY.CONTROLLER);
+    this.world.turnManager.registerFactory(ArmyContext.FACTORY.ACTOR, new ArmyActorFactory().load(resources.actors));
+    this.world.turnManager.selectFactory(ArmyContext.FACTORY.ACTOR);
     
     this.states.addState(ArmyContext.STATE.MAIN_MENU, new MainMenuState());
     this.states.addState(ArmyContext.STATE.STORY_MODE, new StoryModeState());
@@ -171,8 +171,8 @@ ArmyContext.prototype.init = function(resources) {
     }
 
     if(ArmyContext.DEBUG.LOG_WORLD_EVENTS) {
-        this.world.events.subscribe(World.EVENT.CONTROLLER_CREATE, "DEBUG", (controller) => console.log(controller, "HAS BEEN CREATED"));
-        this.world.events.subscribe(World.EVENT.CONTROLLER_DESTROY, "DEBUG", (controller) => console.log(controller, "HAS BEEN DESTROYED"));
+        this.world.events.subscribe(World.EVENT.ACTOR_CREATE, "DEBUG", (actor) => console.log(actor, "HAS BEEN CREATED"));
+        this.world.events.subscribe(World.EVENT.ACTOR_DESTROY, "DEBUG", (actor) => console.log(actor, "HAS BEEN DESTROYED"));
         this.world.events.subscribe(World.EVENT.ENTITY_DESTROY, "DEBUG", (entity) => console.log(entity, "HAS BEEN DESTROYED"));
         this.world.events.subscribe(World.EVENT.ENTITY_CREATE, "DEBUG", (entity) => console.log(entity, "HAS BEEN CREATED"));
         this.world.events.subscribe(World.EVENT.MAP_CREATE, "DEBUG", (worldMap) => console.log(worldMap, "HAS BEEN LOADED"));
@@ -207,7 +207,7 @@ ArmyContext.prototype.setGameMode = function(modeID) {
 
             eventBus.on(GAME_EVENT.DROP_HIT_ITEMS, (items, receiverID) => dropItemsEvent(this, items, receiverID));
             eventBus.on(GAME_EVENT.DROP_KILL_ITEMS, (items, receiverID) => dropItemsEvent(this, items, receiverID));
-            eventBus.on(GAME_EVENT.CHOICE_MADE, (controllerID) => choiceMadeEvent(this, controllerID));
+            eventBus.on(GAME_EVENT.CHOICE_MADE, (actorID) => choiceMadeEvent(this, actorID));
 
             this.switchState(ArmyContext.STATE.STORY_MODE);
             break;
@@ -218,8 +218,8 @@ ArmyContext.prototype.setGameMode = function(modeID) {
             eventBus.register(GAME_EVENT.SKIP_TURN, EventBus.STATUS.NOT_EMITABLE);
 
             eventBus.on(GAME_EVENT.DROP_KILL_ITEMS, (items, receiverID) => dropItemsEvent(this, items, receiverID));
-            eventBus.on(GAME_EVENT.CHOICE_MADE, (controllerID) => choiceMadeEvent(this, controllerID));
-            eventBus.on(GAME_EVENT.SKIP_TURN, (controllerID) => skipTurnEvent(this, controllerID));
+            eventBus.on(GAME_EVENT.CHOICE_MADE, (actorID) => choiceMadeEvent(this, actorID));
+            eventBus.on(GAME_EVENT.SKIP_TURN, (actorID) => skipTurnEvent(this, actorID));
 
             this.switchState(ArmyContext.STATE.VERSUS_MODE);
             break;
@@ -264,19 +264,18 @@ ArmyContext.prototype.initConversions = function(teamConversions) {
 
 ArmyContext.prototype.saveSnapshot = function() {
     const entities = [];
-    const controllers = [];
+    const actors = [];
 
-    this.world.turnManager.controllers.forEach(controller => {
-        const controllerID = controller.getID();
-        const saveData = controller.save();
+    this.world.turnManager.forAllActors((actor, actorID) => {
+        const saveData = actor.save();
 
-        controllers.push({
-            "id": controllerID,
+        actors.push({
+            "id": actorID,
             "data": saveData
         });
     });
 
-    this.world.entityManager.entities.forEach(entity => {
+    this.world.entityManager.forAllEntities((entity, entityID) => {
         const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
         const teamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
         const savedComponents = entity.save();
@@ -291,20 +290,21 @@ ArmyContext.prototype.saveSnapshot = function() {
             "components": savedComponents
         });
     });
-
+    
     return {
         "time": Date.now(),
-        "controllers": controllers,
+        "actors": actors,
         "entities": entities
     }
 }
 
 ArmyContext.prototype.loadSnapshot = function(snapshot) {
-    const { time, entities, controllers } = snapshot;
+    const { time, entities, actors } = snapshot;
 
-    //TODO
-    for(const controller of controllers) {
-        this.world.createController(this, controller);
+    for(let i = 0; i < actors.length; i++) {
+        const actor = actors[i];
+
+        this.world.createActor(this, actor);
     }
 
     for(const entity of entities) {

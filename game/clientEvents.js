@@ -26,10 +26,10 @@ const getMaxDrop = function(gameContext, type, id) {
     }
 }
 
-export const dropItemsEvent = function(gameContext, items, controllerID) {
+export const dropItemsEvent = function(gameContext, items, actorID) {
     const { world } = gameContext;
     const { turnManager } = world;
-    const receiver = turnManager.getController(controllerID);
+    const receiver = turnManager.getActor(actorID);
 
     if(!receiver || !receiver.inventory) {
         return;
@@ -74,20 +74,20 @@ export const dropItemsEvent = function(gameContext, items, controllerID) {
     }
 }
 
-export const choiceMadeEvent = function(gameContext, controllerID) {
+export const choiceMadeEvent = function(gameContext, actorID) {
     const { world } = gameContext;
     const { turnManager } = world;
-    const isActor = turnManager.isActor(controllerID);
+    const isActor = turnManager.isActor(actorID);
 
     if(isActor) {
         turnManager.reduceActorActions(1);
     }
 }
 
-export const skipTurnEvent = function(gameContext, controllerID) {
+export const skipTurnEvent = function(gameContext, actorID) {
     const { world } = gameContext;
     const { turnManager } = world;
-    const isActor = turnManager.isActor(controllerID);
+    const isActor = turnManager.isActor(actorID);
 
     if(isActor) {
         turnManager.cancelActorActions(0);

@@ -1,8 +1,8 @@
-import { Controller } from "../../source/controller/controller.js";
+import { Actor } from "../../source/turn/actor.js";
 
 export const OtherPlayer = function() {
-    Controller.call(this);
+    Actor.call(this);
 }
 
-OtherPlayer.prototype = Object.create(Controller.prototype);
+OtherPlayer.prototype = Object.create(Actor.prototype);
 OtherPlayer.prototype.constructor = OtherPlayer;

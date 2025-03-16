@@ -3,11 +3,11 @@ import { SpawnSystem } from "./systems/spawn.js";
 
 export const ServerEvents = {};
 
-ServerEvents.instanceController = function(gameContext, payload) {
+ServerEvents.instanceActor = function(gameContext, payload) {
     const { world } = gameContext;
-    const { controllerID, controllerSetup } = payload;
+    const { actorID, actorSetup } = payload;
 
-    world.createController(gameContext, controllerSetup, controllerID);
+    world.createActor(gameContext, actorSetup, actorID);
 }
 
 ServerEvents.instanceEntityBatch = function(gameContext, payload) {
@@ -67,18 +67,18 @@ ServerEvents.roomUpdate = function(gameContext, payload) {
 }
 
 ServerEvents.startVersusInstance = async function(gameContext, payload) {
-    const { entitySetup, mapSetup, controllerSetup, playerID } = payload;
+    const { entitySetup, mapSetup, actorSetup, playerID } = payload;
 
     /**
      * entitySetup = { entityBatch },
      * mapSetup = { mapID },
-     * controllerSetup = [ ...{ controllerID, controllerSetup }],
-     * playerID <- The controllerID of the PLAYER.
+     * actorSetup = [ ...{ actorID, actorSetup }],
+     * playerID <- The actorID of the PLAYER.
      */
-    for(let i = 0; i < controllerSetup.length; i++) {
-        const controllerPayload = controllerSetup[i];
+    for(let i = 0; i < actorSetup.length; i++) {
+        const actorPayload = actorSetup[i];
 
-        ServerEvents.instanceController(gameContext, controllerPayload);
+        ServerEvents.instanceActor(gameContext, actorPayload);
     }
 
     await ServerEvents.instanceMapFromID(gameContext, mapSetup);

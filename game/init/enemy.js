@@ -1,13 +1,13 @@
-import { Controller } from "../../source/controller/controller.js";
+import { Actor } from "../../source/turn/actor.js";
 import { GAME_EVENT } from "../enums.js";
 
 export const Enemy = function() {
-    Controller.call(this);
+    Actor.call(this);
 
     this.teamID = null;
 }
 
-Enemy.prototype = Object.create(Controller.prototype);
+Enemy.prototype = Object.create(Actor.prototype);
 Enemy.prototype.constructor = Enemy;
 
 Enemy.prototype.makeChoice = function(gameContext) {

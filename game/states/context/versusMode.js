@@ -32,8 +32,8 @@ VersusModeState.prototype.onServerMessage = function(gameContext, type, payload)
             ServerEvents.startVersusInstance(gameContext, payload);
             break;
         }
-        case CLIENT_EVENTS.INSTANCE_CONTROLLER: {
-            ServerEvents.instanceController(gameContext, payload);
+        case CLIENT_EVENTS.INSTANCE_ACTOR: {
+            ServerEvents.instanceActor(gameContext, payload);
             break;
         }
         case CLIENT_EVENTS.INSTANCE_MAP: {

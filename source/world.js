@@ -1,5 +1,5 @@
 import { ActionQueue } from "./action/actionQueue.js";
-import { TurnManager } from "./controller/turnManager.js";
+import { TurnManager } from "./turn/turnManager.js";
 import { EntityManager } from "./entity/entityManager.js";
 import { EventEmitter } from "./events/eventEmitter.js";
 import { EventBus } from "./events/eventBus.js";
@@ -15,16 +15,16 @@ export const World = function() {
 
     this.events = new EventEmitter();
     this.events.listen(World.EVENT.MAP_CREATE);
-    this.events.listen(World.EVENT.CONTROLLER_CREATE);
-    this.events.listen(World.EVENT.CONTROLLER_DESTROY);
+    this.events.listen(World.EVENT.ACTOR_CREATE);
+    this.events.listen(World.EVENT.ACTOR_DESTROY);
     this.events.listen(World.EVENT.ENTITY_CREATE);
     this.events.listen(World.EVENT.ENTITY_DESTROY);
 }
 
 World.EVENT = {
     MAP_CREATE: "MAP_CREATE",
-    CONTROLLER_CREATE: "CONTROLLER_CREATE",
-    CONTROLLER_DESTROY: "CONTROLLER_DESTROY",
+    ACTOR_CREATE: "ACTOR_CREATE",
+    ACTOR_DESTROY: "ACTOR_DESTROY",
     ENTITY_CREATE: "ENTITY_CREATE",
     ENTITY_DESTROY: "ENTITY_DESTROY"
 };
@@ -75,7 +75,6 @@ World.prototype.getTileEntity = function(tileX, tileY) {
 
     if(!activeMap) {
         Logger.log(Logger.CODE.ENGINE_WARN, "There is no active map!", "World.prototype.getTileEntity", null);
-
         return null;
     }
 
@@ -84,54 +83,51 @@ World.prototype.getTileEntity = function(tileX, tileY) {
     return this.entityManager.getEntity(entityID);
 }
 
-World.prototype.createController = function(gameContext, config, controllerID) {
-    const controller = this.turnManager.createController(gameContext, config, controllerID);
+World.prototype.createActor = function(gameContext, config, actorID) {
+    const actor = this.turnManager.createActor(gameContext, config, actorID);
 
-    if(!controller) {
-        Logger.log(Logger.CODE.ENGINE_WARN, "Controller could not be created!", "World.prototype.createController", { "controllerID": controllerID });
-
+    if(!actor) {
+        Logger.log(Logger.CODE.ENGINE_WARN, "Actor could not be created!", "World.prototype.createActor", { "actorID": actorID });
         return null;
     }
 
-    this.events.emit(World.EVENT.CONTROLLER_CREATE, controller);
+    this.events.emit(World.EVENT.ACTOR_CREATE, actor);
 
-    return controller;
+    return actor;
 }
 
-World.prototype.removeOwners = function(controllerID) {
-    const controller = this.turnManager.getController(controllerID);
+World.prototype.removeOwners = function(actorID) {
+    const actor = this.turnManager.getActor(actorID);
 
-    if(!controller) {
-        Logger.log(Logger.CODE.ENGINE_WARN, "Controller does not exist!", "World.prototype.removeOwners", { "controllerID": controllerID });
-
+    if(!actor) {
+        Logger.log(Logger.CODE.ENGINE_WARN, "Actor does not exist!", "World.prototype.removeOwners", { "actorID": actorID });
         return;
     }
 
-    for(const entityID of controller.entities) {
+    for(const entityID of actor.entities) {
         const entity = this.entityManager.getEntity(entityID);
 
         if(entity) {
             const ownerID = entity.getOwner();
 
-            if(ownerID === controllerID) {
+            if(ownerID === actorID) {
                 entity.setOwner(null);
             }
         }
     }
 }
 
-World.prototype.destroyController = function(controllerID) {
-    const controller = this.turnManager.getController(controllerID);
+World.prototype.destroyActor = function(actorID) {
+    const actor = this.turnManager.getActor(actorID);
 
-    if(!controller) {
-        Logger.log(Logger.CODE.ENGINE_WARN, "Controller does not exist!", "World.prototype.destroyController", { "controllerID": controllerID });
-
+    if(!actor) {
+        Logger.log(Logger.CODE.ENGINE_WARN, "Actor does not exist!", "World.prototype.destroyActor", { "actorID": actorID });
         return;
     }
 
-    this.removeOwners(controllerID);
-    this.turnManager.destroyController(controllerID);
-    this.events.emit(World.EVENT.CONTROLLER_DESTROY, controller);
+    this.removeOwners(actorID);
+    this.turnManager.destroyActor(actorID);
+    this.events.emit(World.EVENT.ACTOR_DESTROY, actor);
 }
 
 World.prototype.createEntity = function(gameContext, config, ownerID, externalID) {
@@ -140,7 +136,6 @@ World.prototype.createEntity = function(gameContext, config, ownerID, externalID
 
     if(!entity) {
         Logger.log(Logger.CODE.ENGINE_ERROR, "Entity could not be created!", "World.prototype.createEntity", { "entityID": id });
-
         return null;
     }
 
@@ -162,7 +157,6 @@ World.prototype.destroyEntity = function(entityID) {
 
     if(!entity) {
         Logger.log(Logger.CODE.ENGINE_ERROR, "Entity does not exist!", "World.prototype.destroyEntity", { "entityID": entityID });
-
         return;
     }
 

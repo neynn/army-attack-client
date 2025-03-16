@@ -8,24 +8,24 @@ import { Player } from "../player/player.js";
 import { OtherPlayer } from "./otherPlayer.js";
 import { createStoryModeUI } from "../storyUI.js";
 
-export const ArmyControllerFactory = function() {
-    Factory.call(this, "ARMY_CONTROLLER_FACOTRY");
+export const ArmyActorFactory = function() {
+    Factory.call(this, "ARMY_ACTOR_FACOTRY");
 }
 
-ArmyControllerFactory.TYPE = {
+ArmyActorFactory.TYPE = {
     PLAYER: "Player",
     ENEMY: "Enemy",
     OTHER_PLAYER: "OtherPlayer"
 };
 
-ArmyControllerFactory.prototype = Object.create(Factory.prototype);
-ArmyControllerFactory.prototype.constructor = ArmyControllerFactory;
+ArmyActorFactory.prototype = Object.create(Factory.prototype);
+ArmyActorFactory.prototype.constructor = ArmyActorFactory;
 
 const addDragEvent = function(gameContext) {
     const { client } = gameContext;
     const { cursor } = client;
 
-    cursor.events.subscribe(Cursor.EVENT.LEFT_MOUSE_DRAG, "ARMY_CONTROLLER_FACOTRY", (deltaX, deltaY) => {
+    cursor.events.subscribe(Cursor.EVENT.LEFT_MOUSE_DRAG, "ARMY_ACTOR_FACOTRY", (deltaX, deltaY) => {
         const context = gameContext.getContextAtMouse();
 
         if(context) {
@@ -72,43 +72,43 @@ const initPlayerCamera = function(gameContext, camera) {
     return context;
 }
 
-ArmyControllerFactory.prototype.onCreate = function(gameContext, config) {
+ArmyActorFactory.prototype.onCreate = function(gameContext, config) {
     const { spriteManager, client } = gameContext;
     const { router } = client;
     const { type, team } = config;
-    const controllerType = this.getType(type);
+    const actorType = this.getType(type);
 
     switch(type) {
-        case ArmyControllerFactory.TYPE.PLAYER: {
-            const controller = new Player();
-            const controllerSprite = spriteManager.createSprite("cursor_attack_1x1", SpriteManager.LAYER.UI);
-            const spriteID = controllerSprite.getIndex();
+        case ArmyActorFactory.TYPE.PLAYER: {
+            const actor = new Player();
+            const actorSprite = spriteManager.createSprite("cursor_attack_1x1", SpriteManager.LAYER.UI);
+            const spriteID = actorSprite.getIndex();
 
-            controller.inventory.init(gameContext);
-            controller.spriteID = spriteID;
-            controller.teamID = team ?? null;
-            controller.setConfig(controllerType);
+            actor.inventory.init(gameContext);
+            actor.spriteID = spriteID;
+            actor.teamID = team ?? null;
+            actor.setConfig(actorType);
             
-            initPlayerCamera(gameContext, controller.getCamera());
+            initPlayerCamera(gameContext, actor.getCamera());
             addDragEvent(gameContext);
 
-            router.load(gameContext, controllerType.binds);
-            router.on(Player.COMMAND.TOGGLE_RANGE, () => controller.toggleRangeShow(gameContext));
-            router.on(Player.COMMAND.CLICK, () => controller.onClick(gameContext));
+            router.load(gameContext, actorType.binds);
+            router.on(Player.COMMAND.TOGGLE_RANGE, () => actor.toggleRangeShow(gameContext));
+            router.on(Player.COMMAND.CLICK, () => actor.onClick(gameContext));
 
             createStoryModeUI(gameContext);
             
-            return controller;
+            return actor;
         }
-        case ArmyControllerFactory.TYPE.ENEMY: {
-            const controller = new Enemy();
+        case ArmyActorFactory.TYPE.ENEMY: {
+            const actor = new Enemy();
 
-            return controller;
+            return actor;
         }
-        case ArmyControllerFactory.TYPE.OTHER_PLAYER: {
-            const controller = new OtherPlayer();
+        case ArmyActorFactory.TYPE.OTHER_PLAYER: {
+            const actor = new OtherPlayer();
 
-            return controller;
+            return actor;
         }
         default: {
             console.warn(`Type ${type} is not defined!`);

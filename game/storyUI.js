@@ -1,12 +1,12 @@
 import { UserInterface } from "../source/ui/userInterface.js";
-import { ArmyControllerFactory } from "./init/armyControllerFactory.js";
+import { ArmyActorFactory } from "./init/armyActorFactory.js";
 
 export const createStoryModeUI = function(gameContext) {
     const { world, uiManager } = gameContext;
     const { turnManager } = world;
 
     /*
-    const player = turnManager.getController(ArmyControllerFactory.TYPE.PLAYER);
+    const player = turnManager.getActor(ArmyActorFactory.TYPE.PLAYER);
     const ui = new UserInterface("STORY_MODE_UI");
 
     const containerInfo = ui.constructElement("infoc", UserInterface.ELEMENT_TYPE.CONTAINER, {

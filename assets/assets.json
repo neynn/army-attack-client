@@ -1,6 +1,6 @@
 {
     "actions": { "directory": "assets/config", "source": "actions.json" },
-    "controllers": { "directory": "assets/config", "source": "controllers.json" },
+    "actors": { "directory": "assets/config", "source": "actors.json" },
     "interfaces": { "directory": "assets/config", "source": "interfaces.json" },
     "network": { "directory": "assets/config", "source": "network.json" },
     "tileMeta": { "directory": "assets/config", "source": "tileMeta.json" },

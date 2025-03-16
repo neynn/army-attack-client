@@ -304,7 +304,7 @@ ArmyMap.prototype.updateBorder = function(gameContext, centerX, centerY, range) 
         return;
     }
 
-    const player = turnManager.getController(gameContext.playerID);
+    const player = turnManager.getActor(gameContext.playerID);
 
     if(!player || !player.teamID) {
         return;

@@ -43,9 +43,9 @@ VersusMode.prototype.toNextTeam = function() {
     return team;
 }
 
-VersusMode.prototype.addPlayer = function(controllerID) {
+VersusMode.prototype.addPlayer = function(actorID) {
     this.players.push({
-        "id": controllerID,
+        "id": actorID,
         "actionsLeft": 0,
         "maxActions": 0
     });

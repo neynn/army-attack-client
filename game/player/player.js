@@ -5,7 +5,7 @@ import { PathfinderSystem } from "../systems/pathfinder.js";
 import { AttackSystem } from "../systems/attack.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { ConstructionSystem } from "../systems/construction.js";
-import { Controller } from "../../source/controller/controller.js";
+import { Actor } from "../../source/turn/actor.js";
 import { ArmyContext } from "../armyContext.js";
 import { TileManager } from "../../source/tile/tileManager.js";
 import { Hover } from "./hover.js";
@@ -15,7 +15,7 @@ import { Queue } from "../../source/queue.js";
 import { DebugHelper } from "../debug.js";
 
 export const Player = function() {
-    Controller.call(this);
+    Actor.call(this);
 
     this.spriteID = null;
     this.teamID = null;
@@ -57,7 +57,7 @@ Player.OVERLAY_TYPE = {
     ATTACK: "attack"
 };
 
-Player.prototype = Object.create(Controller.prototype);
+Player.prototype = Object.create(Actor.prototype);
 Player.prototype.constructor = Player;
 
 Player.prototype.getCamera = function() {

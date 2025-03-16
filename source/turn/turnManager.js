@@ -5,7 +5,7 @@ import { Logger } from "../logger.js";
 export const TurnManager = function() {
     FactoryOwner.call(this);
 
-    this.controllers = new Map();
+    this.actors = new Map();
     this.actorOrder = [];
     this.actorIndex = -1;
     this.actionsLeft = 0;
@@ -25,46 +25,52 @@ TurnManager.EVENT = {
 TurnManager.prototype = Object.create(FactoryOwner.prototype);
 TurnManager.prototype.constructor = TurnManager;
 
-TurnManager.prototype.createController = function(gameContext, config, controllerID) {
-    if(this.controllers.has(controllerID)) {
-        Logger.log(Logger.CODE.ENGINE_WARN, "ControllerID is already taken!", "TurnManager.prototype.createController", { "controllerID": controllerID });
+TurnManager.prototype.forAllActors = function(onCall) {
+    for(const [actorID, actor] of this.actors) {
+        onCall(actor, actorID);
+    }
+}
+
+TurnManager.prototype.createActor = function(gameContext, config, actorID) {
+    if(this.actors.has(actorID)) {
+        Logger.log(Logger.CODE.ENGINE_WARN, "ActorID is already taken!", "TurnManager.prototype.createActor", { "actorID": actorID });
 
         return null;
     }
 
-    const controller = this.createProduct(gameContext, config);
+    const actor = this.createProduct(gameContext, config);
 
-    if(!controller) {
-        Logger.log(Logger.CODE.ENGINE_WARN, "Controller could not be created!", "TurnManager.prototype.createController", { "controllerID": controllerID });
+    if(!actor) {
+        Logger.log(Logger.CODE.ENGINE_WARN, "Actor could not be created!", "TurnManager.prototype.createActor", { "actorID": actorID });
         
         return null;
     }
     
-    controller.setID(controllerID);
+    actor.setID(actorID);
     
-    this.controllers.set(controllerID, controller);
+    this.actors.set(actorID, actor);
 
-    return controller;
+    return actor;
 }
 
-TurnManager.prototype.destroyController = function(controllerID) {
-    if(!this.controllers.has(controllerID)) {
-        Logger.log(Logger.CODE.ENGINE_WARN, "Controller does not exist!", "TurnManager.prototype.destroyController", { "controllerID": controllerID });
+TurnManager.prototype.destroyActor = function(actorID) {
+    if(!this.actors.has(actorID)) {
+        Logger.log(Logger.CODE.ENGINE_WARN, "Actor does not exist!", "TurnManager.prototype.destroyActor", { "actorID": actorID });
 
         return;
     }
 
-    this.controllers.delete(controllerID);
+    this.actors.delete(actorID);
 }
 
-TurnManager.prototype.getController = function(controllerID) {
-    const controller = this.controllers.get(controllerID);
+TurnManager.prototype.getActor = function(actorID) {
+    const actor = this.actors.get(actorID);
 
-    if(!controller) {
+    if(!actor) {
         return null;
     }
 
-    return controller;
+    return actor;
 }
 
 TurnManager.prototype.isActor = function(actorID) {
@@ -87,7 +93,7 @@ TurnManager.prototype.getNextActor = function(gameContext) {
         this.actorIndex++;
 
         const firstActorID = this.actorOrder[this.actorIndex];
-        const firstActor = this.controllers.get(firstActorID);
+        const firstActor = this.actors.get(firstActorID);
         
         firstActor.onTurnStart(gameContext);   
 
@@ -95,7 +101,7 @@ TurnManager.prototype.getNextActor = function(gameContext) {
     }
 
     const currentActorID = this.actorOrder[this.actorIndex];
-    const currentActor = this.controllers.get(currentActorID);
+    const currentActor = this.actors.get(currentActorID);
 
     if(this.actionsLeft > 0) {
         return currentActor;
@@ -105,12 +111,10 @@ TurnManager.prototype.getNextActor = function(gameContext) {
     this.actorIndex %= this.actorOrder.length;
 
     const actorID = this.actorOrder[this.actorIndex];
-    const actor = this.controllers.get(actorID);
+    const actor = this.actors.get(actorID);
 
-    if(currentActorID !== actorID) {
-        currentActor.onTurnEnd(gameContext);
-        actor.onTurnStart(gameContext);   
-    }
+    currentActor.onTurnEnd(gameContext);
+    actor.onTurnStart(gameContext);   
 
     this.actionsLeft = actor.maxActions;
     this.events.emit(TurnManager.EVENT.ACTOR_CHANGE, currentActorID, actorID);
@@ -124,7 +128,7 @@ TurnManager.prototype.getCurrentActor = function() {
     }
 
     const currentActorID = this.actorOrder[this.actorIndex];
-    const currentActor = this.controllers.get(currentActorID);
+    const currentActor = this.actors.get(currentActorID);
 
     return currentActor;
 }
@@ -164,7 +168,7 @@ TurnManager.prototype.setActorOrder = function(gameContext, order, index = -1) {
     for(let i = 0; i < order.length; i++) {
         const actorID = order[i];
 
-        if(!this.controllers.has(actorID)) {
+        if(!this.actors.has(actorID)) {
             return false;
         }
     }
@@ -191,7 +195,7 @@ TurnManager.prototype.update = function(gameContext) {
     const { world } = gameContext;
     const { actionQueue } = world;
 
-    this.controllers.forEach(controller => controller.update(gameContext));
+    this.actors.forEach(actor => actor.update(gameContext));
 
     const isQueueRunning = actionQueue.isRunning();
 
@@ -206,8 +210,8 @@ TurnManager.prototype.update = function(gameContext) {
     }
 }
 
-TurnManager.prototype.removeEntity = function(controllerID, entityID) {
-    const owner = this.controllers.get(controllerID);
+TurnManager.prototype.removeEntity = function(actorID, entityID) {
+    const owner = this.actors.get(actorID);
 
     if(!owner) {
         return;
@@ -216,11 +220,11 @@ TurnManager.prototype.removeEntity = function(controllerID, entityID) {
     owner.removeEntity(entityID);
 }
 
-TurnManager.prototype.addEntity = function(controllerID, entityID) {
-    const owner = this.controllers.get(controllerID);
+TurnManager.prototype.addEntity = function(actorID, entityID) {
+    const owner = this.actors.get(actorID);
 
     if(!owner) {
-        Logger.log(Logger.CODE.ENGINE_WARN, "Controller does not exist!", "TurnManager.prototype.addEntity", { "controllerID": controllerID });
+        Logger.log(Logger.CODE.ENGINE_WARN, "Actor does not exist!", "TurnManager.prototype.addEntity", { "actorID": actorID });
 
         return;
     }
