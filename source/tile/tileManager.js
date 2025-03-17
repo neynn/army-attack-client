@@ -1,68 +1,38 @@
-import { TileSheet } from "../graphics/tileSheet.js";
 import { Logger } from "../logger.js";
 import { ImageManager } from "../resources/imageManager.js";
+import { TileGraphics } from "./tileGraphics.js";
 import { TileMeta } from "./tileMeta.js";
 
 export const TileManager = function() {
     this.meta = new TileMeta();
     this.resources = new ImageManager();
-    this.dynamicAnimations = [];
-    this.tileTypes = {};
+    this.graphics = new TileGraphics();
 }
 
 TileManager.TILE_ID = {
     EMPTY: 0
 };
 
-TileManager.prototype.load = function(tileTypes, tileMeta) {
+TileManager.prototype.load = function(tileSheets, tileMeta) {
     this.meta.init(tileMeta);
 
-    if(!tileTypes) {
-        Logger.log(false, "TileTypes cannot be undefined!", "TileManager.prototype.load", null);
+    if(!tileSheets) {
+        Logger.log(false, "TileSheets cannot be undefined!", "TileManager.prototype.load", null);
         return;
     }
 
-    this.loadTileTypes(tileTypes);
+    const usedSheets = this.graphics.load(tileSheets, tileMeta);
 
-    this.resources.createImages(tileTypes);
-    this.resources.requestAllImages((key, image, sheet) => sheet.addReference());
+    this.resources.createImages(tileSheets);
+
+    for(const sheetID of usedSheets) {
+        this.resources.requestImage(sheetID, (key, image, sheet) => sheet.addReference());
+    }
 }
 
 TileManager.prototype.update = function(gameContext) {
     const { timer } = gameContext;
     const realTime = timer.getRealTime();
 
-    this.updateDynamicAnimations(realTime);
-}
-
-TileManager.prototype.updateDynamicAnimations = function(timestamp) {
-    for(let i = 0; i < this.dynamicAnimations.length; i++) {
-        const { set, animation } = this.dynamicAnimations[i];
-        const tileType = this.tileTypes[set];
-        const animationType = tileType.getAnimation(animation);
-
-        animationType.updateFrameIndex(timestamp);
-    }
-}
-
-TileManager.prototype.loadTileTypes = function(tileTypes) {
-    for(const typeID in tileTypes) {
-        const tileType = tileTypes[typeID];
-        const tileSheet = new TileSheet();
-
-        tileSheet.init(tileType);
-
-        const dynamicAnimations = tileSheet.getDynamicAnimations();
-
-        for(let i = 0; i < dynamicAnimations.length; i++) {
-            const animationID = dynamicAnimations[i];
-
-            this.dynamicAnimations.push({
-                "set": typeID,
-                "animation": animationID
-            });
-        }
-
-        this.tileTypes[typeID] = tileSheet;
-    }
+    this.graphics.update(realTime);
 }

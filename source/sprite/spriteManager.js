@@ -1,7 +1,7 @@
 import { Logger } from "../logger.js";
 import { Sprite } from "./sprite.js";
 import { ImageManager } from "../resources/imageManager.js";
-import { SpriteSheet } from "../graphics/spriteSheet.js";
+import { SpriteSheet } from "./spriteSheet.js";
 import { ObjectPool } from "../objectPool.js";
 import { Drawable } from "../graphics/drawable.js";
 
@@ -38,7 +38,6 @@ SpriteManager.prototype.getLayer = function(layerIndex) {
 SpriteManager.prototype.load = function(spriteTypes) {
     if(!spriteTypes) {
         Logger.log(Logger.CODE.ENGINE_WARN, "SpriteTypes does not exist!", "SpriteManager.prototype.load", null);
-
         return;
     }
 
@@ -78,7 +77,6 @@ SpriteManager.prototype.createSprite = function(typeID, layerID = null, animatio
 
     if(!sprite) {
         Logger.log(Logger.CODE.ENGINE_ERROR, "SpritePool is full!", "SpriteManager.prototype.createSprite", null);
-
         return null;
     }
 
@@ -87,7 +85,7 @@ SpriteManager.prototype.createSprite = function(typeID, layerID = null, animatio
     sprite.onTerminate = () => this.destroySprite(sprite.index);
 
     if(layerID !== null) {
-        this.addToLayer(layerID, sprite);
+        this.addToLayer(sprite, layerID);
     }
 
     this.updateSprite(sprite.index, typeID, animationID);
@@ -108,22 +106,41 @@ SpriteManager.prototype.drawSprite = function(sprite, context, localX, localY) {
     const animationType = spriteType.getAnimation(animationID);
     const animationFrame = animationType.getFrame(currentFrame);
 
-    for(let i = 0; i < animationFrame.length; i++) {
-        const { frameX, frameY, frameW, frameH, shiftX, shiftY } = animationFrame[i];
-        const renderX = localX + shiftX;
-        const renderY = localY + shiftY;
+    if(!animationFrame) {
+        return;
+    }
+    
+    if(isFlipped) {
+        const renderX = (localX - boundsX) * -1;
+        const renderY = localY + boundsY;
 
-        if(isFlipped) {
-            const drawX = renderX - boundsX;
-            const drawY = renderY + boundsY;
-    
-            context.scale(-1, 1);
-            context.drawImage(spriteBuffer, frameX, frameY, frameW, frameH, -drawX, drawY, frameW, frameH);
-        } else {
-            const drawX = renderX + boundsX;
-            const drawY = renderY + boundsY;
-    
-            context.drawImage(spriteBuffer, frameX, frameY, frameW, frameH, drawX, drawY, frameW, frameH);
+        context.scale(-1, 1);
+
+        for(let i = 0; i < animationFrame.length; i++) {
+            const { frameX, frameY, frameW, frameH, shiftX, shiftY } = animationFrame[i];
+            const drawX = renderX - shiftX;
+            const drawY = renderY + shiftY;
+            
+            context.drawImage(
+                spriteBuffer,
+                frameX, frameY, frameW, frameH,
+                drawX, drawY, frameW, frameH
+            );
+        }
+    } else {
+        const renderX = localX + boundsX;
+        const renderY = localY + boundsY;
+
+        for(let i = 0; i < animationFrame.length; i++) {
+            const { frameX, frameY, frameW, frameH, shiftX, shiftY } = animationFrame[i];
+            const drawX = renderX + shiftX;
+            const drawY = renderY + shiftY;
+
+            context.drawImage(
+                spriteBuffer,
+                frameX, frameY, frameW, frameH,
+                drawX, drawY, frameW, frameH
+            );
         }
     }
 }
@@ -133,7 +150,6 @@ SpriteManager.prototype.destroySprite = function(spriteIndex) {
 
     if(!sprite) {
         Logger.log(Logger.CODE.ENGINE_WARN, "Sprite is not reserved!", "SpriteManager.prototype.destroySprite", { "spriteID": spriteIndex });
-
         return [];
     }
     
@@ -165,15 +181,12 @@ SpriteManager.prototype.destroySprite = function(spriteIndex) {
 }
 
 SpriteManager.prototype.getSprite = function(spriteIndex) {
-    const sprite = this.sprites.getReservedElement(spriteIndex);
-
-    return sprite;
+    return this.sprites.getReservedElement(spriteIndex);
 }
 
-SpriteManager.prototype.swapLayer = function(layerIndex, spriteIndex) {
+SpriteManager.prototype.swapLayer = function(spriteIndex, layerIndex) {
     if(layerIndex < 0 || layerIndex >= this.layers.length) {
         Logger.log(Logger.CODE.ENGINE_WARN, "Layer does not exist!", "SpriteManager.prototype.swapLayer", { "layer": layerIndex });
-
         return;
     }
 
@@ -181,18 +194,16 @@ SpriteManager.prototype.swapLayer = function(layerIndex, spriteIndex) {
 
     if(!sprite) {
         Logger.log(Logger.CODE.ENGINE_WARN, "Sprite is not reserved!", "SpriteManager.prototype.swapLayer", { "spriteID": spriteIndex });
-
         return;
     }
 
     this.removeSpriteFromLayers(spriteIndex);
-    this.addToLayer(layerIndex, sprite);
+    this.addToLayer(sprite, layerIndex);
 }
 
-SpriteManager.prototype.addToLayer = function(layerIndex, sprite) {
+SpriteManager.prototype.addToLayer = function(sprite, layerIndex) {
     if(layerIndex < 0 || layerIndex >= this.layers.length) {
         Logger.log(Logger.CODE.ENGINE_WARN, "Layer does not exist!", "SpriteManager.prototype.addToLayer", { "layer": layerIndex });
-
         return;
     }
 
@@ -201,7 +212,6 @@ SpriteManager.prototype.addToLayer = function(layerIndex, sprite) {
 
     if(index !== -1) {
         Logger.log(Logger.CODE.ENGINE_WARN, "Sprite already exists on layer!", "SpriteManager.prototype.addToLayer", { "layer": layerIndex });
-
         return;
     }
 
@@ -225,7 +235,6 @@ SpriteManager.prototype.updateSprite = function(spriteIndex, typeID, animationID
     
     if(!sprite) {
         Logger.log(Logger.CODE.ENGINE_WARN, "Sprite is not reserved!", "SpriteManager.prototype.updateSprite", { "spriteID": spriteIndex });
-
         return;
     }
 
@@ -233,7 +242,6 @@ SpriteManager.prototype.updateSprite = function(spriteIndex, typeID, animationID
 
     if(!spriteType) {
         Logger.log(Logger.CODE.ENGINE_WARN, "SpriteType does not exist!", "SpriteManager.prototype.updateSprite", { "typeID": typeID });
-
         return;
     }
 
@@ -241,7 +249,6 @@ SpriteManager.prototype.updateSprite = function(spriteIndex, typeID, animationID
 
     if(!animationType) {
         Logger.log(Logger.CODE.ENGINE_WARN, "AnimationType does not exist!", "SpriteManager.prototype.updateSprite", { "animationID": animationID, "typeID": typeID });
-        
         return;
     }
 

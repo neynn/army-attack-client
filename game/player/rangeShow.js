@@ -38,7 +38,7 @@ RangeShow.prototype.show = function(gameContext, entity, camera) {
     const { tileX, tileY } = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
     const { spriteID } = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
 
-    spriteManager.swapLayer(SpriteManager.LAYER.TOP, spriteID);
+    spriteManager.swapLayer(spriteID, SpriteManager.LAYER.TOP);
 
     const startX = tileX - range;
     const startY = tileY - range;
@@ -76,7 +76,7 @@ RangeShow.prototype.reset = function(gameContext, camera) {
     if(entity) {
         const { spriteID } = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
         
-        spriteManager.swapLayer(SpriteManager.LAYER.MIDDLE, spriteID);
+        spriteManager.swapLayer(spriteID, SpriteManager.LAYER.MIDDLE);
     }
 
     this.setLastTarget(null);

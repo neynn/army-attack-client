@@ -71,26 +71,24 @@ OrthogonalCamera.prototype.drawEmptyTile = function(context, renderX, renderY, s
 }
 
 OrthogonalCamera.prototype.drawTileGraphics = function(tileManager, context, tileID, renderX, renderY, scaleX = 1, scaleY = 1) {
-    const { meta, resources, tileTypes } = tileManager;
-    const tileMeta = meta.getMeta(tileID);
+    const { resources, graphics } = tileManager;
+    const graphic = graphics.getGraphic(tileID);
 
-    if(tileMeta === null) {
+    if(graphic === null) {
         this.drawEmptyTile(context, renderX, renderY, scaleX, scaleY);
         return;
     }
 
-    const { set, animation } = tileMeta;
-    const tileBuffer = resources.getImage(set);
+    const { sheet, frames, frameIndex } = graphic;
+    const tileBuffer = resources.getImage(sheet);
 
     if(tileBuffer === null) {
         this.drawEmptyTile(context, renderX, renderY, scaleX, scaleY);
         return;
     }
 
-    const tileType = tileTypes[set];
-    const animationType = tileType.getAnimation(animation);
-    const currentFrame = animationType.getCurrentFrame();
-
+    const currentFrame = frames[frameIndex];
+    
     for(let i = 0; i < currentFrame.length; i++) {
         const component = currentFrame[i];
         const { frameX, frameY, frameW, frameH, shiftX, shiftY } = component;

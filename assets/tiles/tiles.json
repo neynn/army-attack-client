@@ -193,70 +193,70 @@
         "source": "range.png",
         "frameTime": 0.03,
         "frames": {
-            "c": {"x":0,"y":0,"w":48,"h":48},
-            "n": {"x":48,"y":0,"w":48,"h":48},
-            "se": {"x":96,"y":0,"w":48,"h":48},
-            "sw": {"x":144,"y":0,"w":48,"h":48},
-            "ne": {"x":192,"y":0,"w":48,"h":48},
-            "nw": {"x":0,"y":48,"w":48,"h":48},
-            "s": {"x":48,"y":48,"w":48,"h":48},
-            "e": {"x":96,"y":48,"w":48,"h":48},
-            "w": {"x":144,"y":48,"w":48,"h":48}
+            "CENTER": {"x":0,"y":0,"w":48,"h":48},
+            "NORTH": {"x":48,"y":0,"w":48,"h":48},
+            "SOUTH_EAST": {"x":96,"y":0,"w":48,"h":48},
+            "SOUTH_WEST": {"x":144,"y":0,"w":48,"h":48},
+            "NORTH_EAST": {"x":192,"y":0,"w":48,"h":48},
+            "NORTH_WEST": {"x":0,"y":48,"w":48,"h":48},
+            "SOUTH": {"x":48,"y":48,"w":48,"h":48},
+            "EAST": {"x":96,"y":48,"w":48,"h":48},
+            "WEST": {"x":144,"y":48,"w":48,"h":48}
         },
         "patterns": {
             "top_left": [
-                {"id": "nw"},
-                {"id": "n", "shiftX": 48},
-                {"id": "w", "shiftY": 48},
-                {"id": "c", "shiftX": 48, "shiftY": 48}
+                {"id": "NORTH_WEST"},
+                {"id": "NORTH", "shiftX": 48},
+                {"id": "WEST", "shiftY": 48},
+                {"id": "CENTER", "shiftX": 48, "shiftY": 48}
             ],
             "top": [
-                {"id": "n"},
-                {"id": "n", "shiftX": 48},
-                {"id": "c", "shiftY": 48},
-                {"id": "c", "shiftX": 48, "shiftY": 48}
+                {"id": "NORTH"},
+                {"id": "NORTH", "shiftX": 48},
+                {"id": "CENTER", "shiftY": 48},
+                {"id": "CENTER", "shiftX": 48, "shiftY": 48}
             ],
             "top_right": [
-                {"id": "n"},
-                {"id": "ne", "shiftX": 48},
-                {"id": "c", "shiftY": 48},
-                {"id": "e", "shiftX": 48, "shiftY": 48}
+                {"id": "NORTH"},
+                {"id": "NORTH_EAST", "shiftX": 48},
+                {"id": "CENTER", "shiftY": 48},
+                {"id": "EAST", "shiftX": 48, "shiftY": 48}
             ],
             "left": [
-                {"id": "w"},
-                {"id": "c", "shiftX": 48},
-                {"id": "w", "shiftY": 48},
-                {"id": "c", "shiftX": 48, "shiftY": 48}
+                {"id": "WEST"},
+                {"id": "CENTER", "shiftX": 48},
+                {"id": "WEST", "shiftY": 48},
+                {"id": "CENTER", "shiftX": 48, "shiftY": 48}
             ],
             "center": [
-                {"id": "c"},
-                {"id": "c", "shiftX": 48},
-                {"id": "c", "shiftY": 48},
-                {"id": "c", "shiftX": 48, "shiftY": 48}
+                {"id": "CENTER"},
+                {"id": "CENTER", "shiftX": 48},
+                {"id": "CENTER", "shiftY": 48},
+                {"id": "CENTER", "shiftX": 48, "shiftY": 48}
             ],
             "right": [
-                {"id": "c"},
-                {"id": "e", "shiftX": 48},
-                {"id": "c", "shiftY": 48},
-                {"id": "e", "shiftX": 48, "shiftY": 48}
+                {"id": "CENTER"},
+                {"id": "EAST", "shiftX": 48},
+                {"id": "CENTER", "shiftY": 48},
+                {"id": "EAST", "shiftX": 48, "shiftY": 48}
             ],
             "bottom_left": [
-                {"id": "w"},
-                {"id": "c", "shiftX": 48},
-                {"id": "sw", "shiftY": 48},
-                {"id": "s", "shiftX": 48, "shiftY": 48}
+                {"id": "WEST"},
+                {"id": "CENTER", "shiftX": 48},
+                {"id": "SOUTH_WEST", "shiftY": 48},
+                {"id": "SOUTH", "shiftX": 48, "shiftY": 48}
             ],
             "bottom": [
-                {"id": "c"},
-                {"id": "c", "shiftX": 48},
-                {"id": "s", "shiftY": 48},
-                {"id": "s", "shiftX": 48, "shiftY": 48}
+                {"id": "CENTER"},
+                {"id": "CENTER", "shiftX": 48},
+                {"id": "SOUTH", "shiftY": 48},
+                {"id": "SOUTH", "shiftX": 48, "shiftY": 48}
             ],
             "bottom_right": [
-                {"id": "c"},
-                {"id":"e", "shiftX": 48},
-                {"id":"s", "shiftY": 48},
-                {"id": "se", "shiftX": 48, "shiftY": 48}
+                {"id": "CENTER"},
+                {"id":"EAST", "shiftX": 48},
+                {"id":"SOUTH", "shiftY": 48},
+                {"id": "SOUTH_EAST", "shiftX": 48, "shiftY": 48}
             ]
         }
     },
