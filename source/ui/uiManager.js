@@ -73,7 +73,7 @@ UIManager.prototype.onClick = function(mouseX, mouseY, mouseRange) {
 
     for(let i = 0; i < clickedElements.length; i++) {
         const element = clickedElements[i];
-        const hasFlag = element.hasBehaviorFlag(UserInterface.ELEMENT_BEHAVIOR.CLICKABLE);
+        const hasFlag = element.hasBehavior(UserInterface.ELEMENT_BEHAVIOR.CLICKABLE);
 
         if(hasFlag) {
             element.onClick();

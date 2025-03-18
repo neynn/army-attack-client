@@ -1,17 +1,4 @@
 {
-    "FPS_COUNTER": {
-        "TEXT_FPS": {
-            "type": "DYNAMIC_TEXT",
-            "anchor": "BOTTOM_LEFT",
-            "position": { "x": 0, "y": 25 },
-            "text": "FPS",
-            "fontSize": 50,
-            "fontType": "Arial",
-            "color": [238, 238, 238, 1],
-            "align": "left",
-            "opacity": 1
-        }
-    },
     "MAIN_MENU": {
         "TEXT_TITLE": {
             "type": "TEXT",

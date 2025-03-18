@@ -66,7 +66,7 @@ AnimationSystem.playFire = function(gameContext, target, attackers) {
         weaponSprite.setPosition(x, y);
         weaponSprite.expire();
 
-        if(unitSizeComponent && unitSizeComponent.artillery) {
+        if(unitSizeComponent && unitSizeComponent.isArtillery()) {
             const artillerySprite = spriteManager.createSprite(attacker.config.sprites.weapon);
             const { x, y } = getRandomOffset(AnimationSystem.FIRE_OFFSET.ARTILLERY, AnimationSystem.FIRE_OFFSET.ARTILLERY);
 

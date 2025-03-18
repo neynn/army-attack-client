@@ -31,6 +31,11 @@ Renderer.DEBUG = {
     MAP: false
 };
 
+Renderer.FPS_COLOR = {
+    BAD: "#ff0000",
+    GOOD: "#00ff00"
+};
+
 Renderer.prototype.getContext = function(contextID) {
     for(let i = 0; i < this.contexts.length; i++) {
         const context = this.contexts[i];
@@ -124,6 +129,21 @@ Renderer.prototype.update = function(gameContext) {
     if(Renderer.DEBUG.INTERFACE) {
         uiManager.debug(drawContext);
     }
+
+    this.drawFPS(drawContext, timer);
+}
+
+Renderer.prototype.drawFPS = function(context, timer) {
+    const fps = timer.getFPS();
+    const text = `FPS: ${Math.round(fps)}`;
+
+    if(fps >= 60) {
+        context.fillStyle = Renderer.FPS_COLOR.GOOD;
+    } else {
+        context.fillStyle = Renderer.FPS_COLOR.BAD;
+    }
+    
+    context.fillText(text, 0, 10);
 }
 
 Renderer.prototype.resizeDisplay = function(width, height) {

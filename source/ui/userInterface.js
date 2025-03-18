@@ -4,7 +4,6 @@ import { TextStyle } from "../graphics/applyable/textStyle.js";
 import { Logger } from "../logger.js";
 import { Button } from "./elements/button.js";
 import { Container } from "./elements/container.js";
-import { DynamicTextElement } from "./elements/dynamicTextElement.js";
 import { Icon } from "./elements/icon.js";
 import { Scrollbar } from "./elements/scrollbar.js";
 import { TextElement } from "./elements/textElement.js";
@@ -28,11 +27,10 @@ UserInterface.ELEMENT_BEHAVIOR = {
 UserInterface.ELEMENT_TYPE = {
     NONE: 0,
     TEXT: 1,
-    DYNAMIC_TEXT: 2,
-    BUTTON: 3,
-    ICON: 4,
-    CONTAINER: 5,
-    SCROLLBAR: 6
+    BUTTON: 2,
+    ICON: 3,
+    CONTAINER: 4,
+    SCROLLBAR: 5
 };
 
 UserInterface.STATE = {
@@ -49,7 +47,6 @@ UserInterface.EFFECT_CLASS = {
 UserInterface.ELEMENT_TYPE_MAP = {
     "BUTTON": UserInterface.ELEMENT_TYPE.BUTTON,
     "TEXT": UserInterface.ELEMENT_TYPE.TEXT,
-    "DYNAMIC_TEXT": UserInterface.ELEMENT_TYPE.DYNAMIC_TEXT,
     "ICON": UserInterface.ELEMENT_TYPE.ICON,
     "CONTAINER": UserInterface.ELEMENT_TYPE.CONTAINER,
     "SCROLLBAR": UserInterface.ELEMENT_TYPE.SCROLLBAR
@@ -192,8 +189,8 @@ UserInterface.prototype.createElement = function(typeID, config, DEBUG_NAME) {
             const element = new Button(DEBUG_NAME);
             const { shape = Button.SHAPE.RECTANGLE, radius = width } = config;
 
-            element.addBehaviorFlag(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE);
-            element.addBehaviorFlag(UserInterface.ELEMENT_BEHAVIOR.CLICKABLE);
+            element.addBehavior(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE);
+            element.addBehavior(UserInterface.ELEMENT_BEHAVIOR.CLICKABLE);
 
             element.setPosition(x, y);
             element.setOpacity(opacity);
@@ -222,7 +219,7 @@ UserInterface.prototype.createElement = function(typeID, config, DEBUG_NAME) {
         case UserInterface.ELEMENT_TYPE.CONTAINER: {
             const element = new Container(DEBUG_NAME);
 
-            element.addBehaviorFlag(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE);
+            element.addBehavior(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE);
 
             element.setPosition(x, y);
             element.setOpacity(opacity);
@@ -230,29 +227,6 @@ UserInterface.prototype.createElement = function(typeID, config, DEBUG_NAME) {
             element.setAnchor(anchor);
 
             element.setSize(width, height);
-
-            return element;
-        }
-        case UserInterface.ELEMENT_TYPE.DYNAMIC_TEXT: {
-            const element = new DynamicTextElement(DEBUG_NAME);
-            const { 
-                text = "ERROR",
-                fontType = TextStyle.DEFAULT.FONT_TYPE,
-                fontSize = TextStyle.DEFAULT.FONT_SIZE,
-                align = TextStyle.TEXT_ALIGNMENT.LEFT,
-                color = [0, 0, 0, 1]
-            } = config;
-
-            element.setPosition(x, y);
-            element.setOpacity(opacity);
-            element.setOrigin(x, y);
-            element.setAnchor(anchor);
-
-            element.setText(text);
-            element.style.setFontType(fontType);
-            element.style.setFontSize(fontSize);
-            element.style.setAlignment(align);
-            element.style.color.setColorArray(color);
 
             return element;
         }
@@ -269,8 +243,8 @@ UserInterface.prototype.createElement = function(typeID, config, DEBUG_NAME) {
         case UserInterface.ELEMENT_TYPE.SCROLLBAR: {
             const element = new Scrollbar(DEBUG_NAME);
 
-            element.addBehaviorFlag(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE);
-            element.addBehaviorFlag(UserInterface.ELEMENT_BEHAVIOR.CLICKABLE);
+            element.addBehavior(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE);
+            element.addBehavior(UserInterface.ELEMENT_BEHAVIOR.CLICKABLE);
 
             element.setPosition(x, y);
             element.setOpacity(opacity);
@@ -446,24 +420,24 @@ UserInterface.prototype.getID = function() {
     return this.id;
 }
 
-UserInterface.prototype.addClick = function(buttonID, onClick) {
-    const button = this.getElement(buttonID);
+UserInterface.prototype.addClick = function(elementID, onClick, id) {
+    const element = this.getElement(elementID);
 
-    if(!(button instanceof Button)) {
-        return;
+    if(element.hasBehavior(UserInterface.ELEMENT_BEHAVIOR.CLICKABLE)) {
+        const subscriberID = id === undefined ? this.id : id;
+
+        element.events.subscribe(UIElement.EVENT.CLICKED, subscriberID, onClick);
     }
-
-    button.events.subscribe(UIElement.EVENT.CLICKED, this.id, onClick);
 }
 
-UserInterface.prototype.removeClick = function(buttonID) {
-    const button = this.getElement(buttonID);
+UserInterface.prototype.removeClick = function(elementID, id) {
+    const element = this.getElement(elementID);
 
-    if(!(button instanceof Button)) {
-        return;
+    if(element.hasBehavior(UserInterface.ELEMENT_BEHAVIOR.CLICKABLE)) {
+        const subscriberID = id === undefined ? this.id : id;
+
+        element.events.unsubscribeAll(UIElement.EVENT.CLICKED, subscriberID);
     }
-
-    button.events.mute(UIElement.EVENT.CLICKED);
 }
 
 UserInterface.prototype.setText = function(textID, message) {
@@ -474,24 +448,4 @@ UserInterface.prototype.setText = function(textID, message) {
     }
 
     text.setText(message);
-}
-
-UserInterface.prototype.addDynamicText = function(textID, onCall) {
-    const text = this.getElement(textID);
-
-    if(!(text instanceof DynamicTextElement)) {
-        return;
-    }
-
-    text.events.subscribe(UIElement.EVENT.REQUEST_TEXT, this.id, (element) => onCall(element));
-}
-
-UserInterface.prototype.removeDynamicText = function(textID) {
-    const text = this.getElement(textID);
-
-    if(!(text instanceof DynamicTextElement)) {
-        return;
-    }
-
-    text.events.mute(UIElement.EVENT.REQUEST_TEXT);
 }

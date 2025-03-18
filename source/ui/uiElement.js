@@ -22,8 +22,7 @@ UIElement.EVENT = {
     LAST_COLLISION: "LAST_COLLISION",
     FIRST_COLLISION: "FIRST_COLLISION",
     REPEATED_COLLISION: "REPEATED_COLLISION",
-    CLICKED: "CLICKED",
-    REQUEST_TEXT: "REQUEST_TEXT"
+    CLICKED: "CLICKED"
 };
 
 UIElement.ANCHOR_TYPE = {
@@ -41,15 +40,15 @@ UIElement.ANCHOR_TYPE = {
 UIElement.prototype = Object.create(Drawable.prototype);
 UIElement.prototype.constructor = UIElement;
 
-UIElement.prototype.removeBehaviorFlag = function(flag) {
+UIElement.prototype.removeBehavior = function(flag) {
     this.behavior &= (~flag);
 }
 
-UIElement.prototype.hasBehaviorFlag = function(flag) {
+UIElement.prototype.hasBehavior = function(flag) {
     return (this.behavior & flag) !== 0;
 }
 
-UIElement.prototype.addBehaviorFlag = function(flag) {
+UIElement.prototype.addBehavior = function(flag) {
     this.behavior |= flag;
 }
 
@@ -70,7 +69,7 @@ UIElement.prototype.setAnchor = function(anchor) {
 }
 
 UIElement.prototype.getCollisions = function(mouseX, mouseY, mouseRange) {
-    if(!this.hasBehaviorFlag(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE)) {
+    if(!this.hasBehavior(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE)) {
         return [];
     }
 
@@ -97,7 +96,7 @@ UIElement.prototype.getCollisions = function(mouseX, mouseY, mouseRange) {
             const reference = child.getReference();
             
             if(reference.type === Drawable.TYPE.UI_ELEMENT) {
-                const hasFlag = reference.hasBehaviorFlag(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE);
+                const hasFlag = reference.hasBehavior(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE);
 
                 if(hasFlag) {
                     referenceStack.push(reference);

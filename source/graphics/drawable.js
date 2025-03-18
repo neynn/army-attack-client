@@ -127,7 +127,7 @@ Drawable.prototype.draw = function(context, viewportX, viewportY) {
 
 Drawable.prototype.getReferenceStack = function() {
     const referenceStack = [this];
-    const referenceIDStack = [];
+    const result = [];
 
     while(referenceStack.length !== 0) {
         const drawable = referenceStack.pop();
@@ -140,10 +140,10 @@ Drawable.prototype.getReferenceStack = function() {
             referenceStack.push(reference);
         }
 
-        referenceIDStack.push(drawable);
+        result.push(drawable);
     }
 
-    return referenceIDStack;
+    return result;
 }
 
 Drawable.prototype.getID = function() {
@@ -169,7 +169,7 @@ Drawable.prototype.show = function() {
 }
 
 Drawable.prototype.setOpacity = function(opacity) {
-    if(opacity !== undefined) {
+    if(typeof opacity === "number") {
         const clampedOpacity = clampValue(opacity, 1, 0);
 
         this.opacity = clampedOpacity;
@@ -223,57 +223,55 @@ Drawable.prototype.hasFamily = function() {
 }
 
 Drawable.prototype.openFamily = function(name) {
-    if(this.graph) {
-        return;
+    if(!this.graph) {
+        this.graph = new Graph(this.id, this);
+        this.graph.setName(name);
     }
-
-    this.graph = new Graph(this.id, this);
-    this.graph.setName(name);
 }
 
 Drawable.prototype.closeFamily = function() {
-    if(!this.graph) {
-        return;
+    if(this.graph) {
+        this.graph.destroy();
+        this.graph = null;
     }
-
-    this.graph.destroy();
-    this.graph = null;
 }
 
-Drawable.prototype.addChild = function(drawable, name) {
-    if(!(drawable instanceof Drawable)) {
-        return;
+Drawable.prototype.filterChildName = function(child, name) {
+    if(typeof name !== "string" || (this.graph && this.graph.hasChild(name))) {
+        const childID = child.getID();
+
+        return childID;
     }
 
-    const childID = name !== undefined ? name : drawable.getID();
+    return name;
+}
+
+Drawable.prototype.addChild = function(child, name) {
+    const childID = this.filterChildName(child, name);
     
     if(!this.graph) {
         this.openFamily();
     }
 
-    if(this.graph.hasChild(childID)) {
-        return;
-    }
-
-    if(drawable.hasFamily()) {
-        drawable.graph.setName(childID);
+    if(child.hasFamily()) {
+        child.graph.setName(childID);
     } else {
-        drawable.openFamily(childID);
+        child.openFamily(childID);
     }
 
-    this.graph.link(drawable.graph);
+    this.graph.link(child.graph);
+
+    return childID;
 }
 
 Drawable.prototype.removeChild = function(name) {
-    if(!this.graph) {
-        return;
-    }
+    if(this.graph) {
+        const child = this.graph.getChild(name);
 
-    const child = this.graph.getChild(name);
-
-    if(child !== null) {
-        const reference = child.getReference();
-
-        reference.closeFamily();
+        if(child !== null) {
+            const reference = child.getReference();
+    
+            reference.closeFamily();
+        }
     }
 }
