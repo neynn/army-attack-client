@@ -38,9 +38,9 @@ MainMenuState.prototype.onEnter = function(stateMachine) {
     const spriteVersus = spriteManager.createSprite("red_battletank_idle");
     const spriteEdit = spriteManager.createSprite("blue_elite_battery_idle");
     
-    buttonPlay.addChild(spritePlay, "TEST");
-    buttonVersus.addChild(spriteVersus, "TEST");
-    buttonEdit.addChild(spriteEdit, "TEST")
+    buttonPlay.addChild(spritePlay);
+    buttonVersus.addChild(spriteVersus);
+    buttonEdit.addChild(spriteEdit)
 
     buttonPlay.events.subscribe(UIElement.EVENT.FIRST_COLLISION, "TEST", () => spriteManager.updateSprite(spritePlay.getIndex(), "blue_battletank_aim"));
     buttonPlay.events.subscribe(UIElement.EVENT.LAST_COLLISION, "TEST", () => spriteManager.updateSprite(spritePlay.getIndex(), "blue_battletank_idle"));

@@ -64,10 +64,9 @@ const initMoveComponent = function(component, config, type) {
     component.speed = moveSpeed;
 }
 
-const createDefaultEntity = function(defaultConfig, config, gameMode) {
-    const { tileX = 0, tileY = 0, team = null, type } = config;
-    const { stats } = defaultConfig;
-    const entity = new ArmyEntity(type);
+const createDefaultEntity = function(entityType, gameMode, tileX, tileY, teamID, typeID) {
+    const { stats } = entityType;
+    const entity = new ArmyEntity(typeID);
     const positionComponent = new PositionComponent();
     const spriteComponent = new SpriteComponent();
     const directionComponent = new DirectionComponent();
@@ -79,15 +78,15 @@ const createDefaultEntity = function(defaultConfig, config, gameMode) {
         maxHealth = health
     } = stats[gameMode];
 
-    healthComponent.health = config.health ?? health;
-    healthComponent.maxHealth = config.maxHealth ?? maxHealth;
-
     positionComponent.tileX = tileX;
     positionComponent.tileY = tileY;
 
-    teamComponent.teamID = team;
+    healthComponent.health = health;
+    healthComponent.maxHealth = maxHealth;
 
-    entity.setConfig(defaultConfig);
+    teamComponent.teamID = teamID;
+
+    entity.setConfig(entityType);
     entity.addComponent(ArmyEntity.COMPONENT.POSITION, positionComponent);
     entity.addComponent(ArmyEntity.COMPONENT.SPRITE, spriteComponent);
     entity.addComponent(ArmyEntity.COMPONENT.DIRECTION, directionComponent);
@@ -97,10 +96,8 @@ const createDefaultEntity = function(defaultConfig, config, gameMode) {
     return entity;
 }
 
-const createDefaultSprite = function(gameContext, entity, config) {
+const createDefaultSprite = function(gameContext, entity, tileX, tileY) {
     const { spriteManager, renderer } = gameContext;
-    const { tileX, tileY } = config;
-
     const spriteType = entity.getSpriteID(ArmyEntity.SPRITE_TYPE.IDLE);
     const camera = renderer.getContext(Player.CAMERA_ID).getCamera();
     const sprite = spriteManager.createSprite(spriteType, SpriteManager.LAYER.MIDDLE);
@@ -122,7 +119,7 @@ const createDefaultSprite = function(gameContext, entity, config) {
 ArmyEntityFactory.prototype.onCreate = function(gameContext, config) {
     const { world } = gameContext;
     const { entityManager } = world;
-    const { components, type } = config;
+    const { components, tileX = -1, tileY = -1, team = null, type = null } = config;
     const gameMode = gameContext.getGameModeName();
     const entityType = this.getType(type);
 
@@ -130,8 +127,8 @@ ArmyEntityFactory.prototype.onCreate = function(gameContext, config) {
         return null;
     }
 
-    const entity = createDefaultEntity(entityType, config, gameMode);
-    const sprite = createDefaultSprite(gameContext, entity, config);
+    const entity = createDefaultEntity(entityType, gameMode, tileX, tileY, team, type);
+    const sprite = createDefaultSprite(gameContext, entity, tileX, tileY);
     const { archetype, stats } = entityType;
     const statConfig = stats[gameMode] || {};
 

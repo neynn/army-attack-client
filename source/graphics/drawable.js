@@ -241,22 +241,24 @@ Drawable.prototype.closeFamily = function() {
 }
 
 Drawable.prototype.addChild = function(drawable, name) {
-    if(name === undefined) {
+    if(!(drawable instanceof Drawable)) {
         return;
     }
+
+    const childID = name !== undefined ? name : drawable.getID();
     
     if(!this.graph) {
         this.openFamily();
     }
 
-    if(this.graph.hasChild(name)) {
+    if(this.graph.hasChild(childID)) {
         return;
     }
 
     if(drawable.hasFamily()) {
-        drawable.graph.setName(name);
+        drawable.graph.setName(childID);
     } else {
-        drawable.openFamily(name);
+        drawable.openFamily(childID);
     }
 
     this.graph.link(drawable.graph);

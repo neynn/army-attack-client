@@ -46,32 +46,31 @@ AnimationSystem.playDeath = function(gameContext, entity) {
     entity.playSound(gameContext, ArmyEntity.SOUND_TYPE.DEATH);
 }
 
-AnimationSystem.playFire = function(gameContext, target, attackersIDs) {
+AnimationSystem.playFire = function(gameContext, target, attackers) {
     const { world, spriteManager } = gameContext;
     const { entityManager } = world;
     const spriteComponent = target.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const entitySprite = spriteManager.getSprite(spriteComponent.spriteID);
 
-    for(const attackerID of attackersIDs) {
+    for(let i = 0; i < attackers.length; i++) {
+        const attackerID = attackers[i];
         const attacker = entityManager.getEntity(attackerID);
         const unitSizeComponent = attacker.getComponent(ArmyEntity.COMPONENT.UNIT_SIZE);
         const weaponSprite = spriteManager.createSprite(attacker.config.sprites.weapon);
-        const weaponSpriteID = weaponSprite.getIndex();
         const { x, y } = getRandomOffset(AnimationSystem.FIRE_OFFSET.REGULAR, AnimationSystem.FIRE_OFFSET.REGULAR);
 
         attacker.lookAtEntity(target);
         attacker.updateSpriteDirectonal(gameContext, ArmyEntity.SPRITE_TYPE.FIRE, ArmyEntity.SPRITE_TYPE.FIRE_UP);
         attacker.playSound(gameContext, ArmyEntity.SOUND_TYPE.FIRE);
-        entitySprite.addChild(weaponSprite, weaponSpriteID);
+        entitySprite.addChild(weaponSprite);
         weaponSprite.setPosition(x, y);
         weaponSprite.expire();
 
         if(unitSizeComponent && unitSizeComponent.artillery) {
             const artillerySprite = spriteManager.createSprite(attacker.config.sprites.weapon);
-            const artillerySpriteID = artillerySprite.getIndex();
             const { x, y } = getRandomOffset(AnimationSystem.FIRE_OFFSET.ARTILLERY, AnimationSystem.FIRE_OFFSET.ARTILLERY);
 
-            entitySprite.addChild(artillerySprite, artillerySpriteID);
+            entitySprite.addChild(artillerySprite);
             artillerySprite.setPosition(x, y);
             artillerySprite.flip();
             artillerySprite.expire();

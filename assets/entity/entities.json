@@ -2784,8 +2784,8 @@
         "archetype": "Defense",
         "dimX": 3, "dimY": 3, "dimZ": 1,
         "stats": {
-            "story": { "health": 1, "damage": 1, "attackRange": 1, "traits": [] }, 
-            "versus": { "health": 1, "damage": 1, "attackRange": 1, "traits": [] }
+            "story": { "health": 50, "damage": 2, "attackRange": 1, "traits": ["Counter"] }, 
+            "versus": { "health": 50, "damage": 2, "attackRange": 1, "traits": ["Counter"] }
         },
         "sprites": {
             "idle": "red_commandobunker",
