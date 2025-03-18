@@ -116,7 +116,6 @@ MapEditorState.prototype.onEnter = function(stateMachine) {
     this.initEditorCamera(gameContext);
 
     uiManager.parseUI("MAP_EDITOR", gameContext);
-    uiManager.unparseUI("FPS_COUNTER");
 
     router.load(gameContext, {
         "TOGGLE_AUTOTILER": "+a"
