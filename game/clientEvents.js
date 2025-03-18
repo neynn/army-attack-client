@@ -90,6 +90,6 @@ export const skipTurnEvent = function(gameContext, actorID) {
     const isActor = turnManager.isActor(actorID);
 
     if(isActor) {
-        turnManager.cancelActorActions(0);
+        turnManager.cancelActorActions();
     }
 }

@@ -1,9 +1,9 @@
 import { Action } from "../../source/action/action.js";
 import { MoveSystem } from "../systems/move.js";
 import { PathfinderSystem } from "../systems/pathfinder.js";
-import { ConquerSystem } from "../systems/conquer.js";
 import { ACTION_TYPES } from "../enums.js";
 import { ArmyEntity } from "../init/armyEntity.js";
+import { ConquerSystem } from "../systems/conquer.js";
 
 export const MoveAction = function() {}
 
@@ -30,12 +30,10 @@ MoveAction.prototype.onEnd = function(gameContext, request, messengerID) {
     const { entityManager, actionQueue } = world;
     const entity = entityManager.getEntity(entityID);
 
-    ConquerSystem.tryConquering(gameContext, targetX, targetY, entity);
     MoveSystem.endMove(gameContext, entity, targetX, targetY);
-    
     entity.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
     entity.placeOnMap(gameContext);
-
+    ConquerSystem.conquer(gameContext, entity, targetX, targetY);
     actionQueue.addImmediateRequest(ACTION_TYPES.COUNTER_MOVE, null, entityID);
 }
 
@@ -55,7 +53,7 @@ MoveAction.prototype.getValidated = function(gameContext, request, messengerID) 
     const { entityManager } = world;
     const entity = entityManager.getEntity(entityID);
 
-    if(!entity || !entity.canMoveThere(gameContext, targetX, targetY)) {
+    if(!entity || !entity.isAlive()) {
         return null;
     }
 

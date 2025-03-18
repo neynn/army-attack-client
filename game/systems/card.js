@@ -64,11 +64,11 @@ const createNormalCard = function(gameContext, entity, cardType) {
 }
 
 const getTeamSprites = function(gameContext, entity) {
-    const teamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
-    const teamType = gameContext.teamTypes[teamComponent.teamID];
+    const { teamID } = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
+    const teamType = gameContext.teamTypes[teamID];
 
     if(!teamType) {
-        return {};
+        return null;
     }
 
     const teamSprites = teamType.sprites;
@@ -91,6 +91,10 @@ const createStatCard = function(gameContext, entity) {
     const { x, y } = getCardOffset(gameContext, entity);
     const teamSprites = getTeamSprites(gameContext, entity);
     
+    if(!teamSprites) {
+        return null;
+    }
+
     if(entity.hasComponent(ArmyEntity.COMPONENT.ATTACK)) {
         const statCardType = teamSprites[CardSystem.SPRITE_TYPE.LARGE];
 

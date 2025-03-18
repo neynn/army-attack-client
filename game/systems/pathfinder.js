@@ -1,5 +1,7 @@
 import { FloodFill } from "../../source/pathfinders/floodFill.js";
 import { ArmyEntity } from "../init/armyEntity.js";
+import { ArmyMap } from "../init/armyMap.js";
+import { AllianceSystem } from "./alliance.js";
 
 export const PathfinderSystem = function() {}
 
@@ -11,7 +13,59 @@ PathfinderSystem.NODE_STATE = {
 };
 
 const addNode = function(nodeList, node, state) {
-    nodeList.push({ "node": node, "state": state });
+    nodeList.push({
+        "node": node,
+        "state": state
+    });
+}
+
+const isTilePassable = function(worldMap, tileTypes, entity, tileX, tileY) {
+    const tileTypeID = worldMap.getTile(ArmyMap.LAYER.TYPE, tileX, tileY);
+    const moveComponent = entity.getComponent(ArmyEntity.COMPONENT.MOVE);
+    const tileType = tileTypes[tileTypeID];
+
+    if(!tileType) {
+        return false;
+    }
+
+    const { passability } = tileType;
+    const isTilePassable = moveComponent.hasPassability(passability);
+
+    return isTilePassable;
+}
+
+const isTileWalkable = function(gameContext, worldMap, entity, tileX, tileY) {
+    const { teamID } = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
+    const moveComponent = entity.getComponent(ArmyEntity.COMPONENT.MOVE);
+
+    const tileTeamID = worldMap.getTile(ArmyMap.LAYER.TEAM, tileX, tileY);
+    const isTileWalkable = AllianceSystem.isWalkable(gameContext, teamID, ArmyMap.TEAM_TYPE[tileTeamID]);
+    const isWalkable = isTileWalkable || moveComponent.isStealth();
+
+    return isWalkable;
+}
+
+const isBypassingAllowed = function(gameContext, worldMap, entity, blocker) {
+    if((worldMap.flags & ArmyMap.FLAG.ALLOW_PASSING) === 0) {
+        return false;
+    }
+
+    const avianComponent = entity.getComponent(ArmyEntity.COMPONENT.AVIAN);
+    const passerAvianComponent = blocker.getComponent(ArmyEntity.COMPONENT.AVIAN);
+    const isBypassByFlight = avianComponent && avianComponent.isFlying() || passerAvianComponent && passerAvianComponent.isFlying();
+
+    if(isBypassByFlight) {
+        return true;
+    }
+
+    const moveComponent = entity.getComponent(ArmyEntity.COMPONENT.MOVE);
+    const teamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
+    const passerTeamComponent = blocker.getComponent(ArmyEntity.COMPONENT.TEAM);
+
+    const isBypassable = AllianceSystem.isBypassable(gameContext, teamComponent.teamID, passerTeamComponent.teamID);
+    const isBypassingAllowed = isBypassable || moveComponent.isCloaked();
+
+    return isBypassingAllowed;
 }
 
 PathfinderSystem.generateNodeList = function(gameContext, entity) {
@@ -26,11 +80,12 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
     const nodes = [];
     const moveComponent = entity.getComponent(ArmyEntity.COMPONENT.MOVE);
     const { tileX, tileY } = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
-    const isOriginWalkable = entity.isTileWalkable(gameContext, tileX, tileY);
+    const isOriginWalkable = isTileWalkable(gameContext, activeMap, entity, tileX, tileY);
+    const tileTypes = gameContext.tileTypes;
 
     FloodFill.search_cross(tileX, tileY, moveComponent.range, activeMap.width, activeMap.height, (next, current) => {
         const { positionX, positionY } = next;
-        const isNextPassable = entity.isTilePassable(gameContext, positionX, positionY);
+        const isNextPassable = isTilePassable(activeMap, tileTypes, entity, positionX, positionY);
 
         if(!isNextPassable) {
             addNode(nodes, next, PathfinderSystem.NODE_STATE.INVALID_PASSABILITY);
@@ -42,16 +97,16 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
 
         if(entityID !== null) {
             const tileEntity = entityManager.getEntity(entityID);
-            const isBypassingAllowed = entity.isBypassingAllowed(gameContext, tileEntity);
+            const isBypassable = isBypassingAllowed(gameContext, activeMap, entity, tileEntity);
 
-            if(!isBypassingAllowed) {
+            if(!isBypassable) {
                 addNode(nodes, next, PathfinderSystem.NODE_STATE.INVALID_OCCUPIED);
 
                 return FloodFill.RESPONSE.IGNORE_NEXT;
             }
         }
 
-        const isNextWalkable = entity.isTileWalkable(gameContext, positionX, positionY);
+        const isNextWalkable = isTileWalkable(gameContext, activeMap, entity, positionX, positionY);
 
         /**
          * RESCUE: Allows units to move on nearby conquered tiles if they are stranded,

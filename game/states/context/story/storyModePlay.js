@@ -138,13 +138,6 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "owner": ArmyActorFactory.TYPE.PLAYER
     });
 
-    const rmap = gameContext.versusMode.pickRandomMap(gameContext);
-    const reve = gameContext.versusMode.getEventSpawns(rmap);
-
-    for(const e of reve) {
-        SpawnSystem.createEntity(gameContext, e);
-    }
-    
     const s = gameContext.saveSnapshot();
     //saveTemplateAsFile("test.json", JSON.stringify(s, null, 2));
     console.log(s, gameContext);

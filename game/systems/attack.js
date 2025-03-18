@@ -32,28 +32,33 @@ const hasEnoughRange = function(attacker, target, range) {
     return collision;
 }
 
+const getSurroundingEntities = function(worldMap, entity, range) {
+    const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
+    const startX = positionComponent.tileX - range;
+    const startY = positionComponent.tileY - range;
+    const endX = positionComponent.tileX + entity.config.dimX + range;
+    const endY = positionComponent.tileY + entity.config.dimY + range;
+    const entities = worldMap.getUniqueEntitiesInRange(startX, startY, endX, endY);
+
+    return entities;
+}
+
 const filterAliveEntitiesInMaxRange = function(gameContext, entity, onCheck) {
     const { world } = gameContext;
-    const { entityManager } = world;
-    const entities = [];
-    const healthComponent = entity.getComponent(ArmyEntity.COMPONENT.HEALTH);
+    const { entityManager, mapManager } = world;
+    const activeMap = mapManager.getActiveMap();
 
-    if(!healthComponent.isAlive()) {
-        return entities;
+    if(!activeMap || !entity.isAlive()) {
+        return [];
     }
 
-    const nearbyEntities = entity.getSurroundingEntities(gameContext, gameContext.settings.maxAttackRange);
+    const entities = [];
+    const nearbyEntities = getSurroundingEntities(activeMap, entity, gameContext.settings.maxAttackRange);
 
     for(let i = 0; i < nearbyEntities.length; i++) {
         const nearbyEntity = entityManager.getEntity(nearbyEntities[i]);
 
-        if(!nearbyEntity) {
-            continue;
-        }
-
-        const healthComponent = nearbyEntity.getComponent(ArmyEntity.COMPONENT.HEALTH);
-
-        if(!healthComponent.isAlive()) {
+        if(!nearbyEntity || !nearbyEntity.isAlive()) {
             continue;
         }
 

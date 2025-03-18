@@ -15,7 +15,9 @@ ArmyMap.FLAG = {
     NONE: 0,
     ALLOW_PASSING: 1 << 0,
     ALLOW_BORDER: 1 << 1,
-    ALLOW_DROPS: 1 << 2
+    ALLOW_DROPS: 1 << 2,
+    ALLOW_CAPTURE: 1 << 3,
+    NEUTRAL: 1 << 4
 };
 
 ArmyMap.TYPE = {
@@ -113,12 +115,16 @@ ArmyMap.prototype.loadMeta = function(meta) {
         }
     }
 
-    this.loadGraphics(graphics);
+    if(graphics) {
+        const { background = [], foreground = [] } = graphics;
+
+        this.loadGraphics(background, foreground);
+    }
 }
 
 ArmyMap.prototype.reload = function(gameContext) {
     const tileTypes = gameContext.tileTypes;
-
+    
     for(let i = 0; i < this.height; i++) {
         for(let j = 0; j < this.width; j++) {
             const typeID = this.getTile(ArmyMap.LAYER.TYPE, j, i);
@@ -167,45 +173,30 @@ ArmyMap.prototype.getAnimationForm = function(gameContext, tileID) {
     return animationForm;
 }
 
-ArmyMap.prototype.conquer = function(gameContext, tileX, tileY, teamName) {
-    const teamID = this.getTile(ArmyMap.LAYER.TEAM, tileX, tileY);
-    const isEnemy = AllianceSystem.isEnemy(gameContext, teamName, ArmyMap.TEAM_TYPE[teamID]);
-
-    if(!isEnemy) {
-        return;
-    }
-
-    this.placeTile(ArmyMap.TEAM_TO_WORLD[teamName], ArmyMap.LAYER.TEAM, tileX, tileY);
-    this.updateShoreTiles(gameContext, tileX, tileY, ArmyMap.UPDATE_RANGE.CAPTURE);
-    this.updateBorder(gameContext, tileX, tileY, ArmyMap.UPDATE_RANGE.CAPTURE);
-    this.convertGraphicToTeam(gameContext, tileX, tileY);
-}
-
-ArmyMap.prototype.repaint = function(gameContext, centerX, centerY, layerID) {
-    this.updateArea(centerX, centerY, 1, (index, tileX, tileY) => {
-        const tileID = this.getTile(layerID, tileX, tileY);
-
-        this.autotile(gameContext, tileX, tileY, tileID, layerID);
+ArmyMap.prototype.repaint = function(gameContext, tileX, tileY, layerID) {
+    this.updateArea(tileX, tileY, 1, (index, tileX, tileY) => {
+        this.autotile(gameContext, tileX, tileY, layerID);
     });
 }
 
-ArmyMap.prototype.autotile = function(gameContext, centerX, centerY, tileID, layerID) {
+ArmyMap.prototype.autotile = function(gameContext, tileX, tileY, layerID) {
     const { tileManager } = gameContext;
     const { meta } = tileManager; 
+    const tileID = this.getTile(layerID, tileX, tileY);
     const autotiler = meta.getAutotilerByTile(tileID);
 
     if(!autotiler) {
         return;
     }
 
-    this.updateArea(centerX, centerY, 1, (index, tileX, tileY) => {
-        const id = this.getTile(layerID, tileX, tileY);
+    this.updateArea(tileX, tileY, 1, (index, nextX, nextY) => {
+        const id = this.getTile(layerID, nextX, nextY);
 
         if(!autotiler.hasMember(id)) {
             return;
         }
 
-        const responseID = autotiler.run(tileX, tileY, (x, y) => {
+        const responseID = autotiler.run(nextX, nextY, (x, y) => {
             const nextID = this.getTile(layerID, x, y);
 
             if(autotiler.hasMember(nextID) || nextID === null) {
@@ -216,40 +207,24 @@ ArmyMap.prototype.autotile = function(gameContext, centerX, centerY, tileID, lay
         });
 
         if(responseID !== TileManager.TILE_ID.EMPTY) {
-            this.placeTile(responseID, layerID, tileX, tileY);
+            this.placeTile(responseID, layerID, nextX, nextY);
         }
     });
 }
 
-ArmyMap.prototype.getConversionID = function(gameContext, tileID, teamID) {
-    const teamConversions = gameContext.tileConversions[ArmyMap.TEAM_TYPE[teamID]];
-
-    if(!teamConversions) {
-        return TileManager.TILE_ID.EMPTY;
-    }
-
-    const convertedID = teamConversions[tileID];
-    
-    if(!convertedID) {
-        return TileManager.TILE_ID.EMPTY;
-    }
-
-    return convertedID;
-}
-
-ArmyMap.prototype.updateShoreTiles = function(gameContext, centerX, centerY, range) {
+ArmyMap.prototype.updateShoreTiles = function(gameContext, tileX, tileY, range) {
     const { tileManager } = gameContext;
     const { meta } = tileManager;
-    const teamID = this.getTile(ArmyMap.LAYER.TEAM, centerX, centerY);
+    const teamID = this.getTile(ArmyMap.LAYER.TEAM, tileX, tileY);
 
-    this.updateArea(centerX, centerY, range, (index, tileX, tileY) => {
-        const typeID = this.getTile(ArmyMap.LAYER.TYPE, tileX, tileY);
+    this.updateArea(tileX, tileY, range, (index, nextX, nextY) => {
+        const typeID = this.getTile(ArmyMap.LAYER.TYPE, nextX, nextY);
 
         if(typeID !== ArmyMap.TILE_TYPE.SHORE) {
             return;
         }
 
-        const groundID = this.getTile(ArmyMap.LAYER.GROUND, tileX, tileY);
+        const groundID = this.getTile(ArmyMap.LAYER.GROUND, nextX, nextY);
         const animationForm = this.getAnimationForm(gameContext, groundID);
 
         if(!animationForm) {
@@ -261,8 +236,8 @@ ArmyMap.prototype.updateShoreTiles = function(gameContext, centerX, centerY, ran
             if(animationForm[i] === 1) {
                 const row = Math.floor(i / 3);
                 const column = i % 3;
-                const checkX = tileX + (column - 1);
-                const checkY = tileY + (row - 1);
+                const checkX = nextX + (column - 1);
+                const checkY = nextY + (row - 1);
                 const checkTeamID = this.getTile(ArmyMap.LAYER.TEAM, checkX, checkY);
                     
                 if(checkTeamID !== teamID) {
@@ -271,10 +246,10 @@ ArmyMap.prototype.updateShoreTiles = function(gameContext, centerX, centerY, ran
             }
         }
 
-        const conversionID = this.getConversionID(gameContext, groundID, teamID);
+        const conversionID = gameContext.getConversionID(groundID, teamID);
     
         if(meta.hasMeta(conversionID)) {
-            this.placeTile(conversionID, ArmyMap.LAYER.GROUND, tileX, tileY);
+            this.placeTile(conversionID, ArmyMap.LAYER.GROUND, nextX, nextY);
         }
     });
 }
@@ -287,7 +262,7 @@ ArmyMap.prototype.convertGraphicToTeam = function(gameContext, tileX, tileY) {
         const layerID = ArmyMap.CONVERTABLE_LAYERS[i];
         const tileID = this.getTile(layerID, tileX, tileY);
         const teamID = this.getTile(ArmyMap.LAYER.TEAM, tileX, tileY);
-        const conversionID = this.getConversionID(gameContext, tileID, teamID);
+        const conversionID = gameContext.getConversionID(tileID, teamID);
 
         if(meta.hasMeta(conversionID)) {
             this.placeTile(conversionID, layerID, tileX, tileY);
@@ -295,40 +270,43 @@ ArmyMap.prototype.convertGraphicToTeam = function(gameContext, tileX, tileY) {
     }
 }
 
-ArmyMap.prototype.updateBorder = function(gameContext, centerX, centerY, range) {
-    const { tileManager, world } = gameContext;
-    const { turnManager } = world;
+ArmyMap.prototype.updateBorder = function(gameContext, tileX, tileY, range) {
+    const { tileManager } = gameContext;
     const { meta } = tileManager;
 
-    if(!gameContext.settings.drawBorder || (this.flags & ArmyMap.FLAG.ALLOW_BORDER) === 0) {
+    if(!gameContext.settings.drawBorder) {
         return;
     }
 
-    const player = turnManager.getActor(gameContext.playerID);
+    if((this.flags & ArmyMap.FLAG.ALLOW_BORDER) === 0) {
+        return;
+    }
 
-    if(!player || !player.teamID) {
+    const playerTeamID = gameContext.getPlayerTeamID();
+
+    if(!playerTeamID) {
         return;
     }
 
     const autotiler = meta.getAutotilerByID(ArmyMap.AUTOTILER.BORDER);
     const tileTypes = gameContext.tileTypes;
 
-    this.updateArea(centerX, centerY, range, (index, tileX, tileY) => {
-        const centerTypeID = this.getTile(ArmyMap.LAYER.TYPE, tileX, tileY);
+    this.updateArea(tileX, tileY, range, (index, nextX, nextY) => {
+        const centerTypeID = this.getTile(ArmyMap.LAYER.TYPE, nextX, nextY);
         const centerType = tileTypes[centerTypeID];
     
         if(!centerType || !centerType.hasBorder) {
             return;
         }
 
-        const centerTeamID = this.getTile(ArmyMap.LAYER.TEAM, tileX, tileY);
-        const isEnemy = AllianceSystem.isEnemy(gameContext, player.teamID, ArmyMap.TEAM_TYPE[centerTeamID]);
+        const centerTeamID = this.getTile(ArmyMap.LAYER.TEAM, nextX, nextY);
+        const isEnemy = AllianceSystem.isEnemy(gameContext, playerTeamID, ArmyMap.TEAM_TYPE[centerTeamID]);
 
         if(isEnemy) {
             return;
         }
 
-        const tileID = autotiler.run(tileX, tileY, (x, y) => {
+        const tileID = autotiler.run(nextX, nextY, (x, y) => {
             const neighborTypeID = this.getTile(ArmyMap.LAYER.TYPE, x, y);
             const neighborType = tileTypes[neighborTypeID];
     
@@ -346,6 +324,6 @@ ArmyMap.prototype.updateBorder = function(gameContext, centerX, centerY, range) 
             return Autotiler.RESPONSE.VALID;
         });
 
-        this.placeTile(tileID, ArmyMap.LAYER.BORDER, tileX, tileY);
+        this.placeTile(tileID, ArmyMap.LAYER.BORDER, nextX, nextY);
     });
 }

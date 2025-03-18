@@ -103,7 +103,7 @@ Player.prototype.highlightAttackers = function(gameContext, target, attackers) {
 Player.prototype.updateAttackers = function(gameContext) {
     const mouseEntity = this.hover.getEntity(gameContext);
 
-    if(!mouseEntity || !mouseEntity.isAttackable(gameContext, this.teamID)) {
+    if(!mouseEntity || !mouseEntity.isAttackableByTeam(gameContext, this.teamID)) {
         AnimationSystem.revertToIdle(gameContext, this.attackers);
         this.clearAttackers();
         return;
@@ -340,7 +340,7 @@ Player.prototype.updateSelectedEntity = function(gameContext) {
 Player.prototype.queueAttack = function(gameContext, entity) {
     const { world } = gameContext;
     const { actionQueue } = world;
-    const isAttackable = entity.isAttackable(gameContext, this.teamID);
+    const isAttackable = entity.isAttackableByTeam(gameContext, this.teamID);
 
     if(isAttackable) {
         const entityID = entity.getID();

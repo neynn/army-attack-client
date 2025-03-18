@@ -3,7 +3,6 @@ import { EventEmitter } from "../../source/events/eventEmitter.js";
 import { DirectionComponent } from "../components/direction.js";
 import { SpriteComponent } from "../components/sprite.js";
 import { AllianceSystem } from "../systems/alliance.js";
-import { ArmyMap } from "./armyMap.js";
 
 export const ArmyEntity = function(DEBUG_NAME) {
     Entity.call(this, DEBUG_NAME);
@@ -14,8 +13,8 @@ export const ArmyEntity = function(DEBUG_NAME) {
 }
 
 ArmyEntity.EVENT = {
-    HEALTH_UPDATE: 0,
-    DAMAGE_UPDATE: 1
+    HEALTH_UPDATE: "HEALTH_UPDATE",
+    DAMAGE_UPDATE: "DAMAGE_UPDATE"
 };
 
 ArmyEntity.COMPONENT = {
@@ -58,75 +57,6 @@ ArmyEntity.SOUND_TYPE = {
 
 ArmyEntity.prototype = Object.create(Entity.prototype);
 ArmyEntity.prototype.constructor = ArmyEntity;
-
-ArmyEntity.prototype.isTilePassable = function(gameContext, tileX, tileY) {
-    const { world } = gameContext;
-    const { mapManager } = world;
-    const activeMap = mapManager.getActiveMap();
-
-    if(!activeMap) {
-        return false;
-    }
-
-    const tileTypeID = activeMap.getTile(ArmyMap.LAYER.TYPE, tileX, tileY);
-    const moveComponent = this.getComponent(ArmyEntity.COMPONENT.MOVE);
-    const tileType = gameContext.tileTypes[tileTypeID];
-
-    if(!tileType) {
-        return false;
-    }
-
-    const { passability } = tileType;
-    const isTilePassable = moveComponent.hasPassability(passability);
-
-    return isTilePassable
-}
-
-ArmyEntity.prototype.isTileWalkable = function(gameContext, tileX, tileY) {
-    const { world } = gameContext;
-    const { mapManager } = world;
-    const activeMap = mapManager.getActiveMap();
-
-    if(!activeMap) {
-        return false;
-    }
-
-    const { teamID } = this.getComponent(ArmyEntity.COMPONENT.TEAM);
-    const moveComponent = this.getComponent(ArmyEntity.COMPONENT.MOVE);
-
-    const tileTeamID = activeMap.getTile(ArmyMap.LAYER.TEAM, tileX, tileY);
-    const isTileWalkable = AllianceSystem.isWalkable(gameContext, teamID, ArmyMap.TEAM_TYPE[tileTeamID]);
-    const isWalkable = isTileWalkable || moveComponent.isStealth();
-
-    return isWalkable;
-}
-
-ArmyEntity.prototype.isBypassingAllowed = function(gameContext, entity) {
-    const { world } = gameContext;
-    const { mapManager } = world;
-    const activeMap = mapManager.getActiveMap();
-
-    if(!activeMap || (activeMap.flags & ArmyMap.FLAG.ALLOW_PASSING) === 0) {
-        return false;
-    }
-
-    const avianComponent = this.getComponent(ArmyEntity.COMPONENT.AVIAN);
-    const passerAvianComponent = entity.getComponent(ArmyEntity.COMPONENT.AVIAN);
-    const isBypassByFlight = avianComponent && avianComponent.isFlying() || passerAvianComponent && passerAvianComponent.isFlying();
-
-    if(isBypassByFlight) {
-        return true;
-    }
-
-    const moveComponent = this.getComponent(ArmyEntity.COMPONENT.MOVE);
-    const teamComponent = this.getComponent(ArmyEntity.COMPONENT.TEAM);
-    const passerTeamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
-
-    const isBypassable = AllianceSystem.isBypassable(gameContext, teamComponent.teamID, passerTeamComponent.teamID);
-    const isBypassingAllowed = isBypassable || moveComponent.isCloaked();
-
-    return isBypassingAllowed;
-}
 
 ArmyEntity.prototype.updateSpriteHorizontal = function(gameContext) {
     const spriteComponent = this.getComponent(ArmyEntity.COMPONENT.SPRITE);
@@ -190,25 +120,6 @@ ArmyEntity.prototype.getHealth = function() {
     return healthComponent.health;
 }
 
-ArmyEntity.prototype.getSurroundingEntities = function(gameContext, range = 0) {
-    const { world } = gameContext;
-    const { mapManager } = world;
-    const worldMap = mapManager.getActiveMap();
-
-    if(!worldMap) {
-        return [];
-    }
-
-    const positionComponent = this.getComponent(ArmyEntity.COMPONENT.POSITION);
-    const startX = positionComponent.tileX - range;
-    const startY = positionComponent.tileY - range;
-    const endX = positionComponent.tileX + this.config.dimX + range;
-    const endY = positionComponent.tileY + this.config.dimY + range;
-    const entities = worldMap.getUniqueEntitiesInRange(startX, startY, endX, endY);
-
-    return entities;
-}
-
 ArmyEntity.prototype.placeOnMap = function(gameContext) {
     const { world } = gameContext;
     const { mapManager } = world;
@@ -253,35 +164,11 @@ ArmyEntity.prototype.getSpriteID = function(spriteType) {
     return spriteID;
 }
 
-ArmyEntity.prototype.canMoveThere = function(gameContext, tileX, tileY) {
-    const { world } = gameContext;
-    const { mapManager, entityManager } = world;
-    const worldMap = mapManager.getActiveMap();
-    
-    if(!worldMap) {
-        return false;
-    }
-
-    const entities = worldMap.getEntities(tileX, tileY);
-
-    for(let i = 0; i < entities.length; i++) {
-        const entityID = entities[i];
-        const entity = entityManager.getEntity(entityID);
-
-        if(!entity) {
-            continue;
-        }
-
-        //TODO:
-    }
-
+ArmyEntity.prototype.isAlive = function() {
     const healthComponent = this.getComponent(ArmyEntity.COMPONENT.HEALTH);
+    const isAlive = healthComponent.isAlive();
 
-    if(!healthComponent.isAlive()) {
-        return false;
-    }
-
-    return true;
+    return isAlive;
 }
 
 ArmyEntity.prototype.lookHorizontal = function(westCondition) {
@@ -323,25 +210,19 @@ ArmyEntity.prototype.lookAtTile = function(targetX, targetY) {
     }
 }
 
-ArmyEntity.prototype.isAttackable = function(gameContext, attackerTeamID) {
-    const healthComponent = this.getComponent(ArmyEntity.COMPONENT.HEALTH);
-
-    if(!healthComponent.isAlive()) {
+ArmyEntity.prototype.isAttackableByTeam = function(gameContext, team) {
+    if(!this.isAlive()) {
         return false;
     }
 
     const { teamID } = this.getComponent(ArmyEntity.COMPONENT.TEAM);
-    const isEnemy = AllianceSystem.isEnemy(gameContext, attackerTeamID, teamID);
+    const isEnemy = AllianceSystem.isEnemy(gameContext, teamID, team);
 
     return isEnemy;
 }
 
 ArmyEntity.prototype.isMoveable = function() {
-    const healthComponent = this.getComponent(ArmyEntity.COMPONENT.HEALTH);
+    const isMoveable = this.isAlive() && this.hasComponent(ArmyEntity.COMPONENT.MOVE);
 
-    if(!healthComponent.isAlive()) {
-        return false;
-    }
-
-    return this.hasComponent(ArmyEntity.COMPONENT.MOVE);
+    return isMoveable;
 }

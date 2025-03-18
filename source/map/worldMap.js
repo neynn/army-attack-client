@@ -61,30 +61,20 @@ WorldMap.prototype.setID = function(id) {
     this.id = id;
 }
 
-WorldMap.prototype.loadGraphics = function(graphics) {
-    if(!graphics) {
-        return;
-    }
+WorldMap.prototype.loadGraphics = function(background, foreground) {
+    for(let i = 0; i < background.length; i++) {
+        const layerID = background[i];
 
-    const { background, foreground } = graphics;
-
-    if(background) {
-        for(let i = 0; i < background.length; i++) {
-            const layerID = background[i];
-
-            if(this.layers.has(layerID)) {
-                this.background.push(background[i]);
-            }
+        if(this.layers.has(layerID)) {
+            this.background.push(background[i]);
         }
     }
 
-    if(foreground) {
-        for(let i = 0; i < foreground.length; i++) {
-            const layerID = foreground[i];
+    for(let i = 0; i < foreground.length; i++) {
+        const layerID = foreground[i];
 
-            if(this.layers.has(layerID)) {
-                this.foreground.push(foreground[i]);
-            }
+        if(this.layers.has(layerID)) {
+            this.foreground.push(foreground[i]);
         }
     }
 }

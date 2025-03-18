@@ -35,9 +35,9 @@ import { TileManager } from "../source/tile/tileManager.js";
 import { Renderer } from "../source/renderer.js";
 import { Logger } from "../source/logger.js";
 import { EventBus } from "../source/events/eventBus.js";
-import { VersusMode } from "./versusMode.js";
 import { choiceMadeEvent, dropItemsEvent, skipTurnEvent } from "./clientEvents.js";
 import { DeathAction } from "./actions/deathAction.js";
+import { ArmyMap } from "./init/armyMap.js";
 
 export const ArmyContext = function() {
     GameContext.call(this);
@@ -53,7 +53,6 @@ export const ArmyContext = function() {
     this.tileConversions = {};
     this.tileFormConditions = {};
     this.playerID = null;
-    this.versusMode = new VersusMode();
     this.modeID = ArmyContext.GAME_MODE.NONE;
 }
 
@@ -113,8 +112,6 @@ ArmyContext.prototype.init = function(resources) {
     this.languageTypes = resources.world["LanguageType"];
     this.tileFormConditions = resources.world["TileFormCondition"];
     this.settings = resources.world["Settings"];
-
-    this.versusMode.setConfig(resources.world["VersusMode"]);
 
     this.world.actionQueue.registerAction(ACTION_TYPES.DEATH, new DeathAction())
     this.world.actionQueue.registerAction(ACTION_TYPES.ATTACK, new AttackAction());
@@ -328,4 +325,30 @@ ArmyContext.prototype.addDebug = function() {
     router.on("DEBUG_INTERFACE", () => Renderer.DEBUG.INTERFACE = !Renderer.DEBUG.INTERFACE);
     router.on("DEBUG_SPRITES", () => Renderer.DEBUG.SPRITES = !Renderer.DEBUG.SPRITES);
     router.on("EXPORT_LOGS", () => Logger.exportLogs(Logger.EXPORT_CODE_ALL));
+}
+
+ArmyContext.prototype.getPlayerTeamID = function() {
+    const player = this.world.turnManager.getActor(this.playerID);
+
+    if(!player || !player.teamID) {
+        return null;
+    }
+
+    return player.teamID;
+}
+
+ArmyContext.prototype.getConversionID = function(tileID, teamID) {
+    const teamConversions = this.tileConversions[ArmyMap.TEAM_TYPE[teamID]];
+
+    if(!teamConversions) {
+        return TileManager.TILE_ID.EMPTY;
+    }
+
+    const convertedID = teamConversions[tileID];
+    
+    if(!convertedID) {
+        return TileManager.TILE_ID.EMPTY;
+    }
+
+    return convertedID;
 }

@@ -87,7 +87,6 @@
     },
     "TeamType": {
         "Crimson": {
-            "id": "Crimson",
             "name": "Crimson Skies Empire",
             "alliances": {
                 "Crimson": "Ally",
@@ -101,7 +100,6 @@
             }
         },
         "Allies": {
-            "id": "Allies",
             "name": "The Resistance",
             "alliances": {
                 "Crimson": "Enemy",
@@ -115,7 +113,6 @@
             }
         },
         "Neutral": {
-            "id": "Neutral",
             "name": "Neutral Forces",
             "alliances": {
                 "Crimson": "Neutral",
@@ -123,10 +120,12 @@
                 "Neutral": "Neutral",
                 "Wrath": "Neutral"
             },
-            "sprites": {}
+            "sprites": {
+                "stat_card": "unit_stat_card_good",
+                "stat_card_small": "unit_stat_card_good_small"
+            }
         },
         "Wrath": {
-            "id": "Wrath",
             "name": "The Wrathful",
             "alliances": {
                 "Crimson": "Enemy",
@@ -134,7 +133,10 @@
                 "Neutral": "Neutral",
                 "Wrath": "Ally"
             },
-            "sprites": {}
+            "sprites": {
+                "stat_card": "unit_stat_card_bad",
+                "stat_card_small": "unit_stat_card_bad_small"  
+            }
         }
     },
     "ObjectiveType": {
