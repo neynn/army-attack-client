@@ -1,5 +1,5 @@
 {
-    "ArmyAttack Impacted": { "id": "ArmyAttack Impacted", "directory": "assets/fonts", "source": "37_Impacted.ttf" },
-    "ArmyAttack Arial": { "id": "ArmyAttack Arial", "directory": "assets/fonts", "source": "173_Arial.ttf" },
-    "ArmyAttack Impact": { "id": "ArmyAttack Impact", "directory": "assets/fonts", "source": "147_Impact.ttf" }
+    "ArmyAttack Impacted": { "directory": ["assets", "fonts"], "source": "37_Impacted.ttf" },
+    "ArmyAttack Arial": { "directory": ["assets", "fonts"], "source": "173_Arial.ttf" },
+    "ArmyAttack Impact": { "directory": ["assets", "fonts"], "source": "147_Impact.ttf" }
 }

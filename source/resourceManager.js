@@ -9,17 +9,14 @@ ResourceManager.prototype.promiseJSON = function(path) {
 }
 
 ResourceManager.prototype.addFont = function(id, font) {
-    if(this.fonts.has(id)) {
-        return;
+    if(!this.fonts.has(id)) {
+        this.fonts.set(id, font);
+
+        document.fonts.add(font);
     }
-
-    this.fonts.set(id, font);
-
-    document.fonts.add(font);
 }
 
-ResourceManager.prototype.loadCSSFont = function(meta) {
-    const { id, directory, source } = meta;
+ResourceManager.prototype.loadCSSFont = function(id, directory, source) {
     const path = PathHandler.getPath(directory, source);
     const fontFace = new FontFace(id, `url(${path})`);
 
@@ -31,7 +28,8 @@ ResourceManager.prototype.loadFontList = async function(fontList) {
 
 	for(const fontID in fontList) {
 		const fontMeta = fontList[fontID];
-        const promise = this.loadCSSFont(fontMeta)
+        const { directory, source } = fontMeta;
+        const promise = this.loadCSSFont(fontID, directory, source);
 
 		promises.push(promise);
 	}
