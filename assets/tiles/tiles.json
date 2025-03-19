@@ -1,6 +1,6 @@
 {    
     "ground": {
-        "directory": "assets/tiles",
+        "directory": ["assets", "tiles"],
         "source": "ground.png",
         "frameTime": 0.03,
         "frames": {
@@ -18,7 +18,7 @@
         }
     },
     "coast": {
-        "directory": "assets/tiles",
+        "directory": ["assets", "tiles"],
         "source": "coast.png",
         "frameTime": 0.03,
         "frames": {
@@ -50,7 +50,7 @@
         }
     },
     "deco_bad": {
-        "directory": "assets/tiles",
+        "directory": ["assets", "tiles"],
         "source": "deco_bad.png",
         "frameTime": 0.03,
         "frames": {
@@ -84,7 +84,7 @@
         }
     },
     "deco_good": {
-        "directory": "assets/tiles",
+        "directory": ["assets", "tiles"],
         "source": "deco_good.png",
         "frameTime": 0.03,
         "frames": {
@@ -118,7 +118,7 @@
         }
     },
     "river_bad": {
-        "directory": "assets/tiles",
+        "directory": ["assets", "tiles"],
         "source": "river_bad.png",
         "frameTime": 0.03,
         "frames": {
@@ -130,7 +130,7 @@
         }
     },
     "river_good": {
-        "directory": "assets/tiles",
+        "directory": ["assets", "tiles"],
         "source": "river_good.png",
         "frameTime": 0.03,
         "frames": {
@@ -142,7 +142,7 @@
         }
     },
     "mountain": {
-        "directory": "assets/tiles",
+        "directory": ["assets", "tiles"],
         "source": "mountain.png",
         "frameTime": 0.03,
         "frames": {
@@ -157,7 +157,7 @@
         }
     },
     "clouds": {
-        "directory": "assets/tiles",
+        "directory": ["assets", "tiles"],
         "source": "clouds.png",
         "frameTime": 0.03,
         "frames": {
@@ -177,7 +177,7 @@
         }
     },
     "overlay": {
-        "directory": "assets/tiles",
+        "directory": ["assets", "tiles"],
         "source": "overlay.png",
         "frameTime": 0.03,
         "frames": {
@@ -189,7 +189,7 @@
         }
     },
     "range": {
-        "directory": "assets/tiles",
+        "directory": ["assets", "tiles"],
         "source": "range.png",
         "frameTime": 0.03,
         "frames": {
@@ -261,7 +261,7 @@
         }
     },
     "border": {
-        "directory": "assets/tiles",
+        "directory": ["assets", "tiles"],
         "source": "border.png",
         "frameTime": 0.03,
         "frames": {

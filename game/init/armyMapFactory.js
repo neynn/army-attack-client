@@ -17,9 +17,10 @@ ArmyMapFactory.prototype.constructor = Factory;
 
 const createBuffer = function(gameContext, width, height) {
     const { tileManager } = gameContext;
-    const { meta } = tileManager;
+    const { graphics } = tileManager;
     const bufferSize = width * height;
-    const buffer = meta.getCorrectBuffer(bufferSize);
+    const BufferType = graphics.getBufferType(bufferSize);
+    const buffer = new BufferType(bufferSize);
 
     return buffer;
 }

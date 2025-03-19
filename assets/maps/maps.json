@@ -1,7 +1,7 @@
 {
     "oasis": {
         "id": "oasis",
-        "directory": "assets/maps",
+        "directory": ["assets", "maps"],
         "source": "oasis.json",
         "music": "music_desertscorpion",
         "width": 20,
@@ -42,7 +42,7 @@
     },
     "mtn": {
         "id": "mtn",
-        "directory": "assets/maps",
+        "directory": ["assets", "maps"],
         "source": "mtn.json",
         "music": "music_remastered",
         "type": "Versus",
@@ -63,7 +63,7 @@
     },
     "large": {
         "id": "large",
-        "directory": "assets/maps",
+        "directory": ["assets", "maps"],
         "source": "large.json",
         "author": "neyn",
         "music": "music_remastered",

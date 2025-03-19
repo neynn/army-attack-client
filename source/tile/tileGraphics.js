@@ -7,6 +7,21 @@ export const TileGraphics = function() {
     this.frameTime = 1;
 }
 
+TileGraphics.BUFFER_THRESHOLD = {
+    BIT_8: 256,
+    BIT_16: 65536
+};
+
+TileGraphics.prototype.getBufferType = function() {
+    if(this.graphics.length < TileGraphics.BUFFER_THRESHOLD.BIT_8) {
+        return Uint8Array;
+    } else if(this.graphics.length < TileGraphics.BUFFER_THRESHOLD.BIT_16) {
+        return Uint16Array;
+    }
+
+    return Uint32Array;
+}
+
 TileGraphics.prototype.getGraphic = function(tileID) {
     const index = tileID - 1;
 

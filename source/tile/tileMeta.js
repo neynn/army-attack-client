@@ -7,21 +7,6 @@ export const TileMeta = function() {
     this.autotilers = new Map();
 }
 
-TileMeta.BUFFER_THRESHOLD = {
-    BIT_8: 256,
-    BIT_16: 65536
-};
-
-TileMeta.prototype.getCorrectBuffer = function(bufferSize) {
-    if(this.graphics.length < TileMeta.BUFFER_THRESHOLD.BIT_8) {
-        return new Uint8Array(bufferSize);
-    } else if(this.graphics.length < TileMeta.BUFFER_THRESHOLD.BIT_16) {
-        return new Uint16Array(bufferSize);
-    }
-
-    return new Uint32Array(bufferSize);
-}
-
 TileMeta.prototype.init = function(tileMeta) {
     if(!tileMeta) {
         return;
