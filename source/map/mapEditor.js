@@ -1,19 +1,20 @@
 import { ArmyMap } from "../../game/init/armyMap.js";
-import { Logger } from "../logger.js";
 import { clampValue, loopValue } from "../math/math.js";
 
 export const MapEditor = function() {
     this.brush = null;
-    this.config = {};
     this.brushSets = [];
     this.allSetElements = [];
     this.brushSetIndex = 0;
+    this.brushSizes = [0];
     this.brushSizeIndex = 0;
     this.pageIndex = 0;
     this.activityStack = [];
     this.modes = [MapEditor.MODE.DRAW, MapEditor.MODE.ERASE, MapEditor.MODE.FILL];
     this.modeIndex = 0;
     this.isAutotiling = false;
+    this.hiddenSets = new Set();
+    this.slots = [];
 }
 
 MapEditor.MODE = {
@@ -27,11 +28,11 @@ MapEditor.prototype.toggleAutotiling = function() {
 }
 
 MapEditor.prototype.scrollBrushSize = function(delta = 0) {    
-    this.brushSizeIndex = clampValue(this.brushSizeIndex + delta, this.config.brushSizes.length - 1, 0);
+    this.brushSizeIndex = clampValue(this.brushSizeIndex + delta, this.brushSizes.length - 1, 0);
 }
 
 MapEditor.prototype.getBrushSize = function() {
-    return this.config.brushSizes[this.brushSizeIndex];
+    return this.brushSizes[this.brushSizeIndex];
 }
 
 MapEditor.prototype.scrollBrushMode = function(delta = 0) {
@@ -53,8 +54,7 @@ MapEditor.prototype.getBrushSet = function() {
 }
 
 MapEditor.prototype.scrollPage = function(delta = 0) {
-    const maxSlots = this.config.interface.slots.length;
-    const maxPagesNeeded = Math.ceil(this.allSetElements.length / maxSlots);
+    const maxPagesNeeded = Math.ceil(this.allSetElements.length / this.slots.length);
 
     if(maxPagesNeeded <= 0) {
         this.pageIndex = 0;
@@ -64,7 +64,7 @@ MapEditor.prototype.scrollPage = function(delta = 0) {
 }
 
 MapEditor.prototype.getPage = function() {
-    const maxSlots = this.config.interface.slots.length;
+    const maxSlots = this.slots.length;
     const brushSet = this.getBrushSet();
     const pageElements = []; 
 
@@ -127,18 +127,9 @@ MapEditor.prototype.reloadAll = function() {
     }
 }
 
-MapEditor.prototype.loadConfig = function(config) {
-    if(config === undefined) {
-        Logger.log(false, "Config cannot be undefined!", "MapEditor.prototype.loadConfig", null);
-        return;
-    }
-
-    this.config = config;
-}
-
 MapEditor.prototype.loadBrushSets = function(invertedTileMeta) {
     for(const setID in invertedTileMeta) {
-        if(this.config.hiddenSets[setID]) {
+        if(this.hiddenSets.has(setID)) {
             continue;
         }
 
@@ -247,11 +238,9 @@ MapEditor.prototype.paint = function(gameContext, mapID, layerID) {
     }
 }
 
-MapEditor.prototype.resizeMap = function(worldMap, width, height) {
-    const layerConfigs = this.config.default.graphics.layers;
-
+MapEditor.prototype.resizeMap = function(worldMap, width, height, layers) {
     for(const [layerID, layer] of worldMap.layers) {
-        const layerConfig = layerConfigs[layerID];
+        const layerConfig = layers[layerID];
 
         if(layerConfig) {
             const fill = layerConfig.fill;
@@ -291,8 +280,4 @@ MapEditor.prototype.incrementTypeIndex = function(gameContext, mapID, layerID) {
     const nextID = tileTypeIDs[nextIndex];
 
     worldMap.placeTile(nextID, layerID, x, y);
-}
-
-MapEditor.prototype.getDefaultMapData = function() {
-    return this.config.default;
 }
