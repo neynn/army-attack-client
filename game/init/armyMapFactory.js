@@ -25,12 +25,13 @@ const createBuffer = function(gameContext, width, height) {
     return buffer;
 }
 
-const parseMap2D = function(gameContext, map2D, meta, layerData) {
+const parseMap2D = function(gameContext, map2D, config) {
     const { 
         width = 0,
         height = 0,
-        graphics = {}
-    } = meta;
+        graphics = {},
+        data = {}
+    } = config;
 
     const { 
         layers = {}
@@ -41,21 +42,21 @@ const parseMap2D = function(gameContext, map2D, meta, layerData) {
         const buffer = createBuffer(gameContext, width, height);
         const layer = map2D.createLayer(layerID, buffer);
 
-        layer.decode(layerData[layerID]);
+        layer.decode(data[layerID]);
         layer.init(config);
     }
 
     map2D.setWidth(width);
     map2D.setHeight(height);
-    map2D.loadMeta(meta);
+    map2D.loadMeta(config);
 }
 
-const parseMap2DEmpty = function(gameContext, map2D, meta) {
+const parseMap2DEmpty = function(gameContext, map2D, config) {
     const { 
         width = 0,
         height = 0,
         graphics = {},
-    } = meta;
+    } = config;
 
     const {
         layers = {}
@@ -79,29 +80,28 @@ const parseMap2DEmpty = function(gameContext, map2D, meta) {
 
     map2D.setWidth(width);
     map2D.setHeight(height);
-    map2D.loadMeta(meta);
+    map2D.loadMeta(config);
 }
 
 ArmyMapFactory.prototype.onCreate = function(gameContext, config) {
-    const { meta, layers } = config;
-    const { type } = meta;
+    const { type } = config;
     const worldMap = new ArmyMap();
 
     switch(type) {
         case ArmyMapFactory.TYPE.STORY: {
-            parseMap2D(gameContext, worldMap, meta, layers);
+            parseMap2D(gameContext, worldMap, config);
             break;
         }
         case ArmyMapFactory.TYPE.VERSUS: {
-            parseMap2D(gameContext, worldMap, meta, layers);
+            parseMap2D(gameContext, worldMap, config);
             break;
         }
         case ArmyMapFactory.TYPE.EMPTY_STORY: {
-            parseMap2DEmpty(gameContext, worldMap, meta);
+            parseMap2DEmpty(gameContext, worldMap, config);
             break;
         }
         case ArmyMapFactory.TYPE.EMPTY_VERUS: {
-            parseMap2DEmpty(gameContext, worldMap, meta);
+            parseMap2DEmpty(gameContext, worldMap, config);
             break;
         }
         default: {

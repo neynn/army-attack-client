@@ -17,9 +17,7 @@ JSONManager.prototype.promiseJSON = function(path) {
     return fetch(path).then(response => response.json()).catch(error => null);
 }
 
-JSONManager.prototype.loadFileData = async function(meta) {
-    const { id, directory, source } = meta;
-
+JSONManager.prototype.loadFileData = async function(id, directory, source) {
     if(this.cacheEnabled) {
         const cachedMap = this.files.get(id);
 

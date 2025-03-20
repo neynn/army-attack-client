@@ -27,7 +27,7 @@ MapManager.prototype.createMap = function(gameContext, mapID, mapData) {
     const worldMap = this.createProduct(gameContext, mapData);
 
     if(!worldMap) {
-        Logger.log(false, "Factory has not returned an entity!", "MapManager.prototype.createMap", { mapData });
+        Logger.log(Logger.CODE.ENGINE_WARN, "Factory has not returned an entity!", "MapManager.prototype.createMap", { "mapID": mapID });
         return null;
     }
 
@@ -37,24 +37,22 @@ MapManager.prototype.createMap = function(gameContext, mapID, mapData) {
 }
 
 MapManager.prototype.fetchMapData = async function(mapID) {
-    const meta = this.getMapType(mapID);
+    const mapType = this.getMapType(mapID);
 
-    if(!meta) {
-        Logger.log(false, "MapType does not exist!", "MapManager.prototype.loadMapData", { mapID });
+    if(!mapType) {
+        Logger.log(Logger.CODE.ENGINE_WARN, "MapType does not exist!", "MapManager.prototype.loadMapData", { "mapID": mapID });
         return null;
     }
 
-    const layers = await this.resources.loadFileData(meta);
+    const { directory, source } = mapType;
+    const mapData = await this.resources.loadFileData(mapID, directory, source);
 
-    if(!layers) {
-        Logger.log(false, "LayersFiles does not exist!", "MapManager.prototype.loadMapData", { mapID });
+    if(!mapData) {
+        Logger.log(Logger.CODE.ENGINE_WARN, "MapData does not exist!", "MapManager.prototype.loadMapData", { "mapID": mapID });
         return null;
     }
 
-    return {
-        "layers": layers,
-        "meta": meta
-    }
+    return mapData;
 }
 
 MapManager.prototype.setActiveMap = function(mapID) {
@@ -99,8 +97,7 @@ MapManager.prototype.getMapType = function(mapID) {
     const mapType = this.mapTypes[mapID];
 
     if(!mapType) {
-        Logger.log(false, "MapType does not exist!", "MapManager.prototype.getMapType", { mapID });
-
+        Logger.log(Logger.CODE.ENGINE_WARN, "MapType does not exist!", "MapManager.prototype.getMapType", { mapID });
         return null;
     }
 

@@ -248,7 +248,7 @@ MapEditor.prototype.paint = function(gameContext, mapID, layerID) {
 }
 
 MapEditor.prototype.resizeMap = function(worldMap, width, height) {
-    const layerConfigs = this.config.default.meta.graphics.layers;
+    const layerConfigs = this.config.default.graphics.layers;
 
     for(const [layerID, layer] of worldMap.layers) {
         const layerConfig = layerConfigs[layerID];

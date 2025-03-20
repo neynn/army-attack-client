@@ -4,7 +4,6 @@ import { CameraContext } from "../../../source/camera/cameraContext.js";
 import { MapEditor } from "../../../source/map/mapEditor.js";
 import { clampValue } from "../../../source/math/math.js";
 import { saveMap } from "../../../helpers.js";
-import { ArmyContext } from "../../armyContext.js";
 import { ArmyCamera } from "../../armyCamera.js";
 import { World } from "../../../source/world.js";
 import { UIElement } from "../../../source/ui/uiElement.js";
@@ -47,23 +46,21 @@ MapEditorState.CONFIG = {
         "range": 1
     },
     "default": {
-        "meta": {
-            "type": "EmptyVersus",
-            "music": "music_remastered",
-            "width": 20,
-            "height": 20,
-            "graphics": {
-                "layers": {
-                    "ground": { "fill": 1, "opacity": 1, "autoGenerate": false },
-                    "border": { "fill": 0, "opacity": 1, "autoGenerate": true },
-                    "decoration": { "fill": 0, "opacity": 1, "autoGenerate": false },
-                    "cloud": { "fill": 0, "opacity": 1, "autoGenerate": true },
-                    "type": { "fill": 0, "opacity": 1, "autoGenerate": false },
-                    "team": { "fill": 0, "opacity": 1, "autoGenerate": false }
-                },
-                "background": ["ground", "border", "decoration"],
-                "foreground": ["cloud"]
-            }
+        "type": "EmptyVersus",
+        "music": "music_remastered",
+        "width": 20,
+        "height": 20,
+        "graphics": {
+            "layers": {
+                "ground": { "fill": 1, "opacity": 1, "autoGenerate": false },
+                "border": { "fill": 0, "opacity": 1, "autoGenerate": true },
+                "decoration": { "fill": 0, "opacity": 1, "autoGenerate": false },
+                "cloud": { "fill": 0, "opacity": 1, "autoGenerate": true },
+                "type": { "fill": 0, "opacity": 1, "autoGenerate": false },
+                "team": { "fill": 0, "opacity": 1, "autoGenerate": false }
+            },
+            "background": ["ground", "border", "decoration"],
+            "foreground": ["cloud"]
         }
     }
 };

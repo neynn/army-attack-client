@@ -60,16 +60,13 @@ export const saveMap = function(mapID, map2D) {
         },
         "background": ${JSON.stringify(map2D.background)},
         "foreground": ${JSON.stringify(map2D.foreground)}
+    },
+    "data": {
+        ${layers.join(",\n        ")}
     }
 }`;
 
-    const downloadableLayers = 
-`{
-    ${layers.join(",\n    ")}
-}`;
-
-    saveTemplateAsFile("layers_" + mapID + ".json", downloadableLayers);
-    saveTemplateAsFile("meta_" + mapID + ".json", downloadableString);
+    saveTemplateAsFile("map_" + mapID + ".json", downloadableString);
 }
 
 export const saveSprites = function(spriteTypes) {
