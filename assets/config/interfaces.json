@@ -385,7 +385,7 @@
             "width": 350,
             "height": 550,
             "opacity": 1,
-            "children": [ "BUTTON_SCROLL_SIZE", "TEXT_TILESET", "BUTTON_TILESET_RIGHT", "BUTTON_TILESET_LEFT", "BUTTON_TILESET_MODE", "TEXT_PAGE", "BUTTON_PAGE_LAST", "BUTTON_PAGE_NEXT", "BUTTON_0", "BUTTON_1", "BUTTON_2", "BUTTON_3", "BUTTON_4", "BUTTON_5", "BUTTON_6", "BUTTON_7", "BUTTON_8" ]
+            "children": [ "BUTTON_SCROLL_SIZE", "TEXT_TILESET", "BUTTON_TILESET_RIGHT", "BUTTON_TILESET_LEFT", "BUTTON_TILESET_MODE", "TEXT_PAGE", "BUTTON_PAGE_LAST", "BUTTON_PAGE_NEXT" ]
         },
         "TEXT_PAGE": {
             "type": "TEXT",
@@ -519,79 +519,6 @@
             "fontType": "Arial",
             "color": [238, 238, 238, 1],
             "align": "center",
-            "opacity": 1
-        },
-        "BUTTON_0": {
-            "type": "BUTTON",
-            "shape": 0,
-            "position": { "x": 50, "y": 150 },
-            "width": 50,
-            "height": 50,
-            "opacity": 1
-        },
-        "BUTTON_1": {
-            "type": "BUTTON",
-            "shape": 0,
-            "radius": 100,
-            "position": { "x": 150, "y": 150 },
-            "width": 50,
-            "height": 50,
-            "opacity": 1
-        },
-        "BUTTON_2": {
-            "type": "BUTTON",
-            "shape": 0,
-            "position": { "x": 250, "y": 150 },
-            "width": 50,
-            "height": 50,
-            "opacity": 1
-        },
-        "BUTTON_3": {
-            "type": "BUTTON",
-            "shape": 0,
-            "position": { "x": 50, "y": 250 },
-            "width": 50,
-            "height": 50,
-            "opacity": 1
-        },
-        "BUTTON_4": {
-            "type": "BUTTON",
-            "shape": 0,
-            "position": { "x": 150, "y": 250 },
-            "width": 50,
-            "height": 50,
-            "opacity": 1
-        },
-        "BUTTON_5": {
-            "type": "BUTTON",
-            "shape": 0,
-            "position": { "x": 250, "y": 250 },
-            "width": 50,
-            "height": 50,
-            "opacity": 1
-        },
-        "BUTTON_6": {
-            "type": "BUTTON",
-            "shape": 0,
-            "position": { "x": 50, "y": 350 },
-            "width": 50,
-            "height": 50,
-            "opacity": 1
-        },
-        "BUTTON_7": {
-            "type": "BUTTON",
-            "shape": 0,
-            "position": { "x": 150, "y": 350 },
-            "width": 50,
-            "height": 50,
-            "opacity": 1
-        },
-        "BUTTON_8": {
-            "type": "BUTTON",
-            "shape": 0,
-            "position": { "x": 250, "y": 350 },
-            "width": 50,
-            "height": 50,
             "opacity": 1
         },
         "BUTTON_UNDO": {

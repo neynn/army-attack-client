@@ -34,6 +34,7 @@ MapEditorState.prototype.onEnter = function(stateMachine) {
 
     router.on("TOGGLE_AUTOTILER", () => this.mapEditor.toggleAutotiling());
     
+    this.mapEditor.initSlots(gameContext);
     this.mapEditor.loadBrushSets(meta.getInversion());
     this.mapEditor.initRenderEvents(gameContext);
     this.mapEditor.initCursorEvents(gameContext);

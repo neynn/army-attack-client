@@ -6,6 +6,7 @@ import { World } from "../../../source/world.js";
 import { ArmyCamera } from "../../armyCamera.js";
 import { clampValue } from "../../../source/math/math.js";
 import { saveMap } from "../../../helpers.js";
+import { UserInterface } from "../../../source/ui/userInterface.js";
 
 export const ArmyMapEditor = function() {
     MapEditor.call(this);
@@ -47,7 +48,6 @@ export const ArmyMapEditor = function() {
         LC: { layer: "type", text: "TEXT_LC", state: ArmyMapEditor.BUTTON_STATE.VISIBLE, type: ArmyMapEditor.BUTTON_TYPE.TYPE }
     };
 
-    this.slots = ["BUTTON_0", "BUTTON_1", "BUTTON_2", "BUTTON_3", "BUTTON_4", "BUTTON_5", "BUTTON_6", "BUTTON_7", "BUTTON_8"];
     this.camera = new ArmyCamera();
 }
 
@@ -110,6 +110,35 @@ ArmyMapEditor.prototype.init = function(config) {
 
         this.hiddenSets.add(setID);
     }
+}
+
+ArmyMapEditor.prototype.initSlots = function(gameContext) {
+    const { uiManager } = gameContext;
+    const editorInterface = uiManager.getInterface(this.interfaceID);
+    const buttonCount = 7;
+    const buttonSize = 50;
+    const buttons = [];
+
+    for(let i = 0; i < buttonCount; i++) {
+        for(let j = 0; j < buttonCount; j++) {
+            const buttonID = `BUTTON_${i * buttonCount + j}`;
+            const posX = buttonSize * j;
+            const posY = buttonSize * i + 100;
+            const button = editorInterface.createElement(UserInterface.ELEMENT_TYPE.BUTTON, {
+                "shape": 0,
+                "position": { "x": posX, "y": posY },
+                "width": buttonSize,
+                "height": buttonSize,
+                "opacity": 1
+            }, buttonID);
+
+            editorInterface.addElement(button, buttonID);
+            buttons.push(buttonID);
+        }
+    }
+
+    editorInterface.linkElements("CONTAINER_TILES", buttons);
+    this.slots = buttons;
 }
 
 ArmyMapEditor.prototype.initCamera = function(gameContext) {
