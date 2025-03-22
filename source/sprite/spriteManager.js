@@ -49,7 +49,6 @@ SpriteManager.prototype.load = function(spriteTypes) {
         const imageSheet = new SpriteSheet();
 
         imageSheet.load(spriteType);
-        imageSheet.defineDefaultAnimation();
 
         this.spriteTypes[typeID] = imageSheet;
     }

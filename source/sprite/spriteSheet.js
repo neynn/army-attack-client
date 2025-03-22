@@ -17,7 +17,7 @@ SpriteSheet.prototype.getAnimations = function() {
 }
 
 SpriteSheet.prototype.load = function(config) {
-    const { bounds, frameTime, frames  } = config;
+    const { bounds, frameTime, frames, animations } = config;
 
     if(frameTime) {
         this.frameTime = frameTime;
@@ -30,8 +30,8 @@ SpriteSheet.prototype.load = function(config) {
         this.boundsH = bounds.h;
     }
 
-    if(frames) {
-        this.defineDefaultAnimation(frames);
+    if(frames && animations) {
+        this.defineAnimations(animations, frames);
     }
 }
 
@@ -40,7 +40,6 @@ SpriteSheet.prototype.createFrame = function(frameData) {
 
     if(!frameData) {
         Logger.log(Logger.CODE.ENGINE_WARN, "Frame does not exist!", "SpriteSheet.prototype.createFrame", { frameID });
-
         return frame;
     }
 
@@ -65,26 +64,36 @@ SpriteSheet.prototype.addAnimation = function(animationID, animation) {
 
     if(frameCount < 1) {
         Logger.log(Logger.CODE.ENGINE_WARN, "Animation has no frames!", "SpriteSheet.prototype.addAnimation", { animationID });
-
         return;
     }
 
     this.animations.set(animationID, animation);
 }
 
-SpriteSheet.prototype.defineDefaultAnimation = function(frames) {
-    const defaultAnimation = new Animation();
+SpriteSheet.prototype.defineAnimations = function(animations, uniqueFrames) {
+    for(const animationID in animations) {
+        const { 
+            frameTime = this.frameTime,
+            frames = [] 
+        } = animations[animationID];
 
-    defaultAnimation.setFrameTime(this.frameTime);
+        const animation = new Animation();
 
-    for(const frameID in frames) {
-        const frameData = frames[frameID];
-        const frame = this.createFrame(frameData);
-        
-        defaultAnimation.addFrame(frame);
+        animation.setFrameTime(frameTime);
+
+        for(let i = 0; i < frames.length; i++) {
+            const frameID = frames[i];
+            const frameData = uniqueFrames[frameID];
+
+            if(frameData) {
+                const frame = this.createFrame(frameData);
+
+                animation.addFrame(frame);
+            }
+        }
+
+        this.addAnimation(animationID, animation);
     }
-
-    this.addAnimation(SpriteSheet.DEFAULT_ANIMATION_ID, defaultAnimation);
 }
 
 SpriteSheet.prototype.getAnimation = function(key) {
