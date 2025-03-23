@@ -194,7 +194,7 @@ ArmyMapEditor.prototype.initRenderEvents = function(gameContext) {
     
         const { x, y } = this.camera.getViewport();
         const { width, height, halfWidth } = this.camera.getTileDimensions();
-        const { tileName, tileID } = this.brush;
+        const { name, id } = this.brush;
         const startX = cursorTile.x - this.brushSize;
         const startY = cursorTile.y - this.brushSize;
         const endX = cursorTile.x + this.brushSize;
@@ -209,14 +209,14 @@ ArmyMapEditor.prototype.initRenderEvents = function(gameContext) {
             for(let j = startX; j <= endX; j++) {   
                 const renderX = j * width - x;
 
-                if(tileID === 0) {
+                if(id === 0) {
                     this.camera.drawEmptyTile(context, renderX, renderY);
                 } else {
-                    this.camera.drawTileGraphics(tileManager, context, tileID, renderX, renderY);
+                    this.camera.drawTileGraphics(tileManager, context, id, renderX, renderY);
                 } 
 
                 context.fillStyle = this.overlayColor;
-                context.fillText(tileName, renderX + halfWidth, renderY);  
+                context.fillText(name, renderX + halfWidth, renderY);  
             }
         }
 
@@ -339,11 +339,8 @@ ArmyMapEditor.prototype.initUIEvents = function(gameContext) {
     }); 
 
     editorInterface.addClick("BUTTON_ERASER", () => {
-        if(!this.brush || this.brush.tileID !== 0) {
-            this.brush = {
-                "tileName": "ERASER",
-                "tileID": 0
-            };
+        if(!this.brush || this.brush.id !== 0) {
+            this.brush = this.createBrush(0, "ERASER");
         } else {
             this.brush = null;
         }
@@ -385,13 +382,13 @@ ArmyMapEditor.prototype.initButtons = function(gameContext) {
         const buttonID = this.slots[i];
         const brushData = pageElements[i];
         const button = editorInterface.getElement(buttonID);
-        const { tileName, tileID } = brushData;
+        const { name, id } = brushData;
 
-        if(tileID !== 0) {
+        if(id !== 0) {
             button.events.subscribe(UIElement.EVENT.CLICKED, this.id, () => this.brush = brushData);
 
             button.addDefer((context, localX, localY) => {
-                this.camera.drawTileGraphics(tileManager, context, tileID, localX, localY, ArmyMapEditor.SCALE.SLOT_BUTTON, ArmyMapEditor.SCALE.SLOT_BUTTON);
+                this.camera.drawTileGraphics(tileManager, context, id, localX, localY, ArmyMapEditor.SCALE.SLOT_BUTTON, ArmyMapEditor.SCALE.SLOT_BUTTON);
                 /*
                 context.fillStyle = "#eeeeee";
                 context.textAlign = "center";
@@ -532,15 +529,15 @@ ArmyMapEditor.prototype.updateButtonText = function(gameContext) {
     const { uiManager } = gameContext;
     const editorInterface = uiManager.getInterface(this.interfaceID);
 
-    editorInterface.setText("TEXT_TILESET_MODE", `MODE: ${this.brushMode}`);
+    editorInterface.setText("TEXT_TILESET_MODE", `MODE: ${MapEditor.MODE_NAME[this.brushMode]}`);
     editorInterface.setText("TEXT_TILESET", `${this.brushSet?.id}`);
     editorInterface.setText("TEXT_PAGE", this.getPageText());
     editorInterface.setText("TEXT_SIZE",  this.getSizeText());
 }
 
 ArmyMapEditor.prototype.getPageText = function() {
-    const fMaxPagesNeeded = this.allSetElements.length / this.slots.length;
-    const maxPagesNeeded = Math.ceil(fMaxPagesNeeded);
+    const modeElements = this.getModeElements();
+    const maxPagesNeeded = Math.ceil(modeElements.length / this.slots.length);
     const showMaxPagesNeeded = maxPagesNeeded === 0 ? 1 : maxPagesNeeded;
     const showCurrentPage = this.pageIndex + 1;
 

@@ -4,7 +4,8 @@ import { Scroller } from "../scroller.js";
 
 export const MapEditor = function() {
     this.brush = null;
-    this.allSetElements = [];
+    this.allAutotilers = [];
+    this.currentSetTiles = [];
 
     this.brushSets = new Scroller();
     this.brushSet = null;
@@ -23,8 +24,13 @@ export const MapEditor = function() {
 }
 
 MapEditor.MODE = {
-    "DRAW": "DRAW",
-    "AUTOTILE": "AUTOTILE"
+    DRAW: 0,
+    AUTOTILE: 1
+};
+
+MapEditor.MODE_NAME = {
+    [MapEditor.MODE.DRAW]: "DRAW",
+    [MapEditor.MODE.AUTOTILE]: "AUTOTILE"
 };
 
 MapEditor.prototype.toggleAutotiling = function() {
@@ -44,7 +50,7 @@ MapEditor.prototype.scrollBrushSize = function(delta = 0) {
 MapEditor.prototype.scrollBrushMode = function(delta = 0) {
     const brushMode = this.brushModes.loop(delta);
 
-    if(brushMode) {
+    if(brushMode !== null) {
         this.brushMode = brushMode;
     }
 
@@ -54,15 +60,24 @@ MapEditor.prototype.scrollBrushMode = function(delta = 0) {
 MapEditor.prototype.scrollBrushSet = function(delta) {
     const brushSet = this.brushSets.loop(delta);
 
-    if(brushSet) {
+    if(brushSet !== null) {
         this.brushSet = brushSet;
     }
 
     this.reloadAll();
 }    
 
+MapEditor.prototype.getModeElements = function() {
+    switch(this.brushMode) {
+        case MapEditor.MODE.DRAW: return this.currentSetTiles;
+        case MapEditor.MODE.AUTOTILE: return this.allAutotilers;
+        default: return [];
+    }
+}   
+
 MapEditor.prototype.scrollPage = function(delta = 0) {
-    const maxPagesNeeded = Math.ceil(this.allSetElements.length / this.slots.length);
+    const modeElements = this.getModeElements();
+    const maxPagesNeeded = Math.ceil(modeElements.length / this.slots.length);
 
     if(maxPagesNeeded <= 0) {
         this.pageIndex = 0;
@@ -79,15 +94,19 @@ MapEditor.prototype.routePage = function() {
     }
 }
 
+MapEditor.prototype.createBrush = function(id, name) {
+    return {
+        "name": name,
+        "id": id
+    }
+}
+
 MapEditor.prototype.getAutotilePage = function() {
     const maxSlots = this.slots.length;
     const pageElements = []; 
 
     for(let i = 0; i < maxSlots; i++) {
-        pageElements.push({
-            "tileName": "NONE",
-            "tileID": 0
-        });
+        pageElements.push(this.createBrush(0, "NONE"));
     }
 
     return pageElements;
@@ -95,13 +114,11 @@ MapEditor.prototype.getAutotilePage = function() {
 
 MapEditor.prototype.getDrawPage = function() {
     const pageElements = []; 
+    const modeElements = this.getModeElements();
 
     if(!this.brushSet) {
         for(let i = 0; i < this.slots.length; i++) {
-            pageElements.push({
-                "tileName": "NONE",
-                "tileID": 0
-            });
+            pageElements.push(this.createBrush(0, "NONE"));
         }
 
         return pageElements;
@@ -112,34 +129,29 @@ MapEditor.prototype.getDrawPage = function() {
     for(let i = 0; i < this.slots.length; i++) {
         const index = this.slots.length * this.pageIndex + i;
 
-        if(index > this.allSetElements.length - 1) {
-            pageElements.push({
-                "tileName": "NONE",
-                "tileID": 0
-            });
+        if(index > modeElements.length - 1) {
+            pageElements.push(this.createBrush(0, "NONE"));
 
             continue;
         }
 
-        const tileName = this.allSetElements[index];
+        const tileName = modeElements[index];
         const tileID = values[tileName];
         
-        pageElements.push({
-            "tileName": tileName,
-            "tileID": tileID
-        });
+        pageElements.push(this.createBrush(tileID, tileName));
     }
 
     return pageElements;
 }
 
 MapEditor.prototype.reloadAll = function() {
-    this.allSetElements = [];
     this.pageIndex = 0;
     this.brush = null;
 
     switch(this.brushMode) {
         case MapEditor.MODE.DRAW: {
+            this.currentSetTiles = [];
+
             if(!this.brushSet) {
                 return;
             }
@@ -147,7 +159,7 @@ MapEditor.prototype.reloadAll = function() {
             const { values } = this.brushSet;
 
             for(const key in values) {
-                this.allSetElements.push(key);
+                this.currentSetTiles.push(key);
             }
 
             break;
@@ -198,7 +210,10 @@ MapEditor.prototype.undo = function(gameContext) {
         return;
     }
 
-    for(const { layerID, tileX, tileY, oldID, newID } of actions) {
+    for(let i = 0; i < actions.length; i++) {
+        const action = actions[i];
+        const { layerID, tileX, tileY, oldID, newID } = action;
+
         gameMap.placeTile(oldID, layerID, tileX, tileY);
     }
 }
@@ -215,22 +230,22 @@ MapEditor.prototype.paint = function(gameContext, mapID, layerID) {
     }
 
     const actionsTaken = [];
-    const { tileID } = this.brush;
+    const { id } = this.brush;
     const startX = cursorTile.x - this.brushSize;
     const startY = cursorTile.y - this.brushSize;
     const endX = cursorTile.x + this.brushSize;
     const endY = cursorTile.y + this.brushSize;
-    const tileMeta = meta.getMeta(tileID);
+    const tileMeta = meta.getMeta(id);
 
     for(let i = startY; i <= endY; i++) {
         for(let j = startX; j <= endX; j++) {
             const oldTileID = gameMap.getTile(layerID, j, i);
 
-            if(oldTileID === null || oldTileID === tileID) {
+            if(oldTileID === null || oldTileID === id) {
                 continue;
             }
 
-            gameMap.placeTile(tileID, layerID, j, i);
+            gameMap.placeTile(id, layerID, j, i);
 
             if(tileMeta) {
                 const { defaultType } = tileMeta;
@@ -242,22 +257,22 @@ MapEditor.prototype.paint = function(gameContext, mapID, layerID) {
 
             if(this.isAutotiling) {
                 gameMap.repaint(gameContext, j, i, layerID);
+            } else {
+                actionsTaken.push({
+                    "layerID": layerID,
+                    "tileX": j,
+                    "tileY": i,
+                    "oldID": oldTileID,
+                    "newID": id
+                });
             }
-
-            actionsTaken.push({
-                "layerID": layerID,
-                "tileX": j,
-                "tileY": i,
-                "oldID": oldTileID,
-                "newID": tileID
-            });
         }
     }
 
     if(actionsTaken.length !== 0) {
         this.activityStack.push({
             "mapID": mapID,
-            "mode": MapEditor.MODE.DRAW,
+            "mode": this.brushMode,
             "actions": actionsTaken
         });
     }
