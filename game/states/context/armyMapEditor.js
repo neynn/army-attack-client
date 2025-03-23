@@ -99,7 +99,7 @@ ArmyMapEditor.prototype.init = function(config) {
     const {
         maxWidth = this.maxWidth,
         maxHeight = this.maxHeight,
-        brushSizes = this.brushSizes,
+        brushSizes = [],
         hiddenSets = [],
         overlayAlpha = this.overlayAlpha,
         overlayColor = this.overlayColor
@@ -107,9 +107,9 @@ ArmyMapEditor.prototype.init = function(config) {
 
     this.maxWidth = maxWidth;
     this.maxHeight = maxHeight;
-    this.brushSizes = brushSizes;
     this.overlayAlpha = overlayAlpha;
     this.overlayColor = overlayColor;
+    this.brushSizes.setValues(brushSizes);
 
     for(let i = 0; i < hiddenSets.length; i++) {
         const setID = hiddenSets[i];
@@ -179,7 +179,6 @@ ArmyMapEditor.prototype.initRenderEvents = function(gameContext) {
 
     this.camera.addPostDraw((context) => {
         const cursorTile = gameContext.getMouseTile();
-        const brushSize = this.getBrushSize();
     
         if(!this.brush) {
             return;
@@ -196,10 +195,10 @@ ArmyMapEditor.prototype.initRenderEvents = function(gameContext) {
         const { x, y } = this.camera.getViewport();
         const { width, height, halfWidth } = this.camera.getTileDimensions();
         const { tileName, tileID } = this.brush;
-        const startX = cursorTile.x - brushSize;
-        const startY = cursorTile.y - brushSize;
-        const endX = cursorTile.x + brushSize;
-        const endY = cursorTile.y + brushSize;
+        const startX = cursorTile.x - this.brushSize;
+        const startY = cursorTile.y - this.brushSize;
+        const endX = cursorTile.x + this.brushSize;
+        const endY = cursorTile.y + this.brushSize;
 
         context.globalAlpha = this.overlayAlpha;
         context.textAlign = "center";
@@ -341,12 +340,12 @@ ArmyMapEditor.prototype.initUIEvents = function(gameContext) {
 
     editorInterface.addClick("BUTTON_ERASER", () => {
         if(!this.brush || this.brush.tileID !== 0) {
-            this.setBrush({
+            this.brush = {
                 "tileName": "ERASER",
                 "tileID": 0
-            });
+            };
         } else {
-            this.setBrush(null);
+            this.brush = null;
         }
     });
 
@@ -363,9 +362,9 @@ ArmyMapEditor.prototype.initUIEvents = function(gameContext) {
 
         this.currentLayer = null;
         this.currentLayerButtonID = null;
-
+        this.brush = null;
         this.updateLayerOpacity(gameContext);
-        this.setBrush(null);
+
     });
 }
 
@@ -389,7 +388,7 @@ ArmyMapEditor.prototype.initButtons = function(gameContext) {
         const { tileName, tileID } = brushData;
 
         if(tileID !== 0) {
-            button.events.subscribe(UIElement.EVENT.CLICKED, this.id, () => this.setBrush(brushData));
+            button.events.subscribe(UIElement.EVENT.CLICKED, this.id, () => this.brush = brushData);
 
             button.addDefer((context, localX, localY) => {
                 this.camera.drawTileGraphics(tileManager, context, tileID, localX, localY, ArmyMapEditor.SCALE.SLOT_BUTTON, ArmyMapEditor.SCALE.SLOT_BUTTON);
@@ -533,8 +532,8 @@ ArmyMapEditor.prototype.updateButtonText = function(gameContext) {
     const { uiManager } = gameContext;
     const editorInterface = uiManager.getInterface(this.interfaceID);
 
-    editorInterface.setText("TEXT_TILESET_MODE", `MODE: ${this.getBrushMode()}`);
-    editorInterface.setText("TEXT_TILESET", `${this.getBrushSet().id}`);
+    editorInterface.setText("TEXT_TILESET_MODE", `MODE: ${this.brushMode}`);
+    editorInterface.setText("TEXT_TILESET", `${this.brushSet?.id}`);
     editorInterface.setText("TEXT_PAGE", this.getPageText());
     editorInterface.setText("TEXT_SIZE",  this.getSizeText());
 }
@@ -549,9 +548,8 @@ ArmyMapEditor.prototype.getPageText = function() {
 }
 
 ArmyMapEditor.prototype.getSizeText = function() {
-    const brushSize = this.getBrushSize();
-    const showBrushSize = brushSize + 1;
-    const showTileSize = brushSize * 2 + 1;
+    const info = this.brushSizes.getInfo();
+    const showTileSize = this.brushSize * 2 + 1;
 
-    return `SIZE: ${showTileSize}x${showTileSize} (${showBrushSize} / ${this.brushSizes.length})`;
+    return `SIZE: ${showTileSize}x${showTileSize} (${info})`;
 }

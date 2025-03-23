@@ -1,17 +1,22 @@
 import { ArmyMap } from "../../game/init/armyMap.js";
-import { clampValue, loopValue } from "../math/math.js";
+import { loopValue } from "../math/math.js";
+import { Scroller } from "../scroller.js";
 
 export const MapEditor = function() {
     this.brush = null;
-    this.brushSets = [];
     this.allSetElements = [];
-    this.brushSetIndex = 0;
-    this.brushSizes = [0];
-    this.brushSizeIndex = 0;
+
+    this.brushSets = new Scroller();
+    this.brushSet = null;
+
+    this.brushSizes = new Scroller();
+    this.brushSize = 0;
+
+    this.brushModes = new Scroller([MapEditor.MODE.DRAW, MapEditor.MODE.AUTOTILE]);
+    this.brushMode = MapEditor.MODE.DRAW;
+
     this.pageIndex = 0;
     this.activityStack = [];
-    this.modes = [MapEditor.MODE.DRAW, MapEditor.MODE.AUTOTILE];
-    this.modeIndex = 0;
     this.isAutotiling = false;
     this.hiddenSets = new Set();
     this.slots = [];
@@ -24,33 +29,37 @@ MapEditor.MODE = {
 
 MapEditor.prototype.toggleAutotiling = function() {
     this.isAutotiling = !this.isAutotiling;
+
+    return this.isAutotiling;
 }
 
-MapEditor.prototype.scrollBrushSize = function(delta = 0) {    
-    this.brushSizeIndex = clampValue(this.brushSizeIndex + delta, this.brushSizes.length - 1, 0);
-}
+MapEditor.prototype.scrollBrushSize = function(delta = 0) {
+    const brushSize = this.brushSizes.scroll(delta);
 
-MapEditor.prototype.getBrushSize = function() {
-    return this.brushSizes[this.brushSizeIndex];
+    if(brushSize !== null) {
+        this.brushSize = brushSize;
+    }
 }
 
 MapEditor.prototype.scrollBrushMode = function(delta = 0) {
-    this.modeIndex = loopValue(this.modeIndex + delta, this.modes.length - 1, 0);
-    this.reloadAll();
-}
+    const brushMode = this.brushModes.loop(delta);
 
-MapEditor.prototype.getBrushMode = function() {
-    return this.modes[this.modeIndex];
+    if(brushMode) {
+        this.brushMode = brushMode;
+    }
+
+    this.reloadAll();
 }
 
 MapEditor.prototype.scrollBrushSet = function(delta) {
-    this.brushSetIndex = loopValue(this.brushSetIndex + delta, this.brushSets.length - 1, 0);
+    const brushSet = this.brushSets.loop(delta);
+
+    if(brushSet) {
+        this.brushSet = brushSet;
+    }
+
     this.reloadAll();
 }    
-
-MapEditor.prototype.getBrushSet = function() {
-    return this.brushSets[this.brushSetIndex];
-}
 
 MapEditor.prototype.scrollPage = function(delta = 0) {
     const maxPagesNeeded = Math.ceil(this.allSetElements.length / this.slots.length);
@@ -63,10 +72,8 @@ MapEditor.prototype.scrollPage = function(delta = 0) {
 }
 
 MapEditor.prototype.routePage = function() {
-    const mode = this.getBrushMode();
-
-    switch(mode) {
-        case MapEditor.MODE.DRAW:return this.getDrawPage();
+    switch(this.brushMode) {
+        case MapEditor.MODE.DRAW: return this.getDrawPage();
         case MapEditor.MODE.AUTOTILE: return this.getAutotilePage();
         default: return this.getAutotilePage();
     }
@@ -87,10 +94,9 @@ MapEditor.prototype.getAutotilePage = function() {
 }
 
 MapEditor.prototype.getDrawPage = function() {
-    const brushSet = this.getBrushSet();
     const pageElements = []; 
 
-    if(!brushSet) {
+    if(!this.brushSet) {
         for(let i = 0; i < this.slots.length; i++) {
             pageElements.push({
                 "tileName": "NONE",
@@ -101,7 +107,7 @@ MapEditor.prototype.getDrawPage = function() {
         return pageElements;
     }
 
-    const { values } = brushSet;
+    const { values } = this.brushSet;
 
     for(let i = 0; i < this.slots.length; i++) {
         const index = this.slots.length * this.pageIndex + i;
@@ -132,17 +138,13 @@ MapEditor.prototype.reloadAll = function() {
     this.pageIndex = 0;
     this.brush = null;
 
-    const brushMode = this.getBrushMode();
-
-    switch(brushMode) {
+    switch(this.brushMode) {
         case MapEditor.MODE.DRAW: {
-            const brushSet = this.getBrushSet();
-
-            if(!brushSet) {
+            if(!this.brushSet) {
                 return;
             }
 
-            const { values } = brushSet;
+            const { values } = this.brushSet;
 
             for(const key in values) {
                 this.allSetElements.push(key);
@@ -157,6 +159,8 @@ MapEditor.prototype.reloadAll = function() {
 }
 
 MapEditor.prototype.loadBrushSets = function(invertedTileMeta) {
+    const sets = [];
+
     for(const setID in invertedTileMeta) {
         if(this.hiddenSets.has(setID)) {
             continue;
@@ -169,17 +173,15 @@ MapEditor.prototype.loadBrushSets = function(invertedTileMeta) {
             brushSet[tileID] = set[tileID];
         }
 
-        this.brushSets.push({
+        sets.push({
             "id": setID,
             "values": brushSet
         });
     }
 
+    this.brushSets.setValues(sets);
+    this.scrollBrushSet(0);
     this.reloadAll();
-}
-
-MapEditor.prototype.setBrush = function(brush = null) {
-    this.brush = brush;
 }
 
 MapEditor.prototype.undo = function(gameContext) {
@@ -214,11 +216,10 @@ MapEditor.prototype.paint = function(gameContext, mapID, layerID) {
 
     const actionsTaken = [];
     const { tileID } = this.brush;
-    const brushSize = this.getBrushSize();
-    const startX = cursorTile.x - brushSize;
-    const startY = cursorTile.y - brushSize;
-    const endX = cursorTile.x + brushSize;
-    const endY = cursorTile.y + brushSize;
+    const startX = cursorTile.x - this.brushSize;
+    const startY = cursorTile.y - this.brushSize;
+    const endX = cursorTile.x + this.brushSize;
+    const endY = cursorTile.y + this.brushSize;
     const tileMeta = meta.getMeta(tileID);
 
     for(let i = startY; i <= endY; i++) {
