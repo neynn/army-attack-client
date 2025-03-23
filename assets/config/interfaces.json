@@ -540,6 +540,26 @@
             "color": [238, 238, 238, 1],
             "align": "center",
             "opacity": 1
+        },
+        "BUTTON_ERASER": {
+            "type": "BUTTON",
+            "shape": 0,
+            "position": { "x": 100, "y": 0 },
+            "anchor": "BOTTOM_RIGHT",
+            "width": 100,
+            "height": 50,
+            "opacity": 1,
+            "children": [ "TEXT_ERASER" ]
+        },
+        "TEXT_ERASER": {
+            "type": "TEXT",
+            "position": { "x": 50, "y": 25 },
+            "text": "ERASER",
+            "fontSize": 20,
+            "fontType": "Arial",
+            "color": [238, 238, 238, 1],
+            "align": "center",
+            "opacity": 1
         }
     }
 }

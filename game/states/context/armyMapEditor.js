@@ -23,19 +23,19 @@ export const ArmyMapEditor = function() {
     this.buttonStates = {
         [ArmyMapEditor.BUTTON_STATE.HIDDEN]: {
             description: "HIDDEN",
-            textColor: [207, 55, 35, 1],
+            textColor: ArmyMapEditor.COLOR.HIDDEN,
             opacity: 0,
             nextState: ArmyMapEditor.BUTTON_STATE.VISIBLE
         },
         [ArmyMapEditor.BUTTON_STATE.VISIBLE]: {
             description: "VISIBLE",
-            textColor: [238, 238, 238, 1],
+            textColor: ArmyMapEditor.COLOR.VISIBLE,
             opacity: 1,
             nextState: ArmyMapEditor.BUTTON_STATE.EDIT
         },
         [ArmyMapEditor.BUTTON_STATE.EDIT]: {
             description: "EDIT",
-            textColor: [252, 252, 63, 1],
+            textColor: ArmyMapEditor.COLOR.EDIT,
             opacity: 1,
             nextState: ArmyMapEditor.BUTTON_STATE.HIDDEN
         }
@@ -50,6 +50,12 @@ export const ArmyMapEditor = function() {
 
     this.camera = new ArmyCamera();
 }
+
+ArmyMapEditor.COLOR = {
+    HIDDEN: [207, 55, 35, 1],
+    VISIBLE: [238, 238, 238, 1],
+    EDIT: [252, 252, 63, 1]
+};
 
 ArmyMapEditor.DEFAULT_MAP = {
     "type": "EmptyVersus",
@@ -174,9 +180,8 @@ ArmyMapEditor.prototype.initRenderEvents = function(gameContext) {
     this.camera.addPostDraw((context) => {
         const cursorTile = gameContext.getMouseTile();
         const brushSize = this.getBrushSize();
-        const brush = this.getBrush();
     
-        if(!brush) {
+        if(!this.brush) {
             return;
         }
     
@@ -190,7 +195,7 @@ ArmyMapEditor.prototype.initRenderEvents = function(gameContext) {
     
         const { x, y } = this.camera.getViewport();
         const { width, height, halfWidth } = this.camera.getTileDimensions();
-        const { tileName, tileID } = brush;
+        const { tileName, tileID } = this.brush;
         const startX = cursorTile.x - brushSize;
         const startY = cursorTile.y - brushSize;
         const endX = cursorTile.x + brushSize;
@@ -209,10 +214,10 @@ ArmyMapEditor.prototype.initRenderEvents = function(gameContext) {
                     this.camera.drawEmptyTile(context, renderX, renderY);
                 } else {
                     this.camera.drawTileGraphics(tileManager, context, tileID, renderX, renderY);
-
-                    context.fillStyle = this.overlayColor;
-                    context.fillText(tileName, renderX + halfWidth, renderY);  
                 } 
+
+                context.fillStyle = this.overlayColor;
+                context.fillText(tileName, renderX + halfWidth, renderY);  
             }
         }
 
@@ -334,9 +339,20 @@ ArmyMapEditor.prototype.initUIEvents = function(gameContext) {
         this.undo(gameContext);
     }); 
 
+    editorInterface.addClick("BUTTON_ERASER", () => {
+        if(!this.brush || this.brush.tileID !== 0) {
+            this.setBrush({
+                "tileName": "ERASER",
+                "tileID": 0
+            });
+        } else {
+            this.setBrush(null);
+        }
+    });
+
     editorInterface.addClick("BUTTON_VIEW_ALL", () => {
         const buttonColor = this.buttonStates[ArmyMapEditor.BUTTON_STATE.VISIBLE].textColor;
-
+        
         for(const buttonID in this.layerButtons) {
             const button = this.layerButtons[buttonID];
             const buttonText = editorInterface.getElement(button.text);
@@ -355,7 +371,7 @@ ArmyMapEditor.prototype.initUIEvents = function(gameContext) {
 
 ArmyMapEditor.prototype.initButtons = function(gameContext) {
     const { uiManager, tileManager } = gameContext;
-    const pageElements = this.getPage();
+    const pageElements = this.routePage();
     const editorInterface = uiManager.getInterface(this.interfaceID);
 
     for(let i = 0; i < this.slots.length; i++) {
@@ -372,13 +388,9 @@ ArmyMapEditor.prototype.initButtons = function(gameContext) {
         const button = editorInterface.getElement(buttonID);
         const { tileName, tileID } = brushData;
 
-        button.events.subscribe(UIElement.EVENT.CLICKED, this.id, () => this.setBrush(brushData));
+        if(tileID !== 0) {
+            button.events.subscribe(UIElement.EVENT.CLICKED, this.id, () => this.setBrush(brushData));
 
-        if(tileID === 0) {
-            button.addDefer((context, localX, localY) => {
-                this.camera.drawEmptyTile(context, localX, localY, ArmyMapEditor.SCALE.SLOT_BUTTON, ArmyMapEditor.SCALE.SLOT_BUTTON);
-            });
-        } else {
             button.addDefer((context, localX, localY) => {
                 this.camera.drawTileGraphics(tileManager, context, tileID, localX, localY, ArmyMapEditor.SCALE.SLOT_BUTTON, ArmyMapEditor.SCALE.SLOT_BUTTON);
                 /*

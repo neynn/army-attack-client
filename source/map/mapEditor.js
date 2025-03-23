@@ -10,7 +10,7 @@ export const MapEditor = function() {
     this.brushSizeIndex = 0;
     this.pageIndex = 0;
     this.activityStack = [];
-    this.modes = [MapEditor.MODE.DRAW, MapEditor.MODE.ERASE, MapEditor.MODE.FILL];
+    this.modes = [MapEditor.MODE.DRAW, MapEditor.MODE.AUTOTILE];
     this.modeIndex = 0;
     this.isAutotiling = false;
     this.hiddenSets = new Set();
@@ -19,8 +19,7 @@ export const MapEditor = function() {
 
 MapEditor.MODE = {
     "DRAW": "DRAW",
-    "ERASE": "ERASE",
-    "FILL": "FILL"
+    "AUTOTILE": "AUTOTILE"
 };
 
 MapEditor.prototype.toggleAutotiling = function() {
@@ -63,15 +62,38 @@ MapEditor.prototype.scrollPage = function(delta = 0) {
     }
 }
 
-MapEditor.prototype.getPage = function() {
+MapEditor.prototype.routePage = function() {
+    const mode = this.getBrushMode();
+
+    switch(mode) {
+        case MapEditor.MODE.DRAW:return this.getDrawPage();
+        case MapEditor.MODE.AUTOTILE: return this.getAutotilePage();
+        default: return this.getAutotilePage();
+    }
+}
+
+MapEditor.prototype.getAutotilePage = function() {
     const maxSlots = this.slots.length;
+    const pageElements = []; 
+
+    for(let i = 0; i < maxSlots; i++) {
+        pageElements.push({
+            "tileName": "NONE",
+            "tileID": 0
+        });
+    }
+
+    return pageElements;
+}
+
+MapEditor.prototype.getDrawPage = function() {
     const brushSet = this.getBrushSet();
     const pageElements = []; 
 
     if(!brushSet) {
-        for(let i = 0; i < maxSlots; i++) {
+        for(let i = 0; i < this.slots.length; i++) {
             pageElements.push({
-                "tileName": "",
+                "tileName": "NONE",
                 "tileID": 0
             });
         }
@@ -81,12 +103,12 @@ MapEditor.prototype.getPage = function() {
 
     const { values } = brushSet;
 
-    for(let i = 0; i < maxSlots; i++) {
-        const index = maxSlots * this.pageIndex + i;
+    for(let i = 0; i < this.slots.length; i++) {
+        const index = this.slots.length * this.pageIndex + i;
 
         if(index > this.allSetElements.length - 1) {
             pageElements.push({
-                "tileName": "",
+                "tileName": "NONE",
                 "tileID": 0
             });
 
@@ -112,17 +134,24 @@ MapEditor.prototype.reloadAll = function() {
 
     const brushMode = this.getBrushMode();
 
-    if(brushMode === MapEditor.MODE.DRAW) {
-        const brushSet = this.getBrushSet();
+    switch(brushMode) {
+        case MapEditor.MODE.DRAW: {
+            const brushSet = this.getBrushSet();
 
-        if(!brushSet) {
-            return;
+            if(!brushSet) {
+                return;
+            }
+
+            const { values } = brushSet;
+
+            for(const key in values) {
+                this.allSetElements.push(key);
+            }
+
+            break;
         }
-
-        const { values } = brushSet;
-
-        for(const key in values) {
-            this.allSetElements.push(key);
+        case MapEditor.MODE.AUTOTILE: {
+            break;
         }
     }
 }
@@ -147,10 +176,6 @@ MapEditor.prototype.loadBrushSets = function(invertedTileMeta) {
     }
 
     this.reloadAll();
-}
-
-MapEditor.prototype.getBrush = function() {
-    return this.brush;
 }
 
 MapEditor.prototype.setBrush = function(brush = null) {
@@ -182,14 +207,13 @@ MapEditor.prototype.paint = function(gameContext, mapID, layerID) {
     const { meta } = tileManager;
     const cursorTile = gameContext.getMouseTile();
     const gameMap = mapManager.getLoadedMap(mapID);
-    const brush = this.getBrush();
 
-    if(!gameMap || !brush) {
+    if(!gameMap || !this.brush) {
         return;
     }
 
     const actionsTaken = [];
-    const { tileID } = brush;
+    const { tileID } = this.brush;
     const brushSize = this.getBrushSize();
     const startX = cursorTile.x - brushSize;
     const startY = cursorTile.y - brushSize;

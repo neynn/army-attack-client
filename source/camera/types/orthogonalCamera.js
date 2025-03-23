@@ -57,6 +57,14 @@ OrthogonalCamera.prototype.clearOverlay = function(index) {
     this.overlays[index].length = 0;
 }
 
+OrthogonalCamera.prototype.drawColoredTile = function(context, color, renderX, renderY, scaleX = 1, scaleY = 1) {
+    const scaledX = this.tileWidth * scaleX;
+    const scaledY = this.tileHeight * scaleY;
+
+    context.fillStyle = color;
+    context.fillRect(renderX, renderY, scaledX, scaledY);
+}
+
 OrthogonalCamera.prototype.drawEmptyTile = function(context, renderX, renderY, scaleX = 1, scaleY = 1) {
     const scaledX = this.halfTileWidth * scaleX;
     const scaledY = this.halfTileHeight * scaleY;
