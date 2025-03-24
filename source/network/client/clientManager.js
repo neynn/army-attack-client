@@ -20,7 +20,7 @@ ClientManager.prototype.start = function() {
 
 ClientManager.prototype.exit = function() {
     this.clients.clear();
-    this.events.kill();
+    this.events.deafenAll();
 }
 
 ClientManager.prototype.destroyClient = function(clientID) {

@@ -1,6 +1,6 @@
 import { Drawable } from "../graphics/drawable.js";
 
-export const Sprite = function(DEBUG_NAME, index) {
+export const Sprite = function(index, DEBUG_NAME) {
     Drawable.call(this, Drawable.TYPE.SPRITE, DEBUG_NAME);
     
     this.index = index;

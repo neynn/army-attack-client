@@ -10,9 +10,9 @@ EventEmitter.prototype.listen = function(eventType) {
     if(this.listeners.has(eventType)) {
         return;
     }
-
-    const listener = new Listener(eventType);
     
+    const listener = new Listener(eventType);
+
     this.listeners.set(eventType, listener);
 }
 
@@ -24,22 +24,34 @@ EventEmitter.prototype.deafen = function(eventType) {
     this.listeners.delete(eventType);
 }
 
-EventEmitter.prototype.kill = function() {
+EventEmitter.prototype.deafenAll = function() {
     this.listeners.clear();
 }
 
-EventEmitter.prototype.subscribe = function(eventType, subscriberID, onCall) {
-    if(!this.listeners.has(eventType)) {
+EventEmitter.prototype.subscribe = function(eventType, subscriberID, onCall, options) {
+    const listener = this.listeners.get(eventType);
+
+    if(!listener) {
+        return;
+    }
+
+    const observerType = options && options.once ? Listener.OBSERVER_TYPE.SINGLE : Listener.OBSERVER_TYPE.DEFAULT;
+
+    listener.addObserver(observerType, subscriberID, onCall);
+}
+
+EventEmitter.prototype.unsubscribe = function(eventType, subscriberID) {
+    if(subscriberID === EventEmitter.SUPER_ID) {
         return;
     }
 
     const listener = this.listeners.get(eventType);
-    const observer = {
-        "subscriber": subscriberID,
-        "onCall": onCall 
-    };
 
-    listener.observers.push(observer);
+    if(!listener) {
+        return;
+    }
+
+    listener.filterObservers((observer) => observer.subscriber !== subscriberID);
 }
 
 EventEmitter.prototype.unsubscribeAll = function(subscriberID) {
@@ -47,89 +59,45 @@ EventEmitter.prototype.unsubscribeAll = function(subscriberID) {
         return;
     }
 
-    for(const [listenerID, listener] of this.listeners) {
-        const { observers } = listener;
-        const remainingObservers = [];
-
-        for(const observer of observers) {
-            const { subscriber } = observer;
-
-            if(subscriber !== subscriberID) {
-                remainingObservers.push(observer);
-            }
-        }
-
-        listener.observers = remainingObservers;
-    }
-}
-
-EventEmitter.prototype.unsubscribe = function(eventType, subscriberID) {
-    if(!this.listeners.has(eventType)) {
-        return;
-    }
-
-    if(subscriberID === EventEmitter.SUPER_ID) {
-        return;
-    }
-
-    const remainingObservers = [];
-    const listener = this.listeners.get(eventType);
-
-    for(const observer of listener.observers) {
-        const { subscriber } = observer;
-
-        if(subscriber !== subscriberID) {
-            remainingObservers.push(observer);
-        }
-    }
-
-    listener.observers = remainingObservers;
-}
-
-EventEmitter.prototype.emit = function(eventType, ...args) {
-    if(!this.listeners.has(eventType)) {
-        return;
-    }
-
-    const listener = this.listeners.get(eventType);
-
-    for(const { onCall } of listener.observers) {
-        onCall(...args);
-    }
-}
-
-EventEmitter.prototype.muteAll = function() {
-    for(const [listenerID, listener] of this.listeners) {
-        const { observers } = listener;
-        const remainingObservers = [];
-
-        for(const observer of observers) {
-            const { subscriber } = observer;
-
-            if(subscriber === EventEmitter.SUPER_ID) {
-                remainingObservers.push(observer);
-            }
-        }
-
-        listener.observers = remainingObservers;
-    }
+    this.listeners.forEach((listener) => {
+        listener.filterObservers((observer) => observer.subscriber !== subscriberID);
+    });
 }
 
 EventEmitter.prototype.mute = function(eventType) {
-    if(!this.listeners.has(eventType)) {
+    const listener = this.listeners.get(eventType);
+
+    if(!listener) {
         return;
     }
 
-    const remainingObservers = [];
+    listener.filterObservers((observer) => observer.subscriber === EventEmitter.SUPER_ID);
+}
+
+EventEmitter.prototype.muteAll = function() {
+    this.listeners.forEach((listener) => {
+        listener.filterObservers((observer) => observer.subscriber === EventEmitter.SUPER_ID);
+    });
+}
+
+EventEmitter.prototype.emit = function(eventType, ...args) {
     const listener = this.listeners.get(eventType);
 
-    for(const observer of listener.observers) {
-        const { subscriber } = observer;
-
-        if(subscriber === EventEmitter.SUPER_ID) {
-            remainingObservers.push(observer);
-        }
+    if(!listener) {
+        return;
     }
 
-    listener.observers = remainingObservers;
+    for(let i = 0; i < listener.observers.length; i++) {
+        const observer = listener.observers[i];
+
+        observer.onCall(...args);
+    }
+
+    for(let i = 0; i < listener.singleObservers.length; i++) {
+        const observer = listener.singleObservers[i];
+
+        observer.onCall(...args);
+    }
+
+    listener.singleObservers.length = 0;
 }

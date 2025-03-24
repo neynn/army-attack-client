@@ -108,7 +108,7 @@ SpriteManager.prototype.drawSprite = function(sprite, context, localX, localY) {
     if(!animationFrame) {
         return;
     }
-    
+
     if(isFlipped) {
         const renderX = (localX - boundsX) * -1;
         const renderY = localY + boundsY;
