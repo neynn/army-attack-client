@@ -53,6 +53,7 @@ GameContext.prototype.exit = function() {
 }
 
 GameContext.prototype.loadResources = function(resources) {
+    //saveSprites(resources.sprites);
     this.spriteManager.load(resources.sprites);
     this.tileManager.load(resources.tiles, resources.tileMeta);
     this.uiManager.load(resources.interfaces, resources.icons, resources.fonts);

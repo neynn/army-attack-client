@@ -1,3 +1,5 @@
+import { InefficientJSONExporter } from "./source/exporter.js";
+
 export const saveTemplateAsFile = (filename, dataObjToWrite) => {
   const blob = new Blob([dataObjToWrite], { type: "text/json" });
   const link = document.createElement("a");
@@ -16,27 +18,42 @@ export const saveTemplateAsFile = (filename, dataObjToWrite) => {
   link.remove();
 }
 
-export const packerToJSON = (id, packerFile) => {
-  const formattedFrames = Object.keys(packerFile.frames).map(key => {
-    const {x, y, w, h} = packerFile.frames[key].frame;
-    return `"${key}": {"x":${x},"y":${y},"w":${w},"h":${h},"offset":{"x":0,"y":0}}`;
-  }
-).join(',\n        ');
+export const packerToJSONTiles = (id, packerFile) => {
+    const formattedFrames = Object.keys(packerFile.frames).map(key => {
+        const {x, y, w, h} = packerFile.frames[key].frame;
+        const name = key.split(".");
 
-  const meta = `{
-    "id": "${id}",
-    "directory": "assets/tiles",
-    "source": "${packerFile.meta.image}",
-    "offset": { "x": 0, "y": 0 },
-    "frameTime": 0.03,
-    "allowFlip": false,
-    "frames": {
-        ${formattedFrames}
-    }
+        return `"${name[0]}": {"x":${x},"y":${y},"w":${w},"h":${h}}`;
+      }
+    );
+    
+    new InefficientJSONExporter(4)
+    .open()
+    .writeLine("directory", 1, ["assets", "tiles"])
+    .writeLine("source", 1, packerFile.meta.image)
+    .writeLine("frameTime", 1, 0.03)
+    .writeList("frames", 1, InefficientJSONExporter.LIST_TYPE.OBJECT, formattedFrames)
+    .close()
+    .download(id);
 }
-`;
 
-  saveTemplateAsFile(`${id}.json`, meta);
+export const packerToJSONSprites = (id, packerFile) => {
+    const formattedFrames = Object.keys(packerFile.frames).map(key => {
+        const {x, y, w, h} = packerFile.frames[key].frame;
+        const name = key.split(".");
+
+        return `"${name[0]}": {"x":${x},"y":${y},"w":${w},"h":${h}}`;
+    });
+
+    new InefficientJSONExporter(4)
+    .open()
+    .writeLine("directory", 1, ["assets", "sprites"])
+    .writeLine("source", 1, packerFile.meta.image)
+    .writeLine("bounds", 1, {"x": 0,"y": 0,"w":0,"h":0})
+    .writeLine("frameTime", 1, 0.03)
+    .writeList("frames", 1, InefficientJSONExporter.LIST_TYPE.OBJECT, formattedFrames)
+    .close()
+    .download(id);
 }
 
 export const saveMap = function(mapID, map2D) {
@@ -46,27 +63,22 @@ export const saveMap = function(mapID, map2D) {
 
     const graphics = map2D.saveMeta();
     const layers = map2D.saveLayers();
-    const flags = JSON.stringify(map2D.saveFlags());
+    const flags = map2D.saveFlags();
 
-    const downloadableString = 
-`{
-    "music": "${map2D.music}",
-    "width": ${map2D.width},
-    "height": ${map2D.height},
-    "flags": ${flags},
-    "graphics": {
-        "layers": {
-            ${graphics.join(",\n            ")}
-        },
-        "background": ${JSON.stringify(map2D.background)},
-        "foreground": ${JSON.stringify(map2D.foreground)}
-    },
-    "data": {
-        ${layers.join(",\n        ")}
-    }
-}`;
-
-    saveTemplateAsFile("map_" + mapID + ".json", downloadableString);
+    new InefficientJSONExporter(4)
+    .open()
+    .writeLine("music", 1, map2D.music)
+    .writeLine("width", 1, map2D.width)
+    .writeLine("height", 1, map2D.height)
+    .writeLine("flags", 1, flags)
+    .openList("graphics", 1, InefficientJSONExporter.LIST_TYPE.OBJECT)
+    .writeList("layers", 2, InefficientJSONExporter.LIST_TYPE.OBJECT, graphics)
+    .writeLine("background", 2, map2D.background)
+    .writeLine("foreground", 2, map2D.foreground)
+    .closeList()
+    .writeList("data", 1, InefficientJSONExporter.LIST_TYPE.OBJECT, layers)
+    .close()
+    .download("map_" + mapID);
 }
 
 const formatFrames = (frames) => {
@@ -121,47 +133,35 @@ const formatAnimationFrames = (frames, uniqueFrames) => {
     return animationFrames;
 }
 
-const lineFormat = function(line, gap) {
-    let out = line;
-
-    for(let i = 0; i < gap; i++) {
-        out += " ";
-    }
-
-    return out;
-}
-
 export const saveSprites = function(spriteTypes) {
     const output = [];
-
+    const ije = new InefficientJSONExporter(4);
+    
     for(const typeID in spriteTypes) {
         const type = spriteTypes[typeID];
         const { directory, source, bounds, frameTime, frames } = type;
         const { formatted, unique } = formatFrames_unique(frames);
+        const str = ije
+        .reset()
+        .open(1, typeID)
+        .writeLine("directory", 2, directory)
+        .writeLine("source", 2, source)
+        .writeLine("bounds", 2, {"x":bounds.x,"y":bounds.y,"w":bounds.w,"h":bounds.h})
+        .writeLine("frameTime", 2, frameTime)
+        .writeList("frames", 2, InefficientJSONExporter.LIST_TYPE.OBJECT, formatted)
+        .openList("animations", 2, InefficientJSONExporter.LIST_TYPE.OBJECT)
+        .openList("default", 3, InefficientJSONExporter.LIST_TYPE.OBJECT)
+        .writeLine("frameTime", 4, frameTime)
+        .writeLine("frames", 4, formatAnimationFrames(frames, unique))
+        .close(1)
+        .build();
 
-        const typeString =
-`"${typeID}": {
-        "directory": ${JSON.stringify(directory)},
-        "source": "${source}",
-        "bounds": {"x":${bounds.x},"y":${bounds.y},"w":${bounds.w},"h":${bounds.h}},
-        "frameTime": ${frameTime},
-        "frames": {
-            ${formatted.join(lineFormat(",\n", 12))}
-        },
-        "animations": {
-            "default": {
-                "frameTime": ${frameTime},
-                "frames": ${JSON.stringify(formatAnimationFrames(frames, unique))}
-            }
-        }
-    }`;
-        output.push(typeString);
+        output.push(str);
     }
 
-    const downloadableString =
-`{
-    ${output.join(`,\n    `)}
-}`;
+    const str = `{
+${output.join(",\n")}
+}`
 
-    saveTemplateAsFile("sprites.json", downloadableString);
+    saveTemplateAsFile("sprites.json", str);
 }
