@@ -1,12 +1,25 @@
 import { PathHandler } from "../../resources/pathHandler.js";
+import { Sound } from "./sound.js";
 
 export const SoundPlayer = function() {
-    this.defaultVolume = 0.3;
-    this.sounds = new Map();
+    this.volume = 0.3;
+    this.sounds = {};
+    this.loadedSounds = new Map();
     this.activeSounds = new Map();
     this.audioContext = new AudioContext();
-    this.audioBuffers = new Map();
-    this.soundTypes = {};
+}
+
+SoundPlayer.prototype.load = function(soundTypes) {
+    if(!soundTypes) {
+        return;
+    }
+
+    this.sounds = soundTypes; 
+}
+
+SoundPlayer.prototype.clear = function() {
+    this.loadedSounds.forEach(sound => sound.clearInstances());
+    this.activeSounds.clear();
 }
 
 SoundPlayer.prototype.promiseAudioBuffer = function(path) {
@@ -15,49 +28,68 @@ SoundPlayer.prototype.promiseAudioBuffer = function(path) {
     .then(arrayBuffer => this.audioContext.decodeAudioData(arrayBuffer));
 }
 
-SoundPlayer.prototype.bufferAudio = function(audioID, meta) {
-    const { directory, source } = meta;
-    const path = PathHandler.getPath(directory, source);
-    
-    if(this.audioBuffers.has(audioID)) {
-        return;
+SoundPlayer.prototype.bufferAudio = async function(audioID, meta) {
+    const { directory, source, volume, allowStacking } = meta; 
+
+    if(this.loadedSounds.has(audioID)) {
+        return Promise.resolve(this.loadedSounds.get(audioID));
     }
     
+    const path = PathHandler.getPath(directory, source);
+
     return this.promiseAudioBuffer(path)
     .then(audioBuffer => {
-        this.audioBuffers.set(audioID, audioBuffer);
+        const sound = new Sound(audioBuffer, volume, allowStacking);
 
-        return audioBuffer;
+        this.activeSounds.set(audioID, 0);
+        this.loadedSounds.set(audioID, sound);
+
+        sound.onInstanceEnd = (instanceID) => this.onSoundEnded(audioID, instanceID);
+        sound.onInstanceStart = (instanceID) => this.onSoundStarted(audioID, instanceID);
+
+        return sound;
     });
 }
 
-SoundPlayer.prototype.getAudioSource = async function(audioID, meta, volume) {
-    if(!this.audioBuffers.has(audioID)) {
-        await this.bufferAudio(meta);
-    }
-
-    const buffer = this.audioBuffers.get(audioID);
-    const gainNode = this.audioContext.createGain();
-    const sourceNode = this.audioContext.createBufferSource();
-
-    sourceNode.connect(gainNode);
-    gainNode.connect(this.audioContext.destination);
-    gainNode.gain.setValueAtTime(volume, this.audioContext.currentTime);
-    sourceNode.buffer = buffer;
-
-    return sourceNode;
-}
-
-SoundPlayer.prototype.load = function(soundTypes) {
-    if(!soundTypes) {
+SoundPlayer.prototype.onSoundEnded = function(audioID, instanceID) {
+    if(!this.activeSounds.has(audioID)) {
         return;
     }
 
-    this.soundTypes = soundTypes; 
+    const count = this.activeSounds.get(audioID) - 1;
+
+    if(count <= 0) {
+        this.activeSounds.set(audioID, 0);
+    } else {
+        this.activeSounds.set(audioID, count);
+    }
 }
 
-SoundPlayer.prototype.clear = function() {
-    this.activeSounds.forEach((sound, audioID) => this.stopSound(audioID));
+SoundPlayer.prototype.onSoundStarted = function(audioID, instanceID) {
+    if(!this.activeSounds.has(audioID)) {
+        return;
+    }
+
+    const count = this.activeSounds.get(audioID) + 1;
+
+    this.activeSounds.set(audioID, count);
+}
+
+SoundPlayer.prototype.isPlayable = function(soundID) {
+    const soundType = this.sounds[soundID];
+
+    if(!soundType) {
+        return false;
+    }
+
+    if(!this.activeSounds.has(soundID)) {
+        return true;
+    }
+
+    const { allowStacking } = soundType;
+    const count = this.activeSounds.get(soundID);
+
+    return allowStacking || count === 0;
 }
 
 SoundPlayer.prototype.getRandomSoundID = function(soundList) {
@@ -65,17 +97,11 @@ SoundPlayer.prototype.getRandomSoundID = function(soundList) {
 
     for(let i = 0; i < soundList.length; i++) {
         const soundID = soundList[i];
-        const soundType = this.soundTypes[soundID];
+        const isPlayable = this.isPlayable(soundID);
 
-        if(!soundType) {
-            continue;
+        if(isPlayable) {
+            validIndices.push(i);
         }
-
-        if(this.activeSounds.has(soundID) && !soundType.allowStacking) {
-            continue;
-        }
-
-        validIndices.push(i);
     }
 
     if(validIndices.length === 0) {
@@ -88,7 +114,7 @@ SoundPlayer.prototype.getRandomSoundID = function(soundList) {
     return soundList[randomIndex];
 }
 
-SoundPlayer.prototype.playRandom = function(soundList, volume) {
+SoundPlayer.prototype.playRandom = async function(soundList, volume) {
     if(!soundList || soundList.length === 0) {
         return;
     }
@@ -102,53 +128,25 @@ SoundPlayer.prototype.playRandom = function(soundList, volume) {
     this.playSound(soundID, volume);
 }
 
-SoundPlayer.prototype.playSound = function(audioID, volume = this.defaultVolume) {
-    const soundType = this.soundTypes[audioID];
+SoundPlayer.prototype.playSound = async function(audioID, volume = this.volume) {
+    const soundType = this.sounds[audioID];
 
     if(!soundType) {
         return;
     }
 
-    if(this.activeSounds.has(audioID) && !soundType.allowStacking) {
-        return;
-    }
+    const sound = await this.bufferAudio(audioID, soundType);
 
-    this.activeSounds.set(audioID, null);
-
-    this.getAudioSource(audioID, soundType, volume).then(source => {
-        this.activeSounds.set(audioID, source);
-
-        source.onended = () => this.activeSounds.delete(audioID);
-        source.start(0);
-    });
-}
-
-SoundPlayer.prototype.stopSound = function(audioID) {
-    if(!this.activeSounds.has(audioID)) {
-        return;
-    }
-
-    const sound = this.activeSounds.get(audioID);
-
-    if(sound) {
-        sound.stop();
-    }
-
-    this.activeSounds.delete(audioID);
+    sound.volume = volume;
+    sound.play(this.audioContext);
 }
 
 SoundPlayer.prototype.loadSound = async function(audioID) {
-    const soundType = this.soundTypes[audioID];
+    const soundType = this.sounds[audioID];
 
     if(!soundType) {
         return null;
     }
 
     return this.bufferAudio(audioID, soundType);
-}
-
-SoundPlayer.prototype.loadAllSounds = function() {
-    for(const soundID in this.soundTypes) {
-        this.loadSound(soundID);
-    }
 }

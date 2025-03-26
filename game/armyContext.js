@@ -147,8 +147,6 @@ ArmyContext.prototype.init = function(resources) {
     this.states.addState(ArmyContext.STATE.STORY_MODE, new StoryModeState());
     this.states.addState(ArmyContext.STATE.VERSUS_MODE, new VersusModeState());
     this.states.addState(ArmyContext.STATE.EDIT_MODE, new MapEditorState());
-
-    this.client.soundPlayer.loadAllSounds();
     
     if(ArmyContext.DEBUG.LOG_QUEUE_EVENTS) {
         this.world.actionQueue.events.subscribe(ActionQueue.EVENT.QUEUE_ERROR, "DEBUG", (error) => console.log(error));
