@@ -1,4 +1,3 @@
-import { Logger } from "../../logger.js";
 import { PathHandler } from "../../resources/pathHandler.js";
 
 export const SoundPlayer = function() {
@@ -51,7 +50,6 @@ SoundPlayer.prototype.getAudioSource = async function(audioID, meta, volume) {
 
 SoundPlayer.prototype.load = function(soundTypes) {
     if(!soundTypes) {
-        Logger.log(false, "SoundTypes cannot be undefined!", "SoundPlayer.prototype.load", null);
         return;
     }
 
@@ -92,14 +90,12 @@ SoundPlayer.prototype.getRandomSoundID = function(soundList) {
 
 SoundPlayer.prototype.playRandom = function(soundList, volume) {
     if(!soundList || soundList.length === 0) {
-        Logger.log(false, "List is undefined or empty!", "SoundPlayer.prototype.playRandom", null);
         return;
     }
 
     const soundID = this.getRandomSoundID(soundList);
 
     if(!soundID) {
-        Logger.log(false, "No valid sound found!", "SoundPlayer.prototype.playRandom", null);
         return;
     }
 
@@ -110,12 +106,10 @@ SoundPlayer.prototype.playSound = function(audioID, volume = this.defaultVolume)
     const soundType = this.soundTypes[audioID];
 
     if(!soundType) {
-        Logger.log(false, "SoundType does not exist!", "SoundPlayer.prototype.playSound", {audioID});
         return;
     }
 
     if(this.activeSounds.has(audioID) && !soundType.allowStacking) {
-        Logger.log(false, "Sound is already playing!", "SoundPlayer.prototype.playSound", {audioID});
         return;
     }
 
@@ -131,7 +125,6 @@ SoundPlayer.prototype.playSound = function(audioID, volume = this.defaultVolume)
 
 SoundPlayer.prototype.stopSound = function(audioID) {
     if(!this.activeSounds.has(audioID)) {
-        Logger.log(false, "Sound is not active!", "SoundPlayer.prototype.stopSound", {audioID});
         return;
     }
 
@@ -148,8 +141,6 @@ SoundPlayer.prototype.loadSound = async function(audioID) {
     const soundType = this.soundTypes[audioID];
 
     if(!soundType) {
-        Logger.log(false, "SoundType does not exist!", "SoundPlayer.prototype.loadSound", {audioID});
-
         return null;
     }
 

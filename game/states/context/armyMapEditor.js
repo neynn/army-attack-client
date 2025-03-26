@@ -163,7 +163,7 @@ ArmyMapEditor.prototype.initCamera = function(gameContext) {
         this.camera.loadWorld(width, height);
     
         if(music) {
-            //client.musicPlayer.swapTrack(music);
+            //client.musicPlayer.playTrack(music);
         }
 
         context.refreshCamera();

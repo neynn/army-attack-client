@@ -49,7 +49,7 @@ const initPlayerCamera = function(gameContext, camera) {
         camera.loadWorld(width, height);
     
         if(music) {
-            client.musicPlayer.swapTrack(music);
+            client.musicPlayer.playTrack(music);
         }
 
         context.refreshCamera();
