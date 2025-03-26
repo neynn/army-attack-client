@@ -68,9 +68,7 @@ InefficientJSONExporter.prototype.close = function(depth = 0) {
         this.closeList();
     }
 
-    this.jsonString.slice(0, -1);
-    this.jsonString += "\n";
-    this.pad(depth);
+    this.newEmptyLine(depth);
     this.jsonString += "}";
 
     return this;
@@ -91,6 +89,10 @@ InefficientJSONExporter.prototype.writeLine = function(id, depth, data) {
 }
 
 InefficientJSONExporter.prototype.openList = function(id, depth, type) {
+    if(type === undefined) {
+        type = InefficientJSONExporter.LIST_TYPE.OBJECT;
+    }
+
     switch(type) {
         case InefficientJSONExporter.LIST_TYPE.OBJECT: {
             this.newLine(depth);
@@ -113,14 +115,14 @@ InefficientJSONExporter.prototype.openList = function(id, depth, type) {
     return this;
 }
 
-InefficientJSONExporter.prototype.writeList = function(id, depth, type, jsonStrings) {
+InefficientJSONExporter.prototype.writeList = function(id, depth, jsonStrings, type) {
     const nestedDepth = depth + 1;
     const joinString = this.getJoinString(nestedDepth);
     const joined = jsonStrings.join(joinString);
 
     this.openList(id, depth, type);
     this.pad(nestedDepth);
-    this.jsonString += `${joined}`;
+    this.jsonString += joined;
     this.closeList();
 
     return this;
@@ -137,12 +139,12 @@ InefficientJSONExporter.prototype.closeList = function() {
     switch(type) {
         case InefficientJSONExporter.LIST_TYPE.OBJECT: {
             this.newEmptyLine(depth);
-            this.jsonString += `}`;
+            this.jsonString += "}";
             break;
         }
         case InefficientJSONExporter.LIST_TYPE.ARRAY: {
             this.newEmptyLine(depth);
-            this.jsonString += `]`;
+            this.jsonString += "]";
             break;
         }
     }

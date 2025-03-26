@@ -32,7 +32,7 @@ export const packerToJSONTiles = (id, packerFile) => {
     .writeLine("directory", 1, ["assets", "tiles"])
     .writeLine("source", 1, packerFile.meta.image)
     .writeLine("frameTime", 1, 0.03)
-    .writeList("frames", 1, InefficientJSONExporter.LIST_TYPE.OBJECT, formattedFrames)
+    .writeList("frames", 1, formattedFrames)
     .close()
     .download(id);
 }
@@ -51,7 +51,7 @@ export const packerToJSONSprites = (id, packerFile) => {
     .writeLine("source", 1, packerFile.meta.image)
     .writeLine("bounds", 1, {"x": 0,"y": 0,"w":0,"h":0})
     .writeLine("frameTime", 1, 0.03)
-    .writeList("frames", 1, InefficientJSONExporter.LIST_TYPE.OBJECT, formattedFrames)
+    .writeList("frames", 1, formattedFrames)
     .close()
     .download(id);
 }
@@ -71,12 +71,12 @@ export const saveMap = function(mapID, map2D) {
     .writeLine("width", 1, map2D.width)
     .writeLine("height", 1, map2D.height)
     .writeLine("flags", 1, flags)
-    .openList("graphics", 1, InefficientJSONExporter.LIST_TYPE.OBJECT)
-    .writeList("layers", 2, InefficientJSONExporter.LIST_TYPE.OBJECT, graphics)
+    .openList("graphics", 1)
+    .writeList("layers", 2, graphics)
     .writeLine("background", 2, map2D.background)
     .writeLine("foreground", 2, map2D.foreground)
     .closeList()
-    .writeList("data", 1, InefficientJSONExporter.LIST_TYPE.OBJECT, layers)
+    .writeList("data", 1, layers)
     .close()
     .download("map_" + mapID);
 }
@@ -148,9 +148,9 @@ export const saveSprites = function(spriteTypes) {
         .writeLine("source", 2, source)
         .writeLine("bounds", 2, {"x":bounds.x,"y":bounds.y,"w":bounds.w,"h":bounds.h})
         .writeLine("frameTime", 2, frameTime)
-        .writeList("frames", 2, InefficientJSONExporter.LIST_TYPE.OBJECT, formatted)
-        .openList("animations", 2, InefficientJSONExporter.LIST_TYPE.OBJECT)
-        .openList("default", 3, InefficientJSONExporter.LIST_TYPE.OBJECT)
+        .writeList("frames", 2, formatted)
+        .openList("animations", 2)
+        .openList("default", 3)
         .writeLine("frameTime", 4, frameTime)
         .writeLine("frames", 4, formatAnimationFrames(frames, unique))
         .close(1)
