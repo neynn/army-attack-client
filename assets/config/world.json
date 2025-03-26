@@ -11,8 +11,8 @@
         "downDuration": 10
     },
     "LanguageType": {
-        "german": { "directory": "assets/config/language", "source": "de.json" },
-        "english": { "directory": "assets/config/language", "source": "en.json" }
+        "german": { "directory": ["assets", "config", "language"], "source": "de.json" },
+        "english": { "directory": ["assets", "config", "language"], "source": "en.json" }
     },
     "VersusMode": {
         "availableMaps": ["oasis"],
