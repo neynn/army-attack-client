@@ -1,6 +1,3 @@
-import { EventEmitter } from "../events/eventEmitter.js";
-import { Cursor } from "./cursor.js";
-
 export const InputRouter = function() {
     this.binds = new Map();
     this.commands = new Map();
@@ -8,13 +5,8 @@ export const InputRouter = function() {
 
 InputRouter.PREFIX = {
     DOWN: "+",
-    UP: "-"
-};
-
-InputRouter.CURSOR_MAP = {
-    [Cursor.BUTTON_LEFT]: "M1",
-    [Cursor.BUTTON_RIGHT]: "M2",
-    [Cursor.BUTTON_MIDDLE]: "M3"
+    UP: "-",
+    HOLD: "="
 };
 
 InputRouter.CURSOR_INPUT = {
@@ -108,7 +100,7 @@ InputRouter.prototype.on = function(commandID, command) {
     this.commands.set(commandID, command);
 }
 
-InputRouter.prototype.handleInput = function(inputID, prefix) {
+InputRouter.prototype.handleInput = function(prefix, inputID) {
     const prefixedID = prefix + inputID;
 
     if(!this.binds.has(prefixedID)) {
@@ -122,21 +114,3 @@ InputRouter.prototype.handleInput = function(inputID, prefix) {
         command();
     }
 } 
-
-InputRouter.prototype.createKeyboardListener = function(eventID, prefixID, keyboard) {
-    const { events } = keyboard;
-
-    events.subscribe(eventID, EventEmitter.SUPER_ID, (keyID) => this.handleInput(keyID, prefixID));
-}
-
-InputRouter.prototype.createMouseListener = function(eventID, prefixID, buttonID, cursor) {
-    const { events } = cursor;
-
-    events.subscribe(eventID, EventEmitter.SUPER_ID, (cursorX, cursorY) => {
-        const inputID = InputRouter.CURSOR_MAP[buttonID];
-
-        if(inputID !== undefined) {
-            this.handleInput(inputID, prefixID);
-        }
-    });
-}

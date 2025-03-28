@@ -18,47 +18,46 @@ export const saveTemplateAsFile = (filename, dataObjToWrite) => {
   link.remove();
 }
 
-export const packerToJSONTiles = (id, packerFile) => {
-    const formattedFrames = Object.keys(packerFile.frames).map(key => {
-        const {x, y, w, h} = packerFile.frames[key].frame;
-        const name = key.split(".");
+const createJSONFrames = function(frames) {
+    return Object.keys(frames).map(key => {
+        const { x, y, w, h } = frames[key].frame;
+        const [ name ] = key.split(".");
 
-        return `"${name[0]}": {"x":${x},"y":${y},"w":${w},"h":${h}}`;
+        return `"${name}": {"x":${x},"y":${y},"w":${w},"h":${h}}`;
       }
     );
-    
+}
+
+export const packerToJSONTiles = (id, packerFile) => {    
     new InefficientJSONExporter(4)
     .open()
     .writeLine("directory", 1, ["assets", "tiles"])
     .writeLine("source", 1, packerFile.meta.image)
     .writeLine("frameTime", 1, 0.03)
-    .writeList("frames", 1, formattedFrames)
+    .writeList("frames", 1, createJSONFrames(packerFile.frames))
     .close()
     .download(id);
 }
 
 export const packerToJSONSprites = (id, packerFile) => {
-    const formattedFrames = Object.keys(packerFile.frames).map(key => {
-        const {x, y, w, h} = packerFile.frames[key].frame;
-        const name = key.split(".");
-
-        return `"${name[0]}": {"x":${x},"y":${y},"w":${w},"h":${h}}`;
-    });
-
     new InefficientJSONExporter(4)
     .open()
     .writeLine("directory", 1, ["assets", "sprites"])
     .writeLine("source", 1, packerFile.meta.image)
     .writeLine("bounds", 1, {"x": 0,"y": 0,"w":0,"h":0})
     .writeLine("frameTime", 1, 0.03)
-    .writeList("frames", 1, formattedFrames)
+    .writeList("frames", 1, createJSONFrames(packerFile.frames))
     .close()
     .download(id);
 }
 
 export const saveMap = function(mapID, map2D) {
     if(!map2D) {
-        return `{ "ERROR": "MAP NOT LOADED! USE CREATE OR LOAD!" }`;
+        return new InefficientJSONExporter(4)
+        .open()
+        .writeLine("ERROR", 1, "MAP NOT LOADED! USE CREATE OR LOAD!")
+        .close()
+        .download("map_" + mapID);
     }
 
     const graphics = map2D.saveMeta();

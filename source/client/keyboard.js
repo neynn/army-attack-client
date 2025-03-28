@@ -11,18 +11,6 @@ export const Keyboard = function() {
     this.events.listen(Keyboard.EVENT.KEY_BOUND);
     this.events.listen(Keyboard.EVENT.KEY_UNBOUND);
 
-    this.init();
-}
-
-Keyboard.EVENT = {
-    KEY_PRESSED: "KEY_PRESSED",
-    KEY_RELEASED: "KEY_RELEASED",
-    KEY_DOWN: "KEY_DOWN",
-    KEY_BOUND: "KEY_BOUND",
-    KEY_UNBOUND: "KEY_UNBOUND"
-};
-
-Keyboard.prototype.init = function() {
     document.addEventListener("keydown", (event) => {
         const { key } = event;
 
@@ -41,6 +29,14 @@ Keyboard.prototype.init = function() {
         }
     });
 }
+
+Keyboard.EVENT = {
+    KEY_PRESSED: "KEY_PRESSED",
+    KEY_RELEASED: "KEY_RELEASED",
+    KEY_DOWN: "KEY_DOWN",
+    KEY_BOUND: "KEY_BOUND",
+    KEY_UNBOUND: "KEY_UNBOUND"
+};
 
 Keyboard.prototype.onKeyDown = function(keyID) {
     if(!this.activeKeys.has(keyID)) {

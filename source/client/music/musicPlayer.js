@@ -14,6 +14,8 @@ export const MusicPlayer = function() {
     this.mode = MusicPlayer.MODE.SINGLE;
 }
 
+MusicPlayer.DEBUG = 1;
+
 MusicPlayer.MODE = {
     SINGLE: 0,
     PLAYLIST: 1
@@ -26,7 +28,9 @@ MusicPlayer.STATE = {
 
 MusicPlayer.prototype.load = function(musicData) {
     if(!musicData) {
-        console.warn("MusicData does not exist!");
+        if(MusicPlayer.DEBUG) {
+            console.warn("MusicData does not exist!");
+        }
         return;
     }
 
@@ -44,7 +48,9 @@ MusicPlayer.prototype.loadTrack = function(trackID) {
     const meta = this.tracks[trackID];
 
     if(!meta) {
-        console.warn(`Track ${trackID} does not exist!`);
+        if(MusicPlayer.DEBUG) {
+            console.warn(`Track ${trackID} does not exist!`);
+        }
         return null;
     }
 
@@ -89,7 +95,9 @@ MusicPlayer.prototype.play = function(trackID) {
 
     this.currentTrack = trackID;
 
-    console.log(`Now playing: ${trackID}`);
+    if(MusicPlayer.DEBUG) {
+        console.log(`Now playing: ${trackID}`);
+    }
 }
 
 MusicPlayer.prototype.getShuffledPlaylist = function(playlist) {
@@ -196,7 +204,9 @@ MusicPlayer.prototype.playTrack = function(musicID) {
     const meta = this.tracks[musicID];
 
     if(!meta) {
-        console.warn(`Track ${musicID} does not exist!`);
+        if(MusicPlayer.DEBUG) {
+            console.warn(`Track ${trackID} does not exist!`);
+        }
         return;
     }
 
@@ -208,7 +218,9 @@ MusicPlayer.prototype.playPlaylist = function(playlistID) {
     const playlist = this.playlists[playlistID];
 
     if(!playlist) {
-        console.warn(`Playlist ${playlistID} does not exist!`);
+        if(MusicPlayer.DEBUG) {
+            console.warn(`Playlist ${playlistID} does not exist!`);
+        }
         return;
     }
 

@@ -4,6 +4,7 @@ import { Socket } from "../network/socket.js";
 import { SoundPlayer } from "./sound/soundPlayer.js";
 import { InputRouter } from "./inputRouter.js";
 import { MusicPlayer } from "./music/musicPlayer.js";
+import { EventEmitter } from "../events/eventEmitter.js";
 
 export const Client = function() {
     this.router = new InputRouter();
@@ -13,12 +14,24 @@ export const Client = function() {
     this.soundPlayer = new SoundPlayer();
     this.socket = new Socket();
 
-    this.router.createKeyboardListener(Keyboard.EVENT.KEY_PRESSED, InputRouter.PREFIX.DOWN, this.keyboard);
-    this.router.createKeyboardListener(Keyboard.EVENT.KEY_RELEASED, InputRouter.PREFIX.UP, this.keyboard);
-    this.router.createMouseListener(Cursor.EVENT.LEFT_MOUSE_CLICK, InputRouter.PREFIX.DOWN, Cursor.BUTTON_LEFT, this.cursor);
-    this.router.createMouseListener(Cursor.EVENT.LEFT_MOUSE_UP, InputRouter.PREFIX.UP, Cursor.BUTTON_LEFT, this.cursor);
-    this.router.createMouseListener(Cursor.EVENT.RIGHT_MOUSE_CLICK, InputRouter.PREFIX.DOWN, Cursor.BUTTON_RIGHT, this.cursor);
-    this.router.createMouseListener(Cursor.EVENT.RIGHT_MOUSE_UP, InputRouter.PREFIX.UP, Cursor.BUTTON_RIGHT, this.cursor);
+    this.createKeyboardListener(Keyboard.EVENT.KEY_PRESSED, InputRouter.PREFIX.DOWN);
+    this.createKeyboardListener(Keyboard.EVENT.KEY_RELEASED, InputRouter.PREFIX.UP);
+    this.createMouseListener(Cursor.EVENT.LEFT_MOUSE_DOWN, InputRouter.PREFIX.DOWN, InputRouter.CURSOR_INPUT.M1);
+    this.createMouseListener(Cursor.EVENT.LEFT_MOUSE_CLICK, InputRouter.PREFIX.UP, InputRouter.CURSOR_INPUT.M1);
+    this.createMouseListener(Cursor.EVENT.RIGHT_MOUSE_DOWN, InputRouter.PREFIX.DOWN, InputRouter.CURSOR_INPUT.M2);
+    this.createMouseListener(Cursor.EVENT.RIGHT_MOUSE_CLICK, InputRouter.PREFIX.UP, InputRouter.CURSOR_INPUT.M2);
+}
+
+Client.prototype.createKeyboardListener = function(eventID, prefixID) {    
+    this.keyboard.events.subscribe(eventID, EventEmitter.SUPER_ID, (keyID) => {
+        this.router.handleInput(prefixID, keyID);
+    });
+}
+
+Client.prototype.createMouseListener = function(eventID, prefixID, buttonID) {
+    this.cursor.events.subscribe(eventID, EventEmitter.SUPER_ID, (cursorX, cursorY) => {
+        this.router.handleInput(prefixID, buttonID);
+    });
 }
 
 Client.prototype.update = function() {
