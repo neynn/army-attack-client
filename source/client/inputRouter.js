@@ -32,15 +32,11 @@ InputRouter.KEY_INPUT = {
     ARROW_RIGHT: "ArrowRight"
 };
 
-InputRouter.prototype.clearCommands = function() {
-    this.commands.clear();
-}
-
-InputRouter.prototype.clearBinds = function(gameContext) {
+InputRouter.prototype.clear = function(gameContext) {
     const { client } = gameContext;
     const { keyboard } = client;
 
-    for(const [inputID, commandID] of this.binds) {
+    for(const [inputID, commandList] of this.binds) {
         const keyID = inputID.slice(1);
 
         if(InputRouter.CURSOR_INPUT[keyID] === undefined) {
@@ -49,6 +45,7 @@ InputRouter.prototype.clearBinds = function(gameContext) {
     }
 
     this.binds.clear();
+    this.commands.clear();
 }
 
 InputRouter.prototype.load = function(gameContext, binds) {
@@ -85,11 +82,13 @@ InputRouter.prototype.load = function(gameContext, binds) {
 }
 
 InputRouter.prototype.bindInput = function(inputID, commandID) {
-    if(this.binds.has(inputID)) {
-        return;
-    }
+    const commandList = this.binds.get(inputID);
 
-    this.binds.set(inputID, commandID);
+    if(!commandList) {
+        this.binds.set(inputID, [commandID]);
+    } else {
+        commandList.push(commandID);
+    }
 }
 
 InputRouter.prototype.on = function(commandID, command) {
@@ -102,15 +101,18 @@ InputRouter.prototype.on = function(commandID, command) {
 
 InputRouter.prototype.handleInput = function(prefix, inputID) {
     const prefixedID = prefix + inputID;
+    const commandList = this.binds.get(prefixedID);
 
-    if(!this.binds.has(prefixedID)) {
+    if(!commandList) {
         return;
     }
 
-    const commandID = this.binds.get(prefixedID);
-    const command = this.commands.get(commandID);
+    for(let i = 0; i < commandList.length; i++) {
+        const commandID = commandList[i];
+        const command = this.commands.get(commandID);
 
-    if(command) {
-        command();
+        if(command) {
+            command();
+        }
     }
 } 
