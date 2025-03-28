@@ -41,8 +41,10 @@ export const GameContext = function() {
         this.uiManager.onWindowResize(width, height);
     });
 
-    this.client.cursor.events.subscribe(Cursor.EVENT.LEFT_MOUSE_CLICK, EventEmitter.SUPER_ID, (cursorX, cursorY) => {
-        this.uiManager.onClick(cursorX, cursorY, this.client.cursor.radius);
+    this.client.cursor.events.subscribe(Cursor.EVENT.BUTTON_CLICK, EventEmitter.SUPER_ID, (buttonID, cursorX, cursorY) => {
+        if(buttonID === Cursor.BUTTON.LEFT) {
+            this.uiManager.onClick(cursorX, cursorY, this.client.cursor.radius);
+        }
     });
 }
 

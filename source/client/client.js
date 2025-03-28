@@ -16,11 +16,15 @@ export const Client = function() {
 
     this.createKeyboardListener(Keyboard.EVENT.KEY_PRESSED, InputRouter.PREFIX.DOWN);
     this.createKeyboardListener(Keyboard.EVENT.KEY_RELEASED, InputRouter.PREFIX.UP);
-    this.createMouseListener(Cursor.EVENT.LEFT_MOUSE_DOWN, InputRouter.PREFIX.DOWN, InputRouter.CURSOR_INPUT.M1);
-    this.createMouseListener(Cursor.EVENT.LEFT_MOUSE_CLICK, InputRouter.PREFIX.UP, InputRouter.CURSOR_INPUT.M1);
-    this.createMouseListener(Cursor.EVENT.RIGHT_MOUSE_DOWN, InputRouter.PREFIX.DOWN, InputRouter.CURSOR_INPUT.M2);
-    this.createMouseListener(Cursor.EVENT.RIGHT_MOUSE_CLICK, InputRouter.PREFIX.UP, InputRouter.CURSOR_INPUT.M2);
+    this.createMouseListener(Cursor.EVENT.BUTTON_DOWN, InputRouter.PREFIX.DOWN);
+    this.createMouseListener(Cursor.EVENT.BUTTON_CLICK, InputRouter.PREFIX.UP);
 }
+
+Client.BUTTON_MAP = {
+    [Cursor.BUTTON.LEFT]: InputRouter.CURSOR_INPUT.M1,
+    [Cursor.BUTTON.MIDDLE]: InputRouter.CURSOR_INPUT.M3,
+    [Cursor.BUTTON.RIGHT]: InputRouter.CURSOR_INPUT.M2
+};
 
 Client.prototype.createKeyboardListener = function(eventID, prefixID) {    
     this.keyboard.events.subscribe(eventID, EventEmitter.SUPER_ID, (keyID) => {
@@ -28,9 +32,13 @@ Client.prototype.createKeyboardListener = function(eventID, prefixID) {
     });
 }
 
-Client.prototype.createMouseListener = function(eventID, prefixID, buttonID) {
-    this.cursor.events.subscribe(eventID, EventEmitter.SUPER_ID, (cursorX, cursorY) => {
-        this.router.handleInput(prefixID, buttonID);
+Client.prototype.createMouseListener = function(eventID, prefixID) {
+    this.cursor.events.subscribe(eventID, EventEmitter.SUPER_ID, (buttonID) => {
+        const inputID = Client.BUTTON_MAP[buttonID];
+
+        if(inputID !== undefined) {
+            this.router.handleInput(prefixID, inputID);
+        }
     });
 }
 

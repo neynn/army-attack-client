@@ -112,6 +112,7 @@ ArmyContext.prototype.init = function(resources) {
     this.languageTypes = resources.world["LanguageType"];
     this.tileFormConditions = resources.world["TileFormCondition"];
     this.settings = resources.world["Settings"];
+    this.editorConfig = resources.editor;
 
     this.world.actionQueue.registerAction(ACTION_TYPES.DEATH, new DeathAction())
     this.world.actionQueue.registerAction(ACTION_TYPES.ATTACK, new AttackAction());

@@ -15,23 +15,11 @@ MapEditorState.prototype.onEnter = function(stateMachine) {
     const { meta } = tileManager;
 
     this.mapEditor = new ArmyMapEditor();
-    this.mapEditor.init({
-        "maxWidth": 1000,
-        "maxHeight": 1000,
-        "overlayColor": "#eeeeee",
-        "overlayAlpha": 0.75,
-        "brushSizes": [0, 1, 2, 3, 4],
-        "hiddenSets": ["overlay", "border", "range"]
-    });
-
+    this.mapEditor.init(gameContext.editorConfig);
     this.mapEditor.initCamera(gameContext);
 
     uiManager.parseUI(this.mapEditor.interfaceID, gameContext);
-
-    router.load(gameContext, {
-        "TOGGLE_AUTOTILER": "+a"
-    });
-
+    router.load(gameContext, gameContext.editorConfig.binds);
     router.on("TOGGLE_AUTOTILER", () => this.mapEditor.toggleAutotiling());
     
     this.mapEditor.initSlots(gameContext);

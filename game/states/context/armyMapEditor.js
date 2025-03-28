@@ -228,25 +228,42 @@ ArmyMapEditor.prototype.initCursorEvents = function(gameContext) {
     const { client } = gameContext;
     const { cursor } = client;
 
-    cursor.events.subscribe(Cursor.EVENT.UP_MOUSE_SCROLL, this.id, () => {
-        this.scrollBrushSize(1);
-        this.updateButtonText(gameContext);
+    cursor.events.subscribe(Cursor.EVENT.SCROLL, this.id, (direction) => {
+        switch(direction) {
+            case Cursor.SCROLL.UP: {
+                this.scrollBrushSize(1);
+                this.updateButtonText(gameContext);
+                break;
+            }
+            case Cursor.SCROLL.DOWN: {
+                this.scrollBrushSize(-1);
+                this.updateButtonText(gameContext);
+                break;
+            }
+        }
     });
 
-    cursor.events.subscribe(Cursor.EVENT.DOWN_MOUSE_SCROLL, this.id, () => {
-        this.scrollBrushSize(-1);
-        this.updateButtonText(gameContext);
-    });
+    cursor.events.subscribe(Cursor.EVENT.BUTTON_DRAG, this.id, (buttonID) => {
+        if(buttonID !== Cursor.BUTTON.RIGHT) {
+            return;
+        }
 
-    cursor.events.subscribe(Cursor.EVENT.RIGHT_MOUSE_DRAG, this.id, () => {
         this.paintTile(gameContext);
     });
 
-    cursor.events.subscribe(Cursor.EVENT.RIGHT_MOUSE_CLICK, this.id, () => {
+    cursor.events.subscribe(Cursor.EVENT.BUTTON_CLICK, this.id, (buttonID) => {
+        if(buttonID !== Cursor.BUTTON.RIGHT) {
+            return;
+        }
+
         this.paintTile(gameContext);
     });
 
-    cursor.events.subscribe(Cursor.EVENT.LEFT_MOUSE_DRAG, this.id, (deltaX, deltaY) => {
+    cursor.events.subscribe(Cursor.EVENT.BUTTON_DRAG, this.id, (buttonID, deltaX, deltaY) => {
+        if(buttonID !== Cursor.BUTTON.LEFT) {
+            return;
+        }
+
         const context = gameContext.getContextAtMouse();
 
         if(context) {
@@ -374,7 +391,7 @@ ArmyMapEditor.prototype.initButtons = function(gameContext) {
         const buttonID = this.slots[i];
         const button = editorInterface.getElement(buttonID);
 
-        button.events.unsubscribe(UIElement.EVENT.CLICKED, this.id);
+        button.events.unsubscribe(UIElement.EVENT.BUTTON_CLICKED, this.id);
         button.clearDefers();
     }
 
@@ -385,7 +402,7 @@ ArmyMapEditor.prototype.initButtons = function(gameContext) {
         const { name, id } = brushData;
 
         if(id !== 0) {
-            button.events.subscribe(UIElement.EVENT.CLICKED, this.id, () => this.brush = brushData);
+            button.events.subscribe(UIElement.EVENT.BUTTON_CLICKED, this.id, () => this.brush = brushData);
 
             button.addDefer((context, localX, localY) => {
                 this.camera.drawTileGraphics(tileManager, context, id, localX, localY, ArmyMapEditor.SCALE.SLOT_BUTTON, ArmyMapEditor.SCALE.SLOT_BUTTON);

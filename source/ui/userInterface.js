@@ -426,7 +426,7 @@ UserInterface.prototype.addClick = function(elementID, onClick, id) {
     if(element.hasBehavior(UserInterface.ELEMENT_BEHAVIOR.CLICKABLE)) {
         const subscriberID = id === undefined ? this.id : id;
 
-        element.events.subscribe(UIElement.EVENT.CLICKED, subscriberID, onClick);
+        element.events.subscribe(UIElement.EVENT.BUTTON_CLICKED, subscriberID, onClick);
     }
 }
 
@@ -436,7 +436,7 @@ UserInterface.prototype.removeClick = function(elementID, id) {
     if(element.hasBehavior(UserInterface.ELEMENT_BEHAVIOR.CLICKABLE)) {
         const subscriberID = id === undefined ? this.id : id;
 
-        element.events.unsubscribeAll(UIElement.EVENT.CLICKED, subscriberID);
+        element.events.unsubscribeAll(UIElement.EVENT.BUTTON_CLICKED, subscriberID);
     }
 }
 

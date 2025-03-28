@@ -25,7 +25,11 @@ const addDragEvent = function(gameContext) {
     const { client } = gameContext;
     const { cursor } = client;
 
-    cursor.events.subscribe(Cursor.EVENT.LEFT_MOUSE_DRAG, "ARMY_ACTOR_FACOTRY", (deltaX, deltaY) => {
+    cursor.events.subscribe(Cursor.EVENT.BUTTON_DRAG, "ARMY_ACTOR_FACOTRY", (buttonID, deltaX, deltaY) => {
+        if(buttonID !== Cursor.BUTTON.LEFT) {
+            return;
+        }
+
         const context = gameContext.getContextAtMouse();
 
         if(context) {
@@ -62,7 +66,7 @@ const initPlayerCamera = function(gameContext, camera) {
     /*
     let x = false;
 
-    this.client.cursor.events.subscribe(Cursor.LEFT_MOUSE_CLICK, "TEST", () => {
+    this.client.cursor.events.subscribe(Cursor.CLICK, "TEST", () => {
         x = !x;
         let mode = x ? CameraContext.DISPLAY_MODE.RESOLUTION_DEPENDENT : CameraContext.DISPLAY_MODE.RESOLUTION_FIXED;
         this.renderer.getContext(cameraID).setDisplayMode(mode);

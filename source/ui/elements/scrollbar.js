@@ -5,7 +5,7 @@ export const Scrollbar = function(DEBUG_NAME) {
     UIElement.call(this, DEBUG_NAME);
 
     this.events = new EventEmitter();
-    this.events.listen(UIElement.EVENT.CLICKED);
+    this.events.listen(UIElement.EVENT.BUTTON_CLICKED);
 }
 
 Scrollbar.TYPE = {
@@ -19,7 +19,7 @@ Scrollbar.prototype.constructor = Scrollbar;
 Scrollbar.prototype.onCollision = function(type, mouseX, mouseY, mouseRange) {}
 
 Scrollbar.prototype.onClick = function() {
-    this.events.emit(UIElement.EVENT.CLICKED);
+    this.events.emit(UIElement.EVENT.BUTTON_CLICKED);
 }
 
 //onClick - enable drag mode.
