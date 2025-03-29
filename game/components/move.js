@@ -17,6 +17,12 @@ MoveComponent.FLAGS = {
     COWARD: 1 << 2
 };
 
+MoveComponent.FLAG_MAP = {
+    "Stealth": MoveComponent.FLAGS.STEALTH,
+    "Cloak": MoveComponent.FLAGS.CLOAK,
+    "Coward": MoveComponent.FLAGS.COWARD
+};
+
 MoveComponent.prototype = Object.create(ActiveComponent.prototype);
 MoveComponent.prototype.constructor = MoveComponent;
 
@@ -64,17 +70,16 @@ MoveComponent.prototype.isPathEmpty = function() {
 }
 
 MoveComponent.prototype.init = function(config) {
-    const { coward, stealth, cloak } = config;
+    const { flags } = config;
 
-    if(coward) {
-        this.flags |= MoveComponent.FLAGS.COWARD;
-    }
+    if(flags) {
+        for(let i = 0; i < flags.length; i++) {
+            const flagID = flags[i];
+            const flag = MoveComponent.FLAG_MAP[flagID];
 
-    if(stealth) {
-        this.flags |= MoveComponent.FLAGS.STEALTH;
-    }
-
-    if(cloak) {
-        this.flags |= MoveComponent.FLAGS.CLOAK;
+            if(flag !== undefined) {
+                this.flags |= flag;
+            }
+        }
     }
 }

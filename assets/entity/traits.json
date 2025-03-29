@@ -50,19 +50,19 @@
     "Coward": {
         "description": "If a unit can walk on enemy tiles.",
         "components": {
-            "Move": { "coward": true }
+            "Move": { "flags": ["Coward"] }
         }
     },
     "Stealth": {
         "description": "If a unit can move on enemy tiles.",
         "components": {
-            "Move": { "stealth": true }
+            "Move": { "flags": ["Stealth"] }
         }
     },
     "Cloak": {
         "description": "If a unit can walk through enemy units.",
         "components": {
-            "Move": { "stealth": true, "cloak": true }
+            "Move": { "flags": ["Stealth", "Cloak"] }
         }
     },
     "Avian": {

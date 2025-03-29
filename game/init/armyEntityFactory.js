@@ -56,7 +56,7 @@ const initMoveComponent = function(entity, sprite, component, stats) {
     component.speed = moveSpeed;
 }
 
-const createDefaultEntity = function(entityType, gameMode, tileX, tileY, teamID, typeID) {
+const createDefaultEntity = function(entityType, modeID, tileX, tileY, teamID, typeID) {
     const { stats } = entityType;
     const entity = new ArmyEntity(typeID);
     const positionComponent = new PositionComponent();
@@ -68,7 +68,7 @@ const createDefaultEntity = function(entityType, gameMode, tileX, tileY, teamID,
     const {
         health = 1,
         maxHealth = health
-    } = stats[gameMode];
+    } = stats[modeID];
 
     positionComponent.tileX = tileX;
     positionComponent.tileY = tileY;
@@ -124,11 +124,13 @@ ArmyEntityFactory.prototype.onCreate = function(gameContext, config) {
         return null;
     }
 
-    const gameMode = gameContext.getGameModeName();
-    const entity = createDefaultEntity(entityType, gameMode, tileX, tileY, team, type);
+    const modeID = gameContext.getGameModeName();
+
+    const entity = createDefaultEntity(entityType, modeID, tileX, tileY, team, type);
     const sprite = createDefaultSprite(gameContext, entity, tileX, tileY);
+
     const { archetype, stats } = entityType;
-    const statConfig = stats[gameMode] || {};
+    const statConfig = stats[modeID] ?? {};
 
     entityManager.initComponents(entity, archetype, statConfig.traits);
 
@@ -142,7 +144,9 @@ ArmyEntityFactory.prototype.onCreate = function(gameContext, config) {
         }
     }
 
-    entityManager.loadComponents(entity, components);
+    if(components) {
+        entityManager.loadComponents(entity, components);
+    }
     
     return entity;
 }

@@ -48,9 +48,9 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
     const gameContext = stateMachine.getContext();
     const { uiManager } = gameContext;
 
-    uiManager.parseUI("STORY_MODE", gameContext);
-
     console.time();
+    
+    uiManager.parseUI("STORY_MODE", gameContext);
 
     const isReady = await initStoryMode(gameContext);
 
@@ -148,8 +148,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
 
     const s = gameContext.saveSnapshot();
     //saveTemplateAsFile("test.json", JSON.stringify(s, null, 2));
-    console.log(s, gameContext);
-
+    console.log(s);
     console.timeEnd();
 }
 

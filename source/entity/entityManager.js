@@ -4,11 +4,11 @@ import { Logger } from "../logger.js";
 export const EntityManager = function() {
     FactoryOwner.call(this);
 
-    this.entities = [];
     this.traits = {};
     this.archetypes = {};
     this.components = new Map();
     this.entityMap = new Map();
+    this.entities = [];
 }
 
 EntityManager.NEXT_ID = 0;
@@ -33,13 +33,8 @@ EntityManager.prototype.exit = function() {
 }
 
 EntityManager.prototype.registerComponent = function(componentID, component) {
-    if(!componentID || !componentID) {
-        Logger.log(false, "Parameter is undefined!", "EntityManager.prototype.registerComponent", { componentID, component });
-        return;
-    }
-
     if(this.components.has(componentID)) {
-        Logger.log(false, "Component already exists!", "EntityManager.prototype.registerComponent", { componentID, component });
+        Logger.log(Logger.CODE.ENGINE_ERROR, "Component already exists!", "EntityManager.prototype.registerComponent", { "id": componentID });
         return;
     }
 
@@ -62,15 +57,11 @@ EntityManager.prototype.update = function(gameContext) {
 }
 
 EntityManager.prototype.loadComponents = function(entity, components) {
-    if(!components) {
-        return;
-    }
-
     for(const componentID in components) {
         const componentType = this.components.get(componentID);
 
         if(!componentType) {
-            Logger.log(false, "Component is not registered!", "EntityManager.prototype.loadComponents", { componentID }); 
+            Logger.log(Logger.CODE.ENGINE_ERROR, "Component is not registered!", "EntityManager.prototype.loadComponents", { "id": componentID }); 
             continue;
         }
 
@@ -85,7 +76,7 @@ EntityManager.prototype.buildComponents = function(entity, components) {
         const Type = this.components.get(componentID);
 
         if(!Type) {
-            Logger.log(Logger.CODE.ENGINE_ERROR, "Component is not registered!", "EntityManager.prototype.initComponents", { "id": componentID }); 
+            Logger.log(Logger.CODE.ENGINE_ERROR, "Component is not registered!", "EntityManager.prototype.buildComponents", { "id": componentID }); 
             continue;
         }
 
@@ -158,7 +149,7 @@ EntityManager.prototype.createEntity = function(gameContext, config, externalID)
     const entity = this.createProduct(gameContext, config);
 
     if(!entity) {
-        Logger.log(false, "Factory has not returned an entity!", "EntityManager.prototype.createEntity", { config, externalID });
+        Logger.log(Logger.CODE.ENGINE_ERROR, "Factory has not returned an entity!", "EntityManager.prototype.createEntity", { "id": externalID, "config": config });
         return null;
     }
 
@@ -187,7 +178,7 @@ EntityManager.prototype.destroyEntity = function(entityID) {
     const index = this.entityMap.get(entityID);
 
     if(index === undefined || index < 0 || index >= this.entities.length) {
-        Logger.log(false, "Entity does not exist!", "EntityManager.prototype.destroyEntity", { entityID });
+        Logger.log(Logger.CODE.ENGINE_WARN, "Index is out of bounds!", "EntityManager.prototype.destroyEntity", { "id": entityID, "index": index });
 
         return -1;
     }
@@ -212,7 +203,7 @@ EntityManager.prototype.destroyEntity = function(entityID) {
         }
     }
 
-    Logger.log(false, "Entity does not exist!", "EntityManager.prototype.destroyEntity", { entityID });
+    Logger.log(Logger.CODE.ENGINE_WARN, "Entity does not exist!", "EntityManager.prototype.destroyEntity", { "id": entityID, "index": index });
 
     return -1;
 }
