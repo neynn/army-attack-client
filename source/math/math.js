@@ -87,16 +87,6 @@ export const loopValue = function(value, upperLimit, lowerLimit) {
 	return value;
 }
 
-export const getRandomOffset = function(maxOffsetX = 0, maxOffsetY = 0) {
-    const randomX = (Math.random() * 2 - 1) * maxOffsetX;
-    const randomY = (Math.random() * 2 - 1) * maxOffsetY;
-
-    return {
-        "x": randomX,
-        "y": randomY
-    }
-}   
-
 export const getRandomChance = function() {
 	const random = Math.random() * 100;
 	const chance = Math.floor(random) + 1;

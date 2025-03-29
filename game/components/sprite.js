@@ -20,6 +20,13 @@ SpriteComponent.prototype.setPosition = function(gameContext, positionX, positio
     sprite.setPosition(positionX, positionY);
 }
 
+SpriteComponent.prototype.getSprite = function(gameContext) {
+    const { spriteManager } = gameContext;
+    const sprite = spriteManager.getSprite(this.spriteID);
+
+    return sprite;
+}
+
 SpriteComponent.prototype.change = function(gameContext, sheetID, animationID) {
     const { spriteManager } = gameContext;
     
@@ -50,14 +57,6 @@ SpriteComponent.prototype.flip = function(gameContext, state) {
             break; 
         }
     }
-}
-
-SpriteComponent.prototype.allowFlip = function() {
-    this.isFlippable = true;
-}
-
-SpriteComponent.prototype.denyFlip = function() {
-    this.isFlippable = false;
 }
 
 SpriteComponent.prototype.init = function(config) {

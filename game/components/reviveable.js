@@ -2,13 +2,18 @@ import { ActiveComponent } from "../../source/component/activeComponent.js";
 import { ACTION_TYPES } from "../enums.js";
 
 export const ReviveableComponent = function() {
-    this.isElite = false;
+    this.type = ReviveableComponent.TYPE.NONE;
     this.state = ReviveableComponent.STATE.NO_DECAY;
     this.passedTime = 0;
 }
 
 ReviveableComponent.prototype = Object.create(ActiveComponent.prototype);
 ReviveableComponent.prototype.constructor = ReviveableComponent;
+
+ReviveableComponent.TYPE = {
+    NONE: 0,
+    ELITE: 1
+};
 
 ReviveableComponent.STATE = {
     NO_DECAY: 0,
@@ -25,7 +30,7 @@ ReviveableComponent.prototype.isDead = function() {
 }
 
 ReviveableComponent.prototype.beginDecay = function() {
-    if(!this.isElite && this.state === ReviveableComponent.STATE.NO_DECAY) {
+    if(this.type !== ReviveableComponent.TYPE.ELITE && this.state === ReviveableComponent.STATE.NO_DECAY) {
         this.state = ReviveableComponent.STATE.DECAY;
     }
 }
@@ -62,6 +67,6 @@ ReviveableComponent.prototype.init = function(config) {
     const { elite } = config;
 
     if(elite) {
-        this.isElite = elite;
+        this.type = ReviveableComponent.TYPE.ELITE;
     }
 }
