@@ -121,7 +121,6 @@ const createStatCard = function(gameContext, entity) {
 }
 
 CardSystem.generateStatCard = function(gameContext, entity) {
-    const { spriteManager } = gameContext;
     const entityType = gameContext.entityTypes[entity.config.archetype];
 
     if(!entityType || entityType.disableCard || entity.config.disableCard) {
@@ -129,7 +128,7 @@ CardSystem.generateStatCard = function(gameContext, entity) {
     }
 
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
-    const sprite = spriteManager.getSprite(spriteComponent.spriteID);
+    const sprite = spriteComponent.getSprite(gameContext);
     const statCard = createStatCard(gameContext, entity);
 
     if(statCard) {

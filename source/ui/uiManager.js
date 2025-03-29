@@ -17,7 +17,7 @@ UIManager.prototype.load = function(interfaceTypes, iconTypes, fontTypes) {
 
     if(typeof iconTypes === "object") {
         this.resources.createImages(iconTypes);
-        this.resources.requestAllImages((id, image, sheet) => null);
+        //this.resources.requestAllImages((id, image, sheet) => null);
     } else {
         Logger.log(false, "IconTypes cannot be undefined!", "UIManager.prototype.load", null);
     }
