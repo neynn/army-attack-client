@@ -7,11 +7,10 @@ import { Drawable } from "../graphics/drawable.js";
 
 export const SpriteManager = function() {
     this.resources = new ImageManager();
-    this.sprites = new ObjectPool(2000);
+    this.sprites = new ObjectPool(2500, (index) => new Sprite(index, index));
+    this.sprites.allocate();
     this.spriteTypes = {};
     this.timestamp = 0;
-
-    this.sprites.allocate((index) => new Sprite(index, index));
 
     this.layers = [];
     this.layers[SpriteManager.LAYER.BOTTOM] = [];

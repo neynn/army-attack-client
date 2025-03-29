@@ -1,14 +1,15 @@
-export const ObjectPool = function(size) {
+export const ObjectPool = function(size, allocator) {
+    this.allocator = allocator;
     this.size = size;
     this.elements = [];
     this.openSlots = [];
     this.reservedElements = new Set();
 }
 
-ObjectPool.prototype.allocate = function(allocator) {
+ObjectPool.prototype.allocate = function() {
     while(this.size > this.elements.length) {
         const index = this.elements.length;
-        const entry = allocator(index);
+        const entry = this.allocator(index);
 
         this.elements.push(entry);
         this.openSlots.push(index);
@@ -25,6 +26,7 @@ ObjectPool.prototype.freeElement = function(index) {
         this.openSlots.push(index);
     }
 }
+
 
 ObjectPool.prototype.reserveElement = function() {
     if(this.openSlots.length === 0) {
@@ -65,6 +67,7 @@ ObjectPool.prototype.getElement = function(index) {
 ObjectPool.prototype.clear = function() {
     this.elements.length = 0;
     this.openSlots.length = 0;
+    this.reservedElements.clear();
 }
 
 ObjectPool.prototype.freeAll = function() {

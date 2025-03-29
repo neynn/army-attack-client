@@ -7,6 +7,7 @@
     "tileMeta": { "directory": ["assets", "config"], "source": "tileMeta.json" },
     "mapTypes": { "directory": ["assets", "config"], "source": "mapTypes.json" },
     "world": { "directory": ["assets", "config"], "source": "world.json" },
+    "archetypes": { "directory": ["assets", "entity"], "source": "archetypes.json" },
     "entities": { "directory": ["assets", "entity"], "source": "entities.json" },
     "traits": { "directory": ["assets", "entity"], "source": "traits.json" },
     "fonts": { "directory": ["assets", "fonts"], "source": "fonts.json" },

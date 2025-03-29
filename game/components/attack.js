@@ -29,10 +29,15 @@ AttackComponent.ATTACK_TYPE = {
     ACTIVE: 1
 };
 
-AttackComponent.ARCHETYPE_BULLDOZE_MAP = {
+AttackComponent.BULLDOZE_FLAG_MAP = {
     "Unit": AttackComponent.BULLDOZE_TYPE.UNIT,
     "Deco": AttackComponent.BULLDOZE_TYPE.DECO,
     "Building": AttackComponent.BULLDOZE_TYPE.BUILDING
+};
+
+AttackComponent.COUNTER_FLAG_MAP = {
+    "Move": AttackComponent.COUNTER_TYPE.MOVE,
+    "Attack": AttackComponent.COUNTER_TYPE.ATTACK
 };
 
 AttackComponent.prototype.isActive = function() {
@@ -40,7 +45,7 @@ AttackComponent.prototype.isActive = function() {
 }
 
 AttackComponent.prototype.isBulldozed = function(archetype) {
-    const property = AttackComponent.ARCHETYPE_BULLDOZE_MAP[archetype];
+    const property = AttackComponent.BULLDOZE_FLAG_MAP[archetype];
 
     if(property === undefined) {
         return false;
@@ -87,29 +92,31 @@ AttackComponent.prototype.load = function(blob) {
 }
 
 AttackComponent.prototype.init = function(config) {
-    const counterTypes = [
-        { key: "counterMove", flag: AttackComponent.COUNTER_TYPE.MOVE },
-        { key: "counterAttack", flag: AttackComponent.COUNTER_TYPE.ATTACK }
-    ];
-    const bulldozeTypes = [
-        { key: "bulldozeUnit", flag: AttackComponent.BULLDOZE_TYPE.UNIT },
-        { key: "bulldozeDeco", flag: AttackComponent.BULLDOZE_TYPE.DECO },
-        { key: "bulldozeBuilding", flag: AttackComponent.BULLDOZE_TYPE.BUILDING }
-    ];
+    const { counter, bulldoze, active } = config;
 
-    for(let i = 0; i < bulldozeTypes.length; i++) {
-        const { key, flag } = bulldozeTypes[i];
-
-        if(config[key]) {
-            this.bulldoze |= flag;
-        }
+    if(active) {
+        this.type = AttackComponent.ATTACK_TYPE.ACTIVE;
     }
 
-    for(let i = 0; i < counterTypes.length; i++) {
-        const { key, flag } = counterTypes[i];
+    if(counter) {
+        for(let i = 0; i < counter.length; i++) {
+            const flagID = counter[i];
+            const flag = AttackComponent.COUNTER_FLAG_MAP[flagID];
 
-        if(config[key]) {
-            this.counter |= flag;
-        }
+            if(flag !== undefined) {
+                this.counter |= flag;
+            }
+        } 
+    }
+
+    if(bulldoze) {
+        for(let i = 0; i < bulldoze.length; i++) {
+            const flagID = bulldoze[i];
+            const flag = AttackComponent.BULLDOZE_FLAG_MAP[flagID];
+
+            if(flag !== undefined) {
+                this.bulldoze |= flag;
+            }
+        } 
     }
 }

@@ -1,4 +1,4 @@
-import { Actor } from "../../source/turn/actor.js";
+import { Actor } from "../../../source/turn/actor.js";
 
 export const OtherPlayer = function() {
     Actor.call(this);

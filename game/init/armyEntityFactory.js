@@ -5,10 +5,6 @@ import { TeamComponent } from "../components/team.js";
 import { SpriteComponent } from "../components/sprite.js";
 import { DirectionComponent } from "../components/direction.js";
 import { PositionComponent } from "../components/position.js";
-import { AttackComponent } from "../components/attack.js";
-import { MoveComponent } from "../components/move.js";
-import { ConstructionComponent } from "../components/construction.js";
-import { ProductionComponent } from "../components/production.js";
 import { ArmyEntity } from "./armyEntity.js";
 import { Player } from "../player/player.js";
 
@@ -16,17 +12,10 @@ export const ArmyEntityFactory = function() {
     Factory.call(this, "ARMY_ENTITY_FACTORY");
 }
 
-ArmyEntityFactory.TYPE = {
-    UNIT: "Unit",
-    DEFENSE: "Defense",
-    CONSTRUCTION: "Construction",
-    BUILDING: "Building"
-};
-
 ArmyEntityFactory.prototype = Object.create(Factory.prototype);
 ArmyEntityFactory.prototype.constructor = ArmyEntityFactory;
 
-const initAttackComponent = function(component, stats) {
+const initAttackComponent = function(entity, sprite, component, stats) {
     const {
         damage = 0,
         attackRange = 0
@@ -36,25 +25,28 @@ const initAttackComponent = function(component, stats) {
     component.range = attackRange;
 }
 
-const initConstructionComponent = function(component, type) {
+const initConstructionComponent = function(entity, sprite, component, stats) {
     const {
         constructionSteps,
         constructionResult
-    } = type;
+    } = entity.config;
 
     component.stepsRequired = constructionSteps;
     component.result = constructionResult;
+
+    sprite.freeze();
+    sprite.setFrame(0);
 }
 
-const initMoveComponent = function(component, config, type) {
+const initMoveComponent = function(entity, sprite, component, stats) {
     const {
         passability = []
-    } = type;
+    } = entity.config;
 
     const {
         moveRange = 0,
         moveSpeed = 480
-    } = config;
+    } = stats;
 
     for(let i = 0; i < passability.length; i++) {
         component.passability.add(passability[i]);
@@ -116,74 +108,41 @@ const createDefaultSprite = function(gameContext, entity, tileX, tileY) {
     return sprite;
 }
 
+ArmyEntityFactory.COMPONENT_INIT = {
+    [ArmyEntity.COMPONENT.ATTACK]: initAttackComponent,
+    [ArmyEntity.COMPONENT.CONSTRUCTION]: initConstructionComponent,
+    [ArmyEntity.COMPONENT.MOVE]: initMoveComponent
+};
+
 ArmyEntityFactory.prototype.onCreate = function(gameContext, config) {
     const { world } = gameContext;
     const { entityManager } = world;
     const { components, tileX = -1, tileY = -1, team = null, type = null } = config;
-    const gameMode = gameContext.getGameModeName();
     const entityType = this.getType(type);
 
     if(!entityType) {
         return null;
     }
 
+    const gameMode = gameContext.getGameModeName();
     const entity = createDefaultEntity(entityType, gameMode, tileX, tileY, team, type);
     const sprite = createDefaultSprite(gameContext, entity, tileX, tileY);
     const { archetype, stats } = entityType;
     const statConfig = stats[gameMode] || {};
 
-    switch(archetype) {
-        case ArmyEntityFactory.TYPE.UNIT: {
-            const attackComponent = new AttackComponent();
-            const moveComponent = new MoveComponent();
-            
-            attackComponent.toActive();
+    entityManager.initComponents(entity, archetype, statConfig.traits);
 
-            initMoveComponent(moveComponent, statConfig, entityType);
-            initAttackComponent(attackComponent, statConfig);
-        
-            entity.addComponent(ArmyEntity.COMPONENT.ATTACK, attackComponent);
-            entity.addComponent(ArmyEntity.COMPONENT.MOVE, moveComponent);
-            entity.getComponent(ArmyEntity.COMPONENT.SPRITE).allowFlip();
-            break;
-        }
-        case ArmyEntityFactory.TYPE.DEFENSE: {
-            const attackComponent = new AttackComponent();
-    
-            attackComponent.toPassive();
+    for(const componentID in ArmyEntityFactory.COMPONENT_INIT) {
+        const component = entity.getComponent(componentID);
 
-            initAttackComponent(attackComponent, statConfig);
-                
-            entity.addComponent(ArmyEntity.COMPONENT.ATTACK, attackComponent);
-            break;
-        }
-        case ArmyEntityFactory.TYPE.CONSTRUCTION: {
-            const constructionComponent = new ConstructionComponent();
+        if(component) {
+            const onInit = ArmyEntityFactory.COMPONENT_INIT[componentID];
 
-            initConstructionComponent(constructionComponent, entityType);
-
-            entity.addComponent(ArmyEntity.COMPONENT.CONSTRUCTION, constructionComponent);
-        
-            sprite.freeze();
-            sprite.setFrame(0);
-            break;
-        }
-        case ArmyEntityFactory.TYPE.BUILDING: {
-            const productionComponent = new ProductionComponent();
-
-            productionComponent.state = ProductionComponent.STATE.PRODUCING;
-
-            entity.addComponent(ArmyEntity.COMPONENT.PRODUCTION, productionComponent);
-            break;
-        }
-        default: {
-            console.warn(`Archetype ${archetype} is not defined!`);
-            break;
+            onInit(entity, sprite, component, statConfig);
         }
     }
 
-    entityManager.initTraits(entity, statConfig.traits);
     entityManager.loadComponents(entity, components);
-
+    
     return entity;
 }

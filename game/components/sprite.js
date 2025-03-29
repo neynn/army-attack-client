@@ -59,3 +59,11 @@ SpriteComponent.prototype.allowFlip = function() {
 SpriteComponent.prototype.denyFlip = function() {
     this.isFlippable = false;
 }
+
+SpriteComponent.prototype.init = function(config) {
+    const { allowFlip } = config;
+
+    if(allowFlip) {
+        this.isFlippable = true;
+    }
+}

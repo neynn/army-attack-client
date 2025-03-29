@@ -62,13 +62,21 @@ Entity.prototype.save = function() {
     return blob;
 }
 
+Entity.prototype.loadComponent = function(componentID, blob) {
+    const component = this.components.get(componentID);
+
+    if(component) {
+        component.load(blob);
+    }
+}
+
 Entity.prototype.hasComponent = function(component) {
     return this.components.has(component);
 }
 
 Entity.prototype.addComponent = function(componentID, component) {
     if(this.components.has(componentID)) {
-        return -1;
+        return;
     }
 
     this.components.set(componentID, component);
@@ -76,8 +84,6 @@ Entity.prototype.addComponent = function(componentID, component) {
     if(component instanceof ActiveComponent) {
         this.activeComponents.push(componentID);
     }
-
-    return 0;
 }
 
 Entity.prototype.getComponent = function(componentID) {
@@ -86,7 +92,7 @@ Entity.prototype.getComponent = function(componentID) {
 
 Entity.prototype.removeComponent = function(componentID) {
     if(!this.components.has(componentID)) {
-        return -1;
+        return;
     }
 
     this.components.delete(componentID);
@@ -97,10 +103,7 @@ Entity.prototype.removeComponent = function(componentID) {
         if(componentID === activeComponentID) {
             this.activeComponents[i] = this.activeComponents[this.activeComponents.length - 1];
             this.activeComponents.pop();
-            
-            return 0;
+            return;
         }
     }
-
-    return -1;
 }

@@ -1,0 +1,27 @@
+{
+    "Unit": {
+        "components": {
+            "Attack": { "active": true },
+            "Sprite": { "allowFlip": true },
+            "Move": null
+        }
+    },
+    "Defense": {
+        "components": {
+            "Attack": null
+        }
+    },
+    "Construction": {
+        "components": {
+            "Construction": null
+        }
+    },
+    "Building": {
+        "components": {
+            "Production": { "producing": true }
+        }
+    },
+    "Deco": {
+        "components": {}
+    }
+}

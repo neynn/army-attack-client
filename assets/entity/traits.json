@@ -80,27 +80,25 @@
     "Reviveable": {
         "description": "If an entity can be revived.",
         "components": {
-            "Reviveable": {}
+            "Reviveable": null
         }
     },
     "Counter": {
         "description": "If an entity automatically counters.",
         "components": {
-            "Attack": { "counterMove": true, "counterAttack": true }
+            "Attack": { "counter": ["Move", "Attack"] }
         }
     },
     "Bulldoze": {
         "description": "Used by enemy bulldozers to ignore the revive of the specified entityTypes.",
         "components": {
-            "Attack": { "bulldozeUnit": true }
+            "Attack": { "bulldoze": ["Unit"] }
         }
     },
     "AoE": {
         "description": "Not implemented. Allows the entity do do an area of effect attack.",
         "components": {
-            "Attack": {
-
-            }
+            "Attack": null
         }
     }
 }

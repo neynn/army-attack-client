@@ -3,10 +3,10 @@ import { Cursor } from "../../source/client/cursor.js";
 import { Factory } from "../../source/factory/factory.js";
 import { SpriteManager } from "../../source/sprite/spriteManager.js";
 import { World } from "../../source/world.js";
-import { Enemy } from "./enemy.js";
 import { Player } from "../player/player.js";
-import { OtherPlayer } from "./otherPlayer.js";
 import { createStoryModeUI } from "../storyUI.js";
+import { OtherPlayer } from "./actors/otherPlayer.js";
+import { EnemyActor } from "./actors/enemyActor.js";
 
 export const ArmyActorFactory = function() {
     Factory.call(this, "ARMY_ACTOR_FACOTRY");
@@ -105,7 +105,7 @@ ArmyActorFactory.prototype.onCreate = function(gameContext, config) {
             return actor;
         }
         case ArmyActorFactory.TYPE.ENEMY: {
-            const actor = new Enemy();
+            const actor = new EnemyActor();
 
             return actor;
         }

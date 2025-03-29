@@ -17,6 +17,13 @@ ArmyEntity.EVENT = {
     DAMAGE_UPDATE: "DAMAGE_UPDATE"
 };
 
+ArmyEntity.TYPE = {
+    UNIT: "Unit",
+    DEFENSE: "Defense",
+    CONSTRUCTION: "Construction",
+    BUILDING: "Building"
+};
+
 ArmyEntity.COMPONENT = {
     HEALTH: "Health",
     CONSTRUCTION: "Construction",

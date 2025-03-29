@@ -5,8 +5,9 @@ export const EntityManager = function() {
     FactoryOwner.call(this);
 
     this.entities = [];
-    this.traitTypes = {};
-    this.componentTypes = new Map();
+    this.traits = {};
+    this.archetypes = {};
+    this.components = new Map();
     this.entityMap = new Map();
 }
 
@@ -16,13 +17,14 @@ EntityManager.INVALID_ID = -1;
 EntityManager.prototype = Object.create(FactoryOwner.prototype);
 EntityManager.prototype.constructor = EntityManager;
 
-EntityManager.prototype.load = function(traitTypes) {
-    if(!typeof traitTypes === "object") {
-        Logger.log(false, "TraitTypes must be an object!", "EntityManager.prototype.load", null);
-        return;
+EntityManager.prototype.load = function(traits, archetypes) {
+    if(traits) {
+        this.traits = traits;
     }
 
-    this.traitTypes = traitTypes;
+    if(archetypes) {
+        this.archetypes = archetypes;
+    }    
 }
 
 EntityManager.prototype.exit = function() {
@@ -36,12 +38,12 @@ EntityManager.prototype.registerComponent = function(componentID, component) {
         return;
     }
 
-    if(this.componentTypes.has(componentID)) {
+    if(this.components.has(componentID)) {
         Logger.log(false, "Component already exists!", "EntityManager.prototype.registerComponent", { componentID, component });
         return;
     }
 
-    this.componentTypes.set(componentID, component);
+    this.components.set(componentID, component);
 }
 
 EntityManager.prototype.forAllEntities = function(onCall) {
@@ -55,9 +57,7 @@ EntityManager.prototype.forAllEntities = function(onCall) {
 
 EntityManager.prototype.update = function(gameContext) {
     for(let i = 0; i < this.entities.length; i++) {
-        const entity = this.entities[i];
-
-        entity.update(gameContext);
+        this.entities[i].update(gameContext);
     }
 }
 
@@ -67,59 +67,62 @@ EntityManager.prototype.loadComponents = function(entity, components) {
     }
 
     for(const componentID in components) {
-        const blob = components[componentID];
-        const componentType = this.componentTypes.get(componentID);
+        const componentType = this.components.get(componentID);
 
         if(!componentType) {
             Logger.log(false, "Component is not registered!", "EntityManager.prototype.loadComponents", { componentID }); 
             continue;
         }
 
-        if(entity.hasComponent(componentID)) {
+        const blob = components[componentID];
+
+        entity.loadComponent(componentID, blob);
+    }
+}
+
+EntityManager.prototype.buildComponents = function(entity, components) {
+    for(const componentID in components) {
+        const Type = this.components.get(componentID);
+
+        if(!Type) {
+            Logger.log(Logger.CODE.ENGINE_ERROR, "Component is not registered!", "EntityManager.prototype.initComponents", { "id": componentID }); 
+            continue;
+        }
+
+        if(!entity.hasComponent(componentID)) {
+            const component = new Type();
+
+            entity.addComponent(componentID, component);
+        }
+
+        const config = components[componentID];
+
+        if(config) {
             const component = entity.getComponent(componentID);
 
-            component.load(blob);
+            component.init(config);
         }
     }
 }
 
-EntityManager.prototype.initTraits = function(entity, traits) {
-    if(!traits) {
+EntityManager.prototype.initComponents = function(entity, archetypeID, traits) {
+    const archetype = this.archetypes[archetypeID];
+
+    if(!archetype || !archetype.components) {
         return;
     }
 
+    this.buildComponents(entity, archetype.components);
+
     for(let i = 0; i < traits.length; i++) {
         const traitID = traits[i];
-        const traitType = this.traitTypes[traitID];
+        const trait = this.traits[traitID];
 
-        if(!traitType) {
-            Logger.log(false, "TraitType does not exist!", "EntityManager.prototype.loadTraits", { traitID }); 
+        if(!trait || !trait.components) {
             continue;
         }
 
-        const { components } = traitType;
-
-        for(const componentID in components) {
-            const config = components[componentID];
-            const componentType = this.componentTypes.get(componentID);
-
-            if(!componentType) {
-                Logger.log(false, "Component is not registered!", "EntityManager.prototype.initTraits", { componentID }); 
-                continue;
-            }
-
-            if(entity.hasComponent(componentID)) {
-                const component = entity.getComponent(componentID);
-
-                component.init(config);
-            } else {
-                const component = new componentType();
-
-                component.init(config);
-
-                entity.addComponent(componentID, component);
-            }
-        }
+        this.buildComponents(entity, trait.components);
     }
 }
 
@@ -163,7 +166,7 @@ EntityManager.prototype.createEntity = function(gameContext, config, externalID)
 
     entity.setID(entityID);
 
-    this.entityMap.set(entityID, this.entities.length);    
+    this.entityMap.set(entityID, this.entities.length);
     this.entities.push(entity);
 
     return entity;
