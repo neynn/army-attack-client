@@ -1,6 +1,5 @@
 {
     "Player": {
-        "id": "Player",
         "binds": {
             "TOGGLE_RANGE": "+v",
             "CLICK": "-M1"
