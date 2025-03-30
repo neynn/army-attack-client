@@ -10,10 +10,6 @@
         "iconDuration": 1.8,
         "downDuration": 10
     },
-    "LanguageType": {
-        "german": { "directory": ["assets", "config", "language"], "source": "de.json" },
-        "english": { "directory": ["assets", "config", "language"], "source": "en.json" }
-    },
     "VersusMode": {
         "availableMaps": ["oasis"],
         "actionsPerTurn": 5,
@@ -87,7 +83,8 @@
     },
     "TeamType": {
         "Crimson": {
-            "name": "Crimson Skies Empire",
+            "name": "TEAM_NAME_CRIMSON",
+            "description": "TEAM_DESC_CRIMSON",
             "alliances": {
                 "Crimson": "Ally",
                 "Allies": "Enemy",
@@ -100,7 +97,8 @@
             }
         },
         "Allies": {
-            "name": "The Resistance",
+            "name": "TEAM_NAME_ALLIES",
+            "description": "TEAM_DESC_ALLIES",
             "alliances": {
                 "Crimson": "Enemy",
                 "Allies": "Ally",
@@ -113,7 +111,8 @@
             }
         },
         "Neutral": {
-            "name": "Neutral Forces",
+            "name": "TEAM_NAME_NEUTRAL",
+            "description": "TEAM_DESC_NEUTRAL",
             "alliances": {
                 "Crimson": "Neutral",
                 "Allies": "Neutral",
@@ -126,7 +125,8 @@
             }
         },
         "Wrath": {
-            "name": "The Wrathful",
+            "name": "TEAM_NAME_WRATH",
+            "description": "TEAM_DESC_WRATH",
             "alliances": {
                 "Crimson": "Enemy",
                 "Allies": "Enemy", 
@@ -433,8 +433,8 @@
     },
     "CollectionType": {
         "Scout": {
-            "id": "Scout",
-            "name": "#CONFIG_COLLECTION_SCOUT",
+            "name": "COLLECTION_NAME_SCOUT",
+            "description": "COLLECTION_DESC_SCOUT",
             "items": [
                 {"type": "Item", "id": "scout_binoculars", "value": 1},
                 {"type": "Item", "id": "scout_camo", "value": 1},
@@ -447,8 +447,8 @@
             ]
         },
         "Infantry": {
-            "id": "Infantry",
-            "name": "#CONFIG_COLLECTION_INFANTRY",
+            "name": "COLLECTION_NAME_INFANTRY",
+            "description": "COLLECTION_DESC_INFANTRY",
             "items": [
                 {"type": "Item", "id": "infantry_combat_boots", "value": 1},
                 {"type": "Item", "id": "infantry_dog_tags", "value": 1},
@@ -462,8 +462,8 @@
             ]
         },
         "APC": {
-            "id": "APC",
-            "name": "#CONFIG_COLLECTION_APC",
+            "name": "COLLECTION_NAME_APC",
+            "description": "COLLECTION_DESC_APC",
             "items": [
                 {"type": "Item", "id": "apc_ammo_shells", "value": 1},
                 {"type": "Item", "id": "apc_blueprints", "value": 1},
@@ -477,8 +477,8 @@
             ]
         },
         "Artillery": {
-            "id": "Artillery",
-            "name": "#CONFIG_COLLECTION_ARTILLERY",
+            "name": "COLLECTION_NAME_ARTILLERY",
+            "description": "COLLECTION_DESC_ARTILLERY",
             "items": [
                 {"type": "Item", "id": "artillery_ammo", "value": 1},
                 {"type": "Item", "id": "artillery_fire_mission", "value": 1},
@@ -493,8 +493,8 @@
             ]
         },
         "BattleTank": {
-            "id": "BattleTank",
-            "name": "#CONFIG_COLLECTION_BATTLETANK",
+            "name": "COLLECTION_NAME_BATTLETANK",
+            "description": "COLLECTION_DESC_BATTLETANK",
             "items": [
                 {"type": "Item", "id": "battle_tank_armor_plates", "value": 1},
                 {"type": "Item", "id": "battle_tank_blueprints", "value": 1},
@@ -508,8 +508,8 @@
             ]
         },
         "Stormtroop": {
-            "id": "Stormtroop",
-            "name": "#CONFIG_COLLECTION_STORMTROOP",
+            "name": "COLLECTION_NAME_STORMTROOP",
+            "description": "COLLECTION_DESC_STORMTROOP",
             "items": [
                 {"type": "Item", "id": "stormtroop_ammo_crate", "value": 1},
                 {"type": "Item", "id": "stormtroop_balaclava", "value": 1},
@@ -523,8 +523,8 @@
             ]
         },
         "RocketBattery": {
-            "id": "RocketBattery",
-            "name": "#CONFIG_COLLECTION_ROCKETBATTERY",
+            "name": "COLLECTION_NAME_ROCKETBATTERY",
+            "description": "COLLECTION_DESC_ROCKETBATTERY",
             "items": [
                 {"type": "Item", "id": "rocket_battery_headphones", "value": 1},
                 {"type": "Item", "id": "rocket_battery_radar", "value": 1},
@@ -538,8 +538,8 @@
             ]
         },
         "PVP": {
-            "id": "PVP",
-            "name": "#CONFIG_COLLECTION_PVP",
+            "name": "COLLECTION_NAME_PVP",
+            "description": "COLLECTION_DESC_PVP",
             "items": [
                 {"type": "Item", "id": "pvp_compass", "value": 1},
                 {"type": "Item", "id": "pvp_survival_shovel", "value": 1},
@@ -723,7 +723,6 @@
     },
     "FireCallType": {
         "Mortar": { 
-            "id": "Mortar",
             "dimX": 1, "dimY": 1, "dimZ": 1,
             "damage": 2,
             "icon": "icon_mortar",
@@ -736,7 +735,6 @@
             }
         },
         "Napalm": { 
-            "id": "Napalm",
             "dimX": 3, "dimY": 1, "dimZ": 1,
             "damage": 2,
             "icon": "icon_napalm",
@@ -749,7 +747,6 @@
             }
         },
         "Artillery": { 
-            "id": "Artillery",
             "dimX": 2, "dimY": 2, "dimZ": 1,
             "damage": 3,
             "icon": "icon_artillery",
@@ -762,7 +759,6 @@
             }
         },
         "Doomsday": { 
-            "id": "Doomsday",
             "dimX": 3, "dimY": 3, "dimZ": 1,
             "damage": 6,
             "icon": "icon_doomsday",
@@ -775,7 +771,6 @@
             }
         },
         "OrbitalLaser": { 
-            "id": "OrbitalLaser",
             "dimX": 1, "dimY": 1, "dimZ": 1,
             "damage": 12,
             "icon": "icon_beam",
@@ -788,7 +783,6 @@
             }
         },
         "CarptetBomb": { 
-            "id": "CarpetBomb",
             "dimX": 6, "dimY": 1, "dimZ": 1,
             "damage": 4,
             "icon": "icon_bomb",
