@@ -164,3 +164,9 @@ ${output.join(",\n")}
 
     saveTemplateAsFile("sprites.json", str);
 }
+
+export const makeProdFile = function(resources) {
+    const prodFile = JSON.stringify(resources);
+
+    saveTemplateAsFile("assets.json", prodFile);
+}

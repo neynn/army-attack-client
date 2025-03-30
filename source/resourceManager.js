@@ -4,6 +4,11 @@ export const ResourceManager = function() {
     this.fonts = new Map();
 }
 
+ResourceManager.MODE = {
+    DEVELOPER: 0,
+    PRODUCTION: 1
+};
+
 ResourceManager.prototype.promiseJSON = function(path) {
     return fetch(path).then(response => response.json()).catch(error => null);
 }
