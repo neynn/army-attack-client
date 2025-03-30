@@ -39,7 +39,7 @@ ResourceManager.prototype.loadFontList = async function(fontList) {
 		promises.push(promise);
 	}
 
-	await Promise.allSettled(promises);
+	return Promise.allSettled(promises);
 }
 
 ResourceManager.prototype.loadJSONList = async function(fileList) {
@@ -58,4 +58,33 @@ ResourceManager.prototype.loadJSONList = async function(fileList) {
     await Promise.allSettled(promises);
 
     return files;
+}
+
+ResourceManager.prototype.loadResources = async function(modeID, devPath, prodPath) {
+    switch(modeID) {
+        case ResourceManager.MODE.DEVELOPER: {
+            const files = await this.promiseJSON(devPath);
+            const resources = await this.loadJSONList(files);
+            const { fonts } = resources;
+
+            if(fonts) {
+                await this.loadFontList(fonts);
+            }
+
+            return resources;
+        }
+        case ResourceManager.MODE.PRODUCTION: {
+            const resources = await this.promiseJSON(prodPath);
+            const { fonts } = resources;
+
+            if(fonts) {
+                await this.loadFontList(fonts);
+            }
+
+            return resources;
+        }
+        default: {
+            return {};
+        }
+    }
 }
