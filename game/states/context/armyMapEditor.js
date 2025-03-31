@@ -6,7 +6,7 @@ import { World } from "../../../source/world.js";
 import { ArmyCamera } from "../../armyCamera.js";
 import { clampValue } from "../../../source/math/math.js";
 import { saveMap } from "../../../helpers.js";
-import { UserInterface } from "../../../source/ui/userInterface.js";
+import { UIManager } from "../../../source/ui/uiManager.js";
 
 export const ArmyMapEditor = function() {
     MapEditor.call(this);
@@ -130,7 +130,7 @@ ArmyMapEditor.prototype.initSlots = function(gameContext) {
             const buttonID = `BUTTON_${i * buttonCount + j}`;
             const posX = buttonSize * j;
             const posY = buttonSize * i + 100;
-            const button = editorInterface.createElement(UserInterface.ELEMENT_TYPE.BUTTON, {
+            const button = uiManager.createElement(UIManager.ELEMENT_TYPE.BUTTON, {
                 "shape": 0,
                 "position": { "x": posX, "y": posY },
                 "width": buttonSize,

@@ -8,7 +8,6 @@ import { Timer } from "./timer.js";
 import { TileManager } from "./tile/tileManager.js";
 import { Renderer } from "./renderer.js";
 import { World } from "./world.js";
-import { saveSprites } from "../helpers.js";
 
 export const GameContext = function() {
     this.id = "GAME_CONTEXT";
@@ -55,7 +54,6 @@ GameContext.prototype.exit = function() {
 }
 
 GameContext.prototype.loadResources = function(resources) {
-    //saveSprites(resources.sprites);
     this.spriteManager.load(resources.sprites);
     this.tileManager.load(resources.tiles, resources.tileMeta);
     this.uiManager.load(resources.interfaces, resources.icons, resources.fonts);

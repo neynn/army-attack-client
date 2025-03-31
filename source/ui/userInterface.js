@@ -1,13 +1,8 @@
 import { createFadeInEffect } from "../effects/example/fadeIn.js";
 import { createFadeOutEffect } from "../effects/example/fadeOut.js";
-import { TextStyle } from "../graphics/applyable/textStyle.js";
-import { Logger } from "../logger.js";
-import { Button } from "./elements/button.js";
-import { Container } from "./elements/container.js";
-import { Icon } from "./elements/icon.js";
-import { Scrollbar } from "./elements/scrollbar.js";
 import { TextElement } from "./elements/textElement.js";
 import { UIElement } from "./uiElement.js";
+import { UIManager } from "./uiManager.js";
 
 export const UserInterface = function(id) {
     this.id = id;
@@ -24,15 +19,6 @@ UserInterface.ELEMENT_BEHAVIOR = {
     CLICKABLE: 1 << 1
 };
 
-UserInterface.ELEMENT_TYPE = {
-    NONE: 0,
-    TEXT: 1,
-    BUTTON: 2,
-    ICON: 3,
-    CONTAINER: 4,
-    SCROLLBAR: 5
-};
-
 UserInterface.STATE = {
     HIDDEN: 0,
     VISIBLE: 1,
@@ -42,14 +28,6 @@ UserInterface.STATE = {
 UserInterface.EFFECT_CLASS = {
     "FADE_IN": createFadeInEffect,
     "FADE_OUT": createFadeOutEffect
-};
-
-UserInterface.ELEMENT_TYPE_MAP = {
-    "BUTTON": UserInterface.ELEMENT_TYPE.BUTTON,
-    "TEXT": UserInterface.ELEMENT_TYPE.TEXT,
-    "ICON": UserInterface.ELEMENT_TYPE.ICON,
-    "CONTAINER": UserInterface.ELEMENT_TYPE.CONTAINER,
-    "SCROLLBAR": UserInterface.ELEMENT_TYPE.SCROLLBAR
 };
 
 UserInterface.prototype.clear = function() {
@@ -173,124 +151,6 @@ UserInterface.prototype.getCollidedElements = function(mouseX, mouseY, mouseRang
     return [];
 }
 
-UserInterface.prototype.createElement = function(typeID, config, DEBUG_NAME) {
-    const {
-        position = { x: 0, y: 0 },
-        width = 0,
-        height = 0,
-        anchor = UIElement.ANCHOR_TYPE.TOP_LEFT,
-        opacity = 1
-    } = config;
-
-    const { x, y } = position;
-
-    switch(typeID) {
-        case UserInterface.ELEMENT_TYPE.BUTTON: {
-            const element = new Button(DEBUG_NAME);
-            const { shape = Button.SHAPE.RECTANGLE, radius = width } = config;
-
-            element.addBehavior(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE);
-            element.addBehavior(UserInterface.ELEMENT_BEHAVIOR.CLICKABLE);
-
-            element.setPosition(x, y);
-            element.setOpacity(opacity);
-            element.setOrigin(x, y);
-            element.setAnchor(anchor);
-
-            switch(shape) {
-                case Button.SHAPE.RECTANGLE: {
-                    element.setSize(width, height);
-                    element.setShape(Button.SHAPE.RECTANGLE);
-                    break;
-                }
-                case Button.SHAPE.CIRCLE: {
-                    element.setSize(radius, radius);
-                    element.setShape(Button.SHAPE.CIRCLE);
-                    break;
-                }
-                default: {
-                    Logger.log(Logger.CODE.ENGINE_WARN, "Shape does not exist!", "Button.prototype.init", { "shapeID": shape });
-                    break;
-                }
-            }
-
-            return element;
-        }
-        case UserInterface.ELEMENT_TYPE.CONTAINER: {
-            const element = new Container(DEBUG_NAME);
-
-            element.addBehavior(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE);
-
-            element.setPosition(x, y);
-            element.setOpacity(opacity);
-            element.setOrigin(x, y);
-            element.setAnchor(anchor);
-
-            element.setSize(width, height);
-
-            return element;
-        }
-        case UserInterface.ELEMENT_TYPE.ICON: {
-            const element = new Icon(DEBUG_NAME);
-
-            element.setPosition(x, y);
-            element.setOpacity(opacity);
-            element.setOrigin(x, y);
-            element.setAnchor(anchor);
-
-            return element;
-        }
-        case UserInterface.ELEMENT_TYPE.SCROLLBAR: {
-            const element = new Scrollbar(DEBUG_NAME);
-
-            element.addBehavior(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE);
-            element.addBehavior(UserInterface.ELEMENT_BEHAVIOR.CLICKABLE);
-
-            element.setPosition(x, y);
-            element.setOpacity(opacity);
-            element.setOrigin(x, y);
-            element.setAnchor(anchor);
-
-            return element;
-        }
-        case UserInterface.ELEMENT_TYPE.TEXT: {
-            const element = new TextElement(DEBUG_NAME);
-            const { 
-                text = "ERROR",
-                fontType = TextStyle.DEFAULT.FONT_TYPE,
-                fontSize = TextStyle.DEFAULT.FONT_SIZE,
-                align = TextStyle.TEXT_ALIGNMENT.LEFT,
-                color = [0, 0, 0, 1]
-            } = config;
-
-            element.setPosition(x, y);
-            element.setOpacity(opacity);
-            element.setOrigin(x, y);
-            element.setAnchor(anchor);
-
-            element.setText(text);
-            element.style.setFontType(fontType);
-            element.style.setFontSize(fontSize);
-            element.style.setAlignment(align);
-            element.style.color.setColorArray(color);
-
-            return element;
-        }
-        default: {
-            Logger.log(Logger.CODE.ENGINE_WARN, "ElementType does not exist!", "UserInterface.prototype.createElement", { "type": typeID });
-
-            const element = new UIElement(DEBUG_NAME);
-    
-            element.setPosition(x, y);
-            element.setOpacity(opacity);
-            element.setOrigin(x, y);
-            element.setAnchor(anchor);
-
-            return element;
-        }
-    }
-}
-
 UserInterface.prototype.addElement = function(element, name) {
     if(!this.nameMap.has(name)) {
         const elementID = element.getID();
@@ -321,14 +181,6 @@ UserInterface.prototype.linkElements = function(parentID, children) {
     }
 }
 
-UserInterface.prototype.constructElement = function(elementID, typeID, config) {
-    const element = this.createElement(typeID, config, elementID);
-
-    this.addElement(element, elementID);
-
-    return element;
-}
-
 UserInterface.prototype.addEffects = function(gameContext, element, effectList) {
     if(!effectList) {
         return;
@@ -350,19 +202,19 @@ UserInterface.prototype.addEffects = function(gameContext, element, effectList) 
 }
 
 UserInterface.prototype.fromConfig = function(gameContext, userInterface) {
-    const { renderer } = gameContext;
+    const { renderer, uiManager } = gameContext;
     const { w, h } = renderer.getWindow();
 
     for(const elementID in userInterface) {
         const config = userInterface[elementID];
         const { type } = config;
-        const typeID = UserInterface.ELEMENT_TYPE_MAP[type];
+        const typeID = UIManager.ELEMENT_TYPE_MAP[type];
 
-        if(typeID === undefined) {
-            continue;
+        if(typeID !== undefined) {
+            const element = uiManager.createElement(typeID, config, elementID);
+
+            this.addElement(element, elementID);
         }
-
-        this.constructElement(elementID, typeID, config);
     }
     
     for(const elementID in userInterface) {
