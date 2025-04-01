@@ -1,7 +1,7 @@
-import { Drawable } from "../graphics/drawable.js";
+import { Graph } from "../graphics/graph.js";
 
 export const Sprite = function(index, DEBUG_NAME) {
-    Drawable.call(this, Drawable.TYPE.SPRITE, DEBUG_NAME);
+    Graph.call(this, Graph.TYPE.SPRITE, DEBUG_NAME);
     
     this.index = index;
     this.typeID = null;
@@ -32,7 +32,7 @@ Sprite.FLAG = {
     EXPIRE: 1 << 2
 };
 
-Sprite.prototype = Object.create(Drawable.prototype);
+Sprite.prototype = Object.create(Graph.prototype);
 Sprite.prototype.constructor = Sprite;
 
 Sprite.prototype.onTerminate = function(spriteID) {

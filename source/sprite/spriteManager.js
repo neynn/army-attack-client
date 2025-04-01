@@ -3,7 +3,7 @@ import { Sprite } from "./sprite.js";
 import { ImageManager } from "../resources/imageManager.js";
 import { SpriteSheet } from "./spriteSheet.js";
 import { ObjectPool } from "../objectPool.js";
-import { Drawable } from "../graphics/drawable.js";
+import { Graph } from "../graphics/graph.js";
 
 export const SpriteManager = function() {
     this.resources = new ImageManager();
@@ -151,13 +151,13 @@ SpriteManager.prototype.destroySprite = function(spriteIndex) {
         return [];
     }
     
-    const familyStack = sprite.getReferenceStack();
+    const familyStack = sprite.getGraph();
     const invalidElements = [];
 
     for(let i = familyStack.length - 1; i >= 0; i--) {
         const element = familyStack[i];
 
-        if(element.type !== Drawable.TYPE.SPRITE) {
+        if(element.type !== Graph.TYPE.SPRITE) {
             invalidElements.push(element);
             continue;
         }
@@ -169,7 +169,7 @@ SpriteManager.prototype.destroySprite = function(spriteIndex) {
             continue;
         }
 
-        element.closeFamily();
+        element.closeGraph();
 
         this.removeSpriteFromLayers(index);
         this.sprites.freeElement(index);

@@ -1,104 +1,196 @@
-export const Graph = function(id, reference) {
-    this.id = id;
-    this.name = Graph.DEFAULT_NAME;
-    this.reference = reference;
+import { clampValue } from "../math/math.js";
+
+export const Graph = function(type, DEBUG_NAME = "") {
+    this.DEBUG_NAME = DEBUG_NAME;
+    this.type = type ?? Graph.TYPE.NONE;
+    this.id = Graph.NEXT_ID++;
+    this.state = Graph.STATE.VISIBLE;
+    this.positionX = 0;
+    this.positionY = 0;
+    this.opacity = 1;
+    this.name = "";
     this.parent = null;
     this.children = [];
 }
 
-Graph.DEFAULT_NAME = "DEFAULT";
+Graph.NEXT_ID = 69420;
 
-Graph.prototype.link = function(child) {
-    this.addChild(child);
-    child.setParent(this);
-}
+Graph.TYPE = {
+    NONE: 0,
+    SPRITE: 1,
+    UI_ELEMENT: 2,
+    OTHER: 3
+};
 
-Graph.prototype.extract = function() {
-    for(let i = 0; i < this.children.length; i++) {
-        this.children[i].parent = null;
-    }
+Graph.STATE = {
+    HIDDEN: 0,
+    VISIBLE: 1
+};
 
-    if(this.parent !== null) {
-        this.parent.removeChild(this);
+Graph.prototype.onUpdate = function(timestamp, deltaTime) {}
 
-        for(let i = 0; i < this.children.length; i++) {
-            this.parent.link(this.children[i]);
+Graph.prototype.onDraw = function(context, localX, localY) {}
+
+Graph.prototype.onDebug = function(context, localX, localY) {}
+
+Graph.prototype.update = function(timestamp, deltaTime) {
+    const stack = [this];
+
+    while(stack.length !== 0) {
+        const graph = stack.pop();
+        const { children } = graph;
+
+        for(let i = children.length - 1; i >= 0; i--) {
+            stack.push(children[i]);
         }
 
-        this.parent = null;
-    }
-
-    this.children.length = 0;
-}
-
-Graph.prototype.destroy = function() {
-    if(this.parent !== null) {
-        this.parent.removeChild(this);
-        this.parent = null;
-    }
-
-    for(let i = 0; i < this.children.length; i++) {
-        this.children[i].parent = null;
-    }
-
-    this.children.length = 0;
-}
-
-Graph.prototype.setName = function(name) {
-    if(name !== undefined) {
-        this.name = name;
+        graph.onUpdate(timestamp, deltaTime);
     }
 }
 
-Graph.prototype.setParent = function(parent) {
-    if(parent.id === this.id) {
+Graph.prototype.findByID = function(childID) {
+    const stack = [this];
+
+    while(stack.length !== 0) {
+        const graph = stack.pop();
+        const { children, id } = graph;
+
+        if(id === childID) {
+            return graph;
+        }
+
+        for(let i = children.length - 1; i >= 0; i--) {
+            stack.push(children[i]);
+        }
+    }
+
+    return null;
+}
+
+Graph.prototype.drizzle = function(onCall) {
+    const stack = [this];
+
+    while(stack.length !== 0) {
+        const graph = stack.pop();
+        const { children } = graph;
+
+        for(let i = children.length - 1; i >= 0; i--) {
+            stack.push(children[i]);
+        }
+
+        onCall(graph);
+    }
+}
+
+Graph.prototype.debug = function(context, viewportX, viewportY) {
+    const stack = [this];
+    const positions = [this.positionX - viewportX, this.positionY - viewportY];
+
+    while(stack.length !== 0) {
+        const positionY = positions.pop();
+        const positionX = positions.pop();
+        const graph = stack.pop();
+        const { children } = graph;
+
+        context.save();
+        graph.onDebug(context, positionX, positionY);
+        context.restore();
+
+        for(let i = children.length - 1; i >= 0; i--) {
+            const child = children[i];
+
+            stack.push(child);
+            positions.push(positionX + child.positionX);
+            positions.push(positionY + child.positionY);
+        }
+    }
+}
+
+Graph.prototype.draw = function(context, viewportX, viewportY) {
+    if(this.state !== Graph.STATE.VISIBLE) {
         return;
     }
 
-    if(this.parent !== null) {
-        this.parent.removeChild(this);
-    }
+    const stack = [this];
+    const positions = [this.positionX - viewportX, this.positionY - viewportY];
 
-    this.parent = parent;
-}
+    while(stack.length !== 0) {
+        const positionY = positions.pop();
+        const positionX = positions.pop();
+        const graph = stack.pop();
+        const { children } = graph;
 
-Graph.prototype.addChild = function(child) {
-    if(child.id === this.id) {
-        return;
-    }
+        context.save();
+        context.globalAlpha = this.opacity;
+        graph.onDraw(context, positionX, positionY);
+        context.restore();
 
-    for(let i = 0; i < this.children.length; i++) {
-        const element = this.children[i];
+        for(let i = children.length - 1; i >= 0; i--) {
+            const child = children[i];
 
-        if(element.id === child.id) {
-            return;
-        }
-    }
-
-    this.children.push(child);
-}
-
-Graph.prototype.removeChild = function(element) {
-    for(let i = 0; i < this.children.length; i++) {
-        const child = this.children[i];
-
-        if(child.id === element.id) {
-            this.children.splice(i, 1);
-            return;
+            if(child.state === Graph.STATE.VISIBLE) {
+                stack.push(child);
+                positions.push(positionX + child.positionX);
+                positions.push(positionY + child.positionY);
+            }
         }
     }
 }
 
-Graph.prototype.getParent = function() {
-    return this.parent;
+Graph.prototype.getGraph = function() {
+    const result = [];
+    const stack = [this];
+
+    while(stack.length !== 0) {
+        const graph = stack.pop();
+        const { children } = graph;
+
+        for(let i = children.length - 1; i >= 0; i--) {            
+            stack.push(children[i]);
+        }
+
+        result.push(graph);
+    }
+
+    return result;
 }
 
-Graph.prototype.getChildren = function() {
-    return this.children;
+Graph.prototype.getID = function() {
+    return this.id;
 }
 
-Graph.prototype.getReference = function() {
-    return this.reference;
+Graph.prototype.updatePosition = function(deltaX, deltaY) {
+    this.positionX += deltaX;
+    this.positionY += deltaY;
+}
+
+Graph.prototype.setPosition = function(positionX, positionY) {
+    this.positionX = positionX;
+    this.positionY = positionY;
+}
+
+Graph.prototype.hide = function() {
+    this.state = Graph.STATE.HIDDEN;
+}
+
+Graph.prototype.show = function() {
+    this.state = Graph.STATE.VISIBLE;
+}
+
+Graph.prototype.setOpacity = function(opacity) {
+    if(typeof opacity === "number") {
+        const clampedOpacity = clampValue(opacity, 1, 0);
+
+        this.opacity = clampedOpacity;
+    }
+}
+
+Graph.prototype.getOpacity = function() {
+    return this.opacity;
+}
+
+Graph.prototype.hasParent = function() {
+    return this.parent !== null;
 }
 
 Graph.prototype.hasChild = function(name) {
@@ -114,7 +206,7 @@ Graph.prototype.hasChild = function(name) {
 }
 
 Graph.prototype.getChild = function(name) {
-    for(let i = 0; i < this.children.length; i++) {
+    for(let i = 0; i < this.children; i++) {
         const child = this.children[i];
 
         if(child.name === name) {
@@ -123,4 +215,68 @@ Graph.prototype.getChild = function(name) {
     }
 
     return null;
+}
+
+Graph.prototype.removeChild = function(childID) {
+    for(let i = 0; i < this.children.length; i++) {
+        const child = this.children[i];
+
+        if(child.id === childID) {
+            this.children.splice(i, 1);
+            return;
+        }
+    }
+}
+
+Graph.prototype.closeGraph = function() {
+    if(this.parent !== null) {
+        this.parent.removeChild(this.id);
+        this.parent = null;
+    }
+
+    for(let i = 0; i < this.children.length; i++) {
+        this.children[i].parent = null;
+    }
+
+    this.children.length = 0;
+}
+
+Graph.prototype.getChildName = function(childID, name) {
+    if(typeof name !== "string" || this.hasChild(name)) {
+        return childID;
+    }
+
+    return name;
+}
+
+Graph.prototype.addChild = function(child, name) {
+    const childID = child.getID();
+    const activeChild = this.findByID(childID);
+
+    if(activeChild) {
+        return null;
+    }
+
+    const childName = this.getChildName(childID, name);
+
+    child.setName(childName);
+    child.setParent(this);
+
+    this.children.push(child);
+
+    return childName;
+}
+
+Graph.prototype.setName = function(name) {
+    if(name !== undefined) {
+        this.name = name;
+    }
+}
+
+Graph.prototype.setParent = function(parent) {
+    if(this.parent !== null) {
+        this.parent.removeChild(this.id);
+    }
+
+    this.parent = parent;
 }

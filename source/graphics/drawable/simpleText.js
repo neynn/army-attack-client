@@ -1,15 +1,15 @@
-import { Drawable } from "../drawable.js";
 import { TextStyle } from "../applyable/textStyle.js";
+import { Graph } from "../graph.js";
 
 export const SimpleText = function() {
-    Drawable.call(this, Drawable.TYPE.OTHER, "SIMPLE_TEXT");
+    Graph.call(this, Graph.TYPE.OTHER, "SIMPLE_TEXT");
 
     this.style = new TextStyle();
     this.text = "SAMPLE TEXT";
     this.style.color.setColor(238, 238, 238, 1);
 }
 
-SimpleText.prototype = Object.create(Drawable.prototype);
+SimpleText.prototype = Object.create(Graph.prototype);
 SimpleText.prototype.constructor = SimpleText;
 
 SimpleText.prototype.onDraw = function(context, localX, localY) {

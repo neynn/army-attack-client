@@ -1,7 +1,7 @@
-import { Drawable } from "../graphics/drawable.js";
+import { Graph } from "../graphics/graph.js";
 
 export const UIElement = function(DEBUG_NAME) {
-    Drawable.call(this, Drawable.TYPE.UI_ELEMENT, DEBUG_NAME);
+    Graph.call(this, Graph.TYPE.UI_ELEMENT, DEBUG_NAME);
 
     this.anchor = UIElement.ANCHOR_TYPE.TOP_LEFT;
     this.behavior = 0;
@@ -42,7 +42,7 @@ UIElement.ANCHOR_TYPE = {
     RIGHT: 8
 };
 
-UIElement.prototype = Object.create(Drawable.prototype);
+UIElement.prototype = Object.create(Graph.prototype);
 UIElement.prototype.constructor = UIElement;
 
 UIElement.prototype.removeBehavior = function(flag) {
@@ -78,43 +78,42 @@ UIElement.prototype.getCollisions = function(mouseX, mouseY, mouseRange) {
         return [];
     }
 
-    const collidedElements = [];
-    const referenceStack = [this];
-    const positionStack = [mouseX, mouseY];
+    const stack = [this];
+    const positions = [mouseX, mouseY];
+    const collisions = [];
 
-    while(referenceStack.length !== 0) {
-        const positionY = positionStack.pop();
-        const positionX = positionStack.pop();
-        const reference = referenceStack.pop();
-        const isColliding = reference.isColliding(positionX, positionY, mouseRange);
+    while(stack.length !== 0) {
+        const positionY = positions.pop();
+        const positionX = positions.pop();
+        const graph = stack.pop();
+        const isColliding = graph.isColliding(positionX, positionY, mouseRange);
 
         if(!isColliding) {
             continue;
         }
 
-        const children = reference.getChildren();
-        const nextX = positionX - reference.positionX;
-        const nextY = positionY - reference.positionY;
+        const nextX = positionX - graph.positionX;
+        const nextY = positionY - graph.positionY;
+        const children = graph.children;
 
         for(let i = 0; i < children.length; i++) {
             const child = children[i];
-            const reference = child.getReference();
             
-            if(reference.type === Drawable.TYPE.UI_ELEMENT) {
-                const hasFlag = reference.hasBehavior(UIElement.BEHAVIOR.COLLIDEABLE);
+            if(child.type === Graph.TYPE.UI_ELEMENT) {
+                const hasFlag = child.hasBehavior(UIElement.BEHAVIOR.COLLIDEABLE);
 
                 if(hasFlag) {
-                    referenceStack.push(reference);
-                    positionStack.push(nextX);
-                    positionStack.push(nextY);
+                    stack.push(child);
+                    positions.push(nextX);
+                    positions.push(nextY);
                 }
             }
         }
 
-        collidedElements.push(reference);
+        collisions.push(graph);
     }
 
-    return collidedElements;
+    return collisions;
 }
 
 UIElement.prototype.updateAnchor = function(windowWidth, windowHeight) {    

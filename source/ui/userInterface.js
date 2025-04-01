@@ -25,7 +25,7 @@ UserInterface.EFFECT_CLASS = {
 };
 
 UserInterface.prototype.clear = function() {
-    this.elements.forEach(element => element.closeFamily());
+    this.elements.forEach(element => element.closeGraph());
     this.elements.clear();
     this.nameMap.clear();
     this.roots.length = 0;
@@ -40,7 +40,7 @@ UserInterface.prototype.destroyElement = function(name) {
 
     const elementID = element.getID();
 
-    element.closeFamily();
+    element.closeGraph();
 
     this.elements.delete(elementID);
     this.nameMap.delete(name);

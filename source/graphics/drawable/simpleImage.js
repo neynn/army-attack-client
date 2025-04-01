@@ -1,12 +1,12 @@
-import { Drawable } from "../drawable.js";
+import { Graph } from "../graph.js";
 
 export const SimpleImage = function() {
-    Drawable.call(this, Drawable.TYPE.OTHER, "SIMPLE_IMAGE");
+    Graph.call(this, Graph.TYPE.OTHER, "SIMPLE_IMAGE");
 
     this.image = null;
 }
 
-SimpleImage.prototype = Object.create(Drawable.prototype);
+SimpleImage.prototype = Object.create(Graph.prototype);
 SimpleImage.prototype.constructor = SimpleImage;
 
 SimpleImage.prototype.onDraw = function(context, localX, localY) {

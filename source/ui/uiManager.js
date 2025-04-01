@@ -96,7 +96,7 @@ UIManager.prototype.onClick = function(mouseX, mouseY, mouseRange) {
 
     for(let i = 0; i < clickedElements.length; i++) {
         const element = clickedElements[i];
-        const hasFlag = element.hasBehavior(UserInterface.ELEMENT_BEHAVIOR.CLICKABLE);
+        const hasFlag = element.hasBehavior(UIElement.BEHAVIOR.CLICKABLE);
 
         if(hasFlag) {
             element.onClick();
@@ -198,8 +198,8 @@ UIManager.prototype.createElement = function(typeID, config, DEBUG_NAME) {
             const element = new Button(DEBUG_NAME);
             const { shape = Button.SHAPE.RECTANGLE, radius = width } = config;
 
-            element.addBehavior(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE);
-            element.addBehavior(UserInterface.ELEMENT_BEHAVIOR.CLICKABLE);
+            element.addBehavior(UIElement.BEHAVIOR.COLLIDEABLE);
+            element.addBehavior(UIElement.BEHAVIOR.CLICKABLE);
 
             element.setPosition(x, y);
             element.setOpacity(opacity);
@@ -228,7 +228,7 @@ UIManager.prototype.createElement = function(typeID, config, DEBUG_NAME) {
         case UIManager.ELEMENT_TYPE.CONTAINER: {
             const element = new Container(DEBUG_NAME);
 
-            element.addBehavior(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE);
+            element.addBehavior(UIElement.BEHAVIOR.COLLIDEABLE);
 
             element.setPosition(x, y);
             element.setOpacity(opacity);
@@ -266,8 +266,8 @@ UIManager.prototype.createElement = function(typeID, config, DEBUG_NAME) {
         case UIManager.ELEMENT_TYPE.SCROLLBAR: {
             const element = new Scrollbar(DEBUG_NAME);
 
-            element.addBehavior(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE);
-            element.addBehavior(UserInterface.ELEMENT_BEHAVIOR.CLICKABLE);
+            element.addBehavior(UIElement.BEHAVIOR.COLLIDEABLE);
+            element.addBehavior(UIElement.BEHAVIOR.CLICKABLE);
 
             element.setPosition(x, y);
             element.setOpacity(opacity);

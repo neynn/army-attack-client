@@ -1,9 +1,9 @@
-import { Drawable } from "../../graphics/drawable.js";
+import { Graph } from "../../graphics/graph.js";
 import { clampValue } from "../../math/math.js";
 import { Effect } from "../effect.js";
 
 export const createFadeInEffect = function(drawable, increment = 0.1, limit = 1) {
-    if(!(drawable instanceof Drawable)) {
+    if(!(drawable instanceof Graph)) {
         return null;
     }
 
