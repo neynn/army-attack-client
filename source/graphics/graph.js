@@ -206,7 +206,7 @@ Graph.prototype.hasChild = function(name) {
 }
 
 Graph.prototype.getChild = function(name) {
-    for(let i = 0; i < this.children; i++) {
+    for(let i = 0; i < this.children.length; i++) {
         const child = this.children[i];
 
         if(child.name === name) {
