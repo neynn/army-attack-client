@@ -13,12 +13,6 @@ export const UserInterface = function(id) {
     this.previousCollisions = new Set();
 }
 
-UserInterface.ELEMENT_BEHAVIOR = {
-    NONE: 0,
-    COLLIDEABLE: 1 << 0,
-    CLICKABLE: 1 << 1
-};
-
 UserInterface.STATE = {
     HIDDEN: 0,
     VISIBLE: 1,
@@ -275,20 +269,20 @@ UserInterface.prototype.getID = function() {
 UserInterface.prototype.addClick = function(elementID, onClick, id) {
     const element = this.getElement(elementID);
 
-    if(element.hasBehavior(UserInterface.ELEMENT_BEHAVIOR.CLICKABLE)) {
+    if(element.hasBehavior(UIElement.BEHAVIOR.CLICKABLE)) {
         const subscriberID = id === undefined ? this.id : id;
 
-        element.events.subscribe(UIElement.EVENT.BUTTON_CLICKED, subscriberID, onClick);
+        element.events.subscribe(UIElement.EVENT.CLICKED, subscriberID, onClick);
     }
 }
 
 UserInterface.prototype.removeClick = function(elementID, id) {
     const element = this.getElement(elementID);
 
-    if(element.hasBehavior(UserInterface.ELEMENT_BEHAVIOR.CLICKABLE)) {
+    if(element.hasBehavior(UIElement.BEHAVIOR.CLICKABLE)) {
         const subscriberID = id === undefined ? this.id : id;
 
-        element.events.unsubscribeAll(UIElement.EVENT.BUTTON_CLICKED, subscriberID);
+        element.events.unsubscribeAll(UIElement.EVENT.CLICKED, subscriberID);
     }
 }
 

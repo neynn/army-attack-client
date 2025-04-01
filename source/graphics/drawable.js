@@ -10,6 +10,9 @@ export const Drawable = function(type, DEBUG_NAME = "") {
     this.positionY = 0;
     this.opacity = 1;
     this.graph = null;
+    this.name = "";
+    this.parent = null;
+    this.children = [];
 }
 
 Drawable.NEXT_ID = 69420;
@@ -25,6 +28,10 @@ Drawable.STATE = {
     HIDDEN: 0,
     VISIBLE: 1
 };
+
+Drawable.prototype.getID = function() {
+    return this.id;
+}
 
 Drawable.prototype.onUpdate = function(timestamp, deltaTime) {}
 
@@ -144,10 +151,6 @@ Drawable.prototype.getReferenceStack = function() {
     }
 
     return result;
-}
-
-Drawable.prototype.getID = function() {
-    return this.id;
 }
 
 Drawable.prototype.updatePosition = function(deltaX, deltaY) {

@@ -20,7 +20,7 @@ export const Button = function(DEBUG_NAME) {
     this.events.listen(UIElement.EVENT.FIRST_COLLISION);
     this.events.listen(UIElement.EVENT.LAST_COLLISION);
     this.events.listen(UIElement.EVENT.REPEATED_COLLISION);
-    this.events.listen(UIElement.EVENT.BUTTON_CLICKED);
+    this.events.listen(UIElement.EVENT.CLICKED);
 }
 
 Button.SHAPE = {
@@ -61,7 +61,7 @@ Button.prototype.onCollision = function(type, mouseX, mouseY, mouseRange) {
 }   
 
 Button.prototype.onClick = function() {
-    this.events.emit(UIElement.EVENT.BUTTON_CLICKED);
+    this.events.emit(UIElement.EVENT.CLICKED);
 }
 
 Button.prototype.onDebug = function(context, localX, localY) {

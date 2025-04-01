@@ -391,7 +391,7 @@ ArmyMapEditor.prototype.initButtons = function(gameContext) {
         const buttonID = this.slots[i];
         const button = editorInterface.getElement(buttonID);
 
-        button.events.unsubscribe(UIElement.EVENT.BUTTON_CLICKED, this.id);
+        button.events.unsubscribe(UIElement.EVENT.CLICKED, this.id);
         button.clearDefers();
     }
 
@@ -402,7 +402,7 @@ ArmyMapEditor.prototype.initButtons = function(gameContext) {
         const { name, id } = brushData;
 
         if(id !== 0) {
-            button.events.subscribe(UIElement.EVENT.BUTTON_CLICKED, this.id, () => this.brush = brushData);
+            button.events.subscribe(UIElement.EVENT.CLICKED, this.id, () => this.brush = brushData);
 
             button.addDefer((context, localX, localY) => {
                 this.camera.drawTileGraphics(tileManager, context, id, localX, localY, ArmyMapEditor.SCALE.SLOT_BUTTON, ArmyMapEditor.SCALE.SLOT_BUTTON);

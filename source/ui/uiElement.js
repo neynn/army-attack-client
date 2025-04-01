@@ -1,5 +1,4 @@
 import { Drawable } from "../graphics/drawable.js";
-import { UserInterface } from "./userInterface.js";
 
 export const UIElement = function(DEBUG_NAME) {
     Drawable.call(this, Drawable.TYPE.UI_ELEMENT, DEBUG_NAME);
@@ -12,6 +11,12 @@ export const UIElement = function(DEBUG_NAME) {
     this.height = 0;
 }
 
+UIElement.BEHAVIOR = {
+    NONE: 0,
+    COLLIDEABLE: 1 << 0,
+    CLICKABLE: 1 << 1
+};
+
 UIElement.COLLISION_TYPE = {
     FIRST: 0,
     LAST: 1,
@@ -22,7 +27,7 @@ UIElement.EVENT = {
     LAST_COLLISION: "LAST_COLLISION",
     FIRST_COLLISION: "FIRST_COLLISION",
     REPEATED_COLLISION: "REPEATED_COLLISION",
-    BUTTON_CLICKED: "BUTTON_CLICKED"
+    CLICKED: "CLICKED"
 };
 
 UIElement.ANCHOR_TYPE = {
@@ -69,7 +74,7 @@ UIElement.prototype.setAnchor = function(anchor) {
 }
 
 UIElement.prototype.getCollisions = function(mouseX, mouseY, mouseRange) {
-    if(!this.hasBehavior(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE)) {
+    if(!this.hasBehavior(UIElement.BEHAVIOR.COLLIDEABLE)) {
         return [];
     }
 
@@ -96,7 +101,7 @@ UIElement.prototype.getCollisions = function(mouseX, mouseY, mouseRange) {
             const reference = child.getReference();
             
             if(reference.type === Drawable.TYPE.UI_ELEMENT) {
-                const hasFlag = reference.hasBehavior(UserInterface.ELEMENT_BEHAVIOR.COLLIDEABLE);
+                const hasFlag = reference.hasBehavior(UIElement.BEHAVIOR.COLLIDEABLE);
 
                 if(hasFlag) {
                     referenceStack.push(reference);
