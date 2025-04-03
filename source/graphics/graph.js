@@ -1,8 +1,6 @@
-import { clampValue } from "../math/math.js";
-
-export const Graph = function(type, DEBUG_NAME = "") {
+export const Graph = function(type = Graph.TYPE.NONE, DEBUG_NAME = "") {
     this.DEBUG_NAME = DEBUG_NAME;
-    this.type = type ?? Graph.TYPE.NONE;
+    this.type = type;
     this.id = Graph.NEXT_ID++;
     this.state = Graph.STATE.VISIBLE;
     this.positionX = 0;
@@ -179,9 +177,13 @@ Graph.prototype.show = function() {
 
 Graph.prototype.setOpacity = function(opacity) {
     if(typeof opacity === "number") {
-        const clampedOpacity = clampValue(opacity, 1, 0);
-
-        this.opacity = clampedOpacity;
+        if(opacity > 1) {
+            this.opacity = 1;
+        } else if(opacity < 0) {
+            this.opacity = 0;
+        } else {
+            this.opacity = opacity;
+        }
     }
 }
 
@@ -203,6 +205,18 @@ Graph.prototype.hasChild = function(name) {
     }
 
     return false;
+}
+
+Graph.prototype.getChildByID = function(id) {
+    for(let i = 0; i < this.children.length; i++) {
+        const child = this.children[i];
+
+        if(child.id === id) {
+            return child;
+        }
+    }
+
+    return null;
 }
 
 Graph.prototype.getChild = function(name) {

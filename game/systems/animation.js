@@ -1,4 +1,5 @@
 import { SpriteManager } from "../../source/sprite/spriteManager.js";
+import { SpriteComponent } from "../components/sprite.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { Player } from "../player/player.js";
 
@@ -7,11 +8,6 @@ export const AnimationSystem = function() {}
 AnimationSystem.FIRE_OFFSET = {
     ARTILLERY: 48,
     REGULAR: 12
-};
-
-AnimationSystem.SPRITE_ID = {
-    MOVE: "MOVE_CURSOR",
-    DELAY: "DELAY_SPRITE"
 };
 
 AnimationSystem.SPRITE_TYPE = {
@@ -101,7 +97,7 @@ AnimationSystem.playSelect = function(gameContext, entity) {
     const entitySprite = spriteComponent.getSprite(gameContext);
     const moveSprite = spriteManager.createSprite(AnimationSystem.SPRITE_TYPE.SELECT);
     
-    entitySprite.addChild(moveSprite, AnimationSystem.SPRITE_ID.MOVE);
+    entitySprite.addChild(moveSprite, SpriteComponent.SPRITE_ID.MOVE);
     moveSprite.setPosition(0, 0);
     
     entity.playSound(gameContext, ArmyEntity.SOUND_TYPE.SELECT);
@@ -111,7 +107,7 @@ AnimationSystem.stopSelect = function(gameContext, entity) {
     const { spriteManager } = gameContext;
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const entitySprite = spriteComponent.getSprite(gameContext);
-    const moveSprite = entitySprite.getChild(AnimationSystem.SPRITE_ID.MOVE);
+    const moveSprite = entitySprite.getChild(SpriteComponent.SPRITE_ID.MOVE);
 
     if(moveSprite) {
         const spriteIndex = moveSprite.getIndex();
@@ -128,7 +124,7 @@ AnimationSystem.playConstruction = function(gameContext, entity) {
     const camera = renderer.getContext(Player.CAMERA_ID).getCamera();
     const { x, y } = camera.transformSizeToPositionOffsetCenter(entity.config.dimX, entity.config.dimY);
 
-    entitySprite.addChild(delaySprite, AnimationSystem.SPRITE_ID.DELAY);
+    entitySprite.addChild(delaySprite);
     delaySprite.expire();
     delaySprite.setPosition(x, y);
 

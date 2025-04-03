@@ -1,9 +1,14 @@
 import { Component } from "../../source/component/component.js";
 
 export const SpriteComponent = function() {
-    this.spriteID = null;
+    this.spriteID = -1;
     this.isFlippable = false;
 }
+
+SpriteComponent.SPRITE_ID = {
+    MOVE: "MOVE",
+    CARD: "CARD"
+};
 
 SpriteComponent.FLIP_STATE = {
     UNFLIPPED: 0,

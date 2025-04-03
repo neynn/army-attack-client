@@ -2,14 +2,9 @@ import { SimpleText } from "../../source/graphics/drawable/simpleText.js";
 import { TextStyle } from "../../source/graphics/applyable/textStyle.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { Player } from "../player/player.js";
+import { SpriteComponent } from "../components/sprite.js";
 
 export const CardSystem = function() {}
-
-CardSystem.TYPE = {
-    STAT_CARD: "STAT_CARD",
-    HEALTH_TEXT: "HEALTH_TEXT",
-    DAMAGE_TEXT: "DAMAGE_TEXT"
-};
 
 CardSystem.SPRITE_TYPE = {
     LARGE: "stat_card",
@@ -26,8 +21,8 @@ const addHealthText = function(entity, statCard) {
     healthText.setPosition(95, 90);
     healthText.setText(`${healthComponent.health}/${healthComponent.maxHealth}`);
 
-    statCard.addChild(healthText, CardSystem.TYPE.HEALTH_TEXT);
-    entity.events.subscribe(ArmyEntity.EVENT.HEALTH_UPDATE, CardSystem.TYPE.STAT_CARD, (health, maxHealth) => healthText.setText(`${health}/${maxHealth}`));
+    statCard.addChild(healthText);
+    entity.events.subscribe(ArmyEntity.EVENT.HEALTH_UPDATE, SpriteComponent.SPRITE_ID.CARD, (health, maxHealth) => healthText.setText(`${health}/${maxHealth}`));
 }
 
 const addDamageText = function(entity, statCard) {
@@ -40,8 +35,8 @@ const addDamageText = function(entity, statCard) {
     damageText.setPosition(95, 78);
     damageText.setText(`${attackComponent.damage}`);
 
-    statCard.addChild(damageText, CardSystem.TYPE.DAMAGE_TEXT);
-    entity.events.subscribe(ArmyEntity.EVENT.DAMAGE_UPDATE, CardSystem.TYPE.STAT_CARD, (damage) => damageText.setText(`${damage}`));
+    statCard.addChild(damageText);
+    entity.events.subscribe(ArmyEntity.EVENT.DAMAGE_UPDATE, SpriteComponent.SPRITE_ID.CARD, (damage) => damageText.setText(`${damage}`));
 }
 
 const createAttackerCard = function(gameContext, entity, cardType) {
@@ -123,7 +118,7 @@ const createStatCard = function(gameContext, entity) {
 CardSystem.generateStatCard = function(gameContext, entity) {
     const entityType = gameContext.entityTypes[entity.config.archetype];
 
-    if(!entityType || entityType.disableCard || entity.config.disableCard) {
+    if((entityType && entityType.disableCard) || entity.config.disableCard) {
         return;
     }
 
@@ -132,6 +127,6 @@ CardSystem.generateStatCard = function(gameContext, entity) {
     const statCard = createStatCard(gameContext, entity);
 
     if(statCard) {
-        sprite.addChild(statCard, CardSystem.TYPE.STAT_CARD);
+        sprite.addChild(statCard, SpriteComponent.SPRITE_ID.CARD);
     }
 }
