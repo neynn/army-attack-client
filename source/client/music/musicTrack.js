@@ -67,7 +67,15 @@ MusicTrack.prototype.unmute = function() {
 }
 
 MusicTrack.prototype.setVolume = function(volume) {
-    const nextVolume = clampValue(volume, 0, 1);
+    let nextVolume = 0;
+
+    if(volume > 1) {
+        nextVolume = 1;
+    } else if(volume < 0) {
+        nextVolume = 0;
+    } else {
+        nextVolume = volume;
+    }
 
     this.volume = nextVolume;
     this.audio.volume = nextVolume;
