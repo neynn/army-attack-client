@@ -70,8 +70,8 @@ VersusModeState.prototype.onEnter = function(stateMachine) {
     const { socket } = client;
 
     actionQueue.toDeferred();
-    actionQueue.events.subscribe(ActionQueue.EVENT.EXECUTION_DEFER, "VERSUS", (execution, request) => socket.messageRoom(CLIENT_EVENTS.ACTION, request));
-    socket.events.subscribe(Socket.EVENT.MESSAGE_FROM_SERVER, "VERSUS", (type, payload) => this.onServerMessage(gameContext, type, payload));
+    actionQueue.events.on(ActionQueue.EVENT.EXECUTION_DEFER, (execution, request) => socket.messageRoom(CLIENT_EVENTS.ACTION, request), { id: "VERSUS" });
+    socket.events.on(Socket.EVENT.MESSAGE_FROM_SERVER, (type, payload) => this.onServerMessage(gameContext, type, payload), { id: "VERSUS" });
     socket.connect();
 
     this.setNextState(ArmyContext.STATE.VERSUS_MODE_LOBBY);

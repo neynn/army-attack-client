@@ -4,10 +4,47 @@ export const Listener = function(type) {
     this.singleObservers = [];
 }
 
+Listener.ID = {
+    NEXT: 0,
+    SUPER: -1
+};
+
 Listener.OBSERVER_TYPE = {
     DEFAULT: 0,
     SINGLE: 1
 };
+
+Listener.prototype.getType = function(options) {
+    if(!options) {
+        return Listener.OBSERVER_TYPE.DEFAULT;
+    }
+
+    const { once } = options;
+
+    if(once) {
+        return Listener.OBSERVER_TYPE.SINGLE;
+    }
+
+    return Listener.OBSERVER_TYPE.DEFAULT;
+}
+
+Listener.prototype.getID = function(options) {
+    if(!options) {
+        return Listener.ID.NEXT++;
+    }
+
+    const { permanent, id } = options;
+
+    if(permanent) {
+        return Listener.ID.SUPER;
+    }
+
+    if(id && typeof id !== "number") {
+        return id;
+    }
+
+    return Listener.ID.NEXT++;
+}
 
 Listener.prototype.addObserver = function(type, id, onCall) {
     switch(type) {
@@ -30,34 +67,31 @@ Listener.prototype.addObserver = function(type, id, onCall) {
     }
 }
 
-Listener.prototype.filterObservers = function(onCheck) {
-    if(this.observers.length > 0) {
-        const observers = [];
+Listener.prototype.getFilteredObservers = function(oldList, onCheck) {
+    const observers = [];
 
-        for(let i = 0; i < this.observers.length; i++) {
-            const observer = this.observers[i];
-            const result = onCheck(observer);
-    
-            if(result) {
-                observers.push(observer);
-            }
+    for(let i = 0; i < oldList.length; i++) {
+        const observer = oldList[i];
+        const result = onCheck(observer);
+
+        if(result) {
+            observers.push(observer);
         }
-    
-        this.observers = observers;
     }
 
-    if(this.singleObservers.length > 0) {
-        const observers = [];
-    
-        for(let i = 0; i < this.singleObservers.length; i++) {
-            const observer = this.singleObservers[i];
-            const result = onCheck(observer);
-    
-            if(result) {
-                observers.push(observer);
-            }
-        }
-    
-        this.singleObservers = observers;
+    return observers;
+}
+
+Listener.prototype.filterObservers = function(onCheck) {
+    if(typeof onCheck !== "function") {
+        return;
+    }
+
+    if(this.observers.length > 0) {
+        this.observers = this.getFilteredObservers(this.observers, onCheck);
+    }
+
+    if(this.singleObservers.length > 0) {    
+        this.singleObservers = this.getFilteredObservers(this.singleObservers, onCheck);
     }
 }

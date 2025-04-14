@@ -6,30 +6,13 @@ export const InputRouter = function() {
 InputRouter.PREFIX = {
     DOWN: "+",
     UP: "-",
-    HOLD: "="
+    HOLD: "~"
 };
 
 InputRouter.CURSOR_INPUT = {
     M1: "M1",
     M2: "M2",
     M3: "M3"
-};
-
-InputRouter.KEY_INPUT = {
-    W: "w",
-    A: "a",
-    S: "s",
-    D: "d",
-    E: "e",
-    V: "v",
-    SPACE: " ",
-    SHIFT: "Shift",
-    ENTER: "Enter",
-    ESCAPE: "Escape",
-    ARROW_UP: "ArrowUp",
-    ARROW_DOWN: "ArrowDown",
-    ARROW_LEFT: "ArrowLeft",
-    ARROW_RIGHT: "ArrowRight"
 };
 
 InputRouter.prototype.clear = function(gameContext) {
@@ -48,34 +31,55 @@ InputRouter.prototype.clear = function(gameContext) {
     this.commands.clear();
 }
 
+InputRouter.prototype.loadInput = function(keyboard, inputID, commandID) {
+    if(inputID.length === 0) {
+        return;
+    }
+
+    const prefixID = inputID[0];
+    const isPrefixed = inputID.length > 1 && (prefixID === InputRouter.PREFIX.DOWN || prefixID === InputRouter.PREFIX.UP || prefixID === InputRouter.PREFIX.HOLD);
+
+    if(isPrefixed) {
+        const keyID = inputID.slice(1);
+
+        this.bindInput(inputID, commandID);
+
+        if(InputRouter.CURSOR_INPUT[keyID] === undefined) {
+            keyboard.reserve(keyID);
+        }
+    } else {
+        this.bindInput(InputRouter.PREFIX.DOWN + inputID, commandID);
+        this.bindInput(InputRouter.PREFIX.UP + inputID, commandID);
+
+        if(InputRouter.CURSOR_INPUT[inputID] === undefined) {
+            keyboard.reserve(inputID);
+        }
+    }
+}
+
 InputRouter.prototype.load = function(gameContext, binds) {
     const { client } = gameContext;
     const { keyboard } = client;
 
     for(const commandID in binds) {
-        const inputID = binds[commandID];
+        const input = binds[commandID];
         
-        if(inputID.length === 0) {
-            continue;
-        }
+        switch(typeof input) {
+            case "object": {
+                for(let i = 0; i < input.length; i++) {
+                    const inputID = input[i];
 
-        const prefixID = inputID[0];
-        const isPrefixed = inputID.length > 1 && (prefixID === InputRouter.PREFIX.DOWN || prefixID === InputRouter.PREFIX.UP);
-
-        if(isPrefixed) {
-            const keyID = inputID.slice(1);
-
-            this.bindInput(inputID, commandID);
-
-            if(InputRouter.CURSOR_INPUT[keyID] === undefined) {
-                keyboard.reserve(keyID);
+                    this.loadInput(keyboard, inputID, commandID);
+                }
+                break;
             }
-        } else {
-            this.bindInput(InputRouter.PREFIX.DOWN + inputID, commandID);
-            this.bindInput(InputRouter.PREFIX.UP + inputID, commandID);
-    
-            if(InputRouter.CURSOR_INPUT[inputID] === undefined) {
-                keyboard.reserve(inputID);
+            case "string": {
+                this.loadInput(keyboard, input, commandID);
+                break;
+            }
+            default: {
+                console.warn("Invalid input type!");
+                break;
             }
         }
     }
@@ -109,10 +113,15 @@ InputRouter.prototype.handleInput = function(prefix, inputID) {
 
     for(let i = 0; i < commandList.length; i++) {
         const commandID = commandList[i];
-        const command = this.commands.get(commandID);
 
-        if(command) {
-            command();
-        }
+        this.execute(commandID);
     }
-} 
+}
+
+InputRouter.prototype.execute = function(commandID) {
+    const command = this.commands.get(commandID);
+
+    if(command) {
+        command();
+    }
+}

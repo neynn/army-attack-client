@@ -157,7 +157,7 @@ ArmyMapEditor.prototype.initCamera = function(gameContext) {
     
     context.setPositionMode(CameraContext.POSITION_MODE.ORIGIN);
 
-    world.events.subscribe(World.EVENT.MAP_CREATE, this.id, (worldMap) => {
+    world.events.on(World.EVENT.MAP_CREATE, (worldMap) => {
         const { width, height, music } = worldMap;
     
         this.camera.loadWorld(width, height);
@@ -167,11 +167,11 @@ ArmyMapEditor.prototype.initCamera = function(gameContext) {
         }
 
         context.refreshCamera();
-    });
+    }, { id: this.id });
 
-    context.events.subscribe(CameraContext.EVENT.REMOVE, this.id, () => {
+    context.events.on(CameraContext.EVENT.REMOVE, () => {
         world.events.unsubscribe(World.EVENT.MAP_CREATE, this.id);
-    });
+    }, { once: true });
 }
 
 ArmyMapEditor.prototype.initRenderEvents = function(gameContext) {
@@ -228,7 +228,7 @@ ArmyMapEditor.prototype.initCursorEvents = function(gameContext) {
     const { client } = gameContext;
     const { cursor } = client;
 
-    cursor.events.subscribe(Cursor.EVENT.SCROLL, this.id, (direction) => {
+    cursor.events.on(Cursor.EVENT.SCROLL, (direction) => {
         switch(direction) {
             case Cursor.SCROLL.UP: {
                 this.scrollBrushSize(1);
@@ -243,7 +243,7 @@ ArmyMapEditor.prototype.initCursorEvents = function(gameContext) {
         }
     });
 
-    cursor.events.subscribe(Cursor.EVENT.BUTTON_DRAG, this.id, (buttonID) => {
+    cursor.events.on(Cursor.EVENT.BUTTON_DRAG, (buttonID) => {
         if(buttonID !== Cursor.BUTTON.RIGHT) {
             return;
         }
@@ -251,7 +251,7 @@ ArmyMapEditor.prototype.initCursorEvents = function(gameContext) {
         this.paintTile(gameContext);
     });
 
-    cursor.events.subscribe(Cursor.EVENT.BUTTON_CLICK, this.id, (buttonID) => {
+    cursor.events.on(Cursor.EVENT.BUTTON_CLICK, (buttonID) => {
         if(buttonID !== Cursor.BUTTON.RIGHT) {
             return;
         }
@@ -259,7 +259,7 @@ ArmyMapEditor.prototype.initCursorEvents = function(gameContext) {
         this.paintTile(gameContext);
     });
 
-    cursor.events.subscribe(Cursor.EVENT.BUTTON_DRAG, this.id, (buttonID, deltaX, deltaY) => {
+    cursor.events.on(Cursor.EVENT.BUTTON_DRAG, (buttonID, deltaX, deltaY) => {
         if(buttonID !== Cursor.BUTTON.LEFT) {
             return;
         }
@@ -402,7 +402,9 @@ ArmyMapEditor.prototype.initButtons = function(gameContext) {
         const { name, id } = brushData;
 
         if(id !== 0) {
-            button.events.subscribe(UIElement.EVENT.CLICKED, this.id, () => this.brush = brushData);
+            button.events.on(UIElement.EVENT.CLICKED, () => {
+                this.brush = brushData;
+            }, { id: this.id });
 
             button.addDefer((context, localX, localY) => {
                 this.camera.drawTileGraphics(tileManager, context, id, localX, localY, ArmyMapEditor.SCALE.SLOT_BUTTON, ArmyMapEditor.SCALE.SLOT_BUTTON);

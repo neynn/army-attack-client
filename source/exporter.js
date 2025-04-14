@@ -1,16 +1,17 @@
-export const InefficientJSONExporter = function(spacing) {
+export const PrettyJSON = function(spacing) {
+    this.depth = 0;
     this.spacing = spacing;
     this.jsonString = "";
     this.writes = 0;
     this.openLists = [];
 }
 
-InefficientJSONExporter.LIST_TYPE = {
+PrettyJSON.LIST_TYPE = {
     OBJECT: 0,
     ARRAY: 1
 };
 
-InefficientJSONExporter.prototype.pad = function(depth) {
+PrettyJSON.prototype.pad = function(depth) {
     const whitespace = depth * this.spacing;
 
     for(let i = 0; i < whitespace; i++) {
@@ -18,7 +19,7 @@ InefficientJSONExporter.prototype.pad = function(depth) {
     }
 }
 
-InefficientJSONExporter.prototype.newLine = function(depth) {
+PrettyJSON.prototype.newLine = function(depth) {
     if(this.openLists.length === 0) {
         if(this.writes > 0) {
             this.jsonString += ",\n";
@@ -35,12 +36,12 @@ InefficientJSONExporter.prototype.newLine = function(depth) {
     this.pad(depth);
 }
 
-InefficientJSONExporter.prototype.newEmptyLine = function(depth) {
+PrettyJSON.prototype.newEmptyLine = function(depth) {
     this.jsonString += "\n";
     this.pad(depth);
 }
 
-InefficientJSONExporter.prototype.getJoinString = function(depth) {
+PrettyJSON.prototype.getJoinString = function(depth) {
     let join = ",\n";
     const whitespace = depth * this.spacing;
 
@@ -51,8 +52,9 @@ InefficientJSONExporter.prototype.getJoinString = function(depth) {
     return join;
 }
 
-InefficientJSONExporter.prototype.open = function(depth = 0, name) {
+PrettyJSON.prototype.open = function(depth = 0, name) {
     this.pad(depth);
+    this.depth = depth + 1;
 
     if(name) {
         this.jsonString += `"${name}": {\n`;
@@ -63,87 +65,59 @@ InefficientJSONExporter.prototype.open = function(depth = 0, name) {
     return this;
 }
 
-InefficientJSONExporter.prototype.close = function(depth = 0) {
+PrettyJSON.prototype.close = function() {
     while(this.openLists.length !== 0) {
         this.closeList();
     }
 
-    this.newEmptyLine(depth);
+    this.depth--;
+    this.newEmptyLine(this.depth);
     this.jsonString += "}";
 
     return this;
 }
 
-InefficientJSONExporter.prototype.writeLine = function(id, depth, data) {
-    this.newLine(depth);
-    this.jsonString += `"${id}": ${JSON.stringify(data)}`;
-
-    if(this.openLists.length === 0) {
-        this.writes++;
-    } else {
-        const list = this.openLists[this.openLists.length - 1];
-        list.writes++;
-    }
-
-    return this;
-}
-
-InefficientJSONExporter.prototype.openList = function(id, depth, type) {
-    if(type === undefined) {
-        type = InefficientJSONExporter.LIST_TYPE.OBJECT;
-    }
+PrettyJSON.prototype.openList = function(id, type = PrettyJSON.LIST_TYPE.OBJECT) {
+    this.newLine(this.depth);
 
     switch(type) {
-        case InefficientJSONExporter.LIST_TYPE.OBJECT: {
-            this.newLine(depth);
+        case PrettyJSON.LIST_TYPE.OBJECT: {
             this.jsonString += `"${id}": {\n`;
             break;
         }
-        case InefficientJSONExporter.LIST_TYPE.ARRAY: {
-            this.newLine(depth);
+        case PrettyJSON.LIST_TYPE.ARRAY: {
             this.jsonString += `"${id}": [\n`;
             break;
         }
     }
 
+    this.depth++;
+
     this.openLists.push({
         "type": type,
-        "depth": depth,
         "writes": 0
     });
 
     return this;
 }
 
-InefficientJSONExporter.prototype.writeList = function(id, depth, jsonStrings, type) {
-    const nestedDepth = depth + 1;
-    const joinString = this.getJoinString(nestedDepth);
-    const joined = jsonStrings.join(joinString);
-
-    this.openList(id, depth, type);
-    this.pad(nestedDepth);
-    this.jsonString += joined;
-    this.closeList();
-
-    return this;
-}
-
-InefficientJSONExporter.prototype.closeList = function() {
+PrettyJSON.prototype.closeList = function() {
     if(this.openLists.length === 0) {
         return this;
     }
 
     const list = this.openLists.pop();
-    const { depth, type } = list;
+    const { type } = list;
+
+    this.depth--;
+    this.newEmptyLine(this.depth);
 
     switch(type) {
-        case InefficientJSONExporter.LIST_TYPE.OBJECT: {
-            this.newEmptyLine(depth);
+        case PrettyJSON.LIST_TYPE.OBJECT: {
             this.jsonString += "}";
             break;
         }
-        case InefficientJSONExporter.LIST_TYPE.ARRAY: {
-            this.newEmptyLine(depth);
+        case PrettyJSON.LIST_TYPE.ARRAY: {
             this.jsonString += "]";
             break;
         }
@@ -159,11 +133,39 @@ InefficientJSONExporter.prototype.closeList = function() {
     return this;
 }
 
-InefficientJSONExporter.prototype.build = function() {
+PrettyJSON.prototype.writeLine = function(id, data) {
+    this.newLine(this.depth);
+    this.jsonString += `"${id}": ${JSON.stringify(data)}`;
+
+    if(this.openLists.length === 0) {
+        this.writes++;
+    } else {
+        const list = this.openLists[this.openLists.length - 1];
+        list.writes++;
+    }
+
+    return this;
+}
+
+PrettyJSON.prototype.writeList = function(id, jsonStrings, type) {
+    this.openList(id, type);
+    this.pad(this.depth);
+
+    const joinString = this.getJoinString(this.depth);
+    const joined = jsonStrings.join(joinString);
+
+    this.jsonString += joined;
+    this.closeList();
+
+    return this;
+}
+
+PrettyJSON.prototype.build = function() {
     return this.jsonString;
 }
 
-InefficientJSONExporter.prototype.reset = function() {
+PrettyJSON.prototype.reset = function() {
+    this.depth = 0;
     this.openLists = [];
     this.jsonString = "";
     this.writes = 0;
@@ -171,7 +173,7 @@ InefficientJSONExporter.prototype.reset = function() {
     return this;
 }
 
-InefficientJSONExporter.prototype.download = function(filename) {
+PrettyJSON.prototype.download = function(filename) {
     const blob = new Blob([this.jsonString], { type: "text/json" });
     const link = document.createElement("a");
   

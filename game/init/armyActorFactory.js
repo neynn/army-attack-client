@@ -25,7 +25,7 @@ const addDragEvent = function(gameContext) {
     const { client } = gameContext;
     const { cursor } = client;
 
-    cursor.events.subscribe(Cursor.EVENT.BUTTON_DRAG, "ARMY_ACTOR_FACOTRY", (buttonID, deltaX, deltaY) => {
+    cursor.events.on(Cursor.EVENT.BUTTON_DRAG, (buttonID, deltaX, deltaY) => {
         if(buttonID !== Cursor.BUTTON.LEFT) {
             return;
         }
@@ -47,7 +47,7 @@ const initPlayerCamera = function(gameContext, camera) {
     //context.initRenderer(640/2, 360/2);
     //context.setDisplayMode(CameraContext.DISPLAY_MODE.RESOLUTION_FIXED);
 
-    world.events.subscribe(World.EVENT.MAP_CREATE, Player.CAMERA_ID, (worldMap) => {
+    world.events.on(World.EVENT.MAP_CREATE, (worldMap) => {
         const { width, height, music } = worldMap;
     
         camera.loadWorld(width, height);
@@ -57,16 +57,16 @@ const initPlayerCamera = function(gameContext, camera) {
         }
 
         context.refreshCamera();
-    });
+    }, { id: Player.CAMERA_ID });
 
-    context.events.subscribe(CameraContext.EVENT.REMOVE, Player.CAMERA_ID, () => {
+    context.events.on(CameraContext.EVENT.REMOVE, () => {
         world.events.unsubscribe(World.EVENT.MAP_CREATE, Player.CAMERA_ID);
-    });
+    }, { once: true });
 
     /*
     let x = false;
 
-    this.client.cursor.events.subscribe(Cursor.CLICK, "TEST", () => {
+    this.client.cursor.events.on(Cursor.CLICK, () => {
         x = !x;
         let mode = x ? CameraContext.DISPLAY_MODE.RESOLUTION_DEPENDENT : CameraContext.DISPLAY_MODE.RESOLUTION_FIXED;
         this.renderer.getContext(cameraID).setDisplayMode(mode);

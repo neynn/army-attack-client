@@ -148,28 +148,28 @@ ArmyContext.prototype.init = function(resources) {
     this.states.addState(ArmyContext.STATE.EDIT_MODE, new MapEditorState());
     
     if(ArmyContext.DEBUG.LOG_QUEUE_EVENTS) {
-        this.world.actionQueue.events.subscribe(ActionQueue.EVENT.QUEUE_ERROR, "DEBUG", (error) => console.log(error));
-        this.world.actionQueue.events.subscribe(ActionQueue.EVENT.EXECUTION_RUNNING, "DEBUG", (item) => console.log(item, "IS PROCESSING"));
-        this.world.actionQueue.events.subscribe(ActionQueue.EVENT.EXECUTION_ERROR, "DEBUG",  (request) => console.log(request, "IS INVALID"));
+        this.world.actionQueue.events.on(ActionQueue.EVENT.QUEUE_ERROR, (error) => console.log(error), { id: "DEBUG" });
+        this.world.actionQueue.events.on(ActionQueue.EVENT.EXECUTION_RUNNING, (item) => console.log(item, "IS PROCESSING"), { id: "DEBUG" });
+        this.world.actionQueue.events.on(ActionQueue.EVENT.EXECUTION_ERROR,  (request) => console.log(request, "IS INVALID"), { id: "DEBUG" });
     }
 
     if(ArmyContext.DEBUG.LOG_SOCKET_EVENTS) {
-        this.client.socket.events.subscribe(Socket.EVENT.CONNECTED_TO_SERVER, "DEBUG", (socketID) => {
+        this.client.socket.events.on(Socket.EVENT.CONNECTED_TO_SERVER, (socketID) => {
             this.client.socket.emit(NETWORK_EVENTS.REGISTER, { "user-id": "neyn!" }, (response) => console.log(response));
             console.log(`${socketID} is connected to the server!`);
-        });
+        }, { id: "DEBUG" });
     
-        this.client.socket.events.subscribe(Socket.EVENT.DISCONNECTED_FROM_SERVER, "DEBUG", (reason) => {
+        this.client.socket.events.on(Socket.EVENT.DISCONNECTED_FROM_SERVER, (reason) => {
             console.log(`${reason} is disconnected from the server!`);
-        });
+        }, { id: "DEBUG" });
     }
 
     if(ArmyContext.DEBUG.LOG_WORLD_EVENTS) {
-        this.world.events.subscribe(World.EVENT.ACTOR_CREATE, "DEBUG", (actor) => console.log(actor, "HAS BEEN CREATED"));
-        this.world.events.subscribe(World.EVENT.ACTOR_DESTROY, "DEBUG", (actor) => console.log(actor, "HAS BEEN DESTROYED"));
-        this.world.events.subscribe(World.EVENT.ENTITY_DESTROY, "DEBUG", (entity) => console.log(entity, "HAS BEEN DESTROYED"));
-        this.world.events.subscribe(World.EVENT.ENTITY_CREATE, "DEBUG", (entity) => console.log(entity, "HAS BEEN CREATED"));
-        this.world.events.subscribe(World.EVENT.MAP_CREATE, "DEBUG", (worldMap) => console.log(worldMap, "HAS BEEN LOADED"));
+        this.world.events.on(World.EVENT.ACTOR_CREATE, (actor) => console.log(actor, "HAS BEEN CREATED"), { id: "DEBUG" });
+        this.world.events.on(World.EVENT.ACTOR_DESTROY, (actor) => console.log(actor, "HAS BEEN DESTROYED"), { id: "DEBUG" });
+        this.world.events.on(World.EVENT.ENTITY_DESTROY, (entity) => console.log(entity, "HAS BEEN DESTROYED"), { id: "DEBUG" });
+        this.world.events.on(World.EVENT.ENTITY_CREATE, (entity) => console.log(entity, "HAS BEEN CREATED"), { id: "DEBUG" });
+        this.world.events.on(World.EVENT.MAP_CREATE, (worldMap) => console.log(worldMap, "HAS BEEN LOADED"), { id: "DEBUG" });
     }
 
     this.switchState(ArmyContext.STATE.MAIN_MENU);

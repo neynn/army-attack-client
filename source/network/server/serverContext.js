@@ -21,20 +21,20 @@ ServerContext.EVENT_CONNECT = 0;
 ServerContext.EVENT_DISCONNECT = 1;
 
 ServerContext.prototype.initializeEvents = function() {
-    this.events.subscribe(ServerContext.EVENT_CONNECT, EventEmitter.SUPER_ID, (socket) => console.log(`${socket.id} has connected to the server!`));
-    this.events.subscribe(ServerContext.EVENT_DISCONNECT, EventEmitter.SUPER_ID, (clientID) => console.log(`${clientID} has disconnected from the server!`));
-    this.roomManager.events.subscribe(RoomManager.EVENT_ROOM_OPENED, EventEmitter.SUPER_ID, (roomID) => console.log(`Room ${roomID} has been opened!`));
-    this.roomManager.events.subscribe(RoomManager.EVENT_ROOM_CLOSED, EventEmitter.SUPER_ID, (roomID) => console.log(`Room ${roomID} has been closed!`));
-    this.roomManager.events.subscribe(RoomManager.EVENT_CLIENT_JOINED, EventEmitter.SUPER_ID, (clientID, roomID) => this.sendRoomUpdate(clientID, roomID));
-    this.roomManager.events.subscribe(RoomManager.EVENT_CLIENT_LEFT, EventEmitter.SUPER_ID, (clientID, roomID) => this.sendRoomUpdate(clientID, roomID));
-    this.roomManager.events.subscribe(RoomManager.EVENT_CLIENT_LEADER, EventEmitter.SUPER_ID, (clientID, roomID) => this.sendRoomUpdate(clientID, roomID));
-    this.roomManager.events.subscribe(RoomManager.EVENT_MESSAGE_RECEIVED, EventEmitter.SUPER_ID, (roomID, messengerID, message) => console.log(`Message received! ${roomID, messengerID}`));
-    this.roomManager.events.subscribe(RoomManager.EVENT_MESSAGE_LOST, EventEmitter.SUPER_ID, (roomID, messengerID, message) => `Message lost! ${roomID, messengerID}`);
-    this.roomManager.events.subscribe(RoomManager.EVENT_MESSAGE_SEND, EventEmitter.SUPER_ID, (clientID, message) => this.io.to(clientID).emit(NETWORK_EVENTS.MESSAGE, message));
-    this.roomManager.events.subscribe(RoomManager.EVENT_MESSAGE_BROADCAST, EventEmitter.SUPER_ID, (roomID, message) => this.io.in(roomID).emit(NETWORK_EVENTS.MESSAGE, message));
-    this.clientManager.events.subscribe(ClientManager.EVENT_CLIENT_CREATE, EventEmitter.SUPER_ID, (clientID) => console.log(`${clientID} has been created!`));
-    this.clientManager.events.subscribe(ClientManager.EVENT_CLIENT_DELETE, EventEmitter.SUPER_ID, (clientID) => console.log(`${clientID} has been removed!`));
-    this.clientManager.events.subscribe(ClientManager.EVENT_USERID_ADDED, EventEmitter.SUPER_ID, (clientID, userID) => console.log(`${clientID} is now named ${userID}!`));
+    this.events.on(ServerContext.EVENT_CONNECT, (socket) => console.log(`${socket.id} has connected to the server!`), { permanent: true });
+    this.events.on(ServerContext.EVENT_DISCONNECT, (clientID) => console.log(`${clientID} has disconnected from the server!`), { permanent: true });
+    this.roomManager.events.on(RoomManager.EVENT_ROOM_OPENED, (roomID) => console.log(`Room ${roomID} has been opened!`), { permanent: true });
+    this.roomManager.events.on(RoomManager.EVENT_ROOM_CLOSED, (roomID) => console.log(`Room ${roomID} has been closed!`), { permanent: true });
+    this.roomManager.events.on(RoomManager.EVENT_CLIENT_JOINED, (clientID, roomID) => this.sendRoomUpdate(clientID, roomID), { permanent: true });
+    this.roomManager.events.on(RoomManager.EVENT_CLIENT_LEFT, (clientID, roomID) => this.sendRoomUpdate(clientID, roomID), { permanent: true });
+    this.roomManager.events.on(RoomManager.EVENT_CLIENT_LEADER, (clientID, roomID) => this.sendRoomUpdate(clientID, roomID), { permanent: true });
+    this.roomManager.events.on(RoomManager.EVENT_MESSAGE_RECEIVED, (roomID, messengerID, message) => console.log(`Message received! ${roomID, messengerID}`), { permanent: true });
+    this.roomManager.events.on(RoomManager.EVENT_MESSAGE_LOST, (roomID, messengerID, message) => `Message lost! ${roomID, messengerID}`, { permanent: true });
+    this.roomManager.events.on(RoomManager.EVENT_MESSAGE_SEND, (clientID, message) => this.io.to(clientID).emit(NETWORK_EVENTS.MESSAGE, message), { permanent: true });
+    this.roomManager.events.on(RoomManager.EVENT_MESSAGE_BROADCAST, (roomID, message) => this.io.in(roomID).emit(NETWORK_EVENTS.MESSAGE, message), { permanent: true });
+    this.clientManager.events.on(ClientManager.EVENT_CLIENT_CREATE, (clientID) => console.log(`${clientID} has been created!`), { permanent: true });
+    this.clientManager.events.on(ClientManager.EVENT_CLIENT_DELETE, (clientID) => console.log(`${clientID} has been removed!`), { permanent: true });
+    this.clientManager.events.on(ClientManager.EVENT_USERID_ADDED, (clientID, userID) => console.log(`${clientID} is now named ${userID}!`), { permanent: true });
 }
 
 ServerContext.prototype.sendRoomUpdate = function(clientID, roomID) {

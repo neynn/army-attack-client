@@ -1,4 +1,4 @@
-import { InefficientJSONExporter } from "./source/exporter.js";
+import { PrettyJSON } from "./source/exporter.js";
 
 export const saveTemplateAsFile = (filename, dataObjToWrite) => {
   const blob = new Blob([dataObjToWrite], { type: "text/json" });
@@ -29,33 +29,33 @@ const createJSONFrames = function(frames) {
 }
 
 export const packerToJSONTiles = (id, packerFile) => {    
-    new InefficientJSONExporter(4)
+    new PrettyJSON(4)
     .open()
-    .writeLine("directory", 1, ["assets", "tiles"])
-    .writeLine("source", 1, packerFile.meta.image)
-    .writeLine("frameTime", 1, 0.03)
-    .writeList("frames", 1, createJSONFrames(packerFile.frames))
+    .writeLine("directory", ["assets", "tiles"])
+    .writeLine("source", packerFile.meta.image)
+    .writeLine("frameTime", 0.03)
+    .writeList("frames", createJSONFrames(packerFile.frames))
     .close()
     .download(id);
 }
 
 export const packerToJSONSprites = (id, packerFile) => {
-    new InefficientJSONExporter(4)
+    new PrettyJSON(4)
     .open()
-    .writeLine("directory", 1, ["assets", "sprites"])
-    .writeLine("source", 1, packerFile.meta.image)
-    .writeLine("bounds", 1, {"x": 0,"y": 0,"w":0,"h":0})
-    .writeLine("frameTime", 1, 0.03)
-    .writeList("frames", 1, createJSONFrames(packerFile.frames))
+    .writeLine("directory", ["assets", "sprites"])
+    .writeLine("source", packerFile.meta.image)
+    .writeLine("bounds", {"x": 0,"y": 0,"w":0,"h":0})
+    .writeLine("frameTime", 0.03)
+    .writeList("frames", createJSONFrames(packerFile.frames))
     .close()
     .download(id);
 }
 
 export const saveMap = function(mapID, map2D) {
     if(!map2D) {
-        return new InefficientJSONExporter(4)
+        return new PrettyJSON(4)
         .open()
-        .writeLine("ERROR", 1, "MAP NOT LOADED! USE CREATE OR LOAD!")
+        .writeLine("ERROR", "MAP NOT LOADED! USE CREATE OR LOAD!")
         .close()
         .download("map_" + mapID);
     }
@@ -64,18 +64,18 @@ export const saveMap = function(mapID, map2D) {
     const layers = map2D.saveLayers();
     const flags = map2D.saveFlags();
 
-    new InefficientJSONExporter(4)
+    new PrettyJSON(4)
     .open()
-    .writeLine("music", 1, map2D.music)
-    .writeLine("width", 1, map2D.width)
-    .writeLine("height", 1, map2D.height)
-    .writeLine("flags", 1, flags)
-    .openList("graphics", 1)
-    .writeList("layers", 2, graphics)
-    .writeLine("background", 2, map2D.background)
-    .writeLine("foreground", 2, map2D.foreground)
+    .writeLine("music", map2D.music)
+    .writeLine("width", map2D.width)
+    .writeLine("height", map2D.height)
+    .writeLine("flags", flags)
+    .openList("graphics")
+    .writeList("layers", graphics)
+    .writeLine("background", map2D.background)
+    .writeLine("foreground", map2D.foreground)
     .closeList()
-    .writeList("data", 1, layers)
+    .writeList("data", layers)
     .close()
     .download("map_" + mapID);
 }
@@ -134,7 +134,7 @@ const formatAnimationFrames = (frames, uniqueFrames) => {
 
 export const saveSprites = function(spriteTypes) {
     const output = [];
-    const ije = new InefficientJSONExporter(4);
+    const ije = new PrettyJSON(4);
     
     for(const typeID in spriteTypes) {
         const type = spriteTypes[typeID];
@@ -143,16 +143,16 @@ export const saveSprites = function(spriteTypes) {
         const str = ije
         .reset()
         .open(1, typeID)
-        .writeLine("directory", 2, directory)
-        .writeLine("source", 2, source)
-        .writeLine("bounds", 2, {"x":bounds.x,"y":bounds.y,"w":bounds.w,"h":bounds.h})
-        .writeLine("frameTime", 2, frameTime)
-        .writeList("frames", 2, formatted)
-        .openList("animations", 2)
-        .openList("default", 3)
-        .writeLine("frameTime", 4, frameTime)
-        .writeLine("frames", 4, formatAnimationFrames(frames, unique))
-        .close(1)
+        .writeLine("directory", directory)
+        .writeLine("source", source)
+        .writeLine("bounds", {"x":bounds.x,"y":bounds.y,"w":bounds.w,"h":bounds.h})
+        .writeLine("frameTime", frameTime)
+        .writeList("frames", formatted)
+        .openList("animations")
+        .openList("default")
+        .writeLine("frameTime", frameTime)
+        .writeLine("frames", formatAnimationFrames(frames, unique))
+        .close()
         .build();
 
         output.push(str);

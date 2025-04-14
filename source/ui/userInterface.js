@@ -10,6 +10,7 @@ export const UserInterface = function(id) {
     this.nameMap = new Map();
     this.elements = new Map();
     this.state = UserInterface.STATE.VISIBLE;
+    this.currentCollisions = new Set();
     this.previousCollisions = new Set();
 }
 
@@ -97,7 +98,8 @@ UserInterface.prototype.getElement = function(name) {
 }
 
 UserInterface.prototype.updateCollisions = function(mouseX, mouseY, mouseRange) {
-    const currentCollisions = new Set();
+    this.currentCollisions.clear();
+    
     const collidedElements = this.getCollidedElements(mouseX, mouseY, mouseRange);
 
     for(let i = 0; i < collidedElements.length; i++) {
@@ -111,11 +113,11 @@ UserInterface.prototype.updateCollisions = function(mouseX, mouseY, mouseRange) 
             element.onCollision(UIElement.COLLISION_TYPE.FIRST, mouseX, mouseY, mouseRange);
         }
 
-        currentCollisions.add(elementID);
+        this.currentCollisions.add(elementID);
     }
 
     for(const elementID of this.previousCollisions) {
-        const hasCurrentCollision = currentCollisions.has(elementID);
+        const hasCurrentCollision = this.currentCollisions.has(elementID);
 
         if(!hasCurrentCollision) {
             const element = this.elements.get(elementID);
@@ -124,7 +126,7 @@ UserInterface.prototype.updateCollisions = function(mouseX, mouseY, mouseRange) 
         }
     }
 
-    this.previousCollisions = currentCollisions;
+    [this.previousCollisions, this.currentCollisions] = [this.currentCollisions, this.previousCollisions];
 }
 
 UserInterface.prototype.getCollidedElements = function(mouseX, mouseY, mouseRange) {
@@ -272,7 +274,7 @@ UserInterface.prototype.addClick = function(elementID, onClick, id) {
     if(element.hasBehavior(UIElement.BEHAVIOR.CLICKABLE)) {
         const subscriberID = id === undefined ? this.id : id;
 
-        element.events.subscribe(UIElement.EVENT.CLICKED, subscriberID, onClick);
+        element.events.on(UIElement.EVENT.CLICKED, onClick, { id: subscriberID });
     }
 }
 

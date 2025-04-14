@@ -22,7 +22,7 @@ const addHealthText = function(entity, statCard) {
     healthText.setText(`${healthComponent.health}/${healthComponent.maxHealth}`);
 
     statCard.addChild(healthText);
-    entity.events.subscribe(ArmyEntity.EVENT.HEALTH_UPDATE, SpriteComponent.SPRITE_ID.CARD, (health, maxHealth) => healthText.setText(`${health}/${maxHealth}`));
+    entity.events.on(ArmyEntity.EVENT.HEALTH_UPDATE, (health, maxHealth) => healthText.setText(`${health}/${maxHealth}`), { id: SpriteComponent.SPRITE_ID.CARD });
 }
 
 const addDamageText = function(entity, statCard) {
@@ -36,7 +36,7 @@ const addDamageText = function(entity, statCard) {
     damageText.setText(`${attackComponent.damage}`);
 
     statCard.addChild(damageText);
-    entity.events.subscribe(ArmyEntity.EVENT.DAMAGE_UPDATE, SpriteComponent.SPRITE_ID.CARD, (damage) => damageText.setText(`${damage}`));
+    entity.events.on(ArmyEntity.EVENT.DAMAGE_UPDATE, (damage) => damageText.setText(`${damage}`), { id: SpriteComponent.SPRITE_ID.CARD });
 }
 
 const createAttackerCard = function(gameContext, entity, cardType) {

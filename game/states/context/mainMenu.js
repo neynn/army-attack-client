@@ -28,14 +28,14 @@ MainMenuState.prototype.onEnter = function(stateMachine) {
     buttonVersus.addChild(spriteVersus);
     buttonEdit.addChild(spriteEdit)
 
-    buttonPlay.events.subscribe(UIElement.EVENT.FIRST_COLLISION, "TEST", () => spriteManager.updateSprite(spritePlay.getIndex(), "blue_battletank_aim"));
-    buttonPlay.events.subscribe(UIElement.EVENT.LAST_COLLISION, "TEST", () => spriteManager.updateSprite(spritePlay.getIndex(), "blue_battletank_idle"));
+    buttonPlay.events.on(UIElement.EVENT.FIRST_COLLISION, () => spriteManager.updateSprite(spritePlay.getIndex(), "blue_battletank_aim"));
+    buttonPlay.events.on(UIElement.EVENT.LAST_COLLISION, () => spriteManager.updateSprite(spritePlay.getIndex(), "blue_battletank_idle"));
 
-    buttonVersus.events.subscribe(UIElement.EVENT.FIRST_COLLISION, "TEST", () => spriteManager.updateSprite(spriteVersus.getIndex(), "red_battletank_aim"));
-    buttonVersus.events.subscribe(UIElement.EVENT.LAST_COLLISION, "TEST", () => spriteManager.updateSprite(spriteVersus.getIndex(), "red_battletank_idle"));
+    buttonVersus.events.on(UIElement.EVENT.FIRST_COLLISION, () => spriteManager.updateSprite(spriteVersus.getIndex(), "red_battletank_aim"));
+    buttonVersus.events.on(UIElement.EVENT.LAST_COLLISION, () => spriteManager.updateSprite(spriteVersus.getIndex(), "red_battletank_idle"));
 
-    buttonEdit.events.subscribe(UIElement.EVENT.FIRST_COLLISION, "TEST", () => spriteManager.updateSprite(spriteEdit.getIndex(), "blue_elite_battery_aim"));
-    buttonEdit.events.subscribe(UIElement.EVENT.LAST_COLLISION, "TEST", () => spriteManager.updateSprite(spriteEdit.getIndex(), "blue_elite_battery_idle"));
+    buttonEdit.events.on(UIElement.EVENT.FIRST_COLLISION, () => spriteManager.updateSprite(spriteEdit.getIndex(), "blue_elite_battery_aim"));
+    buttonEdit.events.on(UIElement.EVENT.LAST_COLLISION, () => spriteManager.updateSprite(spriteEdit.getIndex(), "blue_elite_battery_idle"));
 }
 
 MainMenuState.prototype.onExit = function(stateMachine) {

@@ -4,7 +4,6 @@ import { Socket } from "../network/socket.js";
 import { SoundPlayer } from "./sound/soundPlayer.js";
 import { InputRouter } from "./inputRouter.js";
 import { MusicPlayer } from "./music/musicPlayer.js";
-import { EventEmitter } from "../events/eventEmitter.js";
 
 export const Client = function() {
     this.router = new InputRouter();
@@ -16,8 +15,10 @@ export const Client = function() {
 
     this.createKeyboardListener(Keyboard.EVENT.KEY_PRESSED, InputRouter.PREFIX.DOWN);
     this.createKeyboardListener(Keyboard.EVENT.KEY_RELEASED, InputRouter.PREFIX.UP);
+    this.createKeyboardListener(Keyboard.EVENT.KEY_DOWN, InputRouter.PREFIX.HOLD);
     this.createMouseListener(Cursor.EVENT.BUTTON_DOWN, InputRouter.PREFIX.DOWN);
     this.createMouseListener(Cursor.EVENT.BUTTON_CLICK, InputRouter.PREFIX.UP);
+    this.createMouseListener(Cursor.EVENT.BUTTON_HOLD, InputRouter.PREFIX.HOLD);
 }
 
 Client.BUTTON_MAP = {
@@ -27,19 +28,19 @@ Client.BUTTON_MAP = {
 };
 
 Client.prototype.createKeyboardListener = function(eventID, prefixID) {    
-    this.keyboard.events.subscribe(eventID, EventEmitter.SUPER_ID, (keyID) => {
+    this.keyboard.events.on(eventID, (keyID) => {
         this.router.handleInput(prefixID, keyID);
-    });
+    }, { permanent: true });
 }
 
 Client.prototype.createMouseListener = function(eventID, prefixID) {
-    this.cursor.events.subscribe(eventID, EventEmitter.SUPER_ID, (buttonID) => {
+    this.cursor.events.on(eventID, (buttonID) => {
         const inputID = Client.BUTTON_MAP[buttonID];
 
         if(inputID !== undefined) {
             this.router.handleInput(prefixID, inputID);
         }
-    });
+    }, { permanent: true });
 }
 
 Client.prototype.update = function() {

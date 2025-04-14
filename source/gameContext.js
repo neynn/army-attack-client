@@ -1,6 +1,5 @@
 import { Client } from "./client/client.js";
 import { Cursor } from "./client/cursor.js";
-import { EventEmitter } from "./events/eventEmitter.js";
 import { SpriteManager } from "./sprite/spriteManager.js";
 import { UIManager } from "./ui/uiManager.js";
 import { StateMachine } from "./state/stateMachine.js";
@@ -36,15 +35,15 @@ export const GameContext = function() {
         this.renderer.update(this);
     }
 
-    this.renderer.events.subscribe(Renderer.EVENT.SCREEN_RESIZE, EventEmitter.SUPER_ID, (width, height) => {
+    this.renderer.events.on(Renderer.EVENT.SCREEN_RESIZE, (width, height) => {
         this.uiManager.onWindowResize(width, height);
-    });
+    }, { permanent: true });
 
-    this.client.cursor.events.subscribe(Cursor.EVENT.BUTTON_CLICK, EventEmitter.SUPER_ID, (buttonID, cursorX, cursorY) => {
+    this.client.cursor.events.on(Cursor.EVENT.BUTTON_CLICK, (buttonID, cursorX, cursorY) => {
         if(buttonID === Cursor.BUTTON.LEFT) {
             this.uiManager.onClick(cursorX, cursorY, this.client.cursor.radius);
         }
-    });
+    }, { permanent: true });
 }
 
 GameContext.prototype.exit = function() {
