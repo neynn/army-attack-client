@@ -1,48 +1,51 @@
-export const Timer = function() {
+export const Timer = function(targetFPS = 60) {
     this.tick = 0;
     this.realTime = 0;
     this.lastTime = 0;
     this.deltaTime = 0;
     this.accumulatedTime = 0;
-    this.rawFPS = Timer.VALUE.TARGET_FPS;
-    this.smoothFPS = Timer.VALUE.TARGET_FPS;
+    this.targetFPS = targetFPS;
+    this.fixedDeltaTime = 1 / targetFPS;
+    this.rawFPS = targetFPS;
+    this.smoothFPS = targetFPS;
     this.smoothFactor = 0.05;
-
-    this.updateProxy = (timestamp) => {
-        this.realTime = timestamp / 1000;
-        this.deltaTime = this.realTime - this.lastTime;
-        this.accumulatedTime += this.deltaTime;
-        this.rawFPS = 1 / this.deltaTime;
-        this.smoothFPS = (1 - this.smoothFactor) * this.smoothFPS + this.smoothFactor * this.rawFPS;
-
-        this.input();
-    
-        while(this.accumulatedTime > Timer.VALUE.FIXED_SPF) {
-            this.tick = ++this.tick % Timer.VALUE.FIXED_FPS;
-            this.accumulatedTime -= Timer.VALUE.FIXED_SPF;
-
-            this.update();
-        }
-    
-        this.render();
-    
-        this.lastTime = this.realTime;
-        this.queue();
-    }
 }
-
-Timer.VALUE = {
-    TARGET_FPS: 120,
-    FIXED_FPS: 60,
-    FIXED_SPF: 1 / 60
-};
 
 Timer.prototype.input = function() {}
 Timer.prototype.update = function() {}
 Timer.prototype.render = function() {}
 
+Timer.prototype.setFPS = function(targetFPS) {
+    this.targetFPS = targetFPS;
+    this.fixedDeltaTime = 1 / targetFPS;
+}
+
+Timer.prototype.nextFrame = function(timestamp) {
+    this.realTime = timestamp / 1000;
+    this.deltaTime = this.realTime - this.lastTime;
+    this.accumulatedTime += this.deltaTime;
+    this.rawFPS = 1 / this.deltaTime;
+    this.smoothFPS = (1 - this.smoothFactor) * this.smoothFPS + this.smoothFactor * this.rawFPS;
+
+    this.input();
+
+    while(this.accumulatedTime > this.fixedDeltaTime) {
+        this.tick = ++this.tick % this.targetFPS;
+        this.accumulatedTime -= this.fixedDeltaTime;
+
+        this.update();
+    }
+
+    this.render();
+
+    this.lastTime = this.realTime;
+    this.queue();
+}
+
 Timer.prototype.queue = function() {
-    requestAnimationFrame(this.updateProxy);
+    requestAnimationFrame((timestamp) => {
+        this.nextFrame(timestamp);
+    });
 }
 
 Timer.prototype.getFPS = function() {
@@ -62,7 +65,7 @@ Timer.prototype.getRealTime = function() {
 }
 
 Timer.prototype.getFixedDeltaTime = function() {
-    return Timer.VALUE.FIXED_SPF;
+    return this.fixedDeltaTime;
 }
 
 Timer.prototype.getDeltaTime = function() {

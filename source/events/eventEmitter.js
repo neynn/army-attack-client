@@ -30,12 +30,12 @@ EventEmitter.prototype.on = function(eventType, onCall, options) {
     const listener = this.listeners.get(eventType);
 
     if(!listener) {
-        return;
+        return Listener.ID.ERROR;
     }
 
     if(typeof onCall !== "function") {
         console.warn("onCall must be a function!");
-        return;
+        return Listener.ID.ERROR;
     }
 
     const observerType = listener.getType(options);
@@ -57,7 +57,7 @@ EventEmitter.prototype.unsubscribe = function(eventType, subscriberID) {
         return;
     }
 
-    listener.filterObservers((observer) => observer.subscriber !== subscriberID);
+    listener.filterObservers((observer) => observer.id !== subscriberID);
 }
 
 EventEmitter.prototype.unsubscribeAll = function(subscriberID) {
@@ -66,7 +66,7 @@ EventEmitter.prototype.unsubscribeAll = function(subscriberID) {
     }
 
     this.listeners.forEach((listener) => {
-        listener.filterObservers((observer) => observer.subscriber !== subscriberID);
+        listener.filterObservers((observer) => observer.id !== subscriberID);
     });
 }
 
@@ -77,12 +77,12 @@ EventEmitter.prototype.mute = function(eventType) {
         return;
     }
 
-    listener.filterObservers((observer) => observer.subscriber === Listener.ID.SUPER);
+    listener.filterObservers((observer) => observer.id === Listener.ID.SUPER);
 }
 
 EventEmitter.prototype.muteAll = function() {
     this.listeners.forEach((listener) => {
-        listener.filterObservers((observer) => observer.subscriber === Listener.ID.SUPER);
+        listener.filterObservers((observer) => observer.id === Listener.ID.SUPER);
     });
 }
 
@@ -93,17 +93,5 @@ EventEmitter.prototype.emit = function(eventType, ...args) {
         return;
     }
 
-    for(let i = 0; i < listener.observers.length; i++) {
-        const observer = listener.observers[i];
-
-        observer.onCall(...args);
-    }
-
-    for(let i = 0; i < listener.singleObservers.length; i++) {
-        const observer = listener.singleObservers[i];
-
-        observer.onCall(...args);
-    }
-
-    listener.singleObservers.length = 0;
+    listener.emit(args);
 }

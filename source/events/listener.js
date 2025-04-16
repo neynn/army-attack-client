@@ -6,7 +6,8 @@ export const Listener = function(type) {
 
 Listener.ID = {
     NEXT: 0,
-    SUPER: -1
+    SUPER: -1,
+    ERROR: -2
 };
 
 Listener.OBSERVER_TYPE = {
@@ -46,22 +47,34 @@ Listener.prototype.getID = function(options) {
     return Listener.ID.NEXT++;
 }
 
+Listener.prototype.emit = function(argsList) {
+    for(let i = 0; i < this.observers.length; i++) {
+        const observer = this.observers[i];
+
+        observer.onCall(...argsList);
+    }
+
+    for(let i = 0; i < this.singleObservers.length; i++) {
+        const observer = this.singleObservers[i];
+
+        observer.onCall(...argsList);
+    }
+
+    this.singleObservers.length = 0;
+}
+
 Listener.prototype.addObserver = function(type, id, onCall) {
     switch(type) {
         case Listener.OBSERVER_TYPE.SINGLE: {
-            this.singleObservers.push({
-                "subscriber": id,
-                "onCall": onCall
-            });
-
+            this.singleObservers.push({ "id": id, "onCall": onCall });
+            break;
+        }
+        case Listener.OBSERVER_TYPE.DEFAULT: {
+            this.observers.push({ "id": id, "onCall": onCall });
             break;
         }
         default: {
-            this.observers.push({
-                "subscriber": id,
-                "onCall": onCall
-            });
-
+            console.warn(`Unknown observer type! ${type}`);
             break; 
         }
     }
