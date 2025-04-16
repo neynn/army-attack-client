@@ -1,0 +1,12 @@
+{
+    "blue_infantry": { "id": "blue_infantry", "type": "Entity", "icon": "icon_units_infantry", "buyResource": "Money", "buyValue": 1500, "sellResouce": "Money", "sellValue": 150 },
+    "blue_elite_infantry": { "id": "blue_elite_infantry", "type": "Entity", "icon": "icon_units_premium_infantry", "buyResource": "Gold", "buyValue": 30, "sellResouce": "Money", "sellValue": 3000 },
+    "blue_tank": { "id": "blue_tank", "type": "Entity", "icon": "icon_units_apc", "buyResource": "Money", "buyValue": 5000, "sellResouce": "Money", "sellValue": 500 },
+    "blue_artillery": { "id": "blue_artillery", "type": "Entity", "icon": "icon_units_artillery", "buyResource": "Money", "buyValue": 10000, "sellResouce": "Money", "sellValue": 1000 },
+    "blue_battletank": { "id": "blue_battletank", "type": "Entity", "icon": "icon_units_battle_tank", "buyResource": "Money", "buyValue": 20000, "sellResouce": "Money", "sellValue": 2000 },
+    "blue_elite_battletank": { "id": "blue_elite_battletank", "type": "Entity", "icon": "icon_units_premium_tank", "buyResource": "Gold", "buyValue": 90, "sellResouce": "Money", "sellValue": 9000 },
+    "blue_commando": { "id": "blue_commando", "type": "Entity", "icon": "icon_units_special_forces", "buyResource": "Money", "buyValue": 22000, "sellResouce": "Money", "sellValue": 2200 },
+    "blue_elite_commando": { "id": "blue_elite_commando", "type": "Entity", "icon": "icon_units_premium_special_forces", "buyResource": "Gold", "buyValue": 500, "sellResouce": "Money", "sellValue": 50000 },
+    "blue_battery": { "id": "blue_battery", "type": "Entity", "icon": "icon_units_rocket_battery", "buyResource": "Money", "buyValue": 30000, "sellResouce": "Money", "sellValue": 3000 },
+    "blue_elite_battery": { "id": "blue_elite_battery", "type": "Entity", "icon": "icon_units_premium_rocket_battery", "buyResource": "Gold", "buyValue": 200, "sellResouce": "Money", "sellValue": 20000 }
+}

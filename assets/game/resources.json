@@ -1,0 +1,13 @@
+{
+    "Money": { "maxDrop": 50, "icon": "resource_icon_cash" },
+    "Gold": { "maxDrop": 1, "icon": "resource_icon_credits" },
+    "Energy": { "maxDrop": 1, "icon": "resource_icon_energy" },
+    "Supplies": { "maxDrop": 50, "icon": "resource_icon_supplies" },
+    "Water": { "maxDrop": 1, "icon": "resource_icon_water" },
+    "XP": { "maxDrop": 5, "icon": "resource_icon_xp" },
+    "Honor": { "maxDrop": 1, "icon": "resource_icon_honor" },
+    "PVP_XP": { "maxDrop": 5, "icon": "pvp_rank_icon" },
+    "SocialEnergy": { "maxDrop": 1, "icon": "resource_icon_social_energy" },
+    "Dollor": { "maxDrop": 1, "icon": "icon_dollor" },
+    "EnergyCounter": { "maxDrop": 0, "icon": null }
+}

@@ -1,0 +1,82 @@
+{
+    "Specials": {
+        "id": "Specials",
+        "name": null,
+        "tabType": "normal",
+        "items": []
+    },
+    "Units": {
+        "id": "Units",
+        "name": null,
+        "tabType": "normal",
+        "items": [
+            "blue_infantry", "blue_elite_infantry", "blue_tank", "blue_artillery",
+            "blue_battletank", "blue_elite_battletank", "blue_commando", "blue_elite_commando", 
+            "blue_battery", "blue_elite_battery"
+        ]
+    },
+    "Areas": {
+        "id": "Areas",
+        "name": null,
+        "tabType": "normal",
+        "items": [
+
+        ]
+    },
+    "Buildings": {
+        "id": "Buildings",
+        "name": null,
+        "tabType": "normal",
+        "items": [
+
+        ]
+    },
+    "Decos": {
+        "id": "Decos",
+        "name": null,
+        "tabType": "normal",
+        "items": [
+
+        ]
+    },
+    "Packs": {
+        "id": "Packs",
+        "name": null,
+        "tabType": "normal",
+        "items": [
+
+        ]
+    },
+    "Supplies": {
+        "id": "Supplies",
+        "name": null,
+        "tabType": "normal",
+        "items": [
+
+        ]
+    },
+    "Storage": {
+        "id": "Storage",
+        "name": null,
+        "tabType": "normal",
+        "items": [
+
+        ]
+    },
+    "BuyGold": {
+        "id": "BuyGold",
+        "name": null,
+        "tabType": "normal",
+        "items": [
+
+        ]
+    },
+    "BuyCash": {
+        "id": "BuyCash",
+        "name": null,
+        "tabType": "normal",
+        "items": [
+
+        ]
+    }
+}

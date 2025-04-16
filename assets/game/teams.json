@@ -1,0 +1,58 @@
+{
+    "Crimson": {
+        "name": "TEAM_NAME_CRIMSON",
+        "description": "TEAM_DESC_CRIMSON",
+        "alliances": {
+            "Crimson": "Ally",
+            "Allies": "Enemy",
+            "Neutral": "Neutral",
+            "Wrath": "Enemy"
+        },
+        "sprites": {
+            "stat_card": "unit_stat_card_bad",
+            "stat_card_small": "unit_stat_card_bad_small"  
+        }
+    },
+    "Allies": {
+        "name": "TEAM_NAME_ALLIES",
+        "description": "TEAM_DESC_ALLIES",
+        "alliances": {
+            "Crimson": "Enemy",
+            "Allies": "Ally",
+            "Neutral": "Neutral",
+            "Wrath": "Enemy"
+        },
+        "sprites": {
+            "stat_card": "unit_stat_card_good",
+            "stat_card_small": "unit_stat_card_good_small"
+        }
+    },
+    "Neutral": {
+        "name": "TEAM_NAME_NEUTRAL",
+        "description": "TEAM_DESC_NEUTRAL",
+        "alliances": {
+            "Crimson": "Neutral",
+            "Allies": "Neutral",
+            "Neutral": "Neutral",
+            "Wrath": "Neutral"
+        },
+        "sprites": {
+            "stat_card": "unit_stat_card_good",
+            "stat_card_small": "unit_stat_card_good_small"
+        }
+    },
+    "Wrath": {
+        "name": "TEAM_NAME_WRATH",
+        "description": "TEAM_DESC_WRATH",
+        "alliances": {
+            "Crimson": "Enemy",
+            "Allies": "Enemy", 
+            "Neutral": "Neutral",
+            "Wrath": "Ally"
+        },
+        "sprites": {
+            "stat_card": "unit_stat_card_bad",
+            "stat_card_small": "unit_stat_card_bad_small"  
+        }
+    }
+}

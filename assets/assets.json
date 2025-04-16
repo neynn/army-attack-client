@@ -5,10 +5,6 @@
     "network": { "directory": ["assets", "config"], "source": "network.json" },
     "tileMeta": { "directory": ["assets", "config"], "source": "tileMeta.json" },
 
-    "editor": { "directory": ["assets", "game"], "source": "editor.json" },
-    "mapTypes": { "directory": ["assets", "game"], "source": "mapTypes.json" },
-    "world": { "directory": ["assets", "game"], "source": "world.json" },
-
     "archetypes": { "directory": ["assets", "entity"], "source": "archetypes.json" },
     "entities": { "directory": ["assets", "entity"], "source": "entities.json" },
     "traits": { "directory": ["assets", "entity"], "source": "traits.json" },
@@ -19,5 +15,23 @@
     "music": { "directory": ["assets", "music"], "source": "music.json" },
     "sounds": { "directory": ["assets", "sounds"], "source": "sounds.json" },
     "sprites": { "directory": ["assets", "sprites"], "source": "sprites.json" },
-    "tiles": { "directory": ["assets", "tiles"], "source": "tiles.json" }
+    "tiles": { "directory": ["assets", "tiles"], "source": "tiles.json" },
+
+    "alliances": { "directory": ["assets", "game"], "source": "alliances.json" },
+    "collections": { "directory": ["assets", "game"], "source": "collections.json" },
+    "editor": { "directory": ["assets", "game"], "source": "editor.json" },
+    "entityTypes": { "directory": ["assets", "game"], "source": "entityTypes.json" },
+    "fireCalls": { "directory": ["assets", "game"], "source": "fireCalls.json" },
+    "items": { "directory": ["assets", "game"], "source": "items.json" },
+    "mapTypes": { "directory": ["assets", "game"], "source": "mapTypes.json" },
+    "objectives": { "directory": ["assets", "game"], "source": "objectives.json" },
+    "resources": { "directory": ["assets", "game"], "source": "resources.json" },
+    "settings": { "directory": ["assets", "game"], "source": "settings.json" },
+    "shopItems": { "directory": ["assets", "game"], "source": "shopItems.json" },
+    "shopTabs": { "directory": ["assets", "game"], "source": "shopTabs.json" },
+    "teams": { "directory": ["assets", "game"], "source": "teams.json" },
+    "teamTileConversion": { "directory": ["assets", "game"], "source": "teamTileConversion.json" },
+    "tileFormConditions": { "directory": ["assets", "game"], "source": "tileFormConditions.json" },
+    "tileTypes": { "directory": ["assets", "game"], "source": "tileTypes.json" },
+    "versus": { "directory": ["assets", "game"], "source": "versus.json" }
 }

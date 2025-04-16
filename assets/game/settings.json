@@ -1,0 +1,11 @@
+{
+    "tileWidth": 96,
+    "tileHeight": 96,
+    "drawBorder": true,
+    "drawAttackRange": false,
+    "maxQueueSize": 20,
+    "maxAttackRange": 5,
+    "hitDuration": 1,
+    "iconDuration": 1.8,
+    "downDuration": 10
+}

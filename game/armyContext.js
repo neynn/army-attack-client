@@ -45,9 +45,12 @@ export const ArmyContext = function() {
     this.entityTypes = {};
     this.teamTypes = {};
     this.tileTypes = {};
+    this.collectionTypes = {};
     this.allianceTypes = {};
     this.tileConversions = {};
     this.tileFormConditions = {};
+    this.fireCallTypes = {};
+
     this.playerID = null;
     this.modeID = ArmyContext.GAME_MODE.NONE;
 }
@@ -95,15 +98,17 @@ ArmyContext.prototype.getGameModeName = function() {
 }
 
 ArmyContext.prototype.init = function(resources) {
-    this.tileConversions = this.initConversions(resources.world["TeamTileConversion"]);
-    this.itemTypes = resources.world["ItemType"];
-    this.resourceTypes = resources.world["ResourceType"];
-    this.tileTypes = resources.world["TileType"];
-    this.teamTypes = resources.world["TeamType"];
-    this.entityTypes = resources.world["EntityType"];
-    this.allianceTypes = resources.world["AllianceType"];
-    this.tileFormConditions = resources.world["TileFormCondition"];
-    this.settings = resources.world["Settings"];
+    this.tileConversions = this.initConversions(resources.teamTileConversion);
+    this.itemTypes = resources.items;
+    this.teamTypes = resources.teams;
+    this.collectionTypes = resources.collections;
+    this.resourceTypes = resources.resources;
+    this.tileTypes = resources.tileTypes;
+    this.entityTypes = resources.entityTypes;
+    this.allianceTypes = resources.alliances;
+    this.fireCallTypes = resources.fireCalls;
+    this.tileFormConditions = resources.tileFormConditions;
+    this.settings = resources.settings;
     this.editorConfig = resources.editor;
 
     this.world.actionQueue.registerAction(ACTION_TYPES.DEATH, new DeathAction())

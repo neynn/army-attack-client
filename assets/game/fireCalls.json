@@ -1,0 +1,74 @@
+{
+    "Mortar": { 
+        "dimX": 1, "dimY": 1, "dimZ": 1,
+        "damage": 2,
+        "icon": "icon_mortar",
+        "sprites": {
+            "fire": "effect_death_explosion",
+            "cursor": "cursor_powerup"
+        },
+        "sounds": {
+            "fire": "sound_firemission_friendlyattack"
+        }
+    },
+    "Napalm": { 
+        "dimX": 3, "dimY": 1, "dimZ": 1,
+        "damage": 2,
+        "icon": "icon_napalm",
+        "sprites": {
+            "fire": "effect_death_explosion",
+            "cursor": "cursor_powerup_3x1"
+        },
+        "sounds": {
+            "fire": "sound_firemission_napalmstrike"
+        }
+    },
+    "Artillery": { 
+        "dimX": 2, "dimY": 2, "dimZ": 1,
+        "damage": 3,
+        "icon": "icon_artillery",
+        "sprites": {
+            "fire": "effect_death_explosion",
+            "cursor": "cursor_powerup_2x2"
+        },
+        "sounds": {
+            "fire": "sound_firemission_artillerystrike"
+        }
+    },
+    "Doomsday": { 
+        "dimX": 3, "dimY": 3, "dimZ": 1,
+        "damage": 6,
+        "icon": "icon_doomsday",
+        "sprites": {
+            "fire": "effect_death_explosion",
+            "cursor": "cursor_powerup_3x3"
+        },
+        "sounds": {
+            "fire": "sound_firemission_doomsday"
+        }
+    },
+    "OrbitalLaser": { 
+        "dimX": 1, "dimY": 1, "dimZ": 1,
+        "damage": 12,
+        "icon": "icon_beam",
+        "sprites": {
+            "fire": "effect_death_explosion",
+            "cursor": "cursor_powerup"
+        },
+        "sounds": {
+            "fire": "sound_firemission_doomsday"
+        }
+    },
+    "CarptetBomb": { 
+        "dimX": 6, "dimY": 1, "dimZ": 1,
+        "damage": 4,
+        "icon": "icon_bomb",
+        "sprites": {
+            "fire": "effect_death_explosion",
+            "cursor": "cursor_powerup_6x1"
+        },
+        "sounds": {
+            "fire": "sound_firemission_napalmstrike"
+        }
+    }
+}
