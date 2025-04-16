@@ -1,7 +1,4 @@
-import { ActionQueue } from "../source/action/actionQueue.js";
 import { GameContext } from "../source/gameContext.js";
-import { Socket } from "../source/network/socket.js";
-import { NETWORK_EVENTS } from "../source/network/events.js";
 import { ACTION_TYPES, GAME_EVENT } from "./enums.js";
 import { AttackAction } from "./actions/attackAction.js";
 import { MoveAction } from "./actions/moveAction.js";
@@ -37,6 +34,7 @@ import { EventBus } from "../source/events/eventBus.js";
 import { choiceMadeEvent, dropItemsEvent, skipTurnEvent } from "./clientEvents.js";
 import { DeathAction } from "./actions/deathAction.js";
 import { ArmyMap } from "./init/armyMap.js";
+import { Socket } from "../source/network/socket.js";
 
 export const ArmyContext = function() {
     GameContext.call(this);
@@ -143,19 +141,11 @@ ArmyContext.prototype.init = function(resources) {
     this.states.addState(ArmyContext.STATE.VERSUS_MODE, new VersusModeState());
     this.states.addState(ArmyContext.STATE.EDIT_MODE, new MapEditorState());
 
-    /* TODO: move to client
-    if(ArmyContext.DEBUG.LOG_SOCKET_EVENTS) {
-        this.client.socket.events.on(Socket.EVENT.CONNECTED_TO_SERVER, (socketID) => {
-            this.client.socket.emit(NETWORK_EVENTS.REGISTER, { "user-id": "neyn!" }, (response) => console.log(response));
-            console.log(`${socketID} is connected to the server!`);
-        }, { id: "DEBUG" });
-    
-        this.client.socket.events.on(Socket.EVENT.DISCONNECTED_FROM_SERVER, (reason) => {
-            console.log(`${reason} is disconnected from the server!`);
-        }, { id: "DEBUG" });
-    }
-    */
     this.switchState(ArmyContext.STATE.MAIN_MENU);
+
+    this.client.socket.events.on(Socket.EVENT.CONNECTED_TO_SERVER, (socketID) => {
+        this.client.socket.registerName("neyn!");
+    }, { once: true });
 }
 
 ArmyContext.prototype.setGameMode = function(modeID) {

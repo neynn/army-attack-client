@@ -10,13 +10,36 @@ export const Socket = function() {
     this.events.listen(Socket.EVENT.CONNECTED_TO_SERVER);
     this.events.listen(Socket.EVENT.DISCONNECTED_FROM_SERVER);
     this.events.listen(Socket.EVENT.MESSAGE_FROM_SERVER);
+
+    this.addDebug();
 }
+
+Socket.DEBUG = {
+    CONNECT: 1,
+    DISCONNECT: 1
+};
 
 Socket.EVENT = {
     CONNECTED_TO_SERVER: "CONNECTED_TO_SERVER",
     DISCONNECTED_FROM_SERVER: "DISCONNECTED_FROM_SERVER",
     MESSAGE_FROM_SERVER: "MESSAGE_FROM_SERVER"
 };
+
+Socket.prototype.registerName = function(userID) {
+    this.socket.emit(NETWORK_EVENTS.REGISTER, { "user-id": userID }, (response) => {
+        console.log(response);
+    });
+}
+
+Socket.prototype.addDebug = function() {
+    if(Socket.DEBUG.CONNECT) {
+        this.events.on(Socket.EVENT.CONNECTED_TO_SERVER, (socketID) => console.log(`${socketID} is connected to the server!`), { permanent: true });
+    }
+
+    if(Socket.DEBUG.DISCONNECT) {
+        this.events.on(Socket.EVENT.CONNECTED_TO_SERVER, (reason) => console.log(`${reason} is disconnected from the server!`), { permanent: true });
+    }
+}
 
 Socket.prototype.load = function(config) {
     if(!config) {
