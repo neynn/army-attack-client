@@ -1,12 +1,14 @@
 {
     "actions": { "directory": ["assets", "config"], "source": "actions.json" },
     "actors": { "directory": ["assets", "config"], "source": "actors.json" },
-    "editor": { "directory": ["assets", "config"], "source": "editor.json" },
     "interfaces": { "directory": ["assets", "config"], "source": "interfaces.json" },
     "network": { "directory": ["assets", "config"], "source": "network.json" },
     "tileMeta": { "directory": ["assets", "config"], "source": "tileMeta.json" },
-    "mapTypes": { "directory": ["assets", "config"], "source": "mapTypes.json" },
-    "world": { "directory": ["assets", "config"], "source": "world.json" },
+
+    "editor": { "directory": ["assets", "game"], "source": "editor.json" },
+    "mapTypes": { "directory": ["assets", "game"], "source": "mapTypes.json" },
+    "world": { "directory": ["assets", "game"], "source": "world.json" },
+
     "archetypes": { "directory": ["assets", "entity"], "source": "archetypes.json" },
     "entities": { "directory": ["assets", "entity"], "source": "entities.json" },
     "traits": { "directory": ["assets", "entity"], "source": "traits.json" },
