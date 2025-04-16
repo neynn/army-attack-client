@@ -134,7 +134,6 @@ Player.prototype.updateAttackers = function(gameContext) {
 
 Player.prototype.getOverlayID = function(gameContext, typeID) {
     const { tileManager } = gameContext;
-    const { meta } = tileManager; 
     const overlay = this.config.overlays[typeID];
 
     if(!overlay) {
@@ -142,7 +141,7 @@ Player.prototype.getOverlayID = function(gameContext, typeID) {
     }
 
     const { set, animation } = overlay;
-    const tileID = meta.getTileID(set, animation);
+    const tileID = tileManager.getTileID(set, animation);
 
     return tileID;
 }

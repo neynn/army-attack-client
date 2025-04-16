@@ -1,4 +1,3 @@
-import { Logger } from "../logger.js";
 import { Animation } from "./animation.js";
 
 export const SpriteSheet = function() {
@@ -6,22 +5,17 @@ export const SpriteSheet = function() {
     this.boundsY = 0;
     this.boundsW = 0;
     this.boundsH = 0;
-    this.frameTime = 1;
     this.animations = new Map();
 }
 
-SpriteSheet.DEFAULT_ANIMATION_ID = "default";
-
-SpriteSheet.prototype.getAnimations = function() {
-    return this.animations;
-}
+SpriteSheet.DEFAULT = {
+    FRAME_TIME: 1,
+    ANIMATION_ID: "default"
+};
 
 SpriteSheet.prototype.load = function(config) {
     const { bounds, frameTime, frames, animations } = config;
-
-    if(frameTime) {
-        this.frameTime = frameTime;
-    }
+    const defaultFrameTime = frameTime ?? SpriteSheet.DEFAULT.FRAME_TIME;
 
     if(bounds) {
         this.boundsX = bounds.x;
@@ -31,18 +25,26 @@ SpriteSheet.prototype.load = function(config) {
     }
 
     if(frames && animations) {
-        this.defineAnimations(animations, frames);
+        defineAnimations(animations, frames, defaultFrameTime, (id, animation) => this.animations.set(id, animation));
     }
 }
 
-SpriteSheet.prototype.createFrame = function(frameData) {
-    const frame = [];
+SpriteSheet.prototype.getAnimation = function(key) {
+    const animation = this.animations.get(key);
 
-    if(!frameData) {
-        Logger.log(Logger.CODE.ENGINE_WARN, "Frame does not exist!", "SpriteSheet.prototype.createFrame", { frameID });
-        return frame;
+    if(!animation) {
+        return null;
     }
 
+    return animation;
+}
+
+const createFrame = function(frameData) {
+    if(!frameData) {
+        return null;
+    }
+
+    const frame = [];
     const { x, y, w, h, offset } = frameData;
 
     const component = {
@@ -59,21 +61,14 @@ SpriteSheet.prototype.createFrame = function(frameData) {
     return frame;
 }
 
-SpriteSheet.prototype.addAnimation = function(animationID, animation) {
-    const frameCount = animation.getFrameCount();
-
-    if(frameCount < 1) {
-        Logger.log(Logger.CODE.ENGINE_WARN, "Animation has no frames!", "SpriteSheet.prototype.addAnimation", { animationID });
+const defineAnimations = function(animations, uniqueFrames, defaultFrameTime, onValid) {
+    if(typeof onValid !== "function") {
         return;
     }
 
-    this.animations.set(animationID, animation);
-}
-
-SpriteSheet.prototype.defineAnimations = function(animations, uniqueFrames) {
     for(const animationID in animations) {
         const { 
-            frameTime = this.frameTime,
+            frameTime = defaultFrameTime,
             frames = [] 
         } = animations[animationID];
 
@@ -84,24 +79,17 @@ SpriteSheet.prototype.defineAnimations = function(animations, uniqueFrames) {
         for(let i = 0; i < frames.length; i++) {
             const frameID = frames[i];
             const frameData = uniqueFrames[frameID];
+            const frame = createFrame(frameData);
 
-            if(frameData) {
-                const frame = this.createFrame(frameData);
-
-                animation.addFrame(frame);
-            }
+            animation.addFrame(frame);
         }
 
-        this.addAnimation(animationID, animation);
+        const frameCount = animation.getFrameCount();
+
+        if(frameCount !== 0) {
+            onValid(animationID, animation);
+        } else {
+            console.warn(`Animation ${animationID} has no frames!`);
+        }
     }
-}
-
-SpriteSheet.prototype.getAnimation = function(key) {
-    const animation = this.animations.get(key);
-
-    if(!animation) {
-        return this.animations.get(SpriteSheet.DEFAULT_ANIMATION_ID);
-    }
-
-    return animation;
 }

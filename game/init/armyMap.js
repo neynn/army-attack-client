@@ -149,8 +149,7 @@ ArmyMap.prototype.reload = function(gameContext) {
 
 ArmyMap.prototype.getAnimationForm = function(gameContext, tileID) {
     const { tileManager } = gameContext;
-    const { meta } = tileManager;
-    const tileMeta = meta.getMeta(tileID);
+    const tileMeta = tileManager.getMeta(tileID);
 
     if(!tileMeta) {
         return null;
@@ -174,7 +173,6 @@ ArmyMap.prototype.getAnimationForm = function(gameContext, tileID) {
 
 ArmyMap.prototype.updateShoreTiles = function(gameContext, tileX, tileY, range) {
     const { tileManager } = gameContext;
-    const { meta } = tileManager;
     const teamID = this.getTile(ArmyMap.LAYER.TEAM, tileX, tileY);
 
     this.updateArea(tileX, tileY, range, (index, nextX, nextY) => {
@@ -208,7 +206,7 @@ ArmyMap.prototype.updateShoreTiles = function(gameContext, tileX, tileY, range) 
 
         const conversionID = gameContext.getConversionID(groundID, teamID);
     
-        if(meta.hasMeta(conversionID)) {
+        if(tileManager.hasMeta(conversionID)) {
             this.placeTile(conversionID, ArmyMap.LAYER.GROUND, nextX, nextY);
         }
     });
@@ -216,7 +214,6 @@ ArmyMap.prototype.updateShoreTiles = function(gameContext, tileX, tileY, range) 
 
 ArmyMap.prototype.convertGraphicToTeam = function(gameContext, tileX, tileY) {
     const { tileManager } = gameContext;
-    const { meta } = tileManager;
 
     for(let i = 0; i < ArmyMap.CONVERTABLE_LAYERS.length; i++) {
         const layerID = ArmyMap.CONVERTABLE_LAYERS[i];
@@ -224,7 +221,7 @@ ArmyMap.prototype.convertGraphicToTeam = function(gameContext, tileX, tileY) {
         const teamID = this.getTile(ArmyMap.LAYER.TEAM, tileX, tileY);
         const conversionID = gameContext.getConversionID(tileID, teamID);
 
-        if(meta.hasMeta(conversionID)) {
+        if(tileManager.hasMeta(conversionID)) {
             this.placeTile(conversionID, layerID, tileX, tileY);
         }
     }
@@ -232,8 +229,7 @@ ArmyMap.prototype.convertGraphicToTeam = function(gameContext, tileX, tileY) {
 
 ArmyMap.prototype.updateBorder = function(gameContext, tileX, tileY, range) {
     const { tileManager } = gameContext;
-    const { meta } = tileManager;
-
+    
     if(!gameContext.settings.drawBorder) {
         return;
     }
@@ -248,7 +244,7 @@ ArmyMap.prototype.updateBorder = function(gameContext, tileX, tileY, range) {
         return;
     }
 
-    const autotiler = meta.getAutotilerByID(ArmyMap.AUTOTILER.BORDER);
+    const autotiler = tileManager.getAutotilerByID(ArmyMap.AUTOTILER.BORDER);
     const tileTypes = gameContext.tileTypes;
 
     this.updateArea(tileX, tileY, range, (index, nextX, nextY) => {

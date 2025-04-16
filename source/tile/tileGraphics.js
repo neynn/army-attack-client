@@ -1,11 +1,13 @@
-import { Logger } from "../logger.js";
 import { TileGraphic } from "./tileGraphic.js";
 
 export const TileGraphics = function() {
     this.graphics = [];
     this.dynamicGraphics = [];
-    this.frameTime = 1;
 }
+
+TileGraphics.DEFAULT = {
+    FRAME_TIME: 1
+};
 
 TileGraphics.BUFFER_THRESHOLD = {
     BIT_8: 256,
@@ -41,12 +43,11 @@ TileGraphics.prototype.update = function(timestamp) {
     }
 }
 
-TileGraphics.prototype.load = function(tileSheets, tileMeta) {
-    const { graphics } = tileMeta;
+TileGraphics.prototype.load = function(tileSheets, tileGraphics = []) {
     const usedSheets = new Set();
     
-    for(let i = 0; i < graphics.length; i++) {
-        const { set, animation } = graphics[i];
+    for(let i = 0; i < tileGraphics.length; i++) {
+        const { set, animation } = tileGraphics[i];
         const sheet = tileSheets[set];
 
         if(!sheet) {
@@ -54,7 +55,7 @@ TileGraphics.prototype.load = function(tileSheets, tileMeta) {
             continue;
         }
 
-        const animationObject = this.createGraphic(sheet, set, animation);
+        const animationObject = createGraphic(sheet, set, animation);
         const frameCount = animationObject.getFrameCount();
 
         if(frameCount === 0) {
@@ -73,35 +74,35 @@ TileGraphics.prototype.load = function(tileSheets, tileMeta) {
     return usedSheets;
 }
 
-TileGraphics.prototype.createGraphic = function(sheet, sheetID, graphicID) {
-    const { frames, patterns, animations } = sheet;
+const createGraphic = function(sheet, sheetID, graphicID) {
+    const { frames = {}, patterns = {}, animations = {} } = sheet;
     const animation = new TileGraphic(sheetID);
-    const frameData = frames?.[graphicID];
+    const frameData = frames[graphicID];
 
     if(frameData) {
-        const frame = this.createFrame(frameData);
+        const frame = createFrame(frameData);
 
-        animation.setFrameTime(this.frameTime);
+        animation.setFrameTime(TileGraphics.DEFAULT.FRAME_TIME);
         animation.addFrame(frame);
 
         return animation;
     } 
 
-    const patternData = patterns?.[graphicID];
+    const patternData = patterns[graphicID];
 
     if(patternData) {
-        const frame = this.createPatternFrame(patternData, frames);
+        const frame = createPatternFrame(patternData, frames);
 
-        animation.setFrameTime(this.frameTime);
+        animation.setFrameTime(TileGraphics.DEFAULT.FRAME_TIME);
         animation.addFrame(frame);
 
         return animation;
     }
 
-    const animationData = animations?.[graphicID];
+    const animationData = animations[graphicID];
 
     if(animationData) {
-        const frameTime = animationData.frameTime ?? this.frameTime;
+        const frameTime = animationData.frameTime ?? TileGraphics.DEFAULT.FRAME_TIME;
         const animationFrames = animationData.frames ?? [];
 
         animation.setFrameTime(frameTime);
@@ -111,12 +112,12 @@ TileGraphics.prototype.createGraphic = function(sheet, sheetID, graphicID) {
             const frameData = frames[frameID];
 
             if(frameData) {
-                const frame = this.createFrame(frameData);
+                const frame = createFrame(frameData);
 
                 animation.addFrame(frame);
             } else {
                 const patternData = patterns[frameID];
-                const frame = this.createPatternFrame(patternData, frames);
+                const frame = createPatternFrame(patternData, frames);
 
                 animation.addFrame(frame);
             }
@@ -128,7 +129,7 @@ TileGraphics.prototype.createGraphic = function(sheet, sheetID, graphicID) {
     return animation;
 }
 
-TileGraphics.prototype.createPatternFrame = function(pattern, frames) {
+const createPatternFrame = function(pattern, frames) {
     if(!pattern) {
         return [];
     }
@@ -140,8 +141,7 @@ TileGraphics.prototype.createPatternFrame = function(pattern, frames) {
         const frameData = frames[id];
 
         if(!frameData) {
-            Logger.log(Logger.CODE.ENGINE_WARN, "Frame does not exist!", "TileGraphics.prototype.createPatternFrame", { "frameID": id });
-
+            console.warn(`Frame ${id} does not exist!`);
             continue;
         }
 
@@ -162,9 +162,9 @@ TileGraphics.prototype.createPatternFrame = function(pattern, frames) {
     return frame;
 }
 
-TileGraphics.prototype.createFrame = function(frameData) {
+const createFrame = function(frameData) {
     if(!frameData) {
-        Logger.log(Logger.CODE.ENGINE_WARN, "FrameData does not exist!", "TileGraphics.prototype.createFrame");
+        console.warn("FrameData does not exist!");
         return [];
     }
 

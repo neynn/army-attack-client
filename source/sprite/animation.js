@@ -18,9 +18,11 @@ Animation.prototype.setFrameTime = function(frameTime = 1) {
 }
 
 Animation.prototype.addFrame = function(frame) {
-    if(frame.length > 0) {
-        this.frames.push(frame);
+    if(!frame || frame.length < 1) {
+        return;
     }
+
+    this.frames.push(frame);
 }
 
 Animation.prototype.getFrame = function(index) {

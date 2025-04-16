@@ -228,7 +228,7 @@ SpriteManager.prototype.removeSpriteFromLayers = function(spriteIndex) {
     }
 }
 
-SpriteManager.prototype.updateSprite = function(spriteIndex, typeID, animationID = SpriteSheet.DEFAULT_ANIMATION_ID) {
+SpriteManager.prototype.updateSprite = function(spriteIndex, typeID, animationID = SpriteSheet.DEFAULT.ANIMATION_ID) {
     const sprite = this.sprites.getReservedElement(spriteIndex);
     
     if(!sprite) {

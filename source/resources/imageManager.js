@@ -14,14 +14,19 @@ ImageManager.prototype.createImages = function(imageMeta) {
     for(const imageID in imageMeta) {
         const imageConfig = imageMeta[imageID];
         const { directory, source } = imageConfig;
-        const fileName = source ? source : `${imageID}${ImageManager.DEFAULT_IMAGE_TYPE}`;
-        const imagePath = PathHandler.getPath(directory, fileName);
 
-        if(!this.images.has(imageID)) {
-            const loadableImage = new LoadableImage(imagePath);
+        this.createImage(imageID, directory, source);
+    }
+}
 
-            this.images.set(imageID, loadableImage);
-        }
+ImageManager.prototype.createImage = function(imageID, directory, source) {
+    const fileName = source ? source : `${imageID}${ImageManager.DEFAULT_IMAGE_TYPE}`;
+    const imagePath = PathHandler.getPath(directory, fileName);
+
+    if(!this.images.has(imageID)) {
+        const loadableImage = new LoadableImage(imagePath);
+
+        this.images.set(imageID, loadableImage);
     }
 }
 

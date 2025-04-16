@@ -218,7 +218,6 @@ ArmyContext.prototype.setGameMode = function(modeID) {
 }
 
 ArmyContext.prototype.initConversions = function(teamConversions) {
-    const { meta } = this.tileManager;
     const updatedConversions = {};
 
     for(const teamID in teamConversions) {
@@ -229,14 +228,14 @@ ArmyContext.prototype.initConversions = function(teamConversions) {
             const set = sets[setID];
 
             for(const animationID in set) {
-                const tileID = meta.getTileID(setID, animationID);
+                const tileID = this.tileManager.getTileID(setID, animationID);
 
                 if(tileID === TileManager.TILE_ID.EMPTY) {
                     continue;
                 }
 
                 const [a, b] = set[animationID];
-                const convertedID = meta.getTileID(a, b);
+                const convertedID = this.tileManager.getTileID(a, b);
 
                 if(convertedID === TileManager.TILE_ID.EMPTY) {
                     continue;

@@ -12,7 +12,6 @@ MapEditorState.prototype.onEnter = function(stateMachine) {
     const gameContext = stateMachine.getContext();
     const { uiManager, tileManager, client } = gameContext;
     const { router } = client;
-    const { meta } = tileManager;
 
     this.mapEditor = new ArmyMapEditor();
     this.mapEditor.init(gameContext.editorConfig);
@@ -23,7 +22,7 @@ MapEditorState.prototype.onEnter = function(stateMachine) {
     router.on("TOGGLE_AUTOTILER", () => this.mapEditor.toggleAutotiling());
     
     this.mapEditor.initSlots(gameContext);
-    this.mapEditor.loadBrushSets(meta.getInversion());
+    this.mapEditor.loadBrushSets(tileManager.getInversion());
     this.mapEditor.initRenderEvents(gameContext);
     this.mapEditor.initCursorEvents(gameContext);
     this.mapEditor.initUIEvents(gameContext);

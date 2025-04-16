@@ -96,9 +96,8 @@ WorldMap.prototype.updateArea = function(tileX, tileY, range, onUpdate) {
 
 WorldMap.prototype.autotile = function(gameContext, tileX, tileY, layerID) {
     const { tileManager } = gameContext;
-    const { meta } = tileManager; 
     const tileID = this.getTile(layerID, tileX, tileY);
-    const autotiler = meta.getAutotilerByTile(tileID);
+    const autotiler = tileManager.getAutotilerByTile(tileID);
 
     if(!autotiler) {
         return;
