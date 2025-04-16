@@ -7,6 +7,7 @@ import { Timer } from "./timer.js";
 import { TileManager } from "./tile/tileManager.js";
 import { Renderer } from "./renderer.js";
 import { World } from "./world.js";
+import { LanguageHandler } from "./languageHandler.js";
 
 export const GameContext = function() {
     this.client = new Client();
@@ -15,6 +16,7 @@ export const GameContext = function() {
     this.tileManager = new TileManager();
     this.spriteManager = new SpriteManager();
     this.uiManager = new UIManager();
+    this.language = new LanguageHandler();
     this.states = new StateMachine(this);
     this.timer = new Timer();
     
