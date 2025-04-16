@@ -1,7 +1,6 @@
 import { Autotiler } from "../../source/tile/autotiler.js";
 import { WorldMap } from "../../source/map/worldMap.js";
 import { AllianceSystem } from "../systems/alliance.js";
-import { TileManager } from "../../source/tile/tileManager.js";
 
 export const ArmyMap = function() {
     WorldMap.call(this, null);
@@ -171,45 +170,6 @@ ArmyMap.prototype.getAnimationForm = function(gameContext, tileID) {
     }
 
     return animationForm;
-}
-
-ArmyMap.prototype.repaint = function(gameContext, tileX, tileY, layerID) {
-    this.updateArea(tileX, tileY, 1, (index, tileX, tileY) => {
-        this.autotile(gameContext, tileX, tileY, layerID);
-    });
-}
-
-ArmyMap.prototype.autotile = function(gameContext, tileX, tileY, layerID) {
-    const { tileManager } = gameContext;
-    const { meta } = tileManager; 
-    const tileID = this.getTile(layerID, tileX, tileY);
-    const autotiler = meta.getAutotilerByTile(tileID);
-
-    if(!autotiler) {
-        return;
-    }
-
-    this.updateArea(tileX, tileY, 1, (index, nextX, nextY) => {
-        const id = this.getTile(layerID, nextX, nextY);
-
-        if(!autotiler.hasMember(id)) {
-            return;
-        }
-
-        const responseID = autotiler.run(nextX, nextY, (x, y) => {
-            const nextID = this.getTile(layerID, x, y);
-
-            if(autotiler.hasMember(nextID) || nextID === null) {
-                return Autotiler.RESPONSE.VALID;
-            }
-
-            return Autotiler.RESPONSE.INVALID;
-        });
-
-        if(responseID !== TileManager.TILE_ID.EMPTY) {
-            this.placeTile(responseID, layerID, nextX, nextY);
-        }
-    });
 }
 
 ArmyMap.prototype.updateShoreTiles = function(gameContext, tileX, tileY, range) {

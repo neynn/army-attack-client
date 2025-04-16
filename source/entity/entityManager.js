@@ -1,3 +1,4 @@
+import { EventEmitter } from "../events/eventEmitter.js";
 import { FactoryOwner } from "../factory/factoryOwner.js";
 import { Logger } from "../logger.js";
 
@@ -9,7 +10,16 @@ export const EntityManager = function() {
     this.components = new Map();
     this.entityMap = new Map();
     this.entities = [];
+
+    this.events = new EventEmitter();
+    this.events.listen(EntityManager.EVENT.ENTITY_CREATE);
+    this.events.listen(EntityManager.EVENT.ENTITY_DESTROY);
 }
+
+EntityManager.EVENT = {
+    ENTITY_CREATE: "ENTITY_CREATE",
+    ENTITY_DESTROY: "ENTITY_DESTROY"
+};
 
 EntityManager.NEXT_ID = 0;
 EntityManager.INVALID_ID = -1;
@@ -30,6 +40,17 @@ EntityManager.prototype.load = function(traits, archetypes) {
 EntityManager.prototype.exit = function() {
     this.entities = [];
     this.entityMap.clear();
+}
+
+EntityManager.prototype.removeOwner = function(actorID) {
+    for(let i = 0; i < this.entities.length; i++) {
+        const entity = this.entities[i];
+        const ownerID = entity.getOwner();
+
+        if(ownerID === actorID) {
+            entity.setOwner(null);
+        }
+    }
 }
 
 EntityManager.prototype.registerComponent = function(componentID, component) {
@@ -153,12 +174,13 @@ EntityManager.prototype.createEntity = function(gameContext, config, externalID)
         return null;
     }
 
-    const entityID = externalID !== EntityManager.INVALID_ID ? externalID : EntityManager.NEXT_ID++;
+    const entityID = externalID !== undefined ? externalID : EntityManager.NEXT_ID++;
 
     entity.setID(entityID);
 
     this.entityMap.set(entityID, this.entities.length);
     this.entities.push(entity);
+    this.events.emit(EntityManager.EVENT.ENTITY_CREATE, entityID, entity);
 
     return entity;
 }
@@ -172,6 +194,7 @@ EntityManager.prototype.removeEntityAtIndex = function(index, entityID) {
     this.entityMap.delete(entityID);
     this.entities[index] = this.entities[swapEntityIndex];
     this.entities.pop();
+    this.events.emit(EntityManager.EVENT.ENTITY_DESTROY, entityID);
 }
 
 EntityManager.prototype.destroyEntity = function(entityID) {
@@ -179,7 +202,6 @@ EntityManager.prototype.destroyEntity = function(entityID) {
 
     if(index === undefined || index < 0 || index >= this.entities.length) {
         Logger.log(Logger.CODE.ENGINE_WARN, "Index is out of bounds!", "EntityManager.prototype.destroyEntity", { "id": entityID, "index": index });
-
         return -1;
     }
     
@@ -188,7 +210,6 @@ EntityManager.prototype.destroyEntity = function(entityID) {
 
     if(targetID === entityID) {
         this.removeEntityAtIndex(index, entityID);
-
         return entityID;
     }
 
@@ -198,7 +219,6 @@ EntityManager.prototype.destroyEntity = function(entityID) {
 
         if(currentID === entityID) {
             this.removeEntityAtIndex(i, entityID);
-
             return entityID;
         }
     }

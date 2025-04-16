@@ -5,9 +5,10 @@ export const ServerEvents = {};
 
 ServerEvents.instanceActor = function(gameContext, payload) {
     const { world } = gameContext;
+    const { turnManager } = world;
     const { actorID, actorSetup } = payload;
 
-    world.createActor(gameContext, actorSetup, actorID);
+    turnManager.createActor(gameContext, actorSetup, actorID);
 }
 
 ServerEvents.instanceEntityBatch = function(gameContext, payload) {
@@ -22,10 +23,11 @@ ServerEvents.instanceEntityBatch = function(gameContext, payload) {
 
 ServerEvents.instanceMapFromData = function(gameContext, payload) {
     const { client, world } = gameContext;
+    const { mapManager } = world;
     const { socket } = client;
     const { mapID, mapData } = payload;
 
-    world.createMap(gameContext, mapID, mapData);
+    mapManager.createMap(gameContext, mapID, mapData);
 
     socket.messageRoom(CLIENT_EVENTS.INSTANCE_MAP, {
         "success": true,
@@ -35,9 +37,10 @@ ServerEvents.instanceMapFromData = function(gameContext, payload) {
 
 ServerEvents.instanceMapFromID = async function(gameContext, payload) {
     const { client, world } = gameContext;
+    const { mapManager } = world;
     const { socket } = client;
     const { mapID } = payload;
-    const worldMap = await world.createMapByID(gameContext, mapID);
+    const worldMap = await mapManager.createMapByID(gameContext, mapID);
 
     if(!worldMap) {
         socket.messageRoom(CLIENT_EVENTS.INSTANCE_MAP, {

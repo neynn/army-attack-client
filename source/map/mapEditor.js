@@ -256,7 +256,7 @@ MapEditor.prototype.paint = function(gameContext, mapID, layerID) {
             }
 
             if(this.isAutotiling) {
-                gameMap.repaint(gameContext, j, i, layerID);
+                gameMap.updateAutotiler(gameContext, j, i, layerID);
             } else {
                 actionsTaken.push({
                     "layerID": layerID,

@@ -2,11 +2,11 @@ import { CameraContext } from "../../../source/camera/cameraContext.js";
 import { Cursor } from "../../../source/client/cursor.js";
 import { MapEditor } from "../../../source/map/mapEditor.js";
 import { UIElement } from "../../../source/ui/uiElement.js";
-import { World } from "../../../source/world.js";
 import { ArmyCamera } from "../../armyCamera.js";
 import { clampValue } from "../../../source/math/math.js";
 import { saveMap } from "../../../helpers.js";
 import { UIManager } from "../../../source/ui/uiManager.js";
+import { MapManager } from "../../../source/map/mapManager.js";
 
 export const ArmyMapEditor = function() {
     MapEditor.call(this);
@@ -149,7 +149,7 @@ ArmyMapEditor.prototype.initSlots = function(gameContext) {
 
 ArmyMapEditor.prototype.initCamera = function(gameContext) {
     const { world, renderer, client } = gameContext;
-
+    const { mapManager } = world;
     this.camera.unbindViewport();
     this.camera.loadTileDimensions(gameContext.settings.tileWidth, gameContext.settings.tileHeight)
 
@@ -157,7 +157,7 @@ ArmyMapEditor.prototype.initCamera = function(gameContext) {
     
     context.setPositionMode(CameraContext.POSITION_MODE.ORIGIN);
 
-    world.events.on(World.EVENT.MAP_CREATE, (worldMap) => {
+    mapManager.events.on(MapManager.EVENT.MAP_CREATE, (worldMap) => {
         const { width, height, music } = worldMap;
     
         this.camera.loadWorld(width, height);
@@ -170,7 +170,7 @@ ArmyMapEditor.prototype.initCamera = function(gameContext) {
     }, { id: this.id });
 
     context.events.on(CameraContext.EVENT.REMOVE, () => {
-        world.events.unsubscribe(World.EVENT.MAP_CREATE, this.id);
+        mapManager.events.unsubscribe(MapManager.EVENT.MAP_CREATE, this.id);
     }, { once: true });
 }
 
@@ -340,7 +340,7 @@ ArmyMapEditor.prototype.initUIEvents = function(gameContext) {
 
     editorInterface.addClick("BUTTON_LOAD", async () => {
         const mapID = prompt("MAP-ID?");
-        const worldMap = await world.createMapByID(gameContext, mapID);
+        const worldMap = await mapManager.createMapByID(gameContext, mapID);
 
         if(worldMap) {
             this.currentMapID = mapID;
@@ -420,12 +420,13 @@ ArmyMapEditor.prototype.initButtons = function(gameContext) {
 
 ArmyMapEditor.prototype.createNewMap = function(gameContext) {
     const { world } = gameContext;
+    const { mapManager } = world;
     const createNew = confirm("This will create and load a brand new map! Proceed?");
 
     if(createNew) {
         const mapID = `${Date.now()}`;
 
-        world.createMap(gameContext, mapID, ArmyMapEditor.DEFAULT_MAP);
+        mapManager.createMap(gameContext, mapID, ArmyMapEditor.DEFAULT_MAP);
 
         this.currentMapID = mapID;
     }

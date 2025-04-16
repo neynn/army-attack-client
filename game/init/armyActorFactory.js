@@ -2,11 +2,11 @@ import { CameraContext } from "../../source/camera/cameraContext.js";
 import { Cursor } from "../../source/client/cursor.js";
 import { Factory } from "../../source/factory/factory.js";
 import { SpriteManager } from "../../source/sprite/spriteManager.js";
-import { World } from "../../source/world.js";
 import { Player } from "../player/player.js";
 import { createStoryModeUI } from "../storyUI.js";
 import { OtherPlayer } from "./actors/otherPlayer.js";
 import { EnemyActor } from "./actors/enemyActor.js";
+import { MapManager } from "../../source/map/mapManager.js";
 
 export const ArmyActorFactory = function() {
     Factory.call(this, "ARMY_ACTOR_FACOTRY");
@@ -40,6 +40,7 @@ const addDragEvent = function(gameContext) {
 
 const initPlayerCamera = function(gameContext, camera) {
     const { world, renderer, client } = gameContext;
+    const { mapManager } = world;
     const context = renderer.createContext(Player.CAMERA_ID, camera);
 
     camera.loadTileDimensions(gameContext.settings.tileWidth, gameContext.settings.tileHeight);
@@ -47,7 +48,7 @@ const initPlayerCamera = function(gameContext, camera) {
     //context.initRenderer(640/2, 360/2);
     //context.setDisplayMode(CameraContext.DISPLAY_MODE.RESOLUTION_FIXED);
 
-    world.events.on(World.EVENT.MAP_CREATE, (worldMap) => {
+    mapManager.events.on(MapManager.EVENT.MAP_CREATE, (worldMap) => {
         const { width, height, music } = worldMap;
     
         camera.loadWorld(width, height);
@@ -60,7 +61,7 @@ const initPlayerCamera = function(gameContext, camera) {
     }, { id: Player.CAMERA_ID });
 
     context.events.on(CameraContext.EVENT.REMOVE, () => {
-        world.events.unsubscribe(World.EVENT.MAP_CREATE, Player.CAMERA_ID);
+        mapManager.events.unsubscribe(MapManager.EVENT.MAP_CREATE, Player.CAMERA_ID);
     }, { once: true });
 
     /*

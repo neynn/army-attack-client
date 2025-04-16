@@ -55,18 +55,26 @@ const loadEntitySprites = function(gameContext, entity) {
 
 SpawnSystem.createEntity = function(gameContext, config) {
     const { world } = gameContext;
+    const { entityManager, turnManager } = world;
 
     if(!config) {
         return null;
     }
     
     const { owner, id } = config;
-    const entity = world.createEntity(gameContext, config, owner, id);
+    const entity = entityManager.createEntity(gameContext, config, id);
 
     if(!entity) {
         return null;
     }
     
+    const entityID = entity.getID();
+
+    if(owner !== undefined && owner !== null) {
+        turnManager.addEntity(owner, entityID);
+        entity.setOwner(owner);
+    }
+
     loadEntitySprites(gameContext, entity);
 
     entity.placeOnMap(gameContext);
@@ -78,13 +86,13 @@ SpawnSystem.createEntity = function(gameContext, config) {
 
 SpawnSystem.destroyEntity = function(gameContext, entity) {
     const { world, spriteManager } = gameContext;
+    const { entityManager } = world;
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
     
     entity.removeFromMap(gameContext);
 
     spriteManager.destroySprite(spriteComponent.spriteID);
-
-    world.destroyEntity(entity.id);
+    entityManager.destroyEntity(entity.getID());
 
     unloadEntitySprites(gameContext, entity);
 }

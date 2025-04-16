@@ -1,10 +1,11 @@
 import { Logger } from "../logger.js";
 import { clampValue } from "../math/math.js";
+import { Autotiler } from "../tile/autotiler.js";
+import { TileManager } from "../tile/tileManager.js";
 import { Layer } from "./layer.js";
 import { Tracker } from "./tracker.js";
 
-export const WorldMap = function(id) {
-    this.id = id;
+export const WorldMap = function() {
     this.width = 0;
     this.height = 0;
     this.flags = 0;
@@ -40,7 +41,43 @@ WorldMap.prototype.saveLayers = function() {
     return layers;
 }
 
+WorldMap.prototype.updateAutotiler = function(gameContext, tileX, tileY, layerID) {
+    const startX = tileX - 1;
+    const startY = tileY - 1;
+    const endX = tileX + 1;
+    const endY = tileY + 1;
+
+    for(let i = startY; i <= endY; i++) {
+        for(let j = startX; j <= endX; j++) {
+            this.autotile(gameContext, j, i, layerID);
+        }
+    }
+}
+
+WorldMap.prototype.updateRect = function(tileX, tileY, width, height, onUpdate) {
+    if(typeof onUpdate !== "function") {
+        return;
+    }
+
+    const endX = tileX + width;
+    const endY = tileY + height;
+
+    for(let i = tileY; i <= endY; i++) {
+        const row = i * this.width;
+
+        for(let j = tileX; j <= endX; j++) {
+            const index = row + j;
+
+            onUpdate(index, j, i);
+        }
+    }
+}
+
 WorldMap.prototype.updateArea = function(tileX, tileY, range, onUpdate) {
+    if(typeof onUpdate !== "function") {
+        return;
+    }
+
     const startX = tileX - range;
     const startY = tileY - range;
     const endX = tileX + range;
@@ -57,8 +94,29 @@ WorldMap.prototype.updateArea = function(tileX, tileY, range, onUpdate) {
     }
 }
 
-WorldMap.prototype.setID = function(id) {
-    this.id = id;
+WorldMap.prototype.autotile = function(gameContext, tileX, tileY, layerID) {
+    const { tileManager } = gameContext;
+    const { meta } = tileManager; 
+    const tileID = this.getTile(layerID, tileX, tileY);
+    const autotiler = meta.getAutotilerByTile(tileID);
+
+    if(!autotiler) {
+        return;
+    }
+
+    const responseID = autotiler.run(tileX, tileY, (x, y) => {
+        const nextID = this.getTile(layerID, x, y);
+
+        if(autotiler.hasMember(nextID) || nextID === null) {
+            return Autotiler.RESPONSE.VALID;
+        }
+
+        return Autotiler.RESPONSE.INVALID;
+    });
+
+    if(responseID !== TileManager.TILE_ID.EMPTY) {
+        this.placeTile(responseID, layerID, tileX, tileY);
+    }
 }
 
 WorldMap.prototype.loadGraphics = function(background, foreground) {

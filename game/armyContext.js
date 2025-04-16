@@ -165,11 +165,7 @@ ArmyContext.prototype.init = function(resources) {
     }
 
     if(ArmyContext.DEBUG.LOG_WORLD_EVENTS) {
-        this.world.events.on(World.EVENT.ACTOR_CREATE, (actor) => console.log(actor, "HAS BEEN CREATED"), { id: "DEBUG" });
-        this.world.events.on(World.EVENT.ACTOR_DESTROY, (actor) => console.log(actor, "HAS BEEN DESTROYED"), { id: "DEBUG" });
-        this.world.events.on(World.EVENT.ENTITY_DESTROY, (entity) => console.log(entity, "HAS BEEN DESTROYED"), { id: "DEBUG" });
-        this.world.events.on(World.EVENT.ENTITY_CREATE, (entity) => console.log(entity, "HAS BEEN CREATED"), { id: "DEBUG" });
-        this.world.events.on(World.EVENT.MAP_CREATE, (worldMap) => console.log(worldMap, "HAS BEEN LOADED"), { id: "DEBUG" });
+
     }
 
     this.switchState(ArmyContext.STATE.MAIN_MENU);
@@ -294,11 +290,12 @@ ArmyContext.prototype.saveSnapshot = function() {
 
 ArmyContext.prototype.loadSnapshot = function(snapshot) {
     const { time, entities, actors } = snapshot;
+    const { turnManager } = this.world;
 
     for(let i = 0; i < actors.length; i++) {
         const actor = actors[i];
 
-        this.world.createActor(this, actor);
+        turnManager.createActor(this, actor, "ID");
     }
 
     for(const entity of entities) {

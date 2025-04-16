@@ -10,14 +10,14 @@ StoryModePlayState.prototype.constructor = StoryModePlayState;
 
 const initStoryMode = async function(gameContext) {
     const { world } = gameContext;
-    const { turnManager } = world;
+    const { turnManager, mapManager } = world;
 
-    const player = world.createActor(gameContext, {
+    const player = turnManager.createActor(gameContext, {
         "type": ArmyActorFactory.TYPE.PLAYER,
         "team": "Allies"
     }, ArmyActorFactory.TYPE.PLAYER);
 
-    const enemy = world.createActor(gameContext, {
+    const enemy = turnManager.createActor(gameContext, {
         "type": ArmyActorFactory.TYPE.ENEMY,
         "team": "Crimson"
     }, ArmyActorFactory.TYPE.ENEMY);
@@ -27,7 +27,7 @@ const initStoryMode = async function(gameContext) {
 
     turnManager.setActorOrder(gameContext, [ArmyActorFactory.TYPE.PLAYER, ArmyActorFactory.TYPE.ENEMY]);
 
-    const worldMap = await world.createMapByID(gameContext, "oasis");
+    const worldMap = await mapManager.createMapByID(gameContext, "oasis");
 
     if(!worldMap) {
         return false;
