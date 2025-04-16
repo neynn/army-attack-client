@@ -289,12 +289,12 @@ ActionQueue.prototype.registerAction = function(typeID, handler) {
     this.actionHandlers.set(typeID, handler);
 }
 
-ActionQueue.prototype.reset = function() {
+ActionQueue.prototype.exit = function() {
     this.immediateQueue.clear();
     this.executionQueue.clear();
-    this.clearCurrent();
     this.mode = ActionQueue.MODE.DIRECT;
     this.state = ActionQueue.STATE.ACTIVE;
+    this.clearCurrent();
 }
 
 ActionQueue.prototype.clearCurrent = function() {

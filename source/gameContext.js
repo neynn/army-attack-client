@@ -10,11 +10,11 @@ import { World } from "./world.js";
 
 export const GameContext = function() {
     this.client = new Client();
+    this.world = new World();
     this.renderer = new Renderer();
     this.tileManager = new TileManager();
     this.spriteManager = new SpriteManager();
     this.uiManager = new UIManager();
-    this.world = new World();
     this.states = new StateMachine(this);
     this.timer = new Timer();
     
@@ -47,7 +47,8 @@ export const GameContext = function() {
 
 GameContext.prototype.exit = function() {
     this.world.exit();
-    this.spriteManager.clear();
+    this.renderer.exit();
+    this.spriteManager.exit();
     this.uiManager.exit();
 }
 

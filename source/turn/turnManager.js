@@ -29,6 +29,13 @@ TurnManager.EVENT = {
 TurnManager.prototype = Object.create(FactoryOwner.prototype);
 TurnManager.prototype.constructor = TurnManager;
 
+TurnManager.prototype.exit = function() {
+    this.actors.clear();
+    this.actorOrder.length = 0;
+    this.actorIndex = -1;
+    this.actionsLeft = 0;
+}
+
 TurnManager.prototype.forAllActors = function(onCall) {
     if(typeof onCall !== "function") {
         return;
@@ -105,6 +112,8 @@ TurnManager.prototype.getNextActor = function(gameContext) {
         firstActor.onTurnStart(gameContext);   
 
         this.actionsLeft = firstActor.maxActions;
+
+        return firstActor;
     }
 
     const currentActorID = this.actorOrder[this.actorIndex];

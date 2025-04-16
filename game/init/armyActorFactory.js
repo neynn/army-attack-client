@@ -48,7 +48,7 @@ const initPlayerCamera = function(gameContext, camera) {
     //context.initRenderer(640/2, 360/2);
     //context.setDisplayMode(CameraContext.DISPLAY_MODE.RESOLUTION_FIXED);
 
-    mapManager.events.on(MapManager.EVENT.MAP_CREATE, (worldMap) => {
+    mapManager.events.on(MapManager.EVENT.MAP_CREATE, (mapID, worldMap) => {
         const { width, height, music } = worldMap;
     
         camera.loadWorld(width, height);

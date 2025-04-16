@@ -1,4 +1,3 @@
-import { Logger } from "../logger.js";
 import { ImageManager } from "../resources/imageManager.js";
 import { TileGraphics } from "./tileGraphics.js";
 import { Autotiler } from "./autotiler.js";
@@ -17,7 +16,7 @@ TileManager.TILE_ID = {
 
 TileManager.prototype.load = function(tileSheets, tileMeta) {
     if(!tileSheets) {
-        Logger.log(false, "TileSheets cannot be undefined!", "TileManager.prototype.load", null);
+        console.warn("TileSheets do not exist!");
         return;
     }
 
@@ -115,7 +114,7 @@ TileManager.prototype.getAutotilerByTile = function(tileID) {
     return autotiler;
 }
 
-const createInversion = function(values) {
+const createInversion = function(values = []) {
     const inversion = {};
 
     for(let i = 0; i < values.length; i++) {

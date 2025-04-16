@@ -88,7 +88,7 @@ UIManager.prototype.update = function(gameContext) {
 }
 
 UIManager.prototype.exit = function() {
-    this.interfaceStack = [];
+    this.interfaceStack.length = 0;
 }
 
 UIManager.prototype.onClick = function(mouseX, mouseY, mouseRange) {

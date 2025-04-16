@@ -13,6 +13,11 @@ EventBus.STATUS = {
     NOT_EMITABLE: 1
 };
 
+EventBus.prototype.exit = function() {
+    this.events.clear();
+    this.emitable.clear();
+}
+
 EventBus.prototype.clear = function() {
     this.events.clear();
 }
@@ -46,6 +51,10 @@ EventBus.prototype.remove = function(eventID) {
 }
 
 EventBus.prototype.on = function(eventID, onEvent) {
+    if(typeof onEvent !== "function") {
+        return;
+    }
+    
     const eventList = this.events.get(eventID);
 
     if(!eventList) {

@@ -36,6 +36,10 @@ Renderer.FPS_COLOR = {
     GOOD: "#00ff00"
 };
 
+Renderer.prototype.exit = function() {
+    this.contexts.length = 0;
+}
+
 Renderer.prototype.getContext = function(contextID) {
     for(let i = 0; i < this.contexts.length; i++) {
         const context = this.contexts[i];

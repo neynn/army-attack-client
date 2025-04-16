@@ -113,11 +113,7 @@ Autotiler.prototype.loadType = function(type) {
     }
 }
 
-Autotiler.prototype.loadMembers = function(tileManager, members) {
-    if(!members) {
-        return;
-    }
-
+Autotiler.prototype.loadMembers = function(tileManager, members = []) {
     for(let i = 0; i < members.length; i++) {
         const { set, animation } = members[i];
         const tileID = tileManager.getTileID(set, animation);
@@ -128,11 +124,7 @@ Autotiler.prototype.loadMembers = function(tileManager, members) {
     }
 }
 
-Autotiler.prototype.loadValues = function(tileManager, values) {
-    if(!values) {
-        return;
-    }
-
+Autotiler.prototype.loadValues = function(tileManager, values = {}) {
     const indexList = Object.keys(values);
 
     for(let i = 0; i < indexList.length; i++) {

@@ -1,7 +1,6 @@
 import { ActionQueue } from "../source/action/actionQueue.js";
 import { GameContext } from "../source/gameContext.js";
 import { Socket } from "../source/network/socket.js";
-import { World } from "../source/world.js";
 import { NETWORK_EVENTS } from "../source/network/events.js";
 import { ACTION_TYPES, GAME_EVENT } from "./enums.js";
 import { AttackAction } from "./actions/attackAction.js";
@@ -59,10 +58,7 @@ ArmyContext.prototype = Object.create(GameContext.prototype);
 ArmyContext.prototype.constructor = ArmyContext;
 
 ArmyContext.DEBUG = {
-    SHOW_INVALID_MOVE_TILES: true,
-    LOG_WORLD_EVENTS: true,
-    LOG_SOCKET_EVENTS: true,
-    LOG_QUEUE_EVENTS: true
+    SHOW_INVALID_MOVE_TILES: true
 };
 
 ArmyContext.FACTORY = {
@@ -146,13 +142,8 @@ ArmyContext.prototype.init = function(resources) {
     this.states.addState(ArmyContext.STATE.STORY_MODE, new StoryModeState());
     this.states.addState(ArmyContext.STATE.VERSUS_MODE, new VersusModeState());
     this.states.addState(ArmyContext.STATE.EDIT_MODE, new MapEditorState());
-    
-    if(ArmyContext.DEBUG.LOG_QUEUE_EVENTS) {
-        this.world.actionQueue.events.on(ActionQueue.EVENT.QUEUE_ERROR, (error) => console.log(error), { id: "DEBUG" });
-        this.world.actionQueue.events.on(ActionQueue.EVENT.EXECUTION_RUNNING, (item) => console.log(item, "IS PROCESSING"), { id: "DEBUG" });
-        this.world.actionQueue.events.on(ActionQueue.EVENT.EXECUTION_ERROR,  (request) => console.log(request, "IS INVALID"), { id: "DEBUG" });
-    }
 
+    /* TODO: move to client
     if(ArmyContext.DEBUG.LOG_SOCKET_EVENTS) {
         this.client.socket.events.on(Socket.EVENT.CONNECTED_TO_SERVER, (socketID) => {
             this.client.socket.emit(NETWORK_EVENTS.REGISTER, { "user-id": "neyn!" }, (response) => console.log(response));
@@ -163,11 +154,7 @@ ArmyContext.prototype.init = function(resources) {
             console.log(`${reason} is disconnected from the server!`);
         }, { id: "DEBUG" });
     }
-
-    if(ArmyContext.DEBUG.LOG_WORLD_EVENTS) {
-
-    }
-
+    */
     this.switchState(ArmyContext.STATE.MAIN_MENU);
 }
 

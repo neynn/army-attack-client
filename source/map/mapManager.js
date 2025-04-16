@@ -10,9 +10,11 @@ export const MapManager = function() {
     this.loadedMaps = new Map();
     this.activeMapID = null;
     this.resources = new JSONManager();
+    this.resources.enableCache();
 
     this.events = new EventEmitter();
     this.events.listen(MapManager.EVENT.MAP_CREATE);
+    this.events.listen(MapManager.EVENT.MAP_DESTROY);
 }
 
 MapManager.EVENT = {
@@ -46,7 +48,7 @@ MapManager.prototype.createMap = function(gameContext, mapID, mapData) {
 
     this.addMap(mapID, worldMap);
     this.updateActiveMap(mapID);
-    this.events.emit(MapManager.EVENT.MAP_CREATE, worldMap);
+    this.events.emit(MapManager.EVENT.MAP_CREATE, mapID, worldMap);
 
     return worldMap;
 }
@@ -154,7 +156,7 @@ MapManager.prototype.getLoadedMap = function(mapID) {
     return loadedMap;
 }
 
-MapManager.prototype.clearAll = function() {
+MapManager.prototype.exit = function() {
     this.loadedMaps.clear();
     this.activeMapID = null;
 }

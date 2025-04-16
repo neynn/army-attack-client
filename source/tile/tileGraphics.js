@@ -61,12 +61,12 @@ TileGraphics.prototype.load = function(tileSheets, tileGraphics = []) {
         if(frameCount === 0) {
             this.graphics.push(null);
         } else {
-            this.graphics.push(animationObject);
-
             if(frameCount > 1) {
                 this.dynamicGraphics.push(i);
             }
 
+            this.graphics.push(animationObject);
+            
             usedSheets.add(set);
         }
     }

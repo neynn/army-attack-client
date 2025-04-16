@@ -43,6 +43,6 @@ MainMenuState.prototype.onExit = function(stateMachine) {
     const { uiManager, spriteManager } = gameContext;
 
     uiManager.unparseUI("MAIN_MENU");
-    spriteManager.clear();
+    spriteManager.exit();
     gameContext.addDebug();
 }

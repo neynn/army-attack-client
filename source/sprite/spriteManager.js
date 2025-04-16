@@ -62,7 +62,7 @@ SpriteManager.prototype.update = function(gameContext) {
     this.timestamp = realTime;
 }
 
-SpriteManager.prototype.clear = function() {
+SpriteManager.prototype.exit = function() {
     this.sprites.freeAll();
 
     for(let i = 0; i < this.layers.length; i++) {

@@ -157,7 +157,7 @@ ArmyMapEditor.prototype.initCamera = function(gameContext) {
     
     context.setPositionMode(CameraContext.POSITION_MODE.ORIGIN);
 
-    mapManager.events.on(MapManager.EVENT.MAP_CREATE, (worldMap) => {
+    mapManager.events.on(MapManager.EVENT.MAP_CREATE, (mapID, worldMap) => {
         const { width, height, music } = worldMap;
     
         this.camera.loadWorld(width, height);

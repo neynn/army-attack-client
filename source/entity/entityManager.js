@@ -21,8 +21,10 @@ EntityManager.EVENT = {
     ENTITY_DESTROY: "ENTITY_DESTROY"
 };
 
-EntityManager.NEXT_ID = 0;
-EntityManager.INVALID_ID = -1;
+EntityManager.ID = {
+    NEXT: 0,
+    INVALID: -1
+};
 
 EntityManager.prototype = Object.create(FactoryOwner.prototype);
 EntityManager.prototype.constructor = EntityManager;
@@ -38,8 +40,8 @@ EntityManager.prototype.load = function(traits, archetypes) {
 }
 
 EntityManager.prototype.exit = function() {
-    this.entities = [];
     this.entityMap.clear();
+    this.entities = [];
 }
 
 EntityManager.prototype.removeOwner = function(actorID) {
@@ -174,7 +176,7 @@ EntityManager.prototype.createEntity = function(gameContext, config, externalID)
         return null;
     }
 
-    const entityID = externalID !== undefined ? externalID : EntityManager.NEXT_ID++;
+    const entityID = externalID !== undefined ? externalID : EntityManager.ID.NEXT++;
 
     entity.setID(entityID);
 
@@ -202,7 +204,7 @@ EntityManager.prototype.destroyEntity = function(entityID) {
 
     if(index === undefined || index < 0 || index >= this.entities.length) {
         Logger.log(Logger.CODE.ENGINE_WARN, "Index is out of bounds!", "EntityManager.prototype.destroyEntity", { "id": entityID, "index": index });
-        return -1;
+        return EntityManager.ID.INVALID;
     }
     
     const entity = this.entities[index];
@@ -224,6 +226,5 @@ EntityManager.prototype.destroyEntity = function(entityID) {
     }
 
     Logger.log(Logger.CODE.ENGINE_WARN, "Entity does not exist!", "EntityManager.prototype.destroyEntity", { "id": entityID, "index": index });
-
-    return -1;
+    return EntityManager.ID.INVALID;
 }
