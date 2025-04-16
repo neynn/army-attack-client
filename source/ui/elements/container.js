@@ -6,7 +6,7 @@ export const Container = function(DEBUG_NAME) {
     UIElement.call(this, DEBUG_NAME);
 
     this.outline = new Outline();
-    this.outline.color.setColor(255, 255, 255, 1);
+    this.outline.color.setColorRGBA(255, 255, 255, 1);
     this.outline.enable();
 } 
 

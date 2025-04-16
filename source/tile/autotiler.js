@@ -113,14 +113,14 @@ Autotiler.prototype.loadType = function(type) {
     }
 }
 
-Autotiler.prototype.loadMembers = function(tileMeta, members) {
+Autotiler.prototype.loadMembers = function(tileManager, members) {
     if(!members) {
         return;
     }
 
     for(let i = 0; i < members.length; i++) {
         const { set, animation } = members[i];
-        const tileID = tileMeta.getTileID(set, animation);
+        const tileID = tileManager.getTileID(set, animation);
 
         if(tileID !== TileManager.TILE_ID.EMPTY) {
             this.members.add(tileID);
@@ -128,7 +128,7 @@ Autotiler.prototype.loadMembers = function(tileMeta, members) {
     }
 }
 
-Autotiler.prototype.loadValues = function(tileMeta, values) {
+Autotiler.prototype.loadValues = function(tileManager, values) {
     if(!values) {
         return;
     }
@@ -144,7 +144,7 @@ Autotiler.prototype.loadValues = function(tileMeta, values) {
         }
 
         const { set, animation } = value;
-        const tileID = tileMeta.getTileID(set, animation);
+        const tileID = tileManager.getTileID(set, animation);
 
         this.values[index] = tileID;
     }

@@ -1,7 +1,11 @@
 export const Color = function() {
-    this.rgb = new Uint8Array(3);
+    this.r = 0;
+    this.g = 0;
+    this.b = 0;
     this.alpha = 0;
 }
+
+Color.LENGTH = 256;
 
 Color.FORMAT = {
     NONE: 0,
@@ -12,55 +16,54 @@ Color.FORMAT = {
 };
 
 Color.prototype.setColorRGB = function(r = 0, g = 0, b = 0) {
-    this.rgb[0] = r;
-    this.rgb[1] = g;
-    this.rgb[2] = b;
+    this.r = r % Color.LENGTH;
+    this.g = g % Color.LENGTH;
+    this.b = b % Color.LENGTH;
 }
 
-Color.prototype.setColor = function(r = 0, g = 0, b = 0, a = 0) {
-    this.rgb[0] = r;
-    this.rgb[1] = g;
-    this.rgb[2] = b;
+Color.prototype.setColorRGBA = function(r = 0, g = 0, b = 0, a = 0) {
+    this.r = r % Color.LENGTH;
+    this.g = g % Color.LENGTH;
+    this.b = b % Color.LENGTH;
     this.alpha = a;
 }
 
 Color.prototype.setColorArray = function(color) {
     if(!Array.isArray(color)) {
-        this.setColor(0, 0, 0, 0);
+        this.setColorRGBA(0, 0, 0, 0);
         return;
     }
 
     switch(color.length) {
         case Color.FORMAT.R: {
             const [r] = color;
-            this.setColor(r, 0, 0, 1);
+            this.setColorRGBA(r, 0, 0, 1);
             break;
         }
         case Color.FORMAT.RG: {
             const [r, g] = color;
-            this.setColor(r, g, 0, 1);
+            this.setColorRGBA(r, g, 0, 1);
             break;
         }
         case Color.FORMAT.RGB: {
             const [r, g, b] = color;
-            this.setColor(r, g, b, 1);
+            this.setColorRGBA(r, g, b, 1);
             break;
         }
         case Color.FORMAT.RGBA: {
             const [r, g, b, a] = color;
-            this.setColor(r, g, b, a);
+            this.setColorRGBA(r, g, b, a);
             break;
         }
         default: {
-            this.setColor(0, 0, 0, 0);
+            this.setColorRGBA(0, 0, 0, 0);
             break;
         }
     }
 }
 
 Color.prototype.getRGBAString = function() {
-    const [r, g, b] = this.rgb;
-    const rgbaString = `rgba(${r}, ${g}, ${b}, ${this.alpha})`;
+    const rgbaString = `rgba(${this.r}, ${this.g}, ${this.b}, ${this.alpha})`;
 
     return rgbaString;
 }

@@ -9,7 +9,6 @@ import { Renderer } from "./renderer.js";
 import { World } from "./world.js";
 
 export const GameContext = function() {
-    this.id = "GAME_CONTEXT";
     this.client = new Client();
     this.renderer = new Renderer();
     this.tileManager = new TileManager();
@@ -91,19 +90,10 @@ GameContext.prototype.getMouseTile = function() {
     return mouseTile;
 }
 
-GameContext.prototype.clearEvents = function() {
-    this.client.cursor.events.unsubscribeAll(this.id);
-    this.client.keyboard.events.unsubscribeAll(this.id);
-    this.client.socket.events.unsubscribeAll(this.id);
-    this.renderer.events.unsubscribeAll(this.id);
-    this.world.actionQueue.events.unsubscribeAll(this.id);
-}
-
 GameContext.prototype.switchState = function(stateID) {
     if(!this.states.hasState(stateID)) {
         return;
     }
 
-    this.clearEvents();
     this.states.setNextState(stateID);
 }

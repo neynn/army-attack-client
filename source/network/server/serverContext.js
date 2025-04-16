@@ -6,35 +6,34 @@ import { Logger } from "../../logger.js";
 
 export const ServerContext = function(io) {
     this.io = io;
-    this.events = new EventEmitter();
-    this.clientManager = new ClientManager();
-    this.roomManager = new RoomManager();
-
-    this.events.listen(ServerContext.EVENT_CONNECT);
-    this.events.listen(ServerContext.EVENT_DISCONNECT);
-
-    this.initializeEvents();
     this.io.on('connection', (socket) => this.handleConnect(socket));
+
+    this.roomManager = new RoomManager();
+    this.clientManager = new ClientManager();
+
+    this.events = new EventEmitter();
+    this.events.listen(ServerContext.EVENT.CONNECT);
+    this.events.listen(ServerContext.EVENT.DISCONNECT);
+
+    this.events.on(ServerContext.EVENT.CONNECT, (socket) => console.log(`${socket.id} has connected to the server!`), { permanent: true });
+    this.events.on(ServerContext.EVENT.DISCONNECT, (clientID) => console.log(`${clientID} has disconnected from the server!`), { permanent: true });
+    this.roomManager.events.on(RoomManager.EVENT.ROOM_OPENED, (roomID) => console.log(`Room ${roomID} has been opened!`), { permanent: true });
+    this.roomManager.events.on(RoomManager.EVENT.ROOM_CLOSED, (roomID) => console.log(`Room ${roomID} has been closed!`), { permanent: true });
+    this.roomManager.events.on(RoomManager.EVENT.CLIENT_JOINED, (clientID, roomID) => this.sendRoomUpdate(clientID, roomID), { permanent: true });
+    this.roomManager.events.on(RoomManager.EVENT.CLIENT_LEFT, (clientID, roomID) => this.sendRoomUpdate(clientID, roomID), { permanent: true });
+    this.roomManager.events.on(RoomManager.EVENT.CLIENT_LEADER, (clientID, roomID) => this.sendRoomUpdate(clientID, roomID), { permanent: true });
+    this.roomManager.events.on(RoomManager.EVENT.MESSAGE_RECEIVED, (roomID, messengerID, message) => console.log(`Message received! ${roomID, messengerID}`), { permanent: true });
+    this.roomManager.events.on(RoomManager.EVENT.MESSAGE_LOST, (roomID, messengerID, message) => `Message lost! ${roomID, messengerID}`, { permanent: true });
+    this.roomManager.events.on(RoomManager.EVENT.MESSAGE_SEND, (clientID, message) => this.io.to(clientID).emit(NETWORK_EVENTS.MESSAGE, message), { permanent: true });
+    this.roomManager.events.on(RoomManager.EVENT.MESSAGE_BROADCAST, (roomID, message) => this.io.in(roomID).emit(NETWORK_EVENTS.MESSAGE, message), { permanent: true });
+    this.clientManager.events.on(ClientManager.EVENT.CLIENT_CREATE, (clientID) => console.log(`${clientID} has been created!`), { permanent: true });
+    this.clientManager.events.on(ClientManager.EVENT.CLIENT_DELETE, (clientID) => console.log(`${clientID} has been removed!`), { permanent: true });
+    this.clientManager.events.on(ClientManager.EVENT.USER_ID_ADDED, (clientID, userID) => console.log(`${clientID} is now named ${userID}!`), { permanent: true });
 }
 
-ServerContext.EVENT_CONNECT = 0;
-ServerContext.EVENT_DISCONNECT = 1;
-
-ServerContext.prototype.initializeEvents = function() {
-    this.events.on(ServerContext.EVENT_CONNECT, (socket) => console.log(`${socket.id} has connected to the server!`), { permanent: true });
-    this.events.on(ServerContext.EVENT_DISCONNECT, (clientID) => console.log(`${clientID} has disconnected from the server!`), { permanent: true });
-    this.roomManager.events.on(RoomManager.EVENT_ROOM_OPENED, (roomID) => console.log(`Room ${roomID} has been opened!`), { permanent: true });
-    this.roomManager.events.on(RoomManager.EVENT_ROOM_CLOSED, (roomID) => console.log(`Room ${roomID} has been closed!`), { permanent: true });
-    this.roomManager.events.on(RoomManager.EVENT_CLIENT_JOINED, (clientID, roomID) => this.sendRoomUpdate(clientID, roomID), { permanent: true });
-    this.roomManager.events.on(RoomManager.EVENT_CLIENT_LEFT, (clientID, roomID) => this.sendRoomUpdate(clientID, roomID), { permanent: true });
-    this.roomManager.events.on(RoomManager.EVENT_CLIENT_LEADER, (clientID, roomID) => this.sendRoomUpdate(clientID, roomID), { permanent: true });
-    this.roomManager.events.on(RoomManager.EVENT_MESSAGE_RECEIVED, (roomID, messengerID, message) => console.log(`Message received! ${roomID, messengerID}`), { permanent: true });
-    this.roomManager.events.on(RoomManager.EVENT_MESSAGE_LOST, (roomID, messengerID, message) => `Message lost! ${roomID, messengerID}`, { permanent: true });
-    this.roomManager.events.on(RoomManager.EVENT_MESSAGE_SEND, (clientID, message) => this.io.to(clientID).emit(NETWORK_EVENTS.MESSAGE, message), { permanent: true });
-    this.roomManager.events.on(RoomManager.EVENT_MESSAGE_BROADCAST, (roomID, message) => this.io.in(roomID).emit(NETWORK_EVENTS.MESSAGE, message), { permanent: true });
-    this.clientManager.events.on(ClientManager.EVENT_CLIENT_CREATE, (clientID) => console.log(`${clientID} has been created!`), { permanent: true });
-    this.clientManager.events.on(ClientManager.EVENT_CLIENT_DELETE, (clientID) => console.log(`${clientID} has been removed!`), { permanent: true });
-    this.clientManager.events.on(ClientManager.EVENT_USERID_ADDED, (clientID, userID) => console.log(`${clientID} is now named ${userID}!`), { permanent: true });
+ServerContext.EVENT = {
+    "CONNECT": "CONNECT",
+    "DISCONNECT": "DISCONNECT"
 }
 
 ServerContext.prototype.sendRoomUpdate = function(clientID, roomID) {
@@ -49,13 +48,13 @@ ServerContext.prototype.sendRoomUpdate = function(clientID, roomID) {
 ServerContext.prototype.handleConnect = function(socket) {
     this.registerNetworkEvents(socket);
     this.clientManager.createClient(socket);
-    this.events.emit(ServerContext.EVENT_CONNECT, socket);
+    this.events.emit(ServerContext.EVENT.CONNECT, socket);
 }
 
 ServerContext.prototype.handleDisconnect = function(clientID) {
     this.handleRoomLeave(clientID);
     this.clientManager.destroyClient(clientID);
-    this.events.emit(ServerContext.EVENT_DISCONNECT, clientID);
+    this.events.emit(ServerContext.EVENT.DISCONNECT, clientID);
 }
 
 ServerContext.prototype.handleRoomLeave = function(clientID) {
@@ -63,7 +62,6 @@ ServerContext.prototype.handleRoomLeave = function(clientID) {
 
     if(!client) {
         Logger.log(false, "Client does not exist!", "NETWORK_EVENTS.LEAVE_ROOM_REQUEST", { clientID });
-
         return false;
     }
 
@@ -71,7 +69,6 @@ ServerContext.prototype.handleRoomLeave = function(clientID) {
 
     if(roomID === null) {
         Logger.log(false, "Client is not in a room!", "NETWORK_EVENTS.LEAVE_ROOM_REQUEST", { clientID, roomID });
-
         return false;
     }
 
@@ -93,7 +90,6 @@ ServerContext.prototype.handleRoomCreate = async function(clientID, roomType) {
 
     if(!client) {
         Logger.log(false, "Client does not exist!", "NETWORK_EVENTS.CREATE_ROOM_REQUEST", null, { clientID });
-
         return false;
     }
 
@@ -101,7 +97,6 @@ ServerContext.prototype.handleRoomCreate = async function(clientID, roomType) {
 
     if(clientRoomID !== null) {
         Logger.log(false, "Client is already in room!", "NETWORK_EVENTS.CREATE_ROOM_REQUEST", { clientID, clientRoomID });
-
         return false;
     }
 
@@ -109,7 +104,6 @@ ServerContext.prototype.handleRoomCreate = async function(clientID, roomType) {
 
     if(!room) {
         Logger.log(false, "Room was not created!", "NETWORK_EVENTS.CREATE_ROOM_REQUEST", { roomType });
-
         return false;
     }
 
@@ -137,7 +131,6 @@ ServerContext.prototype.handleRoomJoin = function(clientID, roomID) {
 
     if(!client) {
         Logger.log(false, "Client does not exist!", "NETWORK_EVENTS.JOIN_ROOM_REQUEST", { clientID });
-
         return false;
     }
 
@@ -145,7 +138,6 @@ ServerContext.prototype.handleRoomJoin = function(clientID, roomID) {
 
     if(clientRoomID !== null) {
         Logger.log(false, "Client is already in room!", "NETWORK_EVENTS.JOIN_ROOM_REQUEST", { clientID, clientRoomID});
-
         return false;
     }
 
@@ -153,7 +145,6 @@ ServerContext.prototype.handleRoomJoin = function(clientID, roomID) {
 
     if(!isJoinable) {
         Logger.log(false, "Room is not joinable!", "NETWORK_EVENTS.JOIN_ROOM_REQUEST", { clientID, roomID });
-
         return false;
     }
 
@@ -171,7 +162,6 @@ ServerContext.prototype.handleRoomMessage = function(clientID, message) {
 
     if(!client) {
         Logger.log(false, "Client does not exist!", "NETWORK_EVENTS.MESSAGE_ROOM_REQUEST", { clientID });
-
         return false;
     }
 
@@ -179,7 +169,6 @@ ServerContext.prototype.handleRoomMessage = function(clientID, message) {
 
     if(clientRoomID === null) {
         Logger.log(false, "Client is not in a room!", "NETWORK_EVENTS.MESSAGE_ROOM_REQUEST", { clientID });
-
         return false;
     }
     
@@ -195,9 +184,4 @@ ServerContext.prototype.registerNetworkEvents = function(socket) {
     socket.on(NETWORK_EVENTS.JOIN_ROOM_REQUEST, (roomID, request) => request(this.handleRoomJoin(socket.id, roomID)));
     socket.on(NETWORK_EVENTS.LEAVE_ROOM_REQUEST, (request) => request(this.handleRoomLeave(socket.id)));
     socket.on(NETWORK_EVENTS.MESSAGE_ROOM_REQUEST, (message, request) => request(this.handleRoomMessage(socket.id, message)));
-}
-
-ServerContext.prototype.start = function() {
-    this.roomManager.start();
-    this.clientManager.start();
 }

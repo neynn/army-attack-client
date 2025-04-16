@@ -12,8 +12,8 @@ export const Button = function(DEBUG_NAME) {
     this.highlight = new Outline();
     this.outline = new Outline();
 
-    this.highlight.color.setColor(200, 200, 200, 0.25);
-    this.outline.color.setColor(255, 255, 255, 1);
+    this.highlight.color.setColorRGBA(200, 200, 200, 0.25);
+    this.outline.color.setColorRGBA(255, 255, 255, 1);
     this.outline.enable();
 
     this.events = new EventEmitter();

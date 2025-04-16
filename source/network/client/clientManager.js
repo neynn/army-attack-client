@@ -4,18 +4,17 @@ import { Client } from "./client.js";
 
 export const ClientManager = function() {
     this.clients = new Map();
+
     this.events = new EventEmitter();
-    this.events.listen(ClientManager.EVENT_CLIENT_CREATE);
-    this.events.listen(ClientManager.EVENT_CLIENT_DELETE);
-    this.events.listen(ClientManager.EVENT_USERID_ADDED);
+    this.events.listen(ClientManager.EVENT.CLIENT_CREATE);
+    this.events.listen(ClientManager.EVENT.CLIENT_DELETE);
+    this.events.listen(ClientManager.EVENT.USER_ID_ADDED);
 }
 
-ClientManager.EVENT_CLIENT_CREATE = 0;
-ClientManager.EVENT_CLIENT_DELETE = 1;
-ClientManager.EVENT_USERID_ADDED = 2;
-
-ClientManager.prototype.start = function() {
-    
+ClientManager.EVENT = {
+    "CLIENT_CREATE": "CLIENT_CREATE",
+    "CLIENT_DELETE": "CLIENT_DELETE",
+    "USER_ID_ADDED": "USER_ID_ADDED"
 }
 
 ClientManager.prototype.exit = function() {
@@ -29,7 +28,7 @@ ClientManager.prototype.destroyClient = function(clientID) {
     }
 
     this.clients.delete(clientID);
-    this.events.emit(ClientManager.EVENT_CLIENT_DELETE, clientID);
+    this.events.emit(ClientManager.EVENT.CLIENT_DELETE, clientID);
 
     return true;
 }
@@ -49,7 +48,7 @@ ClientManager.prototype.createClient = function(socket) {
     const client = new Client(clientID, socket);
 
     this.clients.set(clientID, client);
-    this.events.emit(ClientManager.EVENT_CLIENT_CREATE, clientID);
+    this.events.emit(ClientManager.EVENT.CLIENT_CREATE, clientID, client);
 
     return client;
 }
@@ -59,13 +58,12 @@ ClientManager.prototype.addUserID = function(clientID, userID) {
 
     if(!client) {
         Logger.log(false, "Client does not exist!", "ClientManager.prototype.addUserID", { clientID, userID });
-
         return false;
     }
 
     client.setUserID(userID);
 
-    this.events.emit(ClientManager.EVENT_USERID_ADDED, clientID, userID);
+    this.events.emit(ClientManager.EVENT.USER_ID_ADDED, clientID, userID);
 
     return true;
 }

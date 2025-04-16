@@ -1,42 +1,42 @@
 import { EventEmitter } from "../../events/eventEmitter.js";
-import { IDGenerator } from "../../idGenerator.js";
 import { Logger } from "../../logger.js";
 import { Member } from "./member.js";
 
 export const RoomManager = function() {
     this.rooms = new Map();
-    this.events = new EventEmitter();
-    this.idGenerator = new IDGenerator("@ROOM");
     this.roomTypes = {};
 
-    this.events.listen(RoomManager.EVENT_ROOM_OPENED);
-    this.events.listen(RoomManager.EVENT_ROOM_CLOSED);
-    this.events.listen(RoomManager.EVENT_CLIENT_JOINED);
-    this.events.listen(RoomManager.EVENT_CLIENT_LEFT);
-    this.events.listen(RoomManager.EVENT_CLIENT_LEADER);
-    this.events.listen(RoomManager.EVENT_MESSAGE_RECEIVED);
-    this.events.listen(RoomManager.EVENT_MESSAGE_LOST);
-    this.events.listen(RoomManager.EVENT_MESSAGE_SEND);
-    this.events.listen(RoomManager.EVENT_MESSAGE_BROADCAST);
+    this.events = new EventEmitter();
+    this.events.listen(RoomManager.EVENT.ROOM_OPENED);
+    this.events.listen(RoomManager.EVENT.ROOM_CLOSED);
+    this.events.listen(RoomManager.EVENT.CLIENT_JOINED);
+    this.events.listen(RoomManager.EVENT.CLIENT_LEFT);
+    this.events.listen(RoomManager.EVENT.CLIENT_LEADER);
+    this.events.listen(RoomManager.EVENT.MESSAGE_RECEIVED);
+    this.events.listen(RoomManager.EVENT.MESSAGE_LOST);
+    this.events.listen(RoomManager.EVENT.MESSAGE_SEND);
+    this.events.listen(RoomManager.EVENT.MESSAGE_BROADCAST);
 }
 
-RoomManager.EVENT_ROOM_OPENED = 0;
-RoomManager.EVENT_ROOM_CLOSED = 1;
-RoomManager.EVENT_CLIENT_JOINED = 2;
-RoomManager.EVENT_CLIENT_LEFT = 3;
-RoomManager.EVENT_CLIENT_LEADER = 4;
-RoomManager.EVENT_MESSAGE_RECEIVED = 5;
-RoomManager.EVENT_MESSAGE_LOST = 6;
-RoomManager.EVENT_MESSAGE_SEND = 7;
-RoomManager.EVENT_MESSAGE_BROADCAST = 8;
+RoomManager.ID = {
+    NEXT: 0
+};
 
-RoomManager.prototype.start = function() {
-    this.idGenerator.startGenerator();
-}
+RoomManager.EVENT = {
+    ROOM_OPENED: "ROOM_OPENED",
+    ROOM_CLOSED: "ROOM_CLOSED",
+    CLIENT_JOINED: "CLIENT_JOINED",
+    CLIENT_LEFT: "CLIENT_LEFT",
+    CLIENT_LEADER: "CLIENT_LEADER",
+    MESSAGE_RECEIVED: "MESSAGE_RECEIVED",
+    MESSAGE_LOST: "MESSAGE_LOST",
+    MESSAGE_SEND: "MESSAGE_SEND",
+    MESSAGE_BROADCAST: "MESSAGE_BROADCAST"
+};
 
 RoomManager.prototype.exit = function() {
     this.rooms.clear();
-    this.idGenerator.reset();
+    RoomManager.ID.NEXT = 0;
 }
 
 RoomManager.prototype.getRoom = function(roomID) {
@@ -61,7 +61,7 @@ RoomManager.prototype.registerRoomType = function(typeID, object) {
 
 RoomManager.prototype.processMessage = function(roomID, messengerID, message) {
     if(!message || !message.type || !message.payload) {
-        this.events.emit(RoomManager.EVENT_MESSAGE_LOST, roomID, messengerID, message);
+        this.events.emit(RoomManager.EVENT.MESSAGE_LOST, roomID, messengerID, message);
 
         return false;
     }
@@ -69,14 +69,14 @@ RoomManager.prototype.processMessage = function(roomID, messengerID, message) {
     const room = this.rooms.get(roomID);
 
     if(!room) {
-        this.events.emit(RoomManager.EVENT_MESSAGE_LOST, roomID, messengerID, message);
+        this.events.emit(RoomManager.EVENT.MESSAGE_LOST, roomID, messengerID, message);
 
         return false;
     }
 
     room.processMessage(messengerID, message);
 
-    this.events.emit(RoomManager.EVENT_MESSAGE_RECEIVED, roomID, messengerID, message);
+    this.events.emit(RoomManager.EVENT.MESSAGE_RECEIVED, roomID, messengerID, message);
 
     return true;
 }
@@ -88,16 +88,16 @@ RoomManager.prototype.createRoom = async function(typeID) {
         return null;
     }
 
-    const roomID = this.idGenerator.getID();
+    const roomID = RoomManager.ID.NEXT++;
     const room = new RoomType(roomID);
 
     await room.init();
     
-    room.onMessageSend = (message, clientID) => this.events.emit(RoomManager.EVENT_MESSAGE_SEND, clientID, message);
-    room.onMessageBroadcast = (message) => this.events.emit(RoomManager.EVENT_MESSAGE_BROADCAST, roomID, message);
+    room.onMessageSend = (message, clientID) => this.events.emit(RoomManager.EVENT.MESSAGE_SEND, clientID, message);
+    room.onMessageBroadcast = (message) => this.events.emit(RoomManager.EVENT.MESSAGE_BROADCAST, roomID, message);
 
     this.rooms.set(roomID, room);
-    this.events.emit(RoomManager.EVENT_ROOM_OPENED, roomID);
+    this.events.emit(RoomManager.EVENT.ROOM_OPENED, roomID);
     
     return room;
 }
@@ -119,7 +119,7 @@ RoomManager.prototype.appointLeader = function(roomID, clientID) {
 
     room.setLeader(clientID);
 
-    this.events.emit(RoomManager.EVENT_CLIENT_LEADER, clientID, roomID);
+    this.events.emit(RoomManager.EVENT.CLIENT_LEADER, clientID, roomID);
 
     return true;
 }
@@ -174,7 +174,7 @@ RoomManager.prototype.addClientToRoom = function(clientID, clientName, roomID) {
 
     room.addMember(clientID, member);
 
-    this.events.emit(RoomManager.EVENT_CLIENT_JOINED, clientID, roomID);
+    this.events.emit(RoomManager.EVENT.CLIENT_JOINED, clientID, roomID);
 
     return true;
 }
@@ -196,7 +196,7 @@ RoomManager.prototype.removeClientFromRoom = function(clientID, roomID) {
 
     room.removeMember(clientID);
 
-    this.events.emit(RoomManager.EVENT_CLIENT_LEFT, clientID, roomID);
+    this.events.emit(RoomManager.EVENT.CLIENT_LEFT, clientID, roomID);
 
     if(room.isEmpty()) {
         this.destroyRoom(roomID);
@@ -221,10 +221,10 @@ RoomManager.prototype.destroyRoom = function(roomID) {
 
     this.rooms.delete(roomID);
     
-    this.events.emit(RoomManager.EVENT_ROOM_CLOSED, roomID);
+    this.events.emit(RoomManager.EVENT.ROOM_CLOSED, roomID);
 
     if(this.rooms.size === 0) {
-        this.idGenerator.reset();
+        RoomManager.ID.NEXT = 0;
     }
 
     return true;

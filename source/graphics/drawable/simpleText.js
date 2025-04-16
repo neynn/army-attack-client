@@ -6,7 +6,7 @@ export const SimpleText = function() {
 
     this.style = new TextStyle();
     this.text = "SAMPLE TEXT";
-    this.style.color.setColor(238, 238, 238, 1);
+    this.style.color.setColorRGBA(238, 238, 238, 1);
 }
 
 SimpleText.prototype = Object.create(Graph.prototype);
