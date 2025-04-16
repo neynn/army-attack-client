@@ -116,9 +116,7 @@ const createStatCard = function(gameContext, entity) {
 }
 
 CardSystem.generateStatCard = function(gameContext, entity) {
-    const entityType = gameContext.entityTypes[entity.config.archetype];
-
-    if((entityType && entityType.disableCard) || entity.config.disableCard) {
+    if(entity.config.disableCard) {
         return;
     }
 

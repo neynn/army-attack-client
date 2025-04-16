@@ -33,5 +33,15 @@
         "name": "ARCH_NAME_DECO",
         "description": "ARCH_DESC_DECO",
         "components": {}
+    },
+    "Town": {
+        "name": "ARCH_NAME_TOWN",
+        "description": "ARCH_DESC_TOWN",
+        "components": {}
+    },
+    "HFE": {
+        "name": "ARCH_NAME_HFE",
+        "description": "ARCH_DESC_HFE",
+        "components": {}
     }
 }

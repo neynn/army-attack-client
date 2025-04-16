@@ -150,6 +150,7 @@ Player.prototype.addNodeOverlays = function(gameContext, nodeList) {
     const { world } = gameContext;
     const enableTileID = this.getOverlayID(gameContext, Player.OVERLAY_TYPE.ENABLE);
     const attackTileID = this.getOverlayID(gameContext, Player.OVERLAY_TYPE.ATTACK);
+    const showInvalidTiles = gameContext.settings.debug.showInvalidMoveTiles;
 
     this.camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.MOVE);
 
@@ -158,7 +159,7 @@ Player.prototype.addNodeOverlays = function(gameContext, nodeList) {
         const { positionX, positionY } = node;
 
         if(state !== PathfinderSystem.NODE_STATE.VALID) {
-            if(ArmyContext.DEBUG.SHOW_INVALID_MOVE_TILES) {
+            if(showInvalidTiles) {
                 this.camera.addToOverlay(ArmyCamera.OVERLAY_TYPE.MOVE, attackTileID, positionX, positionY);
             }
 
@@ -363,7 +364,7 @@ Player.prototype.onSelectedClick = function(gameContext, tileX, tileY) {
         const success = this.queueAttack(gameContext, mouseEntity);
 
         if(!success) {
-            soundPlayer.playSound("sound_error", 0.5); 
+            soundPlayer.play("sound_error", 0.5); 
         }
     } else {
         const request = actionQueue.createRequest(ACTION_TYPES.MOVE, this.selectedEntityID, tileX, tileY);

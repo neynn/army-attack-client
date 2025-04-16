@@ -10,7 +10,7 @@ const RESOURCE_PATH = {
 
 const gameContext = new ArmyContext();
 const resourceManager = new ResourceManager();
-const resources = await resourceManager.loadResources(ResourceManager.MODE.PRODUCTION, RESOURCE_PATH.DEV, RESOURCE_PATH.PROD);
+const resources = await resourceManager.loadResources(ResourceManager.MODE.DEVELOPER, RESOURCE_PATH.DEV, RESOURCE_PATH.PROD);
 
 //saveSprites(resources.sprites);
 gameContext.loadResources(resources);

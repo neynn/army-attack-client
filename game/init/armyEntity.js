@@ -157,7 +157,7 @@ ArmyEntity.prototype.playSound = function(gameContext, soundType) {
     const soundID = this.config.sounds[soundType];
 
     if(soundID) {
-        soundPlayer.playRandom(soundID);
+        soundPlayer.play(soundID);
     }
 }
 

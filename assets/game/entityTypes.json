@@ -1,9 +1,0 @@
-{
-    "Building": { "disableCard": false },
-    "Construction": { "disableCard": false },
-    "Deco": { "disableCard": false },
-    "Defense": { "disableCard": false },
-    "HFE": { "disableCard": false },
-    "Town": { "disableCard": false },
-    "Unit": { "disableCard": false }
-}

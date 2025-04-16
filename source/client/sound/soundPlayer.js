@@ -114,18 +114,25 @@ SoundPlayer.prototype.getRandomSoundID = function(soundList) {
     return soundList[randomIndex];
 }
 
-SoundPlayer.prototype.playRandom = async function(soundList, volume) {
-    if(!soundList || soundList.length === 0) {
-        return;
+SoundPlayer.prototype.play = async function(sounds, volume) {
+    switch(typeof sounds) {
+        case "string": {
+            this.playSound(sounds, volume);
+            break;
+        }
+        case "object": {
+            const soundID = this.getRandomSoundID(sounds);
+
+            if(soundID) {
+                this.playSound(soundID, volume);
+            }
+            break;
+        }
+        default: {
+            console.warn("Unknown input!");
+            break;
+        }
     }
-
-    const soundID = this.getRandomSoundID(soundList);
-
-    if(!soundID) {
-        return;
-    }
-
-    this.playSound(soundID, volume);
 }
 
 SoundPlayer.prototype.playSound = async function(audioID, volume = this.volume) {

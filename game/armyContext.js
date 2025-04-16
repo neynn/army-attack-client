@@ -42,7 +42,6 @@ export const ArmyContext = function() {
     this.settings = {};
     this.itemTypes = {};
     this.resourceTypes = {};
-    this.entityTypes = {};
     this.teamTypes = {};
     this.tileTypes = {};
     this.collectionTypes = {};
@@ -57,10 +56,6 @@ export const ArmyContext = function() {
 
 ArmyContext.prototype = Object.create(GameContext.prototype);
 ArmyContext.prototype.constructor = ArmyContext;
-
-ArmyContext.DEBUG = {
-    SHOW_INVALID_MOVE_TILES: true
-};
 
 ArmyContext.FACTORY = {
     MAP: "MAP",
@@ -104,7 +99,6 @@ ArmyContext.prototype.init = function(resources) {
     this.collectionTypes = resources.collections;
     this.resourceTypes = resources.resources;
     this.tileTypes = resources.tileTypes;
-    this.entityTypes = resources.entityTypes;
     this.allianceTypes = resources.alliances;
     this.fireCallTypes = resources.fireCalls;
     this.tileFormConditions = resources.tileFormConditions;

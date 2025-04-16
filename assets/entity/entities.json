@@ -226,9 +226,9 @@
             "weapon": "effect_explosion_sequence"
         },
         "sounds": {
-            "fire": ["sound_blue_commando_fire"],
-            "death": ["sound_blue_commando_death"],
-            "move": ["sound_soldier_move"],
+            "fire": "sound_blue_commando_fire",
+            "death": "sound_blue_commando_death",
+            "move": "sound_soldier_move",
             "select": ["sound_commando_select_long", "sound_commando_select_short1", "sound_commando_select_short2", "sound_commando_select_short3", "sound_commando_select_short4"]
         }
     },
