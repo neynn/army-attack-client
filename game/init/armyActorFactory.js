@@ -2,7 +2,7 @@ import { CameraContext } from "../../source/camera/cameraContext.js";
 import { Cursor } from "../../source/client/cursor.js";
 import { Factory } from "../../source/factory/factory.js";
 import { SpriteManager } from "../../source/sprite/spriteManager.js";
-import { Player } from "../player/player.js";
+import { Player } from "../init/actors/player/player.js";
 import { createStoryModeUI } from "../storyUI.js";
 import { OtherPlayer } from "./actors/otherPlayer.js";
 import { EnemyActor } from "./actors/enemyActor.js";
@@ -86,11 +86,9 @@ ArmyActorFactory.prototype.onCreate = function(gameContext, config) {
     switch(type) {
         case ArmyActorFactory.TYPE.PLAYER: {
             const actor = new Player();
-            const actorSprite = spriteManager.createSprite("cursor_attack_1x1", SpriteManager.LAYER.UI);
-            const spriteID = actorSprite.getIndex();
 
             actor.inventory.init(gameContext);
-            actor.spriteID = spriteID;
+            actor.hover.createSprite(gameContext);
             actor.teamID = team ?? null;
             actor.setConfig(actorType);
             

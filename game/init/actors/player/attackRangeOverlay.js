@@ -1,29 +1,39 @@
-import { SpriteManager } from "../../source/sprite/spriteManager.js";
-import { Autotiler } from "../../source/tile/autotiler.js";
-import { ArmyCamera } from "../armyCamera.js";
-import { ArmyEntity } from "../init/armyEntity.js";
-import { ArmyMap } from "../init/armyMap.js";
+import { SpriteManager } from "../../../../source/sprite/spriteManager.js";
+import { Autotiler } from "../../../../source/tile/autotiler.js";
+import { ArmyCamera } from "../../../armyCamera.js";
+import { ArmyEntity } from "../../armyEntity.js";
+import { ArmyMap } from "../../armyMap.js";
 
-export const RangeShow = function() {
-    this.isActive = true;
+export const AttackRangeOverlay = function() {
+    this.state = AttackRangeOverlay.STATE.ACTIVE;
     this.lastTarget = null;
 }
 
-RangeShow.prototype.toggle = function() {
-    this.isActive = !this.isActive;
+AttackRangeOverlay.STATE = {
+    INACTIVE: 0,
+    ACTIVE: 1
+};
 
-    return this.isActive;
+AttackRangeOverlay.prototype.toggle = function() {
+    switch(this.state) {
+        case AttackRangeOverlay.STATE.INACTIVE: {
+            this.state = AttackRangeOverlay.STATE.ACTIVE;
+            break;
+        }
+        case AttackRangeOverlay.STATE.ACTIVE: {
+            this.state = AttackRangeOverlay.STATE.INACTIVE;
+            break;
+        }
+    }
+
+    return this.state;
 }
 
-RangeShow.prototype.isEnabled = function() {
-    return this.isActive;
+AttackRangeOverlay.prototype.isEnabled = function() {
+    return this.state === AttackRangeOverlay.STATE.ACTIVE;
 }
 
-RangeShow.prototype.setLastTarget = function(entityID) {
-    this.lastTarget = entityID;
-}
-
-RangeShow.prototype.show = function(gameContext, entity, camera) {
+AttackRangeOverlay.prototype.show = function(gameContext, entity, camera) {
     const attackComponent = entity.getComponent(ArmyEntity.COMPONENT.ATTACK);
 
     if(!attackComponent) {
@@ -58,10 +68,10 @@ RangeShow.prototype.show = function(gameContext, entity, camera) {
         }
     }
 
-    this.setLastTarget(entityID);
+    this.lastTarget = entityID;
 }
 
-RangeShow.prototype.reset = function(gameContext, camera) {
+AttackRangeOverlay.prototype.hide = function(gameContext, camera) {
     if(this.lastTarget === null) {
         return;
     }
@@ -78,5 +88,5 @@ RangeShow.prototype.reset = function(gameContext, camera) {
         spriteManager.swapLayer(spriteID, SpriteManager.LAYER.MIDDLE);
     }
 
-    this.setLastTarget(null);
+    this.lastTarget = null;
 }

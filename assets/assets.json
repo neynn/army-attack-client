@@ -24,6 +24,7 @@
     "items": { "directory": ["assets", "game"], "source": "items.json" },
     "mapTypes": { "directory": ["assets", "game"], "source": "mapTypes.json" },
     "objectives": { "directory": ["assets", "game"], "source": "objectives.json" },
+    "objectTypes": { "directory": ["assets", "game"], "source": "objectTypes.json" },
     "passability": { "directory": ["assets", "game"], "source": "passability.json" },
     "resources": { "directory": ["assets", "game"], "source": "resources.json" },
     "settings": { "directory": ["assets", "game"], "source": "settings.json" },

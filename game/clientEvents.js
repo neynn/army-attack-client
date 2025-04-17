@@ -1,4 +1,4 @@
-import { Inventory } from "./player/inventory.js";
+import { Inventory } from "./init/actors/player/inventory.js";
 
 const getMaxDrop = function(gameContext, type, id) {
     switch(type) {

@@ -1,5 +1,5 @@
 import { ArmyEntity } from "../init/armyEntity.js";
-import { Player } from "../player/player.js";
+import { Player } from "../init/actors/player/player.js";
 
 export const MoveSystem = function() {}
 

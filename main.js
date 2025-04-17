@@ -17,7 +17,7 @@ gameContext.loadResources(resources);
 gameContext.init(resources);
 gameContext.timer.start();
 
-console.log(gameContext);
+console.log(resources, gameContext);
 
 /*["river"].forEach(name => {
 	resourceManager.promiseJSON("export/" + name + ".json").then(f => packerToJSONSprites(name, f));
