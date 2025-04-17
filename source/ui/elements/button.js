@@ -1,8 +1,6 @@
-import { EventEmitter } from "../../events/eventEmitter.js";
 import { Outline } from "../../graphics/applyable/outline.js";
 import { Graph } from "../../graphics/graph.js";
-import { Logger } from "../../logger.js";
-import { isCircleCicleIntersect, isRectangleRectangleIntersect } from "../../math/math.js";
+import { UICollider } from "../uiCollider.js";
 import { UIElement } from "../uiElement.js";
 
 export const Button = function(DEBUG_NAME) {
@@ -12,19 +10,14 @@ export const Button = function(DEBUG_NAME) {
     this.shape = Button.SHAPE.RECTANGLE;
     this.highlight = new Outline();
     this.outline = new Outline();
+    this.collider = new UICollider();
 
     this.highlight.color.setColorRGBA(200, 200, 200, 0.25);
     this.outline.color.setColorRGBA(255, 255, 255, 1);
     this.outline.enable();
 
-    this.events = new EventEmitter();
-    this.events.listen(UIElement.EVENT.FIRST_COLLISION);
-    this.events.listen(UIElement.EVENT.LAST_COLLISION);
-    this.events.listen(UIElement.EVENT.REPEATED_COLLISION);
-    this.events.listen(UIElement.EVENT.CLICKED);
-
-    this.addBehavior(UIElement.BEHAVIOR.COLLIDEABLE);
-    this.addBehavior(UIElement.BEHAVIOR.CLICKABLE);
+    this.collider.events.on(UICollider.EVENT.FIRST_COLLISION, (mouseX, mouseY, mouseRange) => this.highlight.enable(), { permanent: true });
+    this.collider.events.on(UICollider.EVENT.LAST_COLLISION, (mouseX, mouseY, mouseRange) => this.highlight.disable(), { permanent: true });
 
     this.addDrawHook();
     this.addDebugHook();
@@ -39,37 +32,19 @@ Button.prototype = Object.create(UIElement.prototype);
 Button.prototype.constructor = Button;
 
 Button.prototype.setShape = function(shape) {
-    if(shape !== undefined) {
-        this.shape = shape;
-    }
-}
-
-Button.prototype.onCollision = function(type, mouseX, mouseY, mouseRange) {
-    switch(type) {
-        case UIElement.COLLISION_TYPE.FIRST: {
-            this.highlight.enable();
-            this.events.emit(UIElement.EVENT.FIRST_COLLISION);
+    switch(shape) {
+        case Button.SHAPE.RECTANGLE: {
+            this.shape = Button.SHAPE.RECTANGLE;
+            this.collider.setShape(UICollider.SHAPE.RECTANGLE);
             break;
         }
-        case UIElement.COLLISION_TYPE.LAST: {
-            this.highlight.disable();
-            this.events.emit(UIElement.EVENT.LAST_COLLISION);
-            break;
-        }
-        case UIElement.COLLISION_TYPE.REPEATED: {
-            this.events.emit(UIElement.EVENT.REPEATED_COLLISION);
-            break;
-        }
-        default: {
-            Logger.log(Logger.CODE.ENGINE_WARN, "CollisionType does not exist!", "Button.prototype.onCollision", { "type": type });
+        case Button.SHAPE.CIRCLE: {
+            this.shape = Button.SHAPE.CIRCLE;
+            this.collider.setShape(UICollider.SHAPE.CIRCLE);
             break;
         }
     }
-}   
-
-Button.prototype.onClick = function() {
-    this.events.emit(UIElement.EVENT.CLICKED);
-}
+} 
 
 Button.prototype.addDebugHook = function() {
     this.addHook(Graph.HOOK.DEBUG, (context, localX, localY) => {
@@ -139,24 +114,6 @@ Button.prototype.addDrawHook = function() {
             }
         }
     });
-}
-
-Button.prototype.isColliding = function(mouseX, mouseY, mouseRange) {
-    switch(this.shape) {
-        case Button.SHAPE.RECTANGLE: {
-            const isColliding = isRectangleRectangleIntersect(this.positionX, this.positionY, this.width, this.height, mouseX, mouseY, mouseRange, mouseRange);
-
-            return isColliding;
-        }
-        case Button.SHAPE.CIRCLE: {
-            const isColliding = isCircleCicleIntersect(this.positionX, this.positionY, this.width, mouseX, mouseY, mouseRange);
-
-            return isColliding;
-        }
-        default: {
-            return false;
-        }
-    }
 }
 
 Button.prototype.clearDefers = function() {

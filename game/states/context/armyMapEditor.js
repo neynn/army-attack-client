@@ -1,12 +1,12 @@
 import { CameraContext } from "../../../source/camera/cameraContext.js";
 import { Cursor } from "../../../source/client/cursor.js";
 import { MapEditor } from "../../../source/map/mapEditor.js";
-import { UIElement } from "../../../source/ui/uiElement.js";
 import { ArmyCamera } from "../../armyCamera.js";
 import { clampValue } from "../../../source/math/math.js";
 import { saveMap } from "../../../helpers.js";
 import { UIManager } from "../../../source/ui/uiManager.js";
 import { MapManager } from "../../../source/map/mapManager.js";
+import { UICollider } from "../../../source/ui/uiCollider.js";
 
 export const ArmyMapEditor = function() {
     MapEditor.call(this);
@@ -391,7 +391,7 @@ ArmyMapEditor.prototype.initButtons = function(gameContext) {
         const buttonID = this.slots[i];
         const button = editorInterface.getElement(buttonID);
 
-        button.events.unsubscribe(UIElement.EVENT.CLICKED, this.id);
+        button.collider.events.unsubscribe(UICollider.EVENT.CLICKED, this.id);
         button.clearDefers();
     }
 
@@ -402,7 +402,7 @@ ArmyMapEditor.prototype.initButtons = function(gameContext) {
         const { name, id } = brushData;
 
         if(id !== 0) {
-            button.events.on(UIElement.EVENT.CLICKED, () => {
+            button.collider.events.on(UICollider.EVENT.CLICKED, () => {
                 this.brush = brushData;
             }, { id: this.id });
 

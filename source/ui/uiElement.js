@@ -4,31 +4,12 @@ export const UIElement = function(DEBUG_NAME) {
     Graph.call(this, Graph.TYPE.UI_ELEMENT, DEBUG_NAME);
 
     this.anchor = UIElement.ANCHOR_TYPE.TOP_LEFT;
-    this.behavior = UIElement.BEHAVIOR.NONE;
     this.originX = 0;
     this.originY = 0;
     this.width = 0;
     this.height = 0;
+    this.collider = null;
 }
-
-UIElement.BEHAVIOR = {
-    NONE: 0,
-    COLLIDEABLE: 1 << 0,
-    CLICKABLE: 1 << 1
-};
-
-UIElement.COLLISION_TYPE = {
-    FIRST: 0,
-    LAST: 1,
-    REPEATED: 2
-};
-
-UIElement.EVENT = {
-    LAST_COLLISION: "LAST_COLLISION",
-    FIRST_COLLISION: "FIRST_COLLISION",
-    REPEATED_COLLISION: "REPEATED_COLLISION",
-    CLICKED: "CLICKED"
-};
 
 UIElement.ANCHOR_TYPE = {
     TOP_CENTER: 0,
@@ -45,47 +26,22 @@ UIElement.ANCHOR_TYPE = {
 UIElement.prototype = Object.create(Graph.prototype);
 UIElement.prototype.constructor = UIElement;
 
-UIElement.prototype.removeBehavior = function(flag) {
-    this.behavior &= (~flag);
-}
+UIElement.prototype.setPosition = function(positionX, positionY) {
+    this.positionX = positionX;
+    this.positionY = positionY;
 
-UIElement.prototype.hasBehavior = function(flag) {
-    return (this.behavior & flag) !== 0;
-}
-
-UIElement.prototype.addBehavior = function(flag) {
-    this.behavior |= flag;
-
-    switch(flag) {
-        case UIElement.BEHAVIOR.CLICKABLE: {
-            if(this.onClick === undefined) {
-                console.warn("onClick is not defined!");
-
-                this.onClick = () => {};
-            }
-            break;
-        }
-        case UIElement.BEHAVIOR.COLLIDEABLE: {
-            if(this.onCollision === undefined) {
-                console.warn("onCollision is not defined!");
-
-                this.onCollision = () => {};
-            }
-
-            if(this.isColliding === undefined) {
-                console.warn("isColliding is not defined!");
-
-                this.isColliding = () => false;
-            }
-
-            break;
-        }
+    if(this.collider) {
+        this.collider.setPosition(positionX, positionY);
     }
 }
 
 UIElement.prototype.setSize = function(width, height) {
     this.width = width;
     this.height = height;
+
+    if(this.collider) {
+        this.collider.setSize(width, height);
+    }
 } 
 
 UIElement.prototype.setOrigin = function(originX, originY) {
@@ -100,7 +56,7 @@ UIElement.prototype.setAnchor = function(anchor) {
 }
 
 UIElement.prototype.getCollisions = function(mouseX, mouseY, mouseRange) {
-    if(!this.hasBehavior(UIElement.BEHAVIOR.COLLIDEABLE)) {
+    if(!this.collider) {
         return [];
     }
 
@@ -112,7 +68,7 @@ UIElement.prototype.getCollisions = function(mouseX, mouseY, mouseRange) {
         const positionY = positions.pop();
         const positionX = positions.pop();
         const graph = stack.pop();
-        const isColliding = graph.isColliding(positionX, positionY, mouseRange);
+        const isColliding = graph.collider.updateCollision(positionX, positionY, mouseRange);
 
         if(!isColliding) {
             continue;
@@ -126,9 +82,7 @@ UIElement.prototype.getCollisions = function(mouseX, mouseY, mouseRange) {
             const child = children[i];
             
             if(child.isType(Graph.TYPE.UI_ELEMENT)) {
-                const hasFlag = child.hasBehavior(UIElement.BEHAVIOR.COLLIDEABLE);
-
-                if(hasFlag) {
+                if(child.collider) {
                     stack.push(child);
                     positions.push(nextX);
                     positions.push(nextY);

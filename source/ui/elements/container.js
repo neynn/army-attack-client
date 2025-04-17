@@ -1,6 +1,6 @@
 import { Outline } from "../../graphics/applyable/outline.js";
 import { Graph } from "../../graphics/graph.js";
-import { isRectangleRectangleIntersect } from "../../math/math.js";
+import { UICollider } from "../uiCollider.js";
 import { UIElement } from "../uiElement.js";
 
 export const Container = function(DEBUG_NAME) {
@@ -9,8 +9,7 @@ export const Container = function(DEBUG_NAME) {
     this.outline = new Outline();
     this.outline.color.setColorRGBA(255, 255, 255, 1);
     this.outline.enable();
-
-    this.addBehavior(UIElement.BEHAVIOR.COLLIDEABLE);
+    this.collider = new UICollider();
 
     this.addDrawHook();
     this.addDebugHook();
@@ -18,14 +17,6 @@ export const Container = function(DEBUG_NAME) {
 
 Container.prototype = Object.create(UIElement.prototype);
 Container.prototype.constructor = Container;
-
-Container.prototype.onCollision = function(type, mouseX, mouseY, mouseRange) {} 
-
-Container.prototype.isColliding = function(mouseX, mouseY, mouseRange) {
-    const isIntersection = isRectangleRectangleIntersect(this.positionX, this.positionY, this.width, this.height, mouseX, mouseY, mouseRange, mouseRange);
-    
-    return isIntersection;
-}
 
 Container.prototype.addDrawHook = function() {
     this.addHook(Graph.HOOK.DRAW, (context, localX, localY) => {

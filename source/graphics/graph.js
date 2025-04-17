@@ -1,7 +1,7 @@
 export const Graph = function(type = Graph.TYPE.NONE, DEBUG_NAME = "") {
     this.DEBUG_NAME = DEBUG_NAME;
     this.type = type;
-    this.id = Graph.NEXT_ID++;
+    this.id = Graph.ID.NEXT++;
     this.state = Graph.STATE.VISIBLE;
     this.positionX = 0;
     this.positionY = 0;
@@ -14,7 +14,10 @@ export const Graph = function(type = Graph.TYPE.NONE, DEBUG_NAME = "") {
     this.debugHooks = [];
 }
 
-Graph.NEXT_ID = 69420;
+Graph.ID = {
+    NEXT: 100000,
+    INVALID: -1
+}
 
 Graph.TYPE = {
     NONE: 0,
@@ -225,11 +228,6 @@ Graph.prototype.getGraph = function() {
 
 Graph.prototype.getID = function() {
     return this.id;
-}
-
-Graph.prototype.updatePosition = function(deltaX, deltaY) {
-    this.positionX += deltaX;
-    this.positionY += deltaY;
 }
 
 Graph.prototype.setPosition = function(positionX, positionY) {

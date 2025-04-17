@@ -1,7 +1,7 @@
 import { createFadeInEffect } from "../effects/example/fadeIn.js";
 import { createFadeOutEffect } from "../effects/example/fadeOut.js";
 import { TextElement } from "./elements/textElement.js";
-import { UIElement } from "./uiElement.js";
+import { UICollider } from "./uiCollider.js";
 import { UIManager } from "./uiManager.js";
 
 export const UserInterface = function(id) {
@@ -10,8 +10,6 @@ export const UserInterface = function(id) {
     this.nameMap = new Map();
     this.elements = new Map();
     this.state = UserInterface.STATE.VISIBLE;
-    this.currentCollisions = new Set();
-    this.previousCollisions = new Set();
 }
 
 UserInterface.STATE = {
@@ -98,38 +96,6 @@ UserInterface.prototype.getElement = function(name) {
 }
 
 UserInterface.prototype.updateCollisions = function(mouseX, mouseY, mouseRange) {
-    this.currentCollisions.clear();
-    
-    const collidedElements = this.getCollidedElements(mouseX, mouseY, mouseRange);
-
-    for(let i = 0; i < collidedElements.length; i++) {
-        const element = collidedElements[i];
-        const elementID = element.getID();
-        const hasPreviousCollision = this.previousCollisions.has(elementID);
-
-        if(hasPreviousCollision) {
-            element.onCollision(UIElement.COLLISION_TYPE.REPEATED, mouseX, mouseY, mouseRange);
-        } else {
-            element.onCollision(UIElement.COLLISION_TYPE.FIRST, mouseX, mouseY, mouseRange);
-        }
-
-        this.currentCollisions.add(elementID);
-    }
-
-    for(const elementID of this.previousCollisions) {
-        const hasCurrentCollision = this.currentCollisions.has(elementID);
-
-        if(!hasCurrentCollision) {
-            const element = this.elements.get(elementID);
-
-            element.onCollision(UIElement.COLLISION_TYPE.LAST, mouseX, mouseY, mouseRange);
-        }
-    }
-
-    [this.previousCollisions, this.currentCollisions] = [this.currentCollisions, this.previousCollisions];
-}
-
-UserInterface.prototype.getCollidedElements = function(mouseX, mouseY, mouseRange) {
     if(this.state !== UserInterface.STATE.VISIBLE) {
         return [];
     }
@@ -271,20 +237,20 @@ UserInterface.prototype.getID = function() {
 UserInterface.prototype.addClick = function(elementID, onClick, id) {
     const element = this.getElement(elementID);
 
-    if(element.hasBehavior(UIElement.BEHAVIOR.CLICKABLE)) {
+    if(element.collider) {
         const subscriberID = id === undefined ? this.id : id;
 
-        element.events.on(UIElement.EVENT.CLICKED, onClick, { id: subscriberID });
+        element.collider.events.on(UICollider.EVENT.CLICKED, onClick, { id: subscriberID });
     }
 }
 
 UserInterface.prototype.removeClick = function(elementID, id) {
     const element = this.getElement(elementID);
 
-    if(element.hasBehavior(UIElement.BEHAVIOR.CLICKABLE)) {
+    if(element.collider) {
         const subscriberID = id === undefined ? this.id : id;
 
-        element.events.unsubscribeAll(UIElement.EVENT.CLICKED, subscriberID);
+        element.collider.events.unsubscribeAll(UICollider.EVENT.CLICKED, subscriberID);
     }
 }
 

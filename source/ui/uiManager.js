@@ -96,19 +96,14 @@ UIManager.prototype.onClick = function(mouseX, mouseY, mouseRange) {
     const clickedElements = this.getCollidedElements(mouseX, mouseY, mouseRange);
 
     for(let i = 0; i < clickedElements.length; i++) {
-        const element = clickedElements[i];
-        const hasFlag = element.hasBehavior(UIElement.BEHAVIOR.CLICKABLE);
-
-        if(hasFlag) {
-            element.onClick();
-        }
+        clickedElements[i].collider.click(mouseX, mouseY, mouseRange);
     }
 }
 
 UIManager.prototype.getCollidedElements = function(mouseX, mouseY, mouseRange) {
     for(let i = this.interfaceStack.length - 1; i >= 0; i--) {
         const userInterface = this.interfaceStack[i];
-        const collisions = userInterface.getCollidedElements(mouseX, mouseY, mouseRange);
+        const collisions = userInterface.updateCollisions(mouseX, mouseY, mouseRange);
 
         if(collisions.length > 0) {
             return collisions;
@@ -188,7 +183,7 @@ UIManager.prototype.createElement = function(typeID, config, DEBUG_NAME) {
         position = { x: 0, y: 0 },
         width = 0,
         height = 0,
-        anchor = UIElement.ANCHOR_TYPE.TOP_LEFT,
+        anchor = "TOP_LEFT",
         opacity = 1
     } = config;
 
