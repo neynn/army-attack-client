@@ -16,12 +16,16 @@ export const Renderer = function() {
 
     this.events = new EventEmitter();
     this.events.listen(Renderer.EVENT.SCREEN_RESIZE);
+    this.events.listen(Renderer.EVENT.CONTEXT_CREATE);
+    this.events.listen(Renderer.EVENT.CONTEXT_DESTROY);
 
     window.addEventListener("resize", () => this.resizeDisplay(window.innerWidth, window.innerHeight));
 }
 
 Renderer.EVENT = {
-    SCREEN_RESIZE: 0
+    SCREEN_RESIZE: "SCREEN_RESIZE",
+    CONTEXT_CREATE: "CONTEXT_CREATE",
+    CONTEXT_DESTROY: "CONTEXT_DESTROY"
 };
 
 Renderer.DEBUG = {
@@ -74,10 +78,10 @@ Renderer.prototype.createContext = function(contextID, camera) {
     const context = new CameraContext(contextID, camera);
 
     camera.setViewport(this.windowWidth, this.windowHeight);
-
     context.setWindow(this.windowWidth, this.windowHeight);
 
     this.contexts.push(context);
+    this.events.emit(Renderer.EVENT.CONTEXT_CREATE, contextID, context);
 
     return context;
 }
@@ -89,7 +93,7 @@ Renderer.prototype.destroyContext = function(contextID) {
 
         if(id === contextID) {
             this.contexts.splice(i, 1);
-            context.events.emit(CameraContext.EVENT.REMOVE);
+            this.events.emit(Renderer.EVENT.CONTEXT_DESTROY, contextID);
             return;
         }
     }

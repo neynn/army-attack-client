@@ -1,5 +1,3 @@
-import { EventEmitter } from "../events/eventEmitter.js";
-import { Logger } from "../logger.js";
 import { RenderContext } from "./renderContext.js";
 
 export const CameraContext = function(id, camera) {
@@ -7,16 +5,13 @@ export const CameraContext = function(id, camera) {
     this.positionX = 0;
     this.positionY = 0;
     this.camera = camera;
-    this.context = null;
+    this.display = null;
     this.scale = CameraContext.BASE_SCALE;
     this.scaleMode = CameraContext.SCALE_MODE.WHOLE;
     this.positionMode = CameraContext.POSITION_MODE.AUTO_CENTER;
     this.displayMode = CameraContext.DISPLAY_MODE.RESOLUTION_DEPENDENT;
     this.windowWidth = 0;
     this.windowHeight = 0;
-
-    this.events = new EventEmitter();
-    this.events.listen(CameraContext.EVENT.REMOVE);
 }
 
 CameraContext.BASE_SCALE = 1;
@@ -90,17 +85,16 @@ CameraContext.prototype.setDisplayMode = function(modeID) {
             break;
         }
         case CameraContext.DISPLAY_MODE.RESOLUTION_FIXED: {
-            if(this.context) {
+            if(this.display) {
                 this.displayMode = modeID;
-                this.camera.setViewport(this.context.width, this.context.height);
+                this.camera.setViewport(this.display.width, this.display.height);
                 this.refresh();
             }
 
             break;
         }
         default: {
-            Logger.log(Logger.CODE.ENGINE_WARN, "Display mode is not supported!", "CameraContext.prototype.setDisplayMode", { modeID });
-
+            console.warn(`DisplayMode ${modeID} is not supported!`);
             break;
         }
     }
@@ -178,7 +172,7 @@ CameraContext.prototype.centerCamera = function() {
 }
 
 CameraContext.prototype.getScale = function(width, height) {
-    if(!this.context) {
+    if(!this.display) {
         return {
             "x": CameraContext.BASE_SCALE,
             "y": CameraContext.BASE_SCALE
@@ -194,14 +188,14 @@ CameraContext.prototype.getScale = function(width, height) {
         }
         case CameraContext.SCALE_MODE.FRACTURED: {
             return {
-                "x": width / this.context.width,
-                "y": height / this.context.height
+                "x": width / this.display.width,
+                "y": height / this.display.height
             }
         }
         case CameraContext.SCALE_MODE.WHOLE: {
             return {
-                "x": Math.floor(width / this.context.width),
-                "y": Math.floor(height / this.context.height)
+                "x": Math.floor(width / this.display.width),
+                "y": Math.floor(height / this.display.height)
             }
         }
         default: {
@@ -238,15 +232,15 @@ CameraContext.prototype.reloadFixedScale = function() {
 }
 
 CameraContext.prototype.initRenderer = function(width, height) {
-    if(!this.context) {
-        this.context = new RenderContext();
-        this.context.init(width, height, RenderContext.TYPE.BUFFER);
+    if(!this.display) {
+        this.display = new RenderContext();
+        this.display.init(width, height, RenderContext.TYPE.BUFFER);
     }
 }
 
 CameraContext.prototype.setResolution = function(width, height) {
-    if(this.context) {
-        this.context.resize(width, height);
+    if(this.display) {
+        this.display.resize(width, height);
 
         if(this.displayMode === CameraContext.DISPLAY_MODE.RESOLUTION_FIXED) {
             this.camera.setViewport(width, height);
@@ -256,7 +250,7 @@ CameraContext.prototype.setResolution = function(width, height) {
 }
 
 CameraContext.prototype.destroyRenderer = function() {
-    this.context = null;
+    this.display = null;
     this.setDisplayMode(CameraContext.DISPLAY_MODE.RESOLUTION_DEPENDENT);
 }
 
@@ -269,10 +263,10 @@ CameraContext.prototype.update = function(gameContext, mainContext) {
             break;
         }
         case CameraContext.DISPLAY_MODE.RESOLUTION_FIXED: {
-            const { canvas, context, width, height } = this.context;
+            const { canvas, context, width, height } = this.display;
             const { x, y, w, h } = this.getBounds();
 
-            this.context.clear();
+            this.display.clear();
             this.camera.update(gameContext, context);
 
             mainContext.drawImage(canvas, 0, 0, width, height, x, y, w, h);

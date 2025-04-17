@@ -7,6 +7,7 @@ import { saveMap } from "../../../helpers.js";
 import { UIManager } from "../../../source/ui/uiManager.js";
 import { MapManager } from "../../../source/map/mapManager.js";
 import { UICollider } from "../../../source/ui/uiCollider.js";
+import { Renderer } from "../../../source/renderer.js";
 
 export const ArmyMapEditor = function() {
     MapEditor.call(this);
@@ -169,8 +170,8 @@ ArmyMapEditor.prototype.initCamera = function(gameContext) {
         context.refreshCamera();
     }, { id: this.id });
 
-    context.events.on(CameraContext.EVENT.REMOVE, () => {
-        mapManager.events.unsubscribe(MapManager.EVENT.MAP_CREATE, this.id);
+    renderer.events.on(Renderer.EVENT.CONTEXT_DESTROY, (id) => {
+        mapManager.events.unsubscribe(MapManager.EVENT.MAP_CREATE, id);
     }, { once: true });
 }
 

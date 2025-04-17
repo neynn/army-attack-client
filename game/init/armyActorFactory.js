@@ -1,12 +1,11 @@
-import { CameraContext } from "../../source/camera/cameraContext.js";
 import { Cursor } from "../../source/client/cursor.js";
 import { Factory } from "../../source/factory/factory.js";
-import { SpriteManager } from "../../source/sprite/spriteManager.js";
 import { Player } from "../init/actors/player/player.js";
 import { createStoryModeUI } from "../storyUI.js";
 import { OtherPlayer } from "./actors/otherPlayer.js";
 import { EnemyActor } from "./actors/enemyActor.js";
 import { MapManager } from "../../source/map/mapManager.js";
+import { Renderer } from "../../source/renderer.js";
 
 export const ArmyActorFactory = function() {
     Factory.call(this, "ARMY_ACTOR_FACOTRY");
@@ -60,8 +59,8 @@ const initPlayerCamera = function(gameContext, camera) {
         context.refreshCamera();
     }, { id: Player.CAMERA_ID });
 
-    context.events.on(CameraContext.EVENT.REMOVE, () => {
-        mapManager.events.unsubscribe(MapManager.EVENT.MAP_CREATE, Player.CAMERA_ID);
+    renderer.events.on(Renderer.EVENT.CONTEXT_DESTROY, (id) => {
+        mapManager.events.unsubscribe(MapManager.EVENT.MAP_CREATE, id);
     }, { once: true });
 
     /*
