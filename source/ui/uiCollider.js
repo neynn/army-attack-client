@@ -6,6 +6,7 @@ export const UICollider = function() {
     this.positionY = -1;
     this.width = -1;
     this.height = -1;
+    this.collisions = 0;
     this.shape = UICollider.SHAPE.RECTANGLE;
     this.state = UICollider.STATE.NOT_COLLIDED;
 
@@ -37,7 +38,7 @@ UICollider.EVENT = {
 UICollider.SHAPE = {
     RECTANGLE: 0,
     CIRCLE: 1
-}
+};
 
 UICollider.prototype.setShape = function(shape) {
     const shapes = Object.values(UICollider.SHAPE);
@@ -82,11 +83,13 @@ UICollider.prototype.updateCollision = function(mouseX, mouseY, mouseRange) {
     if(isColliding) {
         switch(this.state) {
             case UICollider.STATE.NOT_COLLIDED: {
+                this.collisions++;
                 this.state = UICollider.STATE.COLLIDED;
                 this.events.emit(UICollider.EVENT.FIRST_COLLISION, mouseX, mouseY, mouseRange);
                 break;
             }
             case UICollider.STATE.COLLIDED: {
+                this.collisions++;
                 this.events.emit(UICollider.EVENT.REPEATED_COLLISION, mouseX, mouseY, mouseRange);
                 break;
             }
@@ -94,6 +97,7 @@ UICollider.prototype.updateCollision = function(mouseX, mouseY, mouseRange) {
     } else {
         switch(this.state) {
             case UICollider.STATE.COLLIDED: {
+                this.collisions = 0;
                 this.state = UICollider.STATE.NOT_COLLIDED;
                 this.events.emit(UICollider.EVENT.LAST_COLLISION, mouseX, mouseY, mouseRange);
                 break;
