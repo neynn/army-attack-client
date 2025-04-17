@@ -5,9 +5,7 @@ import { ArmyCamera } from "../../armyCamera.js";
 import { clampValue } from "../../../source/math/math.js";
 import { saveMap } from "../../../helpers.js";
 import { UIManager } from "../../../source/ui/uiManager.js";
-import { MapManager } from "../../../source/map/mapManager.js";
 import { UICollider } from "../../../source/ui/uiCollider.js";
-import { Renderer } from "../../../source/renderer.js";
 
 export const ArmyMapEditor = function() {
     MapEditor.call(this);
@@ -149,30 +147,14 @@ ArmyMapEditor.prototype.initSlots = function(gameContext) {
 }
 
 ArmyMapEditor.prototype.initCamera = function(gameContext) {
-    const { world, renderer, client } = gameContext;
-    const { mapManager } = world;
+    const { renderer } = gameContext;
+
     this.camera.unbindViewport();
     this.camera.loadTileDimensions(gameContext.settings.tileWidth, gameContext.settings.tileHeight)
 
     const context = renderer.createContext(this.id, this.camera);
     
     context.setPositionMode(CameraContext.POSITION_MODE.ORIGIN);
-
-    mapManager.events.on(MapManager.EVENT.MAP_CREATE, (mapID, worldMap) => {
-        const { width, height, music } = worldMap;
-    
-        this.camera.loadWorld(width, height);
-    
-        if(music) {
-            //client.musicPlayer.playTrack(music);
-        }
-
-        context.refreshCamera();
-    }, { id: this.id });
-
-    renderer.events.on(Renderer.EVENT.CONTEXT_DESTROY, (id) => {
-        mapManager.events.unsubscribe(MapManager.EVENT.MAP_CREATE, id);
-    }, { once: true });
 }
 
 ArmyMapEditor.prototype.initRenderEvents = function(gameContext) {

@@ -16,10 +16,6 @@ export const CameraContext = function(id, camera) {
 
 CameraContext.BASE_SCALE = 1;
 
-CameraContext.EVENT = {
-    REMOVE: "REMOVE"
-};
-
 CameraContext.POSITION_MODE = {
     AUTO_CENTER: 0,
     FIXED: 1,

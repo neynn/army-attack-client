@@ -35,6 +35,7 @@ import { choiceMadeEvent, dropItemsEvent, skipTurnEvent } from "./clientEvents.j
 import { DeathAction } from "./actions/deathAction.js";
 import { ArmyMap } from "./init/armyMap.js";
 import { Socket } from "../source/network/socket.js";
+import { MapManager } from "../source/map/mapManager.js";
 
 export const ArmyContext = function() {
     GameContext.call(this);
@@ -52,6 +53,7 @@ export const ArmyContext = function() {
 
     this.playerID = null;
     this.modeID = ArmyContext.GAME_MODE.NONE;
+    this.addContextMapHook();
 }
 
 ArmyContext.prototype = Object.create(GameContext.prototype);
@@ -320,4 +322,27 @@ ArmyContext.prototype.getConversionID = function(tileID, teamID) {
     }
 
     return convertedID;
+}
+
+ArmyContext.prototype.addContextMapHook = function() {
+    const { world, renderer, client } = this;
+    const { musicPlayer } = client;
+    const { mapManager } = world;
+
+    renderer.events.on(Renderer.EVENT.CONTEXT_CREATE, (contextID, context) => {
+        mapManager.events.on(MapManager.EVENT.MAP_CREATE, (mapID, worldMap) => {
+            const { width, height, music } = worldMap;
+            const camera = context.getCamera();
+
+            camera.loadWorld(width, height);
+
+            if(music) {
+                musicPlayer.playTrack(music);
+            }
+        }, { id: contextID });
+    }, { permanent: true });
+
+    renderer.events.on(Renderer.EVENT.CONTEXT_DESTROY, (contextID) => {
+        mapManager.events.unsubscribe(MapManager.EVENT.MAP_CREATE, contextID);
+    }, { permanent: true });
 }
