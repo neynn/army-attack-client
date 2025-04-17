@@ -7,7 +7,7 @@ import { Graph } from "../graphics/graph.js";
 
 export const SpriteManager = function() {
     this.resources = new ImageManager();
-    this.sprites = new ObjectPool(2500, (index) => new Sprite(index, index));
+    this.sprites = new ObjectPool(2500, (index) => this.allocateSprite(index));
     this.sprites.allocate();
     this.spriteTypes = {};
     this.timestamp = 0;
@@ -25,6 +25,15 @@ SpriteManager.LAYER = {
     TOP: 2,
     UI: 3
 };
+
+SpriteManager.prototype.allocateSprite = function(index) {
+    const sprite = new Sprite(index, index);
+
+    sprite.addHook(Graph.HOOK.DRAW, (context, localX, localY) => this.drawSprite(sprite, context, localX, localY));
+    sprite.onTerminate = () => this.destroySprite(index);
+
+    return sprite;
+}
 
 SpriteManager.prototype.getLayer = function(layerIndex) {
     if(layerIndex < 0 || layerIndex >= this.layers.length) {
@@ -79,8 +88,6 @@ SpriteManager.prototype.createSprite = function(typeID, layerID = null, animatio
     }
 
     sprite.reset();
-    sprite.onDraw = (context, localX, localY) => this.drawSprite(sprite, context, localX, localY);
-    sprite.onTerminate = () => this.destroySprite(sprite.index);
 
     if(layerID !== null) {
         this.addToLayer(sprite, layerID);
@@ -157,7 +164,7 @@ SpriteManager.prototype.destroySprite = function(spriteIndex) {
     for(let i = familyStack.length - 1; i >= 0; i--) {
         const element = familyStack[i];
 
-        if(element.type !== Graph.TYPE.SPRITE) {
+        if(!element.isType(Graph.TYPE.SPRITE)) {
             invalidElements.push(element);
             continue;
         }

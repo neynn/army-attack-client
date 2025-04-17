@@ -4,7 +4,7 @@ export const UIElement = function(DEBUG_NAME) {
     Graph.call(this, Graph.TYPE.UI_ELEMENT, DEBUG_NAME);
 
     this.anchor = UIElement.ANCHOR_TYPE.TOP_LEFT;
-    this.behavior = 0;
+    this.behavior = UIElement.BEHAVIOR.NONE;
     this.originX = 0;
     this.originY = 0;
     this.width = 0;
@@ -55,6 +55,32 @@ UIElement.prototype.hasBehavior = function(flag) {
 
 UIElement.prototype.addBehavior = function(flag) {
     this.behavior |= flag;
+
+    switch(flag) {
+        case UIElement.BEHAVIOR.CLICKABLE: {
+            if(this.onClick === undefined) {
+                console.warn("onClick is not defined!");
+
+                this.onClick = () => {};
+            }
+            break;
+        }
+        case UIElement.BEHAVIOR.COLLIDEABLE: {
+            if(this.onCollision === undefined) {
+                console.warn("onCollision is not defined!");
+
+                this.onCollision = () => {};
+            }
+
+            if(this.isColliding === undefined) {
+                console.warn("isColliding is not defined!");
+
+                this.isColliding = () => false;
+            }
+
+            break;
+        }
+    }
 }
 
 UIElement.prototype.setSize = function(width, height) {
@@ -99,7 +125,7 @@ UIElement.prototype.getCollisions = function(mouseX, mouseY, mouseRange) {
         for(let i = 0; i < children.length; i++) {
             const child = children[i];
             
-            if(child.type === Graph.TYPE.UI_ELEMENT) {
+            if(child.isType(Graph.TYPE.UI_ELEMENT)) {
                 const hasFlag = child.hasBehavior(UIElement.BEHAVIOR.COLLIDEABLE);
 
                 if(hasFlag) {

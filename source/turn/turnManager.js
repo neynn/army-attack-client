@@ -222,7 +222,7 @@ TurnManager.prototype.update = function(gameContext) {
     const actor = this.getNextActor(gameContext);
 
     if(actor && this.actionsLeft > 0) {
-        actor.makeChoice(gameContext)
+        actor.onMakeChoice(gameContext)
     }
 }
 

@@ -22,9 +22,7 @@ ArmyCamera.prototype.constructor = ArmyCamera;
 
 ArmyCamera.prototype.handlePostDraw = function(context) {
     for(let i = 0; i < this.postDraw.length; i++) {
-        const onDraw = this.postDraw[i];
-
-        onDraw(context);
+        this.postDraw[i](context);
     }
 }
 

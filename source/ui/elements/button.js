@@ -1,5 +1,6 @@
 import { EventEmitter } from "../../events/eventEmitter.js";
 import { Outline } from "../../graphics/applyable/outline.js";
+import { Graph } from "../../graphics/graph.js";
 import { Logger } from "../../logger.js";
 import { isCircleCicleIntersect, isRectangleRectangleIntersect } from "../../math/math.js";
 import { UIElement } from "../uiElement.js";
@@ -21,6 +22,12 @@ export const Button = function(DEBUG_NAME) {
     this.events.listen(UIElement.EVENT.LAST_COLLISION);
     this.events.listen(UIElement.EVENT.REPEATED_COLLISION);
     this.events.listen(UIElement.EVENT.CLICKED);
+
+    this.addBehavior(UIElement.BEHAVIOR.COLLIDEABLE);
+    this.addBehavior(UIElement.BEHAVIOR.CLICKABLE);
+
+    this.addDrawHook();
+    this.addDebugHook();
 }
 
 Button.SHAPE = {
@@ -64,22 +71,74 @@ Button.prototype.onClick = function() {
     this.events.emit(UIElement.EVENT.CLICKED);
 }
 
-Button.prototype.onDebug = function(context, localX, localY) {
-    context.globalAlpha = 0.2;
-    context.fillStyle = "#ff00ff";
+Button.prototype.addDebugHook = function() {
+    this.addHook(Graph.HOOK.DEBUG, (context, localX, localY) => {
+        context.globalAlpha = 0.2;
+        context.fillStyle = "#ff00ff";
 
-    switch(this.shape) {
-        case Button.SHAPE.RECTANGLE: {
-            context.fillRect(localX, localY, this.width, this.height);
-            break;
+        switch(this.shape) {
+            case Button.SHAPE.RECTANGLE: {
+                context.fillRect(localX, localY, this.width, this.height);
+                break;
+            }
+            case Button.SHAPE.CIRCLE: {
+                context.beginPath();
+                context.arc(localX, localY, this.width, 0, 2 * Math.PI);
+                context.fill();
+                break;
+            }
         }
-        case Button.SHAPE.CIRCLE: {
-            context.beginPath();
-            context.arc(localX, localY, this.width, 0, 2 * Math.PI);
-            context.fill();
-            break;
+    });
+}
+
+Button.prototype.addDrawHook = function() {
+    this.addHook(Graph.HOOK.DRAW, (context, localX, localY) => {
+        for(let i = 0; i < this.defers.length; i++) {
+            this.defers[i](context, localX, localY);
         }
-    }
+
+        const isHighlightActive = this.highlight.isActive();
+        const isOutlineActive = this.outline.isActive();
+    
+        switch(this.shape) {
+            case Button.SHAPE.RECTANGLE: {
+                if(isHighlightActive) {
+                    const fillStyle = this.highlight.color.getRGBAString();
+    
+                    context.fillStyle = fillStyle;
+                    context.fillRect(localX, localY, this.width, this.height);
+                }
+            
+                if(isOutlineActive) {
+                    this.outline.apply(context);
+    
+                    context.strokeRect(localX, localY, this.width, this.height);
+                }
+    
+                break;
+            }
+            case Button.SHAPE.CIRCLE: {
+                if(isHighlightActive) {
+                    const fillStyle = this.highlight.color.getRGBAString();
+    
+                    context.fillStyle = fillStyle;
+                    context.beginPath();
+                    context.arc(localX, localY, this.width, 0, 2 * Math.PI);
+                    context.fill();
+                }
+            
+                if(isOutlineActive) {
+                    this.outline.apply(context);
+    
+                    context.beginPath();
+                    context.arc(localX, localY, this.width, 0, 2 * Math.PI);
+                    context.stroke();
+                }
+    
+                break;
+            }
+        }
+    });
 }
 
 Button.prototype.isColliding = function(mouseX, mouseY, mouseRange) {
@@ -106,61 +165,4 @@ Button.prototype.clearDefers = function() {
 
 Button.prototype.addDefer = function(onDraw) {
     this.defers.push(onDraw);
-}
-
-Button.prototype.drawDefers = function(context, localX, localY) {
-    for(let i = 0; i < this.defers.length; i++) {
-        const onDraw = this.defers[i];
-
-        onDraw(context, localX, localY);
-    }
-}
-
-Button.prototype.drawStyle = function(context, localX, localY) {
-    const isHighlightActive = this.highlight.isActive();
-    const isOutlineActive = this.outline.isActive();
-
-    switch(this.shape) {
-        case Button.SHAPE.RECTANGLE: {
-            if(isHighlightActive) {
-                const fillStyle = this.highlight.color.getRGBAString();
-
-                context.fillStyle = fillStyle;
-                context.fillRect(localX, localY, this.width, this.height);
-            }
-        
-            if(isOutlineActive) {
-                this.outline.apply(context);
-
-                context.strokeRect(localX, localY, this.width, this.height);
-            }
-
-            break;
-        }
-        case Button.SHAPE.CIRCLE: {
-            if(isHighlightActive) {
-                const fillStyle = this.highlight.color.getRGBAString();
-
-                context.fillStyle = fillStyle;
-                context.beginPath();
-                context.arc(localX, localY, this.width, 0, 2 * Math.PI);
-                context.fill();
-            }
-        
-            if(isOutlineActive) {
-                this.outline.apply(context);
-
-                context.beginPath();
-                context.arc(localX, localY, this.width, 0, 2 * Math.PI);
-                context.stroke();
-            }
-
-            break;
-        }
-    }
-}
-
-Button.prototype.onDraw = function(context, localX, localY) {
-    this.drawDefers(context, localX, localY);
-    this.drawStyle(context, localX, localY);
 }

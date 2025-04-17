@@ -9,6 +9,8 @@ Actor.prototype.save = function() {}
 
 Actor.prototype.update = function(gameContext) {}
 
+Actor.prototype.onMakeChoice = function(gameContext) {}
+
 Actor.prototype.onTurnStart = function(gameContext) {}
 
 Actor.prototype.onTurnEnd = function(gameContext) {}
@@ -56,5 +58,3 @@ Actor.prototype.setConfig = function(config) {
 Actor.prototype.getConfig = function() {
     return this.config;
 }
-
-Actor.prototype.makeChoice = function(gameContext) {}

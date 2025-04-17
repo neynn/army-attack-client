@@ -1,4 +1,5 @@
 import { TextStyle } from "../../graphics/applyable/textStyle.js";
+import { Graph } from "../../graphics/graph.js";
 import { UIElement } from "../uiElement.js";
 
 export const TextElement = function(DEBUG_NAME) {
@@ -11,6 +12,9 @@ export const TextElement = function(DEBUG_NAME) {
     this.isLooping = false;
     this.isRevealing = false;
     this.lettersPerSecond = 2;
+    
+    this.addDrawHook();
+    this.addUpdateHook();
 }
 
 TextElement.prototype = Object.create(UIElement.prototype);
@@ -57,38 +61,42 @@ TextElement.prototype.isCompleted = function() {
     return this.fullText.length === this.revealedText.length;
 }
 
-TextElement.prototype.onDraw = function(context, localX, localY) {
-    this.style.apply(context);
+TextElement.prototype.addDrawHook = function() {
+    this.addHook(Graph.HOOK.DRAW, (context, localX, localY) => {
+        this.style.apply(context);
 
-    context.fillText(this.revealedText, localX, localY);
+        context.fillText(this.revealedText, localX, localY);
+    });
 }
 
-TextElement.prototype.onUpdate = function(timestamp, deltaTime) {
-    if(!this.isRevealing) {
-        return;
-    }
-
-    this.timeElapsed += deltaTime;
-    const revealCount = Math.floor(this.lettersPerSecond * this.timeElapsed);
-
-    if(revealCount <= 0) {
-        return;
-    }
-
-    this.timeElapsed -= revealCount / this.lettersPerSecond;
-        
-    for(let i = 0; i < revealCount; i++) {
-        if(this.fullText.length !== this.revealedText.length) {
-            this.revealLetter();
-            continue;
+TextElement.prototype.addUpdateHook = function() {
+    this.addHook(Graph.HOOK.UPDATE, (timestamp, deltaTime) => {
+        if(!this.isRevealing) {
+            return;
         }
-        
-        if(this.isLooping) {
-            this.revealedText = "";
-        } else {
-            this.timeElapsed = 0;
+    
+        this.timeElapsed += deltaTime;
+        const revealCount = Math.floor(this.lettersPerSecond * this.timeElapsed);
+    
+        if(revealCount <= 0) {
+            return;
         }
-
-        break;
-    }
+    
+        this.timeElapsed -= revealCount / this.lettersPerSecond;
+            
+        for(let i = 0; i < revealCount; i++) {
+            if(this.fullText.length !== this.revealedText.length) {
+                this.revealLetter();
+                continue;
+            }
+            
+            if(this.isLooping) {
+                this.revealedText = "";
+            } else {
+                this.timeElapsed = 0;
+            }
+    
+            break;
+        }
+    });
 }

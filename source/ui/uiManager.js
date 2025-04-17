@@ -8,6 +8,7 @@ import { Container } from "./elements/container.js";
 import { Icon } from "./elements/icon.js";
 import { Scrollbar } from "./elements/scrollbar.js";
 import { TextElement } from "./elements/textElement.js";
+import { Graph } from "../graphics/graph.js";
 
 export const UIManager = function() {
     this.resources = new ImageManager();
@@ -198,9 +199,6 @@ UIManager.prototype.createElement = function(typeID, config, DEBUG_NAME) {
             const element = new Button(DEBUG_NAME);
             const { shape = Button.SHAPE.RECTANGLE, radius = width } = config;
 
-            element.addBehavior(UIElement.BEHAVIOR.COLLIDEABLE);
-            element.addBehavior(UIElement.BEHAVIOR.CLICKABLE);
-
             element.setPosition(x, y);
             element.setOpacity(opacity);
             element.setOrigin(x, y);
@@ -228,8 +226,6 @@ UIManager.prototype.createElement = function(typeID, config, DEBUG_NAME) {
         case UIManager.ELEMENT_TYPE.CONTAINER: {
             const element = new Container(DEBUG_NAME);
 
-            element.addBehavior(UIElement.BEHAVIOR.COLLIDEABLE);
-
             element.setPosition(x, y);
             element.setOpacity(opacity);
             element.setOrigin(x, y);
@@ -251,7 +247,7 @@ UIManager.prototype.createElement = function(typeID, config, DEBUG_NAME) {
             element.setAnchor(anchor);
             element.setSize(width, height);
             element.setImage(image);
-            element.onDraw = (context, localX, localY) => {
+            element.addHook(Graph.HOOK.DRAW, (context, localX, localY) => {
                 const image = this.resources.getImage(element.imageID);
             
                 if(!image) {
@@ -259,15 +255,12 @@ UIManager.prototype.createElement = function(typeID, config, DEBUG_NAME) {
                 }
             
                 context.drawImage(image, localX, localY);
-            }
+            });
 
             return element;
         }
         case UIManager.ELEMENT_TYPE.SCROLLBAR: {
             const element = new Scrollbar(DEBUG_NAME);
-
-            element.addBehavior(UIElement.BEHAVIOR.COLLIDEABLE);
-            element.addBehavior(UIElement.BEHAVIOR.CLICKABLE);
 
             element.setPosition(x, y);
             element.setOpacity(opacity);

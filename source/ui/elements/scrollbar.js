@@ -6,6 +6,9 @@ export const Scrollbar = function(DEBUG_NAME) {
 
     this.events = new EventEmitter();
     this.events.listen(UIElement.EVENT.CLICKED);
+
+    this.addBehavior(UIElement.BEHAVIOR.COLLIDEABLE);
+    this.addBehavior(UIElement.BEHAVIOR.CLICKABLE);
 }
 
 Scrollbar.TYPE = {
@@ -21,6 +24,3 @@ Scrollbar.prototype.onCollision = function(type, mouseX, mouseY, mouseRange) {}
 Scrollbar.prototype.onClick = function() {
     this.events.emit(UIElement.EVENT.CLICKED);
 }
-
-//onClick - enable drag mode.
-//in drag mode, react to the mouse delta

@@ -1,4 +1,5 @@
 import { Outline } from "../../graphics/applyable/outline.js";
+import { Graph } from "../../graphics/graph.js";
 import { isRectangleRectangleIntersect } from "../../math/math.js";
 import { UIElement } from "../uiElement.js";
 
@@ -8,6 +9,11 @@ export const Container = function(DEBUG_NAME) {
     this.outline = new Outline();
     this.outline.color.setColorRGBA(255, 255, 255, 1);
     this.outline.enable();
+
+    this.addBehavior(UIElement.BEHAVIOR.COLLIDEABLE);
+
+    this.addDrawHook();
+    this.addDebugHook();
 } 
 
 Container.prototype = Object.create(UIElement.prototype);
@@ -21,17 +27,20 @@ Container.prototype.isColliding = function(mouseX, mouseY, mouseRange) {
     return isIntersection;
 }
 
-Container.prototype.onDebug = function(context, localX, localY) {
-    context.globalAlpha = 0.2;
-    context.fillStyle = "#0000ff";
-    context.fillRect(localX, localY, this.width, this.height);
+Container.prototype.addDrawHook = function() {
+    this.addHook(Graph.HOOK.DRAW, (context, localX, localY) => {
+        if(this.outline.isActive()) {
+            this.outline.apply(context);
+        
+            context.strokeRect(localX, localY, this.width, this.height);
+        }
+    });
 }
 
-Container.prototype.onDraw = function(context, localX, localY) {
-    if(this.outline.isActive()) {
-        this.outline.apply(context);
-    
-        context.strokeRect(localX, localY, this.width, this.height);
-    }
+Container.prototype.addDebugHook = function() {
+    this.addHook(Graph.HOOK.DEBUG, (context, localX, localY) => {
+        context.globalAlpha = 0.2;
+        context.fillStyle = "#0000ff";
+        context.fillRect(localX, localY, this.width, this.height);
+    });
 }
-

@@ -18,6 +18,9 @@ export const Sprite = function(index, DEBUG_NAME) {
     this.boundsW = 0;
     this.boundsH = 0;
     this.flags = Sprite.FLAG.NONE;
+
+    this.addUpdateHook();
+    this.addDebugHook();
 }
 
 Sprite.DEBUG = {
@@ -100,33 +103,37 @@ Sprite.prototype.isVisible = function(viewportRight, viewportLeft, viewportBotto
     return isVisible;
 }
 
-Sprite.prototype.onUpdate = function(timestamp, deltaTime) {
-    const passedTime = timestamp - this.lastCallTime;
-    const passedFrames = passedTime / this.frameTime;
-
-    this.lastCallTime = timestamp;
-    this.updateFrame(passedFrames);
+Sprite.prototype.addUpdateHook = function() {
+    this.addHook(Graph.HOOK.UPDATE, (timestamp, deltaTime) => {
+        const passedTime = timestamp - this.lastCallTime;
+        const passedFrames = passedTime / this.frameTime;
+    
+        this.lastCallTime = timestamp;
+        this.updateFrame(passedFrames);
+    })
 }
 
-Sprite.prototype.onDebug = function(context, localX, localY) {
-    const isFlipped = (this.flags & Sprite.FLAG.FLIP) !== 0;
+Sprite.prototype.addDebugHook = function() {
+    this.addHook(Graph.HOOK.DEBUG, (context, localX, localY) => {
+        const isFlipped = (this.flags & Sprite.FLAG.FLIP) !== 0;
 
-    if(isFlipped) {
-        const drawX = localX - this.boundsX;
-        const drawY = localY + this.boundsY;
-
-        context.scale(-1, 1);
-        context.strokeStyle = Sprite.DEBUG.COLOR;
-        context.lineWidth = Sprite.DEBUG.LINE_SIZE;
-        context.strokeRect(-drawX, drawY, this.boundsW, this.boundsH);
-    } else {
-        const drawX = localX + this.boundsX;
-        const drawY = localY + this.boundsY;
-
-        context.strokeStyle = Sprite.DEBUG.COLOR;
-        context.lineWidth = Sprite.DEBUG.LINE_SIZE;
-        context.strokeRect(drawX, drawY, this.boundsW, this.boundsH);
-    }
+        if(isFlipped) {
+            const drawX = localX - this.boundsX;
+            const drawY = localY + this.boundsY;
+    
+            context.scale(-1, 1);
+            context.strokeStyle = Sprite.DEBUG.COLOR;
+            context.lineWidth = Sprite.DEBUG.LINE_SIZE;
+            context.strokeRect(-drawX, drawY, this.boundsW, this.boundsH);
+        } else {
+            const drawX = localX + this.boundsX;
+            const drawY = localY + this.boundsY;
+    
+            context.strokeStyle = Sprite.DEBUG.COLOR;
+            context.lineWidth = Sprite.DEBUG.LINE_SIZE;
+            context.strokeRect(drawX, drawY, this.boundsW, this.boundsH);
+        }
+    });
 }
 
 Sprite.prototype.setFrame = function(frameIndex = this.currentFrame) {

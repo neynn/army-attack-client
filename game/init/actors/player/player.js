@@ -394,7 +394,7 @@ Player.prototype.updateRangeIndicator = function(gameContext) {
     }
 }
 
-Player.prototype.makeChoice = function(gameContext) {
+Player.prototype.onMakeChoice = function(gameContext) {
     const { world } = gameContext;
     const { actionQueue, eventBus } = world;
 

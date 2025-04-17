@@ -7,15 +7,19 @@ export const SimpleText = function() {
     this.style = new TextStyle();
     this.text = "SAMPLE TEXT";
     this.style.color.setColorRGBA(238, 238, 238, 1);
+
+    this.addDrawHook();
 }
 
 SimpleText.prototype = Object.create(Graph.prototype);
 SimpleText.prototype.constructor = SimpleText;
 
-SimpleText.prototype.onDraw = function(context, localX, localY) {
-    this.style.apply(context);
+SimpleText.prototype.addDrawHook = function() {
+    this.addHook(Graph.HOOK.DRAW, (context, localX, localY) => {
+        this.style.apply(context);
 
-    context.fillText(this.text, localX, localY);
+        context.fillText(this.text, localX, localY);
+    });
 }
 
 SimpleText.prototype.setText = function(text) {
