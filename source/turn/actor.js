@@ -5,7 +5,11 @@ export const Actor = function() {
     this.maxActions = 1;
 }
 
-Actor.prototype.save = function() {}
+Actor.prototype.save = function() {
+    return {
+        "INFO": "SAVE IS NOT REGISTERED!"
+    };
+}
 
 Actor.prototype.update = function(gameContext) {}
 

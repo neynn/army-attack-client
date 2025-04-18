@@ -44,17 +44,6 @@ EntityManager.prototype.exit = function() {
     this.entities = [];
 }
 
-EntityManager.prototype.removeOwner = function(actorID) {
-    for(let i = 0; i < this.entities.length; i++) {
-        const entity = this.entities[i];
-        const ownerID = entity.getOwner();
-
-        if(ownerID === actorID) {
-            entity.setOwner(null);
-        }
-    }
-}
-
 EntityManager.prototype.registerComponent = function(componentID, component) {
     if(this.components.has(componentID)) {
         Logger.log(Logger.CODE.ENGINE_ERROR, "Component already exists!", "EntityManager.prototype.registerComponent", { "id": componentID });
@@ -69,7 +58,7 @@ EntityManager.prototype.forAllEntities = function(onCall) {
         const entity = this.entities[i];
         const entityID = entity.getID();
 
-        onCall(entity, entityID);
+        onCall(entityID, entity);
     }
 }
 

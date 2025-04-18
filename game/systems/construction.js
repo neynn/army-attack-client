@@ -4,7 +4,9 @@ import { SpawnSystem } from "./spawn.js";
 
 export const ConstructionSystem = function() {}
 
-const getResult = function(entity) {
+const getResult = function(gameContext, entity) {
+    const { world } = gameContext;
+    const { turnManager } = world;
     const constructionComponent = entity.getComponent(ArmyEntity.COMPONENT.CONSTRUCTION);
 
     if(!constructionComponent) {
@@ -14,13 +16,13 @@ const getResult = function(entity) {
     const { tileX, tileY } = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
     const { teamID } = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
     const entityID = entity.getID();
-    const ownerID = entity.getOwner();
+    const owners = turnManager.getOwnersOf(entityID);
     const type = entity.config.constructionResult;
 
     return {
         "id": entityID,
         "team": teamID,
-        "owner": ownerID,
+        "owners": owners,
         "type": type,
         "tileX": tileX,
         "tileY": tileY
@@ -39,7 +41,7 @@ ConstructionSystem.onInteract = function(gameContext, entity) {
     
     if(constructionComponent.isComplete()) {
         if(!actionQueue.isRunning()) {
-            const result = getResult(entity);
+            const result = getResult(gameContext, entity);
 
             if(result) {
                 SpawnSystem.destroyEntity(gameContext, entity);

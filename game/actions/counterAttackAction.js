@@ -15,10 +15,16 @@ CounterAttackAction.prototype.onEnd = function(gameContext, request, messengerID
     const { world } = gameContext;
     const { entityManager } = world;
     const { attackers } = request;
-    const attacker = entityManager.getEntity(attackers[0]);
-    const ownerID = attacker.getOwner();
 
-    AttackSystem.endAttack(gameContext, request, ownerID);
+    /**
+     * TODO!:
+     * 
+     */
+
+    const attacker = entityManager.getEntity(attackers[0]);
+    
+
+    AttackSystem.endAttack(gameContext, request, null);
 }
 
 CounterAttackAction.prototype.onUpdate = function(gameContext, request, messengerID) {

@@ -12,7 +12,6 @@ export const World = function() {
     this.mapManager = new MapManager();
     this.eventBus = new EventBus();
 
-    this.turnManager.events.on(TurnManager.EVENT.ACTOR_DESTROY, (actorID) => this.entityManager.removeOwner(actorID), { permanent: true });
     this.entityManager.events.on(EntityManager.EVENT.ENTITY_DESTROY, (entityID) => this.turnManager.removeEntity(entityID), { permanent: true });
     
     this.addDebug();

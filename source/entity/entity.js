@@ -2,21 +2,10 @@ import { ActiveComponent } from "../component/activeComponent.js";
 
 export const Entity = function(DEBUG_NAME = "") {
     this.DEBUG_NAME = DEBUG_NAME;
-    this.id = null;
-    this.ownerID = null;
+    this.id = -1;
     this.config = {};
     this.components = new Map();
     this.activeComponents = [];
-}
-
-Entity.prototype.getOwner = function() {
-    return this.ownerID;
-}
-
-Entity.prototype.setOwner = function(ownerID) {
-    if(ownerID !== undefined) {
-        this.ownerID = ownerID;
-    }
 }
 
 Entity.prototype.setID = function(id) {

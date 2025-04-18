@@ -41,9 +41,11 @@ TurnManager.prototype.forAllActors = function(onCall) {
         return;
     }
 
-    for(const [actorID, actor] of this.actors) {
-        onCall(actor, actorID);
-    }
+    this.actors.forEach((actor) => {
+        const actorID = actor.getID();
+
+        onCall(actorID, actor);
+    })
 }
 
 TurnManager.prototype.createActor = function(gameContext, config, actorID) {
@@ -239,4 +241,18 @@ TurnManager.prototype.addEntity = function(actorID, entityID) {
     }
 
     owner.addEntity(entityID);
+}
+
+TurnManager.prototype.getOwnersOf = function(entityID) {
+    const owners = [];
+
+    this.actors.forEach((actor) => {
+        if(actor.hasEntity(entityID)) {
+            const actorID = actor.getID();
+
+            owners.push(actorID);
+        }
+    });
+
+    return owners;
 }

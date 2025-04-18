@@ -232,10 +232,11 @@ ArmyContext.prototype.initConversions = function(teamConversions) {
 }
 
 ArmyContext.prototype.saveSnapshot = function() {
+    const { turnManager, entityManager } = this.world;
     const entities = [];
     const actors = [];
 
-    this.world.turnManager.forAllActors((actor, actorID) => {
+    turnManager.forAllActors((actorID, actor) => {
         const saveData = actor.save();
 
         actors.push({
@@ -244,18 +245,18 @@ ArmyContext.prototype.saveSnapshot = function() {
         });
     });
 
-    this.world.entityManager.forAllEntities((entity, entityID) => {
+    entityManager.forAllEntities((entityID, entity) => {
         const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
         const teamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
         const savedComponents = entity.save();
-        const ownerID = entity.getOwner();
+        const owners = turnManager.getOwnersOf(entityID);
         
         entities.push({
             "type": entity.config.id,
             "tileX": positionComponent.tileX,
             "tileY": positionComponent.tileY,
             "team": teamComponent.teamID,
-            "owner": ownerID,
+            "owners": owners,
             "components": savedComponents
         });
     });

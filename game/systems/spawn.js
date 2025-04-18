@@ -61,7 +61,7 @@ SpawnSystem.createEntity = function(gameContext, config) {
         return null;
     }
     
-    const { owner, id } = config;
+    const { owners, id } = config;
     const entity = entityManager.createEntity(gameContext, config, id);
 
     if(!entity) {
@@ -70,9 +70,19 @@ SpawnSystem.createEntity = function(gameContext, config) {
     
     const entityID = entity.getID();
 
-    if(owner !== undefined && owner !== null) {
-        turnManager.addEntity(owner, entityID);
-        entity.setOwner(owner);
+    switch(typeof owners) {
+        case "string": {
+            turnManager.addEntity(owners, entityID);
+            break;
+        }
+        case "object": {
+            for(let i = 0; i < owners.length; i++) {
+                const owner = owners[i];
+
+                turnManager.addEntity(owner, entityID);
+            }
+            break;
+        }
     }
 
     loadEntitySprites(gameContext, entity);

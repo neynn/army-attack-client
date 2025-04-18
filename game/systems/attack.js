@@ -56,13 +56,14 @@ const filterAliveEntitiesInMaxRange = function(gameContext, entity, onCheck) {
     const nearbyEntities = getSurroundingEntities(activeMap, entity, gameContext.settings.maxAttackRange);
 
     for(let i = 0; i < nearbyEntities.length; i++) {
-        const nearbyEntity = entityManager.getEntity(nearbyEntities[i]);
+        const entityID = nearbyEntities[i];
+        const nearbyEntity = entityManager.getEntity(entityID);
 
         if(!nearbyEntity || !nearbyEntity.isAlive()) {
             continue;
         }
 
-        if(onCheck(nearbyEntity)) {
+        if(onCheck(entityID, nearbyEntity)) {
             entities.push(nearbyEntity);
         }
     }
@@ -156,7 +157,7 @@ AttackSystem.getAttackCounterTargets = function(gameContext, attacker, targetLis
     }
 
     const attackerTeamComponent = attacker.getComponent(ArmyEntity.COMPONENT.TEAM);
-    const targets = filterAliveEntitiesInMaxRange(gameContext, attacker, (target) => {
+    const targets = filterAliveEntitiesInMaxRange(gameContext, attacker, (targetID, target) => {
         const hasRange = hasEnoughRange(attacker, target, attackComponent.range);
 
         if(!hasRange) {
@@ -174,7 +175,7 @@ AttackSystem.getAttackCounterTargets = function(gameContext, attacker, targetLis
 
 AttackSystem.getMoveCounterAttackers = function(gameContext, target) {
     const targetTeamComponent = target.getComponent(ArmyEntity.COMPONENT.TEAM);
-    const attackers = filterAliveEntitiesInMaxRange(gameContext, target, (attacker) => {
+    const attackers = filterAliveEntitiesInMaxRange(gameContext, target, (attackerID, attacker) => {
         const attackComponent = attacker.getComponent(ArmyEntity.COMPONENT.ATTACK);
 
         if(!attackComponent || !attackComponent.isMoveCounterable()) {
@@ -196,12 +197,18 @@ AttackSystem.getMoveCounterAttackers = function(gameContext, target) {
     return attackers;
 }
 
-AttackSystem.getActiveAttackers = function(gameContext, target, ownerID) {
-    const targetTeamComponent = target.getComponent(ArmyEntity.COMPONENT.TEAM);
-    const attackers = filterAliveEntitiesInMaxRange(gameContext, target, (attacker) => {
-        const attackerOwnerID = attacker.getOwner();
+AttackSystem.getActiveAttackers = function(gameContext, target, actorID) {
+    const { world } = gameContext;
+    const { turnManager } = world;
+    const actor = turnManager.getActor(actorID);
 
-        if(attackerOwnerID !== ownerID) {
+    if(!actor) {
+        return [];
+    }
+
+    const targetTeamComponent = target.getComponent(ArmyEntity.COMPONENT.TEAM);
+    const attackers = filterAliveEntitiesInMaxRange(gameContext, target, (attackerID, attacker) => {
+        if(!actor.hasEntity(attackerID)) {
             return false;
         }
 
