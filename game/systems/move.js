@@ -11,26 +11,30 @@ const updateSpritePosition = function(gameContext, entity) {
     spriteComponent.setPosition(gameContext, positionX, positionY);
 }
 
-MoveSystem.updatePath = function(gameContext, entity) {
-    const { timer, renderer } = gameContext;
-    const camera = renderer.getContext(Player.CAMERA_ID).getCamera();
-    const { width } = camera.getTileDimensions();
-    const deltaTime = timer.getFixedDeltaTime();
+MoveSystem.isMoveable = function(entity) {
+    const isMoveable = entity.isAlive() && entity.hasComponent(ArmyEntity.COMPONENT.MOVE);
 
-    const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
+    return isMoveable;
+}
+
+MoveSystem.updatePath = function(gameContext, entity) {
     const moveComponent = entity.getComponent(ArmyEntity.COMPONENT.MOVE);
 
     if(moveComponent.isPathEmpty()) {
         return;
     }
 
-    const { deltaX, deltaY, speed } = moveComponent.getCurrentStep();
-    const moveSpeed = (moveComponent.speed / speed) * deltaTime;
+    const { timer, renderer } = gameContext;
+    const camera = renderer.getContext(Player.CAMERA_ID).getCamera();
+    const deltaTime = timer.getFixedDeltaTime();
+    const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
+    const { deltaX, deltaY } = moveComponent.getCurrentStep();
+    const moveSpeed = moveComponent.getMoveSpeed(deltaTime);
     
     positionComponent.updatePosition(deltaX * moveSpeed, deltaY * moveSpeed);
     moveComponent.distance += moveSpeed;
 
-    while(moveComponent.distance >= width && !moveComponent.isPathEmpty()) {
+    while(moveComponent.distance >= gameContext.settings.travelDistance && !moveComponent.isPathEmpty()) {
         const { deltaX, deltaY } = moveComponent.getCurrentStep();
         const tileX = positionComponent.tileX + deltaX;
         const tileY = positionComponent.tileY + deltaY;
@@ -38,7 +42,7 @@ MoveSystem.updatePath = function(gameContext, entity) {
         
         positionComponent.setPosition(x, y);
         positionComponent.setTile(tileX, tileY);
-        moveComponent.distance -= width;
+        moveComponent.distance -= gameContext.settings.travelDistance;
         moveComponent.path.pop();
     }
 

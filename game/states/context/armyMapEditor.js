@@ -149,7 +149,7 @@ ArmyMapEditor.prototype.initSlots = function(gameContext) {
 ArmyMapEditor.prototype.initCamera = function(gameContext) {
     const { renderer } = gameContext;
 
-    this.camera.unbindViewport();
+    this.camera.freeViewport();
     this.camera.setTileSize(gameContext.settings.tileWidth, gameContext.settings.tileHeight)
 
     const context = renderer.createContext(this.id, this.camera);

@@ -24,7 +24,8 @@ export const ACTION_TYPES = {
     CONSTRUCTION: "Construction",
     COUNTER_ATTACK: "CounterAttack",
     COUNTER_MOVE: "CounterMove",
-    DEATH: "Death"
+    DEATH: "Death",
+    FIRE_MISSION: "FireMission"
 };
 
 export const GAME_EVENT = {

@@ -1,4 +1,5 @@
 import { FloodFill } from "../../source/pathfinders/floodFill.js";
+import { MoveComponent } from "../components/move.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { ArmyMap } from "../init/armyMap.js";
 import { AllianceSystem } from "./alliance.js";
@@ -162,13 +163,9 @@ PathfinderSystem.generateMovePath = function(nodeList, targetX, targetY) {
         for(let i = 1; i < flatTree.length; i++) {
             const deltaX = flatTree[i - 1].positionX - flatTree[i].positionX;
             const deltaY = flatTree[i - 1].positionY - flatTree[i].positionY;
-            const direction = {
-                "deltaX": deltaX,
-                "deltaY": deltaY,
-                "speed": Math.sqrt(deltaX * deltaX + deltaY * deltaY)
-            };
+            const step = MoveComponent.createStep(deltaX, deltaY);
     
-            path.push(direction);
+            path.push(step);
         }
 
         return path;

@@ -36,6 +36,7 @@ import { DeathAction } from "./actions/deathAction.js";
 import { ArmyMap } from "./init/armyMap.js";
 import { Socket } from "../source/network/socket.js";
 import { MapManager } from "../source/map/mapManager.js";
+import { FireMissionAction } from "./actions/fireMissionAction.js";
 
 export const ArmyContext = function() {
     GameContext.call(this);
@@ -113,6 +114,7 @@ ArmyContext.prototype.init = function(resources) {
     this.world.actionQueue.registerAction(ACTION_TYPES.COUNTER_ATTACK, new CounterAttackAction());
     this.world.actionQueue.registerAction(ACTION_TYPES.COUNTER_MOVE, new CounterMoveAction());
     this.world.actionQueue.registerAction(ACTION_TYPES.MOVE, new MoveAction());
+    this.world.actionQueue.registerAction(ACTION_TYPES.FIRE_MISSION, new FireMissionAction());
 
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.ARMOR, ArmorComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.ATTACK, AttackComponent);

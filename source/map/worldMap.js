@@ -298,6 +298,22 @@ WorldMap.prototype.getTile = function(layerID, tileX, tileY) {
     return item;
 }
 
+WorldMap.prototype.getAllEntitiesInRange = function(startX, startY, endX, endY) {
+    const entities = [];
+
+    for(let i = startY; i < endY; i++) {
+        for(let j = startX; j < endX; j++) {
+            const entityID = this.getTopEntity(j, i);
+
+            if(entityID !== null) {
+                entities.push(entityID);
+            }
+        }
+    }
+
+    return entities;
+}
+
 WorldMap.prototype.getUniqueEntitiesInRange = function(startX, startY, endX, endY) {
     const entities = [];
     const addedEntities = new Set();
@@ -306,7 +322,7 @@ WorldMap.prototype.getUniqueEntitiesInRange = function(startX, startY, endX, end
         for(let j = startX; j < endX; j++) {
             const entityID = this.getTopEntity(j, i);
 
-            if(!addedEntities.has(entityID)) {
+            if(entityID !== null && !addedEntities.has(entityID)) {
                 entities.push(entityID);
                 addedEntities.add(entityID)
             }

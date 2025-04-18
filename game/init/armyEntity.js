@@ -227,9 +227,3 @@ ArmyEntity.prototype.isAttackableByTeam = function(gameContext, team) {
 
     return isEnemy;
 }
-
-ArmyEntity.prototype.isMoveable = function() {
-    const isMoveable = this.isAlive() && this.hasComponent(ArmyEntity.COMPONENT.MOVE);
-
-    return isMoveable;
-}

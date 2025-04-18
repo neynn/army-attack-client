@@ -5,12 +5,12 @@ import { Camera } from "../camera.js";
 export const OrthogonalCamera = function() {
     Camera.call(this);
 
-    this.tileWidth = 0;
-    this.tileHeight = 0;
-    this.halfTileWidth = 0;
-    this.halfTileHeight = 0;
     this.mapWidth = 0;
     this.mapHeight = 0;
+    this.tileWidth = -1;
+    this.tileHeight = -1;
+    this.halfTileWidth = -1;
+    this.halfTileHeight = -1;
     this.startX = -1;
     this.startY = -1;
     this.endX = -1;
@@ -258,10 +258,15 @@ OrthogonalCamera.prototype.drawMapOutlines = function(context) {
 }
 
 OrthogonalCamera.prototype.setTileSize = function(tileWidth, tileHeight) {
+    const worldWidth = this.mapWidth * tileWidth;
+    const worldHeight = this.mapHeight * tileHeight;
+
     this.tileWidth = tileWidth;
     this.tileHeight = tileHeight;
     this.halfTileWidth = tileWidth / 2;
     this.halfTileHeight = tileHeight / 2;
+
+    this.setWorldSize(worldWidth, worldHeight);
 }
 
 OrthogonalCamera.prototype.setMapSize = function(mapWidth, mapHeight) {
@@ -270,6 +275,7 @@ OrthogonalCamera.prototype.setMapSize = function(mapWidth, mapHeight) {
 
     this.mapWidth = mapWidth;
     this.mapHeight = mapHeight;
+
     this.setWorldSize(worldWidth, worldHeight);
 }
 

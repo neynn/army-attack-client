@@ -12,6 +12,8 @@ import { AttackRangeOverlay } from "./attackRangeOverlay.js";
 import { Inventory } from "./inventory.js";
 import { Queue } from "../../../../source/queue.js";
 import { EntityManager } from "../../../../source/entity/entityManager.js";
+import { MoveSystem } from "../../../systems/move.js";
+import { FireMissionSystem } from "../../../systems/fireMission.js";
 
 export const Player = function() {
     Actor.call(this);
@@ -47,7 +49,8 @@ Player.STATE = {
 Player.SPRITE_TYPE = {
     MOVE: "move",
     SELECT: "select",
-    ATTACK: "attack" 
+    ATTACK: "attack",
+    FIRE_MISSION: "powerup"
 };
 
 Player.OVERLAY_TYPE = {
@@ -181,6 +184,7 @@ Player.prototype.onClick = function(gameContext) {
             break;
         }
         case Player.STATE.SELECTED: {
+            //this.selectFireMission(gameContext, "Doomsday");
             this.onSelectedClick(gameContext, x, y);
             break;
         }
@@ -267,7 +271,34 @@ Player.prototype.updateSelectedCursor = function(gameContext) {
     }
 }
 
-Player.prototype.selectFireMission = function(gameContext, fireMission) {}
+Player.prototype.updateFireMissionCursor = function(gameContext) {
+    const fireMission = gameContext.fireCallTypes[this.selectedFireMissionID];
+
+    if(!fireMission) {
+        return;
+    }
+
+    const { sprites } = fireMission;
+
+    if(sprites) {
+        this.hover.updateSprite(gameContext, sprites.cursor);
+    }
+}
+
+Player.prototype.selectFireMission = function(gameContext, fireMissionID) {
+    if(this.selectedFireMissionID === fireMissionID) {
+        return;
+    }
+
+    const fireMission = gameContext.fireCallTypes[fireMissionID];
+
+    if(!fireMission) {
+        return;
+    }
+
+    this.selectedFireMissionID = fireMissionID;
+    this.swapState(gameContext, Player.STATE.FIRE_MISSION);
+}
 
 Player.prototype.updateSelectedEntity = function(gameContext) {
     const { world } = gameContext;
@@ -287,21 +318,33 @@ Player.prototype.updateSelectedEntity = function(gameContext) {
     }
 }
 
-Player.prototype.queueAttack = function(gameContext, entity) {
+Player.prototype.queueAttack = function(gameContext, entityID) {
     const { world } = gameContext;
     const { actionQueue } = world;
-    const isAttackable = entity.isAttackableByTeam(gameContext, this.teamID);
+    const request = actionQueue.createRequest(ACTION_TYPES.ATTACK, entityID);
 
-    if(isAttackable) {
-        const entityID = entity.getID();
-        const request = actionQueue.createRequest(ACTION_TYPES.ATTACK, entityID);
-
-        if(request) {
-            this.inputQueue.enqueueLast(request);
-        }
+    if(request) {
+        this.inputQueue.enqueueLast(request);
     }
+}
 
-    return isAttackable;
+Player.prototype.queueFireMission = function(gameContext, tileX, tileY) {
+    const { world } = gameContext;
+    const { actionQueue } = world;
+    const request = actionQueue.createRequest(ACTION_TYPES.FIRE_MISSION, this.selectedFireMissionID, tileX, tileY);
+    
+    if(request) {
+        this.inputQueue.enqueueLast(request);
+    }
+}
+
+Player.prototype.onFireMissionClick = function(gameContext, tileX, tileY) {
+    const isValid = FireMissionSystem.isValid(gameContext, this.selectedFireMissionID, tileX, tileY);
+
+    if(isValid) {
+        this.queueFireMission(gameContext, tileX, tileY);
+        this.swapState(gameContext, Player.STATE.IDLE);
+    }
 }
 
 Player.prototype.onSelectedClick = function(gameContext, tileX, tileY) {
@@ -311,9 +354,13 @@ Player.prototype.onSelectedClick = function(gameContext, tileX, tileY) {
     const mouseEntity = world.getTileEntity(tileX, tileY);
 
     if(mouseEntity) {
-        const success = this.queueAttack(gameContext, mouseEntity);
+        const isAttackable = mouseEntity.isAttackableByTeam(gameContext, this.teamID);
 
-        if(!success) {
+        if(isAttackable) {
+            const entityID = mouseEntity.getID();
+
+            this.queueAttack(gameContext, entityID);
+        } else {
             soundPlayer.play("sound_error", 0.5); 
         }
     } else {
@@ -337,9 +384,14 @@ Player.prototype.onIdleClick = function(gameContext, tileX, tileY) {
     }
 
     const entityID = mouseEntity.getID();
-    const success = this.queueAttack(gameContext, mouseEntity);
+    const isAttackable = mouseEntity.isAttackableByTeam(gameContext, this.teamID);
 
-    if(success || !this.hasEntity(entityID)) {
+    if(isAttackable) {
+        this.queueAttack(gameContext, entityID);
+        return;
+    }
+
+    if(!this.hasEntity(entityID)) {
         return;
     }
 
@@ -350,48 +402,17 @@ Player.prototype.onIdleClick = function(gameContext, tileX, tileY) {
     }
 
     if(!actionQueue.isRunning()) {
-        if(mouseEntity.isMoveable()) {
+        if(MoveSystem.isMoveable(mouseEntity)) {
             this.selectEntity(gameContext, mouseEntity);
             this.swapState(gameContext, Player.STATE.SELECTED);
         }
     }
 }
 
-Player.prototype.onFireMissionClick = function(gameContext, tileX, tileY) {
-
-}
-
-Player.prototype.toggleRangeShow = function(gameContext) {
-    const state = this.attackRangeOverlay.toggle();
-
-    switch(state) {
-        case AttackRangeOverlay.STATE.INACTIVE: {
-            this.attackRangeOverlay.hide(gameContext, this.camera);
-            break;
-        }
-        case AttackRangeOverlay.STATE.ACTIVE: {
-            const hoverEntity = this.hover.getEntity(gameContext);
-
-            if(hoverEntity) {
-                this.attackRangeOverlay.show(gameContext, hoverEntity, this.camera);
-            }
-            break;
-        }
-    }
-}
-
 Player.prototype.updateRangeIndicator = function(gameContext) {
-    if(!this.attackRangeOverlay.isEnabled() || !this.hover.targetChanged) {
-        return;
-    }
+    const entity = this.hover.getEntity(gameContext);
 
-    this.attackRangeOverlay.hide(gameContext, this.camera);
-
-    if(this.hover.state === Hover.STATE.HOVER_ON_ENTITY) {
-        const entity = this.hover.getEntity(gameContext);
-
-        this.attackRangeOverlay.show(gameContext, entity, this.camera);
-    }
+    this.attackRangeOverlay.update(gameContext, entity, this.camera);
 }
 
 Player.prototype.onMakeChoice = function(gameContext) {
@@ -456,7 +477,9 @@ Player.prototype.update = function(gameContext) {
             break;
         }
         case Player.STATE.FIRE_MISSION: {
-            this.updateFireMissionCursor(gameContext);
+            /*
+                Update fire mission overlays. OVERLAY_DISABLED when the attack is not possible.
+            */
             this.hover.alignSprite(gameContext, this.camera);
             break;
         }
@@ -467,6 +490,11 @@ Player.prototype.exitState = function(gameContext) {
     switch(this.state) {
         case Player.STATE.SELECTED: {
             this.deselectEntity(gameContext);
+            break;
+        }
+        case Player.STATE.FIRE_MISSION: {
+            this.selectedFireMissionID = null;
+            this.attackRangeOverlay.unlock();
             break;
         }
     }
@@ -481,8 +509,11 @@ Player.prototype.enterState = function(gameContext, stateID) {
             break;
         }
         case Player.STATE.FIRE_MISSION: {
+            AnimationSystem.revertToIdle(gameContext, this.attackers);
             this.clearAttackers();
-            this.attackRangeOverlay.hide(gameContext, this.camera);
+            this.updateFireMissionCursor(gameContext);
+            this.inputQueue.clear();
+            this.attackRangeOverlay.lock(gameContext, this.camera);
             break;
         }
     }

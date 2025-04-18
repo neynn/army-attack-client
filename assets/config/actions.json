@@ -58,5 +58,15 @@
             "send": false,
             "receive": true
         }
+    },
+    "FireMission": {
+        "name": "ACTION_NAME_FIRE_MISSION", 
+        "description": "ACTION_DESC_FIRE_MISSION",
+        "priority": "HIGH",
+        "isInstant": false,
+        "message": {
+            "send": true,
+            "receive": true
+        }
     }
 }

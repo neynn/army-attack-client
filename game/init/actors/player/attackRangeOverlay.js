@@ -6,15 +6,21 @@ import { ArmyMap } from "../../armyMap.js";
 
 export const AttackRangeOverlay = function() {
     this.state = AttackRangeOverlay.STATE.ACTIVE;
+    this.isLocked = false;
     this.lastTarget = null;
 }
 
 AttackRangeOverlay.STATE = {
-    INACTIVE: 0,
-    ACTIVE: 1
+    NONE: 0,
+    INACTIVE: 1,
+    ACTIVE: 2
 };
 
-AttackRangeOverlay.prototype.toggle = function() {
+AttackRangeOverlay.prototype.toggle = function(gameContext, camera) {
+    if(this.isLocked) {
+        return this.state;
+    }
+
     switch(this.state) {
         case AttackRangeOverlay.STATE.INACTIVE: {
             this.state = AttackRangeOverlay.STATE.ACTIVE;
@@ -22,15 +28,16 @@ AttackRangeOverlay.prototype.toggle = function() {
         }
         case AttackRangeOverlay.STATE.ACTIVE: {
             this.state = AttackRangeOverlay.STATE.INACTIVE;
+            
+            if(this.lastTarget !== null) {
+                this.hide(gameContext, camera);
+                this.lastTarget = null;
+            }
             break;
         }
     }
 
     return this.state;
-}
-
-AttackRangeOverlay.prototype.isEnabled = function() {
-    return this.state === AttackRangeOverlay.STATE.ACTIVE;
 }
 
 AttackRangeOverlay.prototype.show = function(gameContext, entity, camera) {
@@ -41,7 +48,6 @@ AttackRangeOverlay.prototype.show = function(gameContext, entity, camera) {
     }
 
     const { tileManager, spriteManager } = gameContext;
-    const entityID = entity.getID();
     const autotiler = tileManager.getAutotilerByID(ArmyMap.AUTOTILER.RANGE);
     const { range } = attackComponent;
     const { tileX, tileY } = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
@@ -67,15 +73,9 @@ AttackRangeOverlay.prototype.show = function(gameContext, entity, camera) {
             camera.pushOverlay(ArmyCamera.OVERLAY_TYPE.RANGE, tileID, j, i);
         }
     }
-
-    this.lastTarget = entityID;
 }
 
 AttackRangeOverlay.prototype.hide = function(gameContext, camera) {
-    if(this.lastTarget === null) {
-        return;
-    }
-    
     const { spriteManager, world } = gameContext;
     const { entityManager } = world;
     const entity = entityManager.getEntity(this.lastTarget);
@@ -87,6 +87,39 @@ AttackRangeOverlay.prototype.hide = function(gameContext, camera) {
         
         spriteManager.swapLayer(spriteID, SpriteManager.LAYER.MIDDLE);
     }
+}
 
-    this.lastTarget = null;
+AttackRangeOverlay.prototype.update = function(gameContext, entity, camera) {
+    if(this.state !== AttackRangeOverlay.STATE.ACTIVE || this.isLocked) {
+        return;
+    }
+
+    if(entity !== null) {
+        const entityID = entity.getID();
+
+        if(entityID !== this.lastTarget) {
+            if(this.lastTarget !== null) {
+                this.hide(gameContext, camera);
+            }
+
+            this.show(gameContext, entity, camera);
+            this.lastTarget = entityID;
+        }
+    } else {
+        this.hide(gameContext, camera);
+        this.lastTarget = null;
+    }
+}
+
+AttackRangeOverlay.prototype.unlock = function() {
+    this.isLocked = false;
+}
+
+AttackRangeOverlay.prototype.lock = function(gameContext, camera) {
+    this.isLocked = true;
+
+    if(this.lastTarget !== null)  {
+        this.hide(gameContext, camera);
+        this.lastTarget = null;
+    }
 }

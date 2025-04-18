@@ -4,7 +4,6 @@ import { Player } from "../init/actors/player/player.js";
 import { createStoryModeUI } from "../storyUI.js";
 import { OtherPlayer } from "./actors/otherPlayer.js";
 import { EnemyActor } from "./actors/enemyActor.js";
-import { CameraContext } from "../../source/camera/cameraContext.js";
 
 export const ArmyActorFactory = function() {
     Factory.call(this, "ARMY_ACTOR_FACOTRY");
@@ -36,28 +35,8 @@ const addDragEvent = function(gameContext) {
     });
 }
 
-const initPlayerCamera = function(gameContext, camera) {
-    const { renderer } = gameContext;
-    const context = renderer.createContext(Player.CAMERA_ID, camera);
-
-    camera.setTileSize(gameContext.settings.tileWidth, gameContext.settings.tileHeight);
-
-    //context.initRenderer(640/2, 360/2);
-    //context.setDisplayMode(CameraContext.DISPLAY_MODE.RESOLUTION_FIXED);
-
-    /*
-    let x = false;
-
-    this.client.cursor.events.on(Cursor.CLICK, () => {
-        x = !x;
-        let mode = x ? CameraContext.DISPLAY_MODE.RESOLUTION_DEPENDENT : CameraContext.DISPLAY_MODE.RESOLUTION_FIXED;
-        this.renderer.getContext(cameraID).setDisplayMode(mode);
-    });
-    */
-}
-
 ArmyActorFactory.prototype.onCreate = function(gameContext, config) {
-    const { spriteManager, client } = gameContext;
+    const { client, renderer } = gameContext;
     const { router } = client;
     const { type, team } = config;
     const actorType = this.getType(type);
@@ -65,17 +44,20 @@ ArmyActorFactory.prototype.onCreate = function(gameContext, config) {
     switch(type) {
         case ArmyActorFactory.TYPE.PLAYER: {
             const actor = new Player();
+            const camera = actor.getCamera();
 
             actor.inventory.init(gameContext);
             actor.hover.createSprite(gameContext);
             actor.teamID = team ?? null;
             actor.setConfig(actorType);
             
-            initPlayerCamera(gameContext, actor.getCamera());
+            renderer.createContext(Player.CAMERA_ID, camera);
+            camera.setTileSize(gameContext.settings.tileWidth, gameContext.settings.tileHeight);
+
             addDragEvent(gameContext);
 
             router.load(gameContext, actorType.binds);
-            router.on(Player.COMMAND.TOGGLE_RANGE, () => actor.toggleRangeShow(gameContext));
+            router.on(Player.COMMAND.TOGGLE_RANGE, () => actor.attackRangeOverlay.toggle(gameContext, camera));
             router.on(Player.COMMAND.CLICK, () => actor.onClick(gameContext));
 
             createStoryModeUI(gameContext);

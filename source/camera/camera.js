@@ -123,7 +123,7 @@ Camera.prototype.bindViewport = function() {
     this.limitViewport();
 }
 
-Camera.prototype.unbindViewport = function() {
+Camera.prototype.freeViewport = function() {
     this.viewportType = Camera.VIEWPORT_TYPE.FREE;
     this.limitViewport();
 }

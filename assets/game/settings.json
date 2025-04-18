@@ -1,6 +1,7 @@
 {
     "tileWidth": 96,
     "tileHeight": 96,
+    "travelDistance": 96,
     "drawBorder": true,
     "drawAttackRange": false,
     "maxQueueSize": 20,

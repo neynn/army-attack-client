@@ -26,6 +26,14 @@ MoveComponent.FLAG_MAP = {
 MoveComponent.prototype = Object.create(ActiveComponent.prototype);
 MoveComponent.prototype.constructor = MoveComponent;
 
+MoveComponent.createStep = function(deltaX, deltaY) {
+    return {
+        "deltaX": deltaX,
+        "deltaY": deltaY,
+        "speed": Math.sqrt(deltaX * deltaX + deltaY * deltaY)
+    }
+}
+
 MoveComponent.prototype.setPath = function(path) {
     this.path = path;
 }
@@ -51,6 +59,13 @@ MoveComponent.prototype.update = function(gameContext, entity) {
 MoveComponent.prototype.clear = function() {
     this.distance = 0;
     this.path = [];
+}
+
+MoveComponent.prototype.getMoveSpeed = function(deltaTime) {
+    const { speed } = this.getCurrentStep();
+    const moveSpeed = (this.speed / speed) * deltaTime;
+
+    return moveSpeed;
 }
 
 MoveComponent.prototype.getCurrentStep = function() {
