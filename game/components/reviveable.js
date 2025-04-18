@@ -1,14 +1,10 @@
-import { ActiveComponent } from "../../source/component/activeComponent.js";
-import { ACTION_TYPES } from "../enums.js";
+import { ACTION_TYPE } from "../enums.js";
 
 export const ReviveableComponent = function() {
     this.type = ReviveableComponent.TYPE.NONE;
     this.state = ReviveableComponent.STATE.NO_DECAY;
     this.passedTime = 0;
 }
-
-ReviveableComponent.prototype = Object.create(ActiveComponent.prototype);
-ReviveableComponent.prototype.constructor = ReviveableComponent;
 
 ReviveableComponent.TYPE = {
     NONE: 0,
@@ -47,7 +43,7 @@ ReviveableComponent.prototype.update = function(gameContext, entity) {
             this.passedTime = gameContext.settings.downDuration;
             this.state = ReviveableComponent.STATE.DEAD;
 
-            actionQueue.addImmediateRequest(ACTION_TYPES.DEATH, null, entity.getID());
+            actionQueue.addImmediateRequest(ACTION_TYPE.DEATH, null, entity.getID());
         }
     }
 }

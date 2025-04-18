@@ -1,4 +1,4 @@
-export const CLIENT_EVENTS = {
+export const CLIENT_EVENT = {
     INSTANCE_TEAM: 0,
     INSTANCE_ENTITY_BATCH: 1,
     INSTANCE_MAP: 2,
@@ -8,7 +8,7 @@ export const CLIENT_EVENTS = {
     EVENT: 6
 };
 
-export const EVENT_TYPES = {
+export const EVENT_TYPE = {
     CLIENT: "Client",
     COUNTER: "Counter",
     CONTROL: "Control",
@@ -18,7 +18,7 @@ export const EVENT_TYPES = {
     MILESTONE: "Milestone"
 };
 
-export const ACTION_TYPES = {
+export const ACTION_TYPE = {
     MOVE: "Move",
     ATTACK: "Attack",
     CONSTRUCTION: "Construction",

@@ -1,4 +1,3 @@
-import { ActiveComponent } from "../../source/component/activeComponent.js";
 import { MoveSystem } from "../systems/move.js";
 
 export const MoveComponent = function() {
@@ -22,9 +21,6 @@ MoveComponent.FLAG_MAP = {
     "Cloak": MoveComponent.FLAGS.CLOAK,
     "Coward": MoveComponent.FLAGS.COWARD
 };
-
-MoveComponent.prototype = Object.create(ActiveComponent.prototype);
-MoveComponent.prototype.constructor = MoveComponent;
 
 MoveComponent.createStep = function(deltaX, deltaY) {
     return {

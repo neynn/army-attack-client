@@ -68,7 +68,7 @@ AnimationSystem.playFire = function(gameContext, target, attackers) {
     for(let i = 0; i < attackers.length; i++) {
         const attackerID = attackers[i];
         const attacker = entityManager.getEntity(attackerID);
-        const unitSizeComponent = attacker.getComponent(ArmyEntity.COMPONENT.UNIT_SIZE);
+        const unitComponent = attacker.getComponent(ArmyEntity.COMPONENT.UNIT);
         const weaponSprite = spriteManager.createSprite(attacker.config.sprites.weapon);
         const { x, y } = getRandomOffset(camera, target.config.dimX, target.config.dimY, AnimationSystem.FIRE_OFFSET.REGULAR, AnimationSystem.FIRE_OFFSET.REGULAR);
 
@@ -79,7 +79,7 @@ AnimationSystem.playFire = function(gameContext, target, attackers) {
         weaponSprite.setPosition(x, y);
         weaponSprite.expire();
 
-        if(unitSizeComponent && unitSizeComponent.isArtillery()) {
+        if(unitComponent && unitComponent.isArtillery()) {
             const artillerySprite = spriteManager.createSprite(attacker.config.sprites.weapon);
             const { x, y } = getRandomOffset(camera, target.config.dimX, target.config.dimY, AnimationSystem.FIRE_OFFSET.ARTILLERY, AnimationSystem.FIRE_OFFSET.ARTILLERY);
 

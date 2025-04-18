@@ -30,7 +30,7 @@ ArmyEntity.COMPONENT = {
     REVIVEABLE: "Reviveable",
     ATTACK: "Attack",
     MOVE: "Move",
-    UNIT_SIZE: "UnitSize",
+    UNIT: "Unit",
     ARMOR: "Armor",
     AVIAN: "Avian",
     POSITION: "Position",

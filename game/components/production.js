@@ -1,5 +1,3 @@
-import { ActiveComponent } from "../../source/component/activeComponent.js";
-
 export const ProductionComponent = function() {
     this.passedTime = 0;
     this.state = ProductionComponent.STATE.NOT_PRODUCING;
@@ -10,9 +8,6 @@ ProductionComponent.STATE = {
     PRODUCING: 1,
     FINISHED: 2
 };
-
-ProductionComponent.prototype = Object.create(ActiveComponent.prototype);
-ProductionComponent.prototype.constructor = ProductionComponent;
 
 ProductionComponent.prototype.update = function(gameContext, entity) {
     if(this.state === ProductionComponent.STATE.PRODUCING) {

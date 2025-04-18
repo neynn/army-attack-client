@@ -1,5 +1,3 @@
-import { Component } from "../../source/component/component.js";
-
 export const AttackComponent = function() {
     this.damage = 0;
     this.range = 0;
@@ -7,9 +5,6 @@ export const AttackComponent = function() {
     this.counter = AttackComponent.COUNTER_TYPE.NONE;
     this.bulldoze = AttackComponent.BULLDOZE_TYPE.NONE;
 }
-
-AttackComponent.prototype = Object.create(Component.prototype);
-AttackComponent.prototype.constructor = AttackComponent;
 
 AttackComponent.BULLDOZE_TYPE = {
     NONE: 0,

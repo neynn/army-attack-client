@@ -1,5 +1,5 @@
 import { GameContext } from "../source/gameContext.js";
-import { ACTION_TYPES, GAME_EVENT } from "./enums.js";
+import { ACTION_TYPE, GAME_EVENT } from "./enums.js";
 import { AttackAction } from "./actions/attackAction.js";
 import { MoveAction } from "./actions/moveAction.js";
 import { ArmorComponent } from "./components/armor.js";
@@ -8,7 +8,7 @@ import { ConstructionComponent } from "./components/construction.js";
 import { HealthComponent } from "./components/health.js";
 import { MoveComponent } from "./components/move.js";
 import { PositionComponent } from "./components/position.js";
-import { UnitSizeComponent } from "./components/unitSize.js";
+import { UnitComponent } from "./components/unit.js";
 import { TeamComponent } from "./components/team.js";
 import { MainMenuState } from "./states/context/mainMenu.js";
 import { MapEditorState } from "./states/context/mapEditor.js";
@@ -108,13 +108,13 @@ ArmyContext.prototype.init = function(resources) {
     this.settings = resources.settings;
     this.editorConfig = resources.editor;
 
-    this.world.actionQueue.registerAction(ACTION_TYPES.DEATH, new DeathAction())
-    this.world.actionQueue.registerAction(ACTION_TYPES.ATTACK, new AttackAction());
-    this.world.actionQueue.registerAction(ACTION_TYPES.CONSTRUCTION, new ConstructionAction());
-    this.world.actionQueue.registerAction(ACTION_TYPES.COUNTER_ATTACK, new CounterAttackAction());
-    this.world.actionQueue.registerAction(ACTION_TYPES.COUNTER_MOVE, new CounterMoveAction());
-    this.world.actionQueue.registerAction(ACTION_TYPES.MOVE, new MoveAction());
-    this.world.actionQueue.registerAction(ACTION_TYPES.FIRE_MISSION, new FireMissionAction());
+    this.world.actionQueue.registerAction(ACTION_TYPE.DEATH, new DeathAction())
+    this.world.actionQueue.registerAction(ACTION_TYPE.ATTACK, new AttackAction());
+    this.world.actionQueue.registerAction(ACTION_TYPE.CONSTRUCTION, new ConstructionAction());
+    this.world.actionQueue.registerAction(ACTION_TYPE.COUNTER_ATTACK, new CounterAttackAction());
+    this.world.actionQueue.registerAction(ACTION_TYPE.COUNTER_MOVE, new CounterMoveAction());
+    this.world.actionQueue.registerAction(ACTION_TYPE.MOVE, new MoveAction());
+    this.world.actionQueue.registerAction(ACTION_TYPE.FIRE_MISSION, new FireMissionAction());
 
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.ARMOR, ArmorComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.ATTACK, AttackComponent);
@@ -128,7 +128,7 @@ ArmyContext.prototype.init = function(resources) {
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.REVIVEABLE, ReviveableComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.SPRITE, SpriteComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.TEAM, TeamComponent);
-    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.UNIT_SIZE, UnitSizeComponent);
+    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.UNIT, UnitComponent);
 
     this.world.mapManager.registerFactory(ArmyContext.FACTORY.MAP, new ArmyMapFactory().load(resources.mapTypes));
     this.world.mapManager.selectFactory(ArmyContext.FACTORY.MAP);

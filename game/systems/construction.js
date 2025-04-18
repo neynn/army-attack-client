@@ -1,4 +1,4 @@
-import { ACTION_TYPES } from "../enums.js";
+import { ACTION_TYPE } from "../enums.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { SpawnSystem } from "./spawn.js";
 
@@ -50,7 +50,7 @@ ConstructionSystem.onInteract = function(gameContext, entity) {
         }
     } else {
         const entityID = entity.getID();
-        const request = actionQueue.createRequest(ACTION_TYPES.CONSTRUCTION, entityID);
+        const request = actionQueue.createRequest(ACTION_TYPE.CONSTRUCTION, entityID);
 
         return request;
     }

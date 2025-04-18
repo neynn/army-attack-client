@@ -1,13 +1,9 @@
-import { Component } from "../../source/component/component.js";
 import { clampValue } from "../../source/math/math.js";
 
 export const HealthComponent = function() {
     this.health = 0;
     this.maxHealth = 0;
 }
-
-HealthComponent.prototype = Object.create(Component.prototype);
-HealthComponent.prototype.constructor = HealthComponent;
 
 HealthComponent.prototype.setHealth = function(value) {
     const health = clampValue(value, this.maxHealth, 0);

@@ -58,7 +58,3 @@ Actor.prototype.setConfig = function(config) {
         this.config = config;
     }
 } 
-
-Actor.prototype.getConfig = function() {
-    return this.config;
-}

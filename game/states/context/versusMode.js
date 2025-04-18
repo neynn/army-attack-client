@@ -1,7 +1,7 @@
 import { ROOM_EVENTS } from "../../../source/network/events.js";
 import { Socket } from "../../../source/network/socket.js";
 import { StateMachine } from "../../../source/state/stateMachine.js";
-import { CLIENT_EVENTS } from "../../enums.js";
+import { CLIENT_EVENT } from "../../enums.js";
 import { VersusModeLobbyState } from "./versus/versusModeLobby.js";
 import { VersusModePlayState } from "./versus/versusModePlay.js";
 import { ServerEvents } from "../../serverEvents.js";
@@ -32,27 +32,27 @@ VersusModeState.prototype.onServerMessage = function(gameContext, type, payload)
             ServerEvents.startVersusInstance(gameContext, payload);
             break;
         }
-        case CLIENT_EVENTS.INSTANCE_ACTOR: {
+        case CLIENT_EVENT.INSTANCE_ACTOR: {
             ServerEvents.instanceActor(gameContext, payload);
             break;
         }
-        case CLIENT_EVENTS.INSTANCE_MAP: {
+        case CLIENT_EVENT.INSTANCE_MAP: {
             ServerEvents.instanceMapFromID(gameContext, payload);
             break;
         }
-        case CLIENT_EVENTS.INSTANCE_MAP_FROM_DATA: {
+        case CLIENT_EVENT.INSTANCE_MAP_FROM_DATA: {
             ServerEvents.instanceMapFromData(gameContext, payload);
             break;
         }
-        case CLIENT_EVENTS.INSTANCE_ENTITY_BATCH: {
+        case CLIENT_EVENT.INSTANCE_ENTITY_BATCH: {
             ServerEvents.instanceEntityBatch(gameContext, payload);
             break;
         }
-        case CLIENT_EVENTS.ACTION: {
+        case CLIENT_EVENT.ACTION: {
             ServerEvents.queueAction(gameContext, payload);
             break;
         }
-        case CLIENT_EVENTS.EVENT: {
+        case CLIENT_EVENT.EVENT: {
             ServerEvents.gameEvent(gameContext, payload);
             break;
         }
@@ -70,7 +70,7 @@ VersusModeState.prototype.onEnter = function(stateMachine) {
     const { socket } = client;
 
     actionQueue.toDeferred();
-    actionQueue.events.on(ActionQueue.EVENT.EXECUTION_DEFER, (execution, request) => socket.messageRoom(CLIENT_EVENTS.ACTION, request), { id: "VERSUS" });
+    actionQueue.events.on(ActionQueue.EVENT.EXECUTION_DEFER, (execution, request) => socket.messageRoom(CLIENT_EVENT.ACTION, request), { id: "VERSUS" });
     socket.events.on(Socket.EVENT.MESSAGE_FROM_SERVER, (type, payload) => this.onServerMessage(gameContext, type, payload), { id: "VERSUS" });
     socket.connect();
 

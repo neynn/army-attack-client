@@ -1,5 +1,3 @@
-import { Component } from "../../source/component/component.js";
-
 export const DirectionComponent = function() {
     this.directionX = DirectionComponent.DIRECTION.EAST;
     this.directionY = DirectionComponent.DIRECTION.SOUTH;
@@ -11,9 +9,6 @@ DirectionComponent.DIRECTION = {
     SOUTH: 2,
     WEST: 3
 };
-
-DirectionComponent.prototype = Object.create(Component.prototype);
-DirectionComponent.prototype.constructor = DirectionComponent;
 
 DirectionComponent.prototype.toWest = function() {
     this.directionX = DirectionComponent.DIRECTION.WEST;

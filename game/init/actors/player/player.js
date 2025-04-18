@@ -1,4 +1,4 @@
-import { ACTION_TYPES, GAME_EVENT } from "../../../enums.js";
+import { ACTION_TYPE, GAME_EVENT } from "../../../enums.js";
 import { ArmyCamera } from "../../../armyCamera.js";
 import { AnimationSystem } from "../../../systems/animation.js";
 import { PathfinderSystem } from "../../../systems/pathfinder.js";
@@ -321,7 +321,7 @@ Player.prototype.updateSelectedEntity = function(gameContext) {
 Player.prototype.queueAttack = function(gameContext, entityID) {
     const { world } = gameContext;
     const { actionQueue } = world;
-    const request = actionQueue.createRequest(ACTION_TYPES.ATTACK, entityID);
+    const request = actionQueue.createRequest(ACTION_TYPE.ATTACK, entityID);
 
     if(request) {
         this.inputQueue.enqueueLast(request);
@@ -331,7 +331,7 @@ Player.prototype.queueAttack = function(gameContext, entityID) {
 Player.prototype.queueFireMission = function(gameContext, tileX, tileY) {
     const { world } = gameContext;
     const { actionQueue } = world;
-    const request = actionQueue.createRequest(ACTION_TYPES.FIRE_MISSION, this.selectedFireMissionID, tileX, tileY);
+    const request = actionQueue.createRequest(ACTION_TYPE.FIRE_MISSION, this.selectedFireMissionID, tileX, tileY);
     
     if(request) {
         this.inputQueue.enqueueLast(request);
@@ -364,7 +364,7 @@ Player.prototype.onSelectedClick = function(gameContext, tileX, tileY) {
             soundPlayer.play("sound_error", 0.5); 
         }
     } else {
-        const request = actionQueue.createRequest(ACTION_TYPES.MOVE, this.selectedEntityID, tileX, tileY);
+        const request = actionQueue.createRequest(ACTION_TYPE.MOVE, this.selectedEntityID, tileX, tileY);
 
         if(request) {
             this.inputQueue.enqueueLast(request);

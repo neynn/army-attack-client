@@ -1,5 +1,3 @@
-import { Component } from "../../source/component/component.js";
-
 export const SpriteComponent = function() {
     this.spriteID = -1;
     this.isFlippable = false;
@@ -14,9 +12,6 @@ SpriteComponent.FLIP_STATE = {
     UNFLIPPED: 0,
     FLIPPED: 1
 };
-
-SpriteComponent.prototype = Object.create(Component.prototype);
-SpriteComponent.prototype.constructor = SpriteComponent;
 
 SpriteComponent.prototype.setPosition = function(gameContext, positionX, positionY) {
     const { spriteManager } = gameContext;

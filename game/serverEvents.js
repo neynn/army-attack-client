@@ -1,4 +1,4 @@
-import { CLIENT_EVENTS, GAME_EVENT } from "./enums.js";
+import { CLIENT_EVENT, GAME_EVENT } from "./enums.js";
 import { SpawnSystem } from "./systems/spawn.js";
 
 export const ServerEvents = {};
@@ -29,7 +29,7 @@ ServerEvents.instanceMapFromData = function(gameContext, payload) {
 
     mapManager.createMap(gameContext, mapID, mapData);
 
-    socket.messageRoom(CLIENT_EVENTS.INSTANCE_MAP, {
+    socket.messageRoom(CLIENT_EVENT.INSTANCE_MAP, {
         "success": true,
         "error": null
     });
@@ -43,12 +43,12 @@ ServerEvents.instanceMapFromID = async function(gameContext, payload) {
     const worldMap = await mapManager.createMapByID(gameContext, mapID);
 
     if(!worldMap) {
-        socket.messageRoom(CLIENT_EVENTS.INSTANCE_MAP, {
+        socket.messageRoom(CLIENT_EVENT.INSTANCE_MAP, {
             "success": false,
             "error": "NO_MAP_FILE"
         });
     } else {
-        socket.messageRoom(CLIENT_EVENTS.INSTANCE_MAP, {
+        socket.messageRoom(CLIENT_EVENT.INSTANCE_MAP, {
             "success": true,
             "error": null
         }); 

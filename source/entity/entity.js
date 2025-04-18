@@ -1,5 +1,3 @@
-import { ActiveComponent } from "../component/activeComponent.js";
-
 export const Entity = function(DEBUG_NAME = "") {
     this.DEBUG_NAME = DEBUG_NAME;
     this.id = -1;
@@ -24,16 +22,9 @@ Entity.prototype.setConfig = function(config) {
     }
 } 
 
-Entity.prototype.getConfig = function() {
-    return this.config;
-}
-
 Entity.prototype.update = function(gameContext) {
-    for(let i = 0; i < this.activeComponents.length; i++) {
-        const componentID = this.activeComponents[i];
-        const component = this.components.get(componentID);
-
-        component.update(gameContext, this);
+    for(let i = 0; i < this.activeComponents.length; ++i) {
+        this.activeComponents[i].update(gameContext, this);
     }
 }
 
@@ -41,21 +32,45 @@ Entity.prototype.save = function() {
     const blob = {};
 
     for(const [componentID, component] of this.components) {
-        const data = component.save();
+        if(typeof component.save === "function") {
+            const data = component.save();
 
-        if(data) {
-            blob[componentID] = data;
+            if(data) {
+                blob[componentID] = data;
+            }
+        } else {
+            console.log(`Save not implemented for component ${componentID}`);
         }
     }
 
     return blob;
 }
 
-Entity.prototype.loadComponent = function(componentID, blob) {
+Entity.prototype.initComponent = function(componentID, config) {
+    if(!config) {
+        return;
+    }
+
     const component = this.components.get(componentID);
 
-    if(component) {
+    if(component && typeof component.init === "function") {
+        component.init(config);
+    } else {
+        console.log(`Init not implemented for component ${componentID}`);
+    }
+}
+
+Entity.prototype.loadComponent = function(componentID, blob) {
+    if(!blob) {
+        return;
+    }
+    
+    const component = this.components.get(componentID);
+
+    if(component && typeof component.load === "function") {
         component.load(blob);
+    } else {
+        console.log(`Load not implemented for component ${componentID}`);
     }
 }
 
@@ -70,29 +85,37 @@ Entity.prototype.addComponent = function(componentID, component) {
 
     this.components.set(componentID, component);
 
-    if(component instanceof ActiveComponent) {
-        this.activeComponents.push(componentID);
+    if(typeof component.update === "function") {
+        this.activeComponents.push(component);
     }
 }
 
 Entity.prototype.getComponent = function(componentID) {
-    return this.components.get(componentID);
+    const component = this.components.get(componentID);
+
+    if(!component) {
+        return null;
+    }
+
+    return component;
 }
 
 Entity.prototype.removeComponent = function(componentID) {
-    if(!this.components.has(componentID)) {
+    const component = this.components.get(componentID);
+
+    if(!component) {
         return;
     }
 
-    this.components.delete(componentID);
-
     for(let i = 0; i < this.activeComponents.length; i++) {
-        const activeComponentID = this.activeComponents[i];
+        const activeComponent = this.activeComponents[i];
 
-        if(componentID === activeComponentID) {
+        if(activeComponent === component) {
             this.activeComponents[i] = this.activeComponents[this.activeComponents.length - 1];
             this.activeComponents.pop();
-            return;
+            break;
         }
     }
+
+    this.components.delete(componentID);
 }

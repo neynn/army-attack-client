@@ -97,14 +97,8 @@ EntityManager.prototype.buildComponents = function(entity, components) {
 
             entity.addComponent(componentID, component);
         }
-
-        const config = components[componentID];
-
-        if(config) {
-            const component = entity.getComponent(componentID);
-
-            component.init(config);
-        }
+        
+        entity.initComponent(componentID, components[componentID]);
     }
 }
 

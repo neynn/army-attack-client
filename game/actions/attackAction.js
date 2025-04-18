@@ -1,5 +1,5 @@
 import { Action } from "../../source/action/action.js";
-import { ACTION_TYPES } from "../enums.js";
+import { ACTION_TYPE } from "../enums.js";
 import { AttackSystem } from "../systems/attack.js";
 
 export const AttackAction = function() {}
@@ -19,7 +19,7 @@ AttackAction.prototype.onEnd = function(gameContext, request, messengerID) {
     AttackSystem.endAttack(gameContext, request, messengerID);
 
     if(state === AttackSystem.OUTCOME_STATE.IDLE) {
-        actionQueue.addImmediateRequest(ACTION_TYPES.COUNTER_ATTACK, null, targetID, attackers);
+        actionQueue.addImmediateRequest(ACTION_TYPE.COUNTER_ATTACK, null, targetID, attackers);
     }
 }
 
