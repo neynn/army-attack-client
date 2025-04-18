@@ -1,5 +1,3 @@
-import { lerpValue } from "../math/math.js";
-
 export const Camera = function() {    
     this.viewportX = 0;
     this.viewportY = 0;
@@ -28,9 +26,16 @@ Camera.VIEWPORT_MODE = {
 
 Camera.prototype.update = function(gameContext, renderContext) {}
 
-Camera.prototype.loadWorld = function(worldWidth, worldHeight) {
+Camera.prototype.setWorldSize = function(worldWidth, worldHeight) {
     this.worldWidth = worldWidth;
     this.worldHeight = worldHeight;
+
+    this.reloadViewport();
+}
+
+Camera.prototype.setViewportSize = function(width, height) {
+    this.viewportWidth = width;
+    this.viewportHeight = height;
 }
 
 Camera.prototype.centerWorld = function() {
@@ -95,11 +100,6 @@ Camera.prototype.moveViewport = function(viewportX, viewportY) {
     this.limitViewport();
 }
 
-Camera.prototype.setViewport = function(width, height) {
-    this.viewportWidth = width;
-    this.viewportHeight = height;
-}
-
 Camera.prototype.dragViewport = function(dragX, dragY) {
     if(this.viewportMode !== Camera.VIEWPORT_MODE.DRAG) {
         return;
@@ -134,49 +134,5 @@ Camera.prototype.getViewport = function() {
         "y": this.viewportY,
         "w": this.viewportWidth,
         "h": this.viewportHeight
-    }
-}
-
-Camera.prototype.addTarget = function(targetX = 0, targetY = 0, factor = 0) {
-    if(this.viewportMode !== Camera.VIEWPORT_MODE.FOLLOW) {
-        return;
-    }
-
-    this.targets.push([targetX, targetY, factor]);
-}
-
-Camera.prototype.followTargets = function(deltaTime) {
-    if(this.viewportMode !== Camera.VIEWPORT_MODE.FOLLOW || this.targets.length === 0) {
-        return;
-    }
-
-    const threshold = 10;
-    const [positionX, positionY, factor] = this.targets[0];
-    const smoothingFactor = factor * deltaTime;
-
-    const targetX = positionX - this.viewportWidth / 2;
-    const targetY = positionY - this.viewportHeight / 2;
-
-    const distanceX = targetX - this.viewportX;
-    const distanceY = targetY - this.viewportY;
-
-    if(Math.abs(distanceX) < threshold && Math.abs(distanceY) < threshold) {
-        this.moveViewport(targetX, targetY);
-        this.targets.shift();
-        
-        if(this.targets.length === 0) {
-            //TODO: When all targets are reached: emit an "ALL_TARGETS_REACHED" event
-            //THEN: Allow draggin again?
-        }
-
-        return;
-    }
-
-    if(smoothingFactor !== 0) {
-        const viewportX = lerpValue(this.viewportX, targetX, smoothingFactor);
-        const viewportY = lerpValue(this.viewportY, targetY, smoothingFactor);
-        this.moveViewport(viewportX, viewportY);
-    } else {
-        this.moveViewport(targetX, targetY);
     }
 }

@@ -64,7 +64,7 @@ AttackRangeOverlay.prototype.show = function(gameContext, entity, camera) {
                 return Autotiler.RESPONSE.INVALID;
             });
 
-            camera.addToOverlay(ArmyCamera.OVERLAY_TYPE.RANGE, tileID, j, i);
+            camera.pushOverlay(ArmyCamera.OVERLAY_TYPE.RANGE, tileID, j, i);
         }
     }
 

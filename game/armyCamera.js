@@ -5,16 +5,16 @@ import { SpriteManager } from "../source/sprite/spriteManager.js";
 export const ArmyCamera = function() {
     OrthogonalCamera.call(this);
 
-    this.overlays[ArmyCamera.OVERLAY_TYPE.ATTACK] = [];
-    this.overlays[ArmyCamera.OVERLAY_TYPE.MOVE] = [];
-    this.overlays[ArmyCamera.OVERLAY_TYPE.RANGE] = [];
+    this.createOverlay(ArmyCamera.OVERLAY_TYPE.ATTACK);
+    this.createOverlay(ArmyCamera.OVERLAY_TYPE.MOVE);
+    this.createOverlay(ArmyCamera.OVERLAY_TYPE.RANGE);
     this.postDraw = [];
 }
 
 ArmyCamera.OVERLAY_TYPE = {
-    ATTACK: 0,
-    MOVE: 1,
-    RANGE: 2
+    ATTACK: "ATTACK",
+    MOVE: "MOVE",
+    RANGE: "RANGE"
 };
 
 ArmyCamera.prototype = Object.create(OrthogonalCamera.prototype);

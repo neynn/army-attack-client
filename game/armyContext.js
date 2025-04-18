@@ -334,7 +334,7 @@ ArmyContext.prototype.addContextMapHook = function() {
             const { width, height, music } = worldMap;
             const camera = context.getCamera();
 
-            camera.loadWorld(width, height);
+            camera.setMapSize(width, height);
 
             if(music) {
                 musicPlayer.playTrack(music);

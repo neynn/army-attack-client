@@ -150,7 +150,7 @@ ArmyMapEditor.prototype.initCamera = function(gameContext) {
     const { renderer } = gameContext;
 
     this.camera.unbindViewport();
-    this.camera.loadTileDimensions(gameContext.settings.tileWidth, gameContext.settings.tileHeight)
+    this.camera.setTileSize(gameContext.settings.tileWidth, gameContext.settings.tileHeight)
 
     const context = renderer.createContext(this.id, this.camera);
     
@@ -431,7 +431,7 @@ ArmyMapEditor.prototype.resizeCurrentMap = function(gameContext) {
     const newHeight = clampValue(parsedHeight, this.maxHeight, 1);
   
     this.resizeMap(gameMap, newWidth, newHeight, ArmyMapEditor.DEFAULT_MAP.graphics.layers);
-    this.camera.loadWorld(newWidth, newHeight);
+    this.camera.setMapSize(newWidth, newHeight);
 
     renderer.getContext(this.id).refreshCamera();
 }

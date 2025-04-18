@@ -75,7 +75,7 @@ CameraContext.prototype.setDisplayMode = function(modeID) {
         case CameraContext.DISPLAY_MODE.RESOLUTION_DEPENDENT: {
             this.displayMode = modeID;
             this.scale = CameraContext.BASE_SCALE;
-            this.camera.setViewport(this.windowWidth, this.windowHeight);
+            this.camera.setViewportSize(this.windowWidth, this.windowHeight);
             this.refresh();
 
             break;
@@ -83,7 +83,7 @@ CameraContext.prototype.setDisplayMode = function(modeID) {
         case CameraContext.DISPLAY_MODE.RESOLUTION_FIXED: {
             if(this.display) {
                 this.displayMode = modeID;
-                this.camera.setViewport(this.display.width, this.display.height);
+                this.camera.setViewportSize(this.display.width, this.display.height);
                 this.refresh();
             }
 
@@ -153,7 +153,7 @@ CameraContext.prototype.onWindowResize = function(windowWidth, windowHeight) {
     this.setWindow(windowWidth, windowHeight);
 
     if(this.displayMode !== CameraContext.DISPLAY_MODE.RESOLUTION_FIXED) {
-        this.camera.setViewport(windowWidth, windowHeight);
+        this.camera.setViewportSize(windowWidth, windowHeight);
     }
 
     this.refresh();
@@ -239,7 +239,7 @@ CameraContext.prototype.setResolution = function(width, height) {
         this.display.resize(width, height);
 
         if(this.displayMode === CameraContext.DISPLAY_MODE.RESOLUTION_FIXED) {
-            this.camera.setViewport(width, height);
+            this.camera.setViewportSize(width, height);
             this.refresh();
         }
     }

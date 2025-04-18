@@ -77,7 +77,7 @@ Renderer.prototype.createContext = function(contextID, camera) {
 
     const context = new CameraContext(contextID, camera);
 
-    camera.setViewport(this.windowWidth, this.windowHeight);
+    camera.setViewportSize(this.windowWidth, this.windowHeight);
     context.setWindow(this.windowWidth, this.windowHeight);
 
     this.contexts.push(context);

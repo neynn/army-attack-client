@@ -94,7 +94,7 @@ Player.prototype.highlightAttackers = function(gameContext, target, attackers) {
 
         attacker.lookAtEntity(target);
         attacker.updateSpriteDirectonal(gameContext, ArmyEntity.SPRITE_TYPE.AIM, ArmyEntity.SPRITE_TYPE.AIM_UP);
-        this.camera.addToOverlay(ArmyCamera.OVERLAY_TYPE.ATTACK, tileID, tileX, tileY);
+        this.camera.pushOverlay(ArmyCamera.OVERLAY_TYPE.ATTACK, tileID, tileX, tileY);
     }
 }
 
@@ -158,14 +158,14 @@ Player.prototype.addNodeOverlays = function(gameContext, nodeList) {
 
         if(state !== PathfinderSystem.NODE_STATE.VALID) {
             if(showInvalidTiles) {
-                this.camera.addToOverlay(ArmyCamera.OVERLAY_TYPE.MOVE, attackTileID, positionX, positionY);
+                this.camera.pushOverlay(ArmyCamera.OVERLAY_TYPE.MOVE, attackTileID, positionX, positionY);
             }
 
         } else {
             const tileEntity = world.getTileEntity(positionX, positionY);
 
             if(!tileEntity) {
-                this.camera.addToOverlay(ArmyCamera.OVERLAY_TYPE.MOVE, enableTileID, positionX, positionY);
+                this.camera.pushOverlay(ArmyCamera.OVERLAY_TYPE.MOVE, enableTileID, positionX, positionY);
             }
         } 
     }

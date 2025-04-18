@@ -40,7 +40,7 @@ const initPlayerCamera = function(gameContext, camera) {
     const { renderer } = gameContext;
     const context = renderer.createContext(Player.CAMERA_ID, camera);
 
-    camera.loadTileDimensions(gameContext.settings.tileWidth, gameContext.settings.tileHeight);
+    camera.setTileSize(gameContext.settings.tileWidth, gameContext.settings.tileHeight);
 
     //context.initRenderer(640/2, 360/2);
     //context.setDisplayMode(CameraContext.DISPLAY_MODE.RESOLUTION_FIXED);
