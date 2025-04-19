@@ -14,6 +14,7 @@ import { Queue } from "../../../../source/queue.js";
 import { EntityManager } from "../../../../source/entity/entityManager.js";
 import { MoveSystem } from "../../../systems/move.js";
 import { FireMissionSystem } from "../../../systems/fireMission.js";
+import { LookSystem } from "../../../systems/look.js";
 
 export const Player = function() {
     Actor.call(this);
@@ -95,7 +96,7 @@ Player.prototype.highlightAttackers = function(gameContext, target, attackers) {
         const attacker = attackers[i];
         const { tileX, tileY } = attacker.getComponent(ArmyEntity.COMPONENT.POSITION);
 
-        attacker.lookAtEntity(target);
+        LookSystem.lookAtEntity(attacker, target);
         attacker.updateSpriteDirectonal(gameContext, ArmyEntity.SPRITE_TYPE.AIM, ArmyEntity.SPRITE_TYPE.AIM_UP);
         this.camera.pushOverlay(ArmyCamera.OVERLAY_TYPE.ATTACK, tileID, tileX, tileY);
     }
@@ -313,7 +314,7 @@ Player.prototype.updateSelectedEntity = function(gameContext) {
     const { tileX } = selectedEntity.getComponent(ArmyEntity.COMPONENT.POSITION);
     
     if(hoverTileX !== tileX) {
-        selectedEntity.lookHorizontal(hoverTileX < tileX);
+        LookSystem.lookHorizontal(selectedEntity, hoverTileX < tileX);
         selectedEntity.updateSpriteHorizontal(gameContext, selectedEntity);
     }
 }

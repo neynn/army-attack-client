@@ -4,6 +4,8 @@ import { PathfinderSystem } from "../systems/pathfinder.js";
 import { ACTION_TYPE } from "../enums.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { ConquerSystem } from "../systems/conquer.js";
+import { MapSystem } from "../systems/map.js";
+import { LookSystem } from "../systems/look.js";
 
 export const MoveAction = function() {}
 
@@ -19,9 +21,9 @@ MoveAction.prototype.onStart = function(gameContext, request, messengerID) {
 
     moveComponent.setPath(path);
     entity.playSound(gameContext, ArmyEntity.SOUND_TYPE.MOVE);
-    entity.lookAtTile(targetX, targetY);
+    LookSystem.lookAtTile(entity, targetX, targetY);
     entity.updateSpriteDirectonal(gameContext, ArmyEntity.SPRITE_TYPE.MOVE, ArmyEntity.SPRITE_TYPE.MOVE_UP);
-    entity.removeFromMap(gameContext);
+    MapSystem.removeEntity(gameContext, entity);
 }
 
 MoveAction.prototype.onEnd = function(gameContext, request, messengerID) {
@@ -32,7 +34,7 @@ MoveAction.prototype.onEnd = function(gameContext, request, messengerID) {
 
     MoveSystem.endMove(gameContext, entity, targetX, targetY);
     entity.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
-    entity.placeOnMap(gameContext);
+    MapSystem.placeEntity(gameContext, entity);
     ConquerSystem.conquer(gameContext, entity, targetX, targetY);
     actionQueue.addImmediateRequest(ACTION_TYPE.COUNTER_MOVE, null, entityID);
 }

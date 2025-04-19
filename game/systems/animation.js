@@ -2,6 +2,7 @@ import { SpriteManager } from "../../source/sprite/spriteManager.js";
 import { SpriteComponent } from "../components/sprite.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { Player } from "../init/actors/player/player.js";
+import { LookSystem } from "./look.js";
 
 export const AnimationSystem = function() {}
 
@@ -72,7 +73,7 @@ AnimationSystem.playFire = function(gameContext, target, attackers) {
         const weaponSprite = spriteManager.createSprite(attacker.config.sprites.weapon);
         const { x, y } = getRandomOffset(camera, target.config.dimX, target.config.dimY, AnimationSystem.FIRE_OFFSET.REGULAR, AnimationSystem.FIRE_OFFSET.REGULAR);
 
-        attacker.lookAtEntity(target);
+        LookSystem.lookAtEntity(attacker, target);
         attacker.updateSpriteDirectonal(gameContext, ArmyEntity.SPRITE_TYPE.FIRE, ArmyEntity.SPRITE_TYPE.FIRE_UP);
         attacker.playSound(gameContext, ArmyEntity.SOUND_TYPE.FIRE);
         entitySprite.addChild(weaponSprite);

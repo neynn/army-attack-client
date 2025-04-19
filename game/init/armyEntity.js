@@ -127,30 +127,6 @@ ArmyEntity.prototype.getHealth = function() {
     return healthComponent.health;
 }
 
-ArmyEntity.prototype.placeOnMap = function(gameContext) {
-    const { world } = gameContext;
-    const { mapManager } = world;
-    const worldMap = mapManager.getActiveMap();
-
-    if(worldMap) {
-        const { tileX, tileY } = this.getComponent(ArmyEntity.COMPONENT.POSITION);
-
-        worldMap.addEntity(tileX, tileY, this.config.dimX, this.config.dimY, this.id);
-    }
-}
-
-ArmyEntity.prototype.removeFromMap = function(gameContext) {
-    const { world } = gameContext;
-    const { mapManager } = world;
-    const worldMap = mapManager.getActiveMap();
-
-    if(worldMap) {
-        const { tileX, tileY } = this.getComponent(ArmyEntity.COMPONENT.POSITION);
-
-        worldMap.removeEntity(tileX, tileY, this.config.dimX, this.config.dimY, this.id);
-    }
-}
-
 ArmyEntity.prototype.playSound = function(gameContext, soundType) {
     const { client } = gameContext;
     const { soundPlayer } = client;
@@ -176,45 +152,6 @@ ArmyEntity.prototype.isAlive = function() {
     const isAlive = healthComponent.isAlive();
 
     return isAlive;
-}
-
-ArmyEntity.prototype.lookHorizontal = function(westCondition) {
-    const directionComponent = this.getComponent(ArmyEntity.COMPONENT.DIRECTION);
-
-    if(westCondition) {
-        directionComponent.toWest();
-    } else {
-        directionComponent.toEast();
-    }
-}
-
-ArmyEntity.prototype.lookVertical = function(northCondition) {
-    const directionComponent = this.getComponent(ArmyEntity.COMPONENT.DIRECTION);
-
-    if(northCondition) {
-        directionComponent.toNorth();
-    } else {
-        directionComponent.toSouth();
-    }
-}
-
-ArmyEntity.prototype.lookAtEntity = function(target) {
-    const targetPosition = target.getComponent(ArmyEntity.COMPONENT.POSITION);
-    const { tileX, tileY } = targetPosition;
-
-    this.lookAtTile(tileX, tileY);
-}
-
-ArmyEntity.prototype.lookAtTile = function(targetX, targetY) {
-    const positionComponent = this.getComponent(ArmyEntity.COMPONENT.POSITION);
-    const { tileX, tileY } = positionComponent;
-
-    if(targetX === tileX) {
-        this.lookVertical(targetY < tileY);
-    } else {
-        this.lookHorizontal(targetX < tileX);
-        this.lookVertical(targetY < tileY);
-    }
 }
 
 ArmyEntity.prototype.isAttackableByTeam = function(gameContext, team) {

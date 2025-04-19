@@ -1,5 +1,6 @@
 import { ArmyEntity } from "../init/armyEntity.js";
 import { CardSystem } from "./card.js";
+import { MapSystem } from "./map.js";
 
 export const SpawnSystem = function() {}
 
@@ -87,8 +88,7 @@ SpawnSystem.createEntity = function(gameContext, config) {
 
     loadEntitySprites(gameContext, entity);
 
-    entity.placeOnMap(gameContext);
-
+    MapSystem.placeEntity(gameContext, entity);
     CardSystem.generateStatCard(gameContext, entity);
 
     return entity;
@@ -98,11 +98,11 @@ SpawnSystem.destroyEntity = function(gameContext, entity) {
     const { world, spriteManager } = gameContext;
     const { entityManager } = world;
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
-    
-    entity.removeFromMap(gameContext);
+    const entityID = entity.getID();
 
+    MapSystem.removeEntity(gameContext, entity);
     spriteManager.destroySprite(spriteComponent.spriteID);
-    entityManager.destroyEntity(entity.getID());
+    entityManager.destroyEntity(entityID);
 
     unloadEntitySprites(gameContext, entity);
 }
