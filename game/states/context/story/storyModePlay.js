@@ -1,6 +1,5 @@
 import { saveTemplateAsFile } from "../../../../helpers.js";
 import { State } from "../../../../source/state/state.js";
-import { ArmyActorFactory } from "../../../init/armyActorFactory.js";
 import { SpawnSystem } from "../../../systems/spawn.js";
 
 export const StoryModePlayState = function() {}
@@ -8,24 +7,28 @@ export const StoryModePlayState = function() {}
 StoryModePlayState.prototype = Object.create(State.prototype);
 StoryModePlayState.prototype.constructor = StoryModePlayState;
 
+const ID = {
+    PLAYER: "Player",
+    ENEMY: "Enemy"
+}
 const initStoryMode = async function(gameContext) {
     const { world } = gameContext;
     const { turnManager, mapManager } = world;
 
     const player = turnManager.createActor(gameContext, {
-        "type": ArmyActorFactory.TYPE.PLAYER,
+        "type": "Player",
         "team": "Allies"
-    }, ArmyActorFactory.TYPE.PLAYER);
+    }, ID.PLAYER);
 
     const enemy = turnManager.createActor(gameContext, {
-        "type": ArmyActorFactory.TYPE.ENEMY,
+        "type": "Enemy",
         "team": "Crimson"
-    }, ArmyActorFactory.TYPE.ENEMY);
+    }, ID.ENEMY);
 
     player.setMaxActions(1);
     enemy.setMaxActions(1);
 
-    turnManager.setActorOrder(gameContext, [ArmyActorFactory.TYPE.PLAYER, ArmyActorFactory.TYPE.ENEMY]);
+    turnManager.setActorOrder(gameContext, [ID.PLAYER, ID.ENEMY]);
 
     const worldMap = await mapManager.createMapByID(gameContext, "oasis");
 
@@ -63,7 +66,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "tileX": 4,
         "tileY": 4,
         "team": "Crimson",
-        "owners": ArmyActorFactory.TYPE.ENEMY
+        "owners": ID.ENEMY
     });
 
     SpawnSystem.createEntity(gameContext, { 
@@ -71,7 +74,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "tileX": 6,
         "tileY": 4,
         "team": "Crimson",
-        "owners": ArmyActorFactory.TYPE.ENEMY
+        "owners": ID.ENEMY
     });
 
     SpawnSystem.createEntity(gameContext, { 
@@ -79,7 +82,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "tileX": 4,
         "tileY": 3,
         "team": "Crimson",
-        "owners": ArmyActorFactory.TYPE.ENEMY
+        "owners": ID.ENEMY
     });
 
     SpawnSystem.createEntity(gameContext, { 
@@ -87,7 +90,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "tileX": 4,
         "tileY": 5,
         "team": "Allies",
-        "owners": ArmyActorFactory.TYPE.PLAYER
+        "owners": ID.PLAYER
     });
 
     SpawnSystem.createEntity(gameContext, { 
@@ -95,7 +98,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "tileX": 5,
         "tileY": 5,
         "team": "Allies",
-        "owners": ArmyActorFactory.TYPE.PLAYER
+        "owners": ID.PLAYER
     });
 
     SpawnSystem.createEntity(gameContext, { 
@@ -103,7 +106,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "tileX": 5,
         "tileY": 3,
         "team": "Allies",
-        "owners": ArmyActorFactory.TYPE.PLAYER
+        "owners": ID.PLAYER
     });
 
     SpawnSystem.createEntity(gameContext, {
@@ -111,7 +114,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "tileX": 2,
         "tileY": 3,
         "team": "Allies",
-        "owners": ArmyActorFactory.TYPE.PLAYER
+        "owners": ID.PLAYER
     });
 
     SpawnSystem.createEntity(gameContext, {
@@ -119,7 +122,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "tileX": 2,
         "tileY": 9,
         "team": "Allies",
-        "owners": ArmyActorFactory.TYPE.PLAYER
+        "owners": ID.PLAYER
     });
 
     SpawnSystem.createEntity(gameContext, { 
@@ -127,7 +130,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "tileX": 7,
         "tileY": 3,
         "team": "Allies",
-        "owners": ArmyActorFactory.TYPE.PLAYER
+        "owners": ID.PLAYER
     });
 
     SpawnSystem.createEntity(gameContext, { 
@@ -135,7 +138,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "tileX": 3,
         "tileY": 5,
         "team": "Allies",
-        "owners": ArmyActorFactory.TYPE.PLAYER
+        "owners": ID.PLAYER
     });
 
     SpawnSystem.createEntity(gameContext, { 
@@ -143,13 +146,13 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
         "tileX": 3,
         "tileY": 4,
         "team": "Allies",
-        "owners": ArmyActorFactory.TYPE.PLAYER
+        "owners": ID.PLAYER
     });
 
-    const s = gameContext.saveSnapshot();
-    //saveTemplateAsFile("test.json", JSON.stringify(s, null, 2));
-    console.log(s);
     console.timeEnd();
+
+    const s = gameContext.saveSnapshot();
+    console.log(s);
 }
 
 StoryModePlayState.prototype.onExit = function(stateMachine) {

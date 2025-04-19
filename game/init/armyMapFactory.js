@@ -5,7 +5,7 @@ export const ArmyMapFactory = function() {
     Factory.call(this, "ARMY_MAP_FACTORY");
 }
 
-ArmyMapFactory.TYPE = {
+const MAP_TYPE = {
     STORY: "Story",
     VERSUS: "Versus",
     EMPTY_STORY: "EmptyStory",
@@ -88,19 +88,19 @@ ArmyMapFactory.prototype.onCreate = function(gameContext, config) {
     const worldMap = new ArmyMap();
 
     switch(type) {
-        case ArmyMapFactory.TYPE.STORY: {
+        case MAP_TYPE.STORY: {
             parseMap2D(gameContext, worldMap, config);
             break;
         }
-        case ArmyMapFactory.TYPE.VERSUS: {
+        case MAP_TYPE.VERSUS: {
             parseMap2D(gameContext, worldMap, config);
             break;
         }
-        case ArmyMapFactory.TYPE.EMPTY_STORY: {
+        case MAP_TYPE.EMPTY_STORY: {
             parseMap2DEmpty(gameContext, worldMap, config);
             break;
         }
-        case ArmyMapFactory.TYPE.EMPTY_VERUS: {
+        case MAP_TYPE.EMPTY_VERUS: {
             parseMap2DEmpty(gameContext, worldMap, config);
             break;
         }

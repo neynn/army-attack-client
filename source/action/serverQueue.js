@@ -1,27 +1,25 @@
-import { ActionQueue } from "./actionQueue.js";
+const enableServerQueue = function(gameContext) {
+    const { world } = gameContext;
+    const { actionQueue } = world;
 
-export const ServerQueue = function() {
-    ActionQueue.call(this);
-
-    this.mode = ActionQueue.MODE.DIRECT;
-    this.state = ActionQueue.STATE.FLUSH;
+    actionQueue.toDirect();
+    actionQueue.toFlush();
 }
 
-ServerQueue.prototype = Object.create(ActionQueue.prototype);
-ServerQueue.prototype.constructor = ServerQueue;
-
-ServerQueue.prototype.processUserRequest = function(gameContext, request, messengerID) {
-    const executionItem = this.getExecutionItem(gameContext, request, messengerID);
+const processUserRequest = function(gameContext, request, messengerID) {
+    const { world } = gameContext;
+    const { actionQueue } = world;
+    const executionItem = actionQueue.getExecutionItem(gameContext, request, messengerID);
 
     if(!executionItem) {
         return;
     }
 
-    this.enqueueExecutionItem(executionItem, request);
+    actionQueue.enqueueExecutionItem(executionItem, request);
 
     const processNext = () => {
-        if(!this.isEmpty()) {
-            this.update(gameContext);
+        if(!actionQueue.isEmpty()) {
+            actionQueue.update(gameContext);
             setTimeout(processNext, 0);
         }
     };

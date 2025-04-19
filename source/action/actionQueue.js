@@ -338,6 +338,10 @@ ActionQueue.prototype.isRunning = function() {
     return this.executionQueue.getSize() !== 0 || this.current !== null;
 }
 
+ActionQueue.prototype.toFlush = function() {
+    this.state = ActionQueue.STATE.FLUSH;
+}
+
 ActionQueue.prototype.toDeferred = function() {
     this.mode = ActionQueue.MODE.DEFERRED;
 }

@@ -9,14 +9,14 @@ export const ArmyActorFactory = function() {
     Factory.call(this, "ARMY_ACTOR_FACOTRY");
 }
 
-ArmyActorFactory.TYPE = {
+ArmyActorFactory.prototype = Object.create(Factory.prototype);
+ArmyActorFactory.prototype.constructor = ArmyActorFactory;
+
+const ACTOR_TYPE = {
     PLAYER: "Player",
     ENEMY: "Enemy",
     OTHER_PLAYER: "OtherPlayer"
 };
-
-ArmyActorFactory.prototype = Object.create(Factory.prototype);
-ArmyActorFactory.prototype.constructor = ArmyActorFactory;
 
 const addDragEvent = function(gameContext) {
     const { client } = gameContext;
@@ -42,7 +42,7 @@ ArmyActorFactory.prototype.onCreate = function(gameContext, config) {
     const actorType = this.getType(type);
 
     switch(type) {
-        case ArmyActorFactory.TYPE.PLAYER: {
+        case ACTOR_TYPE.PLAYER: {
             const actor = new Player();
             const camera = actor.getCamera();
 
@@ -64,12 +64,12 @@ ArmyActorFactory.prototype.onCreate = function(gameContext, config) {
             
             return actor;
         }
-        case ArmyActorFactory.TYPE.ENEMY: {
+        case ACTOR_TYPE.ENEMY: {
             const actor = new EnemyActor();
 
             return actor;
         }
-        case ArmyActorFactory.TYPE.OTHER_PLAYER: {
+        case ACTOR_TYPE.OTHER_PLAYER: {
             const actor = new OtherPlayer();
 
             return actor;

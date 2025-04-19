@@ -7,7 +7,7 @@ export const createStoryModeUI = function(gameContext) {
     const { turnManager } = world;
 
     /*
-    const player = turnManager.getActor(ArmyActorFactory.TYPE.PLAYER);
+    const player = turnManager.getActor("Player");
     const ui = new UserInterface("STORY_MODE_UI");
 
     const containerInfo = ui.constructElement("infoc", UIManager.ELEMENT_TYPE.CONTAINER, {

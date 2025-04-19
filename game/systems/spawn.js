@@ -42,12 +42,12 @@ const loadEntitySprites = function(gameContext, entity) {
         const spriteID = sprites[spriteType];
 
         if(blocked.has(spriteType)) {
-            console.log("BLOCKED", spriteID);
+            //console.log("BLOCKED", spriteID);
             continue;
         }
 
         resources.requestImage(spriteID, (id, image, sheet) => {
-            console.log("LOADED IMAGE", id);
+            //console.log("LOADED IMAGE", id);
         });
 
         resources.addReference(spriteID);
