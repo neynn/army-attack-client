@@ -1,12 +1,12 @@
 {
     "Crimson": {
         "name": "TEAM_NAME_CRIMSON",
-        "description": "TEAM_DESC_CRIMSON",
+        "desc": "TEAM_DESC_CRIMSON",
         "alliances": {
             "Crimson": "Ally",
             "Allies": "Enemy",
             "Neutral": "Neutral",
-            "Wrath": "Enemy"
+            "Versus": "Enemy"
         },
         "sprites": {
             "stat_card": "unit_stat_card_bad",
@@ -15,12 +15,12 @@
     },
     "Allies": {
         "name": "TEAM_NAME_ALLIES",
-        "description": "TEAM_DESC_ALLIES",
+        "desc": "TEAM_DESC_ALLIES",
         "alliances": {
             "Crimson": "Enemy",
             "Allies": "Ally",
             "Neutral": "Neutral",
-            "Wrath": "Enemy"
+            "Versus": "Enemy"
         },
         "sprites": {
             "stat_card": "unit_stat_card_good",
@@ -29,26 +29,26 @@
     },
     "Neutral": {
         "name": "TEAM_NAME_NEUTRAL",
-        "description": "TEAM_DESC_NEUTRAL",
+        "desc": "TEAM_DESC_NEUTRAL",
         "alliances": {
             "Crimson": "Neutral",
             "Allies": "Neutral",
             "Neutral": "Neutral",
-            "Wrath": "Neutral"
+            "Versus": "Neutral"
         },
         "sprites": {
             "stat_card": "unit_stat_card_good",
             "stat_card_small": "unit_stat_card_good_small"
         }
     },
-    "Wrath": {
-        "name": "TEAM_NAME_WRATH",
-        "description": "TEAM_DESC_WRATH",
+    "Versus": {
+        "name": "TEAM_NAME_VERSUS",
+        "desc": "TEAM_DESC_VERSUS",
         "alliances": {
             "Crimson": "Enemy",
             "Allies": "Enemy", 
             "Neutral": "Neutral",
-            "Wrath": "Ally"
+            "Versus": "Ally"
         },
         "sprites": {
             "stat_card": "unit_stat_card_bad",

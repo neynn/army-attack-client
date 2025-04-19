@@ -67,8 +67,8 @@
     "TEAM_DESC_ALLIES": "",
     "TEAM_NAME_NEUTRAL": "Neutral",
     "TEAM_DESC_NEUTRAL": "They always remain neutral.",
-    "TEAM_NAME_WRATH": "Wrath",
-    "TEAM_DESC_WRATH": "Angered by the war, they attack anything.",
+    "TEAM_NAME_VERSUS": "Versus",
+    "TEAM_DESC_VERSUS": "Versus Mode enemies.",
 
     "COLLECTION_NAME_SCOUT": "",
     "COLLECTION_DESC_SCOUT": "",

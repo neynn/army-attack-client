@@ -32,14 +32,14 @@ ArmyMap.TEAM_TO_WORLD = {
     "Crimson": 0,
     "Allies": 1,
     "Neutral": 2,
-    "Wrath": 3
+    "Versus": 3
 };
 
 ArmyMap.TEAM_TYPE = {
     0: "Crimson",
     1: "Allies",
     2: "Neutral",
-    3: "Wrath"
+    3: "Versus"
 };
 
 ArmyMap.TILE_TYPE = {

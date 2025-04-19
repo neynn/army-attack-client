@@ -1,7 +1,7 @@
 {
     "Attack": {
         "name": "ACTION_NAME_ATTACK", 
-        "description": "ACTION_DESC_ATTACK",
+        "desc": "ACTION_DESC_ATTACK",
         "priority": "LOW",
         "isInstant": false,
         "message": {
@@ -11,7 +11,7 @@
     },
     "Construction": {
         "name": "ACTION_NAME_CONSTRUCTION", 
-        "description": "ACTION_DESC_CONSTRUCTION",
+        "desc": "ACTION_DESC_CONSTRUCTION",
         "priority": "LOW",
         "isInstant": false,
         "message": {
@@ -21,7 +21,7 @@
     },
     "Move": {
         "name": "ACTION_NAME_MOVE", 
-        "description": "ACTION_DESC_MOVE",
+        "desc": "ACTION_DESC_MOVE",
         "priority": "LOW",
         "isInstant": false,
         "message": {
@@ -31,7 +31,7 @@
     },
     "CounterAttack": {
         "name": "ACTION_NAME_COUNTER_ATTACK", 
-        "description": "ACTION_DESC_COUNTER_ATTACK",
+        "desc": "ACTION_DESC_COUNTER_ATTACK",
         "priority": "HIGH",
         "isInstant": false,
         "message": {
@@ -41,7 +41,7 @@
     },
     "CounterMove": {
         "name": "ACTION_NAME_COUNTER_MOVE", 
-        "description": "ACTION_DESC_COUNTER_MOVE",
+        "desc": "ACTION_DESC_COUNTER_MOVE",
         "priority": "HIGH",
         "isInstant": false,
         "message": {
@@ -51,7 +51,7 @@
     },
     "Death": {
         "name": "ACTION_NAME_DEATH", 
-        "description": "ACTION_DESC_DEATH",
+        "desc": "ACTION_DESC_DEATH",
         "priority": "HIGH",
         "isInstant": true,
         "message": {
@@ -61,7 +61,7 @@
     },
     "FireMission": {
         "name": "ACTION_NAME_FIRE_MISSION", 
-        "description": "ACTION_DESC_FIRE_MISSION",
+        "desc": "ACTION_DESC_FIRE_MISSION",
         "priority": "HIGH",
         "isInstant": false,
         "message": {

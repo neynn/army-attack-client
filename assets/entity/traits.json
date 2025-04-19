@@ -1,119 +1,119 @@
 {
     "Infantry": {
         "name": "TRAIT_NAME_INFANTRY",
-        "description": "TRAIT_DESC_INFANTRY",
+        "desc": "TRAIT_DESC_INFANTRY",
         "components": {
             "Unit": { "infantry": 1 } 
         }
     },
     "HeavyInfantry": {
         "name": "TRAIT_NAME_HEAVY_INFANTRY",
-        "description": "TRAIT_DESC_HEAVY_INFANTRY",
+        "desc": "TRAIT_DESC_HEAVY_INFANTRY",
         "components": {
             "Unit": { "infantry": 2 } 
         }
     },
     "Artillery": {
         "name": "TRAIT_NAME_ARTILLERY",
-        "description": "TRAIT_DESC_ARTILLERY",
+        "desc": "TRAIT_DESC_ARTILLERY",
         "components": { 
             "Unit": { "artillery": 1 } 
         }
     },
     "HeavyArtillery": {
         "name": "TRAIT_NAME_HEAVY_ARTILLERY",
-        "description": "TRAIT_DESC_HEAVY_ARTILLERY",
+        "desc": "TRAIT_DESC_HEAVY_ARTILLERY",
         "components": { 
             "Unit": { "artillery": 2 } 
         }
     },
     "Armor": {
         "name": "TRAIT_NAME_ARMOR",
-        "description": "TRAIT_DESC_ARMOR",
+        "desc": "TRAIT_DESC_ARMOR",
         "components": {
             "Unit": { "armor": 1 } 
         }
     },
     "HeavyArmor": {
         "name": "TRAIT_NAME_HEAVY_ARMOR",
-        "description": "TRAIT_DESC_HEAVY_ARMOR",
+        "desc": "TRAIT_DESC_HEAVY_ARMOR",
         "components": {
             "Unit": { "armor": 2 } 
         }
     },
     "EliteArmor": {
         "name": "TRAIT_NAME_ELITE_ARMOR",
-        "description": "TRAIT_DESC_ELITE_ARMOR",
+        "desc": "TRAIT_DESC_ELITE_ARMOR",
         "components": {
             "Armor": { "armor": 1 } 
         }
     },
     "WeakArmor": {
         "name": "TRAIT_NAME_WEAK_ARMOR",
-        "description": "TRAIT_DESC_WEAK_ARMOR",
+        "desc": "TRAIT_DESC_WEAK_ARMOR",
         "components": { 
             "Armor": { "armor": -1 }
         }
     },
     "Coward": {
         "name": "TRAIT_NAME_COWARD",
-        "description": "TRAIT_DESC_COWARD",
+        "desc": "TRAIT_DESC_COWARD",
         "components": {
             "Move": { "flags": ["Coward"] }
         }
     },
     "Stealth": {
         "name": "TRAIT_NAME_STEALTH",
-        "description": "TRAIT_DESC_STEALTH",
+        "desc": "TRAIT_DESC_STEALTH",
         "components": {
             "Move": { "flags": ["Stealth"] }
         }
     },
     "Cloak": {
         "name": "TRAIT_NAME_CLOAK",
-        "description": "TRAIT_DESC_CLOAK",
+        "desc": "TRAIT_DESC_CLOAK",
         "components": {
             "Move": { "flags": ["Stealth", "Cloak"] }
         }
     },
     "Avian": {
         "name": "TRAIT_NAME_AVIAN",
-        "description": "TRAIT_DESC_AVIAN",
+        "desc": "TRAIT_DESC_AVIAN",
         "components": {
             "Avian": { "flying": true }
         }
     },
     "Elite": {
         "name": "TRAIT_NAME_ELITE",
-        "description": "TRAIT_DESC_ELITE",
+        "desc": "TRAIT_DESC_ELITE",
         "components": {
             "Reviveable": { "elite": true }
         }
     },
     "Reviveable": {
         "name": "TRAIT_NAME_REVIVEABLE",
-        "description": "TRAIT_DESC_REVIVEABLE",
+        "desc": "TRAIT_DESC_REVIVEABLE",
         "components": {
             "Reviveable": null
         }
     },
     "Counter": {
         "name": "TRAIT_NAME_COUNTER",
-        "description": "TRAIT_DESC_COUNTER",
+        "desc": "TRAIT_DESC_COUNTER",
         "components": {
             "Attack": { "counter": ["Move", "Attack"] }
         }
     },
     "Bulldoze": {
         "name": "TRAIT_NAME_BULLDOZE",
-        "description": "TRAIT_DESC_BULLDOZE",
+        "desc": "TRAIT_DESC_BULLDOZE",
         "components": {
             "Attack": { "bulldoze": ["Unit"] }
         }
     },
     "AoE": {
         "name": "TRAIT_NAME_AOE",
-        "description": "TRAIT_DESC_AOE",
+        "desc": "TRAIT_DESC_AOE",
         "components": {
             "Attack": null
         }

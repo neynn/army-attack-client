@@ -1,6 +1,6 @@
 {
     "name": "MAP_NAME_STRIKE_OASIS",
-    "description": "MAP_DESCRIPTION_STRIKE_OASIS",
+    "desc": "MAP_DESC_STRIKE_OASIS",
     "music": "music_desertscorpion",
     "width": 20,
     "height": 20,
@@ -22,8 +22,8 @@
         }
     },
     "randomEvents": [
-        { "type": "red_guardtower", "team": "Wrath", "tileX": 5, "tileY": 4, "chance": 100 },
-        { "type": "blue_guardtower", "team": "Wrath", "tileX": 5, "tileY": 6, "chance": 50 }
+        { "type": "red_guardtower", "team": "Versus", "tileX": 5, "tileY": 4, "chance": 100 },
+        { "type": "blue_guardtower", "team": "Versus", "tileX": 5, "tileY": 6, "chance": 50 }
     ],
     "graphics": {
         "layers": {
