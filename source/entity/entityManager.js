@@ -1,6 +1,7 @@
 import { EventEmitter } from "../events/eventEmitter.js";
 import { FactoryOwner } from "../factory/factoryOwner.js";
 import { Logger } from "../logger.js";
+import { Component } from "./component.js";
 
 export const EntityManager = function() {
     FactoryOwner.call(this);
@@ -44,11 +45,13 @@ EntityManager.prototype.exit = function() {
     this.entities = [];
 }
 
-EntityManager.prototype.registerComponent = function(componentID, component) {
+EntityManager.prototype.registerComponent = function(componentID, componentClass) {
     if(this.components.has(componentID)) {
         Logger.log(Logger.CODE.ENGINE_ERROR, "Component already exists!", "EntityManager.prototype.registerComponent", { "id": componentID });
         return;
     }
+
+    const component = new Component(componentClass);
 
     this.components.set(componentID, component);
 }
@@ -69,10 +72,12 @@ EntityManager.prototype.update = function(gameContext) {
 }
 
 EntityManager.prototype.loadComponents = function(entity, components) {
-    for(const componentID in components) {
-        const componentType = this.components.get(componentID);
+    if(!components) {
+        return;
+    }
 
-        if(!componentType) {
+    for(const componentID in components) {
+        if(!this.components.has(componentID)) {
             Logger.log(Logger.CODE.ENGINE_ERROR, "Component is not registered!", "EntityManager.prototype.loadComponents", { "id": componentID }); 
             continue;
         }
@@ -84,18 +89,22 @@ EntityManager.prototype.loadComponents = function(entity, components) {
 }
 
 EntityManager.prototype.buildComponents = function(entity, components) {
-    for(const componentID in components) {
-        const Type = this.components.get(componentID);
+    if(!components) {
+        return;
+    }
 
-        if(!Type) {
+    for(const componentID in components) {
+        const component = this.components.get(componentID);
+
+        if(!component) {
             Logger.log(Logger.CODE.ENGINE_ERROR, "Component is not registered!", "EntityManager.prototype.buildComponents", { "id": componentID }); 
             continue;
         }
 
         if(!entity.hasComponent(componentID)) {
-            const component = new Type();
+            const instance = component.createInstance();
 
-            entity.addComponent(componentID, component);
+            entity.addComponent(componentID, instance);
         }
         
         entity.initComponent(componentID, components[componentID]);
@@ -105,7 +114,7 @@ EntityManager.prototype.buildComponents = function(entity, components) {
 EntityManager.prototype.initComponents = function(entity, archetypeID, traits) {
     const archetype = this.archetypes[archetypeID];
 
-    if(!archetype || !archetype.components) {
+    if(!archetype) {
         return;
     }
 
@@ -115,7 +124,7 @@ EntityManager.prototype.initComponents = function(entity, archetypeID, traits) {
         const traitID = traits[i];
         const trait = this.traits[traitID];
 
-        if(!trait || !trait.components) {
+        if(!trait) {
             continue;
         }
 

@@ -15,7 +15,7 @@ export const ArmyEntityFactory = function() {
 ArmyEntityFactory.prototype = Object.create(Factory.prototype);
 ArmyEntityFactory.prototype.constructor = ArmyEntityFactory;
 
-const initAttackComponent = function(entity, sprite, component, stats) {
+const initAttackComponent = function(entityType, component, stats) {
     const {
         damage = 0,
         attackRange = 0
@@ -25,23 +25,20 @@ const initAttackComponent = function(entity, sprite, component, stats) {
     component.range = attackRange;
 }
 
-const initConstructionComponent = function(entity, sprite, component, stats) {
+const initConstructionComponent = function(entityType, component, stats) {
     const {
         constructionSteps,
         constructionResult
-    } = entity.config;
+    } = entityType;
 
     component.stepsRequired = constructionSteps;
     component.result = constructionResult;
-
-    sprite.freeze();
-    sprite.setFrame(0);
 }
 
-const initMoveComponent = function(entity, sprite, component, stats) {
+const initMoveComponent = function(entityType, component, stats) {
     const {
         passability = []
-    } = entity.config;
+    } = entityType;
 
     const {
         moveRange = 0,
@@ -108,7 +105,7 @@ const createDefaultSprite = function(gameContext, entity, tileX, tileY) {
     return sprite;
 }
 
-ArmyEntityFactory.COMPONENT_INIT = {
+const COMPONENT_INIT = {
     [ArmyEntity.COMPONENT.ATTACK]: initAttackComponent,
     [ArmyEntity.COMPONENT.CONSTRUCTION]: initConstructionComponent,
     [ArmyEntity.COMPONENT.MOVE]: initMoveComponent
@@ -134,19 +131,20 @@ ArmyEntityFactory.prototype.onCreate = function(gameContext, config) {
 
     entityManager.initComponents(entity, archetype, statConfig.traits);
 
-    for(const componentID in ArmyEntityFactory.COMPONENT_INIT) {
+    for(const componentID in COMPONENT_INIT) {
         const component = entity.getComponent(componentID);
 
         if(component) {
-            const onInit = ArmyEntityFactory.COMPONENT_INIT[componentID];
-
-            onInit(entity, sprite, component, statConfig);
+            COMPONENT_INIT[componentID](entityType, component, statConfig);
         }
     }
 
-    if(components) {
-        entityManager.loadComponents(entity, components);
+    if(archetype === ArmyEntity.TYPE.CONSTRUCTION) {
+        sprite.freeze();
+        sprite.setFrame(0);
     }
+
+    entityManager.loadComponents(entity, components);
     
     return entity;
 }
