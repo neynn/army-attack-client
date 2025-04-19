@@ -5,7 +5,7 @@ export const AvianComponent = function() {
 AvianComponent.STATE = {
     GROUNDED: 0,
     FLYING: 1
-}
+};
 
 AvianComponent.prototype.toGround = function() {
     this.state = AvianComponent.STATE.GROUNDED;

@@ -1,13 +1,13 @@
 {
-    "Specials": {
-        "id": "Specials",
-        "name": null,
+    "Special": {
+        "name": "SHOP_TAB_NAME_SPECIAL",
+        "desc": "SHOP_TAB_DESC_SPECIAL",
         "tabType": "normal",
         "items": []
     },
-    "Units": {
-        "id": "Units",
-        "name": null,
+    "Unit": {
+        "name": "SHOP_TAB_NAME_UNIT",
+        "desc": "SHOP_TAB_DESC_UNIT",
         "tabType": "normal",
         "items": [
             "blue_infantry", "blue_elite_infantry", "blue_tank", "blue_artillery",
@@ -15,49 +15,49 @@
             "blue_battery", "blue_elite_battery"
         ]
     },
-    "Areas": {
-        "id": "Areas",
-        "name": null,
+    "Area": {
+        "name": "SHOP_TAB_NAME_AREAS",
+        "desc": "SHOP_TAB_DESC_AREAS",
         "tabType": "normal",
         "items": [
 
         ]
     },
-    "Buildings": {
-        "id": "Buildings",
-        "name": null,
+    "Building": {
+        "name": "SHOP_TAB_NAME_BUILDING",
+        "desc": "SHOP_TAB_DESC_BUILDING",
         "tabType": "normal",
         "items": [
 
         ]
     },
-    "Decos": {
-        "id": "Decos",
-        "name": null,
+    "Deco": {
+        "name": "SHOP_TAB_NAME_DECO",
+        "desc": "SHOP_TAB_DESC_DECO",
         "tabType": "normal",
         "items": [
 
         ]
     },
-    "Packs": {
-        "id": "Packs",
-        "name": null,
+    "Pack": {
+        "name": "SHOP_TAB_NAME_PACK",
+        "desc": "SHOP_TAB_DESC_PACK",
         "tabType": "normal",
         "items": [
 
         ]
     },
-    "Supplies": {
-        "id": "Supplies",
-        "name": null,
+    "Supply": {
+        "name": "SHOP_TAB_NAME_SUPPLY",
+        "desc": "SHOP_TAB_DESC_SUPPLY",
         "tabType": "normal",
         "items": [
 
         ]
     },
     "Storage": {
-        "id": "Storage",
-        "name": null,
+        "name": "SHOP_TAB_NAME_STORAGE",
+        "desc": "SHOP_TAB_DESC_STORAGE",
         "tabType": "normal",
         "items": [
 
@@ -65,7 +65,8 @@
     },
     "BuyGold": {
         "id": "BuyGold",
-        "name": null,
+        "name": "SHOP_TAB_NAME_BUY_GOLD",
+        "desc": "SHOP_TAB_DESC_BUY_GOLD",
         "tabType": "normal",
         "items": [
 
@@ -73,7 +74,8 @@
     },
     "BuyCash": {
         "id": "BuyCash",
-        "name": null,
+        "name": "SHOP_TAB_NAME_BUY_CASH",
+        "desc": "SHOP_TAB_DESC_BUY_CASH",
         "tabType": "normal",
         "items": [
 

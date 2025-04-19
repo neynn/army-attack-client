@@ -129,7 +129,8 @@ ArmyEntityFactory.prototype.onCreate = function(gameContext, config) {
     const { archetype, stats } = entityType;
     const statConfig = stats[modeID] ?? {};
 
-    entityManager.initComponents(entity, archetype, statConfig.traits);
+    entityManager.addArchetypeComponents(entity, archetype);
+    entityManager.addTraitComponents(entity, statConfig.traits);
 
     for(const componentID in COMPONENT_INIT) {
         const component = entity.getComponent(componentID);

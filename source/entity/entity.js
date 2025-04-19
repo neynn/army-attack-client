@@ -28,6 +28,21 @@ Entity.prototype.update = function(gameContext) {
     }
 }
 
+Entity.prototype.hasComponent = function(component) {
+    return this.components.has(component);
+}
+
+
+Entity.prototype.getComponent = function(componentID) {
+    const component = this.components.get(componentID);
+
+    if(!component) {
+        return null;
+    }
+
+    return component;
+}
+
 Entity.prototype.save = function() {
     const blob = {};
 
@@ -74,10 +89,6 @@ Entity.prototype.loadComponent = function(componentID, blob) {
     }
 }
 
-Entity.prototype.hasComponent = function(component) {
-    return this.components.has(component);
-}
-
 Entity.prototype.addComponent = function(componentID, component) {
     if(this.components.has(componentID)) {
         return;
@@ -88,16 +99,6 @@ Entity.prototype.addComponent = function(componentID, component) {
     if(typeof component.update === "function") {
         this.activeComponents.push(component);
     }
-}
-
-Entity.prototype.getComponent = function(componentID) {
-    const component = this.components.get(componentID);
-
-    if(!component) {
-        return null;
-    }
-
-    return component;
 }
 
 Entity.prototype.removeComponent = function(componentID) {

@@ -1,7 +1,11 @@
 {
     "Mortar": { 
-        "dimX": 1, "dimY": 1, "dimZ": 1,
+        "dimX": 1,
+        "dimY": 1,
+        "dimZ": 1,
         "damage": 2,
+        "name": "FIRE_MISSION_NAME_MORTAR",
+        "desc": "FIRE_MISSION_DESC_MORTAR",
         "icon": "icon_mortar",
         "sprites": {
             "fire": "effect_death_explosion",
@@ -12,8 +16,12 @@
         }
     },
     "Napalm": { 
-        "dimX": 3, "dimY": 1, "dimZ": 1,
+        "dimX": 3,
+        "dimY": 1,
+        "dimZ": 1,
         "damage": 2,
+        "name": "FIRE_MISSION_NAME_NAPALM",
+        "desc": "FIRE_MISSION_DESC_NAPALM",
         "icon": "icon_napalm",
         "sprites": {
             "fire": "effect_death_explosion",
@@ -24,8 +32,12 @@
         }
     },
     "Artillery": { 
-        "dimX": 2, "dimY": 2, "dimZ": 1,
+        "dimX": 2, 
+        "dimY": 2,
+        "dimZ": 1,
         "damage": 3,
+        "name": "FIRE_MISSION_NAME_ARTILLERY",
+        "desc": "FIRE_MISSION_DESC_ARTILLERY",
         "icon": "icon_artillery",
         "sprites": {
             "fire": "effect_death_explosion",
@@ -36,8 +48,12 @@
         }
     },
     "Doomsday": { 
-        "dimX": 3, "dimY": 3, "dimZ": 1,
+        "dimX": 3,
+        "dimY": 3,
+        "dimZ": 1,
         "damage": 6,
+        "name": "FIRE_MISSION_NAME_DOOMSDAY",
+        "desc": "FIRE_MISSION_DESC_DOOMSDAY",
         "icon": "icon_doomsday",
         "sprites": {
             "fire": "effect_death_explosion",
@@ -48,8 +64,12 @@
         }
     },
     "OrbitalLaser": { 
-        "dimX": 1, "dimY": 1, "dimZ": 1,
+        "dimX": 1,
+        "dimY": 1,
+        "dimZ": 1,
         "damage": 12,
+        "name": "FIRE_MISSION_NAME_ORBITAL_LASER",
+        "desc": "FIRE_MISSION_DESC_ORBITAL_LASER",
         "icon": "icon_beam",
         "sprites": {
             "fire": "effect_death_explosion",
@@ -60,8 +80,12 @@
         }
     },
     "CarptetBomb": { 
-        "dimX": 6, "dimY": 1, "dimZ": 1,
+        "dimX": 6,
+        "dimY": 1,
+        "dimZ": 1,
         "damage": 4,
+        "name": "FIRE_MISSION_NAME_CARPET_BOMB",
+        "desc": "FIRE_MISSION_DESC_CARPET_BOMB",
         "icon": "icon_bomb",
         "sprites": {
             "fire": "effect_death_explosion",

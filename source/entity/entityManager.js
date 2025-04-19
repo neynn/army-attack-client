@@ -66,7 +66,7 @@ EntityManager.prototype.forAllEntities = function(onCall) {
 }
 
 EntityManager.prototype.update = function(gameContext) {
-    for(let i = 0; i < this.entities.length; i++) {
+    for(let i = 0; i < this.entities.length; ++i) {
         this.entities[i].update(gameContext);
     }
 }
@@ -88,7 +88,7 @@ EntityManager.prototype.loadComponents = function(entity, components) {
     }
 }
 
-EntityManager.prototype.buildComponents = function(entity, components) {
+EntityManager.prototype.initComponents = function(entity, components) {
     if(!components) {
         return;
     }
@@ -111,15 +111,17 @@ EntityManager.prototype.buildComponents = function(entity, components) {
     }
 }
 
-EntityManager.prototype.initComponents = function(entity, archetypeID, traits) {
+EntityManager.prototype.addArchetypeComponents = function(entity, archetypeID) {
     const archetype = this.archetypes[archetypeID];
 
     if(!archetype) {
         return;
     }
 
-    this.buildComponents(entity, archetype.components);
+    this.initComponents(entity, archetype.components);
+}
 
+EntityManager.prototype.addTraitComponents = function(entity, traits) {
     for(let i = 0; i < traits.length; i++) {
         const traitID = traits[i];
         const trait = this.traits[traitID];
@@ -128,7 +130,7 @@ EntityManager.prototype.initComponents = function(entity, archetypeID, traits) {
             continue;
         }
 
-        this.buildComponents(entity, trait.components);
+        this.initComponents(entity, trait.components);
     }
 }
 

@@ -1,7 +1,7 @@
 {
     "Scout": {
         "name": "COLLECTION_NAME_SCOUT",
-        "description": "COLLECTION_DESC_SCOUT",
+        "desc": "COLLECTION_DESC_SCOUT",
         "items": [
             {"type": "Item", "id": "scout_binoculars", "value": 1},
             {"type": "Item", "id": "scout_camo", "value": 1},
@@ -15,7 +15,7 @@
     },
     "Infantry": {
         "name": "COLLECTION_NAME_INFANTRY",
-        "description": "COLLECTION_DESC_INFANTRY",
+        "desc": "COLLECTION_DESC_INFANTRY",
         "items": [
             {"type": "Item", "id": "infantry_combat_boots", "value": 1},
             {"type": "Item", "id": "infantry_dog_tags", "value": 1},
@@ -30,7 +30,7 @@
     },
     "APC": {
         "name": "COLLECTION_NAME_APC",
-        "description": "COLLECTION_DESC_APC",
+        "desc": "COLLECTION_DESC_APC",
         "items": [
             {"type": "Item", "id": "apc_ammo_shells", "value": 1},
             {"type": "Item", "id": "apc_blueprints", "value": 1},
@@ -45,7 +45,7 @@
     },
     "Artillery": {
         "name": "COLLECTION_NAME_ARTILLERY",
-        "description": "COLLECTION_DESC_ARTILLERY",
+        "desc": "COLLECTION_DESC_ARTILLERY",
         "items": [
             {"type": "Item", "id": "artillery_ammo", "value": 1},
             {"type": "Item", "id": "artillery_fire_mission", "value": 1},
@@ -61,7 +61,7 @@
     },
     "BattleTank": {
         "name": "COLLECTION_NAME_BATTLETANK",
-        "description": "COLLECTION_DESC_BATTLETANK",
+        "desc": "COLLECTION_DESC_BATTLETANK",
         "items": [
             {"type": "Item", "id": "battle_tank_armor_plates", "value": 1},
             {"type": "Item", "id": "battle_tank_blueprints", "value": 1},
@@ -76,7 +76,7 @@
     },
     "Stormtroop": {
         "name": "COLLECTION_NAME_STORMTROOP",
-        "description": "COLLECTION_DESC_STORMTROOP",
+        "desc": "COLLECTION_DESC_STORMTROOP",
         "items": [
             {"type": "Item", "id": "stormtroop_ammo_crate", "value": 1},
             {"type": "Item", "id": "stormtroop_balaclava", "value": 1},
@@ -91,7 +91,7 @@
     },
     "RocketBattery": {
         "name": "COLLECTION_NAME_ROCKETBATTERY",
-        "description": "COLLECTION_DESC_ROCKETBATTERY",
+        "desc": "COLLECTION_DESC_ROCKETBATTERY",
         "items": [
             {"type": "Item", "id": "rocket_battery_headphones", "value": 1},
             {"type": "Item", "id": "rocket_battery_radar", "value": 1},
@@ -106,7 +106,7 @@
     },
     "PVP": {
         "name": "COLLECTION_NAME_PVP",
-        "description": "COLLECTION_DESC_PVP",
+        "desc": "COLLECTION_DESC_PVP",
         "items": [
             {"type": "Item", "id": "pvp_compass", "value": 1},
             {"type": "Item", "id": "pvp_survival_shovel", "value": 1},
