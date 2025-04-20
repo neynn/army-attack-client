@@ -57,7 +57,7 @@ UIElement.prototype.setAnchor = function(anchor) {
 
 UIElement.prototype.getCollisions = function(mouseX, mouseY, mouseRange) {
     if(!this.collider) {
-        return [];
+        return null;
     }
 
     const stack = [this];

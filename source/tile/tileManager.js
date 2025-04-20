@@ -21,14 +21,11 @@ TileManager.prototype.load = function(tileSheets, tileMeta) {
     }
 
     const { graphics, autotilers } = tileMeta;
-    const usedSheets = this.graphics.load(tileSheets, graphics);
 
     this.init(graphics, autotilers);
+    this.graphics.load(tileSheets, graphics);
     this.resources.createImages(tileSheets);
-
-    for(const sheetID of usedSheets) {
-        this.resources.requestImage(sheetID, (key, image, sheet) => sheet.addReference());
-    }
+    this.graphics.loadSheets(this.resources);
 }
 
 TileManager.prototype.update = function(gameContext) {

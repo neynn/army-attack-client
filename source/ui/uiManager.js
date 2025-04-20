@@ -105,7 +105,7 @@ UIManager.prototype.getCollidedElements = function(mouseX, mouseY, mouseRange) {
         const userInterface = this.interfaceStack[i];
         const collisions = userInterface.updateCollisions(mouseX, mouseY, mouseRange);
 
-        if(collisions.length > 0) {
+        if(collisions !== null && collisions.length > 0) {
             return collisions;
         }
     }

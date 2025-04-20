@@ -97,7 +97,7 @@ UserInterface.prototype.getElement = function(name) {
 
 UserInterface.prototype.updateCollisions = function(mouseX, mouseY, mouseRange) {
     if(this.state !== UserInterface.STATE.VISIBLE) {
-        return [];
+        return null;
     }
 
     for(let i = 0; i < this.roots.length; i++) {
@@ -105,12 +105,12 @@ UserInterface.prototype.updateCollisions = function(mouseX, mouseY, mouseRange) 
         const element = this.elements.get(elementID);
         const collisions = element.getCollisions(mouseX, mouseY, mouseRange);
 
-        if(collisions.length > 0) {
+        if(collisions !== null && collisions.length > 0) {
             return collisions;
         }
     }
 
-    return [];
+    return null;
 }
 
 UserInterface.prototype.addElement = function(element, name) {

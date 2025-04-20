@@ -81,9 +81,7 @@ ArmyMapEditor.BUTTON_TYPE = {
     TYPE: 2
 };
 
-ArmyMapEditor.SCALE = {
-    SLOT_BUTTON: 50 / 96
-};
+ArmyMapEditor.SLOT_BUTTON_SIZE = 50;
 
 ArmyMapEditor.BUTTON_STATE = {
     HIDDEN: 0,
@@ -159,6 +157,7 @@ ArmyMapEditor.prototype.initCamera = function(gameContext) {
 
 ArmyMapEditor.prototype.initRenderEvents = function(gameContext) {
     const { tileManager } = gameContext;
+    const { graphics } = tileManager;
 
     this.camera.addPostDraw((context) => {
         const cursorTile = gameContext.getMouseTile();
@@ -193,9 +192,9 @@ ArmyMapEditor.prototype.initRenderEvents = function(gameContext) {
                 const renderX = j * width - x;
 
                 if(id === 0) {
-                    this.camera.drawEmptyTile(context, renderX, renderY);
+                    this.camera.drawEmptyTile(graphics, context, renderX, renderY);
                 } else {
-                    this.camera.drawTileGraphics(tileManager, context, id, renderX, renderY);
+                    this.camera.drawTile(graphics, context, id, renderX, renderY);
                 } 
 
                 context.fillStyle = this.overlayColor;
@@ -367,6 +366,7 @@ ArmyMapEditor.prototype.initUIEvents = function(gameContext) {
 
 ArmyMapEditor.prototype.initButtons = function(gameContext) {
     const { uiManager, tileManager } = gameContext;
+    const { graphics } = tileManager;
     const pageElements = this.routePage();
     const editorInterface = uiManager.getInterface(this.interfaceID);
 
@@ -390,7 +390,7 @@ ArmyMapEditor.prototype.initButtons = function(gameContext) {
             }, { id: this.id });
 
             button.addDefer((context, localX, localY) => {
-                this.camera.drawTileGraphics(tileManager, context, id, localX, localY, ArmyMapEditor.SCALE.SLOT_BUTTON, ArmyMapEditor.SCALE.SLOT_BUTTON);
+                this.camera.drawTile(graphics, context, id, localX, localY, ArmyMapEditor.SLOT_BUTTON_SIZE, ArmyMapEditor.SLOT_BUTTON_SIZE);
                 /*
                 context.fillStyle = "#eeeeee";
                 context.textAlign = "center";

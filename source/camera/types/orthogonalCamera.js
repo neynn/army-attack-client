@@ -18,11 +18,6 @@ export const OrthogonalCamera = function() {
     this.overlays = new Map();
 }
 
-OrthogonalCamera.COLOR = {
-    EMPTY_TILE_FIRST: "#000000",
-    EMPTY_TILE_SECOND: "#701867"
-};
-
 OrthogonalCamera.MAP_OUTLINE = {
     LINE_SIZE: 2,
     COLOR: "#dddddd"
@@ -75,64 +70,23 @@ OrthogonalCamera.prototype.clearOverlay = function(overlayID) {
     overlay.length = 0;
 }
 
-OrthogonalCamera.prototype.drawColoredTile = function(context, color, renderX, renderY, scaleX = 1, scaleY = 1) {
-    const scaledX = this.tileWidth * scaleX;
-    const scaledY = this.tileHeight * scaleY;
+OrthogonalCamera.prototype.drawEmptyTile = function(graphics, context, renderX, renderY, targetWidth = this.tileWidth, targetHeight = this.tileHeight) {
+    const scaleX = targetWidth / this.tileWidth;
+    const scaleY = targetHeight / this.tileHeight;
 
-    context.fillStyle = color;
-    context.fillRect(renderX, renderY, scaledX, scaledY);
+    graphics.drawEmptyTile(context, renderX, renderY, scaleX, scaleY, this.tileWidth, this.tileHeight);
 }
 
-OrthogonalCamera.prototype.drawEmptyTile = function(context, renderX, renderY, scaleX = 1, scaleY = 1) {
-    const scaledX = this.halfTileWidth * scaleX;
-    const scaledY = this.halfTileHeight * scaleY;
+OrthogonalCamera.prototype.drawTile = function(graphics, context, tileID, renderX, renderY, targetWidth = this.tileWidth, targetHeight = this.tileHeight) {
+    const scaleX = targetWidth / this.tileWidth;
+    const scaleY = targetHeight / this.tileHeight;
 
-    context.fillStyle = OrthogonalCamera.COLOR.EMPTY_TILE_FIRST;
-    context.fillRect(renderX, renderY, scaledX, scaledY);
-    context.fillRect(renderX + scaledX, renderY + scaledY, scaledX, scaledY);
-
-    context.fillStyle = OrthogonalCamera.COLOR.EMPTY_TILE_SECOND;
-    context.fillRect(renderX + scaledX, renderY, scaledX, scaledY);
-    context.fillRect(renderX, renderY + scaledY, scaledX, scaledY);
-}
-
-OrthogonalCamera.prototype.drawTileGraphics = function(tileManager, context, tileID, renderX, renderY, scaleX = 1, scaleY = 1) {
-    const { resources, graphics } = tileManager;
-    const graphic = graphics.getGraphic(tileID);
-
-    if(graphic === null) {
-        this.drawEmptyTile(context, renderX, renderY, scaleX, scaleY);
-        return;
-    }
-
-    const { sheet, frames, frameIndex } = graphic;
-    const tileBuffer = resources.getImage(sheet);
-
-    if(tileBuffer === null) {
-        this.drawEmptyTile(context, renderX, renderY, scaleX, scaleY);
-        return;
-    }
-
-    const currentFrame = frames[frameIndex];
-    
-    for(let i = 0; i < currentFrame.length; i++) {
-        const component = currentFrame[i];
-        const { frameX, frameY, frameW, frameH, shiftX, shiftY } = component;
-        const drawX = renderX + shiftX * scaleX;
-        const drawY = renderY + shiftY * scaleY;
-        const drawWidth = frameW * scaleX;
-        const drawHeight = frameH * scaleY;
-
-        context.drawImage(
-            tileBuffer,
-            frameX, frameY, frameW, frameH,
-            drawX, drawY, drawWidth, drawHeight
-        );
-    }
+    graphics.drawTile(context, tileID, renderX, renderY, scaleX, scaleY, this.tileWidth, this.tileHeight);
 }
 
 OrthogonalCamera.prototype.drawOverlay = function(gameContext, renderContext, overlayID) {
     const { tileManager } = gameContext;
+    const { graphics } = tileManager;
     const overlay = this.overlays.get(overlayID);
 
     if(!overlay) {
@@ -146,7 +100,7 @@ OrthogonalCamera.prototype.drawOverlay = function(gameContext, renderContext, ov
             const renderX = drawX - this.viewportX;
             const renderY = drawY - this.viewportY;
     
-            this.drawTileGraphics(tileManager, renderContext, id, renderX, renderY);
+            graphics.drawTile(renderContext, id, renderX, renderY, 1, 1, this.tileWidth, this.tileHeight);
         }
     }
 }
@@ -168,19 +122,20 @@ OrthogonalCamera.prototype.drawLayer = function(gameContext, renderContext, laye
 
 OrthogonalCamera.prototype.drawTileBuffer = function(gameContext, renderContext, buffer) {
     const { tileManager } = gameContext;
+    const { graphics } = tileManager;
 
-    for(let i = this.startY; i <= this.endY; i++) {
+    for(let i = this.startY; i <= this.endY; ++i) {
         const tileRow = i * this.mapWidth;
         const renderY = i * this.tileHeight - this.viewportY;
 
-        for(let j = this.startX; j <= this.endX; j++) {
+        for(let j = this.startX; j <= this.endX; ++j) {
             const index = tileRow + j;
             const tileID = buffer[index];
 
             if(tileID !== 0) {
                 const renderX = j * this.tileWidth - this.viewportX;
 
-                this.drawTileGraphics(tileManager, renderContext, tileID, renderX, renderY);
+                graphics.drawTile(renderContext, tileID, renderX, renderY, 1, 1, this.tileWidth, this.tileHeight);
             }
         }
     }
