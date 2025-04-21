@@ -8,6 +8,10 @@ export const TileManager = function() {
     this.autotilers = new Map();
     this.metaInversion = {};
     this.meta = [];
+
+    this.resources.events.on(ImageManager.EVENT.IMAGE_LOAD, (imageID, image) => {
+        this.graphics.onImageLoad(imageID, image);
+    },  { permanent: true });
 }
 
 TileManager.TILE_ID = {

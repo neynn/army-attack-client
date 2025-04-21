@@ -99,8 +99,6 @@ LoadableImage.prototype.onBitmapLoad = function(bitmap, imageType) {
     this.width = bitmap.width;
     this.height = bitmap.height;
     this.state = LoadableImage.STATE.LOADED;
-
-    return this.bitmap;
 }
 
 LoadableImage.prototype.addReference = function() {

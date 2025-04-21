@@ -1,4 +1,4 @@
-import { Logger } from "../logger.js";
+import { EventEmitter } from "../events/eventEmitter.js";
 import { LoadableImage } from "./loadableImage.js";
 import { PathHandler } from "./pathHandler.js";
 
@@ -6,7 +6,18 @@ export const ImageManager = function(imageType = LoadableImage.TYPE.BITMAP) {
     this.autoLoad = true;
     this.imageType = imageType;
     this.images = new Map();
+
+    this.events = new EventEmitter();
+    this.events.listen(ImageManager.EVENT.IMAGE_LOAD);
+    this.events.listen(ImageManager.EVENT.IMAGE_UNLOAD);
+    this.events.listen(ImageManager.EVENT.LOAD_ERROR);
 }
+
+ImageManager.EVENT = {
+    IMAGE_LOAD: "IMAGE_LOAD",
+    IMAGE_UNLOAD: "IMAGE_UNLOAD",
+    LOAD_ERROR: "LOAD_ERROR"
+};
 
 ImageManager.SIZE = {
     MB: 1048576,
@@ -49,28 +60,16 @@ ImageManager.prototype.isImageLoadable = function(imageID) {
     return isLoadable;
 }
 
-ImageManager.prototype.onLoadingError = function(imageID, code) {
-    Logger.log(Logger.CODE.ENGINE_WARN, "Image could not be loaded!", "", { imageID, "error": code })
-}
-
-ImageManager.prototype.requestImage = function(imageID, onLoad) {
+ImageManager.prototype.requestImage = function(imageID) {
     const loadableImage = this.images.get(imageID);
 
-    if(!loadableImage) {
+    if(!loadableImage || loadableImage.state !== LoadableImage.STATE.EMPTY) {
         return;
     }
 
     loadableImage.requestImage(this.imageType)
-    .then((bitmap) => onLoad(imageID, bitmap, loadableImage))
-    .catch((code) => this.onLoadingError(imageID, code));
-}
-
-ImageManager.prototype.requestAllImages = function(onLoad) {
-    for(const [imageID, loadableImage] of this.images) {
-        loadableImage.requestImage(this.imageType)
-        .then((bitmap) => onLoad(imageID, bitmap, loadableImage))
-        .catch((code) => this.onLoadingError(imageID, code));
-    }
+    .then(() => this.events.emit(ImageManager.EVENT.IMAGE_LOAD, imageID, loadableImage))
+    .catch((code) => this.events.emit(ImageManager.EVENT.LOAD_ERROR, imageID, code));
 }
 
 ImageManager.prototype.getImageBitmap = function(imageID) {
@@ -85,7 +84,7 @@ ImageManager.prototype.getImageBitmap = function(imageID) {
     switch(state) {
         case LoadableImage.STATE.EMPTY: {
             if(this.autoLoad) {
-                image.requestImage(this.imageType);
+                this.requestImage(imageID);
             }
 
             return null;

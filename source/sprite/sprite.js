@@ -4,8 +4,7 @@ export const Sprite = function(index, DEBUG_NAME) {
     Graph.call(this, Graph.TYPE.SPRITE, DEBUG_NAME);
     
     this.index = index;
-    this.typeID = null;
-    this.animationID = null;
+    this.typeID = -1;
     this.lastCallTime = 0;
     this.frameCount = 0;
     this.frameTime = 1;
@@ -47,8 +46,7 @@ Sprite.prototype.getIndex = function() {
 }
 
 Sprite.prototype.reset = function() {
-    this.typeID = null;
-    this.animationID = null;
+    this.typeID = -1;
     this.lastCallTime = 0;
     this.frameCount = 0;
     this.frameTime = 1;
@@ -65,10 +63,13 @@ Sprite.prototype.reset = function() {
     this.show();
 }
 
-Sprite.prototype.init = function(typeID, animationID, frameCount, frameTime, lastCallTime) {
+Sprite.prototype.isEqual = function(typeID) {
+    return typeID === this.typeID;
+}
+
+Sprite.prototype.init = function(typeID, frameCount, frameTime, lastCallTime) {
     this.DEBUG_NAME = typeID;
     this.typeID = typeID;
-    this.animationID = animationID;
     this.frameCount = frameCount;
     this.frameTime = frameTime;
     this.lastCallTime = lastCallTime;
@@ -85,10 +86,6 @@ Sprite.prototype.setBounds = function(x, y, w, h) {
     this.boundsY = y;
     this.boundsW = w;
     this.boundsH = h;
-}
-
-Sprite.prototype.isEqual = function(typeID, animationID) {
-    return this.typeID === typeID && this.animationID === animationID;
 }
 
 Sprite.prototype.isVisible = function(viewportRight, viewportLeft, viewportBottom, viewportTop) {

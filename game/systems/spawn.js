@@ -41,7 +41,7 @@ const loadEntitySprites = function(gameContext, entity) {
         const spriteID = sprites[spriteType];
 
         if(!blocked.has(spriteType)) {
-            spriteManager.requestSprite(spriteID);
+            spriteManager.preloadAtlas(spriteID);
         }
     }
 }

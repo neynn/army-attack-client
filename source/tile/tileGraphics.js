@@ -122,15 +122,23 @@ TileGraphics.prototype.load = function(resources, tileSheets, tileGraphics) {
     }
 
     for(const [sheetID, indices] of this.usedSheets) {
-        resources.requestImage(sheetID, (key, bitmap, sheet) => {
-            for(let i = 0; i < indices.length; i++) {
-                const index = indices[i];
-                const graphic = this.graphics[index];
+        resources.requestImage(sheetID);
+    }
+}
 
-                graphic.setImage(sheet);
-                sheet.addReference();
-            }
-        });
+TileGraphics.prototype.onImageLoad = function(imageID, image) {
+    const indices = this.usedSheets.get(imageID);
+
+    if(!indices) {
+        return;
+    }
+
+    for(let i = 0; i < indices.length; i++) {
+        const index = indices[i];
+        const graphic = this.graphics[index];
+
+        graphic.setImage(image);
+        image.addReference();
     }
 }
 
