@@ -11,7 +11,8 @@ export const TileManager = function() {
 }
 
 TileManager.TILE_ID = {
-    EMPTY: 0
+    EMPTY: 0,
+    INVALID: -1
 };
 
 TileManager.prototype.load = function(tileSheets, tileMeta) {
@@ -20,12 +21,14 @@ TileManager.prototype.load = function(tileSheets, tileMeta) {
         return;
     }
 
-    const { graphics, autotilers } = tileMeta;
+    const {
+        graphics = [],
+        autotilers = {}
+    } = tileMeta;
 
     this.init(graphics, autotilers);
-    this.graphics.load(tileSheets, graphics);
     this.resources.createImages(tileSheets);
-    this.graphics.loadSheets(this.resources);
+    this.graphics.load(this.resources, tileSheets, graphics);
 }
 
 TileManager.prototype.update = function(gameContext) {
@@ -35,9 +38,18 @@ TileManager.prototype.update = function(gameContext) {
     this.graphics.update(realTime);
 }
 
-TileManager.prototype.init = function(meta = [], autotilers = {}) {
+TileManager.prototype.init = function(meta, autotilers) {
     this.meta = meta;
-    this.metaInversion = createInversion(meta);
+
+    for(let i = 0; i < meta.length; i++) {
+        const { set, animation } = meta[i];
+
+        if(!this.metaInversion[set]) {
+            this.metaInversion[set] = {};
+        }
+
+        this.metaInversion[set][animation] = i + 1;
+    }
 
     for(const autotilerID in autotilers) {
         const config = autotilers[autotilerID];
@@ -109,20 +121,4 @@ TileManager.prototype.getAutotilerByTile = function(tileID) {
     const autotiler = this.getAutotilerByID(autotilerID);
 
     return autotiler;
-}
-
-const createInversion = function(values = []) {
-    const inversion = {};
-
-    for(let i = 0; i < values.length; i++) {
-        const { set, animation } = values[i];
-
-        if(!inversion[set]) {
-            inversion[set] = {};
-        }
-
-        inversion[set][animation] = i + 1;
-    }
-    
-    return inversion;
 }

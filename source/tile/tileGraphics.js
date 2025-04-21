@@ -42,14 +42,13 @@ TileGraphics.prototype.drawTile = function(context, tileID, renderX, renderY, sc
     }
 
     const graphic = this.graphics[index];
-    const { sheet, frames, frameIndex } = graphic;
+    const { bitmap, frames, frameIndex, frameCount } = graphic;
 
-    if(sheet === null) {
+    if(bitmap === null || frameCount === 0) {
         this.drawEmptyTile(context, renderX, renderY, scaleX, scaleY, tileWidth, tileHeight);
         return;
     }
 
-    const { bitmap } = sheet;
     const currentFrame = frames[frameIndex];
     const frameLength = currentFrame.length;
 
@@ -88,62 +87,62 @@ TileGraphics.prototype.update = function(timestamp) {
     }
 }
 
-TileGraphics.prototype.load = function(tileSheets, tileGraphics = []) {
+TileGraphics.prototype.load = function(resources, tileSheets, tileGraphics) {
     for(let i = 0; i < tileGraphics.length; i++) {
         const { set, animation } = tileGraphics[i];
         const sheet = tileSheets[set];
+        const tile = new Tile();
+
+        this.graphics.push(tile);
 
         if(!sheet) {
-            this.graphics.push(null);
             continue;
         }
 
-        const animationObject = createGraphic(sheet, animation);
-        const frameCount = animationObject.getFrameCount();
+        createGraphic(tile, sheet, animation);
+
+        const frameCount = tile.getFrameCount();
 
         if(frameCount === 0) {
-            this.graphics.push(null);
+            continue;
+        }
+
+        if(frameCount > 1) {
+            this.dynamicGraphics.push(i);
+        }
+        
+        const usedSheet = this.usedSheets.get(set);
+
+        if(usedSheet) {
+            usedSheet.push(i);
         } else {
-            if(frameCount > 1) {
-                this.dynamicGraphics.push(i);
-            }
-
-            this.graphics.push(animationObject);
-            
-            const usedSheet = this.usedSheets.get(set);
-
-            if(usedSheet) {
-                usedSheet.push(i);
-            } else {
-                this.usedSheets.set(set, [i]);   
-            }
+            this.usedSheets.set(set, [i]);   
         }
     }
-}
 
-TileGraphics.prototype.loadSheets = function(resources) {
     for(const [sheetID, indices] of this.usedSheets) {
         resources.requestImage(sheetID, (key, image, sheet) => {
             for(let i = 0; i < indices.length; i++) {
                 const index = indices[i];
                 const graphic = this.graphics[index];
+                const { bitmap } = sheet;
 
-                graphic.setSheet(sheet);
+                graphic.setBitmap(bitmap);
                 sheet.addReference();
             }
         });
     }
 }
 
-const createGraphic = function(sheet, graphicID) {
+const createGraphic = function(animation, sheet, graphicID) {
     const { frames = {}, patterns = {}, animations = {} } = sheet;
-    const animation = new Tile();
     const frameData = frames[graphicID];
 
     if(frameData) {
         const frame = createFrame(frameData);
 
         animation.setFrameTime(TileGraphics.DEFAULT.FRAME_TIME);
+        animation.setType(Tile.TYPE.FRAME);
         animation.addFrame(frame);
 
         return animation;
@@ -155,6 +154,7 @@ const createGraphic = function(sheet, graphicID) {
         const frame = createPatternFrame(patternData, frames);
 
         animation.setFrameTime(TileGraphics.DEFAULT.FRAME_TIME);
+        animation.setType(Tile.TYPE.PATTERN);
         animation.addFrame(frame);
 
         return animation;
@@ -167,6 +167,7 @@ const createGraphic = function(sheet, graphicID) {
         const animationFrames = animationData.frames ?? [];
 
         animation.setFrameTime(frameTime);
+        animation.setType(Tile.TYPE.ANIMATION);
 
         for(let i = 0; i < animationFrames.length; i++) {
             const frameID = animationFrames[i];
