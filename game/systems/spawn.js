@@ -34,23 +34,15 @@ const unloadEntitySprites = function(gameContext, entity) {
 
 const loadEntitySprites = function(gameContext, entity) {
     const { spriteManager } = gameContext;
-    const { resources } = spriteManager;
     const { sprites } = entity.config;
     const blocked = new Set(["airdrop"]);
 
     for(const spriteType in sprites) {
         const spriteID = sprites[spriteType];
 
-        if(blocked.has(spriteType)) {
-            //console.log("BLOCKED", spriteID);
-            continue;
+        if(!blocked.has(spriteType)) {
+            spriteManager.requestSprite(spriteID);
         }
-
-        resources.requestImage(spriteID, (id, image, sheet) => {
-            //console.log("LOADED IMAGE", id);
-        });
-
-        resources.addReference(spriteID);
     }
 }
 

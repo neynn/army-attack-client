@@ -1,4 +1,4 @@
-import { Animation } from "./animation.js";
+import { Graphic } from "../graphics/graphic.js";
 
 export const SpriteSheet = function() {
     this.boundsX = 0;
@@ -72,8 +72,9 @@ const defineAnimations = function(animations, uniqueFrames, defaultFrameTime, on
             frames = [] 
         } = animations[animationID];
 
-        const animation = new Animation();
+        const animation = new Graphic();
 
+        animation.setType(Graphic.TYPE.ANIMATION);
         animation.setFrameTime(frameTime);
 
         for(let i = 0; i < frames.length; i++) {

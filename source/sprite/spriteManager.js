@@ -43,6 +43,16 @@ SpriteManager.prototype.getLayer = function(layerIndex) {
     return this.layers[layerIndex];
 }
 
+SpriteManager.prototype.requestSprite = function(imageID) {
+    if(this.resources.isImageLoadable(imageID)) {
+        this.resources.requestImage(imageID, (id, image, sheet) => {
+            //console.log("LOADED IMAGE", id);
+        });
+    }
+
+    this.resources.addReference(imageID);
+}
+
 SpriteManager.prototype.load = function(spriteTypes) {
     if(!spriteTypes) {
         Logger.log(Logger.CODE.ENGINE_WARN, "SpriteTypes does not exist!", "SpriteManager.prototype.load", null);
@@ -100,9 +110,9 @@ SpriteManager.prototype.createSprite = function(typeID, layerID = null, animatio
 
 SpriteManager.prototype.drawSprite = function(sprite, context, localX, localY) {
     const { typeID, animationID, currentFrame, flags, boundsX, boundsY } = sprite;
-    const spriteBuffer = this.resources.getImage(typeID);
+    const bitmap = this.resources.getImageBitmap(typeID);
 
-    if(!spriteBuffer) {
+    if(!bitmap) {
         return;
     }
 
@@ -127,7 +137,7 @@ SpriteManager.prototype.drawSprite = function(sprite, context, localX, localY) {
             const drawY = renderY + shiftY;
             
             context.drawImage(
-                spriteBuffer,
+                bitmap,
                 frameX, frameY, frameW, frameH,
                 drawX, drawY, frameW, frameH
             );
@@ -142,7 +152,7 @@ SpriteManager.prototype.drawSprite = function(sprite, context, localX, localY) {
             const drawY = renderY + shiftY;
 
             context.drawImage(
-                spriteBuffer,
+                bitmap,
                 frameX, frameY, frameW, frameH,
                 drawX, drawY, frameW, frameH
             );

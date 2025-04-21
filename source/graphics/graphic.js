@@ -1,6 +1,6 @@
-export const Tile = function() {
-    this.type = Tile.TYPE.NONE;
-    this.bitmap = null;
+export const Graphic = function() {
+    this.type = Graphic.TYPE.NONE;
+    this.image = null;
     this.frames = [];
     this.frameTime = 1;
     this.frameIndex = 0;
@@ -8,40 +8,44 @@ export const Tile = function() {
     this.frameTimeTotal = 1;
 }
 
-Tile.TYPE = {
+Graphic.TYPE = {
     NONE: 0,
     FRAME: 1,
     PATTERN: 2,
     ANIMATION: 3
 };
 
-Tile.prototype.setType = function(typeID) {
+Graphic.prototype.setType = function(typeID) {
     this.type = typeID;
 } 
 
-Tile.prototype.setBitmap = function(bitmap) {
-    this.bitmap = bitmap;
+Graphic.prototype.setImage = function(image) {
+    this.image = image;
 }
 
-Tile.prototype.getFrameCount = function() {
+Graphic.prototype.getFrameTime = function() {
+    return this.frameTime;
+}
+
+Graphic.prototype.getFrameCount = function() {
     return this.frameCount;
 }
 
-Tile.prototype.updateFrameIndex = function(timestamp) {
+Graphic.prototype.updateFrameIndex = function(timestamp) {
     const currentFrameTime = timestamp % this.frameTimeTotal;
     const frameIndex = Math.floor(currentFrameTime / this.frameTime);
 
     this.frameIndex = frameIndex;
 }
 
-Tile.prototype.setFrameTime = function(frameTime = 1) {
+Graphic.prototype.setFrameTime = function(frameTime = 1) {
     if(frameTime !== 0) {
         this.frameTime = frameTime;
         this.updateTotalFrameTime();
     }
 }
 
-Tile.prototype.addFrame = function(frame) {
+Graphic.prototype.addFrame = function(frame) {
     if(frame && frame.length > 0) {
         this.frames.push(frame);
         this.frameCount++;
@@ -49,7 +53,15 @@ Tile.prototype.addFrame = function(frame) {
     }
 }
 
-Tile.prototype.updateTotalFrameTime = function() {
+Graphic.prototype.getFrame = function(index) {
+    if(index < 0 || index >= this.frames.length) {
+        return null;
+    }
+
+    return this.frames[index];
+}
+
+Graphic.prototype.updateTotalFrameTime = function() {
     const frameTimeTotal = this.frameTime * this.frameCount;
 
     if(frameTimeTotal <= 0) {

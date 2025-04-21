@@ -2,8 +2,17 @@ export const LoadableImage = function(path) {
     this.path = path;
     this.bitmap = null;
     this.references = 0;
+    this.width = 0;
+    this.height = 0;
     this.state = LoadableImage.STATE.EMPTY;
 }
+
+LoadableImage.USE_AUTO_LOADING = 1;
+
+LoadableImage.TYPE = {
+    BITMAP: 0,
+    RAW: 1
+};
 
 LoadableImage.STATE = {
     EMPTY: 0,
@@ -28,7 +37,24 @@ LoadableImage.prototype.clear = function() {
     this.bitmap = null;
 }
 
-LoadableImage.prototype.requestImage = function () {
+LoadableImage.prototype.createImageData = function(bitmap) {
+    const canvas = document.createElement("canvas");
+
+    canvas.width = bitmap.width;
+    canvas.height = bitmap.height;
+
+    const context = canvas.getContext("2d");
+
+    context.imageSmoothingEnabled = false;
+    context.drawImage(bitmap, 0, 0);
+
+    const imageData = context.getImageData(0, 0, bitmap.width, bitmap.height);
+    const pixelArray = imageData.data;
+
+    return pixelArray;
+}
+
+LoadableImage.prototype.requestImage = function(imageType) {
     if(!this.path) {
         return Promise.reject(LoadableImage.ERROR_CODE.ERROR_NO_PATH);
     }
@@ -44,31 +70,45 @@ LoadableImage.prototype.requestImage = function () {
     this.state = LoadableImage.STATE.LOADING;
 
     return fetch(this.path)
-    .then((response) => {
-        if(!response.ok) {
-            return Promise.reject(LoadableImage.ERROR_CODE.ERROR_IMAGE_LOAD);
-        }
-
-        return response.blob();
-    })
-    .then((blob) => {
-        return createImageBitmap(blob);
-    })
-    .then((bitmap) => {
-        this.bitmap = bitmap;
-        this.state = LoadableImage.STATE.LOADED;
-
-        return bitmap;
-    })
-    .catch((error) => {
-        this.state = LoadableImage.STATE.EMPTY;
-
-        return Promise.reject(LoadableImage.ERROR_CODE.ERROR_IMAGE_LOAD);
-    });
+    .then((response) => response.ok ? response.blob() : Promise.reject(LoadableImage.ERROR_CODE.ERROR_IMAGE_LOAD))
+    .then((blob) => createImageBitmap(blob))
+    .then((bitmap) => this.onBitmapLoad(bitmap, imageType))
+    .catch((error) => Promise.reject(this.onLoadError(error)));
 };
+
+LoadableImage.prototype.onLoadError = function(error) {
+    this.state = LoadableImage.STATE.EMPTY;
+
+    return LoadableImage.ERROR_CODE.ERROR_IMAGE_LOAD;
+}
+
+LoadableImage.prototype.onBitmapLoad = function(bitmap, imageType) {
+    switch(imageType) {
+        case LoadableImage.TYPE.BITMAP: {
+            this.bitmap = bitmap;
+            break;
+        }
+        case LoadableImage.TYPE.RAW: {
+            this.bitmap = this.createImageData(bitmap);
+            break;
+        }
+        default: {
+            this.bitmap = bitmap;
+            break;
+        }
+    }
+
+    this.width = bitmap.width;
+    this.height = bitmap.height;
+    this.state = LoadableImage.STATE.LOADED;
+
+    return this.bitmap;
+}
 
 LoadableImage.prototype.addReference = function() {
     this.references++;
+
+    return this.references;
 }
 
 LoadableImage.prototype.removeReference = function() {
@@ -77,12 +117,17 @@ LoadableImage.prototype.removeReference = function() {
     if(this.references <= 0) {
         this.clear();
     }
+
+    return this.references;
 }
 
-LoadableImage.prototype.getBuffer = function() {
+LoadableImage.prototype.getBitmap = function() {
     switch(this.state) {
         case LoadableImage.STATE.EMPTY: {
-            this.requestImage();
+            if(LoadableImage.USE_AUTO_LOADING) {
+                this.requestImage(LoadableImage.TYPE.BITMAP);
+            }
+
             return null;
         }
         case LoadableImage.STATE.LOADED: {
@@ -92,8 +137,4 @@ LoadableImage.prototype.getBuffer = function() {
             return null;
         }
     }
-}
-
-LoadableImage.prototype.getReferences = function() {
-    return this.references;
 }

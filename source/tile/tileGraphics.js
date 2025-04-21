@@ -1,4 +1,4 @@
-import { Tile } from "./tile.js";
+import { Graphic } from "../graphics/graphic.js";
 
 export const TileGraphics = function() {
     this.graphics = [];
@@ -42,13 +42,14 @@ TileGraphics.prototype.drawTile = function(context, tileID, renderX, renderY, sc
     }
 
     const graphic = this.graphics[index];
-    const { bitmap, frames, frameIndex, frameCount } = graphic;
+    const { image, frames, frameIndex, frameCount } = graphic;
 
-    if(bitmap === null || frameCount === 0) {
+    if(image === null || frameCount === 0) {
         this.drawEmptyTile(context, renderX, renderY, scaleX, scaleY, tileWidth, tileHeight);
         return;
     }
 
+    const { bitmap } = image;
     const currentFrame = frames[frameIndex];
     const frameLength = currentFrame.length;
 
@@ -91,7 +92,7 @@ TileGraphics.prototype.load = function(resources, tileSheets, tileGraphics) {
     for(let i = 0; i < tileGraphics.length; i++) {
         const { set, animation } = tileGraphics[i];
         const sheet = tileSheets[set];
-        const tile = new Tile();
+        const tile = new Graphic();
 
         this.graphics.push(tile);
 
@@ -121,13 +122,12 @@ TileGraphics.prototype.load = function(resources, tileSheets, tileGraphics) {
     }
 
     for(const [sheetID, indices] of this.usedSheets) {
-        resources.requestImage(sheetID, (key, image, sheet) => {
+        resources.requestImage(sheetID, (key, bitmap, sheet) => {
             for(let i = 0; i < indices.length; i++) {
                 const index = indices[i];
                 const graphic = this.graphics[index];
-                const { bitmap } = sheet;
 
-                graphic.setBitmap(bitmap);
+                graphic.setImage(sheet);
                 sheet.addReference();
             }
         });
@@ -142,7 +142,7 @@ const createGraphic = function(animation, sheet, graphicID) {
         const frame = createFrame(frameData);
 
         animation.setFrameTime(TileGraphics.DEFAULT.FRAME_TIME);
-        animation.setType(Tile.TYPE.FRAME);
+        animation.setType(Graphic.TYPE.FRAME);
         animation.addFrame(frame);
 
         return animation;
@@ -154,7 +154,7 @@ const createGraphic = function(animation, sheet, graphicID) {
         const frame = createPatternFrame(patternData, frames);
 
         animation.setFrameTime(TileGraphics.DEFAULT.FRAME_TIME);
-        animation.setType(Tile.TYPE.PATTERN);
+        animation.setType(Graphic.TYPE.PATTERN);
         animation.addFrame(frame);
 
         return animation;
@@ -167,7 +167,7 @@ const createGraphic = function(animation, sheet, graphicID) {
         const animationFrames = animationData.frames ?? [];
 
         animation.setFrameTime(frameTime);
-        animation.setType(Tile.TYPE.ANIMATION);
+        animation.setType(Graphic.TYPE.ANIMATION);
 
         for(let i = 0; i < animationFrames.length; i++) {
             const frameID = animationFrames[i];

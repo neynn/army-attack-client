@@ -243,13 +243,11 @@ UIManager.prototype.createElement = function(typeID, config, DEBUG_NAME) {
             element.setSize(width, height);
             element.setImage(image);
             element.addHook(Graph.HOOK.DRAW, (context, localX, localY) => {
-                const image = this.resources.getImage(element.imageID);
+                const bitmap = this.resources.getImageBitmap(element.imageID);
             
-                if(!image) {
-                    return;
+                if(bitmap) {
+                    context.drawImage(bitmap, localX, localY);
                 }
-            
-                context.drawImage(image, localX, localY);
             });
 
             return element;
