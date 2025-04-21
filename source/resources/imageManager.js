@@ -3,6 +3,7 @@ import { LoadableImage } from "./loadableImage.js";
 import { PathHandler } from "./pathHandler.js";
 
 export const ImageManager = function(imageType = LoadableImage.TYPE.BITMAP) {
+    this.autoLoad = true;
     this.imageType = imageType;
     this.images = new Map();
 }
@@ -79,9 +80,23 @@ ImageManager.prototype.getImageBitmap = function(imageID) {
         return null;
     }
 
-    const bitmap = image.getBitmap();
+    const { state, bitmap } = image;
 
-    return bitmap;
+    switch(state) {
+        case LoadableImage.STATE.EMPTY: {
+            if(this.autoLoad) {
+                image.requestImage(this.imageType);
+            }
+
+            return null;
+        }
+        case LoadableImage.STATE.LOADED: {
+            return bitmap;
+        }
+        default: {
+            return null;
+        }
+    }
 }
 
 ImageManager.prototype.addReference = function(imageID) {

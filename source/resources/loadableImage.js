@@ -7,8 +7,6 @@ export const LoadableImage = function(path) {
     this.state = LoadableImage.STATE.EMPTY;
 }
 
-LoadableImage.USE_AUTO_LOADING = 1;
-
 LoadableImage.TYPE = {
     BITMAP: 0,
     RAW: 1
@@ -119,22 +117,4 @@ LoadableImage.prototype.removeReference = function() {
     }
 
     return this.references;
-}
-
-LoadableImage.prototype.getBitmap = function() {
-    switch(this.state) {
-        case LoadableImage.STATE.EMPTY: {
-            if(LoadableImage.USE_AUTO_LOADING) {
-                this.requestImage(LoadableImage.TYPE.BITMAP);
-            }
-
-            return null;
-        }
-        case LoadableImage.STATE.LOADED: {
-            return this.bitmap;
-        }
-        default: {
-            return null;
-        }
-    }
 }
