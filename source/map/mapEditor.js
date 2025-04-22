@@ -1,17 +1,15 @@
 import { loopValue } from "../math/math.js";
 import { Scroller } from "../scroller.js";
+import { Brush } from "./editor/brush.js";
 
 export const MapEditor = function() {
-    this.brush = null;
+    this.brush = new Brush();
     this.allAutotilers = [];
     this.currentSetTiles = [];
 
-    this.brushSets = new Scroller();
     this.brushSet = null;
-
+    this.brushSets = new Scroller();
     this.brushSizes = new Scroller();
-    this.brushSize = 0;
-
     this.brushModes = new Scroller([MapEditor.MODE.DRAW, MapEditor.MODE.AUTOTILE]);
     this.brushMode = MapEditor.MODE.DRAW;
 
@@ -42,7 +40,7 @@ MapEditor.prototype.scrollBrushSize = function(delta = 0) {
     const brushSize = this.brushSizes.scroll(delta);
 
     if(brushSize !== null) {
-        this.brushSize = brushSize;
+        this.brush.setSize(brushSize);
     }
 }
 
@@ -145,7 +143,7 @@ MapEditor.prototype.getDrawPage = function() {
 
 MapEditor.prototype.reloadAll = function() {
     this.pageIndex = 0;
-    this.brush = null;
+    this.brush.reset();
 
     switch(this.brushMode) {
         case MapEditor.MODE.DRAW: {
@@ -218,7 +216,7 @@ MapEditor.prototype.undo = function(gameContext) {
 }
 
 MapEditor.prototype.paint = function(gameContext, mapID, layerID, onPaint) {
-    if(!this.brush || typeof onPaint !== "function") {
+    if(typeof onPaint !== "function") {
         return;
     }
 
@@ -233,36 +231,30 @@ MapEditor.prototype.paint = function(gameContext, mapID, layerID, onPaint) {
     const actionsTaken = [];
     const { x, y } = gameContext.getMouseTile();
     const { id } = this.brush;
-    const startX = x - this.brushSize;
-    const startY = y - this.brushSize;
-    const endX = x + this.brushSize;
-    const endY = y + this.brushSize;
     const autotiler = tileManager.getAutotilerByTile(id);
 
-    for(let i = startY; i <= endY; i++) {
-        for(let j = startX; j <= endX; j++) {
-            const tileID = worldMap.getTile(layerID, j, i);
+    this.brush.paint(x, y, (j, i, brushID, brushName) => {
+        const tileID = worldMap.getTile(layerID, j, i);
 
-            if(tileID !== null && tileID !== id) {
-                worldMap.placeTile(id, layerID, j, i);
+        if(tileID !== null && tileID !== brushID) {
+            worldMap.placeTile(brushID, layerID, j, i);
 
-                onPaint(worldMap, id, j, i);
+            onPaint(worldMap, brushID, j, i);
 
-                if(!this.isAutotiling) {
-                    actionsTaken.push({
-                        "layerID": layerID,
-                        "tileX": j,
-                        "tileY": i,
-                        "oldID": tileID
-                    });
-                }
-            }
-
-            if(this.isAutotiling) {
-                worldMap.updateAutotiler(autotiler, j, i, layerID);
+            if(!this.isAutotiling) {
+                actionsTaken.push({
+                    "layerID": layerID,
+                    "tileX": j,
+                    "tileY": i,
+                    "oldID": tileID
+                });
             }
         }
-    }
+
+        if(this.isAutotiling) {
+            worldMap.updateAutotiler(autotiler, j, i, layerID);
+        }
+    });
 
     if(actionsTaken.length !== 0) {
         this.activityStack.push({

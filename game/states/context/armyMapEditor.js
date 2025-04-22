@@ -169,13 +169,7 @@ ArmyMapEditor.prototype.initRenderEvents = function(gameContext) {
     const { tileManager } = gameContext;
     const { graphics } = tileManager;
 
-    this.camera.addPostDraw((context) => {
-        const cursorTile = gameContext.getMouseTile();
-    
-        if(!this.brush) {
-            return;
-        }
-    
+    this.camera.addPostDraw((context) => {    
         if(this.currentLayerButtonID !== null) {
             const { type } = this.layerButtons[this.currentLayerButtonID];
     
@@ -184,33 +178,22 @@ ArmyMapEditor.prototype.initRenderEvents = function(gameContext) {
             }
         }
     
+        const cursorTile = gameContext.getMouseTile();
         const { x, y } = this.camera.getViewport();
         const { width, height, halfWidth } = this.camera.getTileDimensions();
-        const { name, id } = this.brush;
-        const startX = cursorTile.x - this.brushSize;
-        const startY = cursorTile.y - this.brushSize;
-        const endX = cursorTile.x + this.brushSize;
-        const endY = cursorTile.y + this.brushSize;
 
         context.globalAlpha = this.overlayAlpha;
         context.textAlign = "center";
 
-        for(let i = startY; i <= endY; i++) {
+        this.brush.paint(cursorTile.x, cursorTile.y, (j, i, id, name) => {
             const renderY = i * height - y;
+            const renderX = j * width - x;
 
-            for(let j = startX; j <= endX; j++) {   
-                const renderX = j * width - x;
+            this.camera.drawTile(graphics, context, id, renderX, renderY);
 
-                if(id === 0) {
-                    this.camera.drawEmptyTile(graphics, context, renderX, renderY);
-                } else {
-                    this.camera.drawTile(graphics, context, id, renderX, renderY);
-                } 
-
-                context.fillStyle = this.overlayColor;
-                context.fillText(name, renderX + halfWidth, renderY);  
-            }
-        }
+            context.fillStyle = this.overlayColor;
+            context.fillText(name, renderX + halfWidth, renderY);  
+        });
 
         context.globalAlpha = 1;
     });
@@ -348,11 +331,7 @@ ArmyMapEditor.prototype.initUIEvents = function(gameContext) {
     }); 
 
     editorInterface.addClick("BUTTON_ERASER", () => {
-        if(!this.brush || this.brush.id !== 0) {
-            this.brush = this.createBrush(0, "ERASER");
-        } else {
-            this.brush = null;
-        }
+        this.brush.toggleEraser();
     });
 
     editorInterface.addClick("BUTTON_VIEW_ALL", () => {
@@ -368,7 +347,7 @@ ArmyMapEditor.prototype.initUIEvents = function(gameContext) {
 
         this.currentLayer = null;
         this.currentLayerButtonID = null;
-        this.brush = null;
+        this.brush.reset();
         this.updateLayerOpacity(gameContext);
 
     });
@@ -391,14 +370,12 @@ ArmyMapEditor.prototype.initButtons = function(gameContext) {
     for(let i = 0; i < this.slots.length; i++) {
         const buttonID = this.slots[i];
         const brushData = pageElements[i];
-        //here the brush selects i as the index for the brush from its pallet
-        //loop through the brushes pallet and select it.
         const button = editorInterface.getElement(buttonID);
         const { name, id } = brushData;
 
         if(id !== 0) {
             button.collider.events.on(UICollider.EVENT.CLICKED, () => {
-                this.brush = brushData;
+                this.brush.setBrush(id, name);
             }, { id: this.id });
 
             button.addDefer((context, localX, localY) => {
@@ -573,7 +550,7 @@ ArmyMapEditor.prototype.getPageText = function() {
 
 ArmyMapEditor.prototype.getSizeText = function() {
     const info = this.brushSizes.getInfo();
-    const showTileSize = this.brushSize * 2 + 1;
+    const drawArea = this.brush.getDrawArea();
 
-    return `SIZE: ${showTileSize}x${showTileSize} (${info})`;
+    return `SIZE: ${drawArea}x${drawArea} (${info})`;
 }
