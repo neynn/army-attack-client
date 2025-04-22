@@ -282,23 +282,6 @@ MapEditor.prototype.paint = function(gameContext, mapID, layerID) {
     }
 }
 
-MapEditor.prototype.resizeMap = function(worldMap, width, height, layers) {
-    for(const [layerID, layer] of worldMap.layers) {
-        const layerConfig = layers[layerID];
-
-        if(layerConfig) {
-            const fill = layerConfig.fill;
-
-            worldMap.resizeLayer(layerID, width, height, fill);
-        } else {
-            worldMap.resizeLayer(layerID, width, height, 0);
-        }
-    }
-
-    worldMap.setWidth(width);
-    worldMap.setHeight(height);
-}
-
 MapEditor.prototype.incrementTypeIndex = function(gameContext, mapID, layerID) {
     const { world } = gameContext;
     const { mapManager } = world;

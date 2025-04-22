@@ -56,6 +56,15 @@ ArmyMapEditor.COLOR = {
     EDIT: [252, 252, 63, 1]
 };
 
+ArmyMapEditor.FILL_MAPPING = {
+    "ground": 1,
+    "border": 0,
+    "decoration": 0,
+    "cloud": 0,
+    "type": 0,
+    "team": 0
+};
+
 ArmyMapEditor.DEFAULT_MAP = {
     "type": "EmptyVersus",
     "music": "music_remastered",
@@ -430,7 +439,8 @@ ArmyMapEditor.prototype.resizeCurrentMap = function(gameContext) {
     const newWidth = clampValue(parsedWidth, this.maxWidth, 1);
     const newHeight = clampValue(parsedHeight, this.maxHeight, 1);
   
-    this.resizeMap(gameMap, newWidth, newHeight, ArmyMapEditor.DEFAULT_MAP.graphics.layers);
+    gameMap.resize(newWidth, newHeight, ArmyMapEditor.FILL_MAPPING);
+    
     this.camera.setMapSize(newWidth, newHeight);
 
     renderer.getContext(this.id).refreshCamera();

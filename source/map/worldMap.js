@@ -226,14 +226,15 @@ WorldMap.prototype.setLayerOpacity = function(layerID, opacity) {
     layer.setOpacity(clampedOpacity);
 } 
 
-WorldMap.prototype.resizeLayer = function(layerID, width, height, fill) {
-    const layer = this.layers.get(layerID);
+WorldMap.prototype.resize = function(width, height, fillMapping) {
+    for(const [layerID, layer] of this.layers) {
+        const fill = fillMapping[layerID] ?? 0;
 
-    if(!layer) {
-        return;
+        layer.resize(this.width, this.height, width, height, fill);
     }
 
-    layer.resize(this.width, this.height, width, height, fill);
+    this.setWidth(width);
+    this.setHeight(height);
 }
 
 WorldMap.prototype.clearTile = function(layerID, tileX, tileY) {
