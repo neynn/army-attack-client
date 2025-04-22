@@ -129,13 +129,14 @@ ArmyMapEditor.prototype.init = function(config) {
 ArmyMapEditor.prototype.initSlots = function(gameContext) {
     const { uiManager } = gameContext;
     const editorInterface = uiManager.getInterface(this.interfaceID);
-    const buttonCount = 7;
+    const buttonRows = 7;
+    const buttonColumns = 7;
     const buttonSize = 50;
     const buttons = [];
 
-    for(let i = 0; i < buttonCount; i++) {
-        for(let j = 0; j < buttonCount; j++) {
-            const buttonID = `BUTTON_${i * buttonCount + j}`;
+    for(let i = 0; i < buttonRows; i++) {
+        for(let j = 0; j < buttonColumns; j++) {
+            const buttonID = `BUTTON_${i * buttonColumns + j}`;
             const posX = buttonSize * j;
             const posY = buttonSize * i + 100;
             const button = uiManager.createElement(UIManager.ELEMENT_TYPE.BUTTON, {
@@ -152,6 +153,7 @@ ArmyMapEditor.prototype.initSlots = function(gameContext) {
     }
 
     editorInterface.linkElements("CONTAINER_TILES", buttons);
+
     this.slots = buttons;
 }
 
@@ -357,37 +359,29 @@ ArmyMapEditor.prototype.initUIEvents = function(gameContext) {
 ArmyMapEditor.prototype.initButtons = function(gameContext) {
     const { uiManager, tileManager } = gameContext;
     const { graphics } = tileManager;
-    const pageElements = this.routePage();
+    const pageIndices = this.brush.getPageIndices(this.pageIndex, this.slots.length)
     const editorInterface = uiManager.getInterface(this.interfaceID);
 
     for(let i = 0; i < this.slots.length; i++) {
         const buttonID = this.slots[i];
+        const palletID = pageIndices[i];
         const button = editorInterface.getElement(buttonID);
+        const tileID = this.brush.getTileID(palletID);
 
         button.collider.events.unsubscribe(UICollider.EVENT.CLICKED, this.id);
         button.clearDefers();
-    }
 
-    for(let i = 0; i < this.slots.length; i++) {
-        const buttonID = this.slots[i];
-        const brushData = pageElements[i];
-        const button = editorInterface.getElement(buttonID);
-        const { name, id } = brushData;
-
-        if(id !== Brush.ID.INVALID) {
-            button.collider.events.on(UICollider.EVENT.CLICKED, () => {
-                this.brush.setBrush(id, name);
-            }, { id: this.id });
-
-            button.addDefer((context, localX, localY) => {
-                this.camera.drawTile(graphics, context, id, localX, localY, ArmyMapEditor.SLOT_BUTTON_SIZE, ArmyMapEditor.SLOT_BUTTON_SIZE);
-                /*
-                context.fillStyle = "#eeeeee";
-                context.textAlign = "center";
-                context.fillText(tileName, localX + 25, localY + 25);
-                */
-            });
+        if(tileID === Brush.ID.INVALID) {
+            continue;
         }
+
+        button.collider.events.on(UICollider.EVENT.CLICKED, () => {
+            this.brush.selectFromPallet(palletID);
+        }, { id: this.id });
+
+        button.addDefer((context, localX, localY) => {
+            this.camera.drawTile(graphics, context, tileID, localX, localY, ArmyMapEditor.SLOT_BUTTON_SIZE, ArmyMapEditor.SLOT_BUTTON_SIZE);
+        });
     }
 } 
 
@@ -535,14 +529,24 @@ ArmyMapEditor.prototype.updateButtonText = function(gameContext) {
     const editorInterface = uiManager.getInterface(this.interfaceID);
 
     editorInterface.setText("TEXT_TILESET_MODE", `MODE: ${MapEditor.MODE_NAME[this.brushMode]}`);
-    editorInterface.setText("TEXT_TILESET", `${this.brushSet?.id}`);
+
+    switch(this.brushMode) {
+        case MapEditor.MODE.DRAW: {
+            editorInterface.setText("TEXT_TILESET", `${this.brushSets.getValue()?.id}`);
+            break;
+        }
+        case MapEditor.MODE.AUTOTILE: {
+            editorInterface.setText("TEXT_TILESET", `NOT IMPLEMENTED!`);
+            break;
+        }
+    }
+
     editorInterface.setText("TEXT_PAGE", this.getPageText());
     editorInterface.setText("TEXT_SIZE",  this.getSizeText());
 }
 
 ArmyMapEditor.prototype.getPageText = function() {
-    const modeElements = this.getModeElements();
-    const maxPagesNeeded = Math.ceil(modeElements.length / this.slots.length);
+    const maxPagesNeeded = Math.ceil(this.brush.pallet.length / this.slots.length);
     const showMaxPagesNeeded = maxPagesNeeded === 0 ? 1 : maxPagesNeeded;
     const showCurrentPage = this.pageIndex + 1;
 

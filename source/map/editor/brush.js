@@ -3,7 +3,7 @@ export const Brush = function() {
     this.id = -1;
     this.name = "";
     this.pallet = [];
-    this.palletSize = 0;
+    this.brushSet = {};
     this.mode = Brush.MODE.NONE;
 }
 
@@ -20,19 +20,60 @@ Brush.MODE = {
 
 Brush.prototype.selectFromPallet = function(index) {
     if(index < 0 || index >= this.pallet.length) {
+        this.setBrush(Brush.ID.INVALID, "");
         return;
     }
 
-    const { name, id } = this.pallet[index];
+    const tileName = this.pallet[index];
+    const tileID = this.brushSet[tileName];
 
-    this.setBrush(id, name);
+    this.setBrush(tileID, tileName);
 }
 
-Brush.prototype.createPalletElement = function(id, name) {
-    return {
-        "id": id ?? Brush.ID.INVALID,
-        "name": name ?? ""
+Brush.prototype.getPageIndices = function(pageIndex, slots) {
+    const pageIndices = []; 
+
+    for(let i = 0; i < slots; i++) {
+        const index = slots * pageIndex + i;
+
+        if(index >= this.pallet.length) {
+            pageIndices.push(Brush.ID.INVALID);
+        } else {
+            pageIndices.push(index);
+        }
     }
+
+    return pageIndices;
+}
+
+Brush.prototype.getTileID = function(index) {
+    if(index < 0 || index >= this.pallet.length) {
+        return Brush.ID.INVALID;
+    }
+
+    const tileName = this.pallet[index];
+    const tileID = this.brushSet[tileName];
+
+    if(tileID === undefined) {
+        return Brush.ID.INVALID;
+    }
+
+    return tileID;
+}
+
+Brush.prototype.clearPallet = function() {
+    this.pallet.length = 0;
+    this.brushSet = {};
+}
+
+Brush.prototype.setPallet = function(brushData) {
+    this.pallet.length = 0;
+
+    for(const tileID in brushData) {
+        this.pallet.push(tileID);
+    }
+
+    this.brushSet = brushData;
 }
 
 Brush.prototype.setBrush = function(id, name) {

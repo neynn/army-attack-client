@@ -4,10 +4,6 @@ import { Brush } from "./editor/brush.js";
 
 export const MapEditor = function() {
     this.brush = new Brush();
-    this.allAutotilers = [];
-    this.currentSetTiles = [];
-
-    this.brushSet = null;
     this.brushSets = new Scroller();
     this.brushSizes = new Scroller();
     this.brushModes = new Scroller([MapEditor.MODE.DRAW, MapEditor.MODE.AUTOTILE]);
@@ -58,23 +54,12 @@ MapEditor.prototype.scrollBrushSet = function(delta) {
     const brushSet = this.brushSets.loop(delta);
 
     if(brushSet !== null) {
-        this.brushSet = brushSet;
+        this.reloadAll();
     }
-
-    this.reloadAll();
-}    
-
-MapEditor.prototype.getModeElements = function() {
-    switch(this.brushMode) {
-        case MapEditor.MODE.DRAW: return this.currentSetTiles;
-        case MapEditor.MODE.AUTOTILE: return this.allAutotilers;
-        default: return [];
-    }
-}   
+}
 
 MapEditor.prototype.scrollPage = function(delta = 0) {
-    const modeElements = this.getModeElements();
-    const maxPagesNeeded = Math.ceil(modeElements.length / this.slots.length);
+    const maxPagesNeeded = Math.ceil(this.brush.pallet.length / this.slots.length);
 
     if(maxPagesNeeded <= 0) {
         this.pageIndex = 0;
@@ -83,81 +68,28 @@ MapEditor.prototype.scrollPage = function(delta = 0) {
     }
 }
 
-MapEditor.prototype.routePage = function() {
-    switch(this.brushMode) {
-        case MapEditor.MODE.DRAW: return this.getDrawPage();
-        case MapEditor.MODE.AUTOTILE: return this.getAutotilePage();
-        default: return this.getAutotilePage();
-    }
-}
-
-MapEditor.prototype.getAutotilePage = function() {
-    const maxSlots = this.slots.length;
-    const pageElements = []; 
-
-    for(let i = 0; i < maxSlots; i++) {
-        pageElements.push(this.brush.createPalletElement(Brush.ID.INVALID, "NONE"));
-    }
-
-    return pageElements;
-}
-
-MapEditor.prototype.getDrawPage = function() {
-    const pageElements = []; 
-    const modeElements = this.getModeElements();
-
-    if(!this.brushSet) {
-        for(let i = 0; i < this.slots.length; i++) {
-            pageElements.push(this.brush.createPalletElement(Brush.ID.INVALID, "NONE"));
-        }
-
-        return pageElements;
-    }
-
-    const { values } = this.brushSet;
-
-    for(let i = 0; i < this.slots.length; i++) {
-        const index = this.slots.length * this.pageIndex + i;
-
-        if(index > modeElements.length - 1) {
-            pageElements.push(this.brush.createPalletElement(Brush.ID.INVALID, "NONE"));
-
-            continue;
-        }
-
-        const tileName = modeElements[index];
-        const tileID = values[tileName];
-        
-        pageElements.push(this.brush.createPalletElement(tileID, tileName));
-    }
-
-    return pageElements;
-}
-
 MapEditor.prototype.reloadAll = function() {
-    this.pageIndex = 0;
-    this.brush.reset();
-
     switch(this.brushMode) {
         case MapEditor.MODE.DRAW: {
-            this.currentSetTiles = [];
+            const pallet = this.brushSets.getValue();
 
-            if(!this.brushSet) {
-                return;
+            if(pallet) {
+                const { values } = pallet;
+        
+                this.brush.setPallet(values);
+            } else {
+                this.brush.clearPallet();
             }
-
-            const { values } = this.brushSet;
-
-            for(const key in values) {
-                this.currentSetTiles.push(key);
-            }
-
             break;
         }
         case MapEditor.MODE.AUTOTILE: {
+            this.brush.clearPallet();
             break;
         }
     }
+
+    this.pageIndex = 0;
+    this.brush.reset();
 }
 
 MapEditor.prototype.loadBrushSets = function(invertedTileMeta) {
