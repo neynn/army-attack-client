@@ -6,6 +6,7 @@ import { clampValue } from "../../../source/math/math.js";
 import { saveMap } from "../../../helpers.js";
 import { UIManager } from "../../../source/ui/uiManager.js";
 import { UICollider } from "../../../source/ui/uiCollider.js";
+import { ArmyMap } from "../../init/armyMap.js";
 
 export const ArmyMapEditor = function() {
     MapEditor.call(this);
@@ -390,6 +391,8 @@ ArmyMapEditor.prototype.initButtons = function(gameContext) {
     for(let i = 0; i < this.slots.length; i++) {
         const buttonID = this.slots[i];
         const brushData = pageElements[i];
+        //here the brush selects i as the index for the brush from its pallet
+        //loop through the brushes pallet and select it.
         const button = editorInterface.getElement(buttonID);
         const { name, id } = brushData;
 
@@ -451,11 +454,22 @@ ArmyMapEditor.prototype.paintTile = function(gameContext) {
         return;
     }
 
+    const { tileManager } = gameContext;
     const { type } = this.layerButtons[this.currentLayerButtonID];
 
     switch(type) {
         case ArmyMapEditor.BUTTON_TYPE.GRAPHICS: {
-            this.paint(gameContext, this.currentMapID, this.currentLayer);
+            this.paint(gameContext, this.currentMapID, this.currentLayer, (worldMap, tileID, tileX, tileY) => {
+                const tileMeta = tileManager.getMeta(tileID);
+
+                if(tileMeta) {
+                    const { defaultType } = tileMeta;
+    
+                    if(defaultType) {
+                        worldMap.placeTile(defaultType, ArmyMap.LAYER.TYPE, tileX, tileY);
+                    }
+                }
+            });
             break;
         }
         case ArmyMapEditor.BUTTON_TYPE.TYPE: {

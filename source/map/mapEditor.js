@@ -1,4 +1,3 @@
-import { ArmyMap } from "../../game/init/armyMap.js";
 import { loopValue } from "../math/math.js";
 import { Scroller } from "../scroller.js";
 
@@ -218,44 +217,36 @@ MapEditor.prototype.undo = function(gameContext) {
     }
 }
 
-MapEditor.prototype.paint = function(gameContext, mapID, layerID) {
+MapEditor.prototype.paint = function(gameContext, mapID, layerID, onPaint) {
+    if(!this.brush || typeof onPaint !== "function") {
+        return;
+    }
+
     const { world, tileManager } = gameContext;
     const { mapManager } = world;
-    const cursorTile = gameContext.getMouseTile();
-    const gameMap = mapManager.getLoadedMap(mapID);
+    const worldMap = mapManager.getLoadedMap(mapID);
 
-    if(!gameMap || !this.brush) {
+    if(!worldMap) {
         return;
     }
 
     const actionsTaken = [];
+    const { x, y } = gameContext.getMouseTile();
     const { id } = this.brush;
-    const startX = cursorTile.x - this.brushSize;
-    const startY = cursorTile.y - this.brushSize;
-    const endX = cursorTile.x + this.brushSize;
-    const endY = cursorTile.y + this.brushSize;
-
-    const tileMeta = tileManager.getMeta(id);
+    const startX = x - this.brushSize;
+    const startY = y - this.brushSize;
+    const endX = x + this.brushSize;
+    const endY = y + this.brushSize;
     const autotiler = tileManager.getAutotilerByTile(id);
 
     for(let i = startY; i <= endY; i++) {
         for(let j = startX; j <= endX; j++) {
-            const tileID = gameMap.getTile(layerID, j, i);
+            const tileID = worldMap.getTile(layerID, j, i);
 
-            if(tileID === null) {
-                continue;
-            }
+            if(tileID !== null && tileID !== id) {
+                worldMap.placeTile(id, layerID, j, i);
 
-            if(tileMeta) {
-                const { defaultType } = tileMeta;
-
-                if(defaultType) {
-                    gameMap.placeTile(defaultType, ArmyMap.LAYER.TYPE, j, i);
-                }
-            }
-
-            if(tileID !== id) {
-                gameMap.placeTile(id, layerID, j, i);
+                onPaint(worldMap, id, j, i);
 
                 if(!this.isAutotiling) {
                     actionsTaken.push({
@@ -268,7 +259,7 @@ MapEditor.prototype.paint = function(gameContext, mapID, layerID) {
             }
 
             if(this.isAutotiling) {
-                gameMap.updateAutotiler(autotiler, j, i, layerID);
+                worldMap.updateAutotiler(autotiler, j, i, layerID);
             }
         }
     }

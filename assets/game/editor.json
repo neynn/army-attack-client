@@ -6,6 +6,6 @@
     "brushSizes": [0, 1, 2, 3, 4],
     "hiddenSets": ["overlay", "border", "range"],
     "binds": {
-        "TOGGLE_AUTOTILER": "a"
+        "TOGGLE_AUTOTILER": "+a"
     }
 }

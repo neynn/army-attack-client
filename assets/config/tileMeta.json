@@ -208,7 +208,20 @@
                 { "set": "coast", "animation": "Bg_CoastTile_se_inside_02" },
                 { "set": "coast", "animation": "Bg_CoastTile_n_02" },
                 { "set": "coast", "animation": "Bg_CoastTile_nw_02" },
-                { "set": "coast", "animation": "Bg_CoastTile_se_02" }
+                { "set": "coast", "animation": "Bg_CoastTile_se_02" },
+
+                { "set": "coast", "animation": "Bg_CoastTile_ne_01" },
+                { "set": "coast", "animation": "Bg_CoastTile_w_01" },
+                { "set": "coast", "animation": "Bg_CoastTile_nw_inside_01" },
+                { "set": "coast", "animation": "Bg_CoastTile_ne_inside_01" },
+                { "set": "coast", "animation": "Bg_CoastTile_sw_01" },
+                { "set": "coast", "animation": "Bg_CoastTile_e_01" },
+                { "set": "coast", "animation": "Bg_CoastTile_sw_inside_01" },
+                { "set": "coast", "animation": "Bg_CoastTile_s_01" },
+                { "set": "coast", "animation": "Bg_CoastTile_se_inside_01" },
+                { "set": "coast", "animation": "Bg_CoastTile_n_01" },
+                { "set": "coast", "animation": "Bg_CoastTile_nw_01" },
+                { "set": "coast", "animation": "Bg_CoastTile_se_01" }
             ],
             "values": {
                 "4": { "set": "coast", "animation": "Bg_CoastTile_se_inside_02" },
@@ -241,7 +254,20 @@
                 { "set": "coast", "animation": "Bg_CoastTile_se_inside_01" },
                 { "set": "coast", "animation": "Bg_CoastTile_n_01" },
                 { "set": "coast", "animation": "Bg_CoastTile_nw_01" },
-                { "set": "coast", "animation": "Bg_CoastTile_se_01" }
+                { "set": "coast", "animation": "Bg_CoastTile_se_01" },
+
+                { "set": "coast", "animation": "Bg_CoastTile_ne_02" },
+                { "set": "coast", "animation": "Bg_CoastTile_w_02" },
+                { "set": "coast", "animation": "Bg_CoastTile_nw_inside_02" },
+                { "set": "coast", "animation": "Bg_CoastTile_ne_inside_02" },
+                { "set": "coast", "animation": "Bg_CoastTile_sw_02" },
+                { "set": "coast", "animation": "Bg_CoastTile_e_02" },
+                { "set": "coast", "animation": "Bg_CoastTile_sw_inside_02" },
+                { "set": "coast", "animation": "Bg_CoastTile_s_02" },
+                { "set": "coast", "animation": "Bg_CoastTile_se_inside_02" },
+                { "set": "coast", "animation": "Bg_CoastTile_n_02" },
+                { "set": "coast", "animation": "Bg_CoastTile_nw_02" },
+                { "set": "coast", "animation": "Bg_CoastTile_se_02" }
             ],
             "values": {
                 "4": { "set": "coast", "animation": "Bg_CoastTile_se_inside_01" },
