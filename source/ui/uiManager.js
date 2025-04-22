@@ -93,24 +93,20 @@ UIManager.prototype.exit = function() {
 }
 
 UIManager.prototype.onClick = function(mouseX, mouseY, mouseRange) {
-    const clickedElements = this.getCollidedElements(mouseX, mouseY, mouseRange);
-
-    for(let i = 0; i < clickedElements.length; i++) {
-        clickedElements[i].collider.click(mouseX, mouseY, mouseRange);
-    }
-}
-
-UIManager.prototype.getCollidedElements = function(mouseX, mouseY, mouseRange) {
     for(let i = this.interfaceStack.length - 1; i >= 0; i--) {
         const userInterface = this.interfaceStack[i];
-        const collisions = userInterface.updateCollisions(mouseX, mouseY, mouseRange);
+        const { currentCollisions, elements } = userInterface;
 
-        if(collisions !== null && collisions.length > 0) {
-            return collisions;
+        if(currentCollisions.size !== 0) {
+            for(const elementID of currentCollisions) {
+                const element = elements.get(elementID);
+
+                element.collider.click(mouseX, mouseY, mouseRange);
+            }
+
+            break;
         }
     }
-
-    return [];
 }
 
 UIManager.prototype.getInterface = function(interfaceID) {

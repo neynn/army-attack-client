@@ -68,7 +68,7 @@ UIElement.prototype.getCollisions = function(mouseX, mouseY, mouseRange) {
         const positionY = positions.pop();
         const positionX = positions.pop();
         const graph = stack.pop();
-        const isColliding = graph.collider.updateCollision(positionX, positionY, mouseRange);
+        const isColliding = graph.collider.isColliding(positionX, positionY, mouseRange);
 
         if(!isColliding) {
             continue;

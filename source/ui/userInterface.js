@@ -10,6 +10,8 @@ export const UserInterface = function(id) {
     this.nameMap = new Map();
     this.elements = new Map();
     this.state = UserInterface.STATE.VISIBLE;
+    this.previousCollisions = new Set();
+    this.currentCollisions = new Set();
 }
 
 UserInterface.STATE = {
@@ -95,7 +97,7 @@ UserInterface.prototype.getElement = function(name) {
     return element;
 }
 
-UserInterface.prototype.updateCollisions = function(mouseX, mouseY, mouseRange) {
+UserInterface.prototype.getCollisions = function(mouseX, mouseY, mouseRange) {
     if(this.state !== UserInterface.STATE.VISIBLE) {
         return null;
     }
@@ -111,6 +113,40 @@ UserInterface.prototype.updateCollisions = function(mouseX, mouseY, mouseRange) 
     }
 
     return null;
+}
+
+UserInterface.prototype.updateCollisions = function(mouseX, mouseY, mouseRange) {
+    const collisions = this.getCollisions(mouseX, mouseY, mouseRange);
+
+    [this.previousCollisions, this.currentCollisions] = [this.currentCollisions, this.previousCollisions];
+    this.currentCollisions.clear();
+
+    if(!collisions) {
+        for(const elementID of this.previousCollisions) {
+            const element = this.elements.get(elementID);
+
+            element.collider.onCollisionUpdate(UICollider.STATE.NOT_COLLIDED, mouseX, mouseY, mouseRange);
+        }
+
+        this.previousCollisions.clear();
+        return;
+    }
+
+    for(let i = 0; i < collisions.length; i++) {
+        const element = collisions[i];
+        const elementID = element.getID();
+
+        this.currentCollisions.add(elementID);
+        element.collider.onCollisionUpdate(UICollider.STATE.COLLIDED, mouseX, mouseY, mouseRange);
+    }
+
+    for(const elementID of this.previousCollisions) {
+        if(!this.currentCollisions.has(elementID)) {
+            const element = this.elements.get(elementID);
+
+            element.collider.onCollisionUpdate(UICollider.STATE.NOT_COLLIDED, mouseX, mouseY, mouseRange);
+        }
+    }
 }
 
 UserInterface.prototype.addElement = function(element, name) {

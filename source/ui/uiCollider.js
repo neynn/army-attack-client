@@ -7,6 +7,7 @@ export const UICollider = function() {
     this.width = -1;
     this.height = -1;
     this.collisions = 0;
+    this.duration = 0;
     this.shape = UICollider.SHAPE.RECTANGLE;
     this.state = UICollider.STATE.NOT_COLLIDED;
 
@@ -20,12 +21,6 @@ export const UICollider = function() {
 UICollider.STATE = {
     NOT_COLLIDED: 0,
     COLLIDED: 1
-};
-
-UICollider.COLLISION_TYPE = {
-    FIRST: 0,
-    LAST: 1,
-    REPEATED: 2
 };
 
 UICollider.EVENT = {
@@ -77,38 +72,39 @@ UICollider.prototype.isColliding = function(mouseX, mouseY, mouseRange) {
     }
 }
 
-UICollider.prototype.updateCollision = function(mouseX, mouseY, mouseRange) {
-    const isColliding = this.isColliding(mouseX, mouseY, mouseRange);
-
-    if(isColliding) {
-        switch(this.state) {
-            case UICollider.STATE.NOT_COLLIDED: {
-                this.collisions++;
-                this.state = UICollider.STATE.COLLIDED;
-                this.events.emit(UICollider.EVENT.FIRST_COLLISION, mouseX, mouseY, mouseRange);
-                break;
+UICollider.prototype.onCollisionUpdate = function(state, mouseX, mouseY, mouseRange) {
+    switch(state) {
+        case UICollider.STATE.COLLIDED: {
+            switch(this.state) {
+                case UICollider.STATE.NOT_COLLIDED: {
+                    this.collisions++;
+                    this.state = UICollider.STATE.COLLIDED;
+                    this.events.emit(UICollider.EVENT.FIRST_COLLISION, mouseX, mouseY, mouseRange);
+                    break;
+                }
+                case UICollider.STATE.COLLIDED: {
+                    this.collisions++;
+                    this.events.emit(UICollider.EVENT.REPEATED_COLLISION, mouseX, mouseY, mouseRange);
+                    break;
+                }
             }
-            case UICollider.STATE.COLLIDED: {
-                this.collisions++;
-                this.events.emit(UICollider.EVENT.REPEATED_COLLISION, mouseX, mouseY, mouseRange);
-                break;
-            }
+            break;
         }
-    } else {
-        switch(this.state) {
-            case UICollider.STATE.COLLIDED: {
-                this.collisions = 0;
-                this.state = UICollider.STATE.NOT_COLLIDED;
-                this.events.emit(UICollider.EVENT.LAST_COLLISION, mouseX, mouseY, mouseRange);
-                break;
+        case UICollider.STATE.NOT_COLLIDED: {
+            switch(this.state) {
+                case UICollider.STATE.COLLIDED: {
+                    this.collisions = 0;
+                    this.state = UICollider.STATE.NOT_COLLIDED;
+                    this.events.emit(UICollider.EVENT.LAST_COLLISION, mouseX, mouseY, mouseRange);
+                    break;
+                }
+                case UICollider.STATE.NOT_COLLIDED: {
+                    break;
+                }
             }
-            case UICollider.STATE.NOT_COLLIDED: {
-                break;
-            }
+            break;
         }
     }
-
-    return isColliding;
 }
 
 UICollider.prototype.click = function(mouseX, mouseY, mouseRange) {
