@@ -39,17 +39,13 @@ UserInterface.prototype.destroyElement = function(name) {
         return;
     }
 
-    const elementID = element.getID();
-
     element.closeGraph();
 
     this.elements.delete(elementID);
     this.nameMap.delete(name);
 
     for(let i = 0; i < this.roots.length; i++) {
-        const rootID = this.roots[i];
-
-        if(rootID === elementID) {
+        if(this.roots[i] === element) {
             this.roots.splice(i, 1);
             break;
         }
@@ -65,10 +61,7 @@ UserInterface.prototype.update = function(gameContext) {
 
 UserInterface.prototype.debug = function(context) {
     for(let i = 0; i < this.roots.length; i++) {
-        const elementID = this.roots[i];
-        const element = this.elements.get(elementID);
-
-        element.debug(context, 0, 0);
+        this.roots[i].debug(context, 0, 0);
     }
 }
 
@@ -78,8 +71,7 @@ UserInterface.prototype.draw = function(context, realTime, deltaTime) {
     }
 
     for(let i = 0; i < this.roots.length; i++) {
-        const elementID = this.roots[i];
-        const element = this.elements.get(elementID);
+        const element = this.roots[i];
 
         element.update(realTime, deltaTime);
         element.draw(context, 0, 0);
@@ -103,8 +95,7 @@ UserInterface.prototype.getCollisions = function(mouseX, mouseY, mouseRange) {
     }
 
     for(let i = 0; i < this.roots.length; i++) {
-        const elementID = this.roots[i];
-        const element = this.elements.get(elementID);
+        const element = this.roots[i];
         const collisions = element.getCollisions(mouseX, mouseY, mouseRange);
 
         if(collisions !== null && collisions.length > 0) {
@@ -232,9 +223,7 @@ UserInterface.prototype.fromConfig = function(gameContext, userInterface) {
         const element = this.getElement(elementKey);
 
         if(!element.hasParent()) {
-            const elementID = element.getID();
-
-            this.roots.push(elementID);
+            this.roots.push(element);
         }
     }
 
@@ -250,19 +239,15 @@ UserInterface.prototype.rootElement = function(gameContext, name) {
     }
 
     const { w, h } = renderer.getWindow();
-    const elementID = element.getID();
     
     element.updateAnchor(w, h);
 
-    this.roots.push(elementID);
+    this.roots.push(element);
 }
 
 UserInterface.prototype.updateRootAnchors = function(width, height) {
     for(let i = 0; i < this.roots.length; i++) {
-        const elementID = this.roots[i];
-        const element = this.elements.get(elementID);
-
-        element.updateAnchor(width, height);
+        this.roots[i].updateAnchor(width, height);
     }
 }
 
