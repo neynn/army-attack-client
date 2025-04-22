@@ -91,19 +91,12 @@ MapEditor.prototype.routePage = function() {
     }
 }
 
-MapEditor.prototype.createBrush = function(id, name) {
-    return {
-        "name": name,
-        "id": id
-    }
-}
-
 MapEditor.prototype.getAutotilePage = function() {
     const maxSlots = this.slots.length;
     const pageElements = []; 
 
     for(let i = 0; i < maxSlots; i++) {
-        pageElements.push(this.createBrush(0, "NONE"));
+        pageElements.push(this.brush.createPalletElement(Brush.ID.INVALID, "NONE"));
     }
 
     return pageElements;
@@ -115,7 +108,7 @@ MapEditor.prototype.getDrawPage = function() {
 
     if(!this.brushSet) {
         for(let i = 0; i < this.slots.length; i++) {
-            pageElements.push(this.createBrush(0, "NONE"));
+            pageElements.push(this.brush.createPalletElement(Brush.ID.INVALID, "NONE"));
         }
 
         return pageElements;
@@ -127,7 +120,7 @@ MapEditor.prototype.getDrawPage = function() {
         const index = this.slots.length * this.pageIndex + i;
 
         if(index > modeElements.length - 1) {
-            pageElements.push(this.createBrush(0, "NONE"));
+            pageElements.push(this.brush.createPalletElement(Brush.ID.INVALID, "NONE"));
 
             continue;
         }
@@ -135,7 +128,7 @@ MapEditor.prototype.getDrawPage = function() {
         const tileName = modeElements[index];
         const tileID = values[tileName];
         
-        pageElements.push(this.createBrush(tileID, tileName));
+        pageElements.push(this.brush.createPalletElement(tileID, tileName));
     }
 
     return pageElements;

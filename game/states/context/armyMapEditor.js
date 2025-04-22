@@ -7,6 +7,7 @@ import { saveMap } from "../../../helpers.js";
 import { UIManager } from "../../../source/ui/uiManager.js";
 import { UICollider } from "../../../source/ui/uiCollider.js";
 import { ArmyMap } from "../../init/armyMap.js";
+import { Brush } from "../../../source/map/editor/brush.js";
 
 export const ArmyMapEditor = function() {
     MapEditor.call(this);
@@ -373,7 +374,7 @@ ArmyMapEditor.prototype.initButtons = function(gameContext) {
         const button = editorInterface.getElement(buttonID);
         const { name, id } = brushData;
 
-        if(id !== 0) {
+        if(id !== Brush.ID.INVALID) {
             button.collider.events.on(UICollider.EVENT.CLICKED, () => {
                 this.brush.setBrush(id, name);
             }, { id: this.id });

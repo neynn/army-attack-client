@@ -7,6 +7,11 @@ export const Brush = function() {
     this.mode = Brush.MODE.NONE;
 }
 
+Brush.ID = {
+    ERASER: 0,
+    INVALID: -1
+};
+
 Brush.MODE = {
     NONE: 0,
     ERASE: 1,
@@ -14,7 +19,7 @@ Brush.MODE = {
 };
 
 Brush.prototype.selectFromPallet = function(index) {
-    if(index < 0 || index >= this.pallet) {
+    if(index < 0 || index >= this.pallet.length) {
         return;
     }
 
@@ -23,17 +28,20 @@ Brush.prototype.selectFromPallet = function(index) {
     this.setBrush(id, name);
 }
 
-Brush.prototype.createPallet = function() {
-
+Brush.prototype.createPalletElement = function(id, name) {
+    return {
+        "id": id ?? Brush.ID.INVALID,
+        "name": name ?? ""
+    }
 }
 
 Brush.prototype.setBrush = function(id, name) {
     switch(id) {
-        case -1: {
+        case Brush.ID.INVALID: {
             this.reset();
             break;
         }
-        case 0: {
+        case Brush.ID.ERASER: {
             this.enableEraser();
             break;
         }
@@ -65,13 +73,13 @@ Brush.prototype.toggleEraser = function() {
 
 Brush.prototype.enableEraser = function() {
     this.name = "ERASER";
-    this.id = 0;
+    this.id = Brush.ID.ERASER;
     this.mode = Brush.MODE.ERASE;
 }
 
 Brush.prototype.reset = function() {
     this.name = "";
-    this.id = -1;
+    this.id = Brush.ID.INVALID;
     this.mode = Brush.MODE.NONE;
 }
 
