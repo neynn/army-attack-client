@@ -212,7 +212,7 @@ MapEditor.prototype.undo = function(gameContext) {
 
     for(let i = 0; i < actions.length; i++) {
         const action = actions[i];
-        const { layerID, tileX, tileY, oldID, newID } = action;
+        const { layerID, tileX, tileY, oldID } = action;
 
         gameMap.placeTile(oldID, layerID, tileX, tileY);
     }
@@ -234,17 +234,17 @@ MapEditor.prototype.paint = function(gameContext, mapID, layerID) {
     const startY = cursorTile.y - this.brushSize;
     const endX = cursorTile.x + this.brushSize;
     const endY = cursorTile.y + this.brushSize;
+
     const tileMeta = tileManager.getMeta(id);
+    const autotiler = tileManager.getAutotilerByTile(id);
 
     for(let i = startY; i <= endY; i++) {
         for(let j = startX; j <= endX; j++) {
-            const oldTileID = gameMap.getTile(layerID, j, i);
+            const tileID = gameMap.getTile(layerID, j, i);
 
-            if(oldTileID === null || oldTileID === id) {
+            if(tileID === null) {
                 continue;
             }
-
-            gameMap.placeTile(id, layerID, j, i);
 
             if(tileMeta) {
                 const { defaultType } = tileMeta;
@@ -254,16 +254,21 @@ MapEditor.prototype.paint = function(gameContext, mapID, layerID) {
                 }
             }
 
+            if(tileID !== id) {
+                gameMap.placeTile(id, layerID, j, i);
+
+                if(!this.isAutotiling) {
+                    actionsTaken.push({
+                        "layerID": layerID,
+                        "tileX": j,
+                        "tileY": i,
+                        "oldID": tileID
+                    });
+                }
+            }
+
             if(this.isAutotiling) {
-                gameMap.updateAutotiler(gameContext, j, i, layerID);
-            } else {
-                actionsTaken.push({
-                    "layerID": layerID,
-                    "tileX": j,
-                    "tileY": i,
-                    "oldID": oldTileID,
-                    "newID": id
-                });
+                gameMap.updateAutotiler(autotiler, j, i, layerID);
             }
         }
     }

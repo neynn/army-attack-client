@@ -41,7 +41,11 @@ WorldMap.prototype.saveLayers = function() {
     return layers;
 }
 
-WorldMap.prototype.updateAutotiler = function(gameContext, tileX, tileY, layerID) {
+WorldMap.prototype.updateAutotiler = function(autotiler, tileX, tileY, layerID) {
+    if(!autotiler) {
+        return;
+    }
+
     const startX = tileX - 1;
     const startY = tileY - 1;
     const endX = tileX + 1;
@@ -49,7 +53,7 @@ WorldMap.prototype.updateAutotiler = function(gameContext, tileX, tileY, layerID
 
     for(let i = startY; i <= endY; i++) {
         for(let j = startX; j <= endX; j++) {
-            this.autotile(gameContext, j, i, layerID);
+            this.autotile(autotiler, j, i, layerID);
         }
     }
 }
@@ -94,13 +98,11 @@ WorldMap.prototype.updateArea = function(tileX, tileY, range, onUpdate) {
     }
 }
 
-WorldMap.prototype.autotile = function(gameContext, tileX, tileY, layerID) {
-    const { tileManager } = gameContext;
+WorldMap.prototype.autotile = function(autotiler, tileX, tileY, layerID) {
     const tileID = this.getTile(layerID, tileX, tileY);
-    const autotiler = tileManager.getAutotilerByTile(tileID);
 
-    if(!autotiler) {
-        return;
+    if(!autotiler.hasMember(tileID)) {
+        return TileManager.TILE_ID.EMPTY;
     }
 
     const responseID = autotiler.run(tileX, tileY, (x, y) => {
@@ -116,6 +118,8 @@ WorldMap.prototype.autotile = function(gameContext, tileX, tileY, layerID) {
     if(responseID !== TileManager.TILE_ID.EMPTY) {
         this.placeTile(responseID, layerID, tileX, tileY);
     }
+
+    return responseID;
 }
 
 WorldMap.prototype.loadGraphics = function(background, foreground) {
@@ -123,7 +127,7 @@ WorldMap.prototype.loadGraphics = function(background, foreground) {
         const layerID = background[i];
 
         if(this.layers.has(layerID)) {
-            this.background.push(background[i]);
+            this.background.push(layerID);
         }
     }
 
@@ -131,7 +135,7 @@ WorldMap.prototype.loadGraphics = function(background, foreground) {
         const layerID = foreground[i];
 
         if(this.layers.has(layerID)) {
-            this.foreground.push(foreground[i]);
+            this.foreground.push(layerID);
         }
     }
 }
