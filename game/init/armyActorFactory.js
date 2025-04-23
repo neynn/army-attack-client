@@ -36,10 +36,11 @@ const addDragEvent = function(gameContext) {
 }
 
 ArmyActorFactory.prototype.onCreate = function(gameContext, config) {
-    const { client, renderer } = gameContext;
+    const { client, renderer, world } = gameContext;
+    const { turnManager } = world;
     const { router } = client;
     const { type, team } = config;
-    const actorType = this.getType(type);
+    const actorType = turnManager.getActorType(type);
 
     switch(type) {
         case ACTOR_TYPE.PLAYER: {

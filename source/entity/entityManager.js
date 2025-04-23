@@ -8,6 +8,7 @@ export const EntityManager = function() {
 
     this.traits = {};
     this.archetypes = {};
+    this.entityTypes = {};
     this.components = new Map();
     this.entityMap = new Map();
     this.entities = [];
@@ -30,7 +31,11 @@ EntityManager.ID = {
 EntityManager.prototype = Object.create(FactoryOwner.prototype);
 EntityManager.prototype.constructor = EntityManager;
 
-EntityManager.prototype.load = function(traits, archetypes) {
+EntityManager.prototype.load = function(entityTypes, traits, archetypes) {
+    if(entityTypes) {
+        this.entityTypes = entityTypes;
+    }
+
     if(traits) {
         this.traits = traits;
     }
@@ -38,6 +43,16 @@ EntityManager.prototype.load = function(traits, archetypes) {
     if(archetypes) {
         this.archetypes = archetypes;
     }    
+}
+
+EntityManager.prototype.getEntityType = function(typeID) {
+    const entityType = this.entityTypes[typeID];
+
+    if(!entityType) {
+        return null;
+    }
+
+    return entityType;
 }
 
 EntityManager.prototype.exit = function() {

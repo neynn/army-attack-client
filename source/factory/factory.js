@@ -2,25 +2,6 @@ export const Factory = function(DEBUG_NAME) {
     this.DEBUG_NAME = DEBUG_NAME;
     this.failCount = 0;
     this.successCount = 0;
-    this.types = {};
-}
-
-Factory.prototype.load = function(types) {
-    if(types) {
-        this.types = types;
-    }
-
-    return this;
-}
-
-Factory.prototype.getType = function(typeID) {
-    const type = this.types[typeID];
-
-    if(!type) {
-        return null;
-    }
-
-    return type;
 }
 
 Factory.prototype.onCreate = function(gameContext, config) {}

@@ -5,6 +5,7 @@ import { Logger } from "../logger.js";
 export const TurnManager = function() {
     FactoryOwner.call(this);
 
+    this.actorTypes = {};
     this.actors = new Map();
     this.actorOrder = [];
     this.actorIndex = -1;
@@ -29,11 +30,27 @@ TurnManager.EVENT = {
 TurnManager.prototype = Object.create(FactoryOwner.prototype);
 TurnManager.prototype.constructor = TurnManager;
 
+TurnManager.prototype.load = function(actorTypes) {
+    if(actorTypes) {
+        this.actorTypes = actorTypes;
+    }
+}
+
 TurnManager.prototype.exit = function() {
     this.actors.clear();
     this.actorOrder.length = 0;
     this.actorIndex = -1;
     this.actionsLeft = 0;
+}
+
+TurnManager.prototype.getActorType = function(typeID) {
+    const actorType = this.actorTypes[typeID];
+
+    if(!actorType) {
+        return null;
+    }
+
+    return actorType;
 }
 
 TurnManager.prototype.forAllActors = function(onCall) {

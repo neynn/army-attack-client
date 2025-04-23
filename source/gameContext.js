@@ -63,7 +63,8 @@ GameContext.prototype.loadResources = function(resources) {
     this.client.socket.load(resources.network.socket);
     this.world.actionQueue.load(resources.actions);
     this.world.mapManager.load(resources.maps);
-    this.world.entityManager.load(resources.traits, resources.archetypes);
+    this.world.entityManager.load(resources.entities, resources.traits, resources.archetypes);
+    this.world.turnManager.load(resources.actors);
 }
 
 GameContext.prototype.getContextAtMouse = function() {

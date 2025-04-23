@@ -115,7 +115,7 @@ ArmyEntityFactory.prototype.onCreate = function(gameContext, config) {
     const { world } = gameContext;
     const { entityManager } = world;
     const { components, tileX = -1, tileY = -1, team = null, type = null } = config;
-    const entityType = this.getType(type);
+    const entityType = entityManager.getEntityType(type);
 
     if(!entityType) {
         return null;

@@ -130,13 +130,13 @@ ArmyContext.prototype.init = function(resources) {
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.TEAM, TeamComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.UNIT, UnitComponent);
 
-    this.world.mapManager.registerFactory(ArmyContext.FACTORY.MAP, new ArmyMapFactory().load(resources.mapTypes));
+    this.world.mapManager.registerFactory(ArmyContext.FACTORY.MAP, new ArmyMapFactory());
     this.world.mapManager.selectFactory(ArmyContext.FACTORY.MAP);
 
-    this.world.entityManager.registerFactory(ArmyContext.FACTORY.ENTITY, new ArmyEntityFactory().load(resources.entities));
+    this.world.entityManager.registerFactory(ArmyContext.FACTORY.ENTITY, new ArmyEntityFactory());
     this.world.entityManager.selectFactory(ArmyContext.FACTORY.ENTITY);
 
-    this.world.turnManager.registerFactory(ArmyContext.FACTORY.ACTOR, new ArmyActorFactory().load(resources.actors));
+    this.world.turnManager.registerFactory(ArmyContext.FACTORY.ACTOR, new ArmyActorFactory());
     this.world.turnManager.selectFactory(ArmyContext.FACTORY.ACTOR);
     
     this.states.addState(ArmyContext.STATE.MAIN_MENU, new MainMenuState());
