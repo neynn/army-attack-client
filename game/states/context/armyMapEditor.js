@@ -49,6 +49,11 @@ export const ArmyMapEditor = function() {
         LC: { layer: "type", text: "TEXT_LC", state: ArmyMapEditor.BUTTON_STATE.VISIBLE, type: ArmyMapEditor.BUTTON_TYPE.TYPE }
     };
 
+    this.buttonHandler.addButton("L1", "ground", "TEXT_L1");
+    this.buttonHandler.addButton("L2", "decoration", "TEXT_L2");
+    this.buttonHandler.addButton("L3", "cloud", "TEXT_L3");
+    this.buttonHandler.addButton("LC", "type", "TEXT_LC");
+
     this.camera = new ArmyCamera();
 }
 
@@ -210,15 +215,15 @@ ArmyMapEditor.prototype.initCursorEvents = function(gameContext) {
         switch(direction) {
             case Cursor.SCROLL.UP: {
                 this.scrollBrushSize(1);
-                this.updateButtonText(gameContext);
                 break;
             }
             case Cursor.SCROLL.DOWN: {
                 this.scrollBrushSize(-1);
-                this.updateButtonText(gameContext);
                 break;
             }
         }
+
+        this.updateButtonText(gameContext);
     });
 
     cursor.events.on(Cursor.EVENT.BUTTON_DRAG, (buttonID) => {
@@ -256,7 +261,7 @@ ArmyMapEditor.prototype.initUIEvents = function(gameContext) {
     const editorInterface = uiManager.getInterface(this.interfaceID);
 
     editorInterface.addClick("BUTTON_TILESET_MODE", () => {
-        this.scrollBrushMode(1);
+        this.scrollMode(1);
         this.initButtons(gameContext);
         this.updateButtonText(gameContext);
     });
@@ -352,7 +357,6 @@ ArmyMapEditor.prototype.initUIEvents = function(gameContext) {
         this.currentLayerButtonID = null;
         this.brush.reset();
         this.updateLayerOpacity(gameContext);
-
     });
 }
 
@@ -528,9 +532,9 @@ ArmyMapEditor.prototype.updateButtonText = function(gameContext) {
     const { uiManager } = gameContext;
     const editorInterface = uiManager.getInterface(this.interfaceID);
 
-    editorInterface.setText("TEXT_TILESET_MODE", `MODE: ${MapEditor.MODE_NAME[this.brushMode]}`);
+    editorInterface.setText("TEXT_TILESET_MODE", `MODE: ${MapEditor.MODE_NAME[this.mode]}`);
 
-    switch(this.brushMode) {
+    switch(this.mode) {
         case MapEditor.MODE.DRAW: {
             editorInterface.setText("TEXT_TILESET", `${this.brushSets.getValue()?.id}`);
             break;

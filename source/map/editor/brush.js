@@ -3,7 +3,7 @@ export const Brush = function() {
     this.id = -1;
     this.name = "";
     this.pallet = [];
-    this.brushSet = {};
+    this.palletData = {};
     this.mode = Brush.MODE.NONE;
 }
 
@@ -25,7 +25,7 @@ Brush.prototype.selectFromPallet = function(index) {
     }
 
     const tileName = this.pallet[index];
-    const tileID = this.brushSet[tileName];
+    const tileID = this.palletData[tileName];
 
     this.setBrush(tileID, tileName);
 }
@@ -52,7 +52,7 @@ Brush.prototype.getTileID = function(index) {
     }
 
     const tileName = this.pallet[index];
-    const tileID = this.brushSet[tileName];
+    const tileID = this.palletData[tileName];
 
     if(tileID === undefined) {
         return Brush.ID.INVALID;
@@ -63,17 +63,17 @@ Brush.prototype.getTileID = function(index) {
 
 Brush.prototype.clearPallet = function() {
     this.pallet.length = 0;
-    this.brushSet = {};
+    this.palletData = {};
 }
 
-Brush.prototype.setPallet = function(brushData) {
+Brush.prototype.loadPallet = function(palletData) {
     this.pallet.length = 0;
 
-    for(const tileID in brushData) {
+    for(const tileID in palletData) {
         this.pallet.push(tileID);
     }
 
-    this.brushSet = brushData;
+    this.palletData = palletData;
 }
 
 Brush.prototype.setBrush = function(id, name) {

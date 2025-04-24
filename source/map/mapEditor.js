@@ -1,13 +1,15 @@
 import { loopValue } from "../math/math.js";
 import { Scroller } from "../scroller.js";
 import { Brush } from "./editor/brush.js";
+import { ButtonHandler } from "./editor/buttonHandler.js";
 
 export const MapEditor = function() {
     this.brush = new Brush();
+    this.buttonHandler = new ButtonHandler();
     this.brushSets = new Scroller();
     this.brushSizes = new Scroller();
-    this.brushModes = new Scroller([MapEditor.MODE.DRAW, MapEditor.MODE.AUTOTILE]);
-    this.brushMode = MapEditor.MODE.DRAW;
+    this.modes = new Scroller([MapEditor.MODE.DRAW, MapEditor.MODE.AUTOTILE]);
+    this.mode = MapEditor.MODE.DRAW;
 
     this.pageIndex = 0;
     this.activityStack = [];
@@ -40,11 +42,11 @@ MapEditor.prototype.scrollBrushSize = function(delta = 0) {
     }
 }
 
-MapEditor.prototype.scrollBrushMode = function(delta = 0) {
-    const brushMode = this.brushModes.loop(delta);
+MapEditor.prototype.scrollMode = function(delta = 0) {
+    const mode = this.modes.loop(delta);
 
-    if(brushMode !== null) {
-        this.brushMode = brushMode;
+    if(mode !== null) {
+        this.mode = mode;
     }
 
     this.reloadAll();
@@ -69,14 +71,14 @@ MapEditor.prototype.scrollPage = function(delta = 0) {
 }
 
 MapEditor.prototype.reloadAll = function() {
-    switch(this.brushMode) {
+    switch(this.mode) {
         case MapEditor.MODE.DRAW: {
             const pallet = this.brushSets.getValue();
 
             if(pallet) {
                 const { values } = pallet;
         
-                this.brush.setPallet(values);
+                this.brush.loadPallet(values);
             } else {
                 this.brush.clearPallet();
             }
@@ -184,7 +186,7 @@ MapEditor.prototype.paint = function(gameContext, mapID, layerID, onPaint) {
     if(actionsTaken.length !== 0) {
         this.activityStack.push({
             "mapID": mapID,
-            "mode": this.brushMode,
+            "mode": this.mode,
             "actions": actionsTaken
         });
     }
