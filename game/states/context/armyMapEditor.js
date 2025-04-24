@@ -6,10 +6,10 @@ import { UIManager } from "../../../source/ui/uiManager.js";
 import { UICollider } from "../../../source/ui/uiCollider.js";
 import { Brush } from "../../../source/map/editor/brush.js";
 import { EditorButton } from "../../../source/map/editor/editorButton.js";
-import { Button } from "../../../source/ui/elements/button.js";
 import { saveMap } from "../../../helpers.js";
 import { ArmyMap } from "../../init/armyMap.js";
 import { ArmyCamera } from "../../armyCamera.js";
+import { SHAPE } from "../../../source/math/constants.js";
 
 export const ArmyMapEditor = function() {
     MapEditor.call(this);
@@ -73,7 +73,7 @@ ArmyMapEditor.prototype.initUI = function(gameContext) {
     ["CONTAINER_FILE", "CONTAINER_LAYERS", "CONTAINER_TILES", "CONTAINER_TOOLS"].forEach(id => {
         const container = editorInterface.getElement(id);
 
-        container.background.setColorRGBA(20, 20, 20, 0.5);
+        container.background.color.setColorRGBA(20, 20, 20, 0.5);
         container.background.toggle();
     });
 }
@@ -92,7 +92,7 @@ ArmyMapEditor.prototype.initSlots = function(gameContext) {
             const posX = this.slotButtonSize * j;
             const posY = this.slotButtonSize * i + SLOT_START_Y;
             const button = uiManager.createElement(UIManager.ELEMENT_TYPE.BUTTON, {
-                "shape": Button.SHAPE.RECTANGLE,
+                "shape": SHAPE.RECTANGLE,
                 "position": { "x": posX, "y": posY },
                 "width": this.slotButtonSize,
                 "height": this.slotButtonSize,

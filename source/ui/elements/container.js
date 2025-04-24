@@ -1,17 +1,18 @@
-import { ToggleColor } from "../../graphics/applyable/toggleColor.js";
 import { Graph } from "../../graphics/graph.js";
+import { SHAPE } from "../../math/constants.js";
 import { UICollider } from "../uiCollider.js";
+import { UIColorHandler } from "../uiColorHandler.js";
 import { UIElement } from "../uiElement.js";
 
 export const Container = function(DEBUG_NAME) {
     UIElement.call(this, DEBUG_NAME);
 
     this.collider = new UICollider();
+    this.background = new UIColorHandler();
+    this.outline = new UIColorHandler();
+    this.outlineSize = 1;
 
-    this.background = new ToggleColor();
-    this.outline = new ToggleColor();
-
-    this.outline.setColorRGBA(255, 255, 255, 1);
+    this.outline.color.setColorRGBA(255, 255, 255, 1);
     this.outline.enable();
 
     this.addDrawHook();
@@ -23,18 +24,8 @@ Container.prototype.constructor = Container;
 
 Container.prototype.addDrawHook = function() {
     this.addHook(Graph.HOOK.DRAW, (context, localX, localY) => {
-        if(this.background.isActive()) {
-            const fillStyle = this.background.getRGBAString();
-
-            context.fillStyle = fillStyle;
-            context.fillRect(localX, localY, this.width, this.height);
-        }
-
-        if(this.outline.isActive()) {
-            this.outline.apply(context);
-        
-            context.strokeRect(localX, localY, this.width, this.height);
-        }
+        this.background.drawColor(context, SHAPE.RECTANGLE, localX, localY, this.width, this.height);
+        this.outline.drawStroke(context, this.outlineSize, SHAPE.RECTANGLE, localX, localY, this.width, this.height);
     });
 }
 

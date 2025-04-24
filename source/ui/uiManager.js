@@ -9,6 +9,7 @@ import { Icon } from "./elements/icon.js";
 import { Scrollbar } from "./elements/scrollbar.js";
 import { TextElement } from "./elements/textElement.js";
 import { Graph } from "../graphics/graph.js";
+import { SHAPE } from "../math/constants.js";
 
 export const UIManager = function() {
     this.resources = new ImageManager();
@@ -188,7 +189,7 @@ UIManager.prototype.createElement = function(typeID, config, DEBUG_NAME) {
     switch(typeID) {
         case UIManager.ELEMENT_TYPE.BUTTON: {
             const element = new Button(DEBUG_NAME);
-            const { shape = Button.SHAPE.RECTANGLE, radius = width } = config;
+            const { shape = SHAPE.RECTANGLE, radius = width } = config;
 
             element.setPosition(x, y);
             element.setOpacity(opacity);
@@ -196,14 +197,14 @@ UIManager.prototype.createElement = function(typeID, config, DEBUG_NAME) {
             element.setAnchor(anchor);
 
             switch(shape) {
-                case Button.SHAPE.RECTANGLE: {
+                case SHAPE.RECTANGLE: {
                     element.setSize(width, height);
-                    element.setShape(Button.SHAPE.RECTANGLE);
+                    element.setShape(SHAPE.RECTANGLE);
                     break;
                 }
-                case Button.SHAPE.CIRCLE: {
+                case SHAPE.CIRCLE: {
                     element.setSize(radius, radius);
-                    element.setShape(Button.SHAPE.CIRCLE);
+                    element.setShape(SHAPE.CIRCLE);
                     break;
                 }
                 default: {

@@ -1,5 +1,6 @@
 import { EventEmitter } from "../events/eventEmitter.js";
 import { isCircleCicleIntersect, isRectangleRectangleIntersect } from "../math/math.js";
+import { SHAPE } from "../math/constants.js";
 
 export const UICollider = function() {
     this.positionX = -1;
@@ -8,7 +9,7 @@ export const UICollider = function() {
     this.height = -1;
     this.collisions = 0;
     this.duration = 0;
-    this.shape = UICollider.SHAPE.RECTANGLE;
+    this.shape = SHAPE.RECTANGLE;
     this.state = UICollider.STATE.NOT_COLLIDED;
 
     this.events = new EventEmitter();
@@ -30,13 +31,8 @@ UICollider.EVENT = {
     CLICKED: "CLICKED"
 };
 
-UICollider.SHAPE = {
-    RECTANGLE: 0,
-    CIRCLE: 1
-};
-
 UICollider.prototype.setShape = function(shape) {
-    const shapes = Object.values(UICollider.SHAPE);
+    const shapes = Object.values(SHAPE);
     const isShapeValid = shapes.includes(shape);
 
     if(isShapeValid) {
@@ -56,12 +52,12 @@ UICollider.prototype.setSize = function(width, height) {
 
 UICollider.prototype.isColliding = function(mouseX, mouseY, mouseRange) {
     switch(this.shape) {
-        case UICollider.SHAPE.RECTANGLE: {
+        case SHAPE.RECTANGLE: {
             const isColliding = isRectangleRectangleIntersect(this.positionX, this.positionY, this.width, this.height, mouseX, mouseY, mouseRange, mouseRange);
 
             return isColliding;
         }
-        case UICollider.SHAPE.CIRCLE: {
+        case SHAPE.CIRCLE: {
             const isColliding = isCircleCicleIntersect(this.positionX, this.positionY, this.width, mouseX, mouseY, mouseRange);
 
             return isColliding;
