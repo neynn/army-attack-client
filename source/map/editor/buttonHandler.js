@@ -5,14 +5,56 @@ export const ButtonHandler = function() {
     this.activeButton = null;
 }
 
-ButtonHandler.prototype.forAllButtons = function(onCall) {
-    if(typeof onCall !== "function") {
+ButtonHandler.prototype.updateLayers = function(worldMap) {
+    if(this.activeButton === null) {
+        this.buttons.forEach((button) => {
+            const { layerID, opacity } = button;
+
+            worldMap.setLayerOpacity(layerID, opacity);
+        });
+    } else {
+        this.buttons.forEach((button) => {
+            const { state, layerID, opacity } = button;
+
+            if(state === EditorButton.STATE.VISIBLE) {
+                worldMap.setLayerOpacity(layerID, 0.5);
+            } else {
+                worldMap.setLayerOpacity(layerID, opacity);
+            }
+        })
+    }
+}
+
+ButtonHandler.prototype.onClick = function(userInterface, buttonID) {
+    const button = this.buttons.get(buttonID);
+
+    if(!button) {
         return;
     }
 
-    for(const [buttonID, button] of this.buttons) {
-        onCall(buttonID, button);
+    const nextState = button.scrollState(userInterface);
+
+    switch(nextState) {
+        case EditorButton.STATE.EDIT: {
+            const activeButton = this.buttons.get(this.activeButton);
+
+            if(activeButton) {
+                activeButton.setState(EditorButton.STATE.VISIBLE);
+                activeButton.updateTextColor(userInterface);
+            }
+    
+            this.activeButton = buttonID;
+            break;
+        }
+        default: {
+            if(buttonID === this.activeButton) {
+                this.activeButton = null;
+            }
+            break;
+        }
     }
+
+    return this.activeButton;
 }
 
 ButtonHandler.prototype.addButton = function(buttonID, layerID, textID) {
@@ -25,14 +67,21 @@ ButtonHandler.prototype.addButton = function(buttonID, layerID, textID) {
     this.buttons.set(buttonID, button);
 }
 
-ButtonHandler.prototype.getCurrentLayer = function() {
+//TODO: Layer, this will replace the type checks.
+ButtonHandler.prototype.getActiveLayer = function() {
     const button = this.buttons.get(this.activeButton);
 
     if(!button) {
         return null;
     }
 
-    return button.layerID;
+    const { state, layerID } = button;
+
+    if(state !== EditorButton.STATE.EDIT) {
+        return null;
+    }
+
+    return layerID;
 }
 
 ButtonHandler.prototype.resetButtons = function(userInterface) {
@@ -46,6 +95,16 @@ ButtonHandler.prototype.resetButtons = function(userInterface) {
 
 ButtonHandler.prototype.getButton = function(buttonID) {
     const button = this.buttons.get(buttonID);
+
+    if(!button) {
+        return null;
+    }
+    
+    return button;
+}
+
+ButtonHandler.prototype.getActiveButton = function() {
+    const button = this.buttons.get(this.activeButton);
 
     if(!button) {
         return null;

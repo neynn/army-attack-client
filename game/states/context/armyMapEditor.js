@@ -19,14 +19,13 @@ export const ArmyMapEditor = function() {
     this.maxHeight = 100;
     this.overlayAlpha = 0.75;
     this.overlayColor = "#eeeeee";
-    this.currentLayer = null;
-    this.currentLayerButtonID = null;
     this.currentMapID = null;
 
     this.buttonHandler.addButton("L1", "ground", "TEXT_L1");
     this.buttonHandler.addButton("L2", "decoration", "TEXT_L2");
     this.buttonHandler.addButton("L3", "cloud", "TEXT_L3");
     this.buttonHandler.addButton("LC", "type", "TEXT_LC");
+    this.buttonHandler.getButton("LC").setType(EditorButton.TYPE.TYPE);
 
     this.camera = new ArmyCamera();
 }
@@ -134,7 +133,7 @@ ArmyMapEditor.prototype.initRenderEvents = function(gameContext) {
     const { graphics } = tileManager;
 
     this.camera.addPostDraw((context) => {    
-        const button = this.buttonHandler.getButton(this.currentLayerButtonID);
+        const button = this.buttonHandler.getActiveButton();
 
         if(button && button.type !== EditorButton.TYPE.GRAPHICS) {
             return;
@@ -298,12 +297,8 @@ ArmyMapEditor.prototype.initUIEvents = function(gameContext) {
 
     editorInterface.addClick("BUTTON_VIEW_ALL", () => {
         this.buttonHandler.resetButtons(editorInterface);
-
-        this.currentLayer = null;
-        this.currentLayerButtonID = null;
-
-        this.brush.reset();
         this.updateLayerOpacity(gameContext);
+        this.brush.reset();
     });
 }
 
@@ -374,17 +369,17 @@ ArmyMapEditor.prototype.resizeCurrentMap = function(gameContext) {
 
 ArmyMapEditor.prototype.paintTile = function(gameContext) {
     const { tileManager } = gameContext;
-    const button = this.buttonHandler.getButton(this.currentLayerButtonID);
+    const button = this.buttonHandler.getActiveButton();
 
     if(!button) {
         return;
     }
 
-    const { type } = button;
+    const { type, layerID } = button;
 
     switch(type) {
         case EditorButton.TYPE.GRAPHICS: {
-            this.paint(gameContext, this.currentMapID, this.currentLayer, (worldMap, tileID, tileX, tileY) => {
+            this.paint(gameContext, this.currentMapID, layerID, (worldMap, tileID, tileX, tileY) => {
                 const tileMeta = tileManager.getMeta(tileID);
 
                 if(tileMeta) {
@@ -398,6 +393,7 @@ ArmyMapEditor.prototype.paintTile = function(gameContext) {
             break;
         }
         case EditorButton.TYPE.TYPE: {
+            //TODO: TYPE as a type/mode of the editor!
             const layerID = "type";
 
             this.incrementTypeIndex(gameContext, this.currentMapID, layerID);
@@ -419,52 +415,14 @@ ArmyMapEditor.prototype.updateLayerOpacity = function(gameContext) {
         return;
     }
 
-    if(this.currentLayerButtonID === null) {
-        this.buttonHandler.forAllButtons((buttonID, button) => {
-            const { layerID, opacity } = button;
-
-            worldMap.setLayerOpacity(layerID, opacity);
-        });
-    } else {
-        this.buttonHandler.forAllButtons((buttonID, button) => {
-            const { state, layerID, opacity } = button;
-
-            if(state === EditorButton.STATE.VISIBLE) {
-                worldMap.setLayerOpacity(layerID, 0.5);
-            } else {
-                worldMap.setLayerOpacity(layerID, opacity);
-            }
-        });
-    }
+    this.buttonHandler.updateLayers(worldMap);
 }
 
 ArmyMapEditor.prototype.scrollLayerButton = function(gameContext, buttonID) {
     const { uiManager } = gameContext;
     const editorInterface = uiManager.getInterface(this.interfaceID);
-    const button = this.buttonHandler.getButton(buttonID);
 
-    if(buttonID === this.currentLayerButtonID) {
-        this.currentLayerButtonID = null;
-        this.currentLayer = null;
-    }
-
-    const nextState = button.scrollState(editorInterface);
-
-    if(nextState === EditorButton.STATE.EDIT) {
-        const currentButton = this.buttonHandler.getButton(this.currentLayerButtonID);
-
-        if(currentButton) {
-            currentButton.setState(EditorButton.STATE.VISIBLE);
-            currentButton.updateTextColor(editorInterface);
-
-            this.currentLayerButtonID = null;
-            this.currentLayer = null;
-        }
-
-        this.currentLayer = button.layerID;
-        this.currentLayerButtonID = buttonID;
-    }
-
+    this.buttonHandler.onClick(editorInterface, buttonID);
     this.updateLayerOpacity(gameContext);
 }
 
