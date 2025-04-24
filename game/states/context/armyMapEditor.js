@@ -1,25 +1,27 @@
 import { CameraContext } from "../../../source/camera/cameraContext.js";
 import { Cursor } from "../../../source/client/cursor.js";
 import { MapEditor } from "../../../source/map/mapEditor.js";
-import { ArmyCamera } from "../../armyCamera.js";
 import { clampValue } from "../../../source/math/math.js";
-import { saveMap } from "../../../helpers.js";
 import { UIManager } from "../../../source/ui/uiManager.js";
 import { UICollider } from "../../../source/ui/uiCollider.js";
-import { ArmyMap } from "../../init/armyMap.js";
 import { Brush } from "../../../source/map/editor/brush.js";
 import { EditorButton } from "../../../source/map/editor/editorButton.js";
+import { Button } from "../../../source/ui/elements/button.js";
+import { saveMap } from "../../../helpers.js";
+import { ArmyMap } from "../../init/armyMap.js";
+import { ArmyCamera } from "../../armyCamera.js";
 
 export const ArmyMapEditor = function() {
     MapEditor.call(this);
 
     this.id = "ARMY_MAP_EDITOR";
-    this.interfaceID = "MAP_EDITOR";
+    this.interfaceID = null;
     this.maxWidth = 100;
     this.maxHeight = 100;
     this.overlayAlpha = 0.75;
+    this.slotButtonSize = 50;
     this.overlayColor = "#eeeeee";
-    this.currentMapID = null;
+    this.defaultMap = {};
 
     this.buttonHandler.addButton("L1", "ground", "TEXT_L1");
     this.buttonHandler.addButton("L2", "decoration", "TEXT_L2");
@@ -30,53 +32,31 @@ export const ArmyMapEditor = function() {
     this.camera = new ArmyCamera();
 }
 
-ArmyMapEditor.FILL_MAPPING = {
-    "ground": 1,
-    "border": 0,
-    "decoration": 0,
-    "cloud": 0,
-    "type": 0,
-    "team": 0
-};
-
-ArmyMapEditor.DEFAULT_MAP = {
-    "type": "EmptyVersus",
-    "music": "music_remastered",
-    "width": 20,
-    "height": 20,
-    "graphics": {
-        "layers": {
-            "ground": { "fill": 1, "opacity": 1, "autoGenerate": false },
-            "border": { "fill": 0, "opacity": 1, "autoGenerate": true },
-            "decoration": { "fill": 0, "opacity": 1, "autoGenerate": false },
-            "cloud": { "fill": 0, "opacity": 1, "autoGenerate": true },
-            "type": { "fill": 0, "opacity": 1, "autoGenerate": false },
-            "team": { "fill": 0, "opacity": 1, "autoGenerate": false }
-        },
-        "background": ["ground", "border", "decoration"],
-        "foreground": ["cloud"]
-    }
-};
-
-ArmyMapEditor.SLOT_BUTTON_SIZE = 50;
-
 ArmyMapEditor.prototype = Object.create(MapEditor.prototype);
 ArmyMapEditor.prototype.constructor = ArmyMapEditor;
 
 ArmyMapEditor.prototype.init = function(config) {
     const {
+        brushSizes = [0],
+        hiddenSets = [],
         maxWidth = this.maxWidth,
         maxHeight = this.maxHeight,
-        brushSizes = [],
-        hiddenSets = [],
         overlayAlpha = this.overlayAlpha,
-        overlayColor = this.overlayColor
+        overlayColor = this.overlayColor,
+        slotSize = this.slotButtonSize,
+        defaultMap = this.defaultMap,
+        layerFill = this.layerFill,
+        interfaceID = null
     } = config;
 
     this.maxWidth = maxWidth;
     this.maxHeight = maxHeight;
     this.overlayAlpha = overlayAlpha;
     this.overlayColor = overlayColor;
+    this.interfaceID = interfaceID;
+    this.slotButtonSize = slotSize;
+    this.layerFill = layerFill;
+    this.defaultMap = defaultMap;
     this.brushSizes.setValues(brushSizes);
 
     for(let i = 0; i < hiddenSets.length; i++) {
@@ -86,24 +66,36 @@ ArmyMapEditor.prototype.init = function(config) {
     }
 }
 
+ArmyMapEditor.prototype.initUI = function(gameContext) {
+    const { uiManager } = gameContext;
+    const editorInterface = uiManager.getInterface(this.interfaceID);
+
+    ["CONTAINER_FILE", "CONTAINER_LAYERS", "CONTAINER_TILES", "CONTAINER_TOOLS"].forEach(id => {
+        const container = editorInterface.getElement(id);
+
+        container.background.setColorRGBA(20, 20, 20, 0.5);
+        container.background.toggle();
+    });
+}
+
 ArmyMapEditor.prototype.initSlots = function(gameContext) {
     const { uiManager } = gameContext;
+    const SLOT_START_Y = 100;
     const editorInterface = uiManager.getInterface(this.interfaceID);
     const buttonRows = 7;
     const buttonColumns = 7;
-    const buttonSize = 50;
     const buttons = [];
 
     for(let i = 0; i < buttonRows; i++) {
         for(let j = 0; j < buttonColumns; j++) {
             const buttonID = `BUTTON_${i * buttonColumns + j}`;
-            const posX = buttonSize * j;
-            const posY = buttonSize * i + 100;
+            const posX = this.slotButtonSize * j;
+            const posY = this.slotButtonSize * i + SLOT_START_Y;
             const button = uiManager.createElement(UIManager.ELEMENT_TYPE.BUTTON, {
-                "shape": 0,
+                "shape": Button.SHAPE.RECTANGLE,
                 "position": { "x": posX, "y": posY },
-                "width": buttonSize,
-                "height": buttonSize,
+                "width": this.slotButtonSize,
+                "height": this.slotButtonSize,
                 "opacity": 1
             }, buttonID);
 
@@ -208,10 +200,54 @@ ArmyMapEditor.prototype.initCursorEvents = function(gameContext) {
     });
 }
 
+ArmyMapEditor.prototype.toggleEraser = function(gameContext) {
+    const { uiManager } = gameContext;
+    const editorInterface = uiManager.getInterface(this.interfaceID);
+    const nextState = this.brush.toggleEraser();
+    const text = editorInterface.getElement("TEXT_ERASER");
+    const { style } = text;
+    const { color } = style;
+
+    switch(nextState) {
+        case Brush.MODE.ERASE: {
+            color.setColorRGBA(252, 252, 63, 1);
+            break;
+        }
+        default: {
+            color.setColorRGBA(238, 238, 238, 1);
+            break;
+        }
+    }
+}
+
+ArmyMapEditor.prototype.toggleAutotiler = function(gameContext) {
+    const { uiManager } = gameContext;
+    const editorInterface = uiManager.getInterface(this.interfaceID);
+    const nextState = this.toggleAutotiling();
+    const text = editorInterface.getElement("TEXT_AUTO");
+    const { style } = text;
+    const { color } = style;
+
+    switch(nextState) {
+        case MapEditor.AUTOTILER_STATE.INACTIVE: {
+            color.setColorRGBA(238, 238, 238, 1);
+            break;
+        }
+        case MapEditor.AUTOTILER_STATE.ACTIVE: {
+            color.setColorRGBA(252, 252, 63, 1);
+            break;
+        }
+    }
+}
+
 ArmyMapEditor.prototype.initUIEvents = function(gameContext) {
     const { uiManager, world } = gameContext;
     const { mapManager } = world;
     const editorInterface = uiManager.getInterface(this.interfaceID);
+
+    editorInterface.addClick("BUTTON_AUTO", () => {
+        this.toggleAutotiler(gameContext);
+    });
 
     editorInterface.addClick("BUTTON_TILESET_MODE", () => {
         this.scrollMode(1);
@@ -249,25 +285,25 @@ ArmyMapEditor.prototype.initUIEvents = function(gameContext) {
     }); 
 
     editorInterface.addClick("BUTTON_L1", () => {
-        this.scrollLayerButton(gameContext, "L1");
+        this.scrollLayerButton(gameContext, "L1", this.interfaceID);
     });
 
     editorInterface.addClick("BUTTON_L2", () => {
-        this.scrollLayerButton(gameContext, "L2");
+        this.scrollLayerButton(gameContext, "L2", this.interfaceID);
     });
 
     editorInterface.addClick("BUTTON_L3", () => {
-        this.scrollLayerButton(gameContext, "L3");
+        this.scrollLayerButton(gameContext, "L3", this.interfaceID);
     });
 
     editorInterface.addClick("BUTTON_LC", () => {
-        this.scrollLayerButton(gameContext, "LC");
+        this.scrollLayerButton(gameContext, "LC", this.interfaceID);
     });
 
     editorInterface.addClick("BUTTON_SAVE", () => {
-        const mapData = mapManager.getLoadedMap(this.currentMapID);
+        const mapData = mapManager.getLoadedMap(this.mapID);
         
-        saveMap(this.currentMapID, mapData);
+        saveMap(this.mapID, mapData);
     });
 
     editorInterface.addClick("BUTTON_CREATE", () => {
@@ -279,7 +315,7 @@ ArmyMapEditor.prototype.initUIEvents = function(gameContext) {
         const worldMap = await mapManager.createMapByID(gameContext, mapID);
 
         if(worldMap) {
-            this.currentMapID = mapID;
+            this.mapID = mapID;
         }
     });
 
@@ -292,7 +328,7 @@ ArmyMapEditor.prototype.initUIEvents = function(gameContext) {
     }); 
 
     editorInterface.addClick("BUTTON_ERASER", () => {
-        this.brush.toggleEraser();
+        this.toggleEraser(gameContext);
     });
 
     editorInterface.addClick("BUTTON_VIEW_ALL", () => {
@@ -305,13 +341,12 @@ ArmyMapEditor.prototype.initUIEvents = function(gameContext) {
 ArmyMapEditor.prototype.initButtons = function(gameContext) {
     const { uiManager, tileManager } = gameContext;
     const { graphics } = tileManager;
-    const pageIndices = this.brush.getPageIndices(this.pageIndex, this.slots.length)
     const editorInterface = uiManager.getInterface(this.interfaceID);
 
     for(let i = 0; i < this.slots.length; i++) {
         const buttonID = this.slots[i];
-        const palletID = pageIndices[i];
         const button = editorInterface.getElement(buttonID);
+        const palletID = this.brush.getPalletIndex(this.pageIndex, this.slots.length, i);
         const tileID = this.brush.getTileID(palletID);
 
         button.collider.events.unsubscribe(UICollider.EVENT.CLICKED, this.id);
@@ -326,7 +361,7 @@ ArmyMapEditor.prototype.initButtons = function(gameContext) {
         }, { id: this.id });
 
         button.addDefer((context, localX, localY) => {
-            this.camera.drawTile(graphics, context, tileID, localX, localY, ArmyMapEditor.SLOT_BUTTON_SIZE, ArmyMapEditor.SLOT_BUTTON_SIZE);
+            this.camera.drawTile(graphics, context, tileID, localX, localY, this.slotButtonSize, this.slotButtonSize);
         });
     }
 } 
@@ -339,16 +374,16 @@ ArmyMapEditor.prototype.createNewMap = function(gameContext) {
     if(createNew) {
         const mapID = `${Date.now()}`;
 
-        mapManager.createMap(gameContext, mapID, ArmyMapEditor.DEFAULT_MAP);
+        mapManager.createMap(gameContext, mapID, this.defaultMap);
 
-        this.currentMapID = mapID;
+        this.mapID = mapID;
     }
 }
 
 ArmyMapEditor.prototype.resizeCurrentMap = function(gameContext) {
     const { world, renderer } = gameContext;
     const { mapManager } = world;
-    const gameMap = mapManager.getLoadedMap(this.currentMapID);
+    const gameMap = mapManager.getLoadedMap(this.mapID);
 
     if(!gameMap) {
         console.warn(`GameMap cannot be undefined! Returning...`);
@@ -360,7 +395,7 @@ ArmyMapEditor.prototype.resizeCurrentMap = function(gameContext) {
     const newWidth = clampValue(parsedWidth, this.maxWidth, 1);
     const newHeight = clampValue(parsedHeight, this.maxHeight, 1);
   
-    gameMap.resize(newWidth, newHeight, ArmyMapEditor.FILL_MAPPING);
+    gameMap.resize(newWidth, newHeight, this.layerFill);
     
     this.camera.setMapSize(newWidth, newHeight);
 
@@ -369,61 +404,18 @@ ArmyMapEditor.prototype.resizeCurrentMap = function(gameContext) {
 
 ArmyMapEditor.prototype.paintTile = function(gameContext) {
     const { tileManager } = gameContext;
-    const button = this.buttonHandler.getActiveButton();
 
-    if(!button) {
-        return;
-    }
+    this.paint(gameContext, (worldMap, tileID, tileX, tileY) => {
+        const tileMeta = tileManager.getMeta(tileID);
 
-    const { type, layerID } = button;
+        if(tileMeta) {
+            const { defaultType } = tileMeta;
 
-    switch(type) {
-        case EditorButton.TYPE.GRAPHICS: {
-            this.paint(gameContext, this.currentMapID, layerID, (worldMap, tileID, tileX, tileY) => {
-                const tileMeta = tileManager.getMeta(tileID);
-
-                if(tileMeta) {
-                    const { defaultType } = tileMeta;
-    
-                    if(defaultType) {
-                        worldMap.placeTile(defaultType, ArmyMap.LAYER.TYPE, tileX, tileY);
-                    }
-                }
-            });
-            break;
+            if(defaultType) {
+                worldMap.placeTile(defaultType, ArmyMap.LAYER.TYPE, tileX, tileY);
+            }
         }
-        case EditorButton.TYPE.TYPE: {
-            //TODO: TYPE as a type/mode of the editor!
-            const layerID = "type";
-
-            this.incrementTypeIndex(gameContext, this.currentMapID, layerID);
-            break;
-        }
-        default: {
-            console.warn(`Button type ${type} does not exist!`);
-            break;
-        }
-    }
-}
-
-ArmyMapEditor.prototype.updateLayerOpacity = function(gameContext) {
-    const { world } = gameContext;
-    const { mapManager } = world;
-    const worldMap = mapManager.getLoadedMap(this.currentMapID);
-
-    if(!worldMap) {
-        return;
-    }
-
-    this.buttonHandler.updateLayers(worldMap);
-}
-
-ArmyMapEditor.prototype.scrollLayerButton = function(gameContext, buttonID) {
-    const { uiManager } = gameContext;
-    const editorInterface = uiManager.getInterface(this.interfaceID);
-
-    this.buttonHandler.onClick(editorInterface, buttonID);
-    this.updateLayerOpacity(gameContext);
+    });
 }
 
 ArmyMapEditor.prototype.updateMenuText = function(gameContext) {

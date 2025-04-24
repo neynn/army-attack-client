@@ -2,6 +2,7 @@ import { loopValue } from "../math/math.js";
 import { Scroller } from "../scroller.js";
 import { Brush } from "./editor/brush.js";
 import { ButtonHandler } from "./editor/buttonHandler.js";
+import { EditorButton } from "./editor/editorButton.js";
 
 export const MapEditor = function() {
     this.brush = new Brush();
@@ -10,13 +11,19 @@ export const MapEditor = function() {
     this.brushSizes = new Scroller();
     this.modes = new Scroller([MapEditor.MODE.DRAW, MapEditor.MODE.AUTOTILE]);
     this.mode = MapEditor.MODE.DRAW;
-
+    this.mapID = null;
     this.pageIndex = 0;
     this.activityStack = [];
-    this.isAutotiling = false;
+    this.layerFill = {};
+    this.autoState = MapEditor.AUTOTILER_STATE.INACTIVE;
     this.hiddenSets = new Set();
     this.slots = [];
 }
+
+MapEditor.AUTOTILER_STATE = {
+    INACTIVE: 0,
+    ACTIVE: 1
+};
 
 MapEditor.MODE = {
     DRAW: 0,
@@ -29,9 +36,26 @@ MapEditor.MODE_NAME = {
 };
 
 MapEditor.prototype.toggleAutotiling = function() {
-    this.isAutotiling = !this.isAutotiling;
+    switch(this.autoState) {
+        case MapEditor.AUTOTILER_STATE.INACTIVE: {
+            this.autoState = MapEditor.AUTOTILER_STATE.ACTIVE;
+            break;
+        }
+        case MapEditor.AUTOTILER_STATE.ACTIVE: {
+            this.autoState = MapEditor.AUTOTILER_STATE.INACTIVE;
+            break;
+        }
+    }
 
-    return this.isAutotiling;
+    return this.autoState;
+}
+
+MapEditor.prototype.scrollLayerButton = function(gameContext, buttonID, interfaceID) {
+    const { uiManager } = gameContext;
+    const editorInterface = uiManager.getInterface(interfaceID);
+
+    this.buttonHandler.onClick(editorInterface, buttonID);
+    this.updateLayerOpacity(gameContext);
 }
 
 MapEditor.prototype.scrollBrushSize = function(delta = 0) {
@@ -142,14 +166,39 @@ MapEditor.prototype.undo = function(gameContext) {
     }
 }
 
-MapEditor.prototype.paint = function(gameContext, mapID, layerID, onPaint) {
+MapEditor.prototype.updateLayerOpacity = function(gameContext) {
+    const { world } = gameContext;
+    const { mapManager } = world;
+    const worldMap = mapManager.getLoadedMap(this.mapID);
+
+    if(!worldMap) {
+        return;
+    }
+
+    this.buttonHandler.updateLayers(worldMap);
+}
+
+MapEditor.prototype.paint = function(gameContext, onPaint) {
+    const button = this.buttonHandler.getActiveButton();
+
+    if(!button) {
+        return;
+    }
+
+    const { type, layerID } = button;
+
+    if(type === EditorButton.TYPE.TYPE) {
+        this.incrementTypeIndex(gameContext, layerID);
+        return;
+    }
+
     if(typeof onPaint !== "function") {
         return;
     }
 
     const { world, tileManager } = gameContext;
     const { mapManager } = world;
-    const worldMap = mapManager.getLoadedMap(mapID);
+    const worldMap = mapManager.getLoadedMap(this.mapID);
 
     if(!worldMap) {
         return;
@@ -168,7 +217,7 @@ MapEditor.prototype.paint = function(gameContext, mapID, layerID, onPaint) {
 
             onPaint(worldMap, brushID, j, i);
 
-            if(!this.isAutotiling) {
+            if(this.autoState === MapEditor.AUTOTILER_STATE.INACTIVE) {
                 actionsTaken.push({
                     "layerID": layerID,
                     "tileX": j,
@@ -178,25 +227,25 @@ MapEditor.prototype.paint = function(gameContext, mapID, layerID, onPaint) {
             }
         }
 
-        if(this.isAutotiling) {
+        if(this.autoState === MapEditor.AUTOTILER_STATE.ACTIVE) {
             worldMap.updateAutotiler(autotiler, j, i, layerID);
         }
     });
 
     if(actionsTaken.length !== 0) {
         this.activityStack.push({
-            "mapID": mapID,
+            "mapID": this.mapID,
             "mode": this.mode,
             "actions": actionsTaken
         });
     }
 }
 
-MapEditor.prototype.incrementTypeIndex = function(gameContext, mapID, layerID) {
+MapEditor.prototype.incrementTypeIndex = function(gameContext, layerID) {
     const { world } = gameContext;
     const { mapManager } = world;
     const types = gameContext.tileTypes;
-    const worldMap = mapManager.getLoadedMap(mapID);
+    const worldMap = mapManager.getLoadedMap(this.mapID);
 
     if(!worldMap) {
         return;

@@ -4,8 +4,36 @@
     "overlayColor": "#eeeeee",
     "overlayAlpha": 0.75,
     "brushSizes": [0, 1, 2, 3, 4],
-    "hiddenSets": ["overlay", "border", "range"],
+    "hiddenSets": ["overlay"],
+    "interfaceID": "MAP_EDITOR",
+    "layerFill": {
+        "ground": 1,
+        "border": 0,
+        "decoration": 0,
+        "cloud": 0,
+        "type": 0,
+        "team": 0
+    },
+    "defaultMap": {
+        "type": "EmptyVersus",
+        "music": "music_remastered",
+        "width": 20,
+        "height": 20,
+        "graphics": {
+            "layers": {
+                "ground": { "fill": 1, "opacity": 1, "autoGenerate": false },
+                "border": { "fill": 0, "opacity": 1, "autoGenerate": true },
+                "decoration": { "fill": 0, "opacity": 1, "autoGenerate": false },
+                "cloud": { "fill": 0, "opacity": 1, "autoGenerate": true },
+                "type": { "fill": 0, "opacity": 1, "autoGenerate": false },
+                "team": { "fill": 0, "opacity": 1, "autoGenerate": false }
+            },
+            "background": ["ground", "border", "decoration"],
+            "foreground": ["cloud"]
+        }
+    },
     "binds": {
-        "TOGGLE_AUTOTILER": "+a"
+        "TOGGLE_AUTOTILER": "+a",
+        "TOGGLE_ERASER": "+r"
     }
 }

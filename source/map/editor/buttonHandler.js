@@ -33,7 +33,7 @@ ButtonHandler.prototype.onClick = function(userInterface, buttonID) {
     }
 
     const nextState = button.scrollState(userInterface);
-    
+
     button.updateTextColor(userInterface);
 
     switch(nextState) {
@@ -69,7 +69,6 @@ ButtonHandler.prototype.addButton = function(buttonID, layerID, textID) {
     this.buttons.set(buttonID, button);
 }
 
-//TODO: Layer, this will replace the type checks.
 ButtonHandler.prototype.getActiveLayer = function() {
     const button = this.buttons.get(this.activeButton);
 

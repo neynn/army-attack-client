@@ -30,22 +30,6 @@ Brush.prototype.selectFromPallet = function(index) {
     this.setBrush(tileID, tileName);
 }
 
-Brush.prototype.getPageIndices = function(pageIndex, slots) {
-    const pageIndices = []; 
-
-    for(let i = 0; i < slots; i++) {
-        const index = slots * pageIndex + i;
-
-        if(index >= this.pallet.length) {
-            pageIndices.push(Brush.ID.INVALID);
-        } else {
-            pageIndices.push(index);
-        }
-    }
-
-    return pageIndices;
-}
-
 Brush.prototype.getTileID = function(index) {
     if(index < 0 || index >= this.pallet.length) {
         return Brush.ID.INVALID;
@@ -59,6 +43,16 @@ Brush.prototype.getTileID = function(index) {
     }
 
     return tileID;
+}
+
+Brush.prototype.getPalletIndex = function(pageIndex, slotCount, slot) {
+    const palletIndex = pageIndex * slotCount + slot;
+
+    if(palletIndex >= this.pallet.length) {
+        return -1;
+    }
+
+    return palletIndex;
 }
 
 Brush.prototype.clearPallet = function() {
@@ -109,7 +103,7 @@ Brush.prototype.toggleEraser = function() {
         this.enableEraser();
     }
 
-    return this.mode === Brush.MODE.ERASE;
+    return this.mode;
 }
 
 Brush.prototype.enableEraser = function() {

@@ -19,8 +19,10 @@ MapEditorState.prototype.onEnter = function(stateMachine) {
 
     uiManager.parseUI(this.mapEditor.interfaceID, gameContext);
     router.load(gameContext, gameContext.editorConfig.binds);
-    router.on("TOGGLE_AUTOTILER", () => this.mapEditor.toggleAutotiling());
+    router.on("TOGGLE_AUTOTILER", () => this.mapEditor.toggleAutotiler(gameContext));
+    router.on("TOGGLE_ERASER", () => this.mapEditor.toggleEraser(gameContext));
     
+    this.mapEditor.initUI(gameContext);
     this.mapEditor.initSlots(gameContext);
     this.mapEditor.loadBrushSets(tileManager.getInversion());
     this.mapEditor.initRenderEvents(gameContext);

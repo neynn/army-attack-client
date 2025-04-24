@@ -1,4 +1,4 @@
-import { Outline } from "../../graphics/applyable/outline.js";
+import { ToggleColor } from "../../graphics/applyable/toggleColor.js";
 import { Graph } from "../../graphics/graph.js";
 import { UICollider } from "../uiCollider.js";
 import { UIElement } from "../uiElement.js";
@@ -6,10 +6,13 @@ import { UIElement } from "../uiElement.js";
 export const Container = function(DEBUG_NAME) {
     UIElement.call(this, DEBUG_NAME);
 
-    this.outline = new Outline();
-    this.outline.color.setColorRGBA(255, 255, 255, 1);
-    this.outline.enable();
     this.collider = new UICollider();
+
+    this.background = new ToggleColor();
+    this.outline = new ToggleColor();
+
+    this.outline.setColorRGBA(255, 255, 255, 1);
+    this.outline.enable();
 
     this.addDrawHook();
     this.addDebugHook();
@@ -20,6 +23,13 @@ Container.prototype.constructor = Container;
 
 Container.prototype.addDrawHook = function() {
     this.addHook(Graph.HOOK.DRAW, (context, localX, localY) => {
+        if(this.background.isActive()) {
+            const fillStyle = this.background.getRGBAString();
+
+            context.fillStyle = fillStyle;
+            context.fillRect(localX, localY, this.width, this.height);
+        }
+
         if(this.outline.isActive()) {
             this.outline.apply(context);
         
