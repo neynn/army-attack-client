@@ -27,7 +27,7 @@ MapEditorState.prototype.onEnter = function(stateMachine) {
     this.mapEditor.initCursorEvents(gameContext);
     this.mapEditor.initUIEvents(gameContext);
     this.mapEditor.initButtons(gameContext);
-    this.mapEditor.updateButtonText(gameContext);
+    this.mapEditor.updateMenuText(gameContext);
 }
 
 MapEditorState.prototype.onExit = function(stateMachine) {

@@ -8,6 +8,7 @@ import { UIManager } from "../../../source/ui/uiManager.js";
 import { UICollider } from "../../../source/ui/uiCollider.js";
 import { ArmyMap } from "../../init/armyMap.js";
 import { Brush } from "../../../source/map/editor/brush.js";
+import { EditorButton } from "../../../source/map/editor/editorButton.js";
 
 export const ArmyMapEditor = function() {
     MapEditor.call(this);
@@ -21,33 +22,6 @@ export const ArmyMapEditor = function() {
     this.currentLayer = null;
     this.currentLayerButtonID = null;
     this.currentMapID = null;
-    this.buttonStates = {
-        [ArmyMapEditor.BUTTON_STATE.HIDDEN]: {
-            description: "HIDDEN",
-            textColor: ArmyMapEditor.COLOR.HIDDEN,
-            opacity: 0,
-            nextState: ArmyMapEditor.BUTTON_STATE.VISIBLE
-        },
-        [ArmyMapEditor.BUTTON_STATE.VISIBLE]: {
-            description: "VISIBLE",
-            textColor: ArmyMapEditor.COLOR.VISIBLE,
-            opacity: 1,
-            nextState: ArmyMapEditor.BUTTON_STATE.EDIT
-        },
-        [ArmyMapEditor.BUTTON_STATE.EDIT]: {
-            description: "EDIT",
-            textColor: ArmyMapEditor.COLOR.EDIT,
-            opacity: 1,
-            nextState: ArmyMapEditor.BUTTON_STATE.HIDDEN
-        }
-    };
-
-    this.layerButtons = {
-        L1: { layer: "ground", text: "TEXT_L1", state: ArmyMapEditor.BUTTON_STATE.VISIBLE, type: ArmyMapEditor.BUTTON_TYPE.GRAPHICS },
-        L2: { layer: "decoration", text: "TEXT_L2", state: ArmyMapEditor.BUTTON_STATE.VISIBLE, type: ArmyMapEditor.BUTTON_TYPE.GRAPHICS },
-        L3: { layer: "cloud", text: "TEXT_L3", state: ArmyMapEditor.BUTTON_STATE.VISIBLE, type: ArmyMapEditor.BUTTON_TYPE.GRAPHICS },
-        LC: { layer: "type", text: "TEXT_LC", state: ArmyMapEditor.BUTTON_STATE.VISIBLE, type: ArmyMapEditor.BUTTON_TYPE.TYPE }
-    };
 
     this.buttonHandler.addButton("L1", "ground", "TEXT_L1");
     this.buttonHandler.addButton("L2", "decoration", "TEXT_L2");
@@ -56,12 +30,6 @@ export const ArmyMapEditor = function() {
 
     this.camera = new ArmyCamera();
 }
-
-ArmyMapEditor.COLOR = {
-    HIDDEN: [207, 55, 35, 1],
-    VISIBLE: [238, 238, 238, 1],
-    EDIT: [252, 252, 63, 1]
-};
 
 ArmyMapEditor.FILL_MAPPING = {
     "ground": 1,
@@ -91,19 +59,7 @@ ArmyMapEditor.DEFAULT_MAP = {
     }
 };
 
-ArmyMapEditor.BUTTON_TYPE = {
-    NONE: 0,
-    GRAPHICS: 1,
-    TYPE: 2
-};
-
 ArmyMapEditor.SLOT_BUTTON_SIZE = 50;
-
-ArmyMapEditor.BUTTON_STATE = {
-    HIDDEN: 0,
-    VISIBLE: 1,
-    EDIT: 2
-};
 
 ArmyMapEditor.prototype = Object.create(MapEditor.prototype);
 ArmyMapEditor.prototype.constructor = ArmyMapEditor;
@@ -178,12 +134,10 @@ ArmyMapEditor.prototype.initRenderEvents = function(gameContext) {
     const { graphics } = tileManager;
 
     this.camera.addPostDraw((context) => {    
-        if(this.currentLayerButtonID !== null) {
-            const { type } = this.layerButtons[this.currentLayerButtonID];
-    
-            if(type !== ArmyMapEditor.BUTTON_TYPE.GRAPHICS) {
-                return;
-            }
+        const button = this.buttonHandler.getButton(this.currentLayerButtonID);
+
+        if(button && button.type !== EditorButton.TYPE.GRAPHICS) {
+            return;
         }
     
         const cursorTile = gameContext.getMouseTile();
@@ -223,7 +177,7 @@ ArmyMapEditor.prototype.initCursorEvents = function(gameContext) {
             }
         }
 
-        this.updateButtonText(gameContext);
+        this.updateMenuText(gameContext);
     });
 
     cursor.events.on(Cursor.EVENT.BUTTON_DRAG, (buttonID) => {
@@ -263,36 +217,36 @@ ArmyMapEditor.prototype.initUIEvents = function(gameContext) {
     editorInterface.addClick("BUTTON_TILESET_MODE", () => {
         this.scrollMode(1);
         this.initButtons(gameContext);
-        this.updateButtonText(gameContext);
+        this.updateMenuText(gameContext);
     });
 
     editorInterface.addClick("BUTTON_TILESET_LEFT", () => {
         this.scrollBrushSet(-1);
         this.initButtons(gameContext);
-        this.updateButtonText(gameContext);
+        this.updateMenuText(gameContext);
     });
 
     editorInterface.addClick("BUTTON_TILESET_RIGHT", () => {
         this.scrollBrushSet(1);
         this.initButtons(gameContext);
-        this.updateButtonText(gameContext);
+        this.updateMenuText(gameContext);
     });
 
     editorInterface.addClick("BUTTON_PAGE_LAST", () => {
         this.scrollPage(-1);
         this.initButtons(gameContext);
-        this.updateButtonText(gameContext);
+        this.updateMenuText(gameContext);
     }); 
 
     editorInterface.addClick("BUTTON_PAGE_NEXT", () => {
         this.scrollPage(1);
         this.initButtons(gameContext);
-        this.updateButtonText(gameContext);
+        this.updateMenuText(gameContext);
     });  
 
     editorInterface.addClick("BUTTON_SCROLL_SIZE", () => {
         this.scrollBrushSize(1);
-        this.updateButtonText(gameContext);
+        this.updateMenuText(gameContext);
     }); 
 
     editorInterface.addClick("BUTTON_L1", () => {
@@ -343,18 +297,11 @@ ArmyMapEditor.prototype.initUIEvents = function(gameContext) {
     });
 
     editorInterface.addClick("BUTTON_VIEW_ALL", () => {
-        const buttonColor = this.buttonStates[ArmyMapEditor.BUTTON_STATE.VISIBLE].textColor;
-        
-        for(const buttonID in this.layerButtons) {
-            const button = this.layerButtons[buttonID];
-            const buttonText = editorInterface.getElement(button.text);
-
-            button.state = ArmyMapEditor.BUTTON_STATE.VISIBLE;
-            buttonText.style.color.setColorArray(buttonColor);
-        }
+        this.buttonHandler.resetButtons(editorInterface);
 
         this.currentLayer = null;
         this.currentLayerButtonID = null;
+
         this.brush.reset();
         this.updateLayerOpacity(gameContext);
     });
@@ -426,15 +373,17 @@ ArmyMapEditor.prototype.resizeCurrentMap = function(gameContext) {
 }
 
 ArmyMapEditor.prototype.paintTile = function(gameContext) {
-    if(this.currentLayerButtonID === null) {
+    const { tileManager } = gameContext;
+    const button = this.buttonHandler.getButton(this.currentLayerButtonID);
+
+    if(!button) {
         return;
     }
 
-    const { tileManager } = gameContext;
-    const { type } = this.layerButtons[this.currentLayerButtonID];
+    const { type } = button;
 
     switch(type) {
-        case ArmyMapEditor.BUTTON_TYPE.GRAPHICS: {
+        case EditorButton.TYPE.GRAPHICS: {
             this.paint(gameContext, this.currentMapID, this.currentLayer, (worldMap, tileID, tileX, tileY) => {
                 const tileMeta = tileManager.getMeta(tileID);
 
@@ -448,7 +397,7 @@ ArmyMapEditor.prototype.paintTile = function(gameContext) {
             });
             break;
         }
-        case ArmyMapEditor.BUTTON_TYPE.TYPE: {
+        case EditorButton.TYPE.TYPE: {
             const layerID = "type";
 
             this.incrementTypeIndex(gameContext, this.currentMapID, layerID);
@@ -470,65 +419,56 @@ ArmyMapEditor.prototype.updateLayerOpacity = function(gameContext) {
         return;
     }
 
-    for(const buttonID in this.layerButtons) {
-        const button = this.layerButtons[buttonID];
-        const { state, layer } = button;
-        const buttonState = this.buttonStates[state];
-        const { opacity } = buttonState;
+    if(this.currentLayerButtonID === null) {
+        this.buttonHandler.forAllButtons((buttonID, button) => {
+            const { layerID, opacity } = button;
 
-        worldMap.setLayerOpacity(layer, opacity);
+            worldMap.setLayerOpacity(layerID, opacity);
+        });
+    } else {
+        this.buttonHandler.forAllButtons((buttonID, button) => {
+            const { state, layerID, opacity } = button;
 
-        if(this.currentLayerButtonID === null) {
-            continue;
-        }
-
-        if(state === ArmyMapEditor.BUTTON_STATE.VISIBLE) {
-            worldMap.setLayerOpacity(layer, 0.5);
-        }
+            if(state === EditorButton.STATE.VISIBLE) {
+                worldMap.setLayerOpacity(layerID, 0.5);
+            } else {
+                worldMap.setLayerOpacity(layerID, opacity);
+            }
+        });
     }
 }
 
 ArmyMapEditor.prototype.scrollLayerButton = function(gameContext, buttonID) {
     const { uiManager } = gameContext;
-    const button = this.layerButtons[buttonID];
-    const { nextState } = this.buttonStates[button.state];
     const editorInterface = uiManager.getInterface(this.interfaceID);
+    const button = this.buttonHandler.getButton(buttonID);
 
     if(buttonID === this.currentLayerButtonID) {
         this.currentLayerButtonID = null;
         this.currentLayer = null;
     }
 
-    switch(nextState) {
-        case ArmyMapEditor.BUTTON_STATE.EDIT: {
-            if(this.currentLayerButtonID !== null) {
-                const currentButton = this.layerButtons[this.currentLayerButtonID];
-                const currentButtonText = editorInterface.getElement(currentButton.text);
-                const currentButtonColor = this.buttonStates[ArmyMapEditor.BUTTON_STATE.VISIBLE].textColor;
-            
-                currentButton.state = ArmyMapEditor.BUTTON_STATE.VISIBLE;
-                currentButtonText.style.color.setColorArray(currentButtonColor);
-    
-                this.currentLayer = null;
-                this.currentLayerButtonID = null;
-            }
-    
-            this.currentLayer = button.layer;
-            this.currentLayerButtonID = buttonID;
-            break;
+    const nextState = button.scrollState(editorInterface);
+
+    if(nextState === EditorButton.STATE.EDIT) {
+        const currentButton = this.buttonHandler.getButton(this.currentLayerButtonID);
+
+        if(currentButton) {
+            currentButton.setState(EditorButton.STATE.VISIBLE);
+            currentButton.updateTextColor(editorInterface);
+
+            this.currentLayerButtonID = null;
+            this.currentLayer = null;
         }
+
+        this.currentLayer = button.layerID;
+        this.currentLayerButtonID = buttonID;
     }
-
-    const buttonText = editorInterface.getElement(button.text);
-    const buttonColor = this.buttonStates[nextState].textColor;
-
-    buttonText.style.color.setColorArray(buttonColor);
-    button.state = nextState;
 
     this.updateLayerOpacity(gameContext);
 }
 
-ArmyMapEditor.prototype.updateButtonText = function(gameContext) {
+ArmyMapEditor.prototype.updateMenuText = function(gameContext) {
     const { uiManager } = gameContext;
     const editorInterface = uiManager.getInterface(this.interfaceID);
 
