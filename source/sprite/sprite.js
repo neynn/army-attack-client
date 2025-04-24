@@ -67,8 +67,8 @@ Sprite.prototype.isEqual = function(typeID) {
     return typeID === this.typeID;
 }
 
-Sprite.prototype.init = function(typeID, frameCount, frameTime, lastCallTime) {
-    this.DEBUG_NAME = typeID;
+Sprite.prototype.init = function(DEBUG_NAME, typeID, frameCount, frameTime, lastCallTime) {
+    this.DEBUG_NAME = DEBUG_NAME;
     this.typeID = typeID;
     this.frameCount = frameCount;
     this.frameTime = frameTime;

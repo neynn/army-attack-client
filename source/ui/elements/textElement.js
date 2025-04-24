@@ -1,4 +1,4 @@
-import { TextStyle } from "../../graphics/applyable/textStyle.js";
+import { TextStyle } from "../../graphics/textStyle.js";
 import { Graph } from "../../graphics/graph.js";
 import { UIElement } from "../uiElement.js";
 
@@ -62,11 +62,7 @@ TextElement.prototype.isCompleted = function() {
 }
 
 TextElement.prototype.addDrawHook = function() {
-    this.addHook(Graph.HOOK.DRAW, (context, localX, localY) => {
-        this.style.apply(context);
-
-        context.fillText(this.revealedText, localX, localY);
-    });
+    this.addHook(Graph.HOOK.DRAW, (context, localX, localY) => this.style.drawText(context, this.revealedText, localX, localY));
 }
 
 TextElement.prototype.addUpdateHook = function() {

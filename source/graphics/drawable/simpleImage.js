@@ -4,7 +4,7 @@ export const SimpleImage = function() {
     Graph.call(this, Graph.TYPE.OTHER, "SIMPLE_IMAGE");
 
     this.image = null;
-
+    
     this.addDrawHook();
 }
 

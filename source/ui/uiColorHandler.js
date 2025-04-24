@@ -39,9 +39,7 @@ UIColorHandler.prototype.drawColor = function(context, shape, x, y, w, h) {
         return;
     }
 
-    const fillStyle = this.color.getRGBAString();
-
-    context.fillStyle = fillStyle;
+    context.fillStyle = this.color.rgba;
 
     switch(shape) {
         case SHAPE.RECTANGLE: {
@@ -62,9 +60,7 @@ UIColorHandler.prototype.drawStroke = function(context, size, shape, x, y, w, h)
         return;
     }
 
-    const fillStyle = this.color.getRGBAString();
-
-    context.strokeStyle = fillStyle;
+    context.strokeStyle = this.color.rgba;;
     context.lineWidth = size;
 
     switch(shape) {

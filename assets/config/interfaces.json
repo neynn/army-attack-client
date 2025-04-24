@@ -7,7 +7,7 @@
             "text": "ARMY ATTACK",
             "fontSize": 50,
             "fontType": "Arial",
-            "color": [238, 238, 238, 1],
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 0.5,
             "effects": [ { "type": "FADE_IN", "threshold": 1, "value": 0.3 } ]
@@ -28,7 +28,7 @@
             "text": "PLAY",
             "fontSize": 50,
             "fontType": "Arial",
-            "color": [238, 238, 238, 1],
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 0.5,
             "effects": [ { "type": "FADE_IN", "threshold": 1, "value": 0.3 } ]
@@ -49,7 +49,7 @@
             "text": "VERSUS",
             "fontSize": 50,
             "fontType": "Arial",
-            "color": [238, 238, 238, 1],
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 0.5,
             "effects": [ { "type": "FADE_IN", "threshold": 1, "value": 0.3 } ]
@@ -70,7 +70,7 @@
             "text": "EDIT",
             "fontSize": 50,
             "fontType": "Arial",
-            "color": [238, 238, 238, 1],
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 0.5,
             "effects": [ { "type": "FADE_IN", "threshold": 1, "value": 0.3 } ]
@@ -93,7 +93,7 @@
             "text": "CREATE",
             "fontSize": 50,
             "fontType": "Arial",
-            "color": [238, 238, 238, 1],
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 0.5,
             "effects": [ { "type": "FADE_IN", "threshold": 1, "value": 0.3 } ]
@@ -114,7 +114,7 @@
             "text": "JOIN",
             "fontSize": 50,
             "fontType": "Arial",
-            "color": [238, 238, 238, 1],
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 0.5,
             "effects": [ { "type": "FADE_IN", "threshold": 1, "value": 0.3 } ]
@@ -135,7 +135,7 @@
             "text": "LEAVE",
             "fontSize": 50,
             "fontType": "Arial",
-            "color": [238, 238, 238, 1],
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 0.5,
             "effects": [ { "type": "FADE_IN", "threshold": 1, "value": 0.3 } ]
@@ -156,7 +156,7 @@
             "text": "START",
             "fontSize": 50,
             "fontType": "Arial",
-            "color": [238, 238, 238, 1],
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 0.5,
             "effects": [ { "type": "FADE_IN", "threshold": 1, "value": 0.3 } ]
@@ -188,7 +188,7 @@
             "text": "SAVE",
             "fontSize": 20,
             "fontType": "Arial",
-            "color": [238, 238, 238, 1],
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 0.5,
             "effects": [ { "type": "FADE_IN", "threshold": 1, "value": 0.3 } ]
@@ -210,7 +210,7 @@
             "text": "LOAD",
             "fontSize": 20,
             "fontType": "Arial",
-            "color": [238, 238, 238, 1],
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 0.5,
             "effects": [ { "type": "FADE_IN", "threshold": 1, "value": 0.3 } ]
@@ -232,7 +232,7 @@
             "text": "CREATE",
             "fontSize": 20,
             "fontType": "Arial",
-            "color": [238, 238, 238, 1],
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 0.5,
             "effects": [ { "type": "FADE_IN", "threshold": 1, "value": 0.3 } ]
@@ -254,7 +254,7 @@
             "text": "RESIZE",
             "fontSize": 20,
             "fontType": "Arial",
-            "color": [238, 238, 238, 1],
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 0.5,
             "effects": [ { "type": "FADE_IN", "threshold": 1, "value": 0.3 } ]
@@ -285,7 +285,7 @@
             "text": "GROUND",
             "fontSize": 15,
             "fontType": "Arial",
-            "color": [238, 238, 238, 1],
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 0.5,
             "effects": [ { "type": "FADE_IN", "threshold": 1, "value": 0.3 } ]
@@ -307,7 +307,7 @@
             "text": "DECORATION",
             "fontSize": 15,
             "fontType": "Arial",
-            "color": [238, 238, 238, 1],
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 0.5,
             "effects": [ { "type": "FADE_IN", "threshold": 1, "value": 0.3 } ]
@@ -329,7 +329,7 @@
             "text": "CLOUD",
             "fontSize": 15,
             "fontType": "Arial",
-            "color": [238, 238, 238, 1],
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 0.5,
             "effects": [ { "type": "FADE_IN", "threshold": 1, "value": 0.3 } ]
@@ -351,7 +351,7 @@
             "text": "TYPE",
             "fontSize": 15,
             "fontType": "Arial",
-            "color": [238, 238, 238, 1],
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 0.5,
             "effects": [ { "type": "FADE_IN", "threshold": 1, "value": 0.3 } ]
@@ -373,7 +373,7 @@
             "text": "VIEW ALL",
             "fontSize": 15,
             "fontType": "Arial",
-            "color": [238, 238, 238, 1],
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 0.5,
             "effects": [ { "type": "FADE_IN", "threshold": 1, "value": 0.3 } ]
@@ -393,7 +393,7 @@
             "text": "PAGE",
             "fontSize": 20,
             "fontType": "Arial",
-            "color": [238, 238, 238, 1],
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 1
         },
@@ -412,7 +412,7 @@
             "text": "<<",
             "fontSize": 20,
             "fontType": "Arial",
-            "color": [238, 238, 238, 1],
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 1
         },
@@ -431,7 +431,7 @@
             "text": ">>",
             "fontSize": 20,
             "fontType": "Arial",
-            "color": [238, 238, 238, 1],
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 1
         },
@@ -450,7 +450,7 @@
             "text": "<SIZE>",
             "fontSize": 20,
             "fontType": "Arial",
-            "color": [238, 238, 238, 1],
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 1
         },
@@ -460,7 +460,7 @@
             "text": "<TILESET>",
             "fontSize": 20,
             "fontType": "Arial",
-            "color": [238, 238, 238, 1],
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 1
         },
@@ -479,7 +479,7 @@
             "text": "<MODE>",
             "fontSize": 20,
             "fontType": "Arial",
-            "color": [238, 238, 238, 1],
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 1
         },
@@ -498,7 +498,7 @@
             "text": ">>",
             "fontSize": 20,
             "fontType": "Arial",
-            "color": [238, 238, 238, 1],
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 1
         },
@@ -517,7 +517,7 @@
             "text": "<<",
             "fontSize": 20,
             "fontType": "Arial",
-            "color": [238, 238, 238, 1],
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 1
         },
@@ -546,7 +546,7 @@
             "text": "AUTO",
             "fontSize": 20,
             "fontType": "Arial",
-            "color": [238, 238, 238, 1],
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 1
         },
@@ -566,7 +566,7 @@
             "text": "ERASER",
             "fontSize": 20,
             "fontType": "Arial",
-            "color": [238, 238, 238, 1],
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 1
         },
@@ -586,7 +586,7 @@
             "text": "UNDO",
             "fontSize": 20,
             "fontType": "Arial",
-            "color": [238, 238, 238, 1],
+            "color": [238, 238, 238, 255],
             "align": "center",
             "opacity": 1
         }

@@ -1,4 +1,4 @@
-import { Color } from "../color.js";
+import { Color } from "./color.js";
 
 export const TextStyle = function() {
     this.color = new Color();
@@ -64,11 +64,10 @@ TextStyle.prototype.setFontSize = function(fontSize) {
     this.updateFont();
 }
 
-TextStyle.prototype.apply = function(context) {
-    const fillStyle = this.color.getRGBAString();
-
+TextStyle.prototype.drawText = function(context, text, positionX, positionY) {
     context.font = this.font;
-    context.fillStyle = fillStyle;
+    context.fillStyle = this.color.rgba;
     context.textAlign = this.alignment;
     context.textBaseline = this.baseline;
+    context.fillText(text, positionX, positionY);
 }

@@ -1,5 +1,5 @@
 import { SimpleText } from "../../source/graphics/drawable/simpleText.js";
-import { TextStyle } from "../../source/graphics/applyable/textStyle.js";
+import { TextStyle } from "../../source/graphics/textStyle.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { Player } from "../init/actors/player/player.js";
 import { SpriteComponent } from "../components/sprite.js";

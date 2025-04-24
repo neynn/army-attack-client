@@ -1,3 +1,4 @@
+import { Color } from "../../graphics/color.js";
 import { Graph } from "../../graphics/graph.js";
 import { SHAPE, TWO_PI } from "../../math/constants.js";
 import { UICollider } from "../uiCollider.js";
@@ -16,8 +17,8 @@ export const Button = function(DEBUG_NAME) {
     this.outline = new UIColorHandler();
     this.outlineSize = 1;
 
-    this.highlight.color.setColorRGBA(200, 200, 200, 0.25);
-    this.outline.color.setColorRGBA(255, 255, 255, 1);
+    this.highlight.color.setColorRGBA(200, 200, 200, 64);
+    this.outline.color.setColorRGBA(255, 255, 255, 255);
     this.outline.enable();
 
     this.collider.events.on(UICollider.EVENT.FIRST_COLLISION, (mouseX, mouseY, mouseRange) => this.highlight.enable(), { permanent: true });

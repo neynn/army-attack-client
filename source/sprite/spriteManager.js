@@ -199,7 +199,7 @@ SpriteManager.prototype.updateSprite = function(spriteIndex, typeID, animationID
         const frameCount = graphic.getFrameCount();
         const frameTime = graphic.getFrameTime();
 
-        sprite.init(spriteID, frameCount, frameTime, this.timestamp);
+        sprite.init(typeID, spriteID, frameCount, frameTime, this.timestamp);
         sprite.setBounds(boundsX, boundsY, boundsW, boundsH);
 
         this.resources.requestImage(typeID);

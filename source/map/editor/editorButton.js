@@ -19,9 +19,9 @@ EditorButton.STATE = {
 };
 
 EditorButton.STATE_COLOR = {
-    [EditorButton.STATE.HIDDEN]: [207, 55, 35, 1],
-    [EditorButton.STATE.VISIBLE]: [238, 238, 238, 1],
-    [EditorButton.STATE.EDIT]: [252, 252, 63, 1]
+    [EditorButton.STATE.HIDDEN]: [207, 55, 35, 255],
+    [EditorButton.STATE.VISIBLE]: [238, 238, 238, 255],
+    [EditorButton.STATE.EDIT]: [252, 252, 63, 255]
 };
 
 EditorButton.prototype.setType = function(typeID) {

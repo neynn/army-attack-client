@@ -12,7 +12,7 @@ export const Container = function(DEBUG_NAME) {
     this.outline = new UIColorHandler();
     this.outlineSize = 1;
 
-    this.outline.color.setColorRGBA(255, 255, 255, 1);
+    this.outline.color.setColorRGBA(255, 255, 255, 255);
     this.outline.enable();
 
     this.addDrawHook();

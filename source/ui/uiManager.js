@@ -2,7 +2,7 @@ import { Logger } from "../logger.js";
 import { ImageManager } from "../resources/imageManager.js";
 import { UserInterface } from "./userInterface.js";
 import { UIElement } from "./uiElement.js";
-import { TextStyle } from "../graphics/applyable/textStyle.js";
+import { TextStyle } from "../graphics/textStyle.js";
 import { Button } from "./elements/button.js";
 import { Container } from "./elements/container.js";
 import { Icon } from "./elements/icon.js";
@@ -266,7 +266,7 @@ UIManager.prototype.createElement = function(typeID, config, DEBUG_NAME) {
                 fontType = TextStyle.DEFAULT.FONT_TYPE,
                 fontSize = TextStyle.DEFAULT.FONT_SIZE,
                 align = TextStyle.TEXT_ALIGNMENT.LEFT,
-                color = [0, 0, 0, 1]
+                color = [0, 0, 0, 255]
             } = config;
 
             element.setPosition(x, y);

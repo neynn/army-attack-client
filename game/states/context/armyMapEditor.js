@@ -210,11 +210,11 @@ ArmyMapEditor.prototype.toggleEraser = function(gameContext) {
 
     switch(nextState) {
         case Brush.MODE.ERASE: {
-            color.setColorRGBA(252, 252, 63, 1);
+            color.setColorRGBA(252, 252, 63, 255);
             break;
         }
         default: {
-            color.setColorRGBA(238, 238, 238, 1);
+            color.setColorRGBA(238, 238, 238, 255);
             break;
         }
     }
@@ -230,11 +230,11 @@ ArmyMapEditor.prototype.toggleAutotiler = function(gameContext) {
 
     switch(nextState) {
         case MapEditor.AUTOTILER_STATE.INACTIVE: {
-            color.setColorRGBA(238, 238, 238, 1);
+            color.setColorRGBA(238, 238, 238, 255);
             break;
         }
         case MapEditor.AUTOTILER_STATE.ACTIVE: {
-            color.setColorRGBA(252, 252, 63, 1);
+            color.setColorRGBA(252, 252, 63, 255);
             break;
         }
     }
@@ -411,7 +411,7 @@ ArmyMapEditor.prototype.paintTile = function(gameContext) {
         if(tileMeta) {
             const { defaultType } = tileMeta;
 
-            if(defaultType) {
+            if(defaultType !== undefined) {
                 worldMap.placeTile(defaultType, ArmyMap.LAYER.TYPE, tileX, tileY);
             }
         }
