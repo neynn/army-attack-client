@@ -33,6 +33,8 @@ ButtonHandler.prototype.onClick = function(userInterface, buttonID) {
     }
 
     const nextState = button.scrollState(userInterface);
+    
+    button.updateTextColor(userInterface);
 
     switch(nextState) {
         case EditorButton.STATE.EDIT: {

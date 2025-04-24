@@ -19,9 +19,9 @@ EditorButton.STATE = {
 };
 
 EditorButton.STATE_COLOR = {
-    HIDDEN: [207, 55, 35, 1],
-    VISIBLE: [238, 238, 238, 1],
-    EDIT: [252, 252, 63, 1]
+    [EditorButton.STATE.HIDDEN]: [207, 55, 35, 1],
+    [EditorButton.STATE.VISIBLE]: [238, 238, 238, 1],
+    [EditorButton.STATE.EDIT]: [252, 252, 63, 1]
 };
 
 EditorButton.prototype.setType = function(typeID) {
@@ -30,23 +30,15 @@ EditorButton.prototype.setType = function(typeID) {
 
 EditorButton.prototype.updateTextColor = function(userInterface) {
     const text = userInterface.getElement(this.textID);
+
+    if(!text) {
+        return;
+    }
+
     const { style } = text;
     const { color } = style;
-
-    switch(this.state) {
-        case EditorButton.STATE.HIDDEN: {
-            color.setColorArray(EditorButton.STATE_COLOR.HIDDEN);
-            break;
-        }
-        case EditorButton.STATE.VISIBLE: {
-            color.setColorArray(EditorButton.STATE_COLOR.VISIBLE);
-            break;
-        }
-        case EditorButton.STATE.EDIT: {
-            color.setColorArray(EditorButton.STATE_COLOR.EDIT);
-            break;
-        }
-    }
+    
+    color.setColorArray(EditorButton.STATE_COLOR[this.state]);
 }
 
 EditorButton.prototype.setState = function(state) {
@@ -72,7 +64,7 @@ EditorButton.prototype.setState = function(state) {
     }
 }
 
-EditorButton.prototype.scrollState = function(userInterface) {
+EditorButton.prototype.scrollState = function() {
     switch(this.state) {
         case EditorButton.STATE.HIDDEN: {
             this.setState(EditorButton.STATE.VISIBLE);
@@ -86,10 +78,6 @@ EditorButton.prototype.scrollState = function(userInterface) {
             this.setState(EditorButton.STATE.HIDDEN);
             break;
         }
-    }
-
-    if(userInterface) {
-        this.updateTextColor(userInterface);
     }
 
     return this.state;
