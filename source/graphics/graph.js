@@ -24,10 +24,6 @@ Graph.prototype.onDraw = function(context, localX, localY) {}
 Graph.prototype.onDebug = function(context, localX, localY) {}
 Graph.prototype.onUpdate = function(context, localX, localY) {}
 
-Graph.prototype.isState = function(stateID) {
-    return this.state === stateID;
-}
-
 Graph.prototype.findByID = function(childID) {
     const stack = [this];
 
@@ -82,27 +78,28 @@ Graph.prototype.debug = function(context, viewportX, viewportY) {
     const positions = [this.positionX - viewportX, this.positionY - viewportY];
 
     while(stack.length !== 0) {
-        const positionY = positions.pop();
-        const positionX = positions.pop();
+        const localY = positions.pop();
+        const localX = positions.pop();
         const graph = stack.pop();
         const { children } = graph;
 
         context.save();
-        graph.onDebug(context, positionX, positionY);
+        graph.onDebug(context, localX, localY);
         context.restore();
 
         for(let i = children.length - 1; i >= 0; i--) {
             const child = children[i];
+            const { positionX, positionY } = child;
 
             stack.push(child);
-            positions.push(positionX + child.positionX);
-            positions.push(positionY + child.positionY);
+            positions.push(localX + positionX);
+            positions.push(localY + positionY);
         }
     }
 }
 
 Graph.prototype.draw = function(context, viewportX, viewportY) {
-    if(!this.isState(Graph.STATE.VISIBLE)) {
+    if(this.state !== Graph.STATE.VISIBLE) {
         return;
     }
 
@@ -110,23 +107,24 @@ Graph.prototype.draw = function(context, viewportX, viewportY) {
     const positions = [this.positionX - viewportX, this.positionY - viewportY];
 
     while(stack.length !== 0) {
-        const positionY = positions.pop();
-        const positionX = positions.pop();
+        const localY = positions.pop();
+        const localX = positions.pop();
         const graph = stack.pop();
         const { children } = graph;
 
         context.save();
         context.globalAlpha = this.opacity;
-        graph.onDraw(context, positionX, positionY);
+        graph.onDraw(context, localX, localY);
         context.restore();
 
         for(let i = children.length - 1; i >= 0; i--) {
             const child = children[i];
+            const { state, positionX, positionY } = child;
 
-            if(child.isState(Graph.STATE.VISIBLE)) {
+            if(state === Graph.STATE.VISIBLE) {
                 stack.push(child);
-                positions.push(positionX + child.positionX);
-                positions.push(positionY + child.positionY);
+                positions.push(localX + positionX);
+                positions.push(localY + positionY);
             }
         }
     }

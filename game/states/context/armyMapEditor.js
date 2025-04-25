@@ -73,7 +73,7 @@ ArmyMapEditor.prototype.initUI = function(gameContext) {
     ["CONTAINER_FILE", "CONTAINER_LAYERS", "CONTAINER_TILES", "CONTAINER_TOOLS"].forEach(id => {
         const container = editorInterface.getElement(id);
 
-        container.background.color.setColorRGBA(20, 20, 20, 0.5);
+        container.background.color.setColorRGBA(20, 20, 20, 128);
         container.background.toggle();
     });
 }
