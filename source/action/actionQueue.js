@@ -114,7 +114,7 @@ ActionQueue.prototype.flushExecution = function(gameContext) {
     this.events.emit(ActionQueue.EVENT.EXECUTION_RUNNING, this.current);
     
     actionType.onStart(gameContext, data, messengerID);
-    actionType.onEnd(gameContext, data, messengerID);;
+    actionType.onEnd(gameContext, data, messengerID);
 
     this.clearCurrent();
 }

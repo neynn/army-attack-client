@@ -8,7 +8,6 @@ import { Container } from "./elements/container.js";
 import { Icon } from "./elements/icon.js";
 import { Scrollbar } from "./elements/scrollbar.js";
 import { TextElement } from "./elements/textElement.js";
-import { Graph } from "../graphics/graph.js";
 import { SHAPE } from "../math/constants.js";
 
 export const UIManager = function() {
@@ -228,7 +227,7 @@ UIManager.prototype.createElement = function(typeID, config, DEBUG_NAME) {
             return element;
         }
         case UIManager.ELEMENT_TYPE.ICON: {
-            const element = new Icon(DEBUG_NAME);
+            const element = new Icon(this.resources, DEBUG_NAME);
             const {
                 image = null
             } = config;
@@ -239,13 +238,6 @@ UIManager.prototype.createElement = function(typeID, config, DEBUG_NAME) {
             element.setAnchor(anchor);
             element.setSize(width, height);
             element.setImage(image);
-            element.addHook(Graph.HOOK.DRAW, (context, localX, localY) => {
-                const bitmap = this.resources.getImageBitmap(element.imageID);
-            
-                if(bitmap) {
-                    context.drawImage(bitmap, localX, localY);
-                }
-            });
 
             return element;
         }

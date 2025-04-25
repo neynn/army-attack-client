@@ -1,7 +1,7 @@
 import { Graph } from "../graphics/graph.js";
 
 export const UIElement = function(DEBUG_NAME) {
-    Graph.call(this, Graph.TYPE.UI_ELEMENT, DEBUG_NAME);
+    Graph.call(this, DEBUG_NAME);
 
     this.anchor = UIElement.ANCHOR_TYPE.TOP_LEFT;
     this.originX = 0;
@@ -81,12 +81,10 @@ UIElement.prototype.getCollisions = function(mouseX, mouseY, mouseRange) {
         for(let i = 0; i < children.length; i++) {
             const child = children[i];
             
-            if(child.isType(Graph.TYPE.UI_ELEMENT)) {
-                if(child.collider) {
-                    stack.push(child);
-                    positions.push(nextX);
-                    positions.push(nextY);
-                }
+            if(child.collider) {
+                stack.push(child);
+                positions.push(nextX);
+                positions.push(nextY);
             }
         }
 

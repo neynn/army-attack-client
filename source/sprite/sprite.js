@@ -1,8 +1,9 @@
 import { Graph } from "../graphics/graph.js";
 
-export const Sprite = function(index, DEBUG_NAME) {
-    Graph.call(this, Graph.TYPE.SPRITE, DEBUG_NAME);
+export const Sprite = function(manager, index, DEBUG_NAME) {
+    Graph.call(this, DEBUG_NAME);
     
+    this.manager = manager;
     this.index = index;
     this.typeID = -1;
     this.lastCallTime = 0;
@@ -17,9 +18,6 @@ export const Sprite = function(index, DEBUG_NAME) {
     this.boundsW = 0;
     this.boundsH = 0;
     this.flags = Sprite.FLAG.NONE;
-
-    this.addUpdateHook();
-    this.addDebugHook();
 }
 
 Sprite.DEBUG = {
@@ -37,8 +35,85 @@ Sprite.FLAG = {
 Sprite.prototype = Object.create(Graph.prototype);
 Sprite.prototype.constructor = Sprite;
 
-Sprite.prototype.onTerminate = function(spriteID) {
-    console.warn(`Method onTerminate has not been implemented by sprite ${spriteID}`);
+Sprite.prototype.onDraw = function(context, localX, localY) {
+    const graphic = this.manager.graphics.getGraphic(this.typeID);
+
+    if(!graphic) {
+        return;
+    }
+
+    const { image, frames } = graphic;
+
+    if(image === null || frames.length === 0) {
+        return;
+    }
+
+    const { bitmap } = image;
+    const spriteFrame = frames[this.currentFrame];
+    const isFlipped = (this.flags & Sprite.FLAG.FLIP) !== 0;
+
+    if(isFlipped) {
+        const renderX = (localX - this.boundsX) * -1;
+        const renderY = localY + this.boundsY;
+
+        context.scale(-1, 1);
+
+        for(let i = 0; i < spriteFrame.length; i++) {
+            const { frameX, frameY, frameW, frameH, shiftX, shiftY } = spriteFrame[i];
+            const drawX = renderX - shiftX;
+            const drawY = renderY + shiftY;
+            
+            context.drawImage(
+                bitmap,
+                frameX, frameY, frameW, frameH,
+                drawX, drawY, frameW, frameH
+            );
+        }
+    } else {
+        const renderX = localX + this.boundsX;
+        const renderY = localY + this.boundsY;
+
+        for(let i = 0; i < spriteFrame.length; i++) {
+            const { frameX, frameY, frameW, frameH, shiftX, shiftY } = spriteFrame[i];
+            const drawX = renderX + shiftX;
+            const drawY = renderY + shiftY;
+
+            context.drawImage(
+                bitmap,
+                frameX, frameY, frameW, frameH,
+                drawX, drawY, frameW, frameH
+            );
+        }
+    }
+}
+
+Sprite.prototype.onUpdate = function(timestamp, deltaTime) {
+    const passedTime = timestamp - this.lastCallTime;
+    const passedFrames = passedTime / this.frameTime;
+
+    this.lastCallTime = timestamp;
+    this.updateFrame(passedFrames);
+}
+
+Sprite.prototype.onDebug = function(context, localX, localY) {
+    const isFlipped = (this.flags & Sprite.FLAG.FLIP) !== 0;
+
+    if(isFlipped) {
+        const drawX = localX - this.boundsX;
+        const drawY = localY + this.boundsY;
+
+        context.scale(-1, 1);
+        context.strokeStyle = Sprite.DEBUG.COLOR;
+        context.lineWidth = Sprite.DEBUG.LINE_SIZE;
+        context.strokeRect(-drawX, drawY, this.boundsW, this.boundsH);
+    } else {
+        const drawX = localX + this.boundsX;
+        const drawY = localY + this.boundsY;
+
+        context.strokeStyle = Sprite.DEBUG.COLOR;
+        context.lineWidth = Sprite.DEBUG.LINE_SIZE;
+        context.strokeRect(drawX, drawY, this.boundsW, this.boundsH);
+    }
 }
 
 Sprite.prototype.getIndex = function() {
@@ -100,39 +175,6 @@ Sprite.prototype.isVisible = function(viewportRight, viewportLeft, viewportBotto
     return isVisible;
 }
 
-Sprite.prototype.addUpdateHook = function() {
-    this.addHook(Graph.HOOK.UPDATE, (timestamp, deltaTime) => {
-        const passedTime = timestamp - this.lastCallTime;
-        const passedFrames = passedTime / this.frameTime;
-    
-        this.lastCallTime = timestamp;
-        this.updateFrame(passedFrames);
-    })
-}
-
-Sprite.prototype.addDebugHook = function() {
-    this.addHook(Graph.HOOK.DEBUG, (context, localX, localY) => {
-        const isFlipped = (this.flags & Sprite.FLAG.FLIP) !== 0;
-
-        if(isFlipped) {
-            const drawX = localX - this.boundsX;
-            const drawY = localY + this.boundsY;
-    
-            context.scale(-1, 1);
-            context.strokeStyle = Sprite.DEBUG.COLOR;
-            context.lineWidth = Sprite.DEBUG.LINE_SIZE;
-            context.strokeRect(-drawX, drawY, this.boundsW, this.boundsH);
-        } else {
-            const drawX = localX + this.boundsX;
-            const drawY = localY + this.boundsY;
-    
-            context.strokeStyle = Sprite.DEBUG.COLOR;
-            context.lineWidth = Sprite.DEBUG.LINE_SIZE;
-            context.strokeRect(drawX, drawY, this.boundsW, this.boundsH);
-        }
-    });
-}
-
 Sprite.prototype.setFrame = function(frameIndex = this.currentFrame) {
     if(frameIndex < this.frameCount && frameIndex >= 0) {
         this.floatFrame = frameIndex;
@@ -143,7 +185,7 @@ Sprite.prototype.setFrame = function(frameIndex = this.currentFrame) {
 Sprite.prototype.terminate = function() {
     this.hide();
     this.freeze();
-    this.onTerminate();
+    this.manager.destroySprite(this.index);
 }
 
 Sprite.prototype.expire = function(loops = 0) {

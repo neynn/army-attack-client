@@ -60,7 +60,7 @@ UIColorHandler.prototype.drawStroke = function(context, size, shape, x, y, w, h)
         return;
     }
 
-    context.strokeStyle = this.color.rgba;;
+    context.strokeStyle = this.color.rgba;
     context.lineWidth = size;
 
     switch(shape) {

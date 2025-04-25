@@ -45,64 +45,11 @@ SpriteGraphics.prototype.onImageLoad = function(atlasID, loadableImage) {
     sprites.forEach((index) => this.graphics[index].setImage(loadableImage));
 }
 
-SpriteGraphics.prototype.drawSprite = function(context, sprite, localX, localY) {
-    const { typeID, currentFrame, flags, boundsX, boundsY } = sprite;
-
-    if(typeID < 0 || typeID >= this.graphics.length) {
-        return;
-    }
-
-    const graphic = this.graphics[typeID];
-    const { image, frames } = graphic;
-
-    if(image === null || frames.length === 0) {
-        return;
-    }
-
-    const { bitmap } = image;
-    const spriteFrame = frames[currentFrame];
-    const isFlipped = (flags & Sprite.FLAG.FLIP) !== 0;
-
-    if(isFlipped) {
-        const renderX = (localX - boundsX) * -1;
-        const renderY = localY + boundsY;
-
-        context.scale(-1, 1);
-
-        for(let i = 0; i < spriteFrame.length; i++) {
-            const { frameX, frameY, frameW, frameH, shiftX, shiftY } = spriteFrame[i];
-            const drawX = renderX - shiftX;
-            const drawY = renderY + shiftY;
-            
-            context.drawImage(
-                bitmap,
-                frameX, frameY, frameW, frameH,
-                drawX, drawY, frameW, frameH
-            );
-        }
-    } else {
-        const renderX = localX + boundsX;
-        const renderY = localY + boundsY;
-
-        for(let i = 0; i < spriteFrame.length; i++) {
-            const { frameX, frameY, frameW, frameH, shiftX, shiftY } = spriteFrame[i];
-            const drawX = renderX + shiftX;
-            const drawY = renderY + shiftY;
-
-            context.drawImage(
-                bitmap,
-                frameX, frameY, frameW, frameH,
-                drawX, drawY, frameW, frameH
-            );
-        }
-    }
-}
-
 SpriteGraphics.prototype.getSpriteIndex = function(atlasID, spriteID) {
     const spriteAtlas = this.spriteAtlases.get(atlasID);
 
     if(!spriteAtlas) {
-        return SpriteAtlas.ID.INVALID;;
+        return SpriteAtlas.ID.INVALID;
     }
 
     const spriteIndex = spriteAtlas.getSpriteIndex(spriteID)
@@ -125,9 +72,7 @@ SpriteGraphics.prototype.getGraphic = function(spriteIndex) {
         return null;
     }
 
-    const graphic = this.graphics[spriteIndex];
-
-    return graphic;
+    return this.graphics[spriteIndex];
 }
 
 const createFrame = function(frameData) {

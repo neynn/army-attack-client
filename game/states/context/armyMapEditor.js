@@ -350,7 +350,7 @@ ArmyMapEditor.prototype.initButtons = function(gameContext) {
         const tileID = this.brush.getTileID(palletID);
 
         button.collider.events.unsubscribe(UICollider.EVENT.CLICKED, this.id);
-        button.clearDefers();
+        button.clearCustomRenders();
 
         if(tileID === Brush.ID.INVALID) {
             continue;
@@ -360,7 +360,7 @@ ArmyMapEditor.prototype.initButtons = function(gameContext) {
             this.brush.selectFromPallet(palletID);
         }, { id: this.id });
 
-        button.addDefer((context, localX, localY) => {
+        button.addCustomRender((context, localX, localY) => {
             this.camera.drawTile(graphics, context, tileID, localX, localY, this.slotButtonSize, this.slotButtonSize);
         });
     }

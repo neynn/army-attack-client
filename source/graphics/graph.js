@@ -1,6 +1,5 @@
-export const Graph = function(type = Graph.TYPE.NONE, DEBUG_NAME = "") {
+export const Graph = function(DEBUG_NAME = "") {
     this.DEBUG_NAME = DEBUG_NAME;
-    this.type = type;
     this.id = Graph.ID.NEXT++;
     this.state = Graph.STATE.VISIBLE;
     this.positionX = 0;
@@ -9,21 +8,11 @@ export const Graph = function(type = Graph.TYPE.NONE, DEBUG_NAME = "") {
     this.name = "";
     this.parent = null;
     this.children = [];
-    this.drawHooks = [];
-    this.updateHooks = [];
-    this.debugHooks = [];
 }
 
 Graph.ID = {
     NEXT: 100000,
     INVALID: -1
-}
-
-Graph.TYPE = {
-    NONE: 0,
-    SPRITE: 1,
-    UI_ELEMENT: 2,
-    OTHER: 3
 };
 
 Graph.STATE = {
@@ -31,15 +20,9 @@ Graph.STATE = {
     VISIBLE: 1
 };
 
-Graph.HOOK = {
-    DRAW: 0,
-    UPDATE: 1,
-    DEBUG: 2
-};
-
-Graph.prototype.isType = function(typeID) {
-    return this.type === typeID;
-}
+Graph.prototype.onDraw = function(context, localX, localY) {}
+Graph.prototype.onDebug = function(context, localX, localY) {}
+Graph.prototype.onUpdate = function(context, localX, localY) {}
 
 Graph.prototype.isState = function(stateID) {
     return this.state === stateID;
@@ -84,16 +67,13 @@ Graph.prototype.update = function(timestamp, deltaTime) {
 
     while(stack.length !== 0) {
         const graph = stack.pop();
-        const { children, updateHooks } = graph;
-        const length = updateHooks.length;
+        const { children } = graph;
 
         for(let i = children.length - 1; i >= 0; i--) {
             stack.push(children[i]);
         }
 
-        for(let i = 0; i < length; ++i) {
-            updateHooks[i](timestamp, deltaTime);
-        }
+        graph.onUpdate(timestamp, deltaTime);
     }
 }
 
@@ -105,15 +85,10 @@ Graph.prototype.debug = function(context, viewportX, viewportY) {
         const positionY = positions.pop();
         const positionX = positions.pop();
         const graph = stack.pop();
-        const { children, debugHooks } = graph;
-        const length = debugHooks.length;
+        const { children } = graph;
 
         context.save();
-
-        for(let i = 0; i < length; ++i) {
-            debugHooks[i](context, positionX, positionY);
-        }
-
+        graph.onDebug(context, positionX, positionY);
         context.restore();
 
         for(let i = children.length - 1; i >= 0; i--) {
@@ -138,16 +113,11 @@ Graph.prototype.draw = function(context, viewportX, viewportY) {
         const positionY = positions.pop();
         const positionX = positions.pop();
         const graph = stack.pop();
-        const { children, drawHooks } = graph;
-        const length = drawHooks.length;
+        const { children } = graph;
 
         context.save();
         context.globalAlpha = this.opacity;
-
-        for(let i = 0; i < length; ++i) {
-            drawHooks[i](context, positionX, positionY);
-        }
-
+        graph.onDraw(context, positionX, positionY);
         context.restore();
 
         for(let i = children.length - 1; i >= 0; i--) {
@@ -158,52 +128,6 @@ Graph.prototype.draw = function(context, viewportX, viewportY) {
                 positions.push(positionX + child.positionX);
                 positions.push(positionY + child.positionY);
             }
-        }
-    }
-}
-
-Graph.prototype.clearHooks = function(type) {
-    switch(type) {
-        case Graph.HOOK.DRAW: {
-            this.drawHooks.length = 0;
-            break;
-        }
-        case Graph.HOOK.UPDATE: {
-            this.updateHooks.length = 0;
-            break;
-        }
-        case Graph.HOOK.DEBUG: {
-            this.debugHooks.length = 0;
-            break;
-        }
-        default: {
-            console.warn(`HookType ${type} does not exist!`);
-            break;
-        }
-    }
-}
-
-Graph.prototype.addHook = function(type, onCall) {
-    if(typeof onCall !== "function") {
-        return;
-    }
-
-    switch(type) {
-        case Graph.HOOK.DRAW: {
-            this.drawHooks.push(onCall);
-            break;
-        }
-        case Graph.HOOK.UPDATE: {
-            this.updateHooks.push(onCall);
-            break;
-        }
-        case Graph.HOOK.DEBUG: {
-            this.debugHooks.push(onCall);
-            break;
-        }
-        default: {
-            console.warn(`HookType ${type} does not exist!`);
-            break;
         }
     }
 }

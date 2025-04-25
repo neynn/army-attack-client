@@ -2,14 +2,14 @@ import { Logger } from "../logger.js";
 import { Sprite } from "./sprite.js";
 import { ImageManager } from "../resources/imageManager.js";
 import { ObjectPool } from "../objectPool.js";
-import { Graph } from "../graphics/graph.js";
 import { SpriteGraphics } from "./spriteGraphics.js";
 import { SpriteAtlas } from "./spriteAtlas.js";
 
 export const SpriteManager = function() {
     this.resources = new ImageManager();
     this.graphics = new SpriteGraphics();
-    this.sprites = new ObjectPool(2500, (index) => this.allocateSprite(index));
+    this.spriteTracker = new Set();
+    this.sprites = new ObjectPool(2500, (index) => new Sprite(this, index, index));
     this.sprites.allocate();
     this.timestamp = 0;
 
@@ -30,15 +30,6 @@ SpriteManager.LAYER = {
     TOP: 2,
     UI: 3
 };
-
-SpriteManager.prototype.allocateSprite = function(index) {
-    const sprite = new Sprite(index, index);
-
-    sprite.addHook(Graph.HOOK.DRAW, (context, localX, localY) => this.graphics.drawSprite(context, sprite, localX, localY));
-    sprite.onTerminate = () => this.destroySprite(index);
-
-    return sprite;
-}
 
 SpriteManager.prototype.getLayer = function(layerIndex) {
     if(layerIndex < 0 || layerIndex >= this.layers.length) {
@@ -92,7 +83,11 @@ SpriteManager.prototype.createSprite = function(typeID, layerID = null, animatio
         this.addToLayer(sprite, layerID);
     }
 
-    this.updateSprite(sprite.index, typeID, animationID);
+    const spriteID = sprite.getID();
+    const spriteIndex = sprite.getIndex();
+
+    this.spriteTracker.add(spriteID);
+    this.updateSprite(spriteIndex, typeID, animationID);
 
     return sprite;
 }
@@ -105,28 +100,30 @@ SpriteManager.prototype.destroySprite = function(spriteIndex) {
         return [];
     }
     
-    const familyStack = sprite.getGraph();
+    const graph = sprite.getGraph();
     const invalidElements = [];
 
-    for(let i = familyStack.length - 1; i >= 0; i--) {
-        const element = familyStack[i];
+    for(let i = graph.length - 1; i >= 0; i--) {
+        const node = graph[i];
+        const nodeID = node.getID();
 
-        if(!element.isType(Graph.TYPE.SPRITE)) {
-            invalidElements.push(element);
+        if(!this.spriteTracker.has(nodeID)) {
+            invalidElements.push(node);
             continue;
         }
 
-        const index = element.getIndex();
+        const index = node.getIndex();
         const isReserved = this.sprites.isReserved(index);
 
         if(!isReserved) {
             continue;
         }
 
-        element.closeGraph();
+        node.closeGraph();
 
         this.removeSpriteFromLayers(index);
         this.sprites.freeElement(index);
+        this.spriteTracker.delete(nodeID);
     }
     
     return invalidElements;

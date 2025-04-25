@@ -1,5 +1,3 @@
-import { Color } from "../../graphics/color.js";
-import { Graph } from "../../graphics/graph.js";
 import { SHAPE, TWO_PI } from "../../math/constants.js";
 import { UICollider } from "../uiCollider.js";
 import { UIColorHandler } from "../uiColorHandler.js";
@@ -8,7 +6,7 @@ import { UIElement } from "../uiElement.js";
 export const Button = function(DEBUG_NAME) {
     UIElement.call(this, DEBUG_NAME);
 
-    this.defers = [];
+    this.customRenders = [];
     this.shape = SHAPE.RECTANGLE;
     this.collider = new UICollider();
 
@@ -23,9 +21,6 @@ export const Button = function(DEBUG_NAME) {
 
     this.collider.events.on(UICollider.EVENT.FIRST_COLLISION, (mouseX, mouseY, mouseRange) => this.highlight.enable(), { permanent: true });
     this.collider.events.on(UICollider.EVENT.LAST_COLLISION, (mouseX, mouseY, mouseRange) => this.highlight.disable(), { permanent: true });
-
-    this.addDrawHook();
-    this.addDebugHook();
 }
 
 Button.prototype = Object.create(UIElement.prototype);
@@ -46,39 +41,39 @@ Button.prototype.setShape = function(shape) {
     }
 } 
 
-Button.prototype.addDebugHook = function() {
-    this.addHook(Graph.HOOK.DEBUG, (context, localX, localY) => {
-        context.globalAlpha = 0.2;
-        context.fillStyle = "#ff00ff";
+Button.prototype.onDebug = function(context, localX, localY) {
+    context.globalAlpha = 0.2;
+    context.fillStyle = "#ff00ff";
 
-        switch(this.shape) {
-            case SHAPE.RECTANGLE: {
-                context.fillRect(localX, localY, this.width, this.height);
-                break;
-            }
-            case SHAPE.CIRCLE: {
-                context.beginPath();
-                context.arc(localX, localY, this.width, 0, TWO_PI);
-                context.fill();
-                break;
-            }
+    switch(this.shape) {
+        case SHAPE.RECTANGLE: {
+            context.fillRect(localX, localY, this.width, this.height);
+            break;
         }
-    });
+        case SHAPE.CIRCLE: {
+            context.beginPath();
+            context.arc(localX, localY, this.width, 0, TWO_PI);
+            context.fill();
+            break;
+        }
+    }
 }
 
-Button.prototype.addDrawHook = function() {
-    this.addHook(Graph.HOOK.DRAW, (context, localX, localY) => {
-        this.background.drawColor(context, this.shape, localX, localY, this.width, this.height);
-        this.defers.forEach(defer => defer(context, localX, localY));
-        this.highlight.drawColor(context, this.shape, localX, localY, this.width, this.height);
-        this.outline.drawStroke(context, this.outlineSize, this.shape, localX, localY, this.width, this.height);
-    });
+Button.prototype.onDraw = function(context, localX, localY) {
+    this.background.drawColor(context, this.shape, localX, localY, this.width, this.height);
+    this.customRenders.forEach(onDraw => onDraw(context, localX, localY));
+    this.highlight.drawColor(context, this.shape, localX, localY, this.width, this.height);
+    this.outline.drawStroke(context, this.outlineSize, this.shape, localX, localY, this.width, this.height);
 }
 
-Button.prototype.clearDefers = function() {
-    this.defers.length = 0;
+Button.prototype.clearCustomRenders = function() {
+    this.customRenders.length = 0;
 }
 
-Button.prototype.addDefer = function(onDraw) {
-    this.defers.push(onDraw);
+Button.prototype.addCustomRender = function(onDraw) {
+    if(typeof onDraw !== "function") {
+        return;
+    }
+
+    this.customRenders.push(onDraw);
 }
