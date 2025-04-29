@@ -1,9 +1,9 @@
 import { Renderer } from "../source/renderer.js";
-import { OrthogonalCamera } from "../source/camera/types/orthogonalCamera.js";
+import { Camera2D } from "../source/camera/types/camera2D.js";
 import { SpriteManager } from "../source/sprite/spriteManager.js";
 
 export const ArmyCamera = function() {
-    OrthogonalCamera.call(this);
+    Camera2D.call(this);
 
     this.createOverlay(ArmyCamera.OVERLAY_TYPE.ATTACK);
     this.createOverlay(ArmyCamera.OVERLAY_TYPE.MOVE);
@@ -17,7 +17,7 @@ ArmyCamera.OVERLAY_TYPE = {
     RANGE: "RANGE"
 };
 
-ArmyCamera.prototype = Object.create(OrthogonalCamera.prototype);
+ArmyCamera.prototype = Object.create(Camera2D.prototype);
 ArmyCamera.prototype.constructor = ArmyCamera;
 
 ArmyCamera.prototype.handlePostDraw = function(context) {
@@ -35,7 +35,8 @@ ArmyCamera.prototype.addPostDraw = function(onDraw) {
 }
 
 ArmyCamera.prototype.update = function(gameContext, renderContext) {
-    const { world, timer, spriteManager } = gameContext;
+    const { world, timer, spriteManager, tileManager } = gameContext;
+    const { graphics } = tileManager;
     const { mapManager } = world;
     const worldMap = mapManager.getActiveMap();
 
@@ -53,21 +54,21 @@ ArmyCamera.prototype.update = function(gameContext, renderContext) {
     for(let i = 0; i < background.length; i++) {
         const layer = worldMap.getLayer(background[i]);
 
-        this.drawLayer(gameContext, renderContext, layer);
+        this.drawLayer(graphics, renderContext, layer);
     }
     
-    this.drawOverlay(gameContext, renderContext, ArmyCamera.OVERLAY_TYPE.MOVE);
-    this.drawOverlay(gameContext, renderContext, ArmyCamera.OVERLAY_TYPE.ATTACK);
+    this.drawOverlay(graphics, renderContext, ArmyCamera.OVERLAY_TYPE.MOVE);
+    this.drawOverlay(graphics, renderContext, ArmyCamera.OVERLAY_TYPE.ATTACK);
     this.drawSpriteLayer(renderContext, spriteManager.getLayer(SpriteManager.LAYER.BOTTOM), realTime, deltaTime);
     this.drawSpriteLayer(renderContext, spriteManager.getLayer(SpriteManager.LAYER.MIDDLE), realTime, deltaTime);
-    this.drawOverlay(gameContext, renderContext, ArmyCamera.OVERLAY_TYPE.RANGE);
+    this.drawOverlay(graphics, renderContext, ArmyCamera.OVERLAY_TYPE.RANGE);
     this.drawSpriteLayer(renderContext, spriteManager.getLayer(SpriteManager.LAYER.TOP), realTime, deltaTime);
     this.drawSpriteLayer(renderContext, spriteManager.getLayer(SpriteManager.LAYER.UI), realTime, deltaTime);
 
     for(let i = 0; i < foreground.length; i++) {
         const layer = worldMap.getLayer(foreground[i]);
 
-        this.drawLayer(gameContext, renderContext, layer);
+        this.drawLayer(graphics, renderContext, layer);
     }
 
     if(Renderer.DEBUG.MAP) {

@@ -2,7 +2,7 @@ import { clampValue } from "../../math/math.js";
 import { Renderer } from "../../renderer.js";
 import { Camera } from "../camera.js";
 
-export const OrthogonalCamera = function() {
+export const Camera2D = function() {
     Camera.call(this);
 
     this.mapWidth = 0;
@@ -18,15 +18,15 @@ export const OrthogonalCamera = function() {
     this.overlays = new Map();
 }
 
-OrthogonalCamera.MAP_OUTLINE = {
+Camera2D.MAP_OUTLINE = {
     LINE_SIZE: 2,
     COLOR: "#dddddd"
 };
 
-OrthogonalCamera.prototype = Object.create(Camera.prototype);
-OrthogonalCamera.prototype.constructor = OrthogonalCamera;
+Camera2D.prototype = Object.create(Camera.prototype);
+Camera2D.prototype.constructor = Camera2D;
 
-OrthogonalCamera.prototype.createOverlay = function(overlayID) {
+Camera2D.prototype.createOverlay = function(overlayID) {
     if(this.overlays.has(overlayID)) {
         return;
     }
@@ -34,7 +34,7 @@ OrthogonalCamera.prototype.createOverlay = function(overlayID) {
     this.overlays.set(overlayID, []);
 }
 
-OrthogonalCamera.prototype.destroyOverlay = function(overlayID) {
+Camera2D.prototype.destroyOverlay = function(overlayID) {
     if(!this.overlays.has(overlayID)) {
         return;
     }
@@ -42,7 +42,7 @@ OrthogonalCamera.prototype.destroyOverlay = function(overlayID) {
     this.overlays.delete(overlayID);
 }
 
-OrthogonalCamera.prototype.pushOverlay = function(overlayID, tileID, positionX, positionY) {
+Camera2D.prototype.pushOverlay = function(overlayID, tileID, positionX, positionY) {
     const overlay = this.overlays.get(overlayID);
 
     if(!overlay) {
@@ -60,7 +60,7 @@ OrthogonalCamera.prototype.pushOverlay = function(overlayID, tileID, positionX, 
     overlay.push(element);
 }
 
-OrthogonalCamera.prototype.clearOverlay = function(overlayID) {
+Camera2D.prototype.clearOverlay = function(overlayID) {
     const overlay = this.overlays.get(overlayID);
 
     if(!overlay) {
@@ -70,23 +70,21 @@ OrthogonalCamera.prototype.clearOverlay = function(overlayID) {
     overlay.length = 0;
 }
 
-OrthogonalCamera.prototype.drawEmptyTile = function(graphics, context, renderX, renderY, targetWidth = this.tileWidth, targetHeight = this.tileHeight) {
+Camera2D.prototype.drawEmptyTile = function(graphics, context, renderX, renderY, targetWidth = this.tileWidth, targetHeight = this.tileHeight) {
     const scaleX = targetWidth / this.tileWidth;
     const scaleY = targetHeight / this.tileHeight;
 
     graphics.drawEmptyTile(context, renderX, renderY, scaleX, scaleY, this.tileWidth, this.tileHeight);
 }
 
-OrthogonalCamera.prototype.drawTile = function(graphics, context, tileID, renderX, renderY, targetWidth = this.tileWidth, targetHeight = this.tileHeight) {
+Camera2D.prototype.drawTile = function(graphics, context, tileID, renderX, renderY, targetWidth = this.tileWidth, targetHeight = this.tileHeight) {
     const scaleX = targetWidth / this.tileWidth;
     const scaleY = targetHeight / this.tileHeight;
 
     graphics.drawTile(context, tileID, renderX, renderY, scaleX, scaleY, this.tileWidth, this.tileHeight);
 }
 
-OrthogonalCamera.prototype.drawOverlay = function(gameContext, renderContext, overlayID) {
-    const { tileManager } = gameContext;
-    const { graphics } = tileManager;
+Camera2D.prototype.drawOverlay = function(graphics, context, overlayID) {
     const overlay = this.overlays.get(overlayID);
 
     if(!overlay) {
@@ -100,30 +98,27 @@ OrthogonalCamera.prototype.drawOverlay = function(gameContext, renderContext, ov
             const renderX = drawX - this.viewportX;
             const renderY = drawY - this.viewportY;
     
-            graphics.drawTile(renderContext, id, renderX, renderY, 1, 1, this.tileWidth, this.tileHeight);
+            graphics.drawTile(context, id, renderX, renderY, 1, 1, this.tileWidth, this.tileHeight);
         }
     }
 }
 
-OrthogonalCamera.prototype.drawLayer = function(gameContext, renderContext, layer) {
+Camera2D.prototype.drawLayer = function(graphics, context, layer) {
     const opacity = layer.getOpacity();
 
     if(opacity > 0) {
         const buffer = layer.getBuffer();
-        const previousAlpha = renderContext.globalAlpha;
+        const previousAlpha = context.globalAlpha;
 
-        renderContext.globalAlpha = opacity;
+        context.globalAlpha = opacity;
 
-        this.drawTileBuffer(gameContext, renderContext, buffer);
+        this.drawTileBuffer(graphics, context, buffer);
 
-        renderContext.globalAlpha = previousAlpha;
+        context.globalAlpha = previousAlpha;
     }
 }
 
-OrthogonalCamera.prototype.drawTileBuffer = function(gameContext, renderContext, buffer) {
-    const { tileManager } = gameContext;
-    const { graphics } = tileManager;
-
+Camera2D.prototype.drawTileBuffer = function(graphics, context, buffer) {
     for(let i = this.startY; i <= this.endY; ++i) {
         const tileRow = i * this.mapWidth;
         const renderY = i * this.tileHeight - this.viewportY;
@@ -135,13 +130,13 @@ OrthogonalCamera.prototype.drawTileBuffer = function(gameContext, renderContext,
             if(tileID !== 0) {
                 const renderX = j * this.tileWidth - this.viewportX;
 
-                graphics.drawTile(renderContext, tileID, renderX, renderY, 1, 1, this.tileWidth, this.tileHeight);
+                graphics.drawTile(context, tileID, renderX, renderY, 1, 1, this.tileWidth, this.tileHeight);
             }
         }
     }
 }
 
-OrthogonalCamera.prototype.drawSpriteLayer = function(context, spriteLayer, realTime, deltaTime) {
+Camera2D.prototype.drawSpriteLayer = function(context, spriteLayer, realTime, deltaTime) {
     const viewportLeftEdge = this.viewportX;
     const viewportTopEdge = this.viewportY;
     const viewportRightEdge = viewportLeftEdge + this.viewportWidth;
@@ -175,7 +170,7 @@ OrthogonalCamera.prototype.drawSpriteLayer = function(context, spriteLayer, real
     }
 }
 
-OrthogonalCamera.prototype.drawBufferData = function(context, buffer, offsetX, offsetY) {
+Camera2D.prototype.drawBufferData = function(context, buffer, offsetX, offsetY) {
     const drawX = offsetX - this.viewportX;
     const drawY = offsetY - this.viewportY;
 
@@ -193,26 +188,26 @@ OrthogonalCamera.prototype.drawBufferData = function(context, buffer, offsetX, o
     }
 }
 
-OrthogonalCamera.prototype.drawMapOutlines = function(context) {
+Camera2D.prototype.drawMapOutlines = function(context) {
     const endX = this.endX + 1;
     const endY = this.endY + 1;
 
-    context.fillStyle = OrthogonalCamera.MAP_OUTLINE.COLOR;
+    context.fillStyle = Camera2D.MAP_OUTLINE.COLOR;
 
     for(let i = this.startY; i <= endY; i++) {
         const renderY = i * this.tileHeight - this.viewportY;
 
-        context.fillRect(0, renderY, this.viewportWidth, OrthogonalCamera.MAP_OUTLINE.LINE_SIZE);
+        context.fillRect(0, renderY, this.viewportWidth, Camera2D.MAP_OUTLINE.LINE_SIZE);
     }
 
     for (let j = this.startX; j <= endX; j++) {
         const renderX = j * this.tileWidth - this.viewportX;
 
-        context.fillRect(renderX, 0, OrthogonalCamera.MAP_OUTLINE.LINE_SIZE, this.viewportHeight);
+        context.fillRect(renderX, 0, Camera2D.MAP_OUTLINE.LINE_SIZE, this.viewportHeight);
     }
 }
 
-OrthogonalCamera.prototype.setTileSize = function(tileWidth, tileHeight) {
+Camera2D.prototype.setTileSize = function(tileWidth, tileHeight) {
     const worldWidth = this.mapWidth * tileWidth;
     const worldHeight = this.mapHeight * tileHeight;
 
@@ -224,7 +219,7 @@ OrthogonalCamera.prototype.setTileSize = function(tileWidth, tileHeight) {
     this.setWorldSize(worldWidth, worldHeight);
 }
 
-OrthogonalCamera.prototype.setMapSize = function(mapWidth, mapHeight) {
+Camera2D.prototype.setMapSize = function(mapWidth, mapHeight) {
     const worldWidth = mapWidth * this.tileWidth;
     const worldHeight = mapHeight * this.tileHeight;
 
@@ -234,7 +229,7 @@ OrthogonalCamera.prototype.setMapSize = function(mapWidth, mapHeight) {
     this.setWorldSize(worldWidth, worldHeight);
 }
 
-OrthogonalCamera.prototype.updateWorldBounds = function() {
+Camera2D.prototype.updateWorldBounds = function() {
     const offsetX = 0;
     const offsetY = 1;
     const startX = Math.floor(this.viewportX / this.tileWidth);
@@ -248,7 +243,7 @@ OrthogonalCamera.prototype.updateWorldBounds = function() {
     this.endY = clampValue(endY, this.mapHeight - 1, 0);
 }
 
-OrthogonalCamera.prototype.getTileDimensions = function() {
+Camera2D.prototype.getTileDimensions = function() {
     return {
         "width": this.tileWidth,
         "height": this.tileHeight,
@@ -257,7 +252,7 @@ OrthogonalCamera.prototype.getTileDimensions = function() {
     }
 }
 
-OrthogonalCamera.prototype.transformTileToPosition = function(tileX, tileY) {
+Camera2D.prototype.transformTileToPosition = function(tileX, tileY) {
 	const positionX = tileX * this.tileWidth;
 	const positionY = tileY * this.tileHeight;
 
@@ -267,7 +262,7 @@ OrthogonalCamera.prototype.transformTileToPosition = function(tileX, tileY) {
 	}
 }
 
-OrthogonalCamera.prototype.transformPositionToTile = function(positionX, positionY) {
+Camera2D.prototype.transformPositionToTile = function(positionX, positionY) {
     const tileX = Math.floor(positionX / this.tileWidth);
 	const tileY = Math.floor(positionY / this.tileHeight);
 
@@ -277,7 +272,7 @@ OrthogonalCamera.prototype.transformPositionToTile = function(positionX, positio
 	}
 }
 
-OrthogonalCamera.prototype.transformSizeToPositionOffsetCenter = function(sizeX, sizeY) {
+Camera2D.prototype.transformSizeToPositionOffsetCenter = function(sizeX, sizeY) {
     const xOffset = this.tileWidth * (sizeX / 2 - 0.5);
     const yOffset = this.tileHeight * (sizeY / 2 - 0.5);
 
@@ -287,7 +282,7 @@ OrthogonalCamera.prototype.transformSizeToPositionOffsetCenter = function(sizeX,
 	}
 }
 
-OrthogonalCamera.prototype.transformSizeToPositionOffset = function(sizeX, sizeY) {
+Camera2D.prototype.transformSizeToPositionOffset = function(sizeX, sizeY) {
     const xOffset = this.tileWidth * (sizeX - 1);
     const yOffset = this.tileHeight * (sizeY - 1);
 
@@ -297,7 +292,7 @@ OrthogonalCamera.prototype.transformSizeToPositionOffset = function(sizeX, sizeY
 	}
 }
 
-OrthogonalCamera.prototype.transformTileToPositionCenter = function(tileX, tileY) {
+Camera2D.prototype.transformTileToPositionCenter = function(tileX, tileY) {
     const positionX = tileX * this.tileWidth + this.halfTileWidth;
 	const positionY = tileY * this.tileHeight + this.halfTileHeight;
 
