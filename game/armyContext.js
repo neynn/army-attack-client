@@ -342,6 +342,8 @@ ArmyContext.prototype.addContextMapHook = function() {
             if(music) {
                 musicPlayer.playTrack(music);
             }
+
+            context.reload();
         }, { id: contextID });
     }, { permanent: true });
 

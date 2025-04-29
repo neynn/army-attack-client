@@ -117,7 +117,7 @@ ArmyMapEditor.prototype.initCamera = function(gameContext) {
 
     const context = renderer.createContext(this.id, this.camera);
     
-    context.setPositionMode(CameraContext.POSITION_MODE.ORIGIN);
+    context.setPosition(0, 0);
 }
 
 ArmyMapEditor.prototype.initRenderEvents = function(gameContext) {
@@ -399,7 +399,7 @@ ArmyMapEditor.prototype.resizeCurrentMap = function(gameContext) {
     
     this.camera.setMapSize(newWidth, newHeight);
 
-    renderer.getContext(this.id).refreshCamera();
+    renderer.getContext(this.id).reload();
 }
 
 ArmyMapEditor.prototype.paintTile = function(gameContext) {

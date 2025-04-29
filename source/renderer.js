@@ -1,5 +1,5 @@
 import { Camera } from "./camera/camera.js";
-import { RenderContext } from "./camera/renderContext.js";
+import { Display } from "./camera/display.js";
 import { EffectManager } from "./effects/effectManager.js";
 import { EventEmitter } from "./events/eventEmitter.js";
 import { isRectangleRectangleIntersect } from "./math/math.js";
@@ -11,15 +11,15 @@ export const Renderer = function() {
     this.windowHeight = window.innerHeight;
 
     this.effects = new EffectManager();
-    this.display = new RenderContext();
-    this.display.init(this.windowWidth, this.windowHeight, RenderContext.TYPE.DISPLAY);
+    this.display = new Display();
+    this.display.init(this.windowWidth, this.windowHeight, Display.TYPE.DISPLAY);
 
     this.events = new EventEmitter();
     this.events.listen(Renderer.EVENT.SCREEN_RESIZE);
     this.events.listen(Renderer.EVENT.CONTEXT_CREATE);
     this.events.listen(Renderer.EVENT.CONTEXT_DESTROY);
 
-    window.addEventListener("resize", () => this.resizeDisplay(window.innerWidth, window.innerHeight));
+    window.addEventListener("resize", () => this.onWindowResize(window.innerWidth, window.innerHeight));
 }
 
 Renderer.EVENT = {
@@ -154,7 +154,7 @@ Renderer.prototype.drawFPS = function(context, timer) {
     context.fillText(text, 0, 10);
 }
 
-Renderer.prototype.resizeDisplay = function(width, height) {
+Renderer.prototype.onWindowResize = function(width, height) {
     for(let i = 0; i < this.contexts.length; i++) {
         const context = this.contexts[i];
 
@@ -163,7 +163,7 @@ Renderer.prototype.resizeDisplay = function(width, height) {
     
     this.windowWidth = width;
     this.windowHeight = height;
-    this.display.resize(width, height);
+    this.display.onWindowResize(width, height);
     this.events.emit(Renderer.EVENT.SCREEN_RESIZE, width, height);
 }
 

@@ -1,14 +1,14 @@
-import { RenderContext } from "./renderContext.js";
+import { Display } from "./display.js";
 
 export const CameraContext = function(id, camera) {
     this.id = id;
+    this.camera = camera;
     this.positionX = 0;
     this.positionY = 0;
-    this.camera = camera;
     this.display = null;
     this.scale = CameraContext.BASE_SCALE;
-    this.scaleMode = CameraContext.SCALE_MODE.WHOLE;
-    this.positionMode = CameraContext.POSITION_MODE.AUTO_CENTER;
+    this.scaleMode = CameraContext.SCALE_MODE.NONE;
+    this.positionMode = CameraContext.POSITION_MODE.FIXED;
     this.displayMode = CameraContext.DISPLAY_MODE.RESOLUTION_DEPENDENT;
     this.windowWidth = 0;
     this.windowHeight = 0;
@@ -17,9 +17,8 @@ export const CameraContext = function(id, camera) {
 CameraContext.BASE_SCALE = 1;
 
 CameraContext.POSITION_MODE = {
-    AUTO_CENTER: 0,
-    FIXED: 1,
-    ORIGIN: 2
+    FIXED: 0,
+    AUTO_CENTER: 1
 };
 
 CameraContext.DISPLAY_MODE = {
@@ -37,56 +36,67 @@ CameraContext.prototype.getID = function() {
     return this.id;
 }
 
-CameraContext.prototype.getPosition = function() {
-    return this.position;
-}
-
 CameraContext.prototype.setWindow = function(windowWidth, windowHeight) {
     this.windowWidth = windowWidth;
     this.windowHeight = windowHeight;
 }
 
 CameraContext.prototype.setScaleMode = function(modeID) {
-    if(!Object.values(CameraContext.SCALE_MODE).includes(modeID)) {
-        console.warn(`Scale mode is not supported! ${modeID}`);
-        return;
+    switch(modeID) {
+        case CameraContext.SCALE_MODE.NONE: {
+            this.scaleMode = CameraContext.SCALE_MODE.NONE;
+            break;
+        }
+        case CameraContext.SCALE_MODE.WHOLE: {
+            this.scaleMode = CameraContext.SCALE_MODE.WHOLE;
+            break;
+        }
+        case CameraContext.SCALE_MODE.FRACTURED: {
+            this.scaleMode = CameraContext.SCALE_MODE.FRACTURED;
+            break;
+        }
+        default: {
+            console.warn(`Scale mode is not supported! ${modeID}`);
+            break;
+        }
     }
 
-    this.scaleMode = modeID;
-    this.refresh();
+    this.reload();
 }
 
 CameraContext.prototype.setPositionMode = function(modeID) {
-    if(!Object.values(CameraContext.POSITION_MODE).includes(modeID)) {
-        console.warn(`Position mode is not supported! ${modeID}`);
-        return;
+    switch(modeID) {
+        case CameraContext.POSITION_MODE.FIXED: {
+            this.positionMode = CameraContext.POSITION_MODE.FIXED;
+            break;
+        }
+        case CameraContext.POSITION_MODE.AUTO_CENTER: {
+            this.positionMode = CameraContext.POSITION_MODE.AUTO_CENTER;
+            break;
+        }
+        default: {
+            console.warn(`Position mode is not supported! ${modeID}`);
+            break;
+        }
     }
-
-    if(modeID === CameraContext.POSITION_MODE.ORIGIN) {
-        this.setPosition(0, 0);
-    }
-
-    this.positionMode = modeID;
-    this.refresh();
 }
 
 CameraContext.prototype.setDisplayMode = function(modeID) {
     switch(modeID) {
         case CameraContext.DISPLAY_MODE.RESOLUTION_DEPENDENT: {
-            this.displayMode = modeID;
-            this.scale = CameraContext.BASE_SCALE;
+            this.displayMode = CameraContext.DISPLAY_MODE.RESOLUTION_DEPENDENT;
             this.camera.setViewportSize(this.windowWidth, this.windowHeight);
-            this.refresh();
-
+            this.reload();
             break;
         }
         case CameraContext.DISPLAY_MODE.RESOLUTION_FIXED: {
-            if(this.display) {
-                this.displayMode = modeID;
-                this.camera.setViewportSize(this.display.width, this.display.height);
-                this.refresh();
+            if(!this.display) {
+                break;
             }
 
+            this.displayMode = CameraContext.DISPLAY_MODE.RESOLUTION_FIXED;
+            this.camera.setViewportSize(this.display.width, this.display.height);
+            this.reload();
             break;
         }
         default: {
@@ -132,7 +142,7 @@ CameraContext.prototype.getCamera = function() {
     return this.camera;
 }
 
-CameraContext.prototype.refreshCamera = function() {
+CameraContext.prototype.reloadCamera = function() {
     if(this.positionMode === CameraContext.POSITION_MODE.AUTO_CENTER) {
         if(this.displayMode !== CameraContext.DISPLAY_MODE.RESOLUTION_FIXED) {
             this.camera.alignViewport();
@@ -144,19 +154,20 @@ CameraContext.prototype.refreshCamera = function() {
     this.camera.reloadViewport();
 }
 
-CameraContext.prototype.refresh = function() {
-    this.reloadFixedScale();
-    this.refreshCamera();
+CameraContext.prototype.reload = function() {
+    this.reloadScale();
+    this.reloadCamera();
 }
 
 CameraContext.prototype.onWindowResize = function(windowWidth, windowHeight) {
-    this.setWindow(windowWidth, windowHeight);
+    this.windowWidth = windowWidth;
+    this.windowHeight = windowHeight;
 
     if(this.displayMode !== CameraContext.DISPLAY_MODE.RESOLUTION_FIXED) {
         this.camera.setViewportSize(windowWidth, windowHeight);
     }
 
-    this.refresh();
+    this.reload();
 }
 
 CameraContext.prototype.centerCamera = function() {
@@ -169,43 +180,37 @@ CameraContext.prototype.centerCamera = function() {
 
 CameraContext.prototype.getScale = function(width, height) {
     if(!this.display) {
-        return {
-            "x": CameraContext.BASE_SCALE,
-            "y": CameraContext.BASE_SCALE
-        }
+        return CameraContext.BASE_SCALE;
     }
+
+    let scaleX = CameraContext.BASE_SCALE;
+    let scaleY = CameraContext.BASE_SCALE;
 
     switch(this.scaleMode) {
-        case CameraContext.SCALE_MODE.NONE: {
-            return {
-                "x": CameraContext.BASE_SCALE,
-                "y": CameraContext.BASE_SCALE
-            }
-        }
         case CameraContext.SCALE_MODE.FRACTURED: {
-            return {
-                "x": width / this.display.width,
-                "y": height / this.display.height
-            }
+            scaleX = width / this.display.width;
+            scaleY = height / this.display.height;
+            break;
         }
         case CameraContext.SCALE_MODE.WHOLE: {
-            return {
-                "x": Math.floor(width / this.display.width),
-                "y": Math.floor(height / this.display.height)
-            }
-        }
-        default: {
-            return {
-                "x": CameraContext.BASE_SCALE,
-                "y": CameraContext.BASE_SCALE
-            }
+            scaleX = Math.floor(width / this.display.width);
+            scaleY = Math.floor(height / this.display.height);
+            break;
         }
     }
+
+    const minScale = Math.min(scaleX, scaleY);
+
+    if(minScale < CameraContext.BASE_SCALE) {
+        return CameraContext.BASE_SCALE;
+    }
+
+    return minScale;
 }
 
-
-CameraContext.prototype.reloadFixedScale = function() {
-    if(this.displayMode !== CameraContext.DISPLAY_MODE.RESOLUTION_FIXED) {
+CameraContext.prototype.reloadScale = function() {
+    if(this.displayMode === CameraContext.DISPLAY_MODE.RESOLUTION_DEPENDENT) {
+        this.scale = CameraContext.BASE_SCALE;
         return;
     }
 
@@ -213,41 +218,33 @@ CameraContext.prototype.reloadFixedScale = function() {
     let height = this.windowHeight;
 
     if(this.positionMode === CameraContext.POSITION_MODE.FIXED) {
-        width -= this.positionY;
+        width -= this.positionX;
         height -= this.positionY;
     }
 
-    const { x, y } = this.getScale(width, height);
-    const scale = Math.min(x, y);
+    this.scale = this.getScale(width, height);
+}
 
-    if(scale < CameraContext.BASE_SCALE) {
-        this.scale = CameraContext.BASE_SCALE;
-    } else {
-        this.scale = scale;
+CameraContext.prototype.createBuffer = function(width, height) {
+    if(!this.display) {
+        this.display = new Display();
+        this.display.init(width, height, Display.TYPE.BUFFER);
     }
 }
 
-CameraContext.prototype.initRenderer = function(width, height) {
-    if(!this.display) {
-        this.display = new RenderContext();
-        this.display.init(width, height, RenderContext.TYPE.BUFFER);
-    }
+CameraContext.prototype.destroyBuffer = function() {
+    this.display = null;
+    this.setDisplayMode(CameraContext.DISPLAY_MODE.RESOLUTION_DEPENDENT);
 }
 
 CameraContext.prototype.setResolution = function(width, height) {
-    if(this.display) {
-        this.display.resize(width, height);
-
-        if(this.displayMode === CameraContext.DISPLAY_MODE.RESOLUTION_FIXED) {
-            this.camera.setViewportSize(width, height);
-            this.refresh();
-        }
+    if(this.displayMode !== CameraContext.DISPLAY_MODE.RESOLUTION_FIXED) {
+        return;
     }
-}
 
-CameraContext.prototype.destroyRenderer = function() {
-    this.display = null;
-    this.setDisplayMode(CameraContext.DISPLAY_MODE.RESOLUTION_DEPENDENT);
+    this.display.resize(width, height);
+    this.camera.setViewportSize(width, height);
+    this.reload();
 }
 
 CameraContext.prototype.update = function(gameContext, mainContext) {

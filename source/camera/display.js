@@ -1,4 +1,4 @@
-export const RenderContext = function() {
+export const Display = function() {
     this.canvas = null;
     this.context = null;
     this.imageData = null;
@@ -6,23 +6,41 @@ export const RenderContext = function() {
     this.height = 0;
     this.centerX = 0;
     this.centerY = 0;
-    this.type = RenderContext.TYPE.NONE;
-    this.color = RenderContext.COLOR.DARK_GRAY;
+    this.type = Display.TYPE.NONE;
+    this.color = Display.COLOR.DARK_GRAY;
 }
 
-RenderContext.COLOR = {
+Display.COLOR = {
     BLACK: "#000000",
     DARK_GRAY: "#111111"
 };
 
-RenderContext.TYPE = {
+Display.TYPE = {
     NONE: 0,
     BUFFER: 1,
-    DISPLAY: 2
+    DISPLAY: 2,
+    CUSTOM: 3
 };
 
-RenderContext.prototype.clear = function() {
-    if(this.type === RenderContext.TYPE.NONE) {
+Display.prototype.fromDocument = function(canvasID) {
+    if(this.type !== Display.TYPE.NONE) {
+        return;
+    }
+
+    const canvas = document.getElementById(canvasID);
+
+    if(!canvas) {
+        return;
+    }
+
+    this.type = Display.TYPE.CUSTOM;
+    this.canvas = canvas;
+    this.context = canvas.getContext("2d");
+    this.resize(canvas.width, canvas.height);
+}
+
+Display.prototype.clear = function() {
+    if(this.type === Display.TYPE.NONE) {
         return;
     }
 
@@ -30,8 +48,16 @@ RenderContext.prototype.clear = function() {
     this.context.fillRect(0, 0, this.width, this.height);
 }
 
-RenderContext.prototype.resize = function(width, height) {
-    if(this.type === RenderContext.TYPE.NONE) {
+Display.prototype.onWindowResize = function(width, height) {
+    if(this.type === Display.TYPE.CUSTOM) {
+        return;
+    }
+
+    this.resize(width, height);
+}
+
+Display.prototype.resize = function(width, height) {
+    if(this.type === Display.TYPE.NONE) {
         return;
     }
 
@@ -45,16 +71,16 @@ RenderContext.prototype.resize = function(width, height) {
     this.context.imageSmoothingEnabled = false;
 }
 
-RenderContext.prototype.init = function(width, height, type) {
-    if(this.type !== RenderContext.TYPE.NONE) {
+Display.prototype.init = function(width, height, type) {
+    if(this.type !== Display.TYPE.NONE) {
         return;
     }
     
     this.canvas = document.createElement("canvas");
 
     switch(type) {
-        case RenderContext.TYPE.DISPLAY: {
-            this.type = RenderContext.TYPE.DISPLAY;
+        case Display.TYPE.DISPLAY: {
+            this.type = Display.TYPE.DISPLAY;
             this.canvas.oncontextmenu = (event) => { 
                 event.preventDefault();
                 event.stopPropagation();
@@ -63,12 +89,12 @@ RenderContext.prototype.init = function(width, height, type) {
             document.body.appendChild(this.canvas);
             break;
         }
-        case RenderContext.TYPE.BUFFER: {
-            this.type = RenderContext.TYPE.BUFFER;
+        case Display.TYPE.BUFFER: {
+            this.type = Display.TYPE.BUFFER;
             break;
         }
         default: {
-            this.type = RenderContext.TYPE.NONE;
+            this.type = Display.TYPE.NONE;
             break;
         }
     }
@@ -77,8 +103,8 @@ RenderContext.prototype.init = function(width, height, type) {
     this.resize(width, height);
 }
 
-RenderContext.prototype.getImageData = function() {
-    if(this.type === RenderContext.TYPE.NONE) {
+Display.prototype.getImageData = function() {
+    if(this.type === Display.TYPE.NONE) {
         return null;
     }
 

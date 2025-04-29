@@ -4,6 +4,7 @@ import { Player } from "../init/actors/player/player.js";
 import { createStoryModeUI } from "../storyUI.js";
 import { OtherPlayer } from "./actors/otherPlayer.js";
 import { EnemyActor } from "./actors/enemyActor.js";
+import { CameraContext } from "../../source/camera/cameraContext.js";
 
 export const ArmyActorFactory = function() {
     Factory.call(this, "ARMY_ACTOR_FACOTRY");
@@ -46,13 +47,14 @@ ArmyActorFactory.prototype.onCreate = function(gameContext, config) {
         case ACTOR_TYPE.PLAYER: {
             const actor = new Player();
             const camera = actor.getCamera();
+            const context = renderer.createContext(Player.CAMERA_ID, camera);
 
             actor.inventory.init(gameContext);
             actor.hover.createSprite(gameContext);
             actor.teamID = team ?? null;
             actor.setConfig(actorType);
-            
-            renderer.createContext(Player.CAMERA_ID, camera);
+    
+            context.setPositionMode(CameraContext.POSITION_MODE.AUTO_CENTER);
             camera.setTileSize(gameContext.settings.tileWidth, gameContext.settings.tileHeight);
 
             addDragEvent(gameContext);
