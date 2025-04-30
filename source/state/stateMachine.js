@@ -26,21 +26,6 @@ StateMachine.prototype.setContext = function(context) {
     this.context = context;
 }
 
-StateMachine.prototype.hasState = function(stateID) {
-    return this.states.has(stateID);
-}
-
-StateMachine.prototype.setNextState = function(stateID) {
-    const nextState = this.states.get(stateID);
-
-    if(nextState) {
-        this.nextState = nextState;
-        this.goToNextState();
-    } else {
-        console.warn(`State (${stateID}) does not exist!`, this.context);
-    }
-}
-
 StateMachine.prototype.update = function(gameContext) {
     if(this.currentState !== null) {
         this.currentState.onUpdate(gameContext, this);
@@ -51,26 +36,30 @@ StateMachine.prototype.update = function(gameContext) {
     }
 }
 
-StateMachine.prototype.eventEnter = function(...event) {
+StateMachine.prototype.eventEnter = function(gameContext, eventID, eventData) {
     if(this.currentState !== null) {
-        this.currentState.onEvent(this, ...event);
+        this.currentState.onEvent(gameContext, this, eventID, eventData);
+
+        if(this.currentType === StateMachine.TYPE.MACHINE) {
+            this.currentState.eventEnter(gameContext, eventID, eventData);
+        }
     }
 }
 
-StateMachine.prototype.exit = function() {
+StateMachine.prototype.exit = function(gameContext) {
     if(this.currentState !== null) {
         if(this.currentType === StateMachine.TYPE.MACHINE) {
-            this.currentState.exit();
+            this.currentState.exit(gameContext);
         }
         
-        this.currentState.onExit(this);
+        this.currentState.onExit(gameContext, this);
         this.previousState = this.currentState;
         this.currentState = null;
     }
 }
 
-StateMachine.prototype.changeState = function(state) {
-    this.exit();
+StateMachine.prototype.changeState = function(gameContext, state) {
+    this.exit(gameContext);
     this.currentState = state;
 
     if(state instanceof StateMachine) {
@@ -81,15 +70,26 @@ StateMachine.prototype.changeState = function(state) {
         this.currentType = StateMachine.TYPE.NONE;
     }
 
-    this.currentState.onEnter(this);
+    this.currentState.onEnter(gameContext, this);
 }
 
-StateMachine.prototype.goToPreviousState = function() {
-    this.changeState(this.previousState);
+StateMachine.prototype.setNextState = function(gameContext, stateID) {
+    const nextState = this.states.get(stateID);
+
+    if(nextState) {
+        this.nextState = nextState;
+        this.goToNextState(gameContext);
+    } else {
+        console.warn(`State (${stateID}) does not exist!`, this.context);
+    }
 }
 
-StateMachine.prototype.goToNextState = function() {
-    this.changeState(this.nextState);
+StateMachine.prototype.goToPreviousState = function(gameContext) {
+    this.changeState(gameContext, this.previousState);
+}
+
+StateMachine.prototype.goToNextState = function(gameContext) {
+    this.changeState(gameContext, this.nextState);
 }
 
 StateMachine.prototype.getContext = function() {
@@ -97,7 +97,7 @@ StateMachine.prototype.getContext = function() {
 }
 
 StateMachine.prototype.addState = function(stateID, state) {
-    if(this.hasState(stateID)) {
+    if(this.states.has(stateID)) {
         console.warn(`State (${stateID}) already exists!`);
         return;
     }
@@ -108,18 +108,14 @@ StateMachine.prototype.addState = function(stateID, state) {
     }
 
     if(this.context !== null && state instanceof StateMachine) {
-        const context = state.getContext();
-
-        if(!context) {
-            state.setContext(this.context);
-        }
+        state.setContext(this.context);
     }
 
     this.states.set(stateID, state);
 }
 
 StateMachine.prototype.removeState = function(stateID) {
-    if(!this.hasState(stateID)) {
+    if(!this.states.has(stateID)) {
         console.warn(`State (${stateID}) is not registered!`);
         return;
     }

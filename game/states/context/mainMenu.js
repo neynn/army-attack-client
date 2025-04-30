@@ -1,6 +1,5 @@
 import { State } from "../../../source/state/state.js";
 import { UICollider } from "../../../source/ui/uiCollider.js";
-import { UIElement } from "../../../source/ui/uiElement.js";
 import { ArmyContext } from "../../armyContext.js";
 
 export const MainMenuState = function() {}
@@ -8,8 +7,7 @@ export const MainMenuState = function() {}
 MainMenuState.prototype = Object.create(State.prototype);
 MainMenuState.prototype.constructor = MainMenuState;
 
-MainMenuState.prototype.onEnter = function(stateMachine) {
-    const gameContext = stateMachine.getContext();
+MainMenuState.prototype.onEnter = function(gameContext, stateMachine) {
     const { uiManager, spriteManager } = gameContext;
     const mainMenuInterface = uiManager.parseUI("MAIN_MENU", gameContext);
 
@@ -39,8 +37,7 @@ MainMenuState.prototype.onEnter = function(stateMachine) {
     buttonEdit.collider.events.on(UICollider.EVENT.LAST_COLLISION, () => spriteManager.updateSprite(spriteEdit.getIndex(), "blue_elite_battery_idle"));
 }
 
-MainMenuState.prototype.onExit = function(stateMachine) {
-    const gameContext = stateMachine.getContext();
+MainMenuState.prototype.onExit = function(gameContext, stateMachine) {
     const { uiManager, spriteManager } = gameContext;
 
     uiManager.unparseUI("MAIN_MENU");

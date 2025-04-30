@@ -27,7 +27,7 @@ VersusModeState.prototype.onServerMessage = function(gameContext, type, payload)
             break;
         }
         case ROOM_EVENTS.START_INSTANCE: {
-            this.setNextState(ArmyContext.STATE.VERSUS_MODE_PLAY);
+            this.setNextState(gameContext, ArmyContext.STATE.VERSUS_MODE_PLAY);
 
             ServerEvents.startVersusInstance(gameContext, payload);
             break;
@@ -63,8 +63,7 @@ VersusModeState.prototype.onServerMessage = function(gameContext, type, payload)
     }
 }
 
-VersusModeState.prototype.onEnter = function(stateMachine) {
-    const gameContext = stateMachine.getContext();
+VersusModeState.prototype.onEnter = function(gameContext, stateMachine) {
     const { client, world } = gameContext;
     const { actionQueue } = world;
     const { socket } = client;
@@ -74,11 +73,10 @@ VersusModeState.prototype.onEnter = function(stateMachine) {
     socket.events.on(Socket.EVENT.MESSAGE_FROM_SERVER, (type, payload) => this.onServerMessage(gameContext, type, payload), { id: "VERSUS" });
     socket.connect();
 
-    this.setNextState(ArmyContext.STATE.VERSUS_MODE_LOBBY);
+    this.setNextState(gameContext, ArmyContext.STATE.VERSUS_MODE_LOBBY);
 }
 
-VersusModeState.prototype.onExit = function(stateMachine) {
-    const gameContext = stateMachine.getContext();
+VersusModeState.prototype.onExit = function(gameContext, stateMachine) {
     const { client, world } = gameContext;
     const { actionQueue } = world;
     const { socket } = client;

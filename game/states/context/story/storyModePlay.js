@@ -47,8 +47,7 @@ const initStoryMode = async function(gameContext) {
     return true;
 }
 
-StoryModePlayState.prototype.onEnter = async function(stateMachine) {
-    const gameContext = stateMachine.getContext();
+StoryModePlayState.prototype.onEnter = async function(gameContext, stateMachine) {
     const { uiManager } = gameContext;
 
     console.time();
@@ -155,8 +154,7 @@ StoryModePlayState.prototype.onEnter = async function(stateMachine) {
     console.log(s);
 }
 
-StoryModePlayState.prototype.onExit = function(stateMachine) {
-    const gameContext = stateMachine.getContext();
+StoryModePlayState.prototype.onExit = function(gameContext, stateMachine) {
     const { uiManager } = gameContext;
 
     uiManager.unparseUI("PLAY_GAME");

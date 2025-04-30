@@ -6,8 +6,7 @@ export const VersusModeLobbyState = function() {}
 VersusModeLobbyState.prototype = Object.create(State.prototype);
 VersusModeLobbyState.prototype.constructor = VersusModeLobbyState;
 
-VersusModeLobbyState.prototype.onEnter = function(stateMachine) {
-    const gameContext = stateMachine.getContext();
+VersusModeLobbyState.prototype.onEnter = function(gameContext, stateMachine) {
     const { uiManager, client } = gameContext;
     const versusInterface = uiManager.parseUI("VERSUS_MODE_HUB", gameContext);
 
@@ -31,8 +30,7 @@ VersusModeLobbyState.prototype.onEnter = function(stateMachine) {
     });
 }
 
-VersusModeLobbyState.prototype.onExit = function(stateMachine) {
-    const gameContext = stateMachine.getContext();
+VersusModeLobbyState.prototype.onExit = function(gameContext, stateMachine) {
     const { uiManager } = gameContext;
 
     uiManager.unparseUI("VERSUS_MODE_HUB");

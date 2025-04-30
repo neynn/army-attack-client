@@ -1,7 +1,8 @@
 export const State = function() {}
-State.prototype.onEnter = function(stateMachine) {}
-State.prototype.onExit = function(stateMachine) {}
+
+State.prototype.onEnter = function(gameContext, stateMachine) {}
+State.prototype.onExit = function(gameContext, stateMachine) {}
 State.prototype.onUpdate = function(gameContext, stateMachine) {}
-State.prototype.onEvent = function(stateMachine, event) {}
+State.prototype.onEvent = function(gameContext, stateMachine, eventID, eventData) {}
 
 

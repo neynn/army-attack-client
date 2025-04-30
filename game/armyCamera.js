@@ -1,6 +1,7 @@
 import { Renderer } from "../source/renderer.js";
 import { Camera2D } from "../source/camera/types/camera2D.js";
 import { SpriteManager } from "../source/sprite/spriteManager.js";
+import { PathfinderSystem } from "./systems/pathfinder.js";
 
 export const ArmyCamera = function() {
     Camera2D.call(this);
@@ -95,4 +96,29 @@ ArmyCamera.prototype.update = function(gameContext, renderContext) {
     }
 
     this.handlePostDraw(renderContext);
+}
+
+ArmyCamera.prototype.updateMoveOverlay = function(gameContext, nodeList, enableTileID, attackTileID, ) {
+    const { world } = gameContext;
+    const showInvalidTiles = gameContext.settings.debug.showInvalidMoveTiles;
+
+    this.clearOverlay(ArmyCamera.OVERLAY_TYPE.MOVE);
+
+    for(let i = 0; i < nodeList.length; i++) {
+        const { node, state } = nodeList[i];
+        const { positionX, positionY } = node;
+
+        if(state !== PathfinderSystem.NODE_STATE.VALID) {
+            if(showInvalidTiles) {
+                this.pushOverlay(ArmyCamera.OVERLAY_TYPE.MOVE, attackTileID, positionX, positionY);
+            }
+
+        } else {
+            const tileEntity = world.getTileEntity(positionX, positionY);
+
+            if(!tileEntity) {
+                this.pushOverlay(ArmyCamera.OVERLAY_TYPE.MOVE, enableTileID, positionX, positionY);
+            }
+        } 
+    }
 }

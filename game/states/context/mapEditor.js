@@ -8,8 +8,7 @@ export const MapEditorState = function() {
 MapEditorState.prototype = Object.create(State.prototype);
 MapEditorState.prototype.constructor = MapEditorState;
 
-MapEditorState.prototype.onEnter = function(stateMachine) {
-    const gameContext = stateMachine.getContext();
+MapEditorState.prototype.onEnter = function(gameContext, stateMachine) {
     const { uiManager, tileManager, client } = gameContext;
     const { router } = client;
 
@@ -32,8 +31,7 @@ MapEditorState.prototype.onEnter = function(stateMachine) {
     this.mapEditor.updateMenuText(gameContext);
 }
 
-MapEditorState.prototype.onExit = function(stateMachine) {
-    const gameContext = stateMachine.getContext();
+MapEditorState.prototype.onExit = function(gameContext, stateMachine) {
     const { renderer, uiManager } = gameContext;
 
     uiManager.unparseUI(this.mapEditor.interfaceID);

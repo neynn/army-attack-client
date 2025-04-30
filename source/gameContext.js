@@ -95,9 +95,5 @@ GameContext.prototype.getMouseTile = function() {
 }
 
 GameContext.prototype.switchState = function(stateID) {
-    if(!this.states.hasState(stateID)) {
-        return;
-    }
-
-    this.states.setNextState(stateID);
+    this.states.setNextState(this, stateID);
 }

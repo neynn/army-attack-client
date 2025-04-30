@@ -13,10 +13,6 @@ export const StoryModeState = function() {
 StoryModeState.prototype = Object.create(StateMachine.prototype);
 StoryModeState.prototype.constructor = StoryModeState;
 
-StoryModeState.prototype.onEnter = function(stateMachine) {
-    this.setNextState(ArmyContext.STATE.STORY_MODE_PLAY);
-}
-
-StoryModeState.prototype.onExit = function(stateMachine) {
-
+StoryModeState.prototype.onEnter = function(gameContext, stateMachine) {
+    this.setNextState(gameContext, ArmyContext.STATE.STORY_MODE_PLAY);
 }
