@@ -36,15 +36,15 @@ Sprite.prototype = Object.create(Graph.prototype);
 Sprite.prototype.constructor = Sprite;
 
 Sprite.prototype.onDraw = function(context, localX, localY) {
-    const frameContainer = this.manager.graphics.getContainer(this.typeID);
+    const container = this.manager.graphics.getContainer(this.typeID);
 
-    if(!frameContainer) {
+    if(!container) {
         return;
     }
 
-    const { texture, frames } = frameContainer;
+    const { texture, frames, frameCount } = container;
 
-    if(texture === null || frames.length === 0) {
+    if(texture === null || frameCount === 0) {
         return;
     }
 

@@ -180,16 +180,22 @@ SpriteManager.prototype.updateSprite = function(spriteIndex, typeID, animationID
         return;
     }
 
-    const spriteID = this.graphics.getSpriteIndex(typeID, animationID);
+    const atlas = this.graphics.getAtlas(typeID);
 
-    if(spriteID !== SpriteAtlas.ID.INVALID && !sprite.isEqual(spriteID)) {
-        const graphic = this.graphics.getContainer(spriteID);
-        const spriteAtlas = this.graphics.getAtlas(typeID);
-        const { boundsX, boundsY, boundsW, boundsH } = spriteAtlas;
-        const frameCount = graphic.getFrameCount();
-        const frameTime = graphic.getFrameTime();
+    if(!atlas) {
+        Logger.log(Logger.CODE.ENGINE_WARN, "Atlast does not exist!", "SpriteManager.prototype.updateSprite", { "spriteID": spriteIndex });
+        return;
+    }
 
-        sprite.init(typeID, spriteID, frameCount, frameTime, this.timestamp);
+    const { boundsX, boundsY, boundsW, boundsH } = atlas;
+    const index = atlas.getSpriteIndex(animationID);
+
+    if(index !== SpriteAtlas.ID.INVALID && !sprite.isEqual(index)) {
+        const container = this.graphics.getContainer(index);
+        const frameCount = container.getFrameCount();
+        const frameTime = container.getFrameTime();
+
+        sprite.init(typeID, index, frameCount, frameTime, this.timestamp);
         sprite.setBounds(boundsX, boundsY, boundsW, boundsH);
     }
 }

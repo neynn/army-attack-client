@@ -22,12 +22,8 @@ Texture.ERROR_CODE = {
 };
 
 Texture.prototype.clear = function() {
-    if(this.state !== Texture.STATE.LOADED) {
-        return;
-    }
-
-    this.state = Texture.STATE.EMPTY;
     this.bitmap = null;
+    this.state = Texture.STATE.EMPTY;
 }
 
 Texture.prototype.requestBitmap = function() {
@@ -62,7 +58,7 @@ Texture.prototype.onResponse = function(response) {
 Texture.prototype.onLoadError = function(error) {
     this.state = Texture.STATE.EMPTY;
 
-    return Promise.reject(Texture.ERROR_CODE.ERROR_IMAGE_LOAD);
+    return Promise.reject(error);
 }
 
 Texture.prototype.setImageData = function(bitmap, width, height) {

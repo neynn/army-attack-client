@@ -1,11 +1,15 @@
 export const FrameContainer = function() {
     this.texture = null;
     this.frames = [];
-    this.frameTime = 1;
+    this.frameTime = FrameContainer.DEFAULT.FRAME_TIME;
     this.frameIndex = 0;
     this.frameCount = 0;
     this.frameTimeTotal = 1;
 }
+
+FrameContainer.DEFAULT = {
+    FRAME_TIME: 1
+};
 
 FrameContainer.createFrame = function(frameData) {
     if(!frameData) {
@@ -86,8 +90,8 @@ FrameContainer.prototype.updateFrameIndex = function(timestamp) {
     this.frameIndex = frameIndex;
 }
 
-FrameContainer.prototype.setFrameTime = function(frameTime = 1) {
-    if(frameTime !== 0) {
+FrameContainer.prototype.setFrameTime = function(frameTime) {
+    if(frameTime && frameTime > 0) {
         this.frameTime = frameTime;
         this.updateTotalFrameTime();
     }

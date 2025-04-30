@@ -1,24 +1,15 @@
 import { FrameContainer } from "../graphics/frameContainer.js";
-import { TextureManager } from "../resources/textureManager.js";
+import { TextureHandler } from "../resources/textureHandler.js";
 
 export const TileGraphics = function() {
-    this.resources = new TextureManager();
-    this.containers = [];
-    this.activeContainers = [];
-    this.textures = new Map();
-
-    this.resources.events.on(TextureManager.EVENT.TEXTURE_LOAD, (textureID, texture) => {
-        this.onTextureLoad(textureID, texture);
-    },  { permanent: true });
+    TextureHandler.call(this);
 }
+
+TileGraphics.prototype = Object.create(TextureHandler.prototype);
+TileGraphics.prototype.constructor = TileGraphics;
 
 TileGraphics.DEFAULT = {
     FRAME_TIME: 1
-};
-
-TileGraphics.BUFFER_THRESHOLD = {
-    BIT_8: 256,
-    BIT_16: 65536
 };
 
 TileGraphics.COLOR = {
@@ -47,8 +38,8 @@ TileGraphics.prototype.drawTile = function(context, tileID, renderX, renderY, sc
         return;
     }
 
-    const graphic = this.containers[index];
-    const { texture, frames, frameIndex, frameCount } = graphic;
+    const container = this.containers[index];
+    const { texture, frames, frameIndex, frameCount } = container;
 
     if(texture === null || frameCount === 0) {
         this.drawEmptyTile(context, renderX, renderY, scaleX, scaleY, tileWidth, tileHeight);
@@ -75,64 +66,8 @@ TileGraphics.prototype.drawTile = function(context, tileID, renderX, renderY, sc
     }
 }
 
-TileGraphics.prototype.getBufferType = function() {
-    if(this.containers.length < TileGraphics.BUFFER_THRESHOLD.BIT_8) {
-        return Uint8Array;
-    } else if(this.containers.length < TileGraphics.BUFFER_THRESHOLD.BIT_16) {
-        return Uint16Array;
-    }
-
-    return Uint32Array;
-}
-
-TileGraphics.prototype.update = function(timestamp) {
-    for(let i = 0; i < this.activeContainers.length; i++) {
-        const index = this.activeContainers[i];
-        const graphic = this.containers[index];
-
-        graphic.updateFrameIndex(timestamp);
-    }
-}
-
-TileGraphics.prototype.load = function(tileSheets, tileGraphics) {
-    this.resources.createTextures(tileSheets);
-
-    for(let i = 0; i < tileGraphics.length; i++) {
-        const { set, animation } = tileGraphics[i];
-        const sheet = tileSheets[set];
-        const container = new FrameContainer();
-
-        this.containers.push(container);
-
-        if(!sheet) {
-            continue;
-        }
-
-        createGraphic(container, sheet, animation);
-
-        const frameCount = container.getFrameCount();
-
-        if(frameCount === 0) {
-            continue;
-        }
-
-        if(frameCount > 1) {
-            this.activeContainers.push(i);
-        }
-        
-        const usedSheet = this.textures.get(set);
-
-        if(usedSheet) {
-            usedSheet.push(i);
-        } else {
-            this.textures.set(set, [i]);
-            this.resources.requestBitmap(set);
-        }
-    }
-}
-
 TileGraphics.prototype.onTextureLoad = function(textureID, texture) {
-    const indices = this.textures.get(textureID);
+    const indices = this.atlases.get(textureID);
 
     if(!indices) {
         return;
@@ -144,6 +79,43 @@ TileGraphics.prototype.onTextureLoad = function(textureID, texture) {
 
         graphic.setTexture(texture);
         texture.addReference();
+    }
+}
+
+TileGraphics.prototype.load = function(atlases, tileGraphics) {
+    this.resources.createTextures(atlases);
+
+    for(let i = 0; i < tileGraphics.length; i++) {
+        const { set, animation } = tileGraphics[i];
+        const atlas = atlases[set];
+        const container = new FrameContainer();
+
+        this.addContainer(container);
+
+        if(!atlas) {
+            continue;
+        }
+
+        createGraphic(container, atlas, animation);
+
+        const frameCount = container.getFrameCount();
+
+        if(frameCount === 0) {
+            continue;
+        }
+
+        if(frameCount > 1) {
+            this.activeContainers.push(i);
+        }
+        
+        const usedSheet = this.atlases.get(set);
+
+        if(usedSheet) {
+            usedSheet.push(i);
+        } else {
+            this.atlases.set(set, [i]);
+            this.resources.requestBitmap(set);
+        }
     }
 }
 
