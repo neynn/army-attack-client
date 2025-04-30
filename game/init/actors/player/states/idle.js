@@ -48,8 +48,8 @@ const selectEntity = function(gameContext, player, entity) {
 
     const entityID = entity.getID();
     const nodeList = PathfinderSystem.generateNodeList(gameContext, entity);
-    const enableTileID = player.getOverlayID(gameContext, Player.OVERLAY_TYPE.ENABLE);
-    const attackTileID = player.getOverlayID(gameContext, Player.OVERLAY_TYPE.ATTACK);
+    const enableTileID = player.getOverlayID(gameContext, player.config.overlays.enable);
+    const attackTileID = player.getOverlayID(gameContext, player.config.overlays.attack);
 
     player.selectedEntityID = entityID;
     player.hover.updateNodes(gameContext, nodeList);
@@ -88,6 +88,7 @@ const onClick = function(gameContext, stateMachine, tileX, tileY) {
 
     if(!actionQueue.isRunning() && MoveSystem.isMoveable(mouseEntity)) {
         selectEntity(gameContext, player, mouseEntity);
+        
         stateMachine.setNextState(gameContext, Player.STATE.SELECTED);
     }
 }

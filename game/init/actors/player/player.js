@@ -16,7 +16,7 @@ import { PlayerIdleState } from "./states/idle.js";
 import { PlayerSelectedState } from "./states/selected.js";
 import { PlayerFireMissionState } from "./states/fireMission.js";
 import { PlayerBuildState } from "./states/build.js";
-import { PlayerEmptyState } from "./states/empty.js";
+import { PlayerSpectateState } from "./states/spectate.js";
 
 export const Player = function() {
     Actor.call(this);
@@ -32,7 +32,7 @@ export const Player = function() {
     this.camera = new ArmyCamera();
     this.inputQueue = new Queue(10);
 
-    this.states.addState(Player.STATE.NONE, new PlayerEmptyState());
+    this.states.addState(Player.STATE.SPECTATE, new PlayerSpectateState());
     this.states.addState(Player.STATE.IDLE, new PlayerIdleState());
     this.states.addState(Player.STATE.SELECTED, new PlayerSelectedState());
     this.states.addState(Player.STATE.FIRE_MISSION, new PlayerFireMissionState());
@@ -51,11 +51,11 @@ Player.EVENT = {
 };
 
 Player.STATE = {
-    NONE: 0,
-    IDLE: 1,
-    SELECTED: 2,
-    FIRE_MISSION: 3,
-    BUILD: 4
+    SPECTATE: "SPECTATE",
+    IDLE: "IDLE",
+    SELECTED: "SELECTED",
+    FIRE_MISSION: "FIRE_MISSION",
+    BUILD: "BUILD"
 };
 
 Player.SPRITE_TYPE = {
@@ -63,11 +63,6 @@ Player.SPRITE_TYPE = {
     SELECT: "select",
     ATTACK: "attack",
     FIRE_MISSION: "powerup"
-};
-
-Player.OVERLAY_TYPE = {
-    ENABLE: "enable",
-    ATTACK: "attack"
 };
 
 Player.prototype = Object.create(Actor.prototype);
@@ -99,7 +94,7 @@ Player.prototype.resetAttacker = function(gameContext, attackerID) {
 }
 
 Player.prototype.highlightAttackers = function(gameContext, target, attackers) {
-    const tileID = this.getOverlayID(gameContext, Player.OVERLAY_TYPE.ATTACK);
+    const tileID = this.getOverlayID(gameContext, this.config.overlays.attack);
 
     this.camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.ATTACK);
 
@@ -146,14 +141,12 @@ Player.prototype.updateAttackers = function(gameContext) {
     this.highlightAttackers(gameContext, mouseEntity, activeAttackers);
 }
 
-Player.prototype.getOverlayID = function(gameContext, typeID) {
-    const { tileManager } = gameContext;
-    const overlay = this.config.overlays[typeID];
-
+Player.prototype.getOverlayID = function(gameContext, overlay) {
     if(!overlay) {
         return TileManager.TILE_ID.EMPTY;
     }
 
+    const { tileManager } = gameContext;
     const { set, animation } = overlay;
     const tileID = tileManager.getTileID(set, animation);
 
@@ -227,7 +220,7 @@ Player.prototype.onTurnStart = function(gameContext) {
 }
 
 Player.prototype.onTurnEnd = function(gameContext) {
-    this.states.setNextState(gameContext, Player.STATE.NONE);
+    this.states.setNextState(gameContext, Player.STATE.SPECTATE);
 }
 
 Player.prototype.update = function(gameContext) {
