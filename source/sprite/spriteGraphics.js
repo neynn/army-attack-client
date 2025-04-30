@@ -1,40 +1,42 @@
-import { Graphic } from "../graphics/graphic.js";
-import { Sprite } from "./sprite.js";
+import { FrameContainer } from "../graphics/frameContainer.js";
+import { TextureManager } from "../resources/textureManager.js";
 import { SpriteAtlas } from "./spriteAtlas.js";
 
 export const SpriteGraphics = function() {
-    this.graphics = [];
-    this.spriteAtlases = new Map();
+    this.resources = new TextureManager();
+    this.atlases = new Map();
+    this.containers = [];
+
+    this.resources.events.on(TextureManager.EVENT.TEXTURE_LOAD, (textureID, texture) => {
+        this.onTextureLoad(textureID, texture);
+    }, { permanent: true });
 }
 
-SpriteGraphics.prototype.load = function(spriteAtlases) {
-    const atlasKeys = Object.keys(spriteAtlases);
+SpriteGraphics.prototype.load = function(atlases) {
+    const atlasKeys = Object.keys(atlases);
 
     for(let i = 0; i < atlasKeys.length; i++) {
         const atlasID = atlasKeys[i];
         const spriteAtlas = new SpriteAtlas();
-        const atlasConfig = spriteAtlases[atlasID];
+        const atlasConfig = atlases[atlasID];
         const { animations, frames, frameTime, bounds } = atlasConfig;
 
         spriteAtlas.loadBounds(bounds);
 
-        this.spriteAtlases.set(atlasID, spriteAtlas);
+        this.atlases.set(atlasID, spriteAtlas);
 
         if(!animations || !frames) {
             continue;
         }
 
-        const defaultFrameTime = frameTime ?? SpriteAtlas.DEFAULT.FRAME_TIME;
-
-        defineAnimations(animations, frames, defaultFrameTime, (id, graphic) => {
-            spriteAtlas.setSpriteIndex(id, this.graphics.length);
-            this.graphics.push(graphic);
-        });
+        this.createContainers(spriteAtlas, animations, frames, frameTime ?? SpriteAtlas.DEFAULT.FRAME_TIME);
     }
+
+    this.resources.createTextures(atlases);
 }
 
-SpriteGraphics.prototype.onImageLoad = function(atlasID, loadableImage) {
-    const spriteAtlas = this.spriteAtlases.get(atlasID);
+SpriteGraphics.prototype.onTextureLoad = function(atlasID, texture) {
+    const spriteAtlas = this.atlases.get(atlasID);
 
     if(!spriteAtlas) {
         return;
@@ -42,11 +44,11 @@ SpriteGraphics.prototype.onImageLoad = function(atlasID, loadableImage) {
 
     const { sprites } = spriteAtlas;
 
-    sprites.forEach((index) => this.graphics[index].setImage(loadableImage));
+    sprites.forEach((index) => this.containers[index].setTexture(texture));
 }
 
 SpriteGraphics.prototype.getSpriteIndex = function(atlasID, spriteID) {
-    const spriteAtlas = this.spriteAtlases.get(atlasID);
+    const spriteAtlas = this.atlases.get(atlasID);
 
     if(!spriteAtlas) {
         return SpriteAtlas.ID.INVALID;
@@ -58,73 +60,49 @@ SpriteGraphics.prototype.getSpriteIndex = function(atlasID, spriteID) {
 }
 
 SpriteGraphics.prototype.getAtlas = function(atlasID) {
-    const spriteAtlas = this.spriteAtlases.get(atlasID);
+    const spriteAtlas = this.atlases.get(atlasID);
 
     if(!spriteAtlas) {
         return null;
     }
 
+    this.resources.requestBitmap(atlasID);
+
     return spriteAtlas;
 }
 
-SpriteGraphics.prototype.getGraphic = function(spriteIndex) {
-    if(spriteIndex < 0 || spriteIndex >= this.graphics.length) {
+SpriteGraphics.prototype.getContainer = function(spriteIndex) {
+    if(spriteIndex < 0 || spriteIndex >= this.containers.length) {
         return null;
     }
 
-    return this.graphics[spriteIndex];
+    return this.containers[spriteIndex];
 }
 
-const createFrame = function(frameData) {
-    if(!frameData) {
-        return null;
-    }
-
-    const frame = [];
-    const { x, y, w, h, offset } = frameData;
-
-    const component = {
-        "frameX": x,
-        "frameY": y,
-        "frameW": w,
-        "frameH": h,
-        "shiftX": offset?.x ?? 0,
-        "shiftY": offset?.y ?? 0
-    };
-    
-    frame.push(component);
-
-    return frame;
-}
-
-const defineAnimations = function(animations, uniqueFrames, defaultFrameTime, onValid) {
-    if(typeof onValid !== "function") {
-        return;
-    }
-
+SpriteGraphics.prototype.createContainers = function(atlas, animations, uniqueFrames, defaultFrameTime) {
     for(const animationID in animations) {
         const { 
             frameTime = defaultFrameTime,
             frames = [] 
         } = animations[animationID];
 
-        const animation = new Graphic();
+        const container = new FrameContainer();
 
-        animation.setType(Graphic.TYPE.ANIMATION);
-        animation.setFrameTime(frameTime);
+        container.setFrameTime(frameTime);
 
         for(let i = 0; i < frames.length; i++) {
             const frameID = frames[i];
             const frameData = uniqueFrames[frameID];
-            const frame = createFrame(frameData);
+            const frame = FrameContainer.createFrame(frameData);
 
-            animation.addFrame(frame);
+            container.addFrame(frame);
         }
 
-        const frameCount = animation.getFrameCount();
+        const frameCount = container.getFrameCount();
 
         if(frameCount !== 0) {
-            onValid(animationID, animation);
+            atlas.setSpriteIndex(animationID, this.containers.length);
+            this.containers.push(container);
         } else {
             console.warn(`Animation ${animationID} has no frames!`);
         }

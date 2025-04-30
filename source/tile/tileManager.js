@@ -1,17 +1,11 @@
-import { ImageManager } from "../resources/imageManager.js";
 import { TileGraphics } from "./tileGraphics.js";
 import { Autotiler } from "./autotiler.js";
 
 export const TileManager = function() {
-    this.resources = new ImageManager();
     this.graphics = new TileGraphics();
     this.autotilers = new Map();
     this.metaInversion = {};
     this.meta = [];
-
-    this.resources.events.on(ImageManager.EVENT.IMAGE_LOAD, (imageID, image) => {
-        this.graphics.onImageLoad(imageID, image);
-    },  { permanent: true });
 }
 
 TileManager.TILE_ID = {
@@ -31,8 +25,7 @@ TileManager.prototype.load = function(tileSheets, tileMeta) {
     } = tileMeta;
 
     this.init(graphics, autotilers);
-    this.resources.createImages(tileSheets);
-    this.graphics.load(this.resources, tileSheets, graphics);
+    this.graphics.load(tileSheets, graphics);
 }
 
 TileManager.prototype.update = function(gameContext) {

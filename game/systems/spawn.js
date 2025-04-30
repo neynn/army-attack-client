@@ -22,7 +22,8 @@ const loadEntitySounds = function(gameContext, entity) {
 
 const unloadEntitySprites = function(gameContext, entity) {
     const { spriteManager } = gameContext;
-    const { resources } = spriteManager;
+    const { graphics } = spriteManager;
+    const { resources } = graphics;
     const { sprites } = entity.config;
 
     for(const spriteType in sprites) {

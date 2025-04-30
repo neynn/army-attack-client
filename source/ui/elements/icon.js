@@ -11,7 +11,7 @@ Icon.prototype = Object.create(UIElement.prototype);
 Icon.prototype.constructor = Icon;
 
 Icon.prototype.onDraw = function(context, localX, localY) {
-    const bitmap = this.resources.getImageBitmap(this.imageID);
+    const bitmap = this.resources.getBitmap(this.imageID);
             
     if(bitmap) {
         context.drawImage(bitmap, localX, localY);

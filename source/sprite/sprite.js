@@ -36,19 +36,19 @@ Sprite.prototype = Object.create(Graph.prototype);
 Sprite.prototype.constructor = Sprite;
 
 Sprite.prototype.onDraw = function(context, localX, localY) {
-    const graphic = this.manager.graphics.getGraphic(this.typeID);
+    const frameContainer = this.manager.graphics.getContainer(this.typeID);
 
-    if(!graphic) {
+    if(!frameContainer) {
         return;
     }
 
-    const { image, frames } = graphic;
+    const { texture, frames } = frameContainer;
 
-    if(image === null || frames.length === 0) {
+    if(texture === null || frames.length === 0) {
         return;
     }
 
-    const { bitmap } = image;
+    const { bitmap } = texture;
     const spriteFrame = frames[this.currentFrame];
     const isFlipped = (this.flags & Sprite.FLAG.FLIP) !== 0;
 

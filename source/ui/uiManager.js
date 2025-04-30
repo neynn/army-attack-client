@@ -1,5 +1,5 @@
 import { Logger } from "../logger.js";
-import { ImageManager } from "../resources/imageManager.js";
+import { TextureManager } from "../resources/textureManager.js";
 import { UserInterface } from "./userInterface.js";
 import { UIElement } from "./uiElement.js";
 import { TextStyle } from "../graphics/textStyle.js";
@@ -11,7 +11,7 @@ import { TextElement } from "./elements/textElement.js";
 import { SHAPE } from "../math/constants.js";
 
 export const UIManager = function() {
-    this.resources = new ImageManager();
+    this.resources = new TextureManager();
     this.interfaceStack = [];
     this.interfaceTypes = {};
 }
@@ -41,7 +41,7 @@ UIManager.prototype.load = function(interfaceTypes, iconTypes, fontTypes) {
     }
 
     if(typeof iconTypes === "object") {
-        this.resources.createImages(iconTypes);
+        this.resources.createTextures(iconTypes);
     } else {
         Logger.log(false, "IconTypes cannot be undefined!", "UIManager.prototype.load", null);
     }

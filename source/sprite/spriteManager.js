@@ -1,12 +1,10 @@
 import { Logger } from "../logger.js";
 import { Sprite } from "./sprite.js";
-import { ImageManager } from "../resources/imageManager.js";
 import { ObjectPool } from "../objectPool.js";
 import { SpriteGraphics } from "./spriteGraphics.js";
 import { SpriteAtlas } from "./spriteAtlas.js";
 
 export const SpriteManager = function() {
-    this.resources = new ImageManager();
     this.graphics = new SpriteGraphics();
     this.spriteTracker = new Set();
     this.sprites = new ObjectPool(2500, (index) => new Sprite(this, index, index));
@@ -18,10 +16,6 @@ export const SpriteManager = function() {
     this.layers[SpriteManager.LAYER.MIDDLE] = [];
     this.layers[SpriteManager.LAYER.TOP] = [];
     this.layers[SpriteManager.LAYER.UI] = [];
-
-    this.resources.events.on(ImageManager.EVENT.IMAGE_LOAD, (imageID, image) => {
-        this.graphics.onImageLoad(imageID, image);
-    }, { permanent: true });
 }
 
 SpriteManager.LAYER = {
@@ -40,8 +34,8 @@ SpriteManager.prototype.getLayer = function(layerIndex) {
 }
 
 SpriteManager.prototype.preloadAtlas = function(atlasID) {
-    this.resources.requestImage(atlasID);
-    this.resources.addReference(atlasID);
+    this.graphics.resources.requestBitmap(atlasID);
+    this.graphics.resources.addReference(atlasID);
 }
 
 SpriteManager.prototype.load = function(spriteTypes) {
@@ -51,7 +45,6 @@ SpriteManager.prototype.load = function(spriteTypes) {
     }
 
     this.graphics.load(spriteTypes);
-    this.resources.createImages(spriteTypes);
 }
 
 SpriteManager.prototype.update = function(gameContext) {
@@ -190,7 +183,7 @@ SpriteManager.prototype.updateSprite = function(spriteIndex, typeID, animationID
     const spriteID = this.graphics.getSpriteIndex(typeID, animationID);
 
     if(spriteID !== SpriteAtlas.ID.INVALID && !sprite.isEqual(spriteID)) {
-        const graphic = this.graphics.getGraphic(spriteID);
+        const graphic = this.graphics.getContainer(spriteID);
         const spriteAtlas = this.graphics.getAtlas(typeID);
         const { boundsX, boundsY, boundsW, boundsH } = spriteAtlas;
         const frameCount = graphic.getFrameCount();
@@ -198,7 +191,5 @@ SpriteManager.prototype.updateSprite = function(spriteIndex, typeID, animationID
 
         sprite.init(typeID, spriteID, frameCount, frameTime, this.timestamp);
         sprite.setBounds(boundsX, boundsY, boundsW, boundsH);
-
-        this.resources.requestImage(typeID);
     }
 }
