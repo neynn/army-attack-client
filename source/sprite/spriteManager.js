@@ -18,6 +18,8 @@ export const SpriteManager = function() {
     this.layers[SpriteManager.LAYER.UI] = [];
 }
 
+SpriteManager.DEFAULT_ANIMATION_ID = "default";
+
 SpriteManager.LAYER = {
     BOTTOM: 0,
     MIDDLE: 1,
@@ -172,30 +174,33 @@ SpriteManager.prototype.removeSpriteFromLayers = function(spriteIndex) {
     }
 }
 
-SpriteManager.prototype.updateSprite = function(spriteIndex, typeID, animationID = SpriteAtlas.DEFAULT.ANIMATION_ID) {
+SpriteManager.prototype.updateSprite = function(spriteIndex, atlasID, animationID) {
     const sprite = this.sprites.getReservedElement(spriteIndex);
     
+    console.log("ATT", atlasID, animationID);
+
     if(!sprite) {
         Logger.log(Logger.CODE.ENGINE_WARN, "Sprite is not reserved!", "SpriteManager.prototype.updateSprite", { "spriteID": spriteIndex });
         return;
     }
 
-    const atlas = this.graphics.getAtlas(typeID);
+    const atlas = this.graphics.getAtlas(atlasID);
 
     if(!atlas) {
         Logger.log(Logger.CODE.ENGINE_WARN, "Atlast does not exist!", "SpriteManager.prototype.updateSprite", { "spriteID": spriteIndex });
         return;
     }
 
-    const { boundsX, boundsY, boundsW, boundsH } = atlas;
-    const index = atlas.getSpriteIndex(animationID);
+    const spriteID = animationID ?? SpriteManager.DEFAULT_ANIMATION_ID;
+    const index = atlas.getSpriteIndex(spriteID);
+    const container = this.graphics.getContainer(index);
 
-    if(index !== SpriteAtlas.ID.INVALID && !sprite.isEqual(index)) {
-        const container = this.graphics.getContainer(index);
+    if(container && !sprite.isEqual(index)) {
+        const { boundsX, boundsY, boundsW, boundsH } = atlas;
         const frameCount = container.getFrameCount();
         const frameTime = container.getFrameTime();
 
-        sprite.init(typeID, index, frameCount, frameTime, this.timestamp);
+        sprite.init(atlasID, index, frameCount, frameTime, this.timestamp);
         sprite.setBounds(boundsX, boundsY, boundsW, boundsH);
     }
 }

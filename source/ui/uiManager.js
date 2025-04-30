@@ -95,10 +95,11 @@ UIManager.prototype.exit = function() {
 UIManager.prototype.onClick = function(mouseX, mouseY, mouseRange) {
     for(let i = this.interfaceStack.length - 1; i >= 0; i--) {
         const userInterface = this.interfaceStack[i];
-        const { currentCollisions, elements } = userInterface;
+        const { collisions, elements } = userInterface;
+        const current = collisions.getCurrent();
 
-        if(currentCollisions.size !== 0) {
-            for(const elementID of currentCollisions) {
+        if(current.size !== 0) {
+            for(const elementID of current) {
                 const element = elements.get(elementID);
 
                 element.collider.click(mouseX, mouseY, mouseRange);

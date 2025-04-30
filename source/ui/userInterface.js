@@ -1,3 +1,4 @@
+import { DualSet } from "../dualSet.js";
 import { createFadeInEffect } from "../effects/example/fadeIn.js";
 import { createFadeOutEffect } from "../effects/example/fadeOut.js";
 import { TextElement } from "./elements/textElement.js";
@@ -10,8 +11,7 @@ export const UserInterface = function(id) {
     this.nameMap = new Map();
     this.elements = new Map();
     this.state = UserInterface.STATE.VISIBLE;
-    this.previousCollisions = new Set();
-    this.currentCollisions = new Set();
+    this.collisions = new DualSet();
 }
 
 UserInterface.STATE = {
@@ -109,17 +109,16 @@ UserInterface.prototype.getCollisions = function(mouseX, mouseY, mouseRange) {
 UserInterface.prototype.updateCollisions = function(mouseX, mouseY, mouseRange) {
     const collisions = this.getCollisions(mouseX, mouseY, mouseRange);
 
-    [this.previousCollisions, this.currentCollisions] = [this.currentCollisions, this.previousCollisions];
-    this.currentCollisions.clear();
+    this.collisions.reset();
 
     if(!collisions) {
-        for(const elementID of this.previousCollisions) {
+        for(const elementID of this.collisions.previous) {
             const element = this.elements.get(elementID);
 
             element.collider.onCollisionUpdate(UICollider.STATE.NOT_COLLIDED, mouseX, mouseY, mouseRange);
         }
 
-        this.previousCollisions.clear();
+        this.collisions.previous.clear();
         return;
     }
 
@@ -127,12 +126,12 @@ UserInterface.prototype.updateCollisions = function(mouseX, mouseY, mouseRange) 
         const element = collisions[i];
         const elementID = element.getID();
 
-        this.currentCollisions.add(elementID);
+        this.collisions.current.add(elementID);
         element.collider.onCollisionUpdate(UICollider.STATE.COLLIDED, mouseX, mouseY, mouseRange);
     }
 
-    for(const elementID of this.previousCollisions) {
-        if(!this.currentCollisions.has(elementID)) {
+    for(const elementID of this.collisions.previous) {
+        if(!this.collisions.current.has(elementID)) {
             const element = this.elements.get(elementID);
 
             element.collider.onCollisionUpdate(UICollider.STATE.NOT_COLLIDED, mouseX, mouseY, mouseRange);

@@ -1,5 +1,4 @@
 import { EventEmitter } from "../events/eventEmitter.js";
-import { Logger } from "../logger.js";
 import { Queue } from "../queue.js";
 
 export const ActionQueue = function() {
@@ -47,7 +46,7 @@ ActionQueue.EVENT = {
 
 ActionQueue.prototype.load = function(actionTypes) {
     if(typeof actionTypes !== "object") {
-        Logger.log(false, "ActionTypes cannot be undefined!", "ActionQueue.prototype.load", null);
+        console.error("ActionType cannot be undefined!");
         return;
     }
 
@@ -277,12 +276,12 @@ ActionQueue.prototype.enqueueExecutionItem = function(executionItem, request) {
 
 ActionQueue.prototype.registerAction = function(typeID, handler) {
     if(this.actionHandlers.has(typeID)) {
-        Logger.log(false, "Handler already exist!", "ActionQueue.prototype.registerAction", { typeID });
+        console.warn(`Action ${typeID} is already registered!`);
         return;
     }
 
     if(this.actionTypes[typeID] === undefined) {
-        Logger.log(false, "ActionType does not exist!", "ActionQueue.prototype.registerAction", { typeID });
+        console.warn(`ActionType ${typeID} does not exist!`);
         return;
     }
 

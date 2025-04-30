@@ -22,7 +22,7 @@ export const Player = function() {
     this.teamID = null;
     this.selectedEntityID = EntityManager.ID.INVALID;
     this.selectedFireMissionID = null;
-    this.attackers = [];
+    this.attackers = new Set();
     this.state = Player.STATE.NONE;
     this.hover = new Hover();
     this.attackRangeOverlay = new AttackRangeOverlay();
@@ -74,7 +74,7 @@ Player.prototype.onEntityRemove = function(entityID) {
 
 Player.prototype.clearAttackers = function() {
     this.camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.ATTACK);
-    this.attackers.length = 0;
+    this.attackers.clear()
 }
 
 Player.prototype.resetAttacker = function(gameContext, attackerID) {
@@ -98,6 +98,7 @@ Player.prototype.highlightAttackers = function(gameContext, target, attackers) {
 
         LookSystem.lookAtEntity(attacker, target);
         attacker.updateSpriteDirectonal(gameContext, ArmyEntity.SPRITE_TYPE.AIM, ArmyEntity.SPRITE_TYPE.AIM_UP);
+        
         this.camera.pushOverlay(ArmyCamera.OVERLAY_TYPE.ATTACK, tileID, tileX, tileY);
     }
 }
@@ -111,26 +112,26 @@ Player.prototype.updateAttackers = function(gameContext) {
         return;
     }
 
-    const newAttackers = [];
+    const currentAttackers = new Set();
     const activeAttackers = AttackSystem.getActiveAttackers(gameContext, mouseEntity, this.id);
 
     for(let i = 0; i < activeAttackers.length; i++) {
         const attacker = activeAttackers[i];
         const attackerID = attacker.getID();
 
-        newAttackers.push(attackerID);
+        currentAttackers.add(attackerID);
     }
 
     for(let i = 0; i < this.attackers.length; i++) {
         const attackerID = this.attackers[i];
-        const isAttacking = newAttackers.includes(attackerID);
+        const isAttacking = currentAttackers.has(attackerID);
 
         if(!isAttacking) {
             this.resetAttacker(gameContext, attackerID);
         }
     }
 
-    this.attackers = newAttackers;
+    this.attackers = currentAttackers;
     this.highlightAttackers(gameContext, mouseEntity, activeAttackers);
 }
 
@@ -240,7 +241,7 @@ Player.prototype.updateIdleCursor = function(gameContext) {
     switch(this.hover.state) {
         case Hover.STATE.HOVER_ON_ENTITY: {
             const hoveredEntity = this.hover.getEntity(gameContext);
-            const typeID = this.attackers.length > 0 ? Player.SPRITE_TYPE.ATTACK : Player.SPRITE_TYPE.SELECT;
+            const typeID = this.attackers.size > 0 ? Player.SPRITE_TYPE.ATTACK : Player.SPRITE_TYPE.SELECT;
             const spriteKey = `${hoveredEntity.config.dimX}-${hoveredEntity.config.dimY}`;
             const spriteID = this.getSpriteType(typeID, spriteKey);
 

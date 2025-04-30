@@ -40,7 +40,7 @@ SpriteGraphics.prototype.load = function(atlases) {
             continue;
         }
 
-        this.createContainers(spriteAtlas, animations, frames, frameTime ?? SpriteAtlas.DEFAULT.FRAME_TIME);
+        this.createContainers(spriteAtlas, animations, frames, frameTime ?? FrameContainer.DEFAULT.FRAME_TIME);
     }
 }
 

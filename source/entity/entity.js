@@ -32,7 +32,6 @@ Entity.prototype.hasComponent = function(component) {
     return this.components.has(component);
 }
 
-
 Entity.prototype.getComponent = function(componentID) {
     const component = this.components.get(componentID);
 

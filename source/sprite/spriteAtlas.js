@@ -6,15 +6,6 @@ export const SpriteAtlas = function() {
     this.sprites = new Map();
 }
 
-SpriteAtlas.ID = {
-    INVALID: -1
-};
-
-SpriteAtlas.DEFAULT = {
-    FRAME_TIME: 1,
-    ANIMATION_ID: "default"
-};
-
 SpriteAtlas.prototype.loadBounds = function(bounds) {
     if(bounds) {
         const { x, y, w, h } = bounds;
@@ -36,7 +27,7 @@ SpriteAtlas.prototype.getSpriteIndex = function(spriteID) {
     const spriteIndex = this.sprites.get(spriteID);
 
     if(spriteIndex === undefined) {
-        return SpriteAtlas.ID.INVALID;
+        return -1;
     }
 
     return spriteIndex;
