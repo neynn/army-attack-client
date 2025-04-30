@@ -1,16 +1,13 @@
-import { Logger } from "../logger.js";
-import { clampValue } from "../math/math.js";
 import { Autotiler } from "../tile/autotiler.js";
 import { TileManager } from "../tile/tileManager.js";
 import { Layer } from "./layer.js";
-import { Tracker } from "./tracker.js";
 
 export const WorldMap = function() {
     this.width = 0;
     this.height = 0;
     this.flags = 0;
     this.layers = new Map();
-    this.tracker = new Tracker();
+    this.entities = new Map();
     this.background = [];
     this.foreground = [];
 }
@@ -188,30 +185,99 @@ WorldMap.prototype.getListID = function(tileX, tileY) {
 
 WorldMap.prototype.getEntities = function(tileX, tileY) {
     const listID = this.getListID(tileX, tileY);
-    const entityList = this.tracker.getList(listID);
+    const list = this.entities.get(listID);
 
-    return entityList;
+    if(!list) {
+        return [];
+    }
+
+    return list;
 }
 
 WorldMap.prototype.getTopEntity = function(tileX, tileY) {
     const listID = this.getListID(tileX, tileY);
-    const topEntity = this.tracker.getTopElement(listID);
+    const list = this.entities.get(listID);
 
-    return topEntity;
+    if(!list || list.length === 0) {
+        return null;
+    }
+
+    return list[list.length - 1];
 }
 
 WorldMap.prototype.getBottomEntity = function(tileX, tileY) {
     const listID = this.getListID(tileX, tileY);
-    const bottomEntity = this.tracker.getBottomElement(listID);
+    const list = this.entities.get(listID);
 
-    return bottomEntity;
+    if(!list || list.length === 0) {
+        return null;
+    }
+
+    return list[0];
 }
 
 WorldMap.prototype.isTileOccupied = function(tileX, tileY) {
     const listID = this.getListID(tileX, tileY);
-    const isActive = this.tracker.isListActive(listID);
+    const list = this.entities.get(listID);
 
-    return isActive;
+    if(!list) {
+        return false;
+    }
+
+    return list.length > 0;
+}
+
+WorldMap.prototype.removeEntity = function(tileX, tileY, rangeX, rangeY, entityID) {
+    for(let i = 0; i < rangeY; i++) {
+        const locationY = tileY + i;
+
+        for(let j = 0; j < rangeX; j++) {
+            const locationX = tileX + j;
+            const listID = this.getListID(locationX, locationY);
+
+            if(listID !== -1) {
+                const list = this.entities.get(listID);
+
+                if(!list) {
+                    return;
+                }
+            
+                for(let i = 0; i < list.length; i++) {
+                    const entry = list[i];
+            
+                    if(entry === entityID) {
+                        list.splice(i, 1);
+                        break;
+                    }
+                }
+            
+                if(list.length === 0) {
+                    this.entities.delete(listID);
+                }
+            }
+        }
+    }
+}
+
+WorldMap.prototype.addEntity = function(tileX, tileY, rangeX, rangeY, entityID) {
+    for(let i = 0; i < rangeY; i++) {
+        const locationY = tileY + i;
+
+        for(let j = 0; j < rangeX; j++) {
+            const locationX = tileX + j;
+            const listID = this.getListID(locationX, locationY);
+
+            if(listID !== -1) {
+                const list = this.entities.get(listID);
+
+                if(!list) {
+                    this.entities.set(listID, [entityID]);
+                } else {
+                    list.push(entityID);
+                }
+            }
+        }
+    }
 }
 
 WorldMap.prototype.setLayerOpacity = function(layerID, opacity) {
@@ -221,9 +287,7 @@ WorldMap.prototype.setLayerOpacity = function(layerID, opacity) {
         return;
     }
 
-    const clampedOpacity = clampValue(opacity, 1, 0);
-
-    layer.setOpacity(clampedOpacity);
+    layer.setOpacity(opacity);
 } 
 
 WorldMap.prototype.resize = function(width, height, fillMapping) {
@@ -286,14 +350,12 @@ WorldMap.prototype.getTile = function(layerID, tileX, tileY) {
     const layer = this.layers.get(layerID);
 
     if(!layer) {
-        Logger.log(Logger.CODE.ENGINE_WARN, "Layer does not exist or tile is out of bounds!", "WorldMap.prototype.getTile", { layerID, tileX, tileY });
-
+        console.warn(`Layer ${layerID} does not exist!`);
         return null;
     }
 
     if(this.isTileOutOfBounds(tileX, tileY)) {
-        Logger.log(Logger.CODE.ENGINE_WARN, "Layer does not exist or tile is out of bounds!", "WorldMap.prototype.getTile", { layerID, tileX, tileY });
-
+        console.warn(`Tile [${tileY}|${tileX}] is out of bounds!`);
         return null;
     }
 
@@ -335,34 +397,4 @@ WorldMap.prototype.getUniqueEntitiesInRange = function(startX, startY, endX, end
     }
 
     return entities;
-}
-
-WorldMap.prototype.removeEntity = function(tileX, tileY, rangeX, rangeY, entityID) {
-    for(let i = 0; i < rangeY; i++) {
-        const locationY = tileY + i;
-
-        for(let j = 0; j < rangeX; j++) {
-            const locationX = tileX + j;
-            const listID = this.getListID(locationX, locationY);
-
-            if(listID !== -1) {
-                this.tracker.removeElement(listID, entityID);
-            }
-        }
-    }
-}
-
-WorldMap.prototype.addEntity = function(tileX, tileY, rangeX, rangeY, entityID) {
-    for(let i = 0; i < rangeY; i++) {
-        const locationY = tileY + i;
-
-        for(let j = 0; j < rangeX; j++) {
-            const locationX = tileX + j;
-            const listID = this.getListID(locationX, locationY);
-
-            if(listID !== -1) {
-                this.tracker.addElement(listID, entityID);
-            }
-        }
-    }
 }

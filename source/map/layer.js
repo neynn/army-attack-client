@@ -4,11 +4,6 @@ export const Layer = function(buffer) {
     this.autoGenerate = false;
 }
 
-Layer.RESPONSE_CODE = {
-    SUCCESS: 0,
-    OUT_OF_BOUNDS: 1
-};
-
 Layer.prototype.getBuffer = function() {
     return this.buffer;
 }
@@ -18,7 +13,11 @@ Layer.prototype.getOpacity = function() {
 }
 
 Layer.prototype.setOpacity = function(opacity) {
-    if(opacity !== undefined) {
+    if(opacity < 0) {
+        this.opacity = 0;
+    } else if(opacity > 1) {
+        this.opacity = 1;
+    } else {
         this.opacity = opacity;
     }
 }
@@ -124,10 +123,8 @@ Layer.prototype.getItem = function(index) {
 
 Layer.prototype.setItem = function(item, index) {
     if(index < 0 || index >= this.buffer.length) {
-        return Layer.RESPONSE_CODE.OUT_OF_BOUNDS;
+        return;
     }
 
     this.buffer[index] = item;
-
-    return Layer.RESPONSE_CODE.SUCCESS;
 }
