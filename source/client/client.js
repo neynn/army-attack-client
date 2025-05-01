@@ -27,6 +27,15 @@ Client.BUTTON_MAP = {
     [Cursor.BUTTON.RIGHT]: InputRouter.CURSOR_INPUT.M2
 };
 
+Client.prototype.exit = function(gameContext) {
+    this.router.clear(gameContext);
+    this.keyboard.events.muteAll();
+    this.cursor.events.muteAll();
+    this.socket.events.muteAll();
+    this.musicPlayer.stop();
+    this.soundPlayer.exit();
+}
+
 Client.prototype.createKeyboardListener = function(eventID, prefixID) {    
     this.keyboard.events.on(eventID, (keyID) => {
         this.router.handleInput(prefixID, keyID);

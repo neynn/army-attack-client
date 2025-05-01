@@ -47,24 +47,13 @@ export const GameContext = function() {
     }, { permanent: true });
 
     this.states.events.on(StateMachine.EVENT.STATE_EXIT, () => {
-        this.client.router.clear(this);
-        this.client.keyboard.events.muteAll();
-        this.client.cursor.events.muteAll();
-        this.client.socket.events.muteAll();
-        this.world.actionQueue.events.muteAll();
-        this.world.turnManager.events.muteAll();
-        this.world.entityManager.events.muteAll();
-        this.world.mapManager.events.muteAll();
-        this.world.eventBus.clear();
-        this.language.events.muteAll();
+        this.client.exit(this);
+        this.world.exit();
+        this.renderer.exit();
+        this.spriteManager.exit();
+        this.uiManager.exit();
+        this.language.exit();
     }, { permanent: true });
-}
-
-GameContext.prototype.exit = function() {
-    this.world.exit();
-    this.renderer.exit();
-    this.spriteManager.exit();
-    this.uiManager.exit();
 }
 
 GameContext.prototype.loadResources = function(resources) {

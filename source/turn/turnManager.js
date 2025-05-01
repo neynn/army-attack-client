@@ -37,6 +37,7 @@ TurnManager.prototype.load = function(actorTypes) {
 }
 
 TurnManager.prototype.exit = function() {
+    this.events.muteAll();
     this.actors.clear();
     this.actorOrder.length = 0;
     this.actorIndex = -1;

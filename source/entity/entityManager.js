@@ -56,6 +56,7 @@ EntityManager.prototype.getEntityType = function(typeID) {
 }
 
 EntityManager.prototype.exit = function() {
+    this.events.muteAll();
     this.entityMap.clear();
     this.entities = [];
 }

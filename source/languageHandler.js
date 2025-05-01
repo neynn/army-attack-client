@@ -15,6 +15,10 @@ LanguageHandler.EVENT = {
 
 LanguageHandler.STRICT = 1;
 
+LanguageHandler.prototype.exit = function() {
+    this.events.muteAll();
+}
+
 LanguageHandler.prototype.selectLanguage = function(languageID) {
     const language = this.languages.get(languageID);
 

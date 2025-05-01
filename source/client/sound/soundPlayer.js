@@ -17,7 +17,7 @@ SoundPlayer.prototype.load = function(soundTypes) {
     this.sounds = soundTypes; 
 }
 
-SoundPlayer.prototype.clear = function() {
+SoundPlayer.prototype.exit = function() {
     this.loadedSounds.forEach(sound => sound.clearInstances());
     this.activeSounds.clear();
 }

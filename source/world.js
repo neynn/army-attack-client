@@ -53,8 +53,8 @@ World.prototype.addDebug = function() {
 
 World.prototype.exit = function() {
     this.actionQueue.exit();
-    this.entityManager.exit();
     this.turnManager.exit();
+    this.entityManager.exit();
     this.mapManager.exit();
     this.eventBus.exit();
 }

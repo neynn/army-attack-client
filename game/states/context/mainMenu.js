@@ -43,9 +43,4 @@ MainMenuState.prototype.onEnter = function(gameContext, stateMachine) {
     loadUI(gameContext, stateMachine);
 }
 
-MainMenuState.prototype.onExit = function(gameContext, stateMachine) {
-    const { uiManager, spriteManager } = gameContext;
-
-    uiManager.unparseUI("MAIN_MENU");
-    spriteManager.exit();
-}
+MainMenuState.prototype.onExit = function(gameContext, stateMachine) {}

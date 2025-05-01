@@ -157,6 +157,7 @@ MapManager.prototype.getLoadedMap = function(mapID) {
 }
 
 MapManager.prototype.exit = function() {
+    this.events.muteAll();
     this.loadedMaps.clear();
     this.activeMapID = null;
 }

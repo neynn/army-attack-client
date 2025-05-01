@@ -287,6 +287,7 @@ ActionQueue.prototype.registerAction = function(typeID, handler) {
 }
 
 ActionQueue.prototype.exit = function() {
+    this.events.muteAll();
     this.immediateQueue.clear();
     this.executionQueue.clear();
     this.mode = ActionQueue.MODE.DIRECT;
