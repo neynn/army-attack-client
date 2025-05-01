@@ -30,8 +30,8 @@ import { DirectionComponent } from "./components/direction.js";
 import { TileManager } from "../source/tile/tileManager.js";
 import { Renderer } from "../source/renderer.js";
 import { Logger } from "../source/logger.js";
-import { EventBus } from "../source/events/eventBus.js";
-import { choiceMadeEvent, dropItemsEvent, skipTurnEvent } from "./clientEvents.js";
+import { WorldEventHandler } from "../source/worldEventHandler.js";
+import { GameEvent } from "./gameEvent.js";
 import { DeathAction } from "./actions/deathAction.js";
 import { ArmyMap } from "./init/armyMap.js";
 import { Socket } from "../source/network/socket.js";
@@ -171,25 +171,35 @@ ArmyContext.prototype.setGameMode = function(modeID) {
             break;
         }
         case ArmyContext.GAME_MODE.STORY: {
-            eventBus.register(GAME_EVENT.DROP_HIT_ITEMS, EventBus.STATUS.EMITABLE);
-            eventBus.register(GAME_EVENT.DROP_KILL_ITEMS, EventBus.STATUS.EMITABLE);
-            eventBus.register(GAME_EVENT.CHOICE_MADE, EventBus.STATUS.EMITABLE);
+            eventBus.register(GAME_EVENT.REQUEST_DROP_HIT_ITEMS, WorldEventHandler.STATUS.EMITABLE);
+            eventBus.register(GAME_EVENT.REQUEST_DROP_KILL_ITEMS, WorldEventHandler.STATUS.EMITABLE);
+            eventBus.register(GAME_EVENT.CHOICE_MADE, WorldEventHandler.STATUS.EMITABLE);
+            eventBus.register(GAME_EVENT.ITEMS_DROPPED, WorldEventHandler.STATUS.EMITABLE);
+            eventBus.register(GAME_EVENT.ENTITY_HIT, WorldEventHandler.STATUS.EMITABLE);
+            eventBus.register(GAME_EVENT.ENTITY_KILLED, WorldEventHandler.STATUS.EMITABLE);
+            eventBus.register(GAME_EVENT.ENTITY_DOWN, WorldEventHandler.STATUS.EMITABLE);
+            eventBus.register(GAME_EVENT.TILE_CAPTURED, WorldEventHandler.STATUS.EMITABLE);
 
-            eventBus.on(GAME_EVENT.DROP_HIT_ITEMS, (items, receiverID) => dropItemsEvent(this, items, receiverID));
-            eventBus.on(GAME_EVENT.DROP_KILL_ITEMS, (items, receiverID) => dropItemsEvent(this, items, receiverID));
-            eventBus.on(GAME_EVENT.CHOICE_MADE, (actorID) => choiceMadeEvent(this, actorID));
+            eventBus.on(GAME_EVENT.REQUEST_DROP_HIT_ITEMS, (event) => GameEvent.dropItems(this, event));
+            eventBus.on(GAME_EVENT.REQUEST_DROP_KILL_ITEMS, (event) => GameEvent.dropItems(this, event));
+            eventBus.on(GAME_EVENT.CHOICE_MADE, (event) => GameEvent.choiceMade(this, event));
+            eventBus.on(GAME_EVENT.ITEMS_DROPPED, (event) => GameEvent.itemsDropped(this, event));
+            eventBus.on(GAME_EVENT.ENTITY_HIT, (event) => GameEvent.entityHit(this, event));
+            eventBus.on(GAME_EVENT.ENTITY_KILLED, (event) => GameEvent.entityKilled(this, event));
+            eventBus.on(GAME_EVENT.ENTITY_DOWN, (event) => GameEvent.entityDown(this, event));
+            eventBus.on(GAME_EVENT.TILE_CAPTURED, (event) => GameEvent.tileCaptured(this, event));
 
             this.switchState(ArmyContext.STATE.STORY_MODE);
             break;
         }
         case ArmyContext.GAME_MODE.VERSUS: {
-            eventBus.register(GAME_EVENT.DROP_KILL_ITEMS, EventBus.STATUS.NOT_EMITABLE);
-            eventBus.register(GAME_EVENT.CHOICE_MADE, EventBus.STATUS.NOT_EMITABLE);
-            eventBus.register(GAME_EVENT.SKIP_TURN, EventBus.STATUS.NOT_EMITABLE);
+            eventBus.register(GAME_EVENT.REQUEST_DROP_KILL_ITEMS);
+            eventBus.register(GAME_EVENT.CHOICE_MADE);
+            eventBus.register(GAME_EVENT.SKIP_TURN);
 
-            eventBus.on(GAME_EVENT.DROP_KILL_ITEMS, (items, receiverID) => dropItemsEvent(this, items, receiverID));
-            eventBus.on(GAME_EVENT.CHOICE_MADE, (actorID) => choiceMadeEvent(this, actorID));
-            eventBus.on(GAME_EVENT.SKIP_TURN, (actorID) => skipTurnEvent(this, actorID));
+            eventBus.on(GAME_EVENT.REQUEST_DROP_KILL_ITEMS, (event) => GameEvent.dropItems(this, event));
+            eventBus.on(GAME_EVENT.CHOICE_MADE, (event) => GameEvent.choiceMade(this, event));
+            eventBus.on(GAME_EVENT.SKIP_TURN, (event) => GameEvent.skipTurn(this, event));
 
             this.switchState(ArmyContext.STATE.VERSUS_MODE);
             break;

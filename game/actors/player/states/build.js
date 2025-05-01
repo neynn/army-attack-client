@@ -1,4 +1,4 @@
-import { State } from "../../../../../source/state/state.js";
+import { State } from "../../../../source/state/state.js";
 
 export const PlayerBuildState = function() {}
 

@@ -1,37 +1,37 @@
-import { ACTION_TYPE, GAME_EVENT } from "../../../enums.js";
-import { ArmyCamera } from "../../../armyCamera.js";
-import { AnimationSystem } from "../../../systems/animation.js";
-import { AttackSystem } from "../../../systems/attack.js";
-import { ArmyEntity } from "../../armyEntity.js";
-import { Actor } from "../../../../source/turn/actor.js";
-import { TileManager } from "../../../../source/tile/tileManager.js";
-import { Hover } from "./hover.js";
+import { ACTION_TYPE, GAME_EVENT } from "../../enums.js";
+import { ArmyCamera } from "../../armyCamera.js";
+import { AnimationSystem } from "../../systems/animation.js";
+import { AttackSystem } from "../../systems/attack.js";
+import { ArmyEntity } from "../../init/armyEntity.js";
+import { PlayerCursor } from "./playerCursor.js";
 import { AttackRangeOverlay } from "./attackRangeOverlay.js";
 import { Inventory } from "./inventory.js";
-import { Queue } from "../../../../source/queue.js";
-import { EntityManager } from "../../../../source/entity/entityManager.js";
-import { LookSystem } from "../../../systems/look.js";
-import { StateMachine } from "../../../../source/state/stateMachine.js";
+import { LookSystem } from "../../systems/look.js";
 import { PlayerIdleState } from "./states/idle.js";
 import { PlayerSelectedState } from "./states/selected.js";
 import { PlayerFireMissionState } from "./states/fireMission.js";
 import { PlayerBuildState } from "./states/build.js";
 import { PlayerSpectateState } from "./states/spectate.js";
+import { Actor } from "../../../source/turn/actor.js";
+import { TileManager } from "../../../source/tile/tileManager.js";
+import { StateMachine } from "../../../source/state/stateMachine.js";
+import { EntityManager } from "../../../source/entity/entityManager.js";
+import { Queue } from "../../../source/queue.js";
 
 export const Player = function() {
     Actor.call(this);
 
-    this.states = new StateMachine(this);
     this.teamID = null;
     this.selectedEntityID = EntityManager.ID.INVALID;
     this.selectedFireMissionID = null;
     this.attackers = new Set();
-    this.hover = new Hover();
+    this.hover = new PlayerCursor();
     this.attackRangeOverlay = new AttackRangeOverlay();
     this.inventory = new Inventory();
     this.camera = new ArmyCamera();
     this.inputQueue = new Queue(10);
 
+    this.states = new StateMachine(this);
     this.states.addState(Player.STATE.SPECTATE, new PlayerSpectateState());
     this.states.addState(Player.STATE.IDLE, new PlayerIdleState());
     this.states.addState(Player.STATE.SELECTED, new PlayerSelectedState());
@@ -209,7 +209,7 @@ Player.prototype.onMakeChoice = function(gameContext) {
         }
 
         actionQueue.enqueueExecutionItem(executionItem, request);
-        eventBus.emit(GAME_EVENT.CHOICE_MADE, this.id);
+        eventBus.emit(GAME_EVENT.CHOICE_MADE, { "actorID": this.id });
         
         return Queue.FILTER.SUCCESS;
     });

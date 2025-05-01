@@ -1,9 +1,9 @@
 import { Cursor } from "../../source/client/cursor.js";
 import { Factory } from "../../source/factory/factory.js";
-import { Player } from "../init/actors/player/player.js";
+import { Player } from "../actors/player/player.js";
 import { createStoryModeUI } from "../storyUI.js";
-import { OtherPlayer } from "./actors/otherPlayer.js";
-import { EnemyActor } from "./actors/enemyActor.js";
+import { OtherPlayer } from "../actors/otherPlayer.js";
+import { EnemyActor } from "../actors/enemyActor.js";
 import { CameraContext } from "../../source/camera/cameraContext.js";
 
 export const ArmyActorFactory = function() {

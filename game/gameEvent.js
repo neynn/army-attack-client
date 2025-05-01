@@ -1,4 +1,10 @@
-import { Inventory } from "./init/actors/player/inventory.js";
+import { Inventory } from "./actors/player/inventory.js";
+import { GAME_EVENT } from "./enums.js";
+import { DropSystem } from "./systems/drop.js";
+
+export const GameEvent = function() {
+    this.id = 0;
+}
 
 const getMaxDrop = function(gameContext, type, id) {
     switch(type) {
@@ -26,10 +32,11 @@ const getMaxDrop = function(gameContext, type, id) {
     }
 }
 
-export const dropItemsEvent = function(gameContext, items, actorID) {
+GameEvent.dropItems = function(gameContext, event) {
     const { world } = gameContext;
-    const { turnManager } = world;
-    const receiver = turnManager.getActor(actorID);
+    const { turnManager, eventBus } = world;
+    const { drops, receiverID } = event;
+    const receiver = turnManager.getActor(receiverID);
 
     if(!receiver || !receiver.inventory) {
         return;
@@ -37,8 +44,8 @@ export const dropItemsEvent = function(gameContext, items, actorID) {
 
     const inventory = receiver.inventory;
 
-    for(let i = 0; i < items.length; i++) {
-        const item = items[i];
+    for(let i = 0; i < drops.length; i++) {
+        const item = drops[i];
         const { type, id, value } = item;
         const maxDrop = getMaxDrop(gameContext, type, id);
 
@@ -72,11 +79,14 @@ export const dropItemsEvent = function(gameContext, items, actorID) {
         inventory.resources.set("EnergyCounter", energyCounter);
         inventory.add(Inventory.TYPE.RESOURCE, "Energy", energyDrops);
     }
+
+    eventBus.emit(GAME_EVENT.ITEMS_DROPPED, { receiverID, drops });
 }
 
-export const choiceMadeEvent = function(gameContext, actorID) {
+GameEvent.choiceMade = function(gameContext, event) {
     const { world } = gameContext;
     const { turnManager } = world;
+    const { actorID } = event;
     const isActor = turnManager.isActor(actorID);
 
     if(isActor) {
@@ -84,12 +94,37 @@ export const choiceMadeEvent = function(gameContext, actorID) {
     }
 }
 
-export const skipTurnEvent = function(gameContext, actorID) {
+GameEvent.skipTurn = function(gameContext, event) {
     const { world } = gameContext;
     const { turnManager } = world;
+    const { actorID } = event;
     const isActor = turnManager.isActor(actorID);
 
     if(isActor) {
         turnManager.cancelActorActions();
     }
+}
+
+GameEvent.entityHit = function(gameContext, event) {
+    const { target } = event;
+    console.log("HIT", event);
+    DropSystem.dropHitReward(gameContext, target, "Player");
+}
+
+GameEvent.entityKilled = function(gameContext, event) {
+    const { target } = event;
+    console.log("KILLED", event);
+    DropSystem.dropKillReward(gameContext, target, "Player");
+}
+
+GameEvent.entityDown = function(gameContext, event) {
+    console.log("DOWN", event);
+}
+
+GameEvent.tileCaptured = function(gameContext, event) {
+    console.log("CAPTURED", event);
+}
+
+GameEvent.itemsDropped = function(gameContext, event) {
+    console.log("DROP", event);
 }

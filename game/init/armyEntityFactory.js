@@ -6,7 +6,7 @@ import { SpriteComponent } from "../components/sprite.js";
 import { DirectionComponent } from "../components/direction.js";
 import { PositionComponent } from "../components/position.js";
 import { ArmyEntity } from "./armyEntity.js";
-import { Player } from "../init/actors/player/player.js";
+import { Player } from "../actors/player/player.js";
 
 export const ArmyEntityFactory = function() {
     Factory.call(this, "ARMY_ENTITY_FACTORY");

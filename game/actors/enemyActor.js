@@ -1,5 +1,5 @@
-import { Actor } from "../../../source/turn/actor.js";
-import { GAME_EVENT } from "../../enums.js";
+import { Actor } from "../../source/turn/actor.js";
+import { GAME_EVENT } from "../enums.js";
 
 export const EnemyActor = function() {
     Actor.call(this);
@@ -14,5 +14,5 @@ EnemyActor.prototype.onMakeChoice = function(gameContext) {
     const { world } = gameContext;
     const { eventBus } = world;
 
-    eventBus.emit(GAME_EVENT.CHOICE_MADE, this.id);
+    eventBus.emit(GAME_EVENT.CHOICE_MADE, { "actorID": this.id });
 }

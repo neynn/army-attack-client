@@ -107,13 +107,13 @@ ActionQueue.prototype.flushExecution = function(gameContext) {
         return;
     }
 
-    const { type, data, messengerID } = this.current;
+    const { type, data } = this.current;
     const actionType = this.actionHandlers.get(type);
 
     this.events.emit(ActionQueue.EVENT.EXECUTION_RUNNING, this.current);
     
-    actionType.onStart(gameContext, data, messengerID);
-    actionType.onEnd(gameContext, data, messengerID);
+    actionType.onStart(gameContext, data);
+    actionType.onEnd(gameContext, data);
 
     this.clearCurrent();
 }
@@ -123,13 +123,13 @@ ActionQueue.prototype.startExecution = function(gameContext) {
         return;
     }
 
-    const { type, data, messengerID } = this.current;
+    const { type, data } = this.current;
     const actionType = this.actionHandlers.get(type);
 
     this.state = ActionQueue.STATE.PROCESSING;
     this.events.emit(ActionQueue.EVENT.EXECUTION_RUNNING, this.current);
         
-    actionType.onStart(gameContext, data, messengerID);
+    actionType.onStart(gameContext, data);
 }
 
 ActionQueue.prototype.processExecution = function(gameContext) {
@@ -137,15 +137,15 @@ ActionQueue.prototype.processExecution = function(gameContext) {
         return;
     }
 
-    const { type, data, messengerID } = this.current;
+    const { type, data } = this.current;
     const actionType = this.actionHandlers.get(type);
 
-    actionType.onUpdate(gameContext, data, messengerID);
+    actionType.onUpdate(gameContext, data);
 
-    const isFinished = actionType.isFinished(gameContext, data, messengerID);
+    const isFinished = actionType.isFinished(gameContext, data);
 
     if(this.isSkipping || isFinished) {
-        actionType.onEnd(gameContext, data, messengerID);
+        actionType.onEnd(gameContext, data);
 
         this.state = ActionQueue.STATE.ACTIVE;
         this.clearCurrent();
@@ -222,7 +222,6 @@ ActionQueue.prototype.getExecutionItem = function(gameContext, request, messenge
 
     if(!validatedData) {
         this.events.emit(ActionQueue.EVENT.EXECUTION_ERROR, request, actionType);
-
         return null;
     }
 
@@ -230,8 +229,7 @@ ActionQueue.prototype.getExecutionItem = function(gameContext, request, messenge
         "type": type,
         "data": validatedData,
         "priority": priority,
-        "isInstant": isInstant,
-        "messengerID": messengerID
+        "isInstant": isInstant
     };
 
     return executionItem;

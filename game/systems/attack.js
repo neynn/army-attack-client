@@ -1,4 +1,5 @@
 import { isRectangleRectangleIntersect } from "../../source/math/math.js";
+import { GAME_EVENT } from "../enums.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { AllianceSystem } from "./alliance.js";
 import { AnimationSystem } from "./animation.js";
@@ -88,9 +89,9 @@ const getState = function(target, damage, isBulldozed) {
     return AttackSystem.OUTCOME_STATE.IDLE;
 }
 
-AttackSystem.endAttack = function(gameContext, outcome, attackerClientID) {
+AttackSystem.endAttack = function(gameContext, outcome) {
     const { world } = gameContext;
-    const { entityManager } = world;
+    const { entityManager, eventBus } = world;
     const { targetID, attackers, damage, state } = outcome;
     const target = entityManager.getEntity(targetID);
 
@@ -98,15 +99,19 @@ AttackSystem.endAttack = function(gameContext, outcome, attackerClientID) {
 
     switch(state) {
         case AttackSystem.OUTCOME_STATE.DEAD: {
-            DropSystem.dropKillReward(gameContext, target, attackerClientID);
             AnimationSystem.playDeath(gameContext, target);
             SpawnSystem.destroyEntity(gameContext, target);
+            eventBus.emit(GAME_EVENT.ENTITY_KILLED, { attackers, target, damage });
             break;
         }
         case AttackSystem.OUTCOME_STATE.IDLE: {
-            DropSystem.dropHitReward(gameContext, target, attackerClientID);
             target.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
+            eventBus.emit(GAME_EVENT.ENTITY_HIT, { attackers, target, damage });
             break;
+        }
+        case AttackSystem.OUTCOME_STATE.DOWN: {
+            eventBus.emit(GAME_EVENT.ENTITY_DOWN, { attackers, target, damage });
+            eventBus.emit(GAME_EVENT.ENTITY_HIT, { attackers, target, damage });
         }
     }
 }

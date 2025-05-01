@@ -26,7 +26,7 @@ DropSystem.dropHitReward = function(gameContext, entity, receiverID) {
     }
 
     if(drops.length !== 0) {
-        eventBus.emit(GAME_EVENT.DROP_HIT_ITEMS, drops, receiverID);
+        eventBus.emit(GAME_EVENT.REQUEST_DROP_HIT_ITEMS, { drops, receiverID });
     }
 }
 
@@ -69,6 +69,6 @@ DropSystem.dropKillReward = function(gameContext, entity, receiverID) {
     }
 
     if(drops.length !== 0) {
-        eventBus.emit(GAME_EVENT.DROP_KILL_ITEMS, drops, receiverID);
+        eventBus.emit(GAME_EVENT.REQUEST_DROP_KILL_ITEMS, { drops, receiverID });
     }
 }

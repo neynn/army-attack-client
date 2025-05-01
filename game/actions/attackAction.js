@@ -7,30 +7,30 @@ export const AttackAction = function() {}
 AttackAction.prototype = Object.create(Action.prototype);
 AttackAction.prototype.constructor = AttackAction;
 
-AttackAction.prototype.onStart = function(gameContext, request, messengerID) {
+AttackAction.prototype.onStart = function(gameContext, request) {
     AttackSystem.beginAttack(gameContext, request);
 }
 
-AttackAction.prototype.onEnd = function(gameContext, request, messengerID) {
+AttackAction.prototype.onEnd = function(gameContext, request) {
     const { world } = gameContext;
     const { actionQueue } = world;
     const { targetID, attackers, state } = request;
 
-    AttackSystem.endAttack(gameContext, request, messengerID);
+    AttackSystem.endAttack(gameContext, request);
 
     if(state === AttackSystem.OUTCOME_STATE.IDLE) {
         actionQueue.addImmediateRequest(ACTION_TYPE.COUNTER_ATTACK, null, targetID, attackers);
     }
 }
 
-AttackAction.prototype.onUpdate = function(gameContext, request, messengerID) {
+AttackAction.prototype.onUpdate = function(gameContext, request) {
     const { timer } = gameContext;
     const deltaTime = timer.getFixedDeltaTime();
 
     request.timePassed += deltaTime;
 }
 
-AttackAction.prototype.isFinished = function(gameContext, request, messengerID) {
+AttackAction.prototype.isFinished = function(gameContext, request) {
     const timeRequired = gameContext.settings.hitDuration;
 
     return request.timePassed >= timeRequired;

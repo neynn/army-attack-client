@@ -1,12 +1,12 @@
-import { SpriteManager } from "../../../../source/sprite/spriteManager.js";
-import { Autotiler } from "../../../../source/tile/autotiler.js";
-import { ArmyCamera } from "../../../armyCamera.js";
-import { ArmyEntity } from "../../armyEntity.js";
-import { ArmyMap } from "../../armyMap.js";
+import { SpriteManager } from "../../../source/sprite/spriteManager.js";
+import { Autotiler } from "../../../source/tile/autotiler.js";
+import { ArmyCamera } from "../../armyCamera.js";
+import { ArmyEntity } from "../../init/armyEntity.js";
+import { ArmyMap } from "../../init/armyMap.js";
 
 export const AttackRangeOverlay = function() {
     this.state = AttackRangeOverlay.STATE.ACTIVE;
-    this.isLocked = false;
+    this.isEnabled = true;
     this.lastTarget = null;
 }
 
@@ -17,7 +17,7 @@ AttackRangeOverlay.STATE = {
 };
 
 AttackRangeOverlay.prototype.toggle = function(gameContext, camera) {
-    if(this.isLocked) {
+    if(!this.isEnabled) {
         return this.state;
     }
 
@@ -90,7 +90,7 @@ AttackRangeOverlay.prototype.hide = function(gameContext, camera) {
 }
 
 AttackRangeOverlay.prototype.update = function(gameContext, entity, camera) {
-    if(this.state !== AttackRangeOverlay.STATE.ACTIVE || this.isLocked) {
+    if(!this.isEnabled || this.state !== AttackRangeOverlay.STATE.ACTIVE) {
         return;
     }
 
@@ -111,12 +111,12 @@ AttackRangeOverlay.prototype.update = function(gameContext, entity, camera) {
     }
 }
 
-AttackRangeOverlay.prototype.unlock = function() {
-    this.isLocked = false;
+AttackRangeOverlay.prototype.enable = function() {
+    this.isEnabled = true;
 }
 
-AttackRangeOverlay.prototype.lock = function(gameContext, camera) {
-    this.isLocked = true;
+AttackRangeOverlay.prototype.disable = function(gameContext, camera) {
+    this.isEnabled = false;
 
     if(this.lastTarget !== null)  {
         this.hide(gameContext, camera);

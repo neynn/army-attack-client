@@ -1,7 +1,7 @@
 import { ActionQueue } from "./action/actionQueue.js";
 import { TurnManager } from "./turn/turnManager.js";
 import { EntityManager } from "./entity/entityManager.js";
-import { EventBus } from "./events/eventBus.js";
+import { WorldEventHandler } from "./worldEventHandler.js";
 import { Logger } from "./logger.js";
 import { MapManager } from "./map/mapManager.js";
 
@@ -10,11 +10,11 @@ export const World = function() {
     this.turnManager = new TurnManager();
     this.entityManager = new EntityManager();
     this.mapManager = new MapManager();
-    this.eventBus = new EventBus();
+    this.eventBus = new WorldEventHandler();
 
     this.entityManager.events.on(EntityManager.EVENT.ENTITY_DESTROY, (entityID) => this.turnManager.removeEntity(entityID), { permanent: true });
     
-    this.addDebug();
+    //this.addDebug();
 }
 
 World.DEBUG = {

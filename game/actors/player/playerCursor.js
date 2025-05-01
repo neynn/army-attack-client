@@ -1,30 +1,30 @@
-import { EntityManager } from "../../../../source/entity/entityManager.js";
-import { SpriteManager } from "../../../../source/sprite/spriteManager.js";
-import { PathfinderSystem } from "../../../systems/pathfinder.js";
-import { ArmyEntity } from "../../armyEntity.js";
+import { EntityManager } from "../../../source/entity/entityManager.js";
+import { SpriteManager } from "../../../source/sprite/spriteManager.js";
+import { PathfinderSystem } from "../../systems/pathfinder.js";
+import { ArmyEntity } from "../../init/armyEntity.js";
 
-export const Hover = function() {
+export const PlayerCursor = function() {
     this.tileX = -1;
     this.tileY = -1;
     this.spriteIndex = -1;
     this.nodeMap = new Map();
-    this.state = Hover.STATE.NONE;
+    this.state = PlayerCursor.STATE.NONE;
     this.currentTarget = EntityManager.ID.INVALID;
     this.lastTarget = EntityManager.ID.INVALID;
     this.targetChanged = false;
 }
 
-Hover.STATE = {
+PlayerCursor.STATE = {
     NONE: 0,
     HOVER_ON_ENTITY: 1,
     HOVER_ON_NODE: 2
 };
 
-Hover.prototype.updateState = function() {
+PlayerCursor.prototype.updateState = function() {
     const onEntity = this.currentTarget !== EntityManager.ID.INVALID;
 
     if(onEntity) {
-        this.state = Hover.STATE.HOVER_ON_ENTITY;
+        this.state = PlayerCursor.STATE.HOVER_ON_ENTITY;
         return;
     }
 
@@ -32,14 +32,14 @@ Hover.prototype.updateState = function() {
     const onNode = this.nodeMap.has(nodeKey);
 
     if(onNode) {
-        this.state = Hover.STATE.HOVER_ON_NODE;
+        this.state = PlayerCursor.STATE.HOVER_ON_NODE;
         return;
     }
 
-    this.state = Hover.STATE.NONE;
+    this.state = PlayerCursor.STATE.NONE;
 }
 
-Hover.prototype.getEntity = function(gameContext) {
+PlayerCursor.prototype.getEntity = function(gameContext) {
     const { world } = gameContext;
     const { entityManager } = world;
     
@@ -52,11 +52,11 @@ Hover.prototype.getEntity = function(gameContext) {
     return entity;
 }
 
-Hover.prototype.clearNodes = function() {
+PlayerCursor.prototype.clearNodes = function() {
     this.nodeMap.clear();
 }
 
-Hover.prototype.updateNodes = function(gameContext, nodeList) {
+PlayerCursor.prototype.updateNodes = function(gameContext, nodeList) {
     const { world } = gameContext;
 
     this.nodeMap.clear();
@@ -78,11 +78,11 @@ Hover.prototype.updateNodes = function(gameContext, nodeList) {
     }
 }
 
-Hover.prototype.getNodeKey = function(nodeX, nodeY) {
+PlayerCursor.prototype.getNodeKey = function(nodeX, nodeY) {
     return `${nodeX}-${nodeY}`;
 }
 
-Hover.prototype.update = function(gameContext) {
+PlayerCursor.prototype.update = function(gameContext) {
     const { world } = gameContext;
     const { x, y } = gameContext.getMouseTile();
     const mouseEntity = world.getTileEntity(x, y);
@@ -108,9 +108,9 @@ Hover.prototype.update = function(gameContext) {
     this.updateState();
 }
 
-Hover.prototype.autoAlignSprite = function(gameContext, camera) {
+PlayerCursor.prototype.autoAlignSprite = function(gameContext, camera) {
     switch(this.state) {
-        case Hover.STATE.HOVER_ON_ENTITY: {
+        case PlayerCursor.STATE.HOVER_ON_ENTITY: {
             const hoverEntity = this.getEntity(gameContext);
             this.alignSpriteEntity(gameContext, camera, hoverEntity);
             break;
@@ -122,7 +122,7 @@ Hover.prototype.autoAlignSprite = function(gameContext, camera) {
     }
 }
 
-Hover.prototype.alignSprite = function(gameContext, camera) {
+PlayerCursor.prototype.alignSprite = function(gameContext, camera) {
     const { spriteManager } = gameContext;
     const sprite = spriteManager.getSprite(this.spriteIndex);
     const { x, y } = camera.transformTileToPositionCenter(this.tileX, this.tileY);
@@ -130,7 +130,7 @@ Hover.prototype.alignSprite = function(gameContext, camera) {
     sprite.setPosition(x, y);
 }
 
-Hover.prototype.alignSpriteEntity = function(gameContext, camera, entity) {
+PlayerCursor.prototype.alignSpriteEntity = function(gameContext, camera, entity) {
     const { spriteManager } = gameContext;
     const sprite = spriteManager.getSprite(this.spriteIndex);
     const { tileX, tileY } = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
@@ -139,14 +139,14 @@ Hover.prototype.alignSpriteEntity = function(gameContext, camera, entity) {
     sprite.setPosition(x, y);
 }
 
-Hover.prototype.hideSprite = function(gameContext) {
+PlayerCursor.prototype.hideSprite = function(gameContext) {
     const { spriteManager } = gameContext;
     const sprite = spriteManager.getSprite(this.spriteIndex);
 
     sprite.hide();
 }
 
-Hover.prototype.updateSprite = function(gameContext, typeID) {
+PlayerCursor.prototype.updateSprite = function(gameContext, typeID) {
     const { spriteManager } = gameContext;
 
     if(typeID) {
@@ -157,7 +157,7 @@ Hover.prototype.updateSprite = function(gameContext, typeID) {
     }
 }
 
-Hover.prototype.createSprite = function(gameContext) {
+PlayerCursor.prototype.createSprite = function(gameContext) {
     if(this.spriteIndex !== -1) {
         return;
     }

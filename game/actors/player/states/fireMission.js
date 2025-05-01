@@ -1,7 +1,7 @@
-import { State } from "../../../../../source/state/state.js";
-import { ACTION_TYPE } from "../../../../enums.js";
-import { AnimationSystem } from "../../../../systems/animation.js";
-import { FireMissionSystem } from "../../../../systems/fireMission.js";
+import { State } from "../../../../source/state/state.js";
+import { ACTION_TYPE } from "../../../enums.js";
+import { AnimationSystem } from "../../../systems/animation.js";
+import { FireMissionSystem } from "../../../systems/fireMission.js";
 import { Player } from "../player.js";
 
 export const PlayerFireMissionState = function() {}
@@ -17,14 +17,14 @@ PlayerFireMissionState.prototype.onEnter = function(gameContext, stateMachine) {
     updateCursor(gameContext, player);
     player.clearAttackers();
     player.inputQueue.clear();
-    player.attackRangeOverlay.lock(gameContext, player.camera);
+    player.attackRangeOverlay.disable(gameContext, player.camera);
 }
 
 PlayerFireMissionState.prototype.onExit = function(gameContext, stateMachine) {
     const player = stateMachine.getContext();
 
     player.selectedFireMissionID = null;
-    player.attackRangeOverlay.unlock();
+    player.attackRangeOverlay.enable();
 }
 
 PlayerFireMissionState.prototype.onUpdate = function(gameContext, stateMachine) {

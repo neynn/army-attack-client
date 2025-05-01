@@ -29,8 +29,13 @@ export const ACTION_TYPE = {
 };
 
 export const GAME_EVENT = {
-    DROP_HIT_ITEMS: 0,
-    DROP_KILL_ITEMS: 1,
-    CHOICE_MADE: 2,
-    SKIP_TURN: 3
+    REQUEST_DROP_HIT_ITEMS: 0,
+    REQUEST_DROP_KILL_ITEMS: 1,
+    ITEMS_DROPPED: 2,
+    CHOICE_MADE: 3,
+    SKIP_TURN: 4,
+    ENTITY_HIT: 5,
+    ENTITY_KILLED: 6,
+    ENTITY_DOWN: 7,
+    TILE_CAPTURED: 8
 };

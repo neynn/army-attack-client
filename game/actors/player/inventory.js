@@ -1,4 +1,4 @@
-import { clampValue } from "../../../../source/math/math.js";
+import { clampValue } from "../../../source/math/math.js";
 
 export const Inventory = function() {
     this.items = new Map();

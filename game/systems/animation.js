@@ -1,7 +1,7 @@
 import { SpriteManager } from "../../source/sprite/spriteManager.js";
 import { SpriteComponent } from "../components/sprite.js";
 import { ArmyEntity } from "../init/armyEntity.js";
-import { Player } from "../init/actors/player/player.js";
+import { Player } from "../actors/player/player.js";
 import { LookSystem } from "./look.js";
 
 export const AnimationSystem = function() {}

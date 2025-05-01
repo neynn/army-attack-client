@@ -6,24 +6,22 @@ export const CounterMoveAction = function() {}
 CounterMoveAction.prototype = Object.create(Action.prototype);
 CounterMoveAction.prototype.constructor = CounterMoveAction;
 
-CounterMoveAction.prototype.onStart = function(gameContext, request, messengerID) {
+CounterMoveAction.prototype.onStart = function(gameContext, request) {
     AttackSystem.beginAttack(gameContext, request);
 }
 
-CounterMoveAction.prototype.onEnd = function(gameContext, request, messengerID) {
-
-    //TODO: Get owner of majority attackers OR drop for every owner/attacker
-    AttackSystem.endAttack(gameContext, request, null);
+CounterMoveAction.prototype.onEnd = function(gameContext, request) {
+    AttackSystem.endAttack(gameContext, request);
 }
 
-CounterMoveAction.prototype.onUpdate = function(gameContext, request, messengerID) {
+CounterMoveAction.prototype.onUpdate = function(gameContext, request) {
     const { timer } = gameContext;
     const deltaTime = timer.getFixedDeltaTime();
 
     request.timePassed += deltaTime;
 }
 
-CounterMoveAction.prototype.isFinished = function(gameContext, request, messengerID) {
+CounterMoveAction.prototype.isFinished = function(gameContext, request) {
     const timeRequired = gameContext.settings.hitDuration;
 
     return request.timePassed >= timeRequired;

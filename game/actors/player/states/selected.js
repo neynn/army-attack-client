@@ -1,11 +1,11 @@
-import { EntityManager } from "../../../../../source/entity/entityManager.js";
-import { State } from "../../../../../source/state/state.js";
-import { ArmyCamera } from "../../../../armyCamera.js";
-import { ACTION_TYPE } from "../../../../enums.js";
-import { AnimationSystem } from "../../../../systems/animation.js";
-import { LookSystem } from "../../../../systems/look.js";
-import { ArmyEntity } from "../../../armyEntity.js";
-import { Hover } from "../hover.js";
+import { EntityManager } from "../../../../source/entity/entityManager.js";
+import { State } from "../../../../source/state/state.js";
+import { ArmyCamera } from "../../../armyCamera.js";
+import { ACTION_TYPE } from "../../../enums.js";
+import { AnimationSystem } from "../../../systems/animation.js";
+import { LookSystem } from "../../../systems/look.js";
+import { ArmyEntity } from "../../../init/armyEntity.js";
+import { PlayerCursor } from "../playerCursor.js";
 import { Player } from "../player.js";
 
 export const PlayerSelectedState = function() {}
@@ -61,7 +61,7 @@ const updateCursor = function(gameContext, player) {
     const { hover } = player;
     const { state } = hover;
 
-    if(state === Hover.STATE.HOVER_ON_ENTITY) {
+    if(state === PlayerCursor.STATE.HOVER_ON_ENTITY) {
         const hoveredEntity = hover.getEntity(gameContext);
         const typeID = player.attackers.size > 0 ? Player.SPRITE_TYPE.ATTACK : Player.SPRITE_TYPE.SELECT;
         const spriteKey = `${hoveredEntity.config.dimX}-${hoveredEntity.config.dimY}`;
@@ -71,7 +71,7 @@ const updateCursor = function(gameContext, player) {
         return;
     }
 
-    if(state === Hover.STATE.HOVER_ON_NODE) {
+    if(state === PlayerCursor.STATE.HOVER_ON_NODE) {
         const spriteID = player.getSpriteType(Player.SPRITE_TYPE.MOVE, "1-1");
 
         hover.updateSprite(gameContext, spriteID);

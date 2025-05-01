@@ -62,7 +62,7 @@ ServerEvents.queueAction = function(gameContext, payload) {
     const { messengerID } = executionItem;
 
     actionQueue.enqueue(executionItem);
-    eventBus.force(GAME_EVENT.CHOICE_MADE, messengerID);
+    eventBus.force(GAME_EVENT.CHOICE_MADE, { "actorID": messengerID });
 }
 
 ServerEvents.roomUpdate = function(gameContext, payload) {

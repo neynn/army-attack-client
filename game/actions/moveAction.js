@@ -12,7 +12,7 @@ export const MoveAction = function() {}
 MoveAction.prototype = Object.create(Action.prototype);
 MoveAction.prototype.constructor = MoveAction;
 
-MoveAction.prototype.onStart = function(gameContext, request, messengerID) {
+MoveAction.prototype.onStart = function(gameContext, request) {
     const { targetX, targetY, entityID, path } = request;
     const { world } = gameContext;
     const { entityManager } = world;
@@ -26,7 +26,7 @@ MoveAction.prototype.onStart = function(gameContext, request, messengerID) {
     MapSystem.removeEntity(gameContext, entity);
 }
 
-MoveAction.prototype.onEnd = function(gameContext, request, messengerID) {
+MoveAction.prototype.onEnd = function(gameContext, request) {
     const { targetX, targetY, entityID } = request;
     const { world } = gameContext;
     const { entityManager, actionQueue } = world;
@@ -39,7 +39,7 @@ MoveAction.prototype.onEnd = function(gameContext, request, messengerID) {
     actionQueue.addImmediateRequest(ACTION_TYPE.COUNTER_MOVE, null, entityID);
 }
 
-MoveAction.prototype.isFinished = function(gameContext, request, messengerID) {
+MoveAction.prototype.isFinished = function(gameContext, request) {
     const { entityID } = request;
     const { world } = gameContext;
     const { entityManager } = world;

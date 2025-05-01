@@ -1,10 +1,10 @@
-import { EntityManager } from "../../../../../source/entity/entityManager.js";
-import { State } from "../../../../../source/state/state.js";
-import { AnimationSystem } from "../../../../systems/animation.js";
-import { ConstructionSystem } from "../../../../systems/construction.js";
-import { MoveSystem } from "../../../../systems/move.js";
-import { PathfinderSystem } from "../../../../systems/pathfinder.js";
-import { Hover } from "../hover.js";
+import { EntityManager } from "../../../../source/entity/entityManager.js";
+import { State } from "../../../../source/state/state.js";
+import { AnimationSystem } from "../../../systems/animation.js";
+import { ConstructionSystem } from "../../../systems/construction.js";
+import { MoveSystem } from "../../../systems/move.js";
+import { PathfinderSystem } from "../../../systems/pathfinder.js";
+import { PlayerCursor } from "../playerCursor.js";
 import { Player } from "../player.js";
 
 export const PlayerIdleState = function() {}
@@ -94,7 +94,7 @@ const onClick = function(gameContext, stateMachine, tileX, tileY) {
 }
 
 const updateCursor = function(gameContext, player) {
-    if(player.hover.state !== Hover.STATE.HOVER_ON_ENTITY) {
+    if(player.hover.state !== PlayerCursor.STATE.HOVER_ON_ENTITY) {
         player.hover.hideSprite(gameContext);
         return;
     }

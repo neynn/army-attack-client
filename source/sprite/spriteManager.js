@@ -177,7 +177,7 @@ SpriteManager.prototype.removeSpriteFromLayers = function(spriteIndex) {
 SpriteManager.prototype.updateSprite = function(spriteIndex, atlasID, animationID) {
     const sprite = this.sprites.getReservedElement(spriteIndex);
     
-    console.log("ATT", atlasID, animationID);
+    //console.log("ATT", atlasID, animationID);
 
     if(!sprite) {
         Logger.log(Logger.CODE.ENGINE_WARN, "Sprite is not reserved!", "SpriteManager.prototype.updateSprite", { "spriteID": spriteIndex });

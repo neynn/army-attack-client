@@ -7,34 +7,22 @@ export const CounterAttackAction = function() {}
 CounterAttackAction.prototype = Object.create(Action.prototype);
 CounterAttackAction.prototype.constructor = CounterAttackAction;
 
-CounterAttackAction.prototype.onStart = function(gameContext, request, messengerID) {
+CounterAttackAction.prototype.onStart = function(gameContext, request) {
     AttackSystem.beginAttack(gameContext, request);
 }
 
-CounterAttackAction.prototype.onEnd = function(gameContext, request, messengerID) {
-    const { world } = gameContext;
-    const { entityManager } = world;
-    const { attackers } = request;
-
-    /**
-     * TODO!:
-     * 
-     */
-
-    const attacker = entityManager.getEntity(attackers[0]);
-    
-
-    AttackSystem.endAttack(gameContext, request, null);
+CounterAttackAction.prototype.onEnd = function(gameContext, request) {
+    AttackSystem.endAttack(gameContext, request);
 }
 
-CounterAttackAction.prototype.onUpdate = function(gameContext, request, messengerID) {
+CounterAttackAction.prototype.onUpdate = function(gameContext, request) {
     const { timer } = gameContext;
     const deltaTime = timer.getFixedDeltaTime();
 
     request.timePassed += deltaTime;
 }
 
-CounterAttackAction.prototype.isFinished = function(gameContext, request, messengerID) {
+CounterAttackAction.prototype.isFinished = function(gameContext, request) {
     const timeRequired = gameContext.settings.hitDuration;
 
     return request.timePassed >= timeRequired;

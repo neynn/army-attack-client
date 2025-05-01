@@ -7,7 +7,7 @@ export const DeathAction = function() {}
 DeathAction.prototype = Object.create(Action.prototype);
 DeathAction.prototype.constructor = DeathAction;
 
-DeathAction.prototype.onEnd = function(gameContext, request, messengerID) {
+DeathAction.prototype.onEnd = function(gameContext, request) {
     const { entityID } = request;
     const { world } = gameContext; 
     const { entityManager } = world;

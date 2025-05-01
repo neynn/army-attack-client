@@ -1,56 +1,49 @@
-export const EventBus = function() {
+export const WorldEventHandler = function() {
     this.events = new Map();
-    this.emitable = new Set();
+    this.tellable = new Set();
 }
 
-EventBus.RESPONSE = {
+WorldEventHandler.RESPONSE = {
     NONE: 0,
     DELETE: 1
 };
 
-EventBus.STATUS = {
-    EMITABLE: 0,
-    NOT_EMITABLE: 1
+WorldEventHandler.STATUS = {
+    EMITABLE: 0
 };
 
-EventBus.prototype.exit = function() {
+WorldEventHandler.prototype.exit = function() {
     this.events.clear();
-    this.emitable.clear();
+    this.tellable.clear();
 }
 
-EventBus.prototype.clear = function() {
+WorldEventHandler.prototype.clear = function() {
     this.events.clear();
 }
 
-EventBus.prototype.register = function(eventID, status) {
+WorldEventHandler.prototype.register = function(eventID, status) {
     if(this.events.has(eventID)) {
         return;
     }
 
     this.events.set(eventID, []);
 
-    switch(status) {
-        case EventBus.STATUS.EMITABLE: {
-            this.emitable.add(eventID);
-            break;
-        }
-        default: {
-            break;
-        }
+    if(status === WorldEventHandler.STATUS.EMITABLE) {
+        this.tellable.add(eventID);
     }
 }
 
-EventBus.prototype.remove = function(eventID) {
+WorldEventHandler.prototype.remove = function(eventID) {
     if(this.events.has(eventID)) {
         this.events.delete(eventID);
     }
 
-    if(this.emitable.has(eventID)) {
-        this.emitable.delete(eventID);
+    if(this.tellable.has(eventID)) {
+        this.tellable.delete(eventID);
     }
 }
 
-EventBus.prototype.on = function(eventID, onEvent) {
+WorldEventHandler.prototype.on = function(eventID, onEvent) {
     if(typeof onEvent !== "function") {
         return;
     }
@@ -64,18 +57,15 @@ EventBus.prototype.on = function(eventID, onEvent) {
     eventList.push(onEvent);
 }
 
-EventBus.prototype.updateEventList = function(eventList, eventData) {
+WorldEventHandler.prototype.updateEventList = function(eventList, eventData) {
     const toRemove = [];
 
     for(let i = 0; i < eventList.length; i++) {
         const onEvent = eventList[i];
-        const response = onEvent(...eventData);
+        const response = onEvent(eventData);
 
-        switch(response) {
-            case EventBus.RESPONSE.DELETE: {
-                toRemove.push(i);
-                break;
-            }
+        if(response === WorldEventHandler.RESPONSE.DELETE) {
+            toRemove.push(i);
         }
     }
 
@@ -86,8 +76,8 @@ EventBus.prototype.updateEventList = function(eventList, eventData) {
     }
 }
 
-EventBus.prototype.emit = function(eventID, ...eventData) {
-    const isEmitable = this.emitable.has(eventID);
+WorldEventHandler.prototype.emit = function(eventID, eventData) {
+    const isEmitable = this.tellable.has(eventID);
     const eventList = this.events.get(eventID);
 
     if(!isEmitable || !eventList || eventList.length === 0) {
@@ -97,7 +87,7 @@ EventBus.prototype.emit = function(eventID, ...eventData) {
     this.updateEventList(eventList, eventData);
 }
 
-EventBus.prototype.force = function(eventID, eventData) {
+WorldEventHandler.prototype.force = function(eventID, eventData) {
     const eventList = this.events.get(eventID);
 
     if(!eventList || eventList.length === 0) {
