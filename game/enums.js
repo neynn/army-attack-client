@@ -37,5 +37,6 @@ export const GAME_EVENT = {
     ENTITY_HIT: 5,
     ENTITY_KILLED: 6,
     ENTITY_DOWN: 7,
-    TILE_CAPTURED: 8
+    TILE_CAPTURED: 8,
+    ENTITY_DECAY: 9
 };

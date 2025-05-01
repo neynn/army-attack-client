@@ -1,4 +1,4 @@
-import { ACTION_TYPE } from "../enums.js";
+import { GAME_EVENT } from "../enums.js";
 
 export const ReviveableComponent = function() {
     this.type = ReviveableComponent.TYPE.NONE;
@@ -34,7 +34,7 @@ ReviveableComponent.prototype.beginDecay = function() {
 ReviveableComponent.prototype.update = function(gameContext, entity) {
     if(this.state === ReviveableComponent.STATE.DECAY) {
         const { timer, world } = gameContext;
-        const { actionQueue } = world;
+        const { eventBus } = world;
         const fixedDeltaTime = timer.getFixedDeltaTime();
 
         this.passedTime += fixedDeltaTime;
@@ -43,7 +43,7 @@ ReviveableComponent.prototype.update = function(gameContext, entity) {
             this.passedTime = gameContext.settings.downDuration;
             this.state = ReviveableComponent.STATE.DEAD;
 
-            actionQueue.addImmediateRequest(ACTION_TYPE.DEATH, null, entity.getID());
+            eventBus.emit(GAME_EVENT.ENTITY_DECAY, { entity });
         }
     }
 }

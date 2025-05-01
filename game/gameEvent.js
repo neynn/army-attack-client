@@ -1,5 +1,5 @@
 import { Inventory } from "./actors/player/inventory.js";
-import { GAME_EVENT } from "./enums.js";
+import { ACTION_TYPE, GAME_EVENT } from "./enums.js";
 import { DropSystem } from "./systems/drop.js";
 
 export const GameEvent = function() {
@@ -103,6 +103,15 @@ GameEvent.skipTurn = function(gameContext, event) {
     if(isActor) {
         turnManager.cancelActorActions();
     }
+}
+
+GameEvent.entityDecay = function(gameContext, event) {
+    const { world } = gameContext;
+    const { actionQueue } = world;
+
+    actionQueue.addImmediateRequest(ACTION_TYPE.DEATH, null, event.entity.getID());
+
+    console.log("DECAY", event);
 }
 
 GameEvent.entityHit = function(gameContext, event) {

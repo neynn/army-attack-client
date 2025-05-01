@@ -179,6 +179,7 @@ ArmyContext.prototype.setGameMode = function(modeID) {
             eventBus.register(GAME_EVENT.ENTITY_KILLED, WorldEventHandler.STATUS.EMITABLE);
             eventBus.register(GAME_EVENT.ENTITY_DOWN, WorldEventHandler.STATUS.EMITABLE);
             eventBus.register(GAME_EVENT.TILE_CAPTURED, WorldEventHandler.STATUS.EMITABLE);
+            eventBus.register(GAME_EVENT.ENTITY_DECAY, WorldEventHandler.STATUS.EMITABLE);
 
             eventBus.on(GAME_EVENT.REQUEST_DROP_HIT_ITEMS, (event) => GameEvent.dropItems(this, event));
             eventBus.on(GAME_EVENT.REQUEST_DROP_KILL_ITEMS, (event) => GameEvent.dropItems(this, event));
@@ -188,6 +189,7 @@ ArmyContext.prototype.setGameMode = function(modeID) {
             eventBus.on(GAME_EVENT.ENTITY_KILLED, (event) => GameEvent.entityKilled(this, event));
             eventBus.on(GAME_EVENT.ENTITY_DOWN, (event) => GameEvent.entityDown(this, event));
             eventBus.on(GAME_EVENT.TILE_CAPTURED, (event) => GameEvent.tileCaptured(this, event));
+            eventBus.on(GAME_EVENT.ENTITY_DECAY, (event) => GameEvent.entityDecay(this, event));
 
             this.switchState(ArmyContext.STATE.STORY_MODE);
             break;
