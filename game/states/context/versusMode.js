@@ -68,9 +68,15 @@ VersusModeState.prototype.onEnter = function(gameContext, stateMachine) {
     const { actionQueue } = world;
     const { socket } = client;
 
+    gameContext.setGameMode(ArmyContext.GAME_MODE.VERSUS);
+
+    socket.events.on(Socket.EVENT.CONNECTED_TO_SERVER, (socketID) => {
+        socket.registerName("neyn!");
+    }, { once: true });
+    
     actionQueue.toDeferred();
-    actionQueue.events.on(ActionQueue.EVENT.EXECUTION_DEFER, (execution, request) => socket.messageRoom(CLIENT_EVENT.ACTION, request), { id: "VERSUS" });
-    socket.events.on(Socket.EVENT.MESSAGE_FROM_SERVER, (type, payload) => this.onServerMessage(gameContext, type, payload), { id: "VERSUS" });
+    actionQueue.events.on(ActionQueue.EVENT.EXECUTION_DEFER, (execution, request) => socket.messageRoom(CLIENT_EVENT.ACTION, request));
+    socket.events.on(Socket.EVENT.MESSAGE_FROM_SERVER, (type, payload) => this.onServerMessage(gameContext, type, payload));
     socket.connect();
 
     this.setNextState(gameContext, ArmyContext.STATE.VERSUS_MODE_LOBBY);
@@ -82,6 +88,4 @@ VersusModeState.prototype.onExit = function(gameContext, stateMachine) {
     const { socket } = client;
 
     actionQueue.toDirect();
-    actionQueue.events.unsubscribe(ActionQueue.EVENT.EXECUTION_DEFER, "VERSUS");
-    socket.events.unsubscribe(Socket.EVENT.MESSAGE_FROM_SERVER, "VERSUS");
 }

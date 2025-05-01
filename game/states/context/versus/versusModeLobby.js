@@ -1,5 +1,6 @@
 import { ROOM_EVENTS } from "../../../../source/network/events.js";
 import { State } from "../../../../source/state/state.js";
+import { ArmyContext } from "../../../armyContext.js";
 
 export const VersusModeLobbyState = function() {}
 
@@ -27,6 +28,10 @@ VersusModeLobbyState.prototype.onEnter = function(gameContext, stateMachine) {
         client.socket.messageRoom(ROOM_EVENTS.START_INSTANCE, {
             "mapID": "pvp_valleys"
         });
+    });
+
+    versusInterface.addClick("BUTTON_BACK", () => {
+        gameContext.states.setNextState(gameContext, ArmyContext.STATE.MAIN_MENU);
     });
 }
 

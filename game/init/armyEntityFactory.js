@@ -122,7 +122,6 @@ ArmyEntityFactory.prototype.onCreate = function(gameContext, config) {
     }
 
     const modeID = gameContext.getGameModeName();
-
     const entity = createDefaultEntity(entityType, modeID, tileX, tileY, team, type);
     const sprite = createDefaultSprite(gameContext, entity, tileX, tileY);
 

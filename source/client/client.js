@@ -9,9 +9,9 @@ export const Client = function() {
     this.router = new InputRouter();
     this.keyboard = new Keyboard();
     this.cursor = new Cursor();
+    this.socket = new Socket();
     this.musicPlayer = new MusicPlayer();
     this.soundPlayer = new SoundPlayer();
-    this.socket = new Socket();
 
     this.createKeyboardListener(Keyboard.EVENT.KEY_PRESSED, InputRouter.PREFIX.DOWN);
     this.createKeyboardListener(Keyboard.EVENT.KEY_RELEASED, InputRouter.PREFIX.UP);

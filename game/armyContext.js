@@ -143,31 +143,17 @@ ArmyContext.prototype.init = function(resources) {
     this.states.addState(ArmyContext.STATE.STORY_MODE, new StoryModeState());
     this.states.addState(ArmyContext.STATE.VERSUS_MODE, new VersusModeState());
     this.states.addState(ArmyContext.STATE.EDIT_MODE, new MapEditorState());
-
-    this.switchState(ArmyContext.STATE.MAIN_MENU);
-
-    this.client.socket.events.on(Socket.EVENT.CONNECTED_TO_SERVER, (socketID) => {
-        this.client.socket.registerName("neyn!");
-    }, { once: true });
+    this.states.setNextState(this, ArmyContext.STATE.MAIN_MENU);
 }
 
 ArmyContext.prototype.setGameMode = function(modeID) {
-    if(this.modeID === modeID) {
-        return;
-    }
-
     const { eventBus } = this.world;
-
-    this.modeID = modeID;
-
-    eventBus.clear();
 
     switch(modeID) {
         case ArmyContext.GAME_MODE.NONE: {
             break;
         }
         case ArmyContext.GAME_MODE.EDIT: {
-            this.switchState(ArmyContext.STATE.EDIT_MODE);
             break;
         }
         case ArmyContext.GAME_MODE.STORY: {
@@ -190,8 +176,6 @@ ArmyContext.prototype.setGameMode = function(modeID) {
             eventBus.on(GAME_EVENT.ENTITY_DOWN, (event) => GameEvent.entityDown(this, event));
             eventBus.on(GAME_EVENT.TILE_CAPTURED, (event) => GameEvent.tileCaptured(this, event));
             eventBus.on(GAME_EVENT.ENTITY_DECAY, (event) => GameEvent.entityDecay(this, event));
-
-            this.switchState(ArmyContext.STATE.STORY_MODE);
             break;
         }
         case ArmyContext.GAME_MODE.VERSUS: {
@@ -202,11 +186,12 @@ ArmyContext.prototype.setGameMode = function(modeID) {
             eventBus.on(GAME_EVENT.REQUEST_DROP_KILL_ITEMS, (event) => GameEvent.dropItems(this, event));
             eventBus.on(GAME_EVENT.CHOICE_MADE, (event) => GameEvent.choiceMade(this, event));
             eventBus.on(GAME_EVENT.SKIP_TURN, (event) => GameEvent.skipTurn(this, event));
-
-            this.switchState(ArmyContext.STATE.VERSUS_MODE);
             break;
         }
     }
+
+    this.modeID = modeID;
+    this.addDebug();
 }
 
 ArmyContext.prototype.initConversions = function(teamConversions) {

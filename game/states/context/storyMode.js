@@ -14,5 +14,7 @@ StoryModeState.prototype = Object.create(StateMachine.prototype);
 StoryModeState.prototype.constructor = StoryModeState;
 
 StoryModeState.prototype.onEnter = function(gameContext, stateMachine) {
+    gameContext.setGameMode(ArmyContext.GAME_MODE.STORY);
+
     this.setNextState(gameContext, ArmyContext.STATE.STORY_MODE_PLAY);
 }

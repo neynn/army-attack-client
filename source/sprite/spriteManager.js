@@ -2,7 +2,6 @@ import { Logger } from "../logger.js";
 import { Sprite } from "./sprite.js";
 import { ObjectPool } from "../objectPool.js";
 import { SpriteGraphics } from "./spriteGraphics.js";
-import { SpriteAtlas } from "./spriteAtlas.js";
 
 export const SpriteManager = function() {
     this.graphics = new SpriteGraphics();

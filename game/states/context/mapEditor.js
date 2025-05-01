@@ -1,5 +1,6 @@
 import { State } from "../../../source/state/state.js";
-import { ArmyMapEditor } from "./armyMapEditor.js";
+import { ArmyContext } from "../../armyContext.js";
+import { ArmyMapEditor } from "../../armyMapEditor.js";
 
 export const MapEditorState = function() {
     this.mapEditor = null;
@@ -15,6 +16,8 @@ MapEditorState.prototype.onEnter = function(gameContext, stateMachine) {
     this.mapEditor = new ArmyMapEditor();
     this.mapEditor.init(gameContext.editorConfig);
     this.mapEditor.initCamera(gameContext);
+
+    gameContext.setGameMode(ArmyContext.GAME_MODE.EDIT);
 
     uiManager.parseUI(this.mapEditor.interfaceID, gameContext);
     router.load(gameContext, gameContext.editorConfig.binds);

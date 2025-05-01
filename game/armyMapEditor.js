@@ -1,15 +1,15 @@
-import { CameraContext } from "../../../source/camera/cameraContext.js";
-import { Cursor } from "../../../source/client/cursor.js";
-import { MapEditor } from "../../../source/map/mapEditor.js";
-import { clampValue } from "../../../source/math/math.js";
-import { UIManager } from "../../../source/ui/uiManager.js";
-import { UICollider } from "../../../source/ui/uiCollider.js";
-import { Brush } from "../../../source/map/editor/brush.js";
-import { EditorButton } from "../../../source/map/editor/editorButton.js";
-import { saveMap } from "../../../helpers.js";
-import { ArmyMap } from "../../init/armyMap.js";
-import { ArmyCamera } from "../../armyCamera.js";
-import { SHAPE } from "../../../source/math/constants.js";
+import { Cursor } from "../source/client/cursor.js";
+import { MapEditor } from "../source/map/mapEditor.js";
+import { clampValue } from "../source/math/math.js";
+import { UIManager } from "../source/ui/uiManager.js";
+import { UICollider } from "../source/ui/uiCollider.js";
+import { Brush } from "../source/map/editor/brush.js";
+import { EditorButton } from "../source/map/editor/editorButton.js";
+import { saveMap } from "../helpers.js";
+import { ArmyMap } from "./init/armyMap.js";
+import { ArmyCamera } from "./armyCamera.js";
+import { SHAPE } from "../source/math/constants.js";
+import { ArmyContext } from "./armyContext.js";
 
 export const ArmyMapEditor = function() {
     MapEditor.call(this);
@@ -241,9 +241,13 @@ ArmyMapEditor.prototype.toggleAutotiler = function(gameContext) {
 }
 
 ArmyMapEditor.prototype.initUIEvents = function(gameContext) {
-    const { uiManager, world } = gameContext;
+    const { uiManager, world, states } = gameContext;
     const { mapManager } = world;
     const editorInterface = uiManager.getInterface(this.interfaceID);
+
+    editorInterface.addClick("BUTTON_BACK", () => {
+        states.setNextState(gameContext, ArmyContext.STATE.MAIN_MENU);
+    });
 
     editorInterface.addClick("BUTTON_AUTO", () => {
         this.toggleAutotiler(gameContext);

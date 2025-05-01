@@ -37,7 +37,7 @@ Socket.prototype.addDebug = function() {
     }
 
     if(Socket.DEBUG.DISCONNECT) {
-        this.events.on(Socket.EVENT.CONNECTED_TO_SERVER, (reason) => console.log(`${reason} is disconnected from the server!`), { permanent: true });
+        this.events.on(Socket.EVENT.DISCONNECTED_FROM_SERVER, (reason) => console.log(`${reason} is disconnected from the server!`), { permanent: true });
     }
 }
 

@@ -7,13 +7,13 @@ export const MainMenuState = function() {}
 MainMenuState.prototype = Object.create(State.prototype);
 MainMenuState.prototype.constructor = MainMenuState;
 
-MainMenuState.prototype.onEnter = function(gameContext, stateMachine) {
+const loadUI = function(gameContext, stateMachine) {
     const { uiManager, spriteManager } = gameContext;
     const mainMenuInterface = uiManager.parseUI("MAIN_MENU", gameContext);
 
-    mainMenuInterface.addClick("BUTTON_PLAY", () => gameContext.setGameMode(ArmyContext.GAME_MODE.STORY));
-    mainMenuInterface.addClick("BUTTON_EDIT", () => gameContext.setGameMode(ArmyContext.GAME_MODE.EDIT));
-    mainMenuInterface.addClick("BUTTON_VERSUS", () => gameContext.setGameMode(ArmyContext.GAME_MODE.VERSUS));
+    mainMenuInterface.addClick("BUTTON_PLAY", () => stateMachine.setNextState(gameContext, ArmyContext.STATE.STORY_MODE));
+    mainMenuInterface.addClick("BUTTON_EDIT", () => stateMachine.setNextState(gameContext, ArmyContext.STATE.EDIT_MODE));
+    mainMenuInterface.addClick("BUTTON_VERSUS", () => stateMachine.setNextState(gameContext, ArmyContext.STATE.VERSUS_MODE));
 
     const buttonPlay = mainMenuInterface.getElement("BUTTON_PLAY");
     const buttonVersus = mainMenuInterface.getElement("BUTTON_VERSUS");
@@ -37,10 +37,15 @@ MainMenuState.prototype.onEnter = function(gameContext, stateMachine) {
     buttonEdit.collider.events.on(UICollider.EVENT.LAST_COLLISION, () => spriteManager.updateSprite(spriteEdit.getIndex(), "blue_elite_battery_idle"));
 }
 
+MainMenuState.prototype.onEnter = function(gameContext, stateMachine) {
+    gameContext.setGameMode(ArmyContext.GAME_MODE.NONE);
+
+    loadUI(gameContext, stateMachine);
+}
+
 MainMenuState.prototype.onExit = function(gameContext, stateMachine) {
     const { uiManager, spriteManager } = gameContext;
 
     uiManager.unparseUI("MAIN_MENU");
     spriteManager.exit();
-    gameContext.addDebug();
 }

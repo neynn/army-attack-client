@@ -45,6 +45,19 @@ export const GameContext = function() {
             this.uiManager.onClick(cursorX, cursorY, this.client.cursor.radius);
         }
     }, { permanent: true });
+
+    this.states.events.on(StateMachine.EVENT.STATE_EXIT, () => {
+        this.client.router.clear(this);
+        this.client.keyboard.events.muteAll();
+        this.client.cursor.events.muteAll();
+        this.client.socket.events.muteAll();
+        this.world.actionQueue.events.muteAll();
+        this.world.turnManager.events.muteAll();
+        this.world.entityManager.events.muteAll();
+        this.world.mapManager.events.muteAll();
+        this.world.eventBus.clear();
+        this.language.events.muteAll();
+    }, { permanent: true });
 }
 
 GameContext.prototype.exit = function() {
@@ -92,8 +105,4 @@ GameContext.prototype.getMouseTile = function() {
     const mouseTile = camera.transformPositionToTile(x, y);
 
     return mouseTile;
-}
-
-GameContext.prototype.switchState = function(stateID) {
-    this.states.setNextState(this, stateID);
 }
