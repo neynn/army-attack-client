@@ -147,8 +147,8 @@ Player.prototype.getOverlayID = function(gameContext, overlay) {
     }
 
     const { tileManager } = gameContext;
-    const { set, animation } = overlay;
-    const tileID = tileManager.getTileID(set, animation);
+    const [atlas, texture] = overlay;
+    const tileID = tileManager.getTileID(atlas, texture);
 
     return tileID;
 }

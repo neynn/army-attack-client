@@ -82,21 +82,22 @@ TileGraphics.prototype.onTextureLoad = function(textureID, texture) {
     }
 }
 
-TileGraphics.prototype.load = function(atlases, tileGraphics) {
+TileGraphics.prototype.load = function(atlases, tileMeta) {
     this.resources.createTextures(atlases);
 
-    for(let i = 0; i < tileGraphics.length; i++) {
-        const { set, animation } = tileGraphics[i];
-        const atlas = atlases[set];
+    for(let i = 0; i < tileMeta.length; i++) {
+        const { graphics } = tileMeta[i];
+        const [atlas, texture] = graphics;
         const container = new FrameContainer();
+        const atlasConfig = atlases[atlas];
 
         this.addContainer(container);
 
-        if(!atlas) {
+        if(!atlasConfig) {
             continue;
         }
 
-        createGraphic(container, atlas, animation);
+        createGraphic(container, atlasConfig, texture);
 
         const frameCount = container.getFrameCount();
 
@@ -108,13 +109,13 @@ TileGraphics.prototype.load = function(atlases, tileGraphics) {
             this.activeContainers.push(i);
         }
         
-        const usedSheet = this.atlases.get(set);
+        const usedSheet = this.atlases.get(atlas);
 
         if(usedSheet) {
             usedSheet.push(i);
         } else {
-            this.atlases.set(set, [i]);
-            this.resources.requestBitmap(set);
+            this.atlases.set(atlas, [i]);
+            this.resources.requestBitmap(atlas);
         }
     }
 }

@@ -155,14 +155,15 @@ ArmyMap.prototype.getAnimationForm = function(gameContext, tileID) {
         return null;
     }
 
-    const { set, animation } = tileMeta;
-    const setForm = gameContext.tileFormConditions[set];
+    const { graphics } = tileMeta;
+    const [atlas, texture] = graphics;
+    const setForm = gameContext.tileFormConditions[atlas];
 
     if(!setForm) {
         return null;
     }
 
-    const animationForm = setForm[animation];
+    const animationForm = setForm[texture];
 
     if(!animationForm) {
         return null;

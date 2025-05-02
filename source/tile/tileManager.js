@@ -13,41 +13,36 @@ TileManager.TILE_ID = {
     INVALID: -1
 };
 
-TileManager.prototype.load = function(tileSheets, tileMeta) {
-    if(!tileSheets) {
-        console.warn("TileSheets do not exist!");
+TileManager.prototype.load = function(tileAtlases, tileMeta, autotilers) {
+    if(!tileAtlases) {
+        console.warn("TileAtlases do not exist!");
         return;
     }
 
-    const {
-        graphics = [],
-        autotilers = {}
-    } = tileMeta;
-
-    this.init(graphics, autotilers);
-    this.graphics.load(tileSheets, graphics);
-}
-
-TileManager.prototype.update = function(gameContext) {
-    const { timer } = gameContext;
-    const realTime = timer.getRealTime();
-
-    this.graphics.update(realTime);
-}
-
-TileManager.prototype.init = function(meta, autotilers) {
-    this.meta = meta;
-
-    for(let i = 0; i < meta.length; i++) {
-        const { set, animation } = meta[i];
-
-        if(!this.metaInversion[set]) {
-            this.metaInversion[set] = {};
-        }
-
-        this.metaInversion[set][animation] = i + 1;
+    if(!tileMeta) {
+        console.warn("TileMeta does not exist!");
+        return;
     }
 
+    this.graphics.load(tileAtlases, tileMeta);
+    this.meta = tileMeta;
+
+    for(let i = 0; i < tileMeta.length; i++) {
+        const { graphics } = tileMeta[i];
+        const [atlas, texture] = graphics;
+
+        if(!this.metaInversion[atlas]) {
+            this.metaInversion[atlas] = {};
+        }
+
+        this.metaInversion[atlas][texture] = i + 1;
+    }
+
+    if(!autotilers) {
+        console.warn("Autotilers do not exist!");
+        return;
+    }
+    
     for(const autotilerID in autotilers) {
         const config = autotilers[autotilerID];
         const { type, values, members } = config;
@@ -61,18 +56,25 @@ TileManager.prototype.init = function(meta, autotilers) {
     }
 }
 
+TileManager.prototype.update = function(gameContext) {
+    const { timer } = gameContext;
+    const realTime = timer.getRealTime();
+
+    this.graphics.update(realTime);
+}
+
 TileManager.prototype.getInversion = function() {
     return this.metaInversion;
 }
 
-TileManager.prototype.getTileID = function(setID, animationID) {
-    const set = this.metaInversion[setID];
+TileManager.prototype.getTileID = function(atlasID, textureID) {
+    const atlas = this.metaInversion[atlasID];
 
-    if(!set) {
+    if(!atlas) {
         return TileManager.TILE_ID.EMPTY;
     }
 
-    const tileID = set[animationID];
+    const tileID = atlas[textureID];
 
     if(tileID === undefined) {
         return TileManager.TILE_ID.EMPTY;
@@ -97,8 +99,8 @@ TileManager.prototype.getMeta = function(tileID) {
     return this.meta[index];
 }
 
-TileManager.prototype.getAutotilerByID = function(id) {
-    const autotiler = this.autotilers.get(id);
+TileManager.prototype.getAutotilerByID = function(autotilerID) {
+    const autotiler = this.autotilers.get(autotilerID);
 
     if(!autotiler) {
         return null;

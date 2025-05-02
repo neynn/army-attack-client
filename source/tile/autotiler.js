@@ -115,8 +115,8 @@ Autotiler.prototype.loadType = function(type) {
 
 Autotiler.prototype.loadMembers = function(tileManager, members = []) {
     for(let i = 0; i < members.length; i++) {
-        const { set, animation } = members[i];
-        const tileID = tileManager.getTileID(set, animation);
+        const [atlas, texture] = members[i];
+        const tileID = tileManager.getTileID(atlas, texture);
 
         if(tileID !== TileManager.TILE_ID.EMPTY) {
             this.members.add(tileID);
@@ -135,8 +135,8 @@ Autotiler.prototype.loadValues = function(tileManager, values = {}) {
             continue;
         }
 
-        const { set, animation } = value;
-        const tileID = tileManager.getTileID(set, animation);
+        const [atlas, texture] = value;
+        const tileID = tileManager.getTileID(atlas, texture);
 
         this.values[index] = tileID;
     }
