@@ -1,0 +1,10 @@
+{
+    "player": {
+        "TOGGLE_RANGE": "+v",
+        "CLICK": "-M1"
+    },
+    "editor": {
+        "TOGGLE_AUTOTILER": "+a",
+        "TOGGLE_ERASER": "+r"
+    }
+}

@@ -200,6 +200,16 @@ ArmyMapEditor.prototype.initCursorEvents = function(gameContext) {
     });
 }
 
+ArmyMapEditor.prototype.disableEraserButton = function(gameContext) {
+    const { uiManager } = gameContext;
+    const editorInterface = uiManager.getInterface(this.interfaceID);
+    const text = editorInterface.getElement("TEXT_ERASER");
+    const { style } = text;
+    const { color } = style;
+
+    color.setColorRGBA(238, 238, 238, 255);
+}
+
 ArmyMapEditor.prototype.toggleEraser = function(gameContext) {
     const { uiManager } = gameContext;
     const editorInterface = uiManager.getInterface(this.interfaceID);
@@ -338,6 +348,7 @@ ArmyMapEditor.prototype.initUIEvents = function(gameContext) {
     editorInterface.addClick("BUTTON_VIEW_ALL", () => {
         this.buttonHandler.resetButtons(editorInterface);
         this.updateLayerOpacity(gameContext);
+        this.disableEraserButton(gameContext);
         this.brush.reset();
     });
 }

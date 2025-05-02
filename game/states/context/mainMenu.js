@@ -42,5 +42,3 @@ MainMenuState.prototype.onEnter = function(gameContext, stateMachine) {
 
     loadUI(gameContext, stateMachine);
 }
-
-MainMenuState.prototype.onExit = function(gameContext, stateMachine) {}

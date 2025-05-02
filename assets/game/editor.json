@@ -31,9 +31,5 @@
             "background": ["ground", "border", "decoration"],
             "foreground": ["cloud"]
         }
-    },
-    "binds": {
-        "TOGGLE_AUTOTILER": "+a",
-        "TOGGLE_ERASER": "+r"
     }
 }

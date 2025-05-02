@@ -51,6 +51,7 @@ export const ArmyContext = function() {
     this.tileConversions = {};
     this.tileFormConditions = {};
     this.fireCallTypes = {};
+    this.keybinds = {};
 
     this.playerID = null;
     this.modeID = ArmyContext.GAME_MODE.NONE;
@@ -107,6 +108,7 @@ ArmyContext.prototype.init = function(resources) {
     this.tileFormConditions = resources.tileFormConditions;
     this.settings = resources.settings;
     this.editorConfig = resources.editor;
+    this.keybinds = resources.keybinds;
 
     this.world.actionQueue.registerAction(ACTION_TYPE.DEATH, new DeathAction())
     this.world.actionQueue.registerAction(ACTION_TYPE.ATTACK, new AttackAction());

@@ -22,6 +22,7 @@
     "editor": { "directory": ["assets", "game"], "source": "editor.json" },
     "fireCalls": { "directory": ["assets", "game"], "source": "fireCalls.json" },
     "items": { "directory": ["assets", "game"], "source": "items.json" },
+    "keybinds": { "directory": ["assets", "game"], "source": "keybinds.json" },
     "mapTypes": { "directory": ["assets", "game"], "source": "mapTypes.json" },
     "objectives": { "directory": ["assets", "game"], "source": "objectives.json" },
     "objectTypes": { "directory": ["assets", "game"], "source": "objectTypes.json" },

@@ -20,7 +20,7 @@ MapEditorState.prototype.onEnter = function(gameContext, stateMachine) {
     gameContext.setGameMode(ArmyContext.GAME_MODE.EDIT);
 
     uiManager.parseUI(this.mapEditor.interfaceID, gameContext);
-    router.load(gameContext, gameContext.editorConfig.binds);
+    router.load(gameContext, gameContext.keybinds.editor);
     router.on("TOGGLE_AUTOTILER", () => this.mapEditor.toggleAutotiler(gameContext));
     router.on("TOGGLE_ERASER", () => this.mapEditor.toggleEraser(gameContext));
     
