@@ -292,7 +292,8 @@ ActionQueue.prototype.exit = function() {
     this.executionQueue.clear();
     this.mode = ActionQueue.MODE.DIRECT;
     this.state = ActionQueue.STATE.ACTIVE;
-    this.clearCurrent();
+    this.isSkipping = false;
+    this.current = null;
 }
 
 ActionQueue.prototype.clearCurrent = function() {

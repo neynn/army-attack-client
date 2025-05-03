@@ -200,7 +200,7 @@ GameEvent.onRequestVersusChoice = function(gameContext, event) {
 
     console.log("REQUEST_SERVER_CHOICE", event);
 
-    socket.messageRoom(CLIENT_EVENT.ACTION, request);
+    socket.messageRoom(CLIENT_EVENT.EVENT, request);
 }
 
 GameEvent.onVersusRequestSkipTurn = function(gameContext, event) {

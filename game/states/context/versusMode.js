@@ -48,10 +48,6 @@ VersusModeState.prototype.onServerMessage = function(gameContext, type, payload)
             ServerEvents.instanceEntityBatch(gameContext, payload);
             break;
         }
-        case CLIENT_EVENT.ACTION: {
-            ServerEvents.queueAction(gameContext, payload);
-            break;
-        }
         case CLIENT_EVENT.EVENT: {
             ServerEvents.gameEvent(gameContext, payload);
             break;
@@ -77,12 +73,4 @@ VersusModeState.prototype.onEnter = function(gameContext, stateMachine) {
     socket.connect();
 
     this.setNextState(gameContext, ArmyContext.STATE.VERSUS_MODE_LOBBY);
-}
-
-VersusModeState.prototype.onExit = function(gameContext, stateMachine) {
-    const { client, world } = gameContext;
-    const { actionQueue } = world;
-    const { socket } = client;
-
-    actionQueue.toDirect();
 }

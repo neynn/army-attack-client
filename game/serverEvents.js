@@ -56,15 +56,6 @@ ServerEvents.instanceMapFromID = async function(gameContext, payload) {
     }
 }
 
-ServerEvents.queueAction = function(gameContext, payload) {
-    const { world } = gameContext;
-    const { eventBus } = world;
-    const { executionItem } = payload;
-    const { messengerID } = executionItem;
-
-    eventBus.force(GameEvent.TYPE.VERSUS_CHOICE_MADE, { "choice": executionItem, "actorID": messengerID });
-}
-
 ServerEvents.roomUpdate = function(gameContext, payload) {
     console.log(payload);
 }
@@ -95,6 +86,17 @@ ServerEvents.gameEvent = function(gameContext, payload) {
     const { world } = gameContext;
     const { eventBus } = world;
     const { type, data } = payload;
+
+    /*
+        TODO: FOR SERVER!
+        When the server sends an action, it sends it as CLIENT_EVENT.EVENT { VERSUS_CHOICE_MADE { "choice": executionItem, "actorID": messengerID } }
+        const { executionItem } = payload;
+        const { messengerID } = executionItem;
+
+        eventBus.force(GameEvent.TYPE.VERSUS_CHOICE_MADE, { "choice": executionItem, "actorID": messengerID });
+
+        So force the eventBus to call VERSUS_CHOICE_MADE with the parameters.
+    */
 
     eventBus.force(type, data);
 }

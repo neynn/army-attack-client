@@ -4,8 +4,7 @@ export const CLIENT_EVENT = {
     INSTANCE_MAP: 2,
     INSTANCE_MAP_FROM_DATA: 3,
     INSTANCE_ACTOR: 4,
-    ACTION: 5,
-    EVENT: 6
+    EVENT: 5
 };
 
 export const EVENT_TYPE = {
