@@ -171,6 +171,9 @@ ArmyContext.prototype.setGameMode = function(modeID) {
             eventBus.register(GameEvent.TYPE.KILL_DROP, WorldEventHandler.STATUS.EMITABLE);
             eventBus.register(GameEvent.TYPE.DROP, WorldEventHandler.STATUS.EMITABLE);
 
+            eventBus.register(GameEvent.TYPE.ACTION_COUNTER_MOVE, WorldEventHandler.STATUS.EMITABLE);
+            eventBus.register(GameEvent.TYPE.ACTION_COUNTER_ATTACK, WorldEventHandler.STATUS.EMITABLE);
+
             eventBus.on(GameEvent.TYPE.PLAYER_CHOICE_MADE, (event) => GameEvent.onStoryChoice(this, event));
             eventBus.on(GameEvent.TYPE.STORY_AI_CHOICE_MADE, (event) => GameEvent.onStoryChoice(this, event));
 
@@ -185,6 +188,9 @@ ArmyContext.prototype.setGameMode = function(modeID) {
             eventBus.on(GameEvent.TYPE.HIT_DROP, (event) => GameEvent.onHitDrop(this, event));
             eventBus.on(GameEvent.TYPE.KILL_DROP, (event) => GameEvent.onKillDrop(this, event));
             eventBus.on(GameEvent.TYPE.DROP, (event) => GameEvent.onDrop(this, event));
+
+            eventBus.on(GameEvent.TYPE.ACTION_COUNTER_MOVE, (event) => GameEvent.onMoveCounter(this, event));
+            eventBus.on(GameEvent.TYPE.ACTION_COUNTER_ATTACK, (event) => GameEvent.onAttackCounter(this, event));
             break;
         }
         case ArmyContext.GAME_MODE.VERSUS: {
@@ -294,13 +300,7 @@ ArmyContext.prototype.loadSnapshot = function(snapshot) {
 ArmyContext.prototype.addDebug = function() {
     const { router } = this.client;
 
-    router.load(this, {
-        "DEBUG_MAP": "+F1",
-        "DEBUG_CONTEXT": "+F2",
-        "DEBUG_INTERFACE": "+F3",
-        "DEBUG_SPRITES": "+F4",
-        "EXPORT_LOGS": "+F6"
-    });
+    router.load(this, this.keybinds.debug);
 
     router.on("DEBUG_MAP", () => Renderer.DEBUG.MAP = !Renderer.DEBUG.MAP);
     router.on("DEBUG_CONTEXT", () => Renderer.DEBUG.CONTEXT = !Renderer.DEBUG.CONTEXT);

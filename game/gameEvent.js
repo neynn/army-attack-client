@@ -1,4 +1,3 @@
-import { Inventory } from "./actors/player/inventory.js";
 import { CLIENT_EVENT } from "./enums.js";
 import { AnimationSystem } from "./systems/animation.js";
 import { DropSystem } from "./systems/drop.js";
@@ -26,7 +25,10 @@ GameEvent.TYPE = {
 
     VERSUS_REQUEST_SKIP_TURN: 1000,
     VERSUS_SKIP_TURN: 1001,
-    VERSUS_CHOICE_MADE: 112,
+    VERSUS_CHOICE_MADE: 1002,
+
+    ACTION_COUNTER_MOVE: 2000,
+    ACTION_COUNTER_ATTACK: 2001
 };
 
 GameEvent.KILL_REASON = {
@@ -34,30 +36,12 @@ GameEvent.KILL_REASON = {
     ATTACK: "ATTACK"
 };
 
-const getMaxDrop = function(gameContext, type, id) {
-    switch(type) {
-        case Inventory.TYPE.ITEM: {
-            const item = gameContext.itemTypes[id];
+GameEvent.onAttackCounter = function(gameContext, event) {
 
-            if(!item || !item.maxDrop) {
-                return 0;
-            }
+}
 
-            return item.maxDrop;
-        }
-        case Inventory.TYPE.RESOURCE: {
-            const resource = gameContext.resourceTypes[id];
+GameEvent.onMoveCounter = function(gameContext, event) {
 
-            if(!resource || !resource.maxDrop) {
-                return 0;
-            }
-
-            return resource.maxDrop;
-        }
-        default: {
-            return 0;
-        }
-    }
 }
 
 GameEvent.onDrop = function(gameContext, event) {
@@ -72,43 +56,7 @@ GameEvent.onDrop = function(gameContext, event) {
     
     console.log("DROP", event);
 
-    const inventory = receiver.inventory;
-
-    for(let i = 0; i < drops.length; i++) {
-        const item = drops[i];
-        const { type, id, value } = item;
-        const maxDrop = getMaxDrop(gameContext, type, id);
-
-        if(maxDrop === 0) {
-            inventory.add(type, id, value);
-            continue;
-        }
-
-        let toDrop = value;
-
-        while(toDrop >= maxDrop) {
-            toDrop -= maxDrop;
-
-            inventory.add(type, id, maxDrop);
-        }
-
-        if(toDrop !== 0) {
-            inventory.add(type, id, toDrop);
-        }
-    }
-
-    let energyDrops = 0;
-    let energyCounter = inventory.resources.get("EnergyCounter");
-
-    while(energyCounter >= 100) {
-        energyCounter -= 100;
-        energyDrops++;
-    }
-
-    if(energyDrops > 0) {
-        inventory.resources.set("EnergyCounter", energyCounter);
-        inventory.add(Inventory.TYPE.RESOURCE, "Energy", energyDrops);
-    }
+    DropSystem.dropItems(gameContext, drops, receiver.inventory);
 }
 
 GameEvent.onKillDrop = function(gameContext, event) {
@@ -119,9 +67,11 @@ GameEvent.onKillDrop = function(gameContext, event) {
 
     console.log("KILL_DROP", event);
 
-    if(killRewards.length > 0) {
-        eventBus.emit(GameEvent.TYPE.DROP, { "drops": killRewards, "receiverID": receiverID })
+    if(!killRewards) {
+        return;
     }
+
+    eventBus.emit(GameEvent.TYPE.DROP, { "drops": killRewards, "receiverID": receiverID });
 }
 
 GameEvent.onHitDrop = function(gameContext, event) {
@@ -132,60 +82,11 @@ GameEvent.onHitDrop = function(gameContext, event) {
 
     console.log("HIT_DROP", event);
 
-    if(hitRewards.length > 0) {
-        eventBus.emit(GameEvent.TYPE.DROP, { "drops": hitRewards, "receiverID": receiverID })
-    }
-}
-
-GameEvent.onDropRequest = function(gameContext, event) {
-    const { world } = gameContext;
-    const { turnManager, eventBus } = world;
-    const { drops, receiverID } = event;
-    const receiver = turnManager.getActor(receiverID);
-
-    if(!receiver || !receiver.inventory) {
+    if(!hitRewards) {
         return;
     }
 
-    const inventory = receiver.inventory;
-
-    for(let i = 0; i < drops.length; i++) {
-        const item = drops[i];
-        const { type, id, value } = item;
-        const maxDrop = getMaxDrop(gameContext, type, id);
-
-        if(maxDrop === 0) {
-            inventory.add(type, id, value);
-            continue;
-        }
-
-        let toDrop = value;
-
-        while(toDrop >= maxDrop) {
-            toDrop -= maxDrop;
-
-            inventory.add(type, id, maxDrop);
-        }
-
-        if(toDrop !== 0) {
-            inventory.add(type, id, toDrop);
-        }
-    }
-
-    let energyDrops = 0;
-    let energyCounter = inventory.resources.get("EnergyCounter");
-
-    while(energyCounter >= 100) {
-        energyCounter -= 100;
-        energyDrops++;
-    }
-
-    if(energyDrops > 0) {
-        inventory.resources.set("EnergyCounter", energyCounter);
-        inventory.add(Inventory.TYPE.RESOURCE, "Energy", energyDrops);
-    }
-
-    eventBus.emit(GameEvent.TYPE.DROP, { receiverID, drops });
+    eventBus.emit(GameEvent.TYPE.DROP, { "drops": hitRewards, "receiverID": receiverID });
 }
 
 GameEvent.onStoryChoice = function(gameContext, event) {

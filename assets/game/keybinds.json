@@ -6,5 +6,12 @@
     "editor": {
         "TOGGLE_AUTOTILER": "+a",
         "TOGGLE_ERASER": "+r"
+    },
+    "debug": {
+        "DEBUG_MAP": "+F1",
+        "DEBUG_CONTEXT": "+F2",
+        "DEBUG_INTERFACE": "+F3",
+        "DEBUG_SPRITES": "+F4",
+        "EXPORT_LOGS": "+F6"
     }
 }

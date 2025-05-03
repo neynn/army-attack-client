@@ -90,7 +90,7 @@ const getState = function(target, damage, isBulldozed) {
 AttackSystem.endAttack = function(gameContext, outcome) {
     const { world } = gameContext;
     const { entityManager, eventBus } = world;
-    const { targetID, attackers, damage, state } = outcome;
+    const { attackers, targetID, state, damage } = outcome;
     const target = entityManager.getEntity(targetID);
 
     AnimationSystem.revertToIdle(gameContext, attackers);
