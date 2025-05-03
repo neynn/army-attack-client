@@ -1,3 +1,4 @@
+import { EntityManager } from "../../source/entity/entityManager.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { CardSystem } from "./card.js";
 import { MapSystem } from "./map.js";
@@ -95,7 +96,7 @@ SpawnSystem.destroyEntity = function(gameContext, entity) {
 
     MapSystem.removeEntity(gameContext, entity);
     spriteManager.destroySprite(spriteComponent.spriteID);
-    entityManager.destroyEntity(entityID);
+    entityManager.markEntity(EntityManager.MARK_TYPE.DELETE, entityID);
 
     unloadEntitySprites(gameContext, entity);
 }

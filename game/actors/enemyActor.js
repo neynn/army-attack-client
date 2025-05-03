@@ -14,5 +14,5 @@ EnemyActor.prototype.onMakeChoice = function(gameContext) {
     const { world } = gameContext;
     const { eventBus } = world;
 
-    eventBus.emit(GAME_EVENT.CHOICE_MADE, { "actorID": this.id });
+    eventBus.emit(GAME_EVENT.MAKE_CHOICE, { "actorID": this.id });
 }

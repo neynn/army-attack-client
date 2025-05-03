@@ -158,7 +158,7 @@ ArmyContext.prototype.setGameMode = function(modeID) {
         case ArmyContext.GAME_MODE.STORY: {
             eventBus.register(GAME_EVENT.REQUEST_DROP_HIT_ITEMS, WorldEventHandler.STATUS.EMITABLE);
             eventBus.register(GAME_EVENT.REQUEST_DROP_KILL_ITEMS, WorldEventHandler.STATUS.EMITABLE);
-            eventBus.register(GAME_EVENT.CHOICE_MADE, WorldEventHandler.STATUS.EMITABLE);
+            eventBus.register(GAME_EVENT.MAKE_CHOICE, WorldEventHandler.STATUS.EMITABLE);
             eventBus.register(GAME_EVENT.ITEMS_DROPPED, WorldEventHandler.STATUS.EMITABLE);
             eventBus.register(GAME_EVENT.ENTITY_HIT, WorldEventHandler.STATUS.EMITABLE);
             eventBus.register(GAME_EVENT.ENTITY_KILLED, WorldEventHandler.STATUS.EMITABLE);
@@ -170,7 +170,7 @@ ArmyContext.prototype.setGameMode = function(modeID) {
             eventBus.on(GAME_EVENT.REQUEST_ENTITY_DEATH, (event) => GameEvent.killEntity(this, event));
             eventBus.on(GAME_EVENT.REQUEST_DROP_HIT_ITEMS, (event) => GameEvent.dropItems(this, event));
             eventBus.on(GAME_EVENT.REQUEST_DROP_KILL_ITEMS, (event) => GameEvent.dropItems(this, event));
-            eventBus.on(GAME_EVENT.CHOICE_MADE, (event) => GameEvent.choiceMade(this, event));
+            eventBus.on(GAME_EVENT.MAKE_CHOICE, (event) => GameEvent.choiceMade(this, event));
             eventBus.on(GAME_EVENT.ITEMS_DROPPED, (event) => GameEvent.itemsDropped(this, event));
             eventBus.on(GAME_EVENT.ENTITY_HIT, (event) => GameEvent.entityHit(this, event));
             eventBus.on(GAME_EVENT.ENTITY_KILLED, (event) => GameEvent.entityKill(this, event));
@@ -181,11 +181,11 @@ ArmyContext.prototype.setGameMode = function(modeID) {
         }
         case ArmyContext.GAME_MODE.VERSUS: {
             eventBus.register(GAME_EVENT.REQUEST_DROP_KILL_ITEMS);
-            eventBus.register(GAME_EVENT.CHOICE_MADE);
+            eventBus.register(GAME_EVENT.MAKE_CHOICE);
             eventBus.register(GAME_EVENT.SKIP_TURN);
 
             eventBus.on(GAME_EVENT.REQUEST_DROP_KILL_ITEMS, (event) => GameEvent.dropItems(this, event));
-            eventBus.on(GAME_EVENT.CHOICE_MADE, (event) => GameEvent.choiceMade(this, event));
+            eventBus.on(GAME_EVENT.MAKE_CHOICE, (event) => GameEvent.choiceMade(this, event));
             eventBus.on(GAME_EVENT.SKIP_TURN, (event) => GameEvent.skipTurn(this, event));
             break;
         }

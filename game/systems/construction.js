@@ -20,7 +20,6 @@ const getResult = function(gameContext, entity) {
     const type = entity.config.constructionResult;
 
     return {
-        "id": entityID,
         "team": teamID,
         "owners": owners,
         "type": type,

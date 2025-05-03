@@ -8,6 +8,20 @@ export const GameEvent = function() {
     this.id = 0;
 }
 
+GameEvent.TYPE = {
+    REQUEST_DROP_HIT_ITEMS: 0,
+    REQUEST_DROP_KILL_ITEMS: 1,
+    REQUEST_ENTITY_DEATH: 2,
+    ITEMS_DROPPED: 3,
+    MAKE_CHOICE: 4,
+    SKIP_TURN: 5,
+    ENTITY_HIT: 6,
+    ENTITY_KILLED: 7,
+    ENTITY_DOWN: 8,
+    TILE_CAPTURED: 9,
+    ENTITY_DECAY: 10,
+};
+
 GameEvent.KILL_REASON = {
     DECAY: "DECAY",
     ATTACK: "ATTACK"
@@ -92,9 +106,15 @@ GameEvent.dropItems = function(gameContext, event) {
 
 GameEvent.choiceMade = function(gameContext, event) {
     const { world } = gameContext;
-    const { turnManager } = world;
-    const { actorID } = event;
+    const { turnManager, actionQueue } = world;
+    const { actorID, request, choice } = event;
     const isActor = turnManager.isActor(actorID);
+
+    console.log("CHOICE", event);
+
+    if(choice && request) {
+        actionQueue.enqueueExecutionItem(choice, request);
+    }
 
     if(isActor) {
         turnManager.reduceActorActions(1);
@@ -116,7 +136,7 @@ GameEvent.killEntity = function(gameContext, event) {
     const { entity, reason } = event;
 
     console.log("KILLED", event);
-    
+
     AnimationSystem.playDeath(gameContext, entity);
     SpawnSystem.destroyEntity(gameContext, entity);
 }

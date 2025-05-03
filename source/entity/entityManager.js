@@ -12,11 +12,16 @@ export const EntityManager = function() {
     this.components = new Map();
     this.entityMap = new Map();
     this.entities = [];
+    this.pendingRemovals = new Set();
 
     this.events = new EventEmitter();
     this.events.listen(EntityManager.EVENT.ENTITY_CREATE);
     this.events.listen(EntityManager.EVENT.ENTITY_DESTROY);
 }
+
+EntityManager.MARK_TYPE = {
+    DELETE: 0
+};
 
 EntityManager.EVENT = {
     ENTITY_CREATE: "ENTITY_CREATE",
@@ -81,10 +86,29 @@ EntityManager.prototype.forAllEntities = function(onCall) {
     }
 }
 
+EntityManager.prototype.markEntity = function(markType, entityID) {
+    if(!this.entityMap.has(entityID)) {
+        return;
+    }
+
+    switch(markType) {
+        case EntityManager.MARK_TYPE.DELETE: {
+            this.pendingRemovals.add(entityID);
+            break;
+        }
+    }
+}
+
 EntityManager.prototype.update = function(gameContext) {
     for(let i = 0; i < this.entities.length; ++i) {
         this.entities[i].update(gameContext);
     }
+
+    for(const entityID of this.pendingRemovals) {
+        this.destroyEntity(entityID);
+    }
+
+    this.pendingRemovals.clear();
 }
 
 EntityManager.prototype.loadComponents = function(entity, components) {

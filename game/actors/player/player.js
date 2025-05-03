@@ -208,8 +208,7 @@ Player.prototype.onMakeChoice = function(gameContext) {
             return Queue.FILTER.NO_SUCCESS;
         }
 
-        actionQueue.enqueueExecutionItem(executionItem, request);
-        eventBus.emit(GAME_EVENT.CHOICE_MADE, { "actorID": this.id });
+        eventBus.emit(GAME_EVENT.MAKE_CHOICE, { "actorID": this.id, "request": request, "choice": executionItem });
         
         return Queue.FILTER.SUCCESS;
     });
