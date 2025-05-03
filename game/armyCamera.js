@@ -70,31 +70,36 @@ ArmyCamera.prototype.update = function(gameContext, display) {
     }
 
     if(Renderer.DEBUG.MAP) {
-        const scaleX = Math.floor(this.tileWidth / 6);
-        const scaleY = Math.floor(this.tileHeight / 6);
-
-        context.font = `${scaleX}px Arial`;
-        context.textBaseline = "middle";
-        context.textAlign = "center";
-
-        context.fillStyle = "#ff0000";
-        this.drawBufferData(context, worldMap.getLayer("type").getBuffer(), scaleX, scaleY);
-
-        context.fillStyle = "#00ff00";
-        this.drawBufferData(context, worldMap.getLayer("team").getBuffer(), this.tileWidth - scaleX, scaleY);
-
-        context.fillStyle = "#0000ff";
-        this.drawBufferData(context, worldMap.getLayer("border").getBuffer(), scaleX, this.tileHeight - scaleY);
-
-        context.fillStyle = "#ffff00";
-        this.drawBufferData(context, worldMap.getLayer("ground").getBuffer(), this.tileWidth - scaleX, this.tileHeight - scaleY);
-
-        this.drawMapOutlines(context);
+        this.debugMap(context, worldMap);
     }
 
     for(let i = 0; i < this.postDraw.length; i++) {
         this.postDraw[i](context);
     }
+}
+
+ArmyCamera.prototype.debugMap = function(context, worldMap) {
+    const scaleX = Math.floor(this.tileWidth / 6);
+    const scaleY = Math.floor(this.tileHeight / 6);
+
+    context.globalAlpha = 1;
+    context.font = `${scaleX}px Arial`;
+    context.textBaseline = "middle";
+    context.textAlign = "center";
+
+    context.fillStyle = "#ff0000";
+    this.drawBufferData(context, worldMap.getLayer("type").getBuffer(), scaleX, scaleY);
+
+    context.fillStyle = "#00ff00";
+    this.drawBufferData(context, worldMap.getLayer("team").getBuffer(), this.tileWidth - scaleX, scaleY);
+
+    context.fillStyle = "#0000ff";
+    this.drawBufferData(context, worldMap.getLayer("border").getBuffer(), scaleX, this.tileHeight - scaleY);
+
+    context.fillStyle = "#ffff00";
+    this.drawBufferData(context, worldMap.getLayer("ground").getBuffer(), this.tileWidth - scaleX, this.tileHeight - scaleY);
+
+    this.drawMapOutlines(context);
 }
 
 ArmyCamera.prototype.updateMoveOverlay = function(gameContext, nodeList, enableTileID, attackTileID, ) {

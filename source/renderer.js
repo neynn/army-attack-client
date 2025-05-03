@@ -100,14 +100,17 @@ Renderer.prototype.destroyContext = function(contextID) {
 }
 
 Renderer.prototype.drawContextDebug = function() {
-    this.display.context.strokeStyle = "#eeeeee";
-    this.display.context.lineWidth = 3;
+    const { context } = this.display;
+
+    context.globalAlpha = 1;
+    context.strokeStyle = "#eeeeee";
+    context.lineWidth = 3;
 
     for(let i = 0; i < this.contexts.length; i++) {
         const context = this.contexts[i];
         const { x, y, w, h } = context.getBounds();
 
-        this.display.context.strokeRect(x, y, w, h);
+        context.strokeRect(x, y, w, h);
     }
 }
 
@@ -132,7 +135,7 @@ Renderer.prototype.update = function(gameContext) {
     this.display.save();
 
     uiManager.draw(gameContext, this.display);
-    
+
     this.display.reset();
 
     if(Renderer.DEBUG.INTERFACE) {
