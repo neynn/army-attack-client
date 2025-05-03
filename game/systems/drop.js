@@ -1,17 +1,14 @@
 import { getRandomChance } from "../../source/math/math.js";
-import { GameEvent } from "../gameEvent.js";
 
 export const DropSystem = function() {}
 
-DropSystem.dropHitReward = function(gameContext, entity, receiverID) {
+DropSystem.getHitReward = function(entity) {
     const hitRewards = entity.config.hitRewards;
 
-    if(!hitRewards || receiverID === null) {
+    if(!hitRewards) {
         return;
     }
 
-    const { world } = gameContext;
-    const { eventBus } = world;
     const drops = [];
     
     for(let i = 0; i < hitRewards.length; i++) {
@@ -25,20 +22,16 @@ DropSystem.dropHitReward = function(gameContext, entity, receiverID) {
         });
     }
 
-    if(drops.length !== 0) {
-        eventBus.emit(GameEvent.TYPE.HIT_DROP, { drops, receiverID });
-    }
+    return drops;
 }
 
-DropSystem.dropKillReward = function(gameContext, entity, receiverID) {
+DropSystem.getKillReward = function(entity) {
     const killRewards = entity.config.killRewards;
 
-    if(!killRewards || receiverID === null) {
+    if(!killRewards) {
         return;
     }
 
-    const { world } = gameContext;
-    const { eventBus } = world;
     const drops = [];
 
     for(let i = 0; i < killRewards.length; i++) {
@@ -68,7 +61,5 @@ DropSystem.dropKillReward = function(gameContext, entity, receiverID) {
         });
     }
 
-    if(drops.length !== 0) {
-        eventBus.emit(GameEvent.TYPE.KILL_DROP, { drops, receiverID });
-    }
+    return drops;
 }

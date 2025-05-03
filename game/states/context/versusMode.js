@@ -6,7 +6,6 @@ import { VersusModeLobbyState } from "./versus/versusModeLobby.js";
 import { VersusModePlayState } from "./versus/versusModePlay.js";
 import { ServerEvents } from "../../serverEvents.js";
 import { ArmyContext } from "../../armyContext.js";
-import { ActionQueue } from "../../../source/action/actionQueue.js";
 
 export const VersusModeState = function() {
     StateMachine.call(this);
@@ -28,8 +27,10 @@ VersusModeState.prototype.onServerMessage = function(gameContext, type, payload)
         }
         case ROOM_EVENTS.START_INSTANCE: {
             this.setNextState(gameContext, ArmyContext.STATE.VERSUS_MODE_PLAY);
-
-            ServerEvents.startVersusInstance(gameContext, payload);
+            break;
+        }
+        case CLIENT_EVENT.INSTANCE_GAME: {
+            ServerEvents.instanceGame(gameContext, payload);
             break;
         }
         case CLIENT_EVENT.INSTANCE_ACTOR: {

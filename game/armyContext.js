@@ -182,8 +182,8 @@ ArmyContext.prototype.setGameMode = function(modeID) {
 
             eventBus.on(GameEvent.TYPE.TILE_CAPTURED, (event) => GameEvent.onTileCaptured(this, event));
 
-            eventBus.on(GameEvent.TYPE.HIT_DROP, (event) => GameEvent.onDropRequest(this, event));
-            eventBus.on(GameEvent.TYPE.KILL_DROP, (event) => GameEvent.onDropRequest(this, event));
+            eventBus.on(GameEvent.TYPE.HIT_DROP, (event) => GameEvent.onHitDrop(this, event));
+            eventBus.on(GameEvent.TYPE.KILL_DROP, (event) => GameEvent.onKillDrop(this, event));
             eventBus.on(GameEvent.TYPE.DROP, (event) => GameEvent.onDrop(this, event));
             break;
         }

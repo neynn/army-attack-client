@@ -1,8 +1,44 @@
 import { CLIENT_EVENT } from "./enums.js";
-import { GameEvent } from "./gameEvent.js";
 import { SpawnSystem } from "./systems/spawn.js";
 
 export const ServerEvents = {};
+
+ServerEvents.instanceGame = async function(gameContext, payload) {
+    const { world, client } = gameContext;
+    const { turnManager, mapManager } = world;
+    const { socket } = client;
+    const { actors, entities, mapID, mapData, playerID } = payload;
+
+    /* Actor Instancing */
+    for(let i = 0; i < actors.length; i++) {
+        const { actorID, actorSetup } = actors[i];
+
+        turnManager.createActor(gameContext, actorSetup, actorID);
+    }
+
+    /* Map-Instancing */
+    if(!mapData) {
+        const worldMap = await mapManager.createMapByID(gameContext, mapID);
+
+        if(!worldMap) {
+            socket.messageRoom(CLIENT_EVENT.INSTANCE_MAP, { "success": false, "error": "NO_MAP_FILE" });
+        } else {
+            socket.messageRoom(CLIENT_EVENT.INSTANCE_MAP, { "success": true, "error": null }); 
+        }
+    } else {
+        mapManager.createMap(gameContext, mapID, mapData);
+
+        socket.messageRoom(CLIENT_EVENT.INSTANCE_MAP, { "success": true, "error": null });
+    }
+
+    for(let i = 0; i < entities.length; i++) {
+        const setup = entities[i];
+
+        SpawnSystem.createEntity(gameContext, setup);
+    }
+
+    gameContext.playerID = playerID;
+}
 
 ServerEvents.instanceActor = function(gameContext, payload) {
     const { world } = gameContext;
@@ -58,28 +94,6 @@ ServerEvents.instanceMapFromID = async function(gameContext, payload) {
 
 ServerEvents.roomUpdate = function(gameContext, payload) {
     console.log(payload);
-}
-
-ServerEvents.startVersusInstance = async function(gameContext, payload) {
-    const { entitySetup, mapSetup, actorSetup, playerID } = payload;
-
-    /**
-     * entitySetup = { entityBatch },
-     * mapSetup = { mapID },
-     * actorSetup = [ ...{ actorID, actorSetup }],
-     * playerID <- The actorID of the PLAYER.
-     */
-    for(let i = 0; i < actorSetup.length; i++) {
-        const actorPayload = actorSetup[i];
-
-        ServerEvents.instanceActor(gameContext, actorPayload);
-    }
-
-    await ServerEvents.instanceMapFromID(gameContext, mapSetup);
-
-    ServerEvents.instanceEntityBatch(gameContext, entitySetup);
-
-    gameContext.playerID = playerID;
 }
 
 ServerEvents.gameEvent = function(gameContext, payload) {

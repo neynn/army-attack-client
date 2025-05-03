@@ -61,7 +61,80 @@ const getMaxDrop = function(gameContext, type, id) {
 }
 
 GameEvent.onDrop = function(gameContext, event) {
+    const { world } = gameContext;
+    const { turnManager } = world;
+    const { drops, receiverID } = event;
+    const receiver = turnManager.getActor(receiverID);
+
+    if(!receiver || !receiver.inventory) {
+        return;
+    }
+    
     console.log("DROP", event);
+
+    const inventory = receiver.inventory;
+
+    for(let i = 0; i < drops.length; i++) {
+        const item = drops[i];
+        const { type, id, value } = item;
+        const maxDrop = getMaxDrop(gameContext, type, id);
+
+        if(maxDrop === 0) {
+            inventory.add(type, id, value);
+            continue;
+        }
+
+        let toDrop = value;
+
+        while(toDrop >= maxDrop) {
+            toDrop -= maxDrop;
+
+            inventory.add(type, id, maxDrop);
+        }
+
+        if(toDrop !== 0) {
+            inventory.add(type, id, toDrop);
+        }
+    }
+
+    let energyDrops = 0;
+    let energyCounter = inventory.resources.get("EnergyCounter");
+
+    while(energyCounter >= 100) {
+        energyCounter -= 100;
+        energyDrops++;
+    }
+
+    if(energyDrops > 0) {
+        inventory.resources.set("EnergyCounter", energyCounter);
+        inventory.add(Inventory.TYPE.RESOURCE, "Energy", energyDrops);
+    }
+}
+
+GameEvent.onKillDrop = function(gameContext, event) {
+    const { world } = gameContext;
+    const { eventBus } = world;
+    const { entity, receiverID } = event;
+    const killRewards = DropSystem.getKillReward(entity);
+
+    console.log("KILL_DROP", event);
+
+    if(killRewards.length > 0) {
+        eventBus.emit(GameEvent.TYPE.DROP, { "drops": killRewards, "receiverID": receiverID })
+    }
+}
+
+GameEvent.onHitDrop = function(gameContext, event) {
+    const { world } = gameContext;
+    const { eventBus } = world;
+    const { entity, receiverID } = event;
+    const hitRewards = DropSystem.getHitReward(entity);
+
+    console.log("HIT_DROP", event);
+
+    if(hitRewards.length > 0) {
+        eventBus.emit(GameEvent.TYPE.DROP, { "drops": hitRewards, "receiverID": receiverID })
+    }
 }
 
 GameEvent.onDropRequest = function(gameContext, event) {
@@ -152,11 +225,13 @@ GameEvent.onEntityDecay = function(gameContext, event) {
 }
 
 GameEvent.onEntityHit = function(gameContext, event) {
+    const { world } = gameContext;
+    const { eventBus } = world;
     const { target } = event;
 
     console.log("HIT", event);
 
-    DropSystem.dropHitReward(gameContext, target, "Player");
+    eventBus.emit(GameEvent.TYPE.HIT_DROP, { "entity": target, "receiverID": "Player"});
 }
 
 GameEvent.onEntityKill = function(gameContext, event) {
@@ -166,8 +241,8 @@ GameEvent.onEntityKill = function(gameContext, event) {
 
     console.log("KILLED", event);
 
+    eventBus.emit(GameEvent.TYPE.KILL_DROP, { "entity": target, "receiverID": "Player"});
     eventBus.emit(GameEvent.TYPE.ENTITY_DEATH, { "entity": target, "reason": GameEvent.KILL_REASON.ATTACK });
-    DropSystem.dropKillReward(gameContext, target, "Player");
 }
 
 GameEvent.onEntityDown = function(gameContext, event) {
