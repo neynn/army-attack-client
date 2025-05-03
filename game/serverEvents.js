@@ -1,4 +1,5 @@
-import { CLIENT_EVENT, GAME_EVENT } from "./enums.js";
+import { CLIENT_EVENT } from "./enums.js";
+import { GameEvent } from "./gameEvent.js";
 import { SpawnSystem } from "./systems/spawn.js";
 
 export const ServerEvents = {};
@@ -57,12 +58,11 @@ ServerEvents.instanceMapFromID = async function(gameContext, payload) {
 
 ServerEvents.queueAction = function(gameContext, payload) {
     const { world } = gameContext;
-    const { actionQueue, eventBus } = world;
+    const { eventBus } = world;
     const { executionItem } = payload;
     const { messengerID } = executionItem;
 
-    actionQueue.enqueue(executionItem);
-    eventBus.force(GAME_EVENT.MAKE_CHOICE, { "actorID": messengerID });
+    eventBus.force(GameEvent.TYPE.VERSUS_CHOICE_MADE, { "choice": executionItem, "actorID": messengerID });
 }
 
 ServerEvents.roomUpdate = function(gameContext, payload) {

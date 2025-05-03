@@ -1,4 +1,4 @@
-import { GAME_EVENT } from "../enums.js";
+import { GameEvent } from "../gameEvent.js";
 
 export const ReviveableComponent = function() {
     this.type = ReviveableComponent.TYPE.NONE;
@@ -43,7 +43,7 @@ ReviveableComponent.prototype.update = function(gameContext, entity) {
             this.passedTime = gameContext.settings.downDuration;
             this.state = ReviveableComponent.STATE.DEAD;
 
-            eventBus.emit(GAME_EVENT.ENTITY_DECAY, { entity });
+            eventBus.emit(GameEvent.TYPE.ENTITY_DECAY, { entity });
         }
     }
 }

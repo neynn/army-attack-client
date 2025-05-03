@@ -1,5 +1,5 @@
 import { GameContext } from "../source/gameContext.js";
-import { ACTION_TYPE, GAME_EVENT } from "./enums.js";
+import { ACTION_TYPE } from "./enums.js";
 import { AttackAction } from "./actions/attackAction.js";
 import { MoveAction } from "./actions/moveAction.js";
 import { ArmorComponent } from "./components/armor.js";
@@ -156,37 +156,47 @@ ArmyContext.prototype.setGameMode = function(modeID) {
             break;
         }
         case ArmyContext.GAME_MODE.STORY: {
-            eventBus.register(GAME_EVENT.REQUEST_DROP_HIT_ITEMS, WorldEventHandler.STATUS.EMITABLE);
-            eventBus.register(GAME_EVENT.REQUEST_DROP_KILL_ITEMS, WorldEventHandler.STATUS.EMITABLE);
-            eventBus.register(GAME_EVENT.MAKE_CHOICE, WorldEventHandler.STATUS.EMITABLE);
-            eventBus.register(GAME_EVENT.ITEMS_DROPPED, WorldEventHandler.STATUS.EMITABLE);
-            eventBus.register(GAME_EVENT.ENTITY_HIT, WorldEventHandler.STATUS.EMITABLE);
-            eventBus.register(GAME_EVENT.ENTITY_KILLED, WorldEventHandler.STATUS.EMITABLE);
-            eventBus.register(GAME_EVENT.ENTITY_DOWN, WorldEventHandler.STATUS.EMITABLE);
-            eventBus.register(GAME_EVENT.TILE_CAPTURED, WorldEventHandler.STATUS.EMITABLE);
-            eventBus.register(GAME_EVENT.ENTITY_DECAY, WorldEventHandler.STATUS.EMITABLE);
-            eventBus.register(GAME_EVENT.REQUEST_ENTITY_DEATH, WorldEventHandler.STATUS.EMITABLE);
+            eventBus.register(GameEvent.TYPE.STORY_AI_CHOICE_MADE, WorldEventHandler.STATUS.EMITABLE);
+            eventBus.register(GameEvent.TYPE.PLAYER_CHOICE_MADE, WorldEventHandler.STATUS.EMITABLE);
 
-            eventBus.on(GAME_EVENT.REQUEST_ENTITY_DEATH, (event) => GameEvent.killEntity(this, event));
-            eventBus.on(GAME_EVENT.REQUEST_DROP_HIT_ITEMS, (event) => GameEvent.dropItems(this, event));
-            eventBus.on(GAME_EVENT.REQUEST_DROP_KILL_ITEMS, (event) => GameEvent.dropItems(this, event));
-            eventBus.on(GAME_EVENT.MAKE_CHOICE, (event) => GameEvent.choiceMade(this, event));
-            eventBus.on(GAME_EVENT.ITEMS_DROPPED, (event) => GameEvent.itemsDropped(this, event));
-            eventBus.on(GAME_EVENT.ENTITY_HIT, (event) => GameEvent.entityHit(this, event));
-            eventBus.on(GAME_EVENT.ENTITY_KILLED, (event) => GameEvent.entityKill(this, event));
-            eventBus.on(GAME_EVENT.ENTITY_DOWN, (event) => GameEvent.entityDown(this, event));
-            eventBus.on(GAME_EVENT.TILE_CAPTURED, (event) => GameEvent.tileCaptured(this, event));
-            eventBus.on(GAME_EVENT.ENTITY_DECAY, (event) => GameEvent.entityDecay(this, event));
+            eventBus.register(GameEvent.TYPE.ENTITY_DEATH, WorldEventHandler.STATUS.EMITABLE);
+            eventBus.register(GameEvent.TYPE.ENTITY_DECAY, WorldEventHandler.STATUS.EMITABLE);
+            eventBus.register(GameEvent.TYPE.ENTITY_HIT, WorldEventHandler.STATUS.EMITABLE);
+            eventBus.register(GameEvent.TYPE.ENTITY_DOWN, WorldEventHandler.STATUS.EMITABLE);
+            eventBus.register(GameEvent.TYPE.ENTITY_KILL, WorldEventHandler.STATUS.EMITABLE);
+
+            eventBus.register(GameEvent.TYPE.TILE_CAPTURED, WorldEventHandler.STATUS.EMITABLE);
+
+            eventBus.register(GameEvent.TYPE.HIT_DROP, WorldEventHandler.STATUS.EMITABLE);
+            eventBus.register(GameEvent.TYPE.KILL_DROP, WorldEventHandler.STATUS.EMITABLE);
+            eventBus.register(GameEvent.TYPE.DROP, WorldEventHandler.STATUS.EMITABLE);
+
+            eventBus.on(GameEvent.TYPE.PLAYER_CHOICE_MADE, (event) => GameEvent.onStoryChoice(this, event));
+            eventBus.on(GameEvent.TYPE.STORY_AI_CHOICE_MADE, (event) => GameEvent.onStoryChoice(this, event));
+
+            eventBus.on(GameEvent.TYPE.ENTITY_DEATH, (event) => GameEvent.onEntityDeath(this, event));
+            eventBus.on(GameEvent.TYPE.ENTITY_DECAY, (event) => GameEvent.onEntityDecay(this, event));
+            eventBus.on(GameEvent.TYPE.ENTITY_HIT, (event) => GameEvent.onEntityHit(this, event));
+            eventBus.on(GameEvent.TYPE.ENTITY_DOWN, (event) => GameEvent.onEntityDown(this, event));
+            eventBus.on(GameEvent.TYPE.ENTITY_KILL, (event) => GameEvent.onEntityKill(this, event));
+
+            eventBus.on(GameEvent.TYPE.TILE_CAPTURED, (event) => GameEvent.onTileCaptured(this, event));
+
+            eventBus.on(GameEvent.TYPE.HIT_DROP, (event) => GameEvent.onDropRequest(this, event));
+            eventBus.on(GameEvent.TYPE.KILL_DROP, (event) => GameEvent.onDropRequest(this, event));
+            eventBus.on(GameEvent.TYPE.DROP, (event) => GameEvent.onDrop(this, event));
             break;
         }
         case ArmyContext.GAME_MODE.VERSUS: {
-            eventBus.register(GAME_EVENT.REQUEST_DROP_KILL_ITEMS);
-            eventBus.register(GAME_EVENT.MAKE_CHOICE);
-            eventBus.register(GAME_EVENT.SKIP_TURN);
+            eventBus.register(GameEvent.TYPE.VERSUS_REQUEST_SKIP_TURN, WorldEventHandler.STATUS.EMITABLE);
+            eventBus.register(GameEvent.TYPE.VERSUS_SKIP_TURN);
+            eventBus.register(GameEvent.TYPE.PLAYER_CHOICE_MADE, WorldEventHandler.STATUS.EMITABLE);
+            eventBus.register(GameEvent.TYPE.VERSUS_CHOICE_MADE);
 
-            eventBus.on(GAME_EVENT.REQUEST_DROP_KILL_ITEMS, (event) => GameEvent.dropItems(this, event));
-            eventBus.on(GAME_EVENT.MAKE_CHOICE, (event) => GameEvent.choiceMade(this, event));
-            eventBus.on(GAME_EVENT.SKIP_TURN, (event) => GameEvent.skipTurn(this, event));
+            eventBus.on(GameEvent.TYPE.VERSUS_REQUEST_SKIP_TURN, (event) => GameEvent.onVersusRequestSkipTurn(this, event));
+            eventBus.on(GameEvent.TYPE.VERSUS_SKIP_TURN, (event) => GameEvent.onVersusSkipTurn(this, event));
+            eventBus.on(GameEvent.TYPE.PLAYER_CHOICE_MADE, (event) => GameEvent.onRequestVersusChoice(this, event));
+            eventBus.on(GameEvent.TYPE.VERSUS_CHOICE_MADE, (event) => GameEvent.onVersusChoice(this, event));
             break;
         }
     }

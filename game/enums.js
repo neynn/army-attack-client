@@ -27,17 +27,3 @@ export const ACTION_TYPE = {
     DEATH: "Death",
     FIRE_MISSION: "FireMission"
 };
-
-export const GAME_EVENT = {
-    REQUEST_DROP_HIT_ITEMS: 0,
-    REQUEST_DROP_KILL_ITEMS: 1,
-    ITEMS_DROPPED: 2,
-    MAKE_CHOICE: 3,
-    SKIP_TURN: 4,
-    ENTITY_HIT: 5,
-    ENTITY_KILLED: 6,
-    ENTITY_DOWN: 7,
-    TILE_CAPTURED: 8,
-    ENTITY_DECAY: 9,
-    REQUEST_ENTITY_DEATH: 10
-};

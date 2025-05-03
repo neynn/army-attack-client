@@ -1,11 +1,9 @@
 import { isRectangleRectangleIntersect } from "../../source/math/math.js";
-import { GAME_EVENT } from "../enums.js";
+import { GameEvent } from "../gameEvent.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { AllianceSystem } from "./alliance.js";
 import { AnimationSystem } from "./animation.js";
 import { DecaySystem } from "./decay.js";
-import { DropSystem } from "./drop.js";
-import { SpawnSystem } from "./spawn.js";
 
 export const AttackSystem = function() {}
 
@@ -100,17 +98,17 @@ AttackSystem.endAttack = function(gameContext, outcome) {
     switch(state) {
         case AttackSystem.OUTCOME_STATE.DEAD: {
             target.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
-            eventBus.emit(GAME_EVENT.ENTITY_KILLED, { attackers, target, damage });
+            eventBus.emit(GameEvent.TYPE.ENTITY_KILL, { attackers, target, damage });
             break;
         }
         case AttackSystem.OUTCOME_STATE.IDLE: {
             target.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
-            eventBus.emit(GAME_EVENT.ENTITY_HIT, { attackers, target, damage });
+            eventBus.emit(GameEvent.TYPE.ENTITY_HIT, { attackers, target, damage });
             break;
         }
         case AttackSystem.OUTCOME_STATE.DOWN: {
-            eventBus.emit(GAME_EVENT.ENTITY_DOWN, { attackers, target, damage });
-            eventBus.emit(GAME_EVENT.ENTITY_HIT, { attackers, target, damage });
+            eventBus.emit(GameEvent.TYPE.ENTITY_DOWN, { attackers, target, damage });
+            eventBus.emit(GameEvent.TYPE.ENTITY_HIT, { attackers, target, damage });
         }
     }
 }

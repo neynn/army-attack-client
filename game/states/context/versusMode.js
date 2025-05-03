@@ -64,8 +64,7 @@ VersusModeState.prototype.onServerMessage = function(gameContext, type, payload)
 }
 
 VersusModeState.prototype.onEnter = function(gameContext, stateMachine) {
-    const { client, world } = gameContext;
-    const { actionQueue } = world;
+    const { client } = gameContext;
     const { socket } = client;
 
     gameContext.setGameMode(ArmyContext.GAME_MODE.VERSUS);
@@ -73,9 +72,7 @@ VersusModeState.prototype.onEnter = function(gameContext, stateMachine) {
     socket.events.on(Socket.EVENT.CONNECTED_TO_SERVER, (socketID) => {
         socket.registerName("neyn!");
     }, { once: true });
-    
-    actionQueue.toDeferred();
-    actionQueue.events.on(ActionQueue.EVENT.EXECUTION_DEFER, (execution, request) => socket.messageRoom(CLIENT_EVENT.ACTION, request));
+
     socket.events.on(Socket.EVENT.MESSAGE_FROM_SERVER, (type, payload) => this.onServerMessage(gameContext, type, payload));
     socket.connect();
 

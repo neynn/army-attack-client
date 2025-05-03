@@ -1,4 +1,4 @@
-import { ACTION_TYPE, GAME_EVENT } from "../../enums.js";
+import { ACTION_TYPE } from "../../enums.js";
 import { ArmyCamera } from "../../armyCamera.js";
 import { AnimationSystem } from "../../systems/animation.js";
 import { AttackSystem } from "../../systems/attack.js";
@@ -17,6 +17,7 @@ import { TileManager } from "../../../source/tile/tileManager.js";
 import { StateMachine } from "../../../source/state/stateMachine.js";
 import { EntityManager } from "../../../source/entity/entityManager.js";
 import { Queue } from "../../../source/queue.js";
+import { GameEvent } from "../../gameEvent.js";
 
 export const Player = function() {
     Actor.call(this);
@@ -208,7 +209,7 @@ Player.prototype.onMakeChoice = function(gameContext) {
             return Queue.FILTER.NO_SUCCESS;
         }
 
-        eventBus.emit(GAME_EVENT.MAKE_CHOICE, { "actorID": this.id, "request": request, "choice": executionItem });
+        eventBus.emit(GameEvent.TYPE.PLAYER_CHOICE_MADE, { "actorID": this.id, "request": request, "choice": executionItem });
         
         return Queue.FILTER.SUCCESS;
     });

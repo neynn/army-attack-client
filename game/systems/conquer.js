@@ -1,4 +1,4 @@
-import { GAME_EVENT } from "../enums.js";
+import { GameEvent } from "../gameEvent.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { ArmyMap } from "../init/armyMap.js";
 import { AllianceSystem } from "./alliance.js";
@@ -32,5 +32,5 @@ ConquerSystem.conquer = function(gameContext, entity, tileX, tileY) {
     worldMap.updateShoreTiles(gameContext, tileX, tileY, ArmyMap.UPDATE_RANGE.CAPTURE);
     worldMap.updateBorder(gameContext, tileX, tileY, ArmyMap.UPDATE_RANGE.CAPTURE);
     worldMap.convertGraphicToTeam(gameContext, tileX, tileY);
-    eventBus.emit(GAME_EVENT.TILE_CAPTURED, { "teamID": teamComponent.teamID, tileX, tileY });
+    eventBus.emit(GameEvent.TYPE.TILE_CAPTURED, { "teamID": teamComponent.teamID, tileX, tileY });
 }

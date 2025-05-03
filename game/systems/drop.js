@@ -1,5 +1,5 @@
 import { getRandomChance } from "../../source/math/math.js";
-import { GAME_EVENT } from "../enums.js";
+import { GameEvent } from "../gameEvent.js";
 
 export const DropSystem = function() {}
 
@@ -26,7 +26,7 @@ DropSystem.dropHitReward = function(gameContext, entity, receiverID) {
     }
 
     if(drops.length !== 0) {
-        eventBus.emit(GAME_EVENT.REQUEST_DROP_HIT_ITEMS, { drops, receiverID });
+        eventBus.emit(GameEvent.TYPE.HIT_DROP, { drops, receiverID });
     }
 }
 
@@ -69,6 +69,6 @@ DropSystem.dropKillReward = function(gameContext, entity, receiverID) {
     }
 
     if(drops.length !== 0) {
-        eventBus.emit(GAME_EVENT.REQUEST_DROP_KILL_ITEMS, { drops, receiverID });
+        eventBus.emit(GameEvent.TYPE.KILL_DROP, { drops, receiverID });
     }
 }
