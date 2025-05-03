@@ -18,12 +18,16 @@ export const Container = function(DEBUG_NAME) {
 Container.prototype = Object.create(UIElement.prototype);
 Container.prototype.constructor = Container;
 
-Container.prototype.onDraw = function(context, localX, localY) {
+Container.prototype.onDraw = function(display, localX, localY) {
+    const { context } = display;
+
     this.background.drawColor(context, SHAPE.RECTANGLE, localX, localY, this.width, this.height);
     this.outline.drawStroke(context, this.outlineSize, SHAPE.RECTANGLE, localX, localY, this.width, this.height);
 }
 
-Container.prototype.onDebug = function(context, localX, localY) {
+Container.prototype.onDebug = function(display, localX, localY) {
+    const { context } = display;
+    
     context.globalAlpha = 0.2;
     context.fillStyle = "#0000ff";
     context.fillRect(localX, localY, this.width, this.height);

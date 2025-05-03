@@ -12,7 +12,9 @@ export const SimpleText = function() {
 SimpleText.prototype = Object.create(Graph.prototype);
 SimpleText.prototype.constructor = SimpleText;
 
-SimpleText.prototype.onDraw = function(context, localX, localY) {
+SimpleText.prototype.onDraw = function(display, localX, localY) {
+    const { context } = display;
+    
     this.style.drawText(context, this.text, localX, localY);
 }
 

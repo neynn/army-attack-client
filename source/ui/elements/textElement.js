@@ -57,7 +57,9 @@ TextElement.prototype.isCompleted = function() {
     return this.fullText.length === this.revealedText.length;
 }
 
-TextElement.prototype.onDraw = function(context, localX, localY) {
+TextElement.prototype.onDraw = function(display, localX, localY) {
+    const { context } = display;
+    
     this.style.drawText(context, this.revealedText, localX, localY)
 }
 

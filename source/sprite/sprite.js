@@ -35,7 +35,7 @@ Sprite.FLAG = {
 Sprite.prototype = Object.create(Graph.prototype);
 Sprite.prototype.constructor = Sprite;
 
-Sprite.prototype.onDraw = function(context, localX, localY) {
+Sprite.prototype.onDraw = function(display, localX, localY) {
     const container = this.manager.graphics.getContainer(this.typeID);
 
     if(!container) {
@@ -51,12 +51,13 @@ Sprite.prototype.onDraw = function(context, localX, localY) {
     const { bitmap } = texture;
     const spriteFrame = frames[this.currentFrame];
     const isFlipped = (this.flags & Sprite.FLAG.FLIP) !== 0;
+    const { context } = display;
 
     if(isFlipped) {
         const renderX = (localX - this.boundsX) * -1;
         const renderY = localY + this.boundsY;
 
-        context.scale(-1, 1);
+        display.flip();
 
         for(let i = 0; i < spriteFrame.length; i++) {
             const { frameX, frameY, frameW, frameH, shiftX, shiftY } = spriteFrame[i];
@@ -72,6 +73,8 @@ Sprite.prototype.onDraw = function(context, localX, localY) {
     } else {
         const renderX = localX + this.boundsX;
         const renderY = localY + this.boundsY;
+
+        display.unflip();
 
         for(let i = 0; i < spriteFrame.length; i++) {
             const { frameX, frameY, frameW, frameH, shiftX, shiftY } = spriteFrame[i];
@@ -95,20 +98,24 @@ Sprite.prototype.onUpdate = function(timestamp, deltaTime) {
     this.updateFrame(passedFrames);
 }
 
-Sprite.prototype.onDebug = function(context, localX, localY) {
+Sprite.prototype.onDebug = function(display, localX, localY) {
+    const { context } = display;
     const isFlipped = (this.flags & Sprite.FLAG.FLIP) !== 0;
 
     if(isFlipped) {
         const drawX = localX - this.boundsX;
         const drawY = localY + this.boundsY;
 
-        context.scale(-1, 1);
+        display.flip();
+
         context.strokeStyle = Sprite.DEBUG.COLOR;
         context.lineWidth = Sprite.DEBUG.LINE_SIZE;
         context.strokeRect(-drawX, drawY, this.boundsW, this.boundsH);
     } else {
         const drawX = localX + this.boundsX;
         const drawY = localY + this.boundsY;
+
+        display.unflip();
 
         context.strokeStyle = Sprite.DEBUG.COLOR;
         context.lineWidth = Sprite.DEBUG.LINE_SIZE;

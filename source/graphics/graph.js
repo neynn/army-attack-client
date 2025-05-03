@@ -20,9 +20,9 @@ Graph.STATE = {
     VISIBLE: 1
 };
 
-Graph.prototype.onDraw = function(context, localX, localY) {}
-Graph.prototype.onDebug = function(context, localX, localY) {}
-Graph.prototype.onUpdate = function(context, localX, localY) {}
+Graph.prototype.onDraw = function(display, localX, localY) {}
+Graph.prototype.onDebug = function(display, localX, localY) {}
+Graph.prototype.onUpdate = function(display, localX, localY) {}
 
 Graph.prototype.findByID = function(childID) {
     const stack = [this];
@@ -44,6 +44,10 @@ Graph.prototype.findByID = function(childID) {
 }
 
 Graph.prototype.drizzle = function(onCall) {
+    if(typeof onCall !== "function") {
+        return;
+    }
+    
     const stack = [this];
 
     while(stack.length !== 0) {
@@ -73,7 +77,7 @@ Graph.prototype.update = function(timestamp, deltaTime) {
     }
 }
 
-Graph.prototype.debug = function(context, viewportX, viewportY) {
+Graph.prototype.debug = function(display, viewportX, viewportY) {
     const stack = [this];
     const positions = [this.positionX - viewportX, this.positionY - viewportY];
 
@@ -83,9 +87,7 @@ Graph.prototype.debug = function(context, viewportX, viewportY) {
         const graph = stack.pop();
         const { children } = graph;
 
-        context.save();
-        graph.onDebug(context, localX, localY);
-        context.restore();
+        graph.onDebug(display, localX, localY);
 
         for(let i = children.length - 1; i >= 0; i--) {
             const child = children[i];
@@ -98,7 +100,7 @@ Graph.prototype.debug = function(context, viewportX, viewportY) {
     }
 }
 
-Graph.prototype.draw = function(context, viewportX, viewportY) {
+Graph.prototype.draw = function(display, viewportX, viewportY) {
     if(this.state !== Graph.STATE.VISIBLE) {
         return;
     }
@@ -112,10 +114,8 @@ Graph.prototype.draw = function(context, viewportX, viewportY) {
         const graph = stack.pop();
         const { children } = graph;
 
-        context.save();
-        context.globalAlpha = this.opacity;
-        graph.onDraw(context, localX, localY);
-        context.restore();
+        display.context.globalAlpha = this.opacity;
+        graph.onDraw(display, localX, localY);
 
         for(let i = children.length - 1; i >= 0; i--) {
             const child = children[i];

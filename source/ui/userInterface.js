@@ -59,13 +59,13 @@ UserInterface.prototype.update = function(gameContext) {
     this.updateCollisions(cursor.positionX, cursor.positionY, cursor.radius);
 }
 
-UserInterface.prototype.debug = function(context) {
+UserInterface.prototype.debug = function(display) {
     for(let i = 0; i < this.roots.length; i++) {
-        this.roots[i].debug(context, 0, 0);
+        this.roots[i].debug(display, 0, 0);
     }
 }
 
-UserInterface.prototype.draw = function(context, realTime, deltaTime) {
+UserInterface.prototype.draw = function(display, realTime, deltaTime) {
     if(this.state === UserInterface.STATE.HIDDEN) {
         return;
     }
@@ -74,7 +74,7 @@ UserInterface.prototype.draw = function(context, realTime, deltaTime) {
         const element = this.roots[i];
 
         element.update(realTime, deltaTime);
-        element.draw(context, 0, 0);
+        element.draw(display, 0, 0);
     }
 }
 

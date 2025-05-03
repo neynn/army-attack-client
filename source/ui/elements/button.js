@@ -41,7 +41,9 @@ Button.prototype.setShape = function(shape) {
     }
 } 
 
-Button.prototype.onDebug = function(context, localX, localY) {
+Button.prototype.onDebug = function(display, localX, localY) {
+    const { context } = display;
+    
     context.globalAlpha = 0.2;
     context.fillStyle = "#ff00ff";
 
@@ -59,7 +61,9 @@ Button.prototype.onDebug = function(context, localX, localY) {
     }
 }
 
-Button.prototype.onDraw = function(context, localX, localY) {
+Button.prototype.onDraw = function(display, localX, localY) {
+    const { context } = display;
+
     this.background.drawColor(context, this.shape, localX, localY, this.width, this.height);
     this.customRenders.forEach(onDraw => onDraw(context, localX, localY));
     this.highlight.drawColor(context, this.shape, localX, localY, this.width, this.height);

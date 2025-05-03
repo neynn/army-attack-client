@@ -113,35 +113,37 @@ Renderer.prototype.drawContextDebug = function() {
 
 Renderer.prototype.update = function(gameContext) {
     const { timer, uiManager } = gameContext; 
-    const drawContext = this.display.context;
     const deltaTime = timer.getDeltaTime();
 
     this.display.clear();
 
     for(let i = 0; i < this.contexts.length; i++) {
-        const context = this.contexts[i];
-
-        drawContext.save();
-        context.update(gameContext, drawContext);
-        drawContext.restore();
+        this.display.save();
+        this.contexts[i].update(gameContext, this.display);
+        this.display.reset();
     }
 
-    this.effects.update(drawContext, deltaTime);
+    this.effects.update(this.display, deltaTime);
 
     if(Renderer.DEBUG.CONTEXT) {
         this.drawContextDebug();
     }
 
-    uiManager.draw(gameContext, drawContext);
+    this.display.save();
+
+    uiManager.draw(gameContext, this.display);
+    
+    this.display.reset();
 
     if(Renderer.DEBUG.INTERFACE) {
-        uiManager.debug(drawContext);
+        uiManager.debug(this.display);
     }
 
-    this.drawFPS(drawContext, timer);
+    this.drawFPS(timer);
 }
 
-Renderer.prototype.drawFPS = function(context, timer) {
+Renderer.prototype.drawFPS = function(timer) {
+    const { context } = this.display;
     const fps = timer.getFPS();
     const text = `FPS: ${Math.round(fps)}`;
 
@@ -151,6 +153,7 @@ Renderer.prototype.drawFPS = function(context, timer) {
         context.fillStyle = Renderer.FPS_COLOR.BAD;
     }
     
+    context.fontSize = 20;
     context.fillText(text, 0, 10);
 }
 

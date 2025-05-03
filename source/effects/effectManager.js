@@ -4,11 +4,11 @@ export const EffectManager = function() {
     this.activeEffects = new Map();
 }
 
-EffectManager.prototype.update = function(renderContext, deltaTime) {
+EffectManager.prototype.update = function(display, deltaTime) {
     const deleteable = [];
 
     this.activeEffects.forEach(effect => {
-        effect.update(renderContext, deltaTime);
+        effect.update(display, deltaTime);
 
         const effectID = effect.getID();
         const isFinished = effect.isFinished();

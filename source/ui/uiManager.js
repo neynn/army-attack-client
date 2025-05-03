@@ -47,15 +47,15 @@ UIManager.prototype.load = function(interfaceTypes, iconTypes, fontTypes) {
     }
 }
 
-UIManager.prototype.debug = function(context) {
+UIManager.prototype.debug = function(display) {
     for(let i = this.interfaceStack.length - 1; i >= 0; i--) {
         const userInterface = this.interfaceStack[i];
 
-        userInterface.debug(context);
+        userInterface.debug(display);
     }
 }
 
-UIManager.prototype.draw = function(gameContext, context) {
+UIManager.prototype.draw = function(gameContext, display) {
     const { timer } = gameContext;
     const realTime = timer.getRealTime();
     const deltaTime = timer.getDeltaTime();
@@ -63,7 +63,7 @@ UIManager.prototype.draw = function(gameContext, context) {
     for(let i = this.interfaceStack.length - 1; i >= 0; i--) {
         const userInterface = this.interfaceStack[i];
 
-        userInterface.draw(context, realTime, deltaTime);
+        userInterface.draw(display, realTime, deltaTime);
     }
 }
 

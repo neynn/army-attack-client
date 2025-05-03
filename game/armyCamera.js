@@ -21,12 +21,6 @@ ArmyCamera.OVERLAY_TYPE = {
 ArmyCamera.prototype = Object.create(Camera2D.prototype);
 ArmyCamera.prototype.constructor = ArmyCamera;
 
-ArmyCamera.prototype.handlePostDraw = function(context) {
-    for(let i = 0; i < this.postDraw.length; i++) {
-        this.postDraw[i](context);
-    }
-}
-
 ArmyCamera.prototype.addPostDraw = function(onDraw) {
     if(typeof onDraw !== "function") {
         return;
@@ -35,7 +29,7 @@ ArmyCamera.prototype.addPostDraw = function(onDraw) {
     this.postDraw.push(onDraw);
 }
 
-ArmyCamera.prototype.update = function(gameContext, renderContext) {
+ArmyCamera.prototype.update = function(gameContext, display) {
     const { world, timer, spriteManager, tileManager } = gameContext;
     const { graphics } = tileManager;
     const { mapManager } = world;
@@ -45,6 +39,7 @@ ArmyCamera.prototype.update = function(gameContext, renderContext) {
         return;
     }
     
+    const { context } = display;
     const deltaTime = timer.getDeltaTime();
     const realTime = timer.getRealTime();
     const background = worldMap.getBackgroundLayers();
@@ -55,47 +50,51 @@ ArmyCamera.prototype.update = function(gameContext, renderContext) {
     for(let i = 0; i < background.length; i++) {
         const layer = worldMap.getLayer(background[i]);
 
-        this.drawLayer(graphics, renderContext, layer);
+        this.drawLayer(graphics, context, layer);
     }
     
-    this.drawOverlay(graphics, renderContext, ArmyCamera.OVERLAY_TYPE.MOVE);
-    this.drawOverlay(graphics, renderContext, ArmyCamera.OVERLAY_TYPE.ATTACK);
-    this.drawSpriteLayer(renderContext, spriteManager.getLayer(SpriteManager.LAYER.BOTTOM), realTime, deltaTime);
-    this.drawSpriteLayer(renderContext, spriteManager.getLayer(SpriteManager.LAYER.MIDDLE), realTime, deltaTime);
-    this.drawOverlay(graphics, renderContext, ArmyCamera.OVERLAY_TYPE.RANGE);
-    this.drawSpriteLayer(renderContext, spriteManager.getLayer(SpriteManager.LAYER.TOP), realTime, deltaTime);
-    this.drawSpriteLayer(renderContext, spriteManager.getLayer(SpriteManager.LAYER.UI), realTime, deltaTime);
+    this.drawOverlay(graphics, context, ArmyCamera.OVERLAY_TYPE.MOVE);
+    this.drawOverlay(graphics, context, ArmyCamera.OVERLAY_TYPE.ATTACK);
+    this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.BOTTOM), realTime, deltaTime);
+    this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.MIDDLE), realTime, deltaTime);
+    display.unflip();
+    this.drawOverlay(graphics, context, ArmyCamera.OVERLAY_TYPE.RANGE);
+    this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.TOP), realTime, deltaTime);
+    this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.UI), realTime, deltaTime);
+    display.unflip();
 
     for(let i = 0; i < foreground.length; i++) {
         const layer = worldMap.getLayer(foreground[i]);
 
-        this.drawLayer(graphics, renderContext, layer);
+        this.drawLayer(graphics, context, layer);
     }
 
     if(Renderer.DEBUG.MAP) {
         const scaleX = Math.floor(this.tileWidth / 6);
         const scaleY = Math.floor(this.tileHeight / 6);
 
-        renderContext.font = `${scaleX}px Arial`;
-        renderContext.textBaseline = "middle";
-        renderContext.textAlign = "center";
+        context.font = `${scaleX}px Arial`;
+        context.textBaseline = "middle";
+        context.textAlign = "center";
 
-        renderContext.fillStyle = "#ff0000";
-        this.drawBufferData(renderContext, worldMap.getLayer("type").getBuffer(), scaleX, scaleY);
+        context.fillStyle = "#ff0000";
+        this.drawBufferData(context, worldMap.getLayer("type").getBuffer(), scaleX, scaleY);
 
-        renderContext.fillStyle = "#00ff00";
-        this.drawBufferData(renderContext, worldMap.getLayer("team").getBuffer(), this.tileWidth - scaleX, scaleY);
+        context.fillStyle = "#00ff00";
+        this.drawBufferData(context, worldMap.getLayer("team").getBuffer(), this.tileWidth - scaleX, scaleY);
 
-        renderContext.fillStyle = "#0000ff";
-        this.drawBufferData(renderContext, worldMap.getLayer("border").getBuffer(), scaleX, this.tileHeight - scaleY);
+        context.fillStyle = "#0000ff";
+        this.drawBufferData(context, worldMap.getLayer("border").getBuffer(), scaleX, this.tileHeight - scaleY);
 
-        renderContext.fillStyle = "#ffff00";
-        this.drawBufferData(renderContext, worldMap.getLayer("ground").getBuffer(), this.tileWidth - scaleX, this.tileHeight - scaleY);
+        context.fillStyle = "#ffff00";
+        this.drawBufferData(context, worldMap.getLayer("ground").getBuffer(), this.tileWidth - scaleX, this.tileHeight - scaleY);
 
-        this.drawMapOutlines(renderContext);
+        this.drawMapOutlines(context);
     }
 
-    this.handlePostDraw(renderContext);
+    for(let i = 0; i < this.postDraw.length; i++) {
+        this.postDraw[i](context);
+    }
 }
 
 ArmyCamera.prototype.updateMoveOverlay = function(gameContext, nodeList, enableTileID, attackTileID, ) {

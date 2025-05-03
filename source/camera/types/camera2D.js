@@ -136,7 +136,7 @@ Camera2D.prototype.drawTileBuffer = function(graphics, context, buffer) {
     }
 }
 
-Camera2D.prototype.drawSpriteLayer = function(context, spriteLayer, realTime, deltaTime) {
+Camera2D.prototype.drawSpriteLayer = function(display, spriteLayer, realTime, deltaTime) {
     const viewportLeftEdge = this.viewportX;
     const viewportTopEdge = this.viewportY;
     const viewportRightEdge = viewportLeftEdge + this.viewportWidth;
@@ -158,14 +158,14 @@ Camera2D.prototype.drawSpriteLayer = function(context, spriteLayer, realTime, de
         const sprite = visibleSprites[i];
 
         sprite.update(realTime, deltaTime);
-        sprite.draw(context, viewportLeftEdge, viewportTopEdge);
+        sprite.draw(display, viewportLeftEdge, viewportTopEdge);
     }
 
     if(Renderer.DEBUG.SPRITES) {
         for(let i = 0; i < visibleSprites.length; i++) {
             const sprite = visibleSprites[i];
     
-            sprite.debug(context, viewportLeftEdge, viewportTopEdge);
+            sprite.debug(display, viewportLeftEdge, viewportTopEdge);
         }
     }
 }

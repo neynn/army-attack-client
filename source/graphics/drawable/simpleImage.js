@@ -9,10 +9,12 @@ export const SimpleImage = function() {
 SimpleImage.prototype = Object.create(Graph.prototype);
 SimpleImage.prototype.constructor = SimpleImage;
 
-SimpleImage.prototype.onDraw = function(context, localX, localY) {
+SimpleImage.prototype.onDraw = function(display, localX, localY) {
     if(!this.image) {
         return;
     }
+
+    const { context } = display;
 
     context.drawImage(
         this.image,

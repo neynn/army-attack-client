@@ -247,22 +247,23 @@ CameraContext.prototype.setResolution = function(width, height) {
     this.reload();
 }
 
-CameraContext.prototype.update = function(gameContext, mainContext) {
+CameraContext.prototype.update = function(gameContext, display) {
     switch(this.displayMode) { 
         case CameraContext.DISPLAY_MODE.RESOLUTION_DEPENDENT: {
-            mainContext.translate(this.positionX, this.positionY);
+            display.translate(this.positionX, this.positionY);
 
-            this.camera.update(gameContext, mainContext);
+            this.camera.update(gameContext, display);
             break;
         }
         case CameraContext.DISPLAY_MODE.RESOLUTION_FIXED: {
-            const { canvas, context, width, height } = this.display;
+            const { context } = display;
+            const { canvas, width, height } = this.display;
             const { x, y, w, h } = this.getBounds();
 
             this.display.clear();
-            this.camera.update(gameContext, context);
+            this.camera.update(gameContext, this.display);
 
-            mainContext.drawImage(canvas, 0, 0, width, height, x, y, w, h);
+            context.drawImage(canvas, 0, 0, width, height, x, y, w, h);
             break;
         }
     }

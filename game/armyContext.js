@@ -34,7 +34,6 @@ import { WorldEventHandler } from "../source/worldEventHandler.js";
 import { GameEvent } from "./gameEvent.js";
 import { DeathAction } from "./actions/deathAction.js";
 import { ArmyMap } from "./init/armyMap.js";
-import { Socket } from "../source/network/socket.js";
 import { MapManager } from "../source/map/mapManager.js";
 import { FireMissionAction } from "./actions/fireMissionAction.js";
 
@@ -200,20 +199,20 @@ ArmyContext.prototype.initConversions = function(teamConversions) {
     const updatedConversions = {};
 
     for(const teamID in teamConversions) {
-        const sets = teamConversions[teamID];
+        const atlases = teamConversions[teamID];
         const teamConversion = {};
 
-        for(const setID in sets) {
-            const set = sets[setID];
+        for(const atlasID in atlases) {
+            const atlas = atlases[atlasID];
 
-            for(const animationID in set) {
-                const tileID = this.tileManager.getTileID(setID, animationID);
+            for(const textureID in atlas) {
+                const tileID = this.tileManager.getTileID(atlasID, textureID);
 
                 if(tileID === TileManager.TILE_ID.EMPTY) {
                     continue;
                 }
 
-                const [a, b] = set[animationID];
+                const [a, b] = atlas[textureID];
                 const convertedID = this.tileManager.getTileID(a, b);
 
                 if(convertedID === TileManager.TILE_ID.EMPTY) {
