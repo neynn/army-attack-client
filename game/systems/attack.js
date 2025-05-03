@@ -99,8 +99,7 @@ AttackSystem.endAttack = function(gameContext, outcome) {
 
     switch(state) {
         case AttackSystem.OUTCOME_STATE.DEAD: {
-            AnimationSystem.playDeath(gameContext, target);
-            SpawnSystem.destroyEntity(gameContext, target);
+            target.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
             eventBus.emit(GAME_EVENT.ENTITY_KILLED, { attackers, target, damage });
             break;
         }

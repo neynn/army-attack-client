@@ -32,7 +32,6 @@ import { Renderer } from "../source/renderer.js";
 import { Logger } from "../source/logger.js";
 import { WorldEventHandler } from "../source/worldEventHandler.js";
 import { GameEvent } from "./gameEvent.js";
-import { DeathAction } from "./actions/deathAction.js";
 import { ArmyMap } from "./init/armyMap.js";
 import { MapManager } from "../source/map/mapManager.js";
 import { FireMissionAction } from "./actions/fireMissionAction.js";
@@ -109,7 +108,6 @@ ArmyContext.prototype.init = function(resources) {
     this.editorConfig = resources.editor;
     this.keybinds = resources.keybinds;
 
-    this.world.actionQueue.registerAction(ACTION_TYPE.DEATH, new DeathAction())
     this.world.actionQueue.registerAction(ACTION_TYPE.ATTACK, new AttackAction());
     this.world.actionQueue.registerAction(ACTION_TYPE.CONSTRUCTION, new ConstructionAction());
     this.world.actionQueue.registerAction(ACTION_TYPE.COUNTER_ATTACK, new CounterAttackAction());
@@ -167,13 +165,15 @@ ArmyContext.prototype.setGameMode = function(modeID) {
             eventBus.register(GAME_EVENT.ENTITY_DOWN, WorldEventHandler.STATUS.EMITABLE);
             eventBus.register(GAME_EVENT.TILE_CAPTURED, WorldEventHandler.STATUS.EMITABLE);
             eventBus.register(GAME_EVENT.ENTITY_DECAY, WorldEventHandler.STATUS.EMITABLE);
+            eventBus.register(GAME_EVENT.REQUEST_ENTITY_DEATH, WorldEventHandler.STATUS.EMITABLE);
 
+            eventBus.on(GAME_EVENT.REQUEST_ENTITY_DEATH, (event) => GameEvent.killEntity(this, event));
             eventBus.on(GAME_EVENT.REQUEST_DROP_HIT_ITEMS, (event) => GameEvent.dropItems(this, event));
             eventBus.on(GAME_EVENT.REQUEST_DROP_KILL_ITEMS, (event) => GameEvent.dropItems(this, event));
             eventBus.on(GAME_EVENT.CHOICE_MADE, (event) => GameEvent.choiceMade(this, event));
             eventBus.on(GAME_EVENT.ITEMS_DROPPED, (event) => GameEvent.itemsDropped(this, event));
             eventBus.on(GAME_EVENT.ENTITY_HIT, (event) => GameEvent.entityHit(this, event));
-            eventBus.on(GAME_EVENT.ENTITY_KILLED, (event) => GameEvent.entityKilled(this, event));
+            eventBus.on(GAME_EVENT.ENTITY_KILLED, (event) => GameEvent.entityKill(this, event));
             eventBus.on(GAME_EVENT.ENTITY_DOWN, (event) => GameEvent.entityDown(this, event));
             eventBus.on(GAME_EVENT.TILE_CAPTURED, (event) => GameEvent.tileCaptured(this, event));
             eventBus.on(GAME_EVENT.ENTITY_DECAY, (event) => GameEvent.entityDecay(this, event));

@@ -49,16 +49,6 @@
             "receive": true
         }
     },
-    "Death": {
-        "name": "ACTION_NAME_DEATH", 
-        "desc": "ACTION_DESC_DEATH",
-        "priority": "HIGH",
-        "isInstant": true,
-        "message": {
-            "send": false,
-            "receive": true
-        }
-    },
     "FireMission": {
         "name": "ACTION_NAME_FIRE_MISSION", 
         "desc": "ACTION_DESC_FIRE_MISSION",

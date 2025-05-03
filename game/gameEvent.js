@@ -1,10 +1,17 @@
 import { Inventory } from "./actors/player/inventory.js";
-import { ACTION_TYPE, GAME_EVENT } from "./enums.js";
+import { GAME_EVENT } from "./enums.js";
+import { AnimationSystem } from "./systems/animation.js";
 import { DropSystem } from "./systems/drop.js";
+import { SpawnSystem } from "./systems/spawn.js";
 
 export const GameEvent = function() {
     this.id = 0;
 }
+
+GameEvent.KILL_REASON = {
+    DECAY: "DECAY",
+    ATTACK: "ATTACK"
+};
 
 const getMaxDrop = function(gameContext, type, id) {
     switch(type) {
@@ -105,24 +112,41 @@ GameEvent.skipTurn = function(gameContext, event) {
     }
 }
 
+GameEvent.killEntity = function(gameContext, event) {
+    const { entity, reason } = event;
+
+    console.log("KILLED", event);
+    
+    AnimationSystem.playDeath(gameContext, entity);
+    SpawnSystem.destroyEntity(gameContext, entity);
+}
+
 GameEvent.entityDecay = function(gameContext, event) {
     const { world } = gameContext;
-    const { actionQueue } = world;
-
-    actionQueue.addImmediateRequest(ACTION_TYPE.DEATH, null, event.entity.getID());
+    const { eventBus } = world;
+    const { entity } = event;
 
     console.log("DECAY", event);
+
+    eventBus.emit(GAME_EVENT.REQUEST_ENTITY_DEATH, { entity, "reason": GameEvent.KILL_REASON.DECAY });
 }
 
 GameEvent.entityHit = function(gameContext, event) {
     const { target } = event;
+
     console.log("HIT", event);
+
     DropSystem.dropHitReward(gameContext, target, "Player");
 }
 
-GameEvent.entityKilled = function(gameContext, event) {
+GameEvent.entityKill = function(gameContext, event) {
+    const { world } = gameContext;
+    const { eventBus } = world;
     const { target } = event;
+
     console.log("KILLED", event);
+
+    eventBus.emit(GAME_EVENT.REQUEST_ENTITY_DEATH, { "entity": target, "reason": GameEvent.KILL_REASON.ATTACK });
     DropSystem.dropKillReward(gameContext, target, "Player");
 }
 
