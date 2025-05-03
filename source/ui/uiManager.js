@@ -230,7 +230,9 @@ UIManager.prototype.createElement = function(typeID, config, DEBUG_NAME) {
         case UIManager.ELEMENT_TYPE.ICON: {
             const element = new Icon(this.resources, DEBUG_NAME);
             const {
-                image = null
+                image = null,
+                scaleX = 1,
+                scaleY = 1
             } = config;
 
             element.setPosition(x, y);
@@ -239,6 +241,7 @@ UIManager.prototype.createElement = function(typeID, config, DEBUG_NAME) {
             element.setAnchor(anchor);
             element.setSize(width, height);
             element.setImage(image);
+            element.setScale(scaleX, scaleY);
 
             return element;
         }

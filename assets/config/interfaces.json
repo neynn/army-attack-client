@@ -3,7 +3,7 @@
         "TEXT_TITLE": {
             "type": "TEXT",
             "anchor": "CENTER",
-            "position": { "x": 0, "y": 150 },
+            "position": { "x": 0, "y": -150 },
             "text": "ARMY ATTACK",
             "fontSize": 50,
             "fontType": "Arial",
@@ -16,7 +16,7 @@
             "type": "BUTTON",
             "shape": 0,
             "anchor": "CENTER", 
-            "position": { "x": 175, "y": 0 },
+            "position": { "x": -175, "y": 0 },
             "width": 300,
             "height": 100,
             "opacity": 1,
@@ -37,7 +37,7 @@
             "type": "BUTTON",
             "shape": 0,
             "anchor": "CENTER",
-            "position": { "x": -175, "y": 0 },
+            "position": { "x": 175, "y": 0 },
             "width": 300,
             "height": 100,
             "opacity": 1,
@@ -58,7 +58,7 @@
             "type": "BUTTON",
             "shape": 0,
             "anchor": "CENTER", 
-            "position": { "x": 175, "y": -150 },
+            "position": { "x": -175, "y": 150 },
             "width": 300,
             "height": 100,
             "opacity": 1,
@@ -640,6 +640,136 @@
             "fontType": "Arial",
             "color": [238, 238, 238, 255],
             "align": "center",
+            "opacity": 1
+        }
+    },
+    "STORY_MODE": {
+        "CONTAINER_USER": {
+            "type": "CONTAINER",
+            "anchor": "PERCENT",
+            "position": { "x": 25, "y": 0 },
+            "width": 300,
+            "height": 100,
+            "opacity": 1,
+            "children": []
+        },
+        "CONTAINER_ENERGY": {
+            "type": "CONTAINER",
+            "anchor": "PERCENT",
+            "position": { "x": 50, "y": 0 },
+            "width": 300,
+            "height": 100,
+            "opacity": 1,
+            "children": [ "CONTAINER_ENERGY_BAR", "ICON_ENERGY", "TEXT_ENERGY_COUNT", "TEXT_ENERGY_TIME", "BUTTON_MORE_ENERGY" ]
+        },
+        "CONTAINER_ENERGY_BAR": {
+            "type": "CONTAINER",
+            "position": { "x": 25, "y": 10 },
+            "width": 200,
+            "height": 50
+        },
+        "ICON_ENERGY": {
+            "type": "ICON",
+            "image": "resource_icon_energy",
+            "position": { "x": 0, "y": 0 },
+            "scaleX": 0.9,
+            "scaleY": 0.9
+        },
+        "TEXT_ENERGY_COUNT": {
+            "type": "TEXT",
+            "position": { "x": 210, "y": 35 },
+            "text": "999999/999999",
+            "fontSize": 20,
+            "fontType": "Arial",
+            "color": [238, 238, 238, 255],
+            "align": "right"
+        },
+        "TEXT_ENERGY_TIME": {
+            "type": "TEXT",
+            "position": { "x": 65, "y": 75 },
+            "text": "TEXT_ENERGY_TIME",
+            "fontSize": 15,
+            "fontType": "Arial",
+            "color": [238, 238, 238, 255],
+            "align": "left"
+        },
+        "BUTTON_MORE_ENERGY": {
+            "type": "BUTTON",
+            "shape": 0,
+            "position": { "x": 225, "y": 10 },
+            "width": 50,
+            "height": 50,
+            "opacity": 1
+        },
+        "CONTAINER_RESOURCES": {
+            "type": "CONTAINER",
+            "anchor": "PERCENT",
+            "position": { "x": 80, "y": 0 },
+            "width": 400,
+            "height": 100,
+            "opacity": 1,
+            "children": [ "CONTAINER_MONEY", "CONTAINER_GOLD" ]
+        },
+        "CONTAINER_MONEY": {
+            "type": "CONTAINER",
+            "position": { "x": 0, "y": 0 },
+            "width": 200,
+            "height": 100,
+            "opacity": 1,
+            "children": [ "ICON_MONEY", "TEXT_MONEY_COUNT", "BUTTON_MORE_MONEY" ]
+        },
+        "ICON_MONEY": {
+            "type": "ICON",
+            "image": "resource_icon_cash",
+            "position": { "x": 0, "y": 10 },
+            "scaleX": 0.8,
+            "scaleY": 0.8
+        },
+        "TEXT_MONEY_COUNT": {
+            "type": "TEXT",
+            "position": { "x": 145, "y": 35 },
+            "text": "99999999",
+            "fontSize": 20,
+            "fontType": "Arial",
+            "color": [238, 238, 238, 255],
+            "align": "right"
+        },
+        "BUTTON_MORE_MONEY": {
+            "type": "BUTTON",
+            "shape": 0,
+            "position": { "x": 150, "y": 10 },
+            "width": 50,
+            "height": 50,
+            "opacity": 1
+        },
+        "CONTAINER_GOLD": {
+            "type": "CONTAINER",
+            "position": { "x": 200, "y": 0 },
+            "width": 200,
+            "height": 100,
+            "opacity": 1,
+            "children": [ "ICON_GOLD", "TEXT_GOLD_COUNT", "BUTTON_MORE_GOLD" ]
+        },
+        "ICON_GOLD": {
+            "type": "ICON",
+            "image": "resource_icon_gold",
+            "position": { "x": 0, "y": 10 }
+        },
+        "TEXT_GOLD_COUNT": {
+            "type": "TEXT",
+            "position": { "x": 145, "y": 35 },
+            "text": "99999999",
+            "fontSize": 20,
+            "fontType": "Arial",
+            "color": [238, 238, 238, 255],
+            "align": "right"
+        },
+        "BUTTON_MORE_GOLD": {
+            "type": "BUTTON",
+            "shape": 0,
+            "position": { "x": 150, "y": 10 },
+            "width": 50,
+            "height": 50,
             "opacity": 1
         }
     }

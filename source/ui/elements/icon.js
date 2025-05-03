@@ -5,6 +5,8 @@ export const Icon = function(resources, DEBUG_NAME) {
     
     this.resources = resources;
     this.imageID = null;
+    this.scaleX = 1;
+    this.scaleY = 1;
 }
 
 Icon.prototype = Object.create(UIElement.prototype);
@@ -16,8 +18,13 @@ Icon.prototype.onDraw = function(display, localX, localY) {
     if(bitmap) {
         const { context } = display;
 
-        context.drawImage(bitmap, localX, localY);
+        context.drawImage(bitmap, localX, localY, bitmap.width * this.scaleX, bitmap.height * this.scaleY);
     }
+}
+
+Icon.prototype.setScale = function(scaleX, scaleY) {
+    this.scaleX = scaleX;
+    this.scaleY = scaleY;
 }
 
 Icon.prototype.onDebug = function(display, localX, localY) {
