@@ -5,6 +5,7 @@ import { createStoryModeUI } from "../storyUI.js";
 import { OtherPlayer } from "../actors/otherPlayer.js";
 import { EnemyActor } from "../actors/enemyActor.js";
 import { CameraContext } from "../../source/camera/cameraContext.js";
+import { ArmyContext } from "../armyContext.js";
 
 export const ArmyActorFactory = function() {
     Factory.call(this, "ARMY_ACTOR_FACOTRY");
@@ -64,6 +65,7 @@ ArmyActorFactory.prototype.onCreate = function(gameContext, config) {
             router.load(gameContext, gameContext.keybinds.player);
             router.on(Player.COMMAND.TOGGLE_RANGE, () => actor.attackRangeOverlay.toggle(gameContext, camera));
             router.on(Player.COMMAND.CLICK, () => actor.onClick(gameContext));
+            router.on("ESCAPE", () => gameContext.states.setNextState(gameContext, ArmyContext.STATE.MAIN_MENU));
 
             createStoryModeUI(gameContext);
             

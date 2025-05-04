@@ -1,7 +1,8 @@
 {
     "player": {
         "TOGGLE_RANGE": "+v",
-        "CLICK": "-M1"
+        "CLICK": "-M1",
+        "ESCAPE": "+Escape"
     },
     "editor": {
         "TOGGLE_AUTOTILER": "+a",

@@ -38,6 +38,12 @@ Keyboard.EVENT = {
     KEY_UNBOUND: "KEY_UNBOUND"
 };
 
+Keyboard.prototype.exit = function() {
+    this.activeKeys.clear();
+    this.reservedKeys.clear();
+    this.events.muteAll();
+}
+
 Keyboard.prototype.onKeyDown = function(keyID) {
     if(!this.activeKeys.has(keyID)) {
         this.activeKeys.add(keyID);

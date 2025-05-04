@@ -29,7 +29,7 @@ Client.BUTTON_MAP = {
 
 Client.prototype.exit = function(gameContext) {
     this.router.clear(gameContext);
-    this.keyboard.events.muteAll();
+    this.keyboard.exit();
     this.cursor.events.muteAll();
     this.socket.events.muteAll();
     this.musicPlayer.stop();

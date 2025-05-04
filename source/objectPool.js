@@ -6,6 +6,18 @@ export const ObjectPool = function(size, allocator) {
     this.reservedElements = new Set();
 }
 
+ObjectPool.prototype.forAllReserved = function(onCall) {
+    if(typeof onCall !== "function") {
+        return;
+    }
+
+    for(const index of this.reservedElements) {
+        const element = this.elements[index];
+
+        onCall(element);
+    }
+}
+
 ObjectPool.prototype.allocate = function() {
     while(this.size > this.elements.length) {
         const index = this.elements.length;
