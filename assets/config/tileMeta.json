@@ -189,5 +189,7 @@
     { "graphics": ["border", "43"] },
     { "graphics": ["border", "44"] },
     { "graphics": ["border", "45"] },
-    { "graphics": ["border", "47"] }
+    { "graphics": ["border", "47"] },
+
+    { "graphics": ["debris", "Debris_01"] }
 ]

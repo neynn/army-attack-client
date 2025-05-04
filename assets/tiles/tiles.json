@@ -1,4 +1,12 @@
 {    
+    "debris": {
+        "directory": ["assets", "tiles"],
+        "source": "debris.png",
+        "frameTime": 0.03,
+        "frames": {
+            "Debris_01": {"x":0,"y":0,"w":84,"h":80,"offset":{"x":6,"y":12}}
+        }
+    },
     "ground": {
         "directory": ["assets", "tiles"],
         "source": "ground.png",
