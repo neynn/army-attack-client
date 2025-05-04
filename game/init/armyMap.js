@@ -98,15 +98,6 @@ ArmyMap.prototype.loadMeta = function(meta) {
 ArmyMap.prototype.reload = function(gameContext) {
     for(let i = 0; i < this.height; i++) {
         for(let j = 0; j < this.width; j++) {
-            const typeID = this.getTile(ArmyMap.LAYER.TYPE, j, i);
-            const teamID = gameContext.getTileDefaultTeamID(typeID);
-
-            this.placeTile(teamID, ArmyMap.LAYER.TEAM, j, i);
-        }
-    }
-
-    for(let i = 0; i < this.height; i++) {
-        for(let j = 0; j < this.width; j++) {
             this.updateShoreTiles(gameContext, j, i, 1);
             this.convertGraphicToTeam(gameContext, j, i);
             BorderSystem.updateBorder(gameContext, this, j, i, 0);
