@@ -74,7 +74,7 @@ const getState = function(target, damage, isBulldozed) {
     const healthComponent = target.getComponent(ArmyEntity.COMPONENT.HEALTH);
     const remainder = healthComponent.getRemainder(damage);
 
-    if(remainder >= 0) {
+    if(remainder <= 0) {
         const isReviveable = target.hasComponent(ArmyEntity.COMPONENT.REVIVEABLE);
 
         if(isReviveable && !isBulldozed) {
@@ -109,6 +109,7 @@ AttackSystem.endAttack = function(gameContext, outcome) {
         case AttackSystem.OUTCOME_STATE.DOWN: {
             eventBus.emit(GameEvent.TYPE.ENTITY_DOWN, { attackers, target, damage });
             eventBus.emit(GameEvent.TYPE.ENTITY_HIT, { attackers, target, damage });
+            break;
         }
     }
 }

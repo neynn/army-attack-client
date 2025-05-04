@@ -72,8 +72,6 @@ export const saveMap = function(mapID, map2D) {
     .writeLine("flags", flags)
     .openList("graphics")
     .writeList("layers", graphics)
-    .writeLine("background", map2D.background)
-    .writeLine("foreground", map2D.foreground)
     .closeList()
     .writeList("data", layers)
     .close()

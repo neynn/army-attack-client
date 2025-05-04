@@ -50,7 +50,6 @@ export const ArmyContext = function() {
     this.fireCallTypes = {};
     this.keybinds = {};
 
-    this.playerID = null;
     this.eventHandler = new GameEvent();
     this.modeID = ArmyContext.GAME_MODE.NONE;
     this.addContextMapHook();
@@ -272,16 +271,6 @@ ArmyContext.prototype.addDebug = function() {
     router.on("EXPORT_LOGS", () => Logger.exportLogs(Logger.EXPORT_CODE_ALL));
 }
 
-ArmyContext.prototype.getPlayerTeamID = function() {
-    const player = this.world.turnManager.getActor(this.playerID);
-
-    if(!player || !player.teamID) {
-        return null;
-    }
-
-    return player.teamID;
-}
-
 ArmyContext.prototype.getConversionID = function(tileID, teamID) {
     const teamConversions = this.tileConversions[ArmyMap.TEAM_TYPE[teamID]];
 
@@ -309,6 +298,7 @@ ArmyContext.prototype.addContextMapHook = function() {
             const camera = context.getCamera();
 
             camera.setMapSize(width, height);
+            camera.initBorder(this);
 
             if(music) {
                 musicPlayer.playTrack(music);
@@ -321,4 +311,31 @@ ArmyContext.prototype.addContextMapHook = function() {
     renderer.events.on(Renderer.EVENT.CONTEXT_DESTROY, (contextID) => {
         mapManager.events.unsubscribe(MapManager.EVENT.MAP_CREATE, contextID);
     }, { permanent: true });
+}
+
+ArmyContext.prototype.getTeamID = function(teamName) {
+    const team = this.teamTypes[teamName];
+
+    if(!team) {
+        return 0;
+    }
+
+    return team.id;
+}
+
+ArmyContext.prototype.getTileDefaultTeamID = function(tileName) {
+    const tile = this.tileTypes[tileName];
+
+    if(!tile) {
+        return -1;
+    }
+
+    const { defaultTeam } = tile;
+    const teamID = this.getTeamID(defaultTeam);
+
+    return teamID;
+}
+
+ArmyContext.prototype.getTeamName = function(teamID) {
+
 }

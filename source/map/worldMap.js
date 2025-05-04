@@ -119,32 +119,6 @@ WorldMap.prototype.autotile = function(autotiler, tileX, tileY, layerID) {
     return responseID;
 }
 
-WorldMap.prototype.loadGraphics = function(background, foreground) {
-    for(let i = 0; i < background.length; i++) {
-        const layerID = background[i];
-
-        if(this.layers.has(layerID)) {
-            this.background.push(layerID);
-        }
-    }
-
-    for(let i = 0; i < foreground.length; i++) {
-        const layerID = foreground[i];
-
-        if(this.layers.has(layerID)) {
-            this.foreground.push(layerID);
-        }
-    }
-}
-
-WorldMap.prototype.getBackgroundLayers = function() {
-    return this.background;
-}
-
-WorldMap.prototype.getForegroundLayers = function() {
-    return this.foreground;
-}
-
 WorldMap.prototype.setWidth = function(width) {
     this.width = width;
 }

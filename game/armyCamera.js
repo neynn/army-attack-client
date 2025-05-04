@@ -2,6 +2,8 @@ import { Renderer } from "../source/renderer.js";
 import { Camera2D } from "../source/camera/types/camera2D.js";
 import { SpriteManager } from "../source/sprite/spriteManager.js";
 import { PathfinderSystem } from "./systems/pathfinder.js";
+import { Layer } from "../source/map/layer.js";
+import { ArmyMap } from "./init/armyMap.js";
 
 export const ArmyCamera = function() {
     Camera2D.call(this);
@@ -10,6 +12,7 @@ export const ArmyCamera = function() {
     this.createOverlay(ArmyCamera.OVERLAY_TYPE.MOVE);
     this.createOverlay(ArmyCamera.OVERLAY_TYPE.RANGE);
     this.postDraw = [];
+    this.border = null;
 }
 
 ArmyCamera.OVERLAY_TYPE = {
@@ -42,17 +45,11 @@ ArmyCamera.prototype.update = function(gameContext, display) {
     const { context } = display;
     const deltaTime = timer.getDeltaTime();
     const realTime = timer.getRealTime();
-    const background = worldMap.getBackgroundLayers();
-    const foreground = worldMap.getForegroundLayers();
 
     this.updateWorldBounds();
-
-    for(let i = 0; i < background.length; i++) {
-        const layer = worldMap.getLayer(background[i]);
-
-        this.drawLayer(graphics, context, layer);
-    }
-    
+    this.drawLayer(graphics, context, worldMap.getLayer(ArmyMap.LAYER.GROUND));
+    this.drawLayer(graphics, context, this.border);
+    this.drawLayer(graphics, context, worldMap.getLayer(ArmyMap.LAYER.DECORATION));
     this.drawOverlay(graphics, context, ArmyCamera.OVERLAY_TYPE.MOVE);
     this.drawOverlay(graphics, context, ArmyCamera.OVERLAY_TYPE.ATTACK);
     this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.BOTTOM), realTime, deltaTime);
@@ -62,12 +59,7 @@ ArmyCamera.prototype.update = function(gameContext, display) {
     this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.TOP), realTime, deltaTime);
     this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.UI), realTime, deltaTime);
     display.unflip();
-
-    for(let i = 0; i < foreground.length; i++) {
-        const layer = worldMap.getLayer(foreground[i]);
-
-        this.drawLayer(graphics, context, layer);
-    }
+    this.drawLayer(graphics, context, worldMap.getLayer(ArmyMap.LAYER.DECORATION));
 
     if(Renderer.DEBUG.MAP) {
         this.debugMap(context, worldMap);
@@ -94,7 +86,7 @@ ArmyCamera.prototype.debugMap = function(context, worldMap) {
     this.drawBufferData(context, worldMap.getLayer("team").getBuffer(), this.tileWidth - scaleX, scaleY);
 
     context.fillStyle = "#0000ff";
-    this.drawBufferData(context, worldMap.getLayer("border").getBuffer(), scaleX, this.tileHeight - scaleY);
+    this.drawBufferData(context, this.border.getBuffer(), scaleX, this.tileHeight - scaleY);
 
     context.fillStyle = "#ffff00";
     this.drawBufferData(context, worldMap.getLayer("ground").getBuffer(), this.tileWidth - scaleX, this.tileHeight - scaleY);
@@ -125,4 +117,21 @@ ArmyCamera.prototype.updateMoveOverlay = function(gameContext, nodeList, enableT
             }
         } 
     }
+}
+
+ArmyCamera.prototype.initBorder = function(gameContext) {
+    const { tileManager } = gameContext;
+    const { graphics } = tileManager;
+    const bufferSize = this.mapWidth * this.mapHeight;
+    const BufferType = graphics.getBufferType(bufferSize);
+    const buffer = new BufferType(bufferSize);
+    const layer = new Layer(buffer);
+
+    this.border = layer;
+}
+
+ArmyCamera.prototype.updateBorder = function(borderID, tileX, tileY) {
+    const index = tileY * this.mapWidth + tileX;
+
+    this.border.setItem(borderID, index);
 }

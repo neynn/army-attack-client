@@ -36,8 +36,6 @@ ServerEvents.instanceGame = async function(gameContext, payload) {
 
         SpawnSystem.createEntity(gameContext, setup);
     }
-
-    gameContext.playerID = playerID;
 }
 
 ServerEvents.instanceActor = function(gameContext, payload) {
@@ -103,13 +101,13 @@ ServerEvents.gameEvent = function(gameContext, payload) {
 
     /*
         TODO: FOR SERVER!
-        When the server sends an action, it sends it as CLIENT_EVENT.EVENT { VERSUS_CHOICE_MADE { "choice": executionItem, "actorID": messengerID } }
+        When the server sends an action, it sends it as CLIENT_EVENT.EVENT { ACTION_AUTHORIZE { "choice": executionItem, "actorID": messengerID } }
         const { executionItem } = payload;
         const { messengerID } = executionItem;
 
-        eventBus.emit(GameEvent.TYPE.VERSUS_CHOICE_MADE, { "choice": executionItem, "actorID": messengerID });
+        eventBus.emit(GameEvent.TYPE.ACTION_AUTHORIZE, { "choice": executionItem, "actorID": messengerID });
 
-        So force the eventBus to call VERSUS_CHOICE_MADE with the parameters.
+        So force the eventBus to call ACTION_AUTHORIZE with the parameters.
     */
 
     eventBus.emit(type, data);

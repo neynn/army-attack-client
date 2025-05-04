@@ -2,6 +2,7 @@
     "Crimson": {
         "name": "TEAM_NAME_CRIMSON",
         "desc": "TEAM_DESC_CRIMSON",
+        "id": 0,
         "alliances": {
             "Crimson": "Ally",
             "Allies": "Enemy",
@@ -16,6 +17,7 @@
     "Allies": {
         "name": "TEAM_NAME_ALLIES",
         "desc": "TEAM_DESC_ALLIES",
+        "id": 1,
         "alliances": {
             "Crimson": "Enemy",
             "Allies": "Ally",
@@ -30,6 +32,7 @@
     "Neutral": {
         "name": "TEAM_NAME_NEUTRAL",
         "desc": "TEAM_DESC_NEUTRAL",
+        "id": 2,
         "alliances": {
             "Crimson": "Neutral",
             "Allies": "Neutral",
@@ -44,6 +47,7 @@
     "Versus": {
         "name": "TEAM_NAME_VERSUS",
         "desc": "TEAM_DESC_VERSUS",
+        "id": 3,
         "alliances": {
             "Crimson": "Enemy",
             "Allies": "Enemy", 
