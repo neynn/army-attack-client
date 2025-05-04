@@ -194,10 +194,9 @@ Player.prototype.updateRangeIndicator = function(gameContext) {
     this.attackRangeOverlay.update(gameContext, entity, this.camera);
 }
 
-Player.prototype.onClick = function(gameContext) {
-    const mouseTile = gameContext.getMouseTile();
-    
-    this.states.eventEnter(gameContext, Player.EVENT.CLICK, mouseTile);
+Player.prototype.onClick = function(gameContext) {    
+    this.hover.update(gameContext);
+    this.states.eventEnter(gameContext, Player.EVENT.CLICK);
 }
 
 Player.prototype.onMakeChoice = function(gameContext) {

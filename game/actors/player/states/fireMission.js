@@ -41,12 +41,10 @@ PlayerFireMissionState.prototype.onUpdate = function(gameContext, stateMachine) 
     player.hover.alignSprite(gameContext, player.camera);
 }
 
-PlayerFireMissionState.prototype.onEvent = function(gameContext, stateMachine, eventID, eventData) {
+PlayerFireMissionState.prototype.onEvent = function(gameContext, stateMachine, eventID) {
     switch(eventID) {
         case Player.EVENT.CLICK: {
-            const { x, y } = eventData;
-
-            this.onClick(gameContext, stateMachine, x, y);
+            this.onClick(gameContext, stateMachine);
             break;
         }
     }
@@ -76,8 +74,10 @@ PlayerFireMissionState.prototype.queueFireMission = function(gameContext, player
     }
 }
 
-PlayerFireMissionState.prototype.onClick = function(gameContext, stateMachine, tileX, tileY) {
+PlayerFireMissionState.prototype.onClick = function(gameContext, stateMachine) {
     const player = stateMachine.getContext();
+    const { hover } = player;
+    const { tileX, tileY } = hover;
     const isValid = FireMissionSystem.isValid(gameContext, this.missionID, tileX, tileY);
 
     if(isValid) {

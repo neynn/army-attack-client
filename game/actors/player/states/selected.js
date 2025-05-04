@@ -35,12 +35,10 @@ PlayerSelectedState.prototype.onUpdate = function(gameContext, stateMachine) {
     player.hover.autoAlignSprite(gameContext, player.camera);
 }
 
-PlayerSelectedState.prototype.onEvent = function(gameContext, stateMachine, eventID, eventData) {
+PlayerSelectedState.prototype.onEvent = function(gameContext, stateMachine, eventID) {
     switch(eventID) {
         case Player.EVENT.CLICK: {
-            const { x, y } = eventData;
-
-            this.onClick(gameContext, stateMachine, x, y);
+            this.onClick(gameContext, stateMachine);
             break;
         }
     }
@@ -105,28 +103,38 @@ PlayerSelectedState.prototype.deselectEntity = function(gameContext, stateMachin
     this.entityID = EntityManager.ID.INVALID;
 }
 
-PlayerSelectedState.prototype.onClick = function(gameContext, stateMachine, tileX, tileY) {
+PlayerSelectedState.prototype.onClick = function(gameContext, stateMachine) {
     const { world, client } = gameContext;
     const { actionQueue } = world;
     const { soundPlayer } = client;
-    const mouseEntity = world.getTileEntity(tileX, tileY);
     const player = stateMachine.getContext();
+    const { hover } = player;
+    const { state, tileX, tileY, currentTarget } = hover;
 
-    if(mouseEntity) {
-        const isAttackable = mouseEntity.isAttackableByTeam(gameContext, player.teamID);
+    switch(state) {
+        case PlayerCursor.STATE.HOVER_ON_ENTITY: {
+            const mouseEntity = hover.getEntity(gameContext);
+            const isAttackable = mouseEntity.isAttackableByTeam(gameContext, player.teamID);
 
-        if(isAttackable) {
-            const entityID = mouseEntity.getID();
+            if(isAttackable) {
+                player.queueAttack(gameContext, currentTarget);
+            } else {
+                soundPlayer.play("sound_error", 0.5); 
+            }
 
-            player.queueAttack(gameContext, entityID);
-        } else {
-            soundPlayer.play("sound_error", 0.5); 
+            break;
         }
-    } else {
-        const request = actionQueue.createRequest(ACTION_TYPE.MOVE, this.entityID, tileX, tileY);
+        case PlayerCursor.STATE.HOVER_ON_NODE: {
+            const request = actionQueue.createRequest(ACTION_TYPE.MOVE, this.entityID, tileX, tileY);
 
-        if(request) {
-            player.inputQueue.enqueueLast(request);
+            if(request) {
+                player.inputQueue.enqueueLast(request);
+            }
+            break;
+        }
+        default: {
+            soundPlayer.play("sound_error", 0.5); 
+            break;
         }
     }
 

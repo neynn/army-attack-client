@@ -29,7 +29,7 @@ PlayerIdleState.prototype.onUpdate = function(gameContext, stateMachine) {
     player.hover.autoAlignSprite(gameContext, player.camera);
 }
 
-PlayerIdleState.prototype.onEvent = function(gameContext, stateMachine, eventID, eventData) {
+PlayerIdleState.prototype.onEvent = function(gameContext, stateMachine, eventID) {
     switch(eventID) {
         case Player.EVENT.CLICK: {
             onClick(gameContext, stateMachine);
@@ -56,21 +56,19 @@ const onClick = function(gameContext, stateMachine) {
     const { actionQueue } = world;
     const player = stateMachine.getContext();
     const { hover } = player;
+    const { state, currentTarget } = hover;
 
-    hover.update(gameContext);
-
-    switch(hover.state) {
+    switch(state) {
         case PlayerCursor.STATE.HOVER_ON_ENTITY: {
-            const entityID = hover.currentTarget;
             const mouseEntity = hover.getEntity(gameContext);
             const isAttackable = mouseEntity.isAttackableByTeam(gameContext, player.teamID);
 
             if(isAttackable) {
-                player.queueAttack(gameContext, entityID);
+                player.queueAttack(gameContext, currentTarget);
                 return;
             }
         
-            if(!player.hasEntity(entityID)) {
+            if(!player.hasEntity(currentTarget)) {
                 return;
             }
         
