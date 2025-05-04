@@ -29,7 +29,7 @@ CounterAttackAction.prototype.isFinished = function(gameContext, request) {
 }
 
 CounterAttackAction.prototype.getValidated = function(gameContext, template, messengerID) {
-    const { entityID, attackers } = template;
+    const { entityID } = template;
     const { world } = gameContext; 
     const { entityManager } = world;
     const entity = entityManager.getEntity(entityID);
@@ -44,9 +44,9 @@ CounterAttackAction.prototype.getValidated = function(gameContext, template, mes
         return null;
     }
 
-    const potentialTargets = AttackSystem.getAttackCounterTargets(gameContext, entity, attackers);
+    const potentialTargets = AttackSystem.getAttackCounterTargets(gameContext, entity);
 
-    if(potentialTargets.length === 0) {
+    if(!potentialTargets) {
         return null;
     }
 

@@ -39,7 +39,7 @@ CounterMoveAction.prototype.getValidated = function(gameContext, template, messe
 
     const attackers = AttackSystem.getMoveCounterAttackers(gameContext, targetEntity);
 
-    if(attackers.length === 0) {
+    if(!attackers) {
         return null;
     }
 

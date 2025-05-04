@@ -119,8 +119,18 @@ Player.prototype.updateAttackers = function(gameContext) {
         return;
     }
 
-    const currentAttackers = new Set();
     const activeAttackers = AttackSystem.getActiveAttackers(gameContext, mouseEntity, this.id);
+
+    if(!activeAttackers) {
+        for(let i = 0; i < this.attackers.length; i++) {
+            const attackerID = this.attackers[i];
+            
+            this.resetAttacker(gameContext, attackerID);
+        }
+        return;
+    }
+
+    const currentAttackers = new Set();
 
     for(let i = 0; i < activeAttackers.length; i++) {
         const attacker = activeAttackers[i];
@@ -209,7 +219,7 @@ Player.prototype.onMakeChoice = function(gameContext) {
             return Queue.FILTER.NO_SUCCESS;
         }
 
-        eventBus.emit(GameEvent.TYPE.PLAYER_CHOICE_MADE, { "actorID": this.id, "request": request, "choice": executionItem });
+        eventBus.emit(GameEvent.TYPE.ACTION_REQUEST, { "actorID": this.id, "request": request, "choice": executionItem });
         
         return Queue.FILTER.SUCCESS;
     });

@@ -4,12 +4,20 @@ import { DropSystem } from "./systems/drop.js";
 import { SpawnSystem } from "./systems/spawn.js";
 
 export const GameEvent = function() {
-    this.id = 0;
+    this.mode = GameEvent.MODE.NONE;
 }
 
+GameEvent.MODE = {
+    NONE: 0,
+    STORY: 1,
+    VERSUS: 2,
+    COOP: 3
+};
+
 GameEvent.TYPE = {
-    STORY_AI_CHOICE_MADE: 111,
-    PLAYER_CHOICE_MADE: 113,
+    ACTION_REQUEST: 100,
+    ACTION_AUTHORIZE: 101,
+    ACTION_DENY: 102,
 
     ENTITY_DEATH: 200,
     ENTITY_DECAY: 201,
@@ -36,15 +44,33 @@ GameEvent.KILL_REASON = {
     ATTACK: "ATTACK"
 };
 
-GameEvent.onAttackCounter = function(gameContext, event) {
+GameEvent.prototype.init = function(gameContext) {
+    const { world } = gameContext;
+    const { eventBus } = world;
+
+    eventBus.on(GameEvent.TYPE.ACTION_REQUEST, (event) => this.onActionRequested(gameContext, event));
+    eventBus.on(GameEvent.TYPE.ACTION_AUTHORIZE, (event) => this.onActionAuthorized(gameContext, event));
+    eventBus.on(GameEvent.TYPE.ACTION_DENY, (event) => this.onActionDenied(gameContext, event));
+    eventBus.on(GameEvent.TYPE.ENTITY_DEATH, (event) => this.onEntityDeath(gameContext, event));
+    eventBus.on(GameEvent.TYPE.ENTITY_DECAY, (event) => this.onEntityDecay(gameContext, event));
+    eventBus.on(GameEvent.TYPE.ENTITY_HIT, (event) => this.onEntityHit(gameContext, event));
+    eventBus.on(GameEvent.TYPE.ENTITY_DOWN, (event) => this.onEntityDown(gameContext, event));
+    eventBus.on(GameEvent.TYPE.ENTITY_KILL, (event) => this.onEntityKill(gameContext, event));
+    eventBus.on(GameEvent.TYPE.TILE_CAPTURED, (event) => this.onTileCaptured(gameContext, event));
+    eventBus.on(GameEvent.TYPE.HIT_DROP, (event) => this.onHitDrop(gameContext, event));
+    eventBus.on(GameEvent.TYPE.KILL_DROP, (event) => this.onKillDrop(gameContext, event));
+    eventBus.on(GameEvent.TYPE.DROP, (event) => this.onDrop(gameContext, event));
+}
+
+GameEvent.prototype.onAttackCounter = function(gameContext, event) {
 
 }
 
-GameEvent.onMoveCounter = function(gameContext, event) {
+GameEvent.prototype.onMoveCounter = function(gameContext, event) {
 
 }
 
-GameEvent.onDrop = function(gameContext, event) {
+GameEvent.prototype.onDrop = function(gameContext, event) {
     const { world } = gameContext;
     const { turnManager } = world;
     const { drops, receiverID } = event;
@@ -59,7 +85,7 @@ GameEvent.onDrop = function(gameContext, event) {
     DropSystem.dropItems(gameContext, drops, receiver.inventory);
 }
 
-GameEvent.onKillDrop = function(gameContext, event) {
+GameEvent.prototype.onKillDrop = function(gameContext, event) {
     const { world } = gameContext;
     const { eventBus } = world;
     const { entity, receiverID } = event;
@@ -71,10 +97,15 @@ GameEvent.onKillDrop = function(gameContext, event) {
         return;
     }
 
-    eventBus.emit(GameEvent.TYPE.DROP, { "drops": killRewards, "receiverID": receiverID });
+    switch(this.mode) {
+        case GameEvent.MODE.STORY: {
+            eventBus.emit(GameEvent.TYPE.DROP, { "drops": killRewards, "receiverID": receiverID });
+            break;
+        }
+    }
 }
 
-GameEvent.onHitDrop = function(gameContext, event) {
+GameEvent.prototype.onHitDrop = function(gameContext, event) {
     const { world } = gameContext;
     const { eventBus } = world;
     const { entity, receiverID } = event;
@@ -86,27 +117,15 @@ GameEvent.onHitDrop = function(gameContext, event) {
         return;
     }
 
-    eventBus.emit(GameEvent.TYPE.DROP, { "drops": hitRewards, "receiverID": receiverID });
-}
-
-GameEvent.onStoryChoice = function(gameContext, event) {
-    const { world } = gameContext;
-    const { turnManager, actionQueue } = world;
-    const { actorID, request, choice } = event;
-    const isActor = turnManager.isActor(actorID);
-
-    console.log("STORY_CHOICE", event);
-
-    if(choice && request) {
-        actionQueue.enqueueExecutionItem(choice, request);
-    }
-
-    if(isActor) {
-        turnManager.reduceActorActions(1);
+    switch(this.mode) {
+        case GameEvent.MODE.STORY: {
+            eventBus.emit(GameEvent.TYPE.DROP, { "drops": hitRewards, "receiverID": receiverID });
+            break;
+        }
     }
 }
 
-GameEvent.onEntityDeath = function(gameContext, event) {
+GameEvent.prototype.onEntityDeath = function(gameContext, event) {
     const { entity, reason } = event;
 
     console.log("ENTITY_DEATH", event);
@@ -115,78 +134,138 @@ GameEvent.onEntityDeath = function(gameContext, event) {
     SpawnSystem.destroyEntity(gameContext, entity);
 }
 
-GameEvent.onEntityDecay = function(gameContext, event) {
+GameEvent.prototype.onEntityDecay = function(gameContext, event) {
     const { world } = gameContext;
     const { eventBus } = world;
     const { entity } = event;
 
-    console.log("DECAY", event);
+    console.log("ENTITY_DECAY", event);
 
-    eventBus.emit(GameEvent.TYPE.ENTITY_DEATH, { entity, "reason": GameEvent.KILL_REASON.DECAY });
+    switch(this.mode) {
+        case GameEvent.MODE.STORY: {
+            eventBus.emit(GameEvent.TYPE.ENTITY_DEATH, { entity, "reason": GameEvent.KILL_REASON.DECAY });
+            break;
+        }
+    }
 }
 
-GameEvent.onEntityHit = function(gameContext, event) {
+GameEvent.prototype.onEntityHit = function(gameContext, event) {
     const { world } = gameContext;
     const { eventBus } = world;
     const { target } = event;
 
-    console.log("HIT", event);
+    console.log("ENTITY_HIT", event);
 
-    eventBus.emit(GameEvent.TYPE.HIT_DROP, { "entity": target, "receiverID": "Player"});
+    switch(this.mode) {
+        case GameEvent.MODE.STORY: {
+            eventBus.emit(GameEvent.TYPE.HIT_DROP, { "entity": target, "receiverID": "Player"});
+            break;
+        }
+    }
 }
 
-GameEvent.onEntityKill = function(gameContext, event) {
+GameEvent.prototype.onEntityKill = function(gameContext, event) {
     const { world } = gameContext;
     const { eventBus } = world;
     const { target } = event;
 
-    console.log("KILLED", event);
+    console.log("ENTITY_KILL", event);
 
-    eventBus.emit(GameEvent.TYPE.KILL_DROP, { "entity": target, "receiverID": "Player"});
-    eventBus.emit(GameEvent.TYPE.ENTITY_DEATH, { "entity": target, "reason": GameEvent.KILL_REASON.ATTACK });
+    switch(this.mode) {
+        case GameEvent.MODE.STORY: {
+            eventBus.emit(GameEvent.TYPE.KILL_DROP, { "entity": target, "receiverID": "Player"});
+            eventBus.emit(GameEvent.TYPE.ENTITY_DEATH, { "entity": target, "reason": GameEvent.KILL_REASON.ATTACK });
+            break;
+        }
+    }
 }
 
-GameEvent.onEntityDown = function(gameContext, event) {
-    console.log("DOWN", event);
+GameEvent.prototype.onEntityDown = function(gameContext, event) {
+    console.log("ENTITY_DOWN", event);
 }
 
-GameEvent.onTileCaptured = function(gameContext, event) {
-    console.log("CAPTURED", event);
+GameEvent.prototype.onTileCaptured = function(gameContext, event) {
+    console.log("TILE_CAPTURED", event);
 }
 
-GameEvent.onVersusChoice = function(gameContext, event) {
+GameEvent.prototype.onActionAuthorized = function(gameContext, event) {
     const { world } = gameContext;
     const { actionQueue, turnManager } = world;
     const { choice, actorID } = event;
     const isActor = turnManager.isActor(actorID);
 
-    console.log("SERVER_CHOICE", event);
+    console.log("ACTION_AUTHORIZED", event);
 
-    if(isActor) {
-        turnManager.reduceActorActions(1);
+    switch(this.mode) {
+        case GameEvent.MODE.STORY: {        
+            if(isActor) {
+                turnManager.reduceActorActions(1);
+            }
+
+            actionQueue.enqueue(choice);
+            break;
+        }
+        case GameEvent.MODE.VERSUS: {
+            if(isActor) {
+                turnManager.reduceActorActions(1);
+            }
+        
+            actionQueue.enqueue(choice);
+            break;
+        }
     }
-
-    actionQueue.enqueue(choice);
 }
 
-GameEvent.onRequestVersusChoice = function(gameContext, event) {
-    const { client } = gameContext;
+GameEvent.prototype.onActionRequested = function(gameContext, event) {
+    const { client, world } = gameContext;
+    const { eventBus } = world;
     const { socket } = client;
-    const { actorID, request, choice } = event;
+    const { request, choice } = event;
 
-    console.log("REQUEST_SERVER_CHOICE", event);
+    console.log("ACTION_REQUESTED", event);
 
-    socket.messageRoom(CLIENT_EVENT.EVENT, request);
+    switch(this.mode) {
+        case GameEvent.MODE.STORY: {
+            if(choice && request) {
+                eventBus.emit(GameEvent.TYPE.ACTION_AUTHORIZE, event);
+            } else {
+                eventBus.emit(GameEvent.TYPE.ACTION_DENY, event);
+            }
+            break;
+        }
+        case GameEvent.MODE.VERSUS: {
+            socket.messageRoom(CLIENT_EVENT.EVENT, request);
+            break;
+        }
+    }
 }
 
-GameEvent.onVersusRequestSkipTurn = function(gameContext, event) {
+GameEvent.prototype.onActionDenied = function(gameContext, event) {
+    const { world } = gameContext;
+    const { turnManager } = world;
+    const { actorID } = event;
+
+    console.log("ACTION_DENIED", event);
+
+    switch(this.mode) {
+        case GameEvent.MODE.STORY: {
+            const isActor = turnManager.isActor(actorID);
+        
+            if(isActor) {
+                turnManager.reduceActorActions(1);
+            }
+            break;
+        }
+    }
+}
+
+GameEvent.prototype.onVersusRequestSkipTurn = function(gameContext, event) {
     //Send request to skip turn to server.
     //Only works if user is the active actor.
-
     console.log("VERUS_REQUEST_SKIP_TURN", event);
 }
 
-GameEvent.onVersusSkipTurn = function(gameContext, event) {
+GameEvent.prototype.onVersusSkipTurn = function(gameContext, event) {
     const { world } = gameContext;
     const { turnManager } = world;
     const { actorID } = event;

@@ -56,7 +56,6 @@ World.prototype.exit = function() {
     this.turnManager.exit();
     this.entityManager.exit();
     this.mapManager.exit();
-    this.eventBus.exit();
 }
 
 World.prototype.update = function(gameContext) {

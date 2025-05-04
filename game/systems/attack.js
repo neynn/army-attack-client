@@ -74,7 +74,7 @@ const getState = function(target, damage, isBulldozed) {
     const healthComponent = target.getComponent(ArmyEntity.COMPONENT.HEALTH);
     const remainder = healthComponent.getRemainder(damage);
 
-    if(remainder === 0) {
+    if(remainder >= 0) {
         const isReviveable = target.hasComponent(ArmyEntity.COMPONENT.REVIVEABLE);
 
         if(isReviveable && !isBulldozed) {
@@ -151,11 +151,11 @@ AttackSystem.pickAttackCounterTarget = function(attacker, targets) {
     return targets[index];
 }
 
-AttackSystem.getAttackCounterTargets = function(gameContext, attacker, targetList) {
+AttackSystem.getAttackCounterTargets = function(gameContext, attacker) {
     const attackComponent = attacker.getComponent(ArmyEntity.COMPONENT.ATTACK);
 
     if(!attackComponent || !attackComponent.isAttackCounterable()) {
-        return [];
+        return null;
     }
 
     const attackerTeamComponent = attacker.getComponent(ArmyEntity.COMPONENT.TEAM);
@@ -172,6 +172,10 @@ AttackSystem.getAttackCounterTargets = function(gameContext, attacker, targetLis
         return isEnemy;
     });
     
+    if(targets.length === 0) {
+        return null;
+    }
+
     return targets;
 }
 
@@ -196,6 +200,10 @@ AttackSystem.getMoveCounterAttackers = function(gameContext, target) {
         return isEnemy;
     });
 
+    if(attackers.length === 0) {
+        return null;
+    }
+
     return attackers;
 }
 
@@ -205,7 +213,7 @@ AttackSystem.getActiveAttackers = function(gameContext, target, actorID) {
     const actor = turnManager.getActor(actorID);
 
     if(!actor) {
-        return [];
+        return null;
     }
 
     const targetTeamComponent = target.getComponent(ArmyEntity.COMPONENT.TEAM);
@@ -231,6 +239,10 @@ AttackSystem.getActiveAttackers = function(gameContext, target, actorID) {
 
         return isEnemy;
     });
+
+    if(attackers.length === 0) {
+        return null;
+    }
 
     return attackers;
 }

@@ -30,7 +30,6 @@ import { DirectionComponent } from "./components/direction.js";
 import { TileManager } from "../source/tile/tileManager.js";
 import { Renderer } from "../source/renderer.js";
 import { Logger } from "../source/logger.js";
-import { WorldEventHandler } from "../source/worldEventHandler.js";
 import { GameEvent } from "./gameEvent.js";
 import { ArmyMap } from "./init/armyMap.js";
 import { MapManager } from "../source/map/mapManager.js";
@@ -52,6 +51,7 @@ export const ArmyContext = function() {
     this.keybinds = {};
 
     this.playerID = null;
+    this.eventHandler = new GameEvent();
     this.modeID = ArmyContext.GAME_MODE.NONE;
     this.addContextMapHook();
 }
@@ -137,6 +137,8 @@ ArmyContext.prototype.init = function(resources) {
 
     this.world.turnManager.registerFactory(ArmyContext.FACTORY.ACTOR, new ArmyActorFactory());
     this.world.turnManager.selectFactory(ArmyContext.FACTORY.ACTOR);
+
+    this.eventHandler.init(this);
     
     this.states.addState(ArmyContext.STATE.MAIN_MENU, new MainMenuState());
     this.states.addState(ArmyContext.STATE.STORY_MODE, new StoryModeState());
@@ -146,68 +148,29 @@ ArmyContext.prototype.init = function(resources) {
 }
 
 ArmyContext.prototype.setGameMode = function(modeID) {
-    const { eventBus } = this.world;
-
     switch(modeID) {
         case ArmyContext.GAME_MODE.NONE: {
-            break;
-        }
-        case ArmyContext.GAME_MODE.EDIT: {
+            this.modeID = ArmyContext.GAME_MODE.NONE;
+            this.eventHandler.mode = GameEvent.MODE.NONE;
             break;
         }
         case ArmyContext.GAME_MODE.STORY: {
-            eventBus.register(GameEvent.TYPE.STORY_AI_CHOICE_MADE, WorldEventHandler.STATUS.EMITABLE);
-            eventBus.register(GameEvent.TYPE.PLAYER_CHOICE_MADE, WorldEventHandler.STATUS.EMITABLE);
-
-            eventBus.register(GameEvent.TYPE.ENTITY_DEATH, WorldEventHandler.STATUS.EMITABLE);
-            eventBus.register(GameEvent.TYPE.ENTITY_DECAY, WorldEventHandler.STATUS.EMITABLE);
-            eventBus.register(GameEvent.TYPE.ENTITY_HIT, WorldEventHandler.STATUS.EMITABLE);
-            eventBus.register(GameEvent.TYPE.ENTITY_DOWN, WorldEventHandler.STATUS.EMITABLE);
-            eventBus.register(GameEvent.TYPE.ENTITY_KILL, WorldEventHandler.STATUS.EMITABLE);
-
-            eventBus.register(GameEvent.TYPE.TILE_CAPTURED, WorldEventHandler.STATUS.EMITABLE);
-
-            eventBus.register(GameEvent.TYPE.HIT_DROP, WorldEventHandler.STATUS.EMITABLE);
-            eventBus.register(GameEvent.TYPE.KILL_DROP, WorldEventHandler.STATUS.EMITABLE);
-            eventBus.register(GameEvent.TYPE.DROP, WorldEventHandler.STATUS.EMITABLE);
-
-            eventBus.register(GameEvent.TYPE.ACTION_COUNTER_MOVE, WorldEventHandler.STATUS.EMITABLE);
-            eventBus.register(GameEvent.TYPE.ACTION_COUNTER_ATTACK, WorldEventHandler.STATUS.EMITABLE);
-
-            eventBus.on(GameEvent.TYPE.PLAYER_CHOICE_MADE, (event) => GameEvent.onStoryChoice(this, event));
-            eventBus.on(GameEvent.TYPE.STORY_AI_CHOICE_MADE, (event) => GameEvent.onStoryChoice(this, event));
-
-            eventBus.on(GameEvent.TYPE.ENTITY_DEATH, (event) => GameEvent.onEntityDeath(this, event));
-            eventBus.on(GameEvent.TYPE.ENTITY_DECAY, (event) => GameEvent.onEntityDecay(this, event));
-            eventBus.on(GameEvent.TYPE.ENTITY_HIT, (event) => GameEvent.onEntityHit(this, event));
-            eventBus.on(GameEvent.TYPE.ENTITY_DOWN, (event) => GameEvent.onEntityDown(this, event));
-            eventBus.on(GameEvent.TYPE.ENTITY_KILL, (event) => GameEvent.onEntityKill(this, event));
-
-            eventBus.on(GameEvent.TYPE.TILE_CAPTURED, (event) => GameEvent.onTileCaptured(this, event));
-
-            eventBus.on(GameEvent.TYPE.HIT_DROP, (event) => GameEvent.onHitDrop(this, event));
-            eventBus.on(GameEvent.TYPE.KILL_DROP, (event) => GameEvent.onKillDrop(this, event));
-            eventBus.on(GameEvent.TYPE.DROP, (event) => GameEvent.onDrop(this, event));
-
-            eventBus.on(GameEvent.TYPE.ACTION_COUNTER_MOVE, (event) => GameEvent.onMoveCounter(this, event));
-            eventBus.on(GameEvent.TYPE.ACTION_COUNTER_ATTACK, (event) => GameEvent.onAttackCounter(this, event));
+            this.modeID = ArmyContext.GAME_MODE.STORY;
+            this.eventHandler.mode = GameEvent.MODE.STORY;
+            break;
+        }
+        case ArmyContext.GAME_MODE.EDIT: {
+            this.modeID = ArmyContext.GAME_MODE.EDIT;
+            this.eventHandler.mode = GameEvent.MODE.NONE;
             break;
         }
         case ArmyContext.GAME_MODE.VERSUS: {
-            eventBus.register(GameEvent.TYPE.VERSUS_REQUEST_SKIP_TURN, WorldEventHandler.STATUS.EMITABLE);
-            eventBus.register(GameEvent.TYPE.VERSUS_SKIP_TURN);
-            eventBus.register(GameEvent.TYPE.PLAYER_CHOICE_MADE, WorldEventHandler.STATUS.EMITABLE);
-            eventBus.register(GameEvent.TYPE.VERSUS_CHOICE_MADE);
-
-            eventBus.on(GameEvent.TYPE.VERSUS_REQUEST_SKIP_TURN, (event) => GameEvent.onVersusRequestSkipTurn(this, event));
-            eventBus.on(GameEvent.TYPE.VERSUS_SKIP_TURN, (event) => GameEvent.onVersusSkipTurn(this, event));
-            eventBus.on(GameEvent.TYPE.PLAYER_CHOICE_MADE, (event) => GameEvent.onRequestVersusChoice(this, event));
-            eventBus.on(GameEvent.TYPE.VERSUS_CHOICE_MADE, (event) => GameEvent.onVersusChoice(this, event));
+            this.modeID = ArmyContext.GAME_MODE.VERSUS;
+            this.eventHandler.mode = GameEvent.MODE.VERSUS;
             break;
         }
     }
 
-    this.modeID = modeID;
     this.addDebug();
 }
 

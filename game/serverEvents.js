@@ -107,10 +107,10 @@ ServerEvents.gameEvent = function(gameContext, payload) {
         const { executionItem } = payload;
         const { messengerID } = executionItem;
 
-        eventBus.force(GameEvent.TYPE.VERSUS_CHOICE_MADE, { "choice": executionItem, "actorID": messengerID });
+        eventBus.emit(GameEvent.TYPE.VERSUS_CHOICE_MADE, { "choice": executionItem, "actorID": messengerID });
 
         So force the eventBus to call VERSUS_CHOICE_MADE with the parameters.
     */
 
-    eventBus.force(type, data);
+    eventBus.emit(type, data);
 }
