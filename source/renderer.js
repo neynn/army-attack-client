@@ -44,6 +44,18 @@ Renderer.prototype.exit = function() {
     this.contexts.length = 0;
 }
 
+Renderer.prototype.forAllContexts = function(onCall) {
+    if(typeof onCall !== "function") {
+        return;
+    }
+
+    this.contexts.forEach((context) => {
+        const contextID = context.getID();
+
+        onCall(contextID, context);
+    });
+}
+
 Renderer.prototype.getContext = function(contextID) {
     for(let i = 0; i < this.contexts.length; i++) {
         const context = this.contexts[i];

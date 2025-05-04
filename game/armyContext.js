@@ -52,7 +52,6 @@ export const ArmyContext = function() {
 
     this.eventHandler = new GameEvent();
     this.modeID = ArmyContext.GAME_MODE.NONE;
-    this.addContextMapHook();
 }
 
 ArmyContext.prototype = Object.create(GameContext.prototype);
@@ -287,31 +286,22 @@ ArmyContext.prototype.getConversionID = function(tileID, teamID) {
     return convertedID;
 }
 
-ArmyContext.prototype.addContextMapHook = function() {
-    const { world, renderer, client } = this;
-    const { musicPlayer } = client;
-    const { mapManager } = world;
+ArmyContext.prototype.onMapCreate = function(mapID, worldMap) {
+    const { width, height, music } = worldMap;
 
-    renderer.events.on(Renderer.EVENT.CONTEXT_CREATE, (contextID, context) => {
-        mapManager.events.on(MapManager.EVENT.MAP_CREATE, (mapID, worldMap) => {
-            const { width, height, music } = worldMap;
-            const camera = context.getCamera();
+    this.renderer.forAllContexts((contextID, context) => {
+        const camera = context.getCamera();
 
-            camera.setMapSize(width, height);
-            camera.initBorder(this);
+        camera.setMapSize(width, height);
+        camera.initBorder(this);
 
-            if(music) {
-                musicPlayer.playTrack(music);
-            }
+        context.reload();
+    });
 
-            context.reload();
-        }, { id: contextID });
-    }, { permanent: true });
-
-    renderer.events.on(Renderer.EVENT.CONTEXT_DESTROY, (contextID) => {
-        mapManager.events.unsubscribe(MapManager.EVENT.MAP_CREATE, contextID);
-    }, { permanent: true });
-}
+    if(music) {
+        this.client.musicPlayer.playTrack(music);
+    }
+}   
 
 ArmyContext.prototype.getTeamID = function(teamName) {
     const team = this.teamTypes[teamName];

@@ -63,7 +63,7 @@ TurnManager.prototype.forAllActors = function(onCall) {
         const actorID = actor.getID();
 
         onCall(actorID, actor);
-    })
+    });
 }
 
 TurnManager.prototype.createActor = function(gameContext, config, actorID) {

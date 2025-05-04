@@ -59,7 +59,7 @@ ArmyCamera.prototype.update = function(gameContext, display) {
     this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.TOP), realTime, deltaTime);
     this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.UI), realTime, deltaTime);
     display.unflip();
-    this.drawLayer(graphics, context, worldMap.getLayer(ArmyMap.LAYER.DECORATION));
+    this.drawLayer(graphics, context, worldMap.getLayer(ArmyMap.LAYER.CLOUD));
 
     if(Renderer.DEBUG.MAP) {
         this.debugMap(context, worldMap);
