@@ -32,8 +32,8 @@ import { Renderer } from "../source/renderer.js";
 import { Logger } from "../source/logger.js";
 import { GameEvent } from "./gameEvent.js";
 import { ArmyMap } from "./init/armyMap.js";
-import { MapManager } from "../source/map/mapManager.js";
 import { FireMissionAction } from "./actions/fireMissionAction.js";
+import { ArmyCamera } from "./armyCamera.js";
 
 export const ArmyContext = function() {
     GameContext.call(this);
@@ -292,13 +292,15 @@ ArmyContext.prototype.onMapCreate = function(mapID, worldMap) {
     this.renderer.forAllContexts((contextID, context) => {
         const camera = context.getCamera();
 
-        camera.setMapSize(width, height);
-        camera.initBorder(this);
+        if(camera instanceof ArmyCamera) {
+            camera.setMapSize(width, height);
+            camera.initBorder(this);
 
-        context.reload();
+            context.reload();
+        }
     });
 
-    if(music) {
+    if(music && this.modeID !== ArmyContext.GAME_MODE.EDIT) {
         this.client.musicPlayer.playTrack(music);
     }
 }   

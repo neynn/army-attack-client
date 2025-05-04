@@ -204,7 +204,7 @@ Player.prototype.updateRangeIndicator = function(gameContext) {
 
 Player.prototype.onClick = function(gameContext) {
     const mouseTile = gameContext.getMouseTile();
-
+    
     this.states.eventEnter(gameContext, Player.EVENT.CLICK, mouseTile);
 }
 

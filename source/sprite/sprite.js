@@ -49,6 +49,11 @@ Sprite.prototype.onDraw = function(display, localX, localY) {
     }
 
     const { bitmap } = texture;
+
+    if(!bitmap) {
+        return;
+    }
+    
     const spriteFrame = frames[this.currentFrame];
     const isFlipped = (this.flags & Sprite.FLAG.FLIP) !== 0;
     const { context } = display;

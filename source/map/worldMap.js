@@ -8,8 +8,6 @@ export const WorldMap = function() {
     this.flags = 0;
     this.layers = new Map();
     this.entities = new Map();
-    this.background = [];
-    this.foreground = [];
 }
 
 WorldMap.prototype.saveMeta = function() {
