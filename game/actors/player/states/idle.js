@@ -1,4 +1,3 @@
-import { EntityManager } from "../../../../source/entity/entityManager.js";
 import { State } from "../../../../source/state/state.js";
 import { AnimationSystem } from "../../../systems/animation.js";
 import { ConstructionSystem } from "../../../systems/construction.js";
@@ -42,20 +41,16 @@ PlayerIdleState.prototype.onEvent = function(gameContext, stateMachine, eventID,
 }
 
 const selectEntity = function(gameContext, player, entity) {
-    if(player.selectedEntityID !== EntityManager.ID.INVALID) {
-        return;
-    }
-
     const entityID = entity.getID();
     const nodeList = PathfinderSystem.generateNodeList(gameContext, entity);
     const enableTileID = player.getOverlayID(gameContext, player.config.overlays.enable);
     const attackTileID = player.getOverlayID(gameContext, player.config.overlays.attack);
 
-    player.selectedEntityID = entityID;
+    AnimationSystem.playSelect(gameContext, entity);
+
     player.hover.updateNodes(gameContext, nodeList);
     player.camera.updateMoveOverlay(gameContext, nodeList, enableTileID, attackTileID);
-
-    AnimationSystem.playSelect(gameContext, entity);
+    player.states.setNextState(gameContext, Player.STATE.SELECTED, { "entityID": entityID });
 }
 
 const onClick = function(gameContext, stateMachine, tileX, tileY) {
@@ -88,8 +83,6 @@ const onClick = function(gameContext, stateMachine, tileX, tileY) {
 
     if(!actionQueue.isRunning() && MoveSystem.isMoveable(mouseEntity)) {
         selectEntity(gameContext, player, mouseEntity);
-        
-        stateMachine.setNextState(gameContext, Player.STATE.SELECTED);
     }
 }
 

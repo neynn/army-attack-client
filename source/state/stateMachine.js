@@ -36,6 +36,16 @@ StateMachine.EVENT = {
 StateMachine.prototype = Object.create(State.prototype);
 StateMachine.prototype.constructor = StateMachine;
 
+StateMachine.prototype.isCurrent = function(stateID) {
+    const state = this.states.get(stateID);
+
+    if(!state) {
+        return false;
+    }
+
+    return this.changeState === state;
+}
+
 StateMachine.prototype.setContext = function(context) {
     this.context = context;
 }
@@ -69,10 +79,11 @@ StateMachine.prototype.exit = function(gameContext) {
         this.currentState.onExit(gameContext, this);
         this.previousState = this.currentState;
         this.currentState = null;
+        this.currentType = StateMachine.TYPE.NONE;
     }
 }
 
-StateMachine.prototype.changeState = function(gameContext, state) {
+StateMachine.prototype.changeState = function(gameContext, state, enterData = {}) {
     this.exit(gameContext);
     this.events.emit(StateMachine.EVENT.STATE_EXIT);
     this.currentState = state;
@@ -85,27 +96,27 @@ StateMachine.prototype.changeState = function(gameContext, state) {
         this.currentType = StateMachine.TYPE.NONE;
     }
 
-    this.currentState.onEnter(gameContext, this);
+    this.currentState.onEnter(gameContext, this, enterData);
     this.events.emit(StateMachine.EVENT.STATE_ENTER);
 }
 
-StateMachine.prototype.setNextState = function(gameContext, stateID) {
+StateMachine.prototype.setNextState = function(gameContext, stateID, enterData) {
     const nextState = this.states.get(stateID);
 
     if(nextState) {
         this.nextState = nextState;
-        this.goToNextState(gameContext);
+        this.goToNextState(gameContext, enterData);
     } else {
         console.warn(`State (${stateID}) does not exist!`, this.context);
     }
 }
 
-StateMachine.prototype.goToPreviousState = function(gameContext) {
-    this.changeState(gameContext, this.previousState);
+StateMachine.prototype.goToPreviousState = function(gameContext, enterData) {
+    this.changeState(gameContext, this.previousState, enterData);
 }
 
-StateMachine.prototype.goToNextState = function(gameContext) {
-    this.changeState(gameContext, this.nextState);
+StateMachine.prototype.goToNextState = function(gameContext, enterData) {
+    this.changeState(gameContext, this.nextState, enterData);
 }
 
 StateMachine.prototype.getContext = function() {

@@ -15,7 +15,6 @@ import { PlayerSpectateState } from "./states/spectate.js";
 import { Actor } from "../../../source/turn/actor.js";
 import { TileManager } from "../../../source/tile/tileManager.js";
 import { StateMachine } from "../../../source/state/stateMachine.js";
-import { EntityManager } from "../../../source/entity/entityManager.js";
 import { Queue } from "../../../source/queue.js";
 import { GameEvent } from "../../gameEvent.js";
 
@@ -23,8 +22,6 @@ export const Player = function() {
     Actor.call(this);
 
     this.teamID = null;
-    this.selectedEntityID = EntityManager.ID.INVALID;
-    this.selectedFireMissionID = null;
     this.attackers = new Set();
     this.hover = new PlayerCursor();
     this.attackRangeOverlay = new AttackRangeOverlay();
@@ -74,8 +71,8 @@ Player.prototype.getCamera = function() {
 }
 
 Player.prototype.onEntityRemove = function(entityID) {
-    if(this.selectedEntityID === entityID) {
-        this.selectedEntityID = EntityManager.ID.INVALID;
+    if(this.states.isCurrent(Player.STATE.SELECTED)) {
+        //TODO: Go back to regular on removal!
     }
 }
 
@@ -172,18 +169,13 @@ Player.prototype.getSpriteType = function(typeID, spriteKey) {
 }
 
 Player.prototype.selectFireMission = function(gameContext, fireMissionID) {
-    if(this.selectedFireMissionID === fireMissionID) {
-        return;
-    }
-
     const fireMission = gameContext.fireCallTypes[fireMissionID];
 
     if(!fireMission) {
         return;
     }
 
-    this.selectedFireMissionID = fireMissionID;
-    this.states.setNextState(gameContext, Player.STATE.FIRE_MISSION);
+    this.states.setNextState(gameContext, Player.STATE.FIRE_MISSION, { "mission": fireMissionID });
 }
 
 Player.prototype.queueAttack = function(gameContext, entityID) {
@@ -226,7 +218,7 @@ Player.prototype.onMakeChoice = function(gameContext) {
 }
 
 Player.prototype.onTurnStart = function(gameContext) {
-    this.states.setNextState(gameContext, Player.STATE.IDLE);
+    this.states.setNextState(gameContext, Player.STATE.FIRE_MISSION, { "missionID": "Artillery" });
 }
 
 Player.prototype.onTurnEnd = function(gameContext) {

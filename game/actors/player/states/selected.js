@@ -8,21 +8,29 @@ import { ArmyEntity } from "../../../init/armyEntity.js";
 import { PlayerCursor } from "../playerCursor.js";
 import { Player } from "../player.js";
 
-export const PlayerSelectedState = function() {}
+export const PlayerSelectedState = function() {
+    this.entityID = EntityManager.ID.INVALID;
+}
 
 PlayerSelectedState.prototype = Object.create(State.prototype);
 PlayerSelectedState.prototype.constructor = PlayerSelectedState;
 
+PlayerSelectedState.prototype.onEnter = function(gameContext, stateMachine, transition) {
+    const { entityID } = transition;
+
+    this.entityID = entityID;
+}
+
 PlayerSelectedState.prototype.onExit = function(gameContext, stateMachine) {
-    deselectEntity(gameContext, stateMachine);
+    this.deselectEntity(gameContext, stateMachine);
 }
 
 PlayerSelectedState.prototype.onUpdate = function(gameContext, stateMachine) {
     const player = stateMachine.getContext();
 
     player.updateAttackers(gameContext);
-    updateEntity(gameContext, player);
-    updateCursor(gameContext, player);
+    this.updateEntity(gameContext, player);
+    this.updateCursor(gameContext, player);
     player.updateRangeIndicator(gameContext);
     player.hover.autoAlignSprite(gameContext, player.camera);
 }
@@ -32,16 +40,16 @@ PlayerSelectedState.prototype.onEvent = function(gameContext, stateMachine, even
         case Player.EVENT.CLICK: {
             const { x, y } = eventData;
 
-            onClick(gameContext, stateMachine, x, y);
+            this.onClick(gameContext, stateMachine, x, y);
             break;
         }
     }
 }
 
-const updateEntity = function(gameContext, player) {
+PlayerSelectedState.prototype.updateEntity = function(gameContext, player) {
     const { world } = gameContext;
     const { entityManager } = world;
-    const selectedEntity = entityManager.getEntity(player.selectedEntityID);
+    const selectedEntity = entityManager.getEntity(this.entityID);
 
     if(!selectedEntity) {
         return;
@@ -57,7 +65,7 @@ const updateEntity = function(gameContext, player) {
     }
 }
 
-const updateCursor = function(gameContext, player) {
+PlayerSelectedState.prototype.updateCursor = function(gameContext, player) {
     const { hover } = player;
     const { state } = hover;
 
@@ -81,11 +89,11 @@ const updateCursor = function(gameContext, player) {
     hover.hideSprite(gameContext);
 }
 
-const deselectEntity = function(gameContext, stateMachine) {
+PlayerSelectedState.prototype.deselectEntity = function(gameContext, stateMachine) {
     const { world } = gameContext;
     const { entityManager } = world;
     const player = stateMachine.getContext();
-    const entity = entityManager.getEntity(player.selectedEntityID);
+    const entity = entityManager.getEntity(this.entityID);
 
     if(entity) {
         AnimationSystem.stopSelect(gameContext, entity);
@@ -93,10 +101,11 @@ const deselectEntity = function(gameContext, stateMachine) {
 
     player.camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.MOVE);
     player.hover.clearNodes();
-    player.selectedEntityID = EntityManager.ID.INVALID;
+
+    this.entityID = EntityManager.ID.INVALID;
 }
 
-const onClick = function(gameContext, stateMachine, tileX, tileY) {
+PlayerSelectedState.prototype.onClick = function(gameContext, stateMachine, tileX, tileY) {
     const { world, client } = gameContext;
     const { actionQueue } = world;
     const { soundPlayer } = client;
@@ -114,7 +123,7 @@ const onClick = function(gameContext, stateMachine, tileX, tileY) {
             soundPlayer.play("sound_error", 0.5); 
         }
     } else {
-        const request = actionQueue.createRequest(ACTION_TYPE.MOVE, player.selectedEntityID, tileX, tileY);
+        const request = actionQueue.createRequest(ACTION_TYPE.MOVE, this.entityID, tileX, tileY);
 
         if(request) {
             player.inputQueue.enqueueLast(request);

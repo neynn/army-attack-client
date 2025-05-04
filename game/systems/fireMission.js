@@ -1,8 +1,8 @@
 export const FireMissionSystem = function() {}
 
 const getSurroundingEntities = function(worldMap, tileX, tileY, dimX, dimY) {
-    const endX = tileX + dimX
-    const endY = tileY + dimY
+    const endX = tileX + dimX;
+    const endY = tileY + dimY;
     const entities = worldMap.getAllEntitiesInRange(tileX, tileY, endX, endY);
 
     return entities;
@@ -19,7 +19,12 @@ const getSurroundingEntities = function(worldMap, tileX, tileY, dimX, dimY) {
  */
 const isFireCallValid = function(gameContext, entity) {
     console.log(entity);
+    
     return true;
+}
+
+FireMissionSystem.getOutcome = function(gameContext, fireMissionID, tileX, tileY) {
+
 }
 
 FireMissionSystem.isValid = function(gameContext, fireMissionID, tileX, tileY) {

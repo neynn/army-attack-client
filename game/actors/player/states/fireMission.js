@@ -4,17 +4,25 @@ import { AnimationSystem } from "../../../systems/animation.js";
 import { FireMissionSystem } from "../../../systems/fireMission.js";
 import { Player } from "../player.js";
 
-export const PlayerFireMissionState = function() {}
+export const PlayerFireMissionState = function() {
+    this.missionID = null;
+}
 
 PlayerFireMissionState.prototype = Object.create(State.prototype);
 PlayerFireMissionState.prototype.constructor = PlayerFireMissionState;
 
-PlayerFireMissionState.prototype.onEnter = function(gameContext, stateMachine) {
+PlayerFireMissionState.prototype.onEnter = function(gameContext, stateMachine, transition) {
+    const { missionID } = transition;
     const player = stateMachine.getContext();
+
+    if(missionID) {
+        this.missionID = missionID;
+    }
 
     AnimationSystem.revertToIdle(gameContext, player.attackers);
 
-    updateCursor(gameContext, player);
+    this.updateCursor(gameContext, player);
+
     player.clearAttackers();
     player.inputQueue.clear();
     player.attackRangeOverlay.disable(gameContext, player.camera);
@@ -23,7 +31,7 @@ PlayerFireMissionState.prototype.onEnter = function(gameContext, stateMachine) {
 PlayerFireMissionState.prototype.onExit = function(gameContext, stateMachine) {
     const player = stateMachine.getContext();
 
-    player.selectedFireMissionID = null;
+    this.missionID = null;
     player.attackRangeOverlay.enable();
 }
 
@@ -38,14 +46,14 @@ PlayerFireMissionState.prototype.onEvent = function(gameContext, stateMachine, e
         case Player.EVENT.CLICK: {
             const { x, y } = eventData;
 
-            onClick(gameContext, stateMachine, x, y);
+            this.onClick(gameContext, stateMachine, x, y);
             break;
         }
     }
 }
 
-const updateCursor = function(gameContext, player) {
-    const fireMission = gameContext.fireCallTypes[player.selectedFireMissionID];
+PlayerFireMissionState.prototype.updateCursor = function(gameContext, player) {
+    const fireMission = gameContext.fireCallTypes[this.missionID];
 
     if(!fireMission) {
         return;
@@ -58,22 +66,22 @@ const updateCursor = function(gameContext, player) {
     }
 }
 
-const queueFireMission = function(gameContext, player, tileX, tileY) {
+PlayerFireMissionState.prototype.queueFireMission = function(gameContext, player, tileX, tileY) {
     const { world } = gameContext;
     const { actionQueue } = world;
-    const request = actionQueue.createRequest(ACTION_TYPE.FIRE_MISSION, player.selectedFireMissionID, tileX, tileY);
+    const request = actionQueue.createRequest(ACTION_TYPE.FIRE_MISSION, this.missionID, tileX, tileY);
     
     if(request) {
         player.inputQueue.enqueueLast(request);
     }
 }
 
-const onClick = function(gameContext, stateMachine, tileX, tileY) {
+PlayerFireMissionState.prototype.onClick = function(gameContext, stateMachine, tileX, tileY) {
     const player = stateMachine.getContext();
-    const isValid = FireMissionSystem.isValid(gameContext, player.selectedFireMissionID, tileX, tileY);
+    const isValid = FireMissionSystem.isValid(gameContext, this.missionID, tileX, tileY);
 
     if(isValid) {
-        queueFireMission(gameContext, player, tileX, tileY);
+        this.queueFireMission(gameContext, player, tileX, tileY);
         stateMachine.setNextState(gameContext, Player.STATE.IDLE);
     }
 }
