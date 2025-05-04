@@ -34,6 +34,7 @@ import { GameEvent } from "./gameEvent.js";
 import { ArmyMap } from "./init/armyMap.js";
 import { FireMissionAction } from "./actions/fireMissionAction.js";
 import { ArmyCamera } from "./armyCamera.js";
+import { TownComponent } from "./components/town.js";
 
 export const ArmyContext = function() {
     GameContext.call(this);
@@ -125,6 +126,7 @@ ArmyContext.prototype.init = function(resources) {
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.REVIVEABLE, ReviveableComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.SPRITE, SpriteComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.TEAM, TeamComponent);
+    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.TOWN, TownComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.UNIT, UnitComponent);
 
     this.world.mapManager.registerFactory(ArmyContext.FACTORY.MAP, new ArmyMapFactory());

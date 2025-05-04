@@ -1,56 +1,70 @@
+import { ArmyEntity } from "../init/armyEntity.js";
+
 export const FireMissionSystem = function() {}
 
-const getSurroundingEntities = function(worldMap, tileX, tileY, dimX, dimY) {
+FireMissionSystem.TARGET_STATE = {
+    NONE: 0,
+    VALID: 1,
+    INVALID: 2
+};
+
+const getEntitiesInArea = function(gameContext, tileX, tileY, dimX, dimY) {
+    const { world } = gameContext;
     const endX = tileX + dimX;
     const endY = tileY + dimY;
-    const entities = worldMap.getAllEntitiesInRange(tileX, tileY, endX, endY);
+    const entities = world.getEntitiesInArea(tileX, tileY, endX, endY);
 
     return entities;
 }
 
-/**
- * Checks if the entity can be targeted by a firecall.
- * 
- * Some entities, like TOWNS, cannot be targeted by them, even though war-crimes are fun!
- * 
- * @param {*} gameContext 
- * @param {*} entity 
- * @returns 
- */
-const isFireCallValid = function(gameContext, entity) {
-    console.log(entity);
-    
-    return true;
-}
-
-FireMissionSystem.getOutcome = function(gameContext, fireMissionID, tileX, tileY) {
-
-}
-
-FireMissionSystem.isValid = function(gameContext, fireMissionID, tileX, tileY) {
-    const { world } = gameContext;
-    const { mapManager, entityManager } = world;
-    const worldMap = mapManager.getActiveMap();
-
-    if(!worldMap) {
-        return false;
+const getFireCallState = function(gameContext, entity) {
+    if(entity.hasComponent(ArmyEntity.COMPONENT.TOWN)) {
+        return FireMissionSystem.TARGET_STATE.INVALID;
     }
 
+
+    return FireMissionSystem.TARGET_STATE.VALID;
+}
+
+FireMissionSystem.getTargets = function(gameContext, fireMission, tileX, tileY) {
+    const { dimX = 0, dimY = 0 } = fireMission;
+    const entities = getEntitiesInArea(gameContext, tileX, tileY, dimX, dimY);
+    const targets = [];
+
+    for(let i = 0; i < entities.length; i++) {
+        const entity = entities[i];
+        const state = getFireCallState(gameContext, entity);
+
+        targets.push({
+            "state": state,
+            "entity": entity
+        });
+    }
+
+    console.log(targets);
+
+    return targets;
+}
+
+FireMissionSystem.getOutcome = function(gameContext, fireMissionID, tileX, tileY) {}
+
+FireMissionSystem.isValid = function(gameContext, fireMissionID, tileX, tileY) {
     const fireMission = gameContext.fireCallTypes[fireMissionID];
 
     if(!fireMission) {
         return false;
     }
 
-    const { dimX, dimY } = fireMission;
-    const entities = getSurroundingEntities(worldMap, tileX, tileY, dimX, dimY);
+    const targets = FireMissionSystem.getTargets(gameContext, fireMission, tileX, tileY);
 
-    for(let i = 0; i < entities.length; i++) {
-        const entityID = entities[i];
-        const entity = entityManager.getEntity(entityID);
-        const isValid = isFireCallValid(gameContext, entity);
+    if(targets.length === 0) {
+        return false;
+    }
 
-        if(!isValid) {
+    for(let i = 0; i < targets.length; i++) {
+        const { state, entity } = targets[i];
+
+        if(state === FireMissionSystem.TARGET_STATE.INVALID) {
             return false;
         }
     }

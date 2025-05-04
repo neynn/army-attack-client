@@ -12,7 +12,9 @@ export const World = function() {
     this.mapManager = new MapManager();
     this.eventBus = new WorldEventHandler();
 
-    this.entityManager.events.on(EntityManager.EVENT.ENTITY_DESTROY, (entityID) => this.turnManager.removeEntity(entityID), { permanent: true });
+    this.entityManager.events.on(EntityManager.EVENT.ENTITY_DESTROY, (entityID) => {
+        this.turnManager.removeEntity(entityID);
+    }, { permanent: true });
     
     //this.addDebug();
 }
@@ -76,3 +78,46 @@ World.prototype.getTileEntity = function(tileX, tileY) {
     
     return this.entityManager.getEntity(entityID);
 }
+
+World.prototype.getEntitiesInArea = function(startX, startY, endX, endY) {
+    const worldMap = this.mapManager.getActiveMap();
+
+    if(!worldMap) {
+        return [];
+    }
+
+    const entityIDs = worldMap.getAllEntitiesInArea(startX, startY, endX, endY);
+    const entities = [];
+
+    for(let i = 0; i < entityIDs.length; i++) {
+        const entityID = entityIDs[i];
+        const entity = this.entityManager.getEntity(entityID);
+
+        if(entity) {
+            entities.push(entity);
+        }
+    }
+    
+    return entities;
+} 
+
+World.prototype.getUniqueEntitiesInArea = function(startX, startY, endX, endY) {
+    const worldMap = this.mapManager.getActiveMap();
+
+    if(!worldMap) {
+        return [];
+    }
+
+    const entityIDs = worldMap.getUniqueEntitiesInArea(startX, startY, endX, endY);
+    const entities = [];
+
+    for(const entityID of entityIDs) {
+        const entity = this.entityManager.getEntity(entityID);
+
+        if(entity) {
+            entities.push(entity);
+        }
+    }
+
+    return entities;
+} 

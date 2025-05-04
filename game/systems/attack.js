@@ -31,43 +31,35 @@ const hasEnoughRange = function(attacker, target, range) {
     return collision;
 }
 
-const getSurroundingEntities = function(worldMap, entity, range) {
+const getSurroundingEntities = function(gameContext, entity, range) {
+    const { world } = gameContext;
     const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
     const startX = positionComponent.tileX - range;
     const startY = positionComponent.tileY - range;
     const endX = positionComponent.tileX + entity.config.dimX + range;
     const endY = positionComponent.tileY + entity.config.dimY + range;
-    const entities = worldMap.getUniqueEntitiesInRange(startX, startY, endX, endY);
+    const entities = world.getUniqueEntitiesInArea(startX, startY, endX, endY);
 
     return entities;
 }
 
 const filterAliveEntitiesInMaxRange = function(gameContext, entity, onCheck) {
-    const { world } = gameContext;
-    const { entityManager, mapManager } = world;
-    const activeMap = mapManager.getActiveMap();
-
-    if(!activeMap || !entity.isAlive()) {
+    if(!entity.isAlive()) {
         return [];
     }
 
-    const entities = [];
-    const nearbyEntities = getSurroundingEntities(activeMap, entity, gameContext.settings.maxAttackRange);
+    const validEntities = [];
+    const nearbyEntities = getSurroundingEntities(gameContext, entity, gameContext.settings.maxAttackRange);
 
     for(let i = 0; i < nearbyEntities.length; i++) {
-        const entityID = nearbyEntities[i];
-        const nearbyEntity = entityManager.getEntity(entityID);
+        const nearbyEntity = nearbyEntities[i];
 
-        if(!nearbyEntity || !nearbyEntity.isAlive()) {
-            continue;
-        }
-
-        if(onCheck(entityID, nearbyEntity)) {
-            entities.push(nearbyEntity);
+        if(nearbyEntity.isAlive() && onCheck(nearbyEntity)) {
+            validEntities.push(nearbyEntity);
         }
     }
 
-    return entities;
+    return validEntities;
 }
 
 const getState = function(target, damage, isBulldozed) {
@@ -160,7 +152,7 @@ AttackSystem.getAttackCounterTargets = function(gameContext, attacker) {
     }
 
     const attackerTeamComponent = attacker.getComponent(ArmyEntity.COMPONENT.TEAM);
-    const targets = filterAliveEntitiesInMaxRange(gameContext, attacker, (targetID, target) => {
+    const targets = filterAliveEntitiesInMaxRange(gameContext, attacker, (target) => {
         const hasRange = hasEnoughRange(attacker, target, attackComponent.range);
 
         if(!hasRange) {
@@ -182,7 +174,7 @@ AttackSystem.getAttackCounterTargets = function(gameContext, attacker) {
 
 AttackSystem.getMoveCounterAttackers = function(gameContext, target) {
     const targetTeamComponent = target.getComponent(ArmyEntity.COMPONENT.TEAM);
-    const attackers = filterAliveEntitiesInMaxRange(gameContext, target, (attackerID, attacker) => {
+    const attackers = filterAliveEntitiesInMaxRange(gameContext, target, (attacker) => {
         const attackComponent = attacker.getComponent(ArmyEntity.COMPONENT.ATTACK);
 
         if(!attackComponent || !attackComponent.isMoveCounterable()) {
@@ -218,7 +210,9 @@ AttackSystem.getActiveAttackers = function(gameContext, target, actorID) {
     }
 
     const targetTeamComponent = target.getComponent(ArmyEntity.COMPONENT.TEAM);
-    const attackers = filterAliveEntitiesInMaxRange(gameContext, target, (attackerID, attacker) => {
+    const attackers = filterAliveEntitiesInMaxRange(gameContext, target, (attacker) => {
+        const attackerID = attacker.getID();
+
         if(!actor.hasEntity(attackerID)) {
             return false;
         }

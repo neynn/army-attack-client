@@ -37,7 +37,8 @@ ArmyEntity.COMPONENT = {
     SPRITE: "Sprite",
     DIRECTION: "Direction",
     TEAM: "Team",
-    PRODUCTION: "Production"
+    PRODUCTION: "Production",
+    TOWN: "Town"
 };
 
 ArmyEntity.SPRITE_TYPE = {
