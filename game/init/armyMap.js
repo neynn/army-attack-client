@@ -9,6 +9,7 @@ export const ArmyMap = function() {
     this.music = null;
     this.type = ArmyMap.TYPE.NONE;
     this.flags = ArmyMap.FLAG.NONE;
+    this.debris = new Map();
 }
 
 ArmyMap.FLAG = {
@@ -58,6 +59,44 @@ ArmyMap.CONVERTABLE_LAYERS = [
 
 ArmyMap.prototype = Object.create(WorldMap.prototype);
 ArmyMap.prototype.constructor = ArmyMap;
+
+ArmyMap.prototype.hasDebris = function(tileX, tileY) {
+    const index = this.getListID(tileX, tileY);
+
+    if(index === -1) {
+        return false;
+    }
+
+    return this.debris.has(index);
+}
+
+ArmyMap.prototype.removeDebris = function(tileX, tileY) {
+    const index = this.getListID(tileX, tileY);
+
+    if(index === -1) {
+        return;
+    }
+
+    if(this.debris.has(index)) {
+        this.debris.delete(index);
+    }
+}
+
+ArmyMap.prototype.addDebris = function(type, tileX, tileY) {
+    const index = this.getListID(tileX, tileY);
+
+    if(index === -1) {
+        return;
+    }
+
+    if(!this.debris.has(index)) {
+        this.debris.set(index, {
+            "type": type,
+            "x": tileX,
+            "y": tileY
+        });
+    }   
+}
 
 ArmyMap.prototype.saveFlags = function() {
     const flags = [];

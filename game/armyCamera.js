@@ -32,6 +32,23 @@ ArmyCamera.prototype.addPostDraw = function(onDraw) {
     this.postDraw.push(onDraw);
 }
 
+ArmyCamera.prototype.drawDebris = function(tileManager, context, worldMap) {
+    const { graphics } = tileManager;
+    const { debris } = worldMap;
+    const debrisID = tileManager.getTileID("ground", "Bg_DebrisTile_01");
+
+    debris.forEach((item) => {
+        const { type, x, y } = item;
+
+        if(x >= this.startX && x <= this.endX && y >= this.startY && y <= this.endY) {
+            const renderX = x * this.tileWidth - this.viewportX;
+            const renderY = y * this.tileHeight - this.viewportY;
+
+            graphics.drawTile(context, debrisID, renderX, renderY, 1, 1, this.tileWidth, this.tileHeight);
+        }
+    });
+}
+
 ArmyCamera.prototype.update = function(gameContext, display) {
     const { world, timer, spriteManager, tileManager } = gameContext;
     const { graphics } = tileManager;
@@ -50,6 +67,7 @@ ArmyCamera.prototype.update = function(gameContext, display) {
     this.drawLayer(graphics, context, worldMap.getLayer(ArmyMap.LAYER.GROUND));
     this.drawLayer(graphics, context, this.border);
     this.drawLayer(graphics, context, worldMap.getLayer(ArmyMap.LAYER.DECORATION));
+    this.drawDebris(tileManager, context, worldMap);
     this.drawOverlay(graphics, context, ArmyCamera.OVERLAY_TYPE.MOVE);
     this.drawOverlay(graphics, context, ArmyCamera.OVERLAY_TYPE.ATTACK);
     this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.BOTTOM), realTime, deltaTime);

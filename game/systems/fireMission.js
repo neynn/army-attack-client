@@ -58,7 +58,7 @@ FireMissionSystem.isValid = function(gameContext, fireMissionID, tileX, tileY) {
     const targets = FireMissionSystem.getTargets(gameContext, fireMission, tileX, tileY);
 
     if(targets.length === 0) {
-        return false;
+        return true;
     }
 
     for(let i = 0; i < targets.length; i++) {

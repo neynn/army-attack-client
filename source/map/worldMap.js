@@ -147,6 +147,23 @@ WorldMap.prototype.getLayer = function(layerID) {
     return layer;
 }
 
+WorldMap.prototype.getTileCoords = function(index) {
+    const tileY = Math.floor(index / this.width);
+    const tileX = index % this.width;
+
+    if(this.isTileOutOfBounds(tileX, tileY)) {
+        return {
+            "x": -1,
+            "y": -1
+        };
+    }
+
+    return {
+        "x": tileX,
+        "y": tileY
+    }
+}
+
 WorldMap.prototype.getListID = function(tileX, tileY) {
     if(this.isTileOutOfBounds(tileX, tileY)) {
         return -1;
