@@ -32,9 +32,7 @@ PlayerIdleState.prototype.onUpdate = function(gameContext, stateMachine) {
 PlayerIdleState.prototype.onEvent = function(gameContext, stateMachine, eventID, eventData) {
     switch(eventID) {
         case Player.EVENT.CLICK: {
-            const { x, y } = eventData;
-
-            onClick(gameContext, stateMachine, x, y);
+            onClick(gameContext, stateMachine);
             break;
         }
     }
@@ -53,49 +51,71 @@ const selectEntity = function(gameContext, player, entity) {
     player.states.setNextState(gameContext, Player.STATE.SELECTED, { "entityID": entityID });
 }
 
-const onClick = function(gameContext, stateMachine, tileX, tileY) {
+const onClick = function(gameContext, stateMachine) {
     const { world } = gameContext;
     const { actionQueue } = world;
-    const mouseEntity = world.getTileEntity(tileX, tileY);
     const player = stateMachine.getContext();
+    const { hover } = player;
 
-    if(!mouseEntity) {
-        return;
-    }
+    hover.update(gameContext);
 
-    const entityID = mouseEntity.getID();
-    const isAttackable = mouseEntity.isAttackableByTeam(gameContext, player.teamID);
+    switch(hover.state) {
+        case PlayerCursor.STATE.HOVER_ON_ENTITY: {
+            const entityID = hover.currentTarget;
+            const mouseEntity = hover.getEntity(gameContext);
+            const isAttackable = mouseEntity.isAttackableByTeam(gameContext, player.teamID);
 
-    if(isAttackable) {
-        player.queueAttack(gameContext, entityID);
-        return;
-    }
+            if(isAttackable) {
+                player.queueAttack(gameContext, entityID);
+                return;
+            }
+        
+            if(!player.hasEntity(entityID)) {
+                return;
+            }
+        
+            const constructionRequest = ConstructionSystem.onInteract(gameContext, mouseEntity);
+        
+            if(constructionRequest) {
+                player.inputQueue.enqueueLast(constructionRequest);
+                return;
+            }
+        
+            if(!actionQueue.isRunning() && MoveSystem.isMoveable(mouseEntity)) {
+                selectEntity(gameContext, player, mouseEntity);
+            }
 
-    if(!player.hasEntity(entityID)) {
-        return;
-    }
-
-    const constructionRequest = ConstructionSystem.onInteract(gameContext, mouseEntity);
-
-    if(constructionRequest) {
-        player.inputQueue.enqueueLast(constructionRequest);
-    }
-
-    if(!actionQueue.isRunning() && MoveSystem.isMoveable(mouseEntity)) {
-        selectEntity(gameContext, player, mouseEntity);
+            break;
+        }
+        case PlayerCursor.STATE.HOVER_ON_DEBRIS: {
+            console.log("IMMA DEBRIS! YE!")
+            break;
+        }
     }
 }
 
 const updateCursor = function(gameContext, player) {
-    if(player.hover.state !== PlayerCursor.STATE.HOVER_ON_ENTITY) {
-        player.hover.hideSprite(gameContext);
-        return;
+    const state = player.hover.state;
+
+    switch(state) {
+        case PlayerCursor.STATE.HOVER_ON_DEBRIS: {
+            const spriteID = player.getSpriteType(Player.SPRITE_TYPE.SELECT, "1-1");
+
+            player.hover.updateSprite(gameContext, spriteID);
+            break;
+        }
+        case PlayerCursor.STATE.HOVER_ON_ENTITY: {
+            const hoveredEntity = player.hover.getEntity(gameContext);
+            const typeID = player.attackers.size > 0 ? Player.SPRITE_TYPE.ATTACK : Player.SPRITE_TYPE.SELECT;
+            const spriteKey = `${hoveredEntity.config.dimX}-${hoveredEntity.config.dimY}`;
+            const spriteID = player.getSpriteType(typeID, spriteKey);
+
+            player.hover.updateSprite(gameContext, spriteID);
+            break;
+        }
+        default: {
+            player.hover.hideSprite(gameContext);
+            break;
+        }
     }
-
-    const hoveredEntity = player.hover.getEntity(gameContext);
-    const typeID = player.attackers.size > 0 ? Player.SPRITE_TYPE.ATTACK : Player.SPRITE_TYPE.SELECT;
-    const spriteKey = `${hoveredEntity.config.dimX}-${hoveredEntity.config.dimY}`;
-    const spriteID = player.getSpriteType(typeID, spriteKey);
-
-    player.hover.updateSprite(gameContext, spriteID);
 }

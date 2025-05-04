@@ -17,10 +17,11 @@ export const PlayerCursor = function() {
 PlayerCursor.STATE = {
     NONE: 0,
     HOVER_ON_ENTITY: 1,
-    HOVER_ON_NODE: 2
+    HOVER_ON_NODE: 2,
+    HOVER_ON_DEBRIS: 3
 };
 
-PlayerCursor.prototype.updateState = function() {
+PlayerCursor.prototype.updateState = function(gameContext, tileX, tileY) {
     const onEntity = this.currentTarget !== EntityManager.ID.INVALID;
 
     if(onEntity) {
@@ -34,6 +35,19 @@ PlayerCursor.prototype.updateState = function() {
     if(onNode) {
         this.state = PlayerCursor.STATE.HOVER_ON_NODE;
         return;
+    }
+
+    const { world } = gameContext;
+    const { mapManager } = world;
+    const worldMap = mapManager.getActiveMap();
+
+    if(worldMap) {
+        const isDebris = worldMap.hasDebris(tileX, tileY);
+
+        if(isDebris) {
+            this.state = PlayerCursor.STATE.HOVER_ON_DEBRIS;
+            return;
+        }
     }
 
     this.state = PlayerCursor.STATE.NONE;
@@ -105,7 +119,7 @@ PlayerCursor.prototype.update = function(gameContext) {
         this.lastTarget = previous;
     }
 
-    this.updateState();
+    this.updateState(gameContext, x, y);
 }
 
 PlayerCursor.prototype.autoAlignSprite = function(gameContext, camera) {
