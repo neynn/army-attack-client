@@ -116,6 +116,19 @@ AnimationSystem.stopSelect = function(gameContext, entity) {
     }
 }
 
+AnimationSystem.playCleaning = function(gameContext, tileX, tileY) {
+    const { spriteManager, renderer, client } = gameContext;
+    const { soundPlayer } = client;
+    const delaySprite = spriteManager.createSprite(AnimationSystem.SPRITE_TYPE.DELAY, SpriteManager.LAYER.MIDDLE);
+    const camera = renderer.getContext(Player.CAMERA_ID).getCamera();
+    const { x, y } = camera.transformTileToPositionCenter(tileX, tileY);
+
+    delaySprite.expire();
+    delaySprite.setPosition(x, y);
+
+    soundPlayer.playSound("sound_button_press");
+}
+
 AnimationSystem.playConstruction = function(gameContext, entity) {
     const { spriteManager, renderer } = gameContext;
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);

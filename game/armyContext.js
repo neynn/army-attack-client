@@ -35,6 +35,7 @@ import { ArmyMap } from "./init/armyMap.js";
 import { FireMissionAction } from "./actions/fireMissionAction.js";
 import { ArmyCamera } from "./armyCamera.js";
 import { TownComponent } from "./components/town.js";
+import { ClearDebrisAction } from "./actions/clearDebrisAction.js";
 
 export const ArmyContext = function() {
     GameContext.call(this);
@@ -113,6 +114,7 @@ ArmyContext.prototype.init = function(resources) {
     this.world.actionQueue.registerAction(ACTION_TYPE.COUNTER_MOVE, new CounterMoveAction());
     this.world.actionQueue.registerAction(ACTION_TYPE.MOVE, new MoveAction());
     this.world.actionQueue.registerAction(ACTION_TYPE.FIRE_MISSION, new FireMissionAction());
+    this.world.actionQueue.registerAction(ACTION_TYPE.CLEAR_DEBRIS, new ClearDebrisAction());
 
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.ARMOR, ArmorComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.ATTACK, AttackComponent);
@@ -305,6 +307,10 @@ ArmyContext.prototype.onMapCreate = function(mapID, worldMap) {
     if(music && this.modeID !== ArmyContext.GAME_MODE.EDIT) {
         this.client.musicPlayer.playTrack(music);
     }
+
+    worldMap.addDebris(1, 2, 2);
+    worldMap.addDebris(1, 3, 2);
+    worldMap.addDebris(1, 4, 2);
 }   
 
 ArmyContext.prototype.getTeamID = function(teamName) {

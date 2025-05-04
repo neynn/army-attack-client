@@ -217,7 +217,7 @@ Player.prototype.onMakeChoice = function(gameContext) {
 }
 
 Player.prototype.onTurnStart = function(gameContext) {
-    this.states.setNextState(gameContext, Player.STATE.FIRE_MISSION, { "missionID": "Artillery" });
+    this.states.setNextState(gameContext, Player.STATE.IDLE, { "missionID": "Artillery" });
 }
 
 Player.prototype.onTurnEnd = function(gameContext) {

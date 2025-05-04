@@ -25,5 +25,6 @@ export const ACTION_TYPE = {
     COUNTER_ATTACK: "CounterAttack",
     COUNTER_MOVE: "CounterMove",
     DEATH: "Death",
-    FIRE_MISSION: "FireMission"
+    FIRE_MISSION: "FireMission",
+    CLEAR_DEBRIS: "ClearDebris"
 };

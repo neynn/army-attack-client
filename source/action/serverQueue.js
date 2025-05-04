@@ -2,7 +2,6 @@ const enableServerQueue = function(gameContext) {
     const { world } = gameContext;
     const { actionQueue } = world;
 
-    actionQueue.toDirect();
     actionQueue.toFlush();
 }
 
@@ -15,7 +14,7 @@ const processUserRequest = function(gameContext, request, messengerID) {
         return;
     }
 
-    actionQueue.enqueueExecutionItem(executionItem, request);
+    actionQueue.enqueue(executionItem);
 
     const processNext = () => {
         if(!actionQueue.isEmpty()) {

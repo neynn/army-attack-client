@@ -10,7 +10,6 @@ export const ActionQueue = function() {
     this.current = null;
     this.isSkipping = false;
     this.state = ActionQueue.STATE.ACTIVE;
-    this.mode = ActionQueue.MODE.DIRECT;
 
     this.events = new EventEmitter();
     this.events.listen(ActionQueue.EVENT.EXECUTION_DEFER);
@@ -24,12 +23,6 @@ ActionQueue.STATE = {
     ACTIVE: 1,
     PROCESSING: 2,
     FLUSH: 3
-};
-
-ActionQueue.MODE = {
-    DIRECT: 0,
-    DEFERRED: 1,
-    TELL: 2
 };
 
 ActionQueue.PRIORITY = {
@@ -51,6 +44,19 @@ ActionQueue.prototype.load = function(actionTypes) {
     }
 
     this.actionTypes = actionTypes;
+}
+
+ActionQueue.prototype.isSendable = function(typeID) {
+    const actionType = this.actionTypes[typeID];
+
+    if(!actionType) {
+        return false;
+    }
+
+    const { message } = actionType;
+    const { send } = message;
+
+    return send;
 }
 
 ActionQueue.prototype.updateInstant = function(gameContext) {
@@ -201,7 +207,7 @@ ActionQueue.prototype.updateImmediateQueue = function(gameContext) {
         const executionItem = this.getExecutionItem(gameContext, request, messengerID);
 
         if(executionItem) {
-            this.enqueueExecutionItem(executionItem, request);
+            this.enqueue(executionItem);
         }
 
         return executionItem !== null;
@@ -235,43 +241,6 @@ ActionQueue.prototype.getExecutionItem = function(gameContext, request, messenge
     return executionItem;
 }
 
-ActionQueue.prototype.enqueueExecutionItem = function(executionItem, request) {
-    switch(this.mode) {
-        case ActionQueue.MODE.DIRECT: {
-            this.enqueue(executionItem);
-            break;
-        }
-        case ActionQueue.MODE.DEFERRED: {
-            const { type } = request;
-            const actionType = this.actionTypes[type];
-            const { message } = actionType;
-
-            if(message.send) {
-                this.events.emit(ActionQueue.EVENT.EXECUTION_DEFER, executionItem, request);
-            }
-
-            break;
-        }
-        case ActionQueue.MODE.TELL: {
-            const { type } = request;
-            const actionType = this.actionTypes[type];
-            const { message } = actionType;
-
-            this.enqueue(executionItem);
-
-            if(message.send) {
-                this.events.emit(ActionQueue.EVENT.EXECUTION_DEFER, executionItem, request);
-            }
-
-            break;
-        }
-        default: {
-            console.warn(`Unknown mode! ${this.mode}`);
-            break;
-        }
-    }
-}
-
 ActionQueue.prototype.registerAction = function(typeID, handler) {
     if(this.actionHandlers.has(typeID)) {
         console.warn(`Action ${typeID} is already registered!`);
@@ -290,7 +259,6 @@ ActionQueue.prototype.exit = function() {
     this.events.muteAll();
     this.immediateQueue.clear();
     this.executionQueue.clear();
-    this.mode = ActionQueue.MODE.DIRECT;
     this.state = ActionQueue.STATE.ACTIVE;
     this.isSkipping = false;
     this.current = null;
@@ -339,14 +307,6 @@ ActionQueue.prototype.isRunning = function() {
 
 ActionQueue.prototype.toFlush = function() {
     this.state = ActionQueue.STATE.FLUSH;
-}
-
-ActionQueue.prototype.toDeferred = function() {
-    this.mode = ActionQueue.MODE.DEFERRED;
-}
-
-ActionQueue.prototype.toDirect = function() {
-    this.mode = ActionQueue.MODE.DIRECT;
 }
 
 ActionQueue.prototype.skip = function() {

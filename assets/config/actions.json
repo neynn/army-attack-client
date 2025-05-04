@@ -52,7 +52,17 @@
     "FireMission": {
         "name": "ACTION_NAME_FIRE_MISSION", 
         "desc": "ACTION_DESC_FIRE_MISSION",
-        "priority": "HIGH",
+        "priority": "LOW",
+        "isInstant": false,
+        "message": {
+            "send": true,
+            "receive": true
+        }
+    },
+    "ClearDebris": {
+        "name": "ACTION_NAME_CLEAR_DEBRIS", 
+        "desc": "ACTION_DESC_CLEAR_DEBRIS",
+        "priority": "LOW",
         "isInstant": false,
         "message": {
             "send": true,

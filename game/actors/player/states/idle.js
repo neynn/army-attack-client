@@ -5,6 +5,7 @@ import { MoveSystem } from "../../../systems/move.js";
 import { PathfinderSystem } from "../../../systems/pathfinder.js";
 import { PlayerCursor } from "../playerCursor.js";
 import { Player } from "../player.js";
+import { ACTION_TYPE } from "../../../enums.js";
 
 export const PlayerIdleState = function() {}
 
@@ -51,12 +52,22 @@ const selectEntity = function(gameContext, player, entity) {
     player.states.setNextState(gameContext, Player.STATE.SELECTED, { "entityID": entityID });
 }
 
+const queueClearDebris = function(gameContext, player, tileX, tileY) {
+    const { world } = gameContext;
+    const { actionQueue } = world;
+    const request = actionQueue.createRequest(ACTION_TYPE.CLEAR_DEBRIS, tileX, tileY);
+    
+    if(request) {
+        player.inputQueue.enqueueLast(request);
+    }
+}
+
 const onClick = function(gameContext, stateMachine) {
     const { world } = gameContext;
     const { actionQueue } = world;
     const player = stateMachine.getContext();
     const { hover } = player;
-    const { state, currentTarget } = hover;
+    const { state, currentTarget, tileX, tileY } = hover;
 
     switch(state) {
         case PlayerCursor.STATE.HOVER_ON_ENTITY: {
@@ -86,7 +97,7 @@ const onClick = function(gameContext, stateMachine) {
             break;
         }
         case PlayerCursor.STATE.HOVER_ON_DEBRIS: {
-            console.log("IMMA DEBRIS! YE!")
+            queueClearDebris(gameContext, player, tileX, tileY);
             break;
         }
     }

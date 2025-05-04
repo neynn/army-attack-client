@@ -26,6 +26,7 @@ GameEvent.TYPE = {
     ENTITY_KILL: 204,
 
     TILE_CAPTURED: 300,
+    DEBRIS_REMOVED: 301,
 
     DROP: 400,
     HIT_DROP: 401,
@@ -53,9 +54,14 @@ GameEvent.prototype.init = function(gameContext) {
     eventBus.on(GameEvent.TYPE.ENTITY_DOWN, (event) => this.onEntityDown(gameContext, event));
     eventBus.on(GameEvent.TYPE.ENTITY_KILL, (event) => this.onEntityKill(gameContext, event));
     eventBus.on(GameEvent.TYPE.TILE_CAPTURED, (event) => this.onTileCaptured(gameContext, event));
+    eventBus.on(GameEvent.TYPE.DEBRIS_REMOVED, (event) => this.onDebrisRemoved(gameContext, event));
     eventBus.on(GameEvent.TYPE.HIT_DROP, (event) => this.onHitDrop(gameContext, event));
     eventBus.on(GameEvent.TYPE.KILL_DROP, (event) => this.onKillDrop(gameContext, event));
     eventBus.on(GameEvent.TYPE.DROP, (event) => this.onDrop(gameContext, event));
+}
+
+GameEvent.prototype.onDebrisRemoved = function(gameContext, event) {
+    console.log("DEBRIS_REMOVE", event);
 }
 
 GameEvent.prototype.onAttackCounter = function(gameContext, event) {
@@ -214,7 +220,7 @@ GameEvent.prototype.onActionAuthorized = function(gameContext, event) {
 
 GameEvent.prototype.onActionRequested = function(gameContext, event) {
     const { client, world } = gameContext;
-    const { eventBus } = world;
+    const { eventBus, actionQueue } = world;
     const { socket } = client;
     const { request, choice } = event;
 
@@ -230,7 +236,12 @@ GameEvent.prototype.onActionRequested = function(gameContext, event) {
             break;
         }
         case GameEvent.MODE.VERSUS: {
-            socket.messageRoom(CLIENT_EVENT.EVENT, request);
+            const { type } = request;
+            const isSendable = actionQueue.isSendable(type);
+
+            if(isSendable) {
+                socket.messageRoom(CLIENT_EVENT.EVENT, request);
+            }
             break;
         }
     }
