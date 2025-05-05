@@ -192,5 +192,6 @@
     { "graphics": ["border", "47"] },
 
     { "graphics": ["debris", "Debris_01"] },
-    { "graphics": ["cursor", "Disabled"] }
+    { "graphics": ["cursor", "Disabled"] },
+    { "graphics": ["overlay", "grid_shadow_1x1"] }
 ]

@@ -1,5 +1,6 @@
 import { CLIENT_EVENT } from "./enums.js";
 import { AnimationSystem } from "./systems/animation.js";
+import { DebrisSystem } from "./systems/debris.js";
 import { DropSystem } from "./systems/drop.js";
 import { SpawnSystem } from "./systems/spawn.js";
 
@@ -27,11 +28,13 @@ GameEvent.TYPE = {
 
     TILE_CAPTURED: 300,
     DEBRIS_REMOVED: 301,
+    DEBRIS_SPAWN: 302,
 
     DROP: 400,
     HIT_DROP: 401,
     KILL_DROP: 402,
     DEBRIS_DROP: 403,
+
 
     VERSUS_REQUEST_SKIP_TURN: 1000,
     VERSUS_SKIP_TURN: 1001
@@ -82,22 +85,8 @@ GameEvent.prototype.init = function(gameContext) {
     eventBus.on(GameEvent.TYPE.HIT_DROP, (event) => this.onHitDrop(gameContext, event));
     eventBus.on(GameEvent.TYPE.KILL_DROP, (event) => this.onKillDrop(gameContext, event));
     eventBus.on(GameEvent.TYPE.DEBRIS_DROP, (event) => this.onDebrisDrop(gameContext, event));
+    eventBus.on(GameEvent.TYPE.DEBRIS_SPAWN, (event) => this.onDebrisSpawn(gameContext, event));
     eventBus.on(GameEvent.TYPE.DROP, (event) => this.onDrop(gameContext, event));
-}
-
-GameEvent.prototype.onDebrisRemoved = function(gameContext, event) {
-    const { world } = gameContext;
-    const { eventBus } = world;
-    const { cleanerID } = event;
-
-    console.log("DEBRIS_REMOVE", event);
-
-    switch(this.mode) {
-        case GameEvent.MODE.STORY: {
-            eventBus.emit(GameEvent.TYPE.DEBRIS_DROP, { "receiverID": cleanerID, "debrisID": "Debris" });
-            break;
-        }
-    }
 }
 
 GameEvent.prototype.onAttackCounter = function(gameContext, event) {
@@ -138,6 +127,32 @@ GameEvent.prototype.onDebrisDrop = function(gameContext, event) {
     switch(this.mode) {
         case GameEvent.MODE.STORY: {
             eventBus.emit(GameEvent.TYPE.DROP, { "drops": drops, "receiverID": receiverID });
+            break;
+        }
+    }
+}
+
+GameEvent.prototype.onDebrisRemoved = function(gameContext, event) {
+    const { world } = gameContext;
+    const { eventBus } = world;
+    const { cleanerID } = event;
+
+    console.log("DEBRIS_REMOVE", event);
+
+    switch(this.mode) {
+        case GameEvent.MODE.STORY: {
+            eventBus.emit(GameEvent.TYPE.DEBRIS_DROP, { "receiverID": cleanerID, "debrisID": "Debris" });
+            break;
+        }
+    }
+}
+
+GameEvent.prototype.onDebrisSpawn = function(gameContext, event) {
+    const { tiles } = event;
+
+    switch(this.mode) {
+        case GameEvent.MODE.STORY: {
+            DebrisSystem.spawnDebris(gameContext, tiles);
             break;
         }
     }

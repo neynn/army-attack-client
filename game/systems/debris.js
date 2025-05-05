@@ -10,3 +10,19 @@ DebrisSystem.endCleaning = function(gameContext, tileX, tileY, cleanerID) {
     worldMap.removeDebris(tileX, tileY);
     eventBus.emit(GameEvent.TYPE.DEBRIS_REMOVED, { tileX, tileY, cleanerID });
 }
+
+DebrisSystem.spawnDebris = function(gameContext, tiles) {
+    const { world } = gameContext;
+    const { mapManager } = world;
+    const worldMap = mapManager.getActiveMap();
+
+    if(!worldMap) {
+        return;
+    }
+
+    for(let i = 0; i < tiles.length; i++) {
+        const { x, y } = tiles[i];
+
+        worldMap.addDebris(1, x, y);
+    }
+}

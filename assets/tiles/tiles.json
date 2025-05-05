@@ -201,7 +201,8 @@
             "grid_enabled_2x2": {"x":96,"y":0,"w":192,"h":192},
             "grid_enabled_1x1": {"x":288,"y":0,"w":96,"h":96},
             "grid_enabled_4x4": {"x":0,"y":192,"w":384,"h":384},
-            "grid_enabled_3x3": {"x":0,"y":576,"w":288,"h":288}
+            "grid_enabled_3x3": {"x":0,"y":576,"w":288,"h":288},
+            "grid_shadow_1x1": {"x":0,"y":96,"w":96,"h":96}
         }
     },
     "range": {

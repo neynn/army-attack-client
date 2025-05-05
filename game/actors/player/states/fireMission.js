@@ -101,7 +101,7 @@ PlayerFireMissionState.prototype.showBlockedEntities = function(gameContext, pla
     const { world, tileManager } = gameContext;
     const { entityManager } = world;
     const { camera } = player;
-    const tileID = tileManager.getTileID("cursor", "Disabled");
+    const disabledID = tileManager.getTileID("cursor", "Disabled");
 
     camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.FIRE_MISSION);
 
@@ -116,7 +116,7 @@ PlayerFireMissionState.prototype.showBlockedEntities = function(gameContext, pla
 
             for(let i =  tileY; i < endY; i++) {
                 for(let j = tileX; j < endX; j++) {
-                    camera.pushOverlay(ArmyCamera.OVERLAY_TYPE.FIRE_MISSION, tileID, j, i);
+                    camera.pushOverlay(ArmyCamera.OVERLAY_TYPE.FIRE_MISSION, disabledID, j, i);
                 }
             }
         }
