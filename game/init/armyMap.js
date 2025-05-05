@@ -60,6 +60,31 @@ ArmyMap.CONVERTABLE_LAYERS = [
 ArmyMap.prototype = Object.create(WorldMap.prototype);
 ArmyMap.prototype.constructor = ArmyMap;
 
+ArmyMap.prototype.clearClouds = function(gameContext, tileX, tileY, width, height) {
+    const { tileManager } = gameContext;
+    const cloudAutotiler = tileManager.getAutotilerByID(ArmyMap.AUTOTILER.CLOUD);
+
+    this.updateRect(tileX, tileY, width - 1, height - 1, (index, x, y) => this.clearTile(ArmyMap.LAYER.CLOUD, x, y));
+    this.updateClouds(cloudAutotiler, tileX, tileY, width, height);
+}
+
+ArmyMap.prototype.updateClouds = function(autotiler, tileX, tileY, width, height) {
+    const startCornerX = tileX - 1;
+    const startCornerY = tileY - 1;
+    const endCornerX = tileX + width;
+    const endCornerY = tileY + height;
+
+    for(let i = startCornerY; i <= endCornerY; i++) {
+        this.autotile(autotiler, startCornerX, i, ArmyMap.LAYER.CLOUD);
+        this.autotile(autotiler, endCornerX, i, ArmyMap.LAYER.CLOUD);
+    }
+
+    for(let j = startCornerX; j <= endCornerX; j++) {
+        this.autotile(autotiler, j, startCornerY, ArmyMap.LAYER.CLOUD);
+        this.autotile(autotiler, j, endCornerY, ArmyMap.LAYER.CLOUD);
+    }
+}
+
 ArmyMap.prototype.hasDebris = function(tileX, tileY) {
     const index = this.getListID(tileX, tileY);
 

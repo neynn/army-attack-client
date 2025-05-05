@@ -308,6 +308,7 @@ ArmyContext.prototype.onMapCreate = function(mapID, worldMap) {
         this.client.musicPlayer.playTrack(music);
     }
 
+    worldMap.clearClouds(this, 2, 2, 10, 10);
     worldMap.addDebris(1, 2, 2);
     worldMap.addDebris(1, 3, 2);
     worldMap.addDebris(1, 4, 2);
