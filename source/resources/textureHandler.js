@@ -12,11 +12,6 @@ export const TextureHandler = function() {
     },  { permanent: true });
 }
 
-TextureHandler.BUFFER_THRESHOLD = {
-    BIT_8: 256,
-    BIT_16: 65536
-};
-
 TextureHandler.prototype.onTextureLoad = function(textureID, texture) {}
 
 TextureHandler.prototype.disableAutoRequest = function() {
@@ -55,14 +50,8 @@ TextureHandler.prototype.getContainer = function(index) {
     return this.containers[index];
 }
 
-TextureHandler.prototype.getBufferType = function() {
-    if(this.containers.length < TextureHandler.BUFFER_THRESHOLD.BIT_8) {
-        return Uint8Array;
-    } else if(this.containers.length < TextureHandler.BUFFER_THRESHOLD.BIT_16) {
-        return Uint16Array;
-    }
-
-    return Uint32Array;
+TextureHandler.prototype.getContainerCount = function() {
+    return this.containers.length;
 }
 
 TextureHandler.prototype.update = function(timestamp) {

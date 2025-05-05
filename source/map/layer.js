@@ -1,9 +1,69 @@
-export const Layer = function(buffer, width, height) {
-    this.buffer = buffer;
+export const Layer = function(width, height) {
+    this.buffer = [];
     this.opacity = 1;
     this.autoGenerate = false;
     this.width = width;
     this.height = height;
+    this.type = Layer.BUFFER_TYPE.BIT_0;
+}
+
+Layer.BUFFER_TYPE = {
+    BIT_0: 0,
+    BIT_8: 1,
+    BIT_16: 2,
+    BIT_32: 3
+};
+
+Layer.BUFFER_THRESHOLD = {
+    BIT_0: -1,
+    BIT_8: 255,
+    BIT_16: 65535,
+    BIT_32: 4294967295
+};
+
+Layer.prototype.getBufferType = function(count) {
+    if(count <= Layer.BUFFER_THRESHOLD.BIT_8) {
+        return Layer.BUFFER_TYPE.BIT_8;
+    } else if(count <= Layer.BUFFER_THRESHOLD.BIT_16) {
+        return Layer.BUFFER_TYPE.BIT_16;
+    }
+
+    return Layer.BUFFER_TYPE.BIT_32;
+}
+
+Layer.prototype.fill = function(id) {
+    if(!id) {
+        return;
+    }
+
+    const length = this.buffer.length;
+    
+    for(let i = 0; i < length; ++i) {
+        this.buffer[i] = id;
+    }
+}
+
+Layer.prototype.initBuffer = function(count) {
+    const bufferType = this.getBufferType(count);
+    const bufferSize = this.width * this.height;
+
+    switch(bufferType) {
+        case Layer.BUFFER_TYPE.BIT_8: {
+            this.type = Layer.BUFFER_TYPE.BIT_8;
+            this.buffer = new Uint8Array(bufferSize);
+            break;
+        }
+        case Layer.BUFFER_TYPE.BIT_16: {
+            this.type = Layer.BUFFER_TYPE.BIT_16;
+            this.buffer = new Uint16Array(bufferSize);
+            break;
+        }
+        case Layer.BUFFER_TYPE.BIT_32: {
+            this.type = Layer.BUFFER_TYPE.BIT_32;
+            this.buffer = new Uint32Array(bufferSize);
+            break;
+        }
+    }
 }
 
 Layer.prototype.getBuffer = function() {
@@ -14,7 +74,7 @@ Layer.prototype.getOpacity = function() {
     return this.opacity;
 }
 
-Layer.prototype.setOpacity = function(opacity) {
+Layer.prototype.setOpacity = function(opacity = 0) {
     if(opacity < 0) {
         this.opacity = 0;
     } else if(opacity > 1) {
@@ -24,14 +84,7 @@ Layer.prototype.setOpacity = function(opacity) {
     }
 }
 
-Layer.prototype.init = function(config) {
-    if(!config) {
-        return;
-    }
-
-    const { opacity, autoGenerate } = config;
-
-    this.setOpacity(opacity);
+Layer.prototype.setAutoGenerate = function(autoGenerate) {
     this.autoGenerate = autoGenerate ?? this.autoGenerate;
 }
 

@@ -15,17 +15,10 @@ const MAP_TYPE = {
 ArmyMapFactory.prototype = Object.create(Factory.prototype);
 ArmyMapFactory.prototype.constructor = Factory;
 
-const createBuffer = function(gameContext, width, height) {
-    const { tileManager } = gameContext;
-    const { graphics } = tileManager;
-    const bufferSize = width * height;
-    const BufferType = graphics.getBufferType(bufferSize);
-    const buffer = new BufferType(bufferSize);
-
-    return buffer;
-}
-
 const parseMap2D = function(gameContext, map2D, config) {
+    const { tileManager } = gameContext;
+    const containerCount = tileManager.graphics.getContainerCount();
+
     const { 
         width = 0,
         height = 0,
@@ -43,15 +36,20 @@ const parseMap2D = function(gameContext, map2D, config) {
 
     for(const layerID in layers) {
         const config = layers[layerID];
-        const buffer = createBuffer(gameContext, width, height);
-        const layer = map2D.createLayer(layerID, buffer);
+        const { opacity, autoGenerate } = config;
+        const layer = map2D.createLayer(layerID);
 
+        layer.initBuffer(containerCount);
         layer.decode(data[layerID]);
-        layer.init(config);
+        layer.setOpacity(opacity);
+        layer.setAutoGenerate(autoGenerate);
     }
 }
 
 const parseMap2DEmpty = function(gameContext, map2D, config) {
+    const { tileManager } = gameContext;
+    const containerCount = tileManager.graphics.getContainerCount();
+
     const { 
         width = 0,
         height = 0,
@@ -68,18 +66,13 @@ const parseMap2DEmpty = function(gameContext, map2D, config) {
 
     for(const layerID in layers) {
         const config = layers[layerID];
-        const { fill } = config;
-        const buffer = createBuffer(gameContext, width, height);
+        const { fill, opacity, autoGenerate } = config;
+        const layer = map2D.createLayer(layerID);
 
-        if(fill) {
-            for(let i = 0; i < buffer.length; i++) {
-                buffer[i] = fill;
-            }
-        }
-
-        const layer = map2D.createLayer(layerID, buffer);
-
-        layer.init(config);
+        layer.initBuffer(containerCount);
+        layer.fill(fill);
+        layer.setOpacity(opacity);
+        layer.setAutoGenerate(autoGenerate);
     }
 }
 

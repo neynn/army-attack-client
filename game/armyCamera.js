@@ -12,7 +12,7 @@ export const ArmyCamera = function() {
     this.createOverlay(ArmyCamera.OVERLAY_TYPE.MOVE);
     this.createOverlay(ArmyCamera.OVERLAY_TYPE.RANGE);
     this.postDraw = [];
-    this.border = null;
+    this.border = new Layer(0, 0);
 }
 
 ArmyCamera.OVERLAY_TYPE = {
@@ -33,9 +33,7 @@ ArmyCamera.prototype.addPostDraw = function(onDraw) {
 }
 
 ArmyCamera.prototype.resizeBorder = function(newWidth, newHeight) {
-    if(this.border) {
-        this.border.resize(newWidth, newHeight, 0);
-    }
+    this.border.resize(newWidth, newHeight, 0);
 }
 
 ArmyCamera.prototype.drawDebris = function(tileManager, context, worldMap) {
@@ -44,7 +42,7 @@ ArmyCamera.prototype.drawDebris = function(tileManager, context, worldMap) {
     const debrisID = tileManager.getTileID("debris", "Debris_01");
 
     context.globalAlpha = 1;
-    
+
     debris.forEach((item) => {
         const { type, x, y } = item;
 
@@ -148,12 +146,10 @@ ArmyCamera.prototype.updateMoveOverlay = function(gameContext, nodeList, enableT
 ArmyCamera.prototype.initBorder = function(gameContext) {
     const { tileManager } = gameContext;
     const { graphics } = tileManager;
-    const bufferSize = this.mapWidth * this.mapHeight;
-    const BufferType = graphics.getBufferType(bufferSize);
-    const buffer = new BufferType(bufferSize);
-    const layer = new Layer(buffer, this.mapWidth, this.mapHeight);
+    const containerCount = graphics.getContainerCount();
 
-    this.border = layer;
+    this.border.resize(this.mapWidth, this.mapHeight, 0);
+    this.border.initBuffer(containerCount);
 }
 
 ArmyCamera.prototype.updateBorder = function(borderID, tileX, tileY) {
