@@ -32,7 +32,32 @@ const isTilePassable = function(worldMap, tileTypes, entity, tileX, tileY) {
     const { passability } = tileType;
     const isTilePassable = moveComponent.hasPassability(passability);
 
-    return isTilePassable;
+    if(!isTilePassable) {
+        return false;
+    }
+
+    const cloudTileID = worldMap.getTile(ArmyMap.LAYER.CLOUD, tileX, tileY);
+
+    if(cloudTileID === 0) {
+        return true;
+    }
+
+    const startX = tileX - 1;
+    const startY = tileY - 1;
+    const endX = tileX + 1;
+    const endY = tileY + 1;
+
+    for(let i = startY; i <= endY; i++) {
+        for(let j = startX; j <= endX; j++) {
+            const neighborCloudID = worldMap.getTile(ArmyMap.LAYER.CLOUD, j, i);
+
+            if(neighborCloudID === 0) {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 const isTileWalkable = function(gameContext, worldMap, entity, tileX, tileY) {

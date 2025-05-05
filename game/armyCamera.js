@@ -42,6 +42,8 @@ ArmyCamera.prototype.drawDebris = function(tileManager, context, worldMap) {
     const { graphics } = tileManager;
     const { debris } = worldMap;
     const debrisID = tileManager.getTileID("debris", "Debris_01");
+
+    context.globalAlpha = 1;
     
     debris.forEach((item) => {
         const { type, x, y } = item;
