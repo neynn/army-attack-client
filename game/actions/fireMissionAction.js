@@ -28,6 +28,8 @@ FireMissionAction.prototype.onUpdate = function(gameContext, request) {
 FireMissionAction.prototype.isFinished = function(gameContext, request) {
     const timeRequired = gameContext.settings.hitDuration;
 
+    return true;
+    
     return request.timePassed >= timeRequired;
 }
 

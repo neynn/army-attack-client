@@ -149,11 +149,13 @@ GameEvent.prototype.onDebrisRemoved = function(gameContext, event) {
 }
 
 GameEvent.prototype.onDebrisSpawn = function(gameContext, event) {
-    const { tiles } = event;
+    const { debris } = event;
+
+    console.log("DEBRIS_SPAWN", event);
 
     switch(this.mode) {
         case GameEvent.MODE.STORY: {
-            DebrisSystem.spawnDebris(gameContext, tiles);
+            DebrisSystem.spawnDebris(gameContext, debris);
             break;
         }
     }

@@ -4,15 +4,6 @@ import { AttackSystem } from "./attack.js";
 
 export const FireMissionSystem = function() {}
 
-const getEntitiesInArea = function(gameContext, tileX, tileY, dimX, dimY) {
-    const { world } = gameContext;
-    const endX = tileX + dimX;
-    const endY = tileY + dimY;
-    const entities = world.getEntitiesInArea(tileX, tileY, endX, endY);
-
-    return entities;
-}
-
 FireMissionSystem.getType = function(gameContext, fireMissionID) {
     const fireMission = gameContext.fireCallTypes[fireMissionID];
 
@@ -32,28 +23,51 @@ FireMissionSystem.isTargetable = function(entity) {
 }
 
 FireMissionSystem.getTargets = function(gameContext, fireMission, tileX, tileY) {
+    const { world } = gameContext;
+    const { mapManager, entityManager } = world;
+    const worldMap = mapManager.getActiveMap();
+
+    if(!worldMap) {
+        return [];
+    }
+
     const { damage = 0, dimX = 0, dimY = 0 } = fireMission;
-    const entities = getEntitiesInArea(gameContext, tileX, tileY, dimX, dimY);
+    const endX = tileX + dimX;
+    const endY = tileY + dimY;
+
     const entityList = new Map();
 
-    for(let i = 0; i < entities.length; i++) {
-        const entity = entities[i];
-        const isTargetable = this.isTargetable(entity);
-        const healthComponent = entity.getComponent(ArmyEntity.COMPONENT.HEALTH);
-        const isAlive = healthComponent.isAlive();
+    for(let i = tileY; i < endY; i++) {
+        for(let j = tileX; j < endX; j++) {
+            const isFullyClouded = worldMap.isFullyClouded(j, i);
 
-        if(isTargetable && isAlive) {
-            const entityID = entity.getID();
-            const currentDamage = damage; //TODO Calculate the damage.
-            const entry = entityList.get(entityID);
+            if(isFullyClouded) {
+                continue;
+            }
 
-            if(!entry) {
-                entityList.set(entityID, {
-                    "entity": entity,
-                    "damage": currentDamage
-                });
-            } else {
-                entry.damage += currentDamage;
+            const entityID = worldMap.getTopEntity(j, i);
+            const entity = entityManager.getEntity(entityID);
+
+            if(!entity) {
+                continue;
+            }
+
+            const isTargetable = this.isTargetable(entity);
+            const healthComponent = entity.getComponent(ArmyEntity.COMPONENT.HEALTH);
+            const isAlive = healthComponent.isAlive();
+
+            if(isTargetable && isAlive) {
+                const currentDamage = damage; //TODO Calculate the damage.
+                const entry = entityList.get(entityID);
+    
+                if(!entry) {
+                    entityList.set(entityID, {
+                        "entity": entity,
+                        "damage": currentDamage
+                    });
+                } else {
+                    entry.damage += currentDamage;
+                }
             }
         }
     }
@@ -74,7 +88,8 @@ FireMissionSystem.getTargets = function(gameContext, fireMission, tileX, tileY) 
     return targetObjects;
 }
 
-FireMissionSystem.isBlocked = function(gameContext, fireMission, tileX, tileY) {
+
+FireMissionSystem.isFullyClouded = function(gameContext, fireMission, tileX, tileY) {
     const { world } = gameContext;
     const { mapManager } = world;
     const worldMap = mapManager.getActiveMap();
@@ -89,12 +104,6 @@ FireMissionSystem.isBlocked = function(gameContext, fireMission, tileX, tileY) {
 
     for(let i = tileY; i < endY; i++) {
         for(let j = tileX; j < endX; j++) {
-            const isFullyClouded = worldMap.isFullyClouded(j, i);
-
-            if(isFullyClouded) {
-                return true;
-            }
-
             const tileEntity = world.getTileEntity(j, i);
 
             if(tileEntity && !this.isTargetable(tileEntity)) {
@@ -106,16 +115,37 @@ FireMissionSystem.isBlocked = function(gameContext, fireMission, tileX, tileY) {
     return false;
 }
 
-FireMissionSystem.isValid = function(gameContext, fireMissionID, tileX, tileY) {
-    const fireMission = FireMissionSystem.getType(gameContext, fireMissionID);
+FireMissionSystem.isBlocked = function(gameContext, fireMission, tileX, tileY) {
+    const { world } = gameContext;
+    const { mapManager } = world;
+    const worldMap = mapManager.getActiveMap();
 
-    if(!fireMission) {
-        return false;
+    if(!worldMap) {
+        return true;
     }
 
-    const isBlocked = FireMissionSystem.isBlocked(gameContext, fireMission, tileX, tileY);
+    let fullyClouded = true;
+    const { dimX = 0, dimY = 0 } = fireMission;
+    const endX = tileX + dimX;
+    const endY = tileY + dimY;
 
-    return !isBlocked;
+    for(let i = tileY; i < endY; i++) {
+        for(let j = tileX; j < endX; j++) {
+            const tileEntity = world.getTileEntity(j, i);
+
+            if(tileEntity && !this.isTargetable(tileEntity)) {
+                return true;
+            }
+
+            const isFullyClouded = worldMap.isFullyClouded(j, i);
+
+            if(!isFullyClouded) {
+                fullyClouded = false;
+            }
+        }
+    }
+
+    return fullyClouded;
 }
 
 FireMissionSystem.startFireMission = function(gameContext, missionID, tileX, tileY, targetObjects) {
@@ -132,8 +162,10 @@ FireMissionSystem.startFireMission = function(gameContext, missionID, tileX, til
 
 FireMissionSystem.endFireMission = function(gameContext, missionID, tileX, tileY, targetObjects) {
     const { world } = gameContext;
-    const { entityManager, eventBus } = world;
+    const { entityManager, eventBus, mapManager } = world;
+    const worldMap = mapManager.getActiveMap();
     const fireMission = FireMissionSystem.getType(gameContext, missionID);
+    const { dimX, dimY } = fireMission;
 
     for(let i = 0; i < targetObjects.length; i++) {
         const { id, state, damage } = targetObjects[i];
@@ -175,5 +207,30 @@ FireMissionSystem.endFireMission = function(gameContext, missionID, tileX, tileY
                 break;
             }
         }
+    }
+
+    const debris = [];
+    const endX = tileX + dimX;
+    const endY = tileY + dimY;
+
+    for(let i = tileY; i < endY; i++) {
+        for(let j = tileX; j < endX; j++) {
+            const tileEntity = world.getTileEntity(j, i);
+            const hasDebris = worldMap.hasDebris(j, i);
+            const isClouded = worldMap.isFullyClouded(j, i);
+
+            if(!tileEntity && !hasDebris && !isClouded) {
+                debris.push({
+                    "x": j,
+                    "y": i
+                });
+            }
+        }
+    }
+
+    if(debris.length !== 0) {
+        eventBus.emit(GameEvent.TYPE.DEBRIS_SPAWN, {
+            "debris": debris
+        });
     }
 }

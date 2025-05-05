@@ -49,7 +49,7 @@ StoryModePlayState.prototype.onEnter = async function(gameContext, stateMachine)
 
     console.time();
     
-    uiManager.parseUI("STORY_MODE", gameContext);
+    //uiManager.parseUI("STORY_MODE", gameContext);
 
     const isReady = await initStoryMode(gameContext);
 

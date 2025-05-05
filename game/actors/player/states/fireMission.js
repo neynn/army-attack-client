@@ -80,11 +80,23 @@ PlayerFireMissionState.prototype.queueFireMission = function(gameContext, player
     }
 }
 
+PlayerFireMissionState.prototype.isValid = function(gameContext, fireMissionID, tileX, tileY) {
+    const fireMission = FireMissionSystem.getType(gameContext, fireMissionID);
+
+    if(!fireMission) {
+        return false;
+    }
+
+    const isBlocked = FireMissionSystem.isBlocked(gameContext, fireMission, tileX, tileY);
+
+    return !isBlocked;
+}
+
 PlayerFireMissionState.prototype.onClick = function(gameContext, stateMachine) {
     const player = stateMachine.getContext();
     const { hover } = player;
     const { tileX, tileY } = hover;
-    const isValid = FireMissionSystem.isValid(gameContext, this.missionID, tileX, tileY);
+    const isValid = this.isValid(gameContext, this.missionID, tileX, tileY);
 
     if(isValid) {
         this.queueFireMission(gameContext, player, tileX, tileY);
