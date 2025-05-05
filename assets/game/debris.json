@@ -1,0 +1,10 @@
+{
+    "Debris": {
+        "killRewards": [
+            { "type": "Resource", "id": "Gold", "value": 1, "chance": 1},
+            { "type": "Resource", "id": "XP", "value": 2 },
+            { "type": "Resource", "id": "Money", "value": 10 },
+            { "type": "Resource", "id": "EnergyCounter", "value": 10 }
+        ]
+    }
+}

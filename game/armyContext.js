@@ -50,6 +50,7 @@ export const ArmyContext = function() {
     this.tileFormConditions = {};
     this.fireCallTypes = {};
     this.keybinds = {};
+    this.debrisTypes = {};
 
     this.eventHandler = new GameEvent();
     this.modeID = ArmyContext.GAME_MODE.NONE;
@@ -105,6 +106,7 @@ ArmyContext.prototype.init = function(resources) {
     this.resourceTypes = resources.resources;
     this.tileTypes = resources.tileTypes;
     this.allianceTypes = resources.alliances;
+    this.debrisTypes = resources.debris;
     this.fireCallTypes = resources.fireCalls;
     this.tileFormConditions = resources.tileFormConditions;
     this.settings = resources.settings;

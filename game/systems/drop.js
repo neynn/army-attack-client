@@ -29,6 +29,30 @@ const getMaxDrop = function(gameContext, type, id) {
     }
 }
 
+const getDrop = function(reward) {
+    const { type, id, value, chance } = reward;
+
+    if(chance === undefined) {
+        return {
+            "type": type,
+            "id": id,
+            "value": value
+        }
+    }
+
+    const roll = getRandomChance();
+
+    if(chance < roll) {
+        return null;
+    }
+
+    return {
+        "type": type,
+        "id": id,
+        "value": value
+    }
+}
+
 DropSystem.dropItems = function(gameContext, drops, inventory) {
     for(let i = 0; i < drops.length; i++) {
         const item = drops[i];
@@ -78,13 +102,11 @@ DropSystem.getHitReward = function(entity) {
     
     for(let i = 0; i < hitRewards.length; i++) {
         const reward = hitRewards[i];
-        const { type, id, value } = reward;
+        const drop = getDrop(reward);
 
-        drops.push({
-            "type": type,
-            "id": id,
-            "value": value
-        });
+        if(drop) {
+            drops.push(drop);
+        }
     }
 
     if(drops.length === 0) {
@@ -105,29 +127,42 @@ DropSystem.getKillReward = function(entity) {
 
     for(let i = 0; i < killRewards.length; i++) {
         const reward = killRewards[i];
-        const { type, id, value, chance } = reward;
+        const drop = getDrop(reward);
 
-        if(chance === undefined) {
-            drops.push({
-                "type": type,
-                "id": id,
-                "value": value
-            });
-            
-            continue;
+        if(drop) {
+            drops.push(drop);
         }
+    }
 
-        const roll = getRandomChance();
+    if(drops.length === 0) {
+        return null;
+    }
 
-        if(chance < roll) {
-            continue;
+    return drops;
+}
+
+DropSystem.getDebrisReward = function(gameContext, debrisID) {
+    const debrisType = gameContext.debrisTypes[debrisID];
+
+    if(!debrisType) {
+        return null;
+    }
+
+    const { killRewards } = debrisType;
+
+    if(!killRewards) {
+        return null;
+    }
+
+    const drops = [];
+
+    for(let i = 0; i < killRewards.length; i++) {
+        const reward = killRewards[i];
+        const drop = getDrop(reward);
+
+        if(drop) {
+            drops.push(drop);
         }
-
-        drops.push({
-            "type": type,
-            "id": id,
-            "value": value
-        });
     }
 
     if(drops.length === 0) {

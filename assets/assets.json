@@ -20,6 +20,7 @@
 
     "alliances": { "directory": ["assets", "game"], "source": "alliances.json" },
     "collections": { "directory": ["assets", "game"], "source": "collections.json" },
+    "debris": { "directory": ["assets", "game"], "source": "debris.json" },
     "editor": { "directory": ["assets", "game"], "source": "editor.json" },
     "fireCalls": { "directory": ["assets", "game"], "source": "fireCalls.json" },
     "items": { "directory": ["assets", "game"], "source": "items.json" },

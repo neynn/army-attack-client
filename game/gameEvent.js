@@ -81,11 +81,18 @@ GameEvent.prototype.init = function(gameContext) {
     eventBus.on(GameEvent.TYPE.DEBRIS_REMOVED, (event) => this.onDebrisRemoved(gameContext, event));
     eventBus.on(GameEvent.TYPE.HIT_DROP, (event) => this.onHitDrop(gameContext, event));
     eventBus.on(GameEvent.TYPE.KILL_DROP, (event) => this.onKillDrop(gameContext, event));
+    eventBus.on(GameEvent.TYPE.DEBRIS_DROP, (event) => this.onDebrisDrop(gameContext, event));
     eventBus.on(GameEvent.TYPE.DROP, (event) => this.onDrop(gameContext, event));
 }
 
 GameEvent.prototype.onDebrisRemoved = function(gameContext, event) {
+    const { world } = gameContext;
+    const { eventBus } = world;
+    const { cleanerID } = event;
+
     console.log("DEBRIS_REMOVE", event);
+
+    eventBus.emit(GameEvent.TYPE.DEBRIS_DROP, { "receiverID": cleanerID, "debrisID": "Debris" });
 }
 
 GameEvent.prototype.onAttackCounter = function(gameContext, event) {
@@ -109,6 +116,26 @@ GameEvent.prototype.onDrop = function(gameContext, event) {
     console.log("DROP", event);
 
     DropSystem.dropItems(gameContext, drops, receiver.inventory);
+}
+
+GameEvent.prototype.onDebrisDrop = function(gameContext, event) {
+    const { world } = gameContext;
+    const { eventBus } = world;
+    const { debrisID, receiverID } = event;
+    const drops = DropSystem.getDebrisReward(gameContext, debrisID);
+
+    console.log("DEBRIS_DROP", event);
+
+    if(!drops) {
+        return;
+    }
+
+    switch(this.mode) {
+        case GameEvent.MODE.STORY: {
+            eventBus.emit(GameEvent.TYPE.DROP, { "drops": drops, "receiverID": receiverID });
+            break;
+        }
+    }
 }
 
 GameEvent.prototype.onKillDrop = function(gameContext, event) {
