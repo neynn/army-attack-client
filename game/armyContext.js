@@ -17,7 +17,6 @@ import { VersusModeState } from "./states/context/versusMode.js";
 import { AvianComponent } from "./components/avian.js";
 import { ConstructionAction } from "./actions/constructionAction.js";
 import { ReviveableComponent } from "./components/reviveable.js";
-import { SpawnSystem } from "./systems/spawn.js";
 import { CounterAttackAction } from "./actions/counterAttackAction.js";
 import { CounterMoveAction } from "./actions/counterMoveAction.js";
 import { ArmyEntityFactory } from "./init/armyEntityFactory.js";
@@ -58,6 +57,10 @@ export const ArmyContext = function() {
 
 ArmyContext.prototype = Object.create(GameContext.prototype);
 ArmyContext.prototype.constructor = ArmyContext;
+
+ArmyContext.EVENT = {
+    STORY_SAVE: 0
+};
 
 ArmyContext.FACTORY = {
     MAP: "MAP",
@@ -208,58 +211,6 @@ ArmyContext.prototype.initConversions = function(teamConversions) {
     }
 
     return updatedConversions;
-}
-
-ArmyContext.prototype.saveSnapshot = function() {
-    const { turnManager, entityManager } = this.world;
-    const entities = [];
-    const actors = [];
-
-    turnManager.forAllActors((actorID, actor) => {
-        const saveData = actor.save();
-
-        actors.push({
-            "id": actorID,
-            "data": saveData
-        });
-    });
-
-    entityManager.forAllEntities((entityID, entity) => {
-        const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
-        const teamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
-        const savedComponents = entity.save();
-        const owners = turnManager.getOwnersOf(entityID);
-        
-        entities.push({
-            "type": entity.config.id,
-            "tileX": positionComponent.tileX,
-            "tileY": positionComponent.tileY,
-            "team": teamComponent.teamID,
-            "owners": owners,
-            "components": savedComponents
-        });
-    });
-    
-    return {
-        "time": Date.now(),
-        "actors": actors,
-        "entities": entities
-    }
-}
-
-ArmyContext.prototype.loadSnapshot = function(snapshot) {
-    const { time, entities, actors } = snapshot;
-    const { turnManager } = this.world;
-
-    for(let i = 0; i < actors.length; i++) {
-        const actor = actors[i];
-
-        turnManager.createActor(this, actor, "ID");
-    }
-
-    for(const entity of entities) {
-        SpawnSystem.createEntity(this, entity);
-    }
 }
 
 ArmyContext.prototype.addDebug = function() {

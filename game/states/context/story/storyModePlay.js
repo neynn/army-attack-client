@@ -1,5 +1,5 @@
-import { saveTemplateAsFile } from "../../../../helpers.js";
 import { State } from "../../../../source/state/state.js";
+import { ArmyContext } from "../../../armyContext.js";
 import { SpawnSystem } from "../../../systems/spawn.js";
 
 export const StoryModePlayState = function() {}
@@ -147,8 +147,7 @@ StoryModePlayState.prototype.onEnter = async function(gameContext, stateMachine)
 
     console.timeEnd();
 
-    const s = gameContext.saveSnapshot();
-    console.log(s);
+    gameContext.states.eventEnter(gameContext, ArmyContext.EVENT.STORY_SAVE, null);
 }
 
 StoryModePlayState.prototype.onExit = function(gameContext, stateMachine) {

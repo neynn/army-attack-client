@@ -9860,7 +9860,7 @@
     "red_stormtrooper_aim": {
         "directory": ["assets","sprites","units","red_stormtrooper"],
         "source": "red_stormtrooper_aim.png",
-        "bounds": {"x":-27,"y":-55,"w":61,"h":72},
+        "bounds": {"x":-27,"y":-54,"w":61,"h":72},
         "frameTime": 0.03,
         "frames": {
             "0": {"x":0,"y":0,"w":61,"h":72},
