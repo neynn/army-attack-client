@@ -22,9 +22,9 @@ Layer.BUFFER_THRESHOLD = {
 };
 
 Layer.prototype.getBufferType = function(count) {
-    if(count <= Layer.BUFFER_THRESHOLD.BIT_8) {
+    if(count < Layer.BUFFER_THRESHOLD.BIT_8) {
         return Layer.BUFFER_TYPE.BIT_8;
-    } else if(count <= Layer.BUFFER_THRESHOLD.BIT_16) {
+    } else if(count < Layer.BUFFER_THRESHOLD.BIT_16) {
         return Layer.BUFFER_TYPE.BIT_16;
     }
 
