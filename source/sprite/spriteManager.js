@@ -187,7 +187,7 @@ SpriteManager.prototype.updateSprite = function(spriteIndex, atlasID, animationI
     const atlas = this.graphics.getAtlas(atlasID);
 
     if(!atlas) {
-        Logger.log(Logger.CODE.ENGINE_WARN, "Atlast does not exist!", "SpriteManager.prototype.updateSprite", { "spriteID": spriteIndex });
+        Logger.log(Logger.CODE.ENGINE_WARN, "Atlas does not exist!", "SpriteManager.prototype.updateSprite", { "atlasID": atlasID, "spriteID": spriteIndex });
         return;
     }
 

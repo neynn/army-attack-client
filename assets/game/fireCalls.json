@@ -9,7 +9,7 @@
         "icon": "icon_mortar",
         "sprites": {
             "fire": "effect_death_explosion",
-            "cursor": "cursor_powerup"
+            "cursor": "cursor_powerup_1x1"
         },
         "sounds": {
             "fire": "sound_firemission_friendlyattack"
@@ -73,7 +73,7 @@
         "icon": "icon_beam",
         "sprites": {
             "fire": "effect_death_explosion",
-            "cursor": "cursor_powerup"
+            "cursor": "cursor_powerup_1x1"
         },
         "sounds": {
             "fire": "sound_firemission_doomsday"

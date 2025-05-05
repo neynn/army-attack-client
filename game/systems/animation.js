@@ -58,9 +58,11 @@ AnimationSystem.playDeath = function(gameContext, entity) {
     entity.playSound(gameContext, ArmyEntity.SOUND_TYPE.DEATH);
 }
 
-AnimationSystem.playFire = function(gameContext, target, attackers) {
+AnimationSystem.playFire = function(gameContext, targetObject, attackers) {
     const { world, spriteManager, renderer } = gameContext;
     const { entityManager } = world;
+    const { id } = targetObject;
+    const target = entityManager.getEntity(id);
     const spriteComponent = target.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const entitySprite = spriteComponent.getSprite(gameContext);
     const camera = renderer.getContext(Player.CAMERA_ID).getCamera();

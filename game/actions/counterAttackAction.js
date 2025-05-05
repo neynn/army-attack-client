@@ -1,5 +1,6 @@
 import { Action } from "../../source/action/action.js";
 import { ArmyEntity } from "../init/armyEntity.js";
+import { AnimationSystem } from "../systems/animation.js";
 import { AttackSystem } from "../systems/attack.js";
 
 export const CounterAttackAction = function() {}
@@ -8,11 +9,17 @@ CounterAttackAction.prototype = Object.create(Action.prototype);
 CounterAttackAction.prototype.constructor = CounterAttackAction;
 
 CounterAttackAction.prototype.onStart = function(gameContext, request) {
-    AttackSystem.beginAttack(gameContext, request);
+    const { attackers, target } = request;
+
+    AttackSystem.updateTarget(gameContext, target);
+    AnimationSystem.playFire(gameContext, target, attackers);
 }
 
 CounterAttackAction.prototype.onEnd = function(gameContext, request) {
-    AttackSystem.endAttack(gameContext, request);
+    const { attackers, target } = request;
+
+    AttackSystem.endAttack(gameContext, target, attackers);
+    AnimationSystem.revertToIdle(gameContext, attackers);
 }
 
 CounterAttackAction.prototype.onUpdate = function(gameContext, request) {
@@ -52,14 +59,13 @@ CounterAttackAction.prototype.getValidated = function(gameContext, template, mes
 
     //TODO: Pick a target based on ai -> damage dealt, or guarantee kill.
     const pickedTarget = AttackSystem.pickAttackCounterTarget(entity, potentialTargets);
-    const outcome = AttackSystem.getOutcome(pickedTarget, [entity]);
-
+    const attackerIDs = [entity].map(entity => entity.getID());
+    const targetObject = AttackSystem.getAttackTarget(pickedTarget, [entity]);
+    
     return {
         "timePassed": 0,
-        "state": outcome.state,
-        "damage": outcome.damage,
-        "attackers": outcome.attackers,
-        "targetID": outcome.targetID
+        "attackers": attackerIDs,
+        "target": targetObject
     }
 }
 

@@ -65,7 +65,8 @@ GameEvent.NAME = {
 
 GameEvent.KILL_REASON = {
     DECAY: "DECAY",
-    ATTACK: "ATTACK"
+    ATTACK: "ATTACK",
+    FIRE_MISSION: "FIRE_MISSION"
 };
 
 GameEvent.prototype.init = function(gameContext) {
@@ -240,14 +241,14 @@ GameEvent.prototype.onEntityHit = function(gameContext, event) {
 GameEvent.prototype.onEntityKill = function(gameContext, event) {
     const { world } = gameContext;
     const { eventBus } = world;
-    const { target } = event;
+    const { target, reason } = event;
 
     console.log("ENTITY_KILL", event);
 
     switch(this.mode) {
         case GameEvent.MODE.STORY: {
             eventBus.emit(GameEvent.TYPE.KILL_DROP, { "entity": target, "receiverID": "Player"});
-            eventBus.emit(GameEvent.TYPE.ENTITY_DEATH, { "entity": target, "reason": GameEvent.KILL_REASON.ATTACK });
+            eventBus.emit(GameEvent.TYPE.ENTITY_DEATH, { "entity": target, "reason": reason });
             break;
         }
     }

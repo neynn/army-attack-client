@@ -1,4 +1,5 @@
 import { Action } from "../../source/action/action.js";
+import { AnimationSystem } from "../systems/animation.js";
 import { AttackSystem } from "../systems/attack.js";
 
 export const CounterMoveAction = function() {}
@@ -7,11 +8,17 @@ CounterMoveAction.prototype = Object.create(Action.prototype);
 CounterMoveAction.prototype.constructor = CounterMoveAction;
 
 CounterMoveAction.prototype.onStart = function(gameContext, request) {
-    AttackSystem.beginAttack(gameContext, request);
+    const { attackers, target } = request;
+
+    AttackSystem.updateTarget(gameContext, target);
+    AnimationSystem.playFire(gameContext, target, attackers);
 }
 
 CounterMoveAction.prototype.onEnd = function(gameContext, request) {
-    AttackSystem.endAttack(gameContext, request);
+    const { attackers, target } = request;
+    
+    AttackSystem.endAttack(gameContext, target, attackers);
+    AnimationSystem.revertToIdle(gameContext, attackers);
 }
 
 CounterMoveAction.prototype.onUpdate = function(gameContext, request) {
@@ -31,26 +38,25 @@ CounterMoveAction.prototype.getValidated = function(gameContext, template, messe
     const { entityID } = template;
     const { world } = gameContext; 
     const { entityManager } = world;
-    const targetEntity = entityManager.getEntity(entityID);
+    const target = entityManager.getEntity(entityID);
 
-    if(!targetEntity) {
+    if(!target) {
         return null;
     }
 
-    const attackers = AttackSystem.getMoveCounterAttackers(gameContext, targetEntity);
+    const attackers = AttackSystem.getMoveCounterAttackers(gameContext, target);
 
     if(!attackers) {
         return null;
     }
-
-    const outcome = AttackSystem.getOutcome(targetEntity, attackers);
+    
+    const attackerIDs = attackers.map(entity => entity.getID());
+    const targetObject = AttackSystem.getAttackTarget(target, attackers);
     
     return {
         "timePassed": 0,
-        "state": outcome.state,
-        "damage": outcome.damage,
-        "attackers": outcome.attackers,
-        "targetID": outcome.targetID
+        "attackers": attackerIDs,
+        "target": targetObject
     }
 }
 

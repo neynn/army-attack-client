@@ -62,7 +62,7 @@ const filterAliveEntitiesInMaxRange = function(gameContext, entity, onCheck) {
     return validEntities;
 }
 
-const getState = function(target, damage, isBulldozed) {
+AttackSystem.getState = function(target, damage, isBulldozed) {
     const healthComponent = target.getComponent(ArmyEntity.COMPONENT.HEALTH);
     const remainder = healthComponent.getRemainder(damage);
 
@@ -79,49 +79,65 @@ const getState = function(target, damage, isBulldozed) {
     return AttackSystem.OUTCOME_STATE.IDLE;
 }
 
-AttackSystem.endAttack = function(gameContext, outcome) {
+AttackSystem.updateTarget = function(gameContext, targetObject) {
     const { world } = gameContext;
-    const { entityManager, eventBus } = world;
-    const { attackers, targetID, state, damage } = outcome;
-    const target = entityManager.getEntity(targetID);
+    const { entityManager } = world;
+    const { id, damage, state } = targetObject;
+    const entity = entityManager.getEntity(id);
 
-    AnimationSystem.revertToIdle(gameContext, attackers);
+    entity.reduceHealth(damage);
 
     switch(state) {
-        case AttackSystem.OUTCOME_STATE.DEAD: {
-            target.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
-            eventBus.emit(GameEvent.TYPE.ENTITY_KILL, { attackers, target, damage });
-            break;
-        }
-        case AttackSystem.OUTCOME_STATE.IDLE: {
-            target.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
-            eventBus.emit(GameEvent.TYPE.ENTITY_HIT, { attackers, target, damage });
-            break;
-        }
         case AttackSystem.OUTCOME_STATE.DOWN: {
-            eventBus.emit(GameEvent.TYPE.ENTITY_DOWN, { attackers, target, damage });
-            eventBus.emit(GameEvent.TYPE.ENTITY_HIT, { attackers, target, damage });
+            DecaySystem.beginDecay(gameContext, entity);
+            break;
+        }
+        default: {
+            entity.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.HIT);
             break;
         }
     }
 }
 
-AttackSystem.beginAttack = function(gameContext, outcome) {
+AttackSystem.endAttack = function(gameContext, target) {
     const { world } = gameContext;
-    const { entityManager } = world;
-    const { attackers, targetID, state, damage } = outcome;
-    const target = entityManager.getEntity(targetID);
-
-    target.reduceHealth(damage);
-    AnimationSystem.playFire(gameContext, target, attackers);
+    const { entityManager, eventBus } = world;
+    const { id, state, damage } = target;
+    const entity = entityManager.getEntity(id);
 
     switch(state) {
-        case AttackSystem.OUTCOME_STATE.DOWN: {
-            DecaySystem.beginDecay(gameContext, target);
+        case AttackSystem.OUTCOME_STATE.DEAD: {
+            entity.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
+
+            eventBus.emit(GameEvent.TYPE.ENTITY_KILL, { 
+                "reason": GameEvent.KILL_REASON.ATTACK,
+                "target": entity,
+                "damage": damage
+            });
             break;
         }
-        default: {
-            target.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.HIT);
+        case AttackSystem.OUTCOME_STATE.IDLE: {
+            entity.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
+
+            eventBus.emit(GameEvent.TYPE.ENTITY_HIT, { 
+                "reason": GameEvent.KILL_REASON.ATTACK,
+                "target": entity,
+                "damage": damage
+            });
+            break;
+        }
+        case AttackSystem.OUTCOME_STATE.DOWN: {
+            eventBus.emit(GameEvent.TYPE.ENTITY_DOWN, { 
+                "reason": GameEvent.KILL_REASON.ATTACK,
+                "target": entity,
+                "damage": damage
+            });
+
+            eventBus.emit(GameEvent.TYPE.ENTITY_HIT, { 
+                "reason": GameEvent.KILL_REASON.ATTACK,
+                "target": entity,
+                "damage": damage
+            });
             break;
         }
     }
@@ -242,10 +258,16 @@ AttackSystem.getActiveAttackers = function(gameContext, target, actorID) {
     return attackers;
 }
 
-AttackSystem.getOutcome = function(target, attackers) {
+AttackSystem.createTargetObject = function(targetID, damage, state) {
+    return {
+        "id": targetID,
+        "damage": damage,
+        "state": state
+    }
+}
+
+AttackSystem.getAttackTarget = function(target, attackers) {
     const armorComponent = target.getComponent(ArmyEntity.COMPONENT.ARMOR);
-    const attackerIDList = [];
-    const targetID = target.getID();
 
     let totalDamage = 0;
     let totalArmor = 0;
@@ -257,7 +279,6 @@ AttackSystem.getOutcome = function(target, attackers) {
 
     for(let i = 0; i < attackers.length; i++) {
         const attacker = attackers[i];
-        const attackerID = attacker.getID();
         const attackComponent = attacker.getComponent(ArmyEntity.COMPONENT.ATTACK);
         const damage = attackComponent.getDamage(totalArmor);
 
@@ -266,16 +287,11 @@ AttackSystem.getOutcome = function(target, attackers) {
         }
 
         totalDamage += damage;
-
-        attackerIDList.push(attackerID);
     }
 
-    const state = getState(target, totalDamage, isBulldozed)
+    const targetID = target.getID();
+    const targetState = AttackSystem.getState(target, totalDamage, isBulldozed);
+    const targetObject = AttackSystem.createTargetObject(targetID, totalDamage, targetState);
 
-    return {
-        "state": state,
-        "damage": totalDamage,
-        "attackers": attackerIDList,
-        "targetID": targetID
-    }
+    return targetObject;
 }
