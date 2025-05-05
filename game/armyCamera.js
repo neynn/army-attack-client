@@ -32,6 +32,12 @@ ArmyCamera.prototype.addPostDraw = function(onDraw) {
     this.postDraw.push(onDraw);
 }
 
+ArmyCamera.prototype.resizeBorder = function(newWidth, newHeight) {
+    if(this.border) {
+        this.border.resize(newWidth, newHeight, 0);
+    }
+}
+
 ArmyCamera.prototype.drawDebris = function(tileManager, context, worldMap) {
     const { graphics } = tileManager;
     const { debris } = worldMap;
@@ -143,7 +149,7 @@ ArmyCamera.prototype.initBorder = function(gameContext) {
     const bufferSize = this.mapWidth * this.mapHeight;
     const BufferType = graphics.getBufferType(bufferSize);
     const buffer = new BufferType(bufferSize);
-    const layer = new Layer(buffer);
+    const layer = new Layer(buffer, this.mapWidth, this.mapHeight);
 
     this.border = layer;
 }

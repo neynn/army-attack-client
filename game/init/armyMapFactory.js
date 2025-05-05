@@ -33,6 +33,10 @@ const parseMap2D = function(gameContext, map2D, config) {
         data = {}
     } = config;
 
+    map2D.setWidth(width);
+    map2D.setHeight(height);
+    map2D.loadMeta(config);
+
     const { 
         layers = {}
     } = graphics;
@@ -45,10 +49,6 @@ const parseMap2D = function(gameContext, map2D, config) {
         layer.decode(data[layerID]);
         layer.init(config);
     }
-
-    map2D.setWidth(width);
-    map2D.setHeight(height);
-    map2D.loadMeta(config);
 }
 
 const parseMap2DEmpty = function(gameContext, map2D, config) {
@@ -58,6 +58,10 @@ const parseMap2DEmpty = function(gameContext, map2D, config) {
         graphics = {},
     } = config;
 
+    map2D.setWidth(width);
+    map2D.setHeight(height);
+    map2D.loadMeta(config);
+    
     const {
         layers = {}
     } = graphics;
@@ -77,10 +81,6 @@ const parseMap2DEmpty = function(gameContext, map2D, config) {
 
         layer.init(config);
     }
-
-    map2D.setWidth(width);
-    map2D.setHeight(height);
-    map2D.loadMeta(config);
 }
 
 ArmyMapFactory.prototype.onCreate = function(gameContext, config) {

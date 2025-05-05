@@ -130,7 +130,7 @@ WorldMap.prototype.createLayer = function(id, buffer) {
         return null;
     }
 
-    const layer = new Layer(buffer);
+    const layer = new Layer(buffer, this.width, this.height);
 
     this.layers.set(id, layer);
 
@@ -283,7 +283,7 @@ WorldMap.prototype.resize = function(width, height, fillMapping) {
     for(const [layerID, layer] of this.layers) {
         const fill = fillMapping[layerID] ?? 0;
 
-        layer.resize(this.width, this.height, width, height, fill);
+        layer.resize(width, height, fill);
     }
 
     this.setWidth(width);

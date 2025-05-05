@@ -119,8 +119,8 @@ Renderer.prototype.drawContextDebug = function() {
     context.lineWidth = 3;
 
     for(let i = 0; i < this.contexts.length; i++) {
-        const context = this.contexts[i];
-        const { x, y, w, h } = context.getBounds();
+        const cameraContext = this.contexts[i];
+        const { x, y, w, h } = cameraContext.getBounds();
 
         context.strokeRect(x, y, w, h);
     }

@@ -1,7 +1,9 @@
-export const Layer = function(buffer) {
+export const Layer = function(buffer, width, height) {
     this.buffer = buffer;
     this.opacity = 1;
     this.autoGenerate = false;
+    this.width = width;
+    this.height = height;
 }
 
 Layer.prototype.getBuffer = function() {
@@ -33,7 +35,7 @@ Layer.prototype.init = function(config) {
     this.autoGenerate = autoGenerate ?? this.autoGenerate;
 }
 
-Layer.prototype.resize = function(oldWidth, oldHeight, newWidth, newHeight, fill = 0) {
+Layer.prototype.resize = function(newWidth, newHeight, fill = 0) {
     const layerSize = newWidth * newHeight;
     const ArrayType = this.buffer.constructor;
     const newBuffer = new ArrayType(layerSize);
@@ -44,12 +46,12 @@ Layer.prototype.resize = function(oldWidth, oldHeight, newWidth, newHeight, fill
         }
     }
 
-    const copyWidth = newWidth < oldWidth ? newWidth : oldWidth;
-    const copyHeight = newHeight < oldHeight ? newHeight : oldHeight;
+    const copyWidth = newWidth < this.width ? newWidth : this.width;
+    const copyHeight = newHeight < this.height ? newHeight : this.height;
 
     for(let i = 0; i < copyHeight; ++i) {
         const newRow = i * newWidth;
-        const oldRow = i * oldWidth;
+        const oldRow = i * this.width;
 
         for(let j = 0; j < copyWidth; ++j) {
             const newIndex = newRow + j;
@@ -60,6 +62,8 @@ Layer.prototype.resize = function(oldWidth, oldHeight, newWidth, newHeight, fill
     }
 
     this.buffer = newBuffer;
+    this.width = newWidth;
+    this.height = newHeight;
 }
 
 Layer.prototype.decode = function(encodedLayer) {

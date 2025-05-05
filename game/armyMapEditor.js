@@ -409,10 +409,11 @@ ArmyMapEditor.prototype.resizeCurrentMap = function(gameContext) {
     const parsedHeight = parseInt(prompt("MAP_HEIGHT"));
     const newWidth = clampValue(parsedWidth, this.maxWidth, 1);
     const newHeight = clampValue(parsedHeight, this.maxHeight, 1);
-  
+
     gameMap.resize(newWidth, newHeight, this.layerFill);
-    
+
     this.camera.setMapSize(newWidth, newHeight);
+    this.camera.resizeBorder(newWidth, newHeight);
 
     renderer.getContext(this.id).reload();
 }
