@@ -60,6 +60,31 @@ ArmyMap.CONVERTABLE_LAYERS = [
 ArmyMap.prototype = Object.create(WorldMap.prototype);
 ArmyMap.prototype.constructor = ArmyMap;
 
+ArmyMap.prototype.isFullyClouded = function(tileX, tileY) {
+    const tileID = this.getTile(ArmyMap.LAYER.CLOUD, tileX, tileY);
+
+    if(tileID === 0) {
+        return false;
+    }
+
+    const startX = tileX - 1;
+    const startY = tileY - 1;
+    const endX = tileX + 1;
+    const endY = tileY + 1;
+
+    for(let i = startY; i <= endY; i++) {
+        for(let j = startX; j <= endX; j++) {
+            const nextID = this.getTile(ArmyMap.LAYER.CLOUD, j, i);
+
+            if(nextID === 0) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
 ArmyMap.prototype.clearClouds = function(gameContext, tileX, tileY, width, height) {
     const { tileManager } = gameContext;
     const cloudAutotiler = tileManager.getAutotilerByID(ArmyMap.AUTOTILER.CLOUD);

@@ -2,12 +2,6 @@ import { ArmyEntity } from "../init/armyEntity.js";
 
 export const FireMissionSystem = function() {}
 
-FireMissionSystem.TARGET_STATE = {
-    NONE: 0,
-    VALID: 1,
-    INVALID: 2
-};
-
 const getEntitiesInArea = function(gameContext, tileX, tileY, dimX, dimY) {
     const { world } = gameContext;
     const endX = tileX + dimX;
@@ -17,13 +11,12 @@ const getEntitiesInArea = function(gameContext, tileX, tileY, dimX, dimY) {
     return entities;
 }
 
-const getFireCallState = function(gameContext, entity) {
+FireMissionSystem.isTargetable = function(entity) {
     if(entity.hasComponent(ArmyEntity.COMPONENT.TOWN)) {
-        return FireMissionSystem.TARGET_STATE.INVALID;
+        return false;
     }
 
-
-    return FireMissionSystem.TARGET_STATE.VALID;
+    return true;
 }
 
 FireMissionSystem.getTargets = function(gameContext, fireMission, tileX, tileY) {
@@ -33,20 +26,51 @@ FireMissionSystem.getTargets = function(gameContext, fireMission, tileX, tileY) 
 
     for(let i = 0; i < entities.length; i++) {
         const entity = entities[i];
-        const state = getFireCallState(gameContext, entity);
+        const isTargetable = this.isTargetable(entity);
 
-        targets.push({
-            "state": state,
-            "entity": entity
-        });
+        if(isTargetable) {
+            targets.push(entity);
+        }
     }
 
-    console.log(targets);
+    if(targets.length === 0) {
+        return null;
+    }
 
     return targets;
 }
 
-FireMissionSystem.getOutcome = function(gameContext, fireMissionID, tileX, tileY) {}
+FireMissionSystem.isBlocked = function(gameContext, fireMission, tileX, tileY) {
+    const { world } = gameContext;
+    const { mapManager } = world;
+    const worldMap = mapManager.getActiveMap();
+
+    if(!worldMap) {
+        return true;
+    }
+
+    const { dimX = 0, dimY = 0 } = fireMission;
+    const endX = tileX + dimX;
+    const endY = tileY + dimY;
+
+    for(let i = tileY; i < endY; i++) {
+        for(let j = tileX; j < endX; j++) {
+            const isFullyClouded = worldMap.isFullyClouded(j, i);
+
+            if(isFullyClouded) {
+                return true;
+            }
+
+            const tileEntity = world.getTileEntity(j, i);
+
+            if(tileEntity && !this.isTargetable(tileEntity)) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
 
 FireMissionSystem.isValid = function(gameContext, fireMissionID, tileX, tileY) {
     const fireMission = gameContext.fireCallTypes[fireMissionID];
@@ -55,19 +79,7 @@ FireMissionSystem.isValid = function(gameContext, fireMissionID, tileX, tileY) {
         return false;
     }
 
-    const targets = FireMissionSystem.getTargets(gameContext, fireMission, tileX, tileY);
+    const isBlocked = FireMissionSystem.isBlocked(gameContext, fireMission, tileX, tileY);
 
-    if(targets.length === 0) {
-        return true;
-    }
-
-    for(let i = 0; i < targets.length; i++) {
-        const { state, entity } = targets[i];
-
-        if(state === FireMissionSystem.TARGET_STATE.INVALID) {
-            return false;
-        }
-    }
-
-    return true;
+    return !isBlocked;
 }

@@ -92,7 +92,12 @@ GameEvent.prototype.onDebrisRemoved = function(gameContext, event) {
 
     console.log("DEBRIS_REMOVE", event);
 
-    eventBus.emit(GameEvent.TYPE.DEBRIS_DROP, { "receiverID": cleanerID, "debrisID": "Debris" });
+    switch(this.mode) {
+        case GameEvent.MODE.STORY: {
+            eventBus.emit(GameEvent.TYPE.DEBRIS_DROP, { "receiverID": cleanerID, "debrisID": "Debris" });
+            break;
+        }
+    }
 }
 
 GameEvent.prototype.onAttackCounter = function(gameContext, event) {

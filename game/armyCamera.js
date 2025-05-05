@@ -11,6 +11,8 @@ export const ArmyCamera = function() {
     this.createOverlay(ArmyCamera.OVERLAY_TYPE.ATTACK);
     this.createOverlay(ArmyCamera.OVERLAY_TYPE.MOVE);
     this.createOverlay(ArmyCamera.OVERLAY_TYPE.RANGE);
+    this.createOverlay(ArmyCamera.OVERLAY_TYPE.FIRE_MISSION);
+    
     this.postDraw = [];
     this.border = new Layer(0, 0);
 }
@@ -18,7 +20,8 @@ export const ArmyCamera = function() {
 ArmyCamera.OVERLAY_TYPE = {
     ATTACK: "ATTACK",
     MOVE: "MOVE",
-    RANGE: "RANGE"
+    RANGE: "RANGE",
+    FIRE_MISSION: "FIRE_MISSION"
 };
 
 ArmyCamera.prototype = Object.create(Camera2D.prototype);
@@ -79,6 +82,7 @@ ArmyCamera.prototype.update = function(gameContext, display) {
     this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.BOTTOM), realTime, deltaTime);
     this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.MIDDLE), realTime, deltaTime);
     display.unflip();
+    this.drawOverlay(graphics, context, ArmyCamera.OVERLAY_TYPE.FIRE_MISSION);
     this.drawOverlay(graphics, context, ArmyCamera.OVERLAY_TYPE.RANGE);
     this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.TOP), realTime, deltaTime);
     this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.UI), realTime, deltaTime);

@@ -1,5 +1,7 @@
 import { State } from "../../../../source/state/state.js";
+import { ArmyCamera } from "../../../armyCamera.js";
 import { ACTION_TYPE } from "../../../enums.js";
+import { ArmyEntity } from "../../../init/armyEntity.js";
 import { AnimationSystem } from "../../../systems/animation.js";
 import { FireMissionSystem } from "../../../systems/fireMission.js";
 import { Player } from "../player.js";
@@ -21,6 +23,7 @@ PlayerFireMissionState.prototype.onEnter = function(gameContext, stateMachine, t
 
     AnimationSystem.revertToIdle(gameContext, player.attackers);
 
+    this.showBlockedEntities(gameContext, player);
     this.updateCursor(gameContext, player);
 
     player.clearAttackers();
@@ -32,13 +35,16 @@ PlayerFireMissionState.prototype.onExit = function(gameContext, stateMachine) {
     const player = stateMachine.getContext();
 
     this.missionID = null;
+
     player.attackRangeOverlay.enable();
+    player.camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.FIRE_MISSION);
 }
 
 PlayerFireMissionState.prototype.onUpdate = function(gameContext, stateMachine) {
     const player = stateMachine.getContext();
+    const { hover, camera } = player;
 
-    player.hover.alignSprite(gameContext, player.camera);
+    hover.alignSprite(gameContext, camera);
 }
 
 PlayerFireMissionState.prototype.onEvent = function(gameContext, stateMachine, eventID) {
@@ -83,5 +89,36 @@ PlayerFireMissionState.prototype.onClick = function(gameContext, stateMachine) {
     if(isValid) {
         this.queueFireMission(gameContext, player, tileX, tileY);
         stateMachine.setNextState(gameContext, Player.STATE.IDLE);
+    } else {
+        const { client } = gameContext;
+        const { soundPlayer } = client;
+        
+        soundPlayer.play("sound_error", 0.5);
     }
+}
+
+PlayerFireMissionState.prototype.showBlockedEntities = function(gameContext, player) {
+    const { world, tileManager } = gameContext;
+    const { entityManager } = world;
+    const { camera } = player;
+    const tileID = tileManager.getTileID("cursor", "Disabled");
+
+    camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.FIRE_MISSION);
+
+    entityManager.forAllEntities((entityID, entity) => {
+        const isTargetable = FireMissionSystem.isTargetable(entity);
+
+        if(!isTargetable) {
+            const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
+            const { tileX, tileY } = positionComponent;
+            const endX = tileX + entity.config.dimX;
+            const endY = tileY + entity.config.dimY;
+
+            for(let i =  tileY; i < endY; i++) {
+                for(let j = tileX; j < endX; j++) {
+                    camera.pushOverlay(ArmyCamera.OVERLAY_TYPE.FIRE_MISSION, tileID, j, i);
+                }
+            }
+        }
+    });
 }
