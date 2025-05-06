@@ -18,10 +18,10 @@ export const Player = function() {
     Actor.call(this);
 
     this.teamID = null;
-    this.hover = new PlayerCursor();
     this.inventory = new Inventory();
     this.camera = new ArmyCamera();
     this.inputQueue = new Queue(10);
+    this.hover = new PlayerCursor(this.camera);
     this.attackVisualizer = new AttackVisualizer(this.camera);
     this.rangeVisualizer = new RangeVisualizer(this.camera);
 

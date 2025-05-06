@@ -3,7 +3,8 @@ import { SpriteManager } from "../../../source/sprite/spriteManager.js";
 import { PathfinderSystem } from "../../systems/pathfinder.js";
 import { ArmyEntity } from "../../init/armyEntity.js";
 
-export const PlayerCursor = function() {
+export const PlayerCursor = function(camera) {
+    this.camera = camera;
     this.tileX = -1;
     this.tileY = -1;
     this.spriteIndex = -1;
@@ -122,33 +123,33 @@ PlayerCursor.prototype.update = function(gameContext) {
     this.updateState(gameContext, x, y);
 }
 
-PlayerCursor.prototype.autoAlignSprite = function(gameContext, camera) {
+PlayerCursor.prototype.autoAlignSprite = function(gameContext) {
     switch(this.state) {
         case PlayerCursor.STATE.HOVER_ON_ENTITY: {
             const hoverEntity = this.getEntity(gameContext);
-            this.alignSpriteEntity(gameContext, camera, hoverEntity);
+            this.alignSpriteEntity(gameContext, hoverEntity);
             break;
         }
         default: {
-            this.alignSprite(gameContext, camera);
+            this.alignSprite(gameContext);
             break;
         }
     }
 }
 
-PlayerCursor.prototype.alignSprite = function(gameContext, camera) {
+PlayerCursor.prototype.alignSprite = function(gameContext) {
     const { spriteManager } = gameContext;
     const sprite = spriteManager.getSprite(this.spriteIndex);
-    const { x, y } = camera.transformTileToPositionCenter(this.tileX, this.tileY);
+    const { x, y } = this.camera.transformTileToPositionCenter(this.tileX, this.tileY);
 
     sprite.setPosition(x, y);
 }
 
-PlayerCursor.prototype.alignSpriteEntity = function(gameContext, camera, entity) {
+PlayerCursor.prototype.alignSpriteEntity = function(gameContext, entity) {
     const { spriteManager } = gameContext;
     const sprite = spriteManager.getSprite(this.spriteIndex);
     const { tileX, tileY } = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
-    const { x, y } = camera.transformTileToPositionCenter(tileX, tileY);
+    const { x, y } = this.camera.transformTileToPositionCenter(tileX, tileY);
 
     sprite.setPosition(x, y);
 }

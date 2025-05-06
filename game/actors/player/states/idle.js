@@ -33,7 +33,7 @@ PlayerIdleState.prototype.onUpdate = function(gameContext, stateMachine) {
     this.updateCursor(gameContext, player);
 
     player.rangeVisualizer.update(gameContext, player);
-    player.hover.autoAlignSprite(gameContext, player.camera);
+    player.hover.autoAlignSprite(gameContext);
 }
 
 PlayerIdleState.prototype.onEvent = function(gameContext, stateMachine, eventID) {

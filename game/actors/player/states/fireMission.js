@@ -41,9 +41,9 @@ PlayerFireMissionState.prototype.onExit = function(gameContext, stateMachine) {
 
 PlayerFireMissionState.prototype.onUpdate = function(gameContext, stateMachine) {
     const player = stateMachine.getContext();
-    const { hover, camera } = player;
+    const { hover } = player;
 
-    hover.alignSprite(gameContext, camera);
+    hover.alignSprite(gameContext);
 }
 
 PlayerFireMissionState.prototype.onEvent = function(gameContext, stateMachine, eventID) {

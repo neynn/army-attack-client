@@ -30,13 +30,13 @@ PlayerSelectedState.prototype.onExit = function(gameContext, stateMachine) {
 
 PlayerSelectedState.prototype.onUpdate = function(gameContext, stateMachine) {
     const player = stateMachine.getContext();
-    const { hover, camera } = player;
+    const { hover } = player;
 
     player.attackVisualizer.updateAttackers(gameContext, player);
     this.updateEntity(gameContext, player);
     this.updateCursor(gameContext, player);
     player.rangeVisualizer.update(gameContext, player);
-    hover.autoAlignSprite(gameContext, camera);
+    hover.autoAlignSprite(gameContext);
 }
 
 PlayerSelectedState.prototype.onEvent = function(gameContext, stateMachine, eventID) {
