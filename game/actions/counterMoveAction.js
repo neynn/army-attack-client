@@ -18,7 +18,7 @@ CounterMoveAction.prototype.onEnd = function(gameContext, request) {
     const { attackers, target } = request;
     
     AttackSystem.endAttack(gameContext, target, attackers);
-    AnimationSystem.revertToIdle(gameContext, attackers);
+    AnimationSystem.playIdle(gameContext, attackers);
 }
 
 CounterMoveAction.prototype.onUpdate = function(gameContext, request) {

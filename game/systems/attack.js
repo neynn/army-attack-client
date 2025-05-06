@@ -2,7 +2,6 @@ import { isRectangleRectangleIntersect } from "../../source/math/math.js";
 import { GameEvent } from "../gameEvent.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { AllianceSystem } from "./alliance.js";
-import { AnimationSystem } from "./animation.js";
 import { DecaySystem } from "./decay.js";
 
 export const AttackSystem = function() {}

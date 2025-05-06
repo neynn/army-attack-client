@@ -21,7 +21,7 @@ PlayerFireMissionState.prototype.onEnter = function(gameContext, stateMachine, t
         this.missionID = missionID;
     }
 
-    AnimationSystem.revertToIdle(gameContext, player.attackers);
+    AnimationSystem.playIdle(gameContext, player.attackers);
 
     this.showBlockedEntities(gameContext, player);
     this.updateCursor(gameContext, player);

@@ -29,11 +29,11 @@ const getRandomOffset = function(camera, sizeX, sizeY, maxOffsetX, maxOffsetY) {
     }
 }
 
-AnimationSystem.revertToIdle = function(gameContext, idList) {
+AnimationSystem.playIdle = function(gameContext, entities) {
     const { world } = gameContext;
     const { entityManager } = world;
     
-    for(const entityID of idList) {
+    for(const entityID of entities) {
         const entity = entityManager.getEntity(entityID);
 
         if(entity) {

@@ -22,7 +22,7 @@ AttackAction.prototype.onEnd = function(gameContext, request) {
     const { id, state } = target;
 
     AttackSystem.endAttack(gameContext, target, attackers);
-    AnimationSystem.revertToIdle(gameContext, attackers);
+    AnimationSystem.playIdle(gameContext, attackers);
 
     if(state === AttackSystem.OUTCOME_STATE.IDLE) {
         actionQueue.addImmediateRequest(ACTION_TYPE.COUNTER_ATTACK, null, id, attackers);

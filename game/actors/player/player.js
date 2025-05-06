@@ -111,7 +111,7 @@ Player.prototype.updateAttackers = function(gameContext) {
     const mouseEntity = this.hover.getEntity(gameContext);
 
     if(!mouseEntity || !mouseEntity.isAttackableByTeam(gameContext, this.teamID)) {
-        AnimationSystem.revertToIdle(gameContext, this.attackers);
+        AnimationSystem.playIdle(gameContext, this.attackers);
         this.clearAttackers();
         return;
     }
@@ -119,9 +119,7 @@ Player.prototype.updateAttackers = function(gameContext) {
     const activeAttackers = AttackSystem.getActiveAttackers(gameContext, mouseEntity, this.id);
 
     if(!activeAttackers) {
-        for(let i = 0; i < this.attackers.length; i++) {
-            const attackerID = this.attackers[i];
-            
+        for(const attackerID of this.attackers) {
             this.resetAttacker(gameContext, attackerID);
         }
         return;
@@ -136,8 +134,7 @@ Player.prototype.updateAttackers = function(gameContext) {
         currentAttackers.add(attackerID);
     }
 
-    for(let i = 0; i < this.attackers.length; i++) {
-        const attackerID = this.attackers[i];
+    for(const attackerID of this.attackers) {
         const isAttacking = currentAttackers.has(attackerID);
 
         if(!isAttacking) {
@@ -217,7 +214,8 @@ Player.prototype.onMakeChoice = function(gameContext) {
 }
 
 Player.prototype.onTurnStart = function(gameContext) {
-    this.states.setNextState(gameContext, Player.STATE.FIRE_MISSION, { "missionID": "Doomsday" });
+    //this.states.setNextState(gameContext, Player.STATE.FIRE_MISSION, { "missionID": "Doomsday" });
+    this.states.setNextState(gameContext, Player.STATE.IDLE);
 }
 
 Player.prototype.onTurnEnd = function(gameContext) {
