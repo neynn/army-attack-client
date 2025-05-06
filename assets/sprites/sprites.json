@@ -1703,7 +1703,7 @@
     "blue_elite_commando_fire": {
         "directory": ["assets","sprites","units","blue_elite_commando"],
         "source": "blue_elite_commando_fire.png",
-        "bounds": {"x":-34,"y":-45,"w":87,"h":85},
+        "bounds": {"x":-34,"y":-48,"w":87,"h":85},
         "frameTime": 0.03,
         "frames": {
             "0": {"x":0,"y":0,"w":87,"h":85},

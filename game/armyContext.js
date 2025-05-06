@@ -293,3 +293,14 @@ ArmyContext.prototype.getTileDefaultTeamID = function(tileName) {
 ArmyContext.prototype.getTeamName = function(teamID) {
 
 }
+
+ArmyContext.prototype.getOverlayID = function(overlay) {
+    if(!overlay) {
+        return TileManager.TILE_ID.EMPTY;
+    }
+
+    const [atlas, texture] = overlay;
+    const tileID = this.tileManager.getTileID(atlas, texture);
+
+    return tileID;
+}

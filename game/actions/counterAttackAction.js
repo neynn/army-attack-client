@@ -1,5 +1,4 @@
 import { Action } from "../../source/action/action.js";
-import { ArmyEntity } from "../init/armyEntity.js";
 import { AnimationSystem } from "../systems/animation.js";
 import { AttackSystem } from "../systems/attack.js";
 
@@ -45,9 +44,9 @@ CounterAttackAction.prototype.getValidated = function(gameContext, template, mes
         return null;
     }
 
-    const attackComponent = entity.getComponent(ArmyEntity.COMPONENT.ATTACK);
+    const isAttackCounterable = AttackSystem.isAttackCounterable(entity);
 
-    if(!entity.isAlive() || !attackComponent || !attackComponent.isAttackCounterable()) {
+    if(!isAttackCounterable) {
         return null;
     }
 

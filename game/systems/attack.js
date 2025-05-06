@@ -61,6 +61,16 @@ const filterAliveEntitiesInMaxRange = function(gameContext, entity, onCheck) {
     return validEntities;
 }
 
+AttackSystem.isAttackCounterable = function(entity) {
+    if(!entity.isAlive()) {
+        return false;
+    }
+
+    const attackComponent = entity.getComponent(ArmyEntity.COMPONENT.ATTACK);
+
+    return attackComponent && attackComponent.isAttackCounterable();
+}
+
 AttackSystem.getState = function(target, damage, isBulldozed) {
     const healthComponent = target.getComponent(ArmyEntity.COMPONENT.HEALTH);
     const remainder = healthComponent.getRemainder(damage);

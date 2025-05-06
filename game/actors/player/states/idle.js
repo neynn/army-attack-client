@@ -12,6 +12,12 @@ export const PlayerIdleState = function() {}
 PlayerIdleState.prototype = Object.create(State.prototype);
 PlayerIdleState.prototype.constructor = PlayerIdleState;
 
+PlayerIdleState.prototype.onExit = function(gameContext, stateMachine) {
+    const player = stateMachine.getContext();
+
+    player.attackVisualizer.clearAttackers();
+}
+
 PlayerIdleState.prototype.onUpdate = function(gameContext, stateMachine) {
     const { world } = gameContext;
     const { actionQueue } = world;
@@ -19,31 +25,31 @@ PlayerIdleState.prototype.onUpdate = function(gameContext, stateMachine) {
     const isShowable = !actionQueue.isRunning() && player.inputQueue.isEmpty();
 
     if(isShowable) {
-        player.updateAttackers(gameContext); 
+        player.attackVisualizer.updateAttackers(gameContext, player); 
     } else {
-        player.clearAttackers();
+        player.attackVisualizer.clearAttackers();
     }
 
-    updateCursor(gameContext, player);
+    this.updateCursor(gameContext, player);
 
-    player.updateRangeIndicator(gameContext);
+    player.rangeVisualizer.update(gameContext, player);
     player.hover.autoAlignSprite(gameContext, player.camera);
 }
 
 PlayerIdleState.prototype.onEvent = function(gameContext, stateMachine, eventID) {
     switch(eventID) {
         case Player.EVENT.CLICK: {
-            onClick(gameContext, stateMachine);
+            this.onClick(gameContext, stateMachine);
             break;
         }
     }
 }
 
-const selectEntity = function(gameContext, player, entity) {
+PlayerIdleState.prototype.selectEntity = function(gameContext, player, entity) {
     const entityID = entity.getID();
     const nodeList = PathfinderSystem.generateNodeList(gameContext, entity);
-    const enableTileID = player.getOverlayID(gameContext, player.config.overlays.enable);
-    const attackTileID = player.getOverlayID(gameContext, player.config.overlays.attack);
+    const enableTileID = gameContext.getOverlayID(player.config.overlays.enable);
+    const attackTileID = gameContext.getOverlayID(player.config.overlays.attack);
 
     AnimationSystem.playSelect(gameContext, entity);
 
@@ -52,7 +58,7 @@ const selectEntity = function(gameContext, player, entity) {
     player.states.setNextState(gameContext, Player.STATE.SELECTED, { "entityID": entityID });
 }
 
-const queueClearDebris = function(gameContext, player, tileX, tileY) {
+PlayerIdleState.prototype.queueClearDebris = function(gameContext, player, tileX, tileY) {
     const { world } = gameContext;
     const { actionQueue } = world;
     const request = actionQueue.createRequest(ACTION_TYPE.CLEAR_DEBRIS, tileX, tileY);
@@ -62,7 +68,7 @@ const queueClearDebris = function(gameContext, player, tileX, tileY) {
     }
 }
 
-const onClick = function(gameContext, stateMachine) {
+PlayerIdleState.prototype.onClick = function(gameContext, stateMachine) {
     const { world } = gameContext;
     const { actionQueue } = world;
     const player = stateMachine.getContext();
@@ -91,39 +97,40 @@ const onClick = function(gameContext, stateMachine) {
             }
         
             if(!actionQueue.isRunning() && MoveSystem.isMoveable(mouseEntity)) {
-                selectEntity(gameContext, player, mouseEntity);
+                this.selectEntity(gameContext, player, mouseEntity);
             }
 
             break;
         }
         case PlayerCursor.STATE.HOVER_ON_DEBRIS: {
-            queueClearDebris(gameContext, player, tileX, tileY);
+            this.queueClearDebris(gameContext, player, tileX, tileY);
             break;
         }
     }
 }
 
-const updateCursor = function(gameContext, player) {
-    const state = player.hover.state;
+PlayerIdleState.prototype.updateCursor = function(gameContext, player) {
+    const { hover } = player;
+    const { state } = hover;
 
     switch(state) {
-        case PlayerCursor.STATE.HOVER_ON_DEBRIS: {
-            const spriteID = player.getSpriteType(Player.SPRITE_TYPE.SELECT, "1-1");
-
-            player.hover.updateSprite(gameContext, spriteID);
-            break;
-        }
         case PlayerCursor.STATE.HOVER_ON_ENTITY: {
-            const hoveredEntity = player.hover.getEntity(gameContext);
-            const typeID = player.attackers.size > 0 ? Player.SPRITE_TYPE.ATTACK : Player.SPRITE_TYPE.SELECT;
+            const hoveredEntity = hover.getEntity(gameContext);
+            const typeID = player.attackVisualizer.attackers.size > 0 ? Player.SPRITE_TYPE.ATTACK : Player.SPRITE_TYPE.SELECT;
             const spriteKey = `${hoveredEntity.config.dimX}-${hoveredEntity.config.dimY}`;
             const spriteID = player.getSpriteType(typeID, spriteKey);
 
-            player.hover.updateSprite(gameContext, spriteID);
+            hover.updateSprite(gameContext, spriteID);
+            break;
+        }
+        case PlayerCursor.STATE.HOVER_ON_DEBRIS: {
+            const spriteID = player.getSpriteType(Player.SPRITE_TYPE.SELECT, "1-1");
+
+            hover.updateSprite(gameContext, spriteID);
             break;
         }
         default: {
-            player.hover.hideSprite(gameContext);
+            hover.hideSprite(gameContext);
             break;
         }
     }

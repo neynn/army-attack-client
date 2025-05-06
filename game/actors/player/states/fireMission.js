@@ -21,14 +21,13 @@ PlayerFireMissionState.prototype.onEnter = function(gameContext, stateMachine, t
         this.missionID = missionID;
     }
 
-    AnimationSystem.playIdle(gameContext, player.attackers);
+    AnimationSystem.playIdle(gameContext, player.attackVisualizer.attackers);
 
     this.showBlockedEntities(gameContext, player);
     this.updateCursor(gameContext, player);
 
-    player.clearAttackers();
     player.inputQueue.clear();
-    player.attackRangeOverlay.disable(gameContext, player.camera);
+    player.rangeVisualizer.disable(gameContext);
 }
 
 PlayerFireMissionState.prototype.onExit = function(gameContext, stateMachine) {
@@ -36,7 +35,7 @@ PlayerFireMissionState.prototype.onExit = function(gameContext, stateMachine) {
 
     this.missionID = null;
 
-    player.attackRangeOverlay.enable();
+    player.rangeVisualizer.enable();
     player.camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.FIRE_MISSION);
 }
 

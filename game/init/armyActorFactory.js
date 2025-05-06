@@ -63,7 +63,7 @@ ArmyActorFactory.prototype.onCreate = function(gameContext, config) {
             addDragEvent(gameContext);
 
             router.load(gameContext, gameContext.keybinds.player);
-            router.on(Player.COMMAND.TOGGLE_RANGE, () => actor.attackRangeOverlay.toggle(gameContext, camera));
+            router.on(Player.COMMAND.TOGGLE_RANGE, () => actor.rangeVisualizer.toggle(gameContext));
             router.on(Player.COMMAND.CLICK, () => actor.onClick(gameContext));
             router.on("ESCAPE", () => gameContext.states.setNextState(gameContext, ArmyContext.STATE.MAIN_MENU));
 

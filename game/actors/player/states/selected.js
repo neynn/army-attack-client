@@ -22,17 +22,21 @@ PlayerSelectedState.prototype.onEnter = function(gameContext, stateMachine, tran
 }
 
 PlayerSelectedState.prototype.onExit = function(gameContext, stateMachine) {
-    this.deselectEntity(gameContext, stateMachine);
+    const player = stateMachine.getContext();
+        
+    this.deselectEntity(gameContext, player);
+    player.attackVisualizer.clearAttackers();
 }
 
 PlayerSelectedState.prototype.onUpdate = function(gameContext, stateMachine) {
     const player = stateMachine.getContext();
+    const { hover, camera } = player;
 
-    player.updateAttackers(gameContext);
+    player.attackVisualizer.updateAttackers(gameContext, player);
     this.updateEntity(gameContext, player);
     this.updateCursor(gameContext, player);
-    player.updateRangeIndicator(gameContext);
-    player.hover.autoAlignSprite(gameContext, player.camera);
+    player.rangeVisualizer.update(gameContext, player);
+    hover.autoAlignSprite(gameContext, camera);
 }
 
 PlayerSelectedState.prototype.onEvent = function(gameContext, stateMachine, eventID) {
@@ -67,30 +71,32 @@ PlayerSelectedState.prototype.updateCursor = function(gameContext, player) {
     const { hover } = player;
     const { state } = hover;
 
-    if(state === PlayerCursor.STATE.HOVER_ON_ENTITY) {
-        const hoveredEntity = hover.getEntity(gameContext);
-        const typeID = player.attackers.size > 0 ? Player.SPRITE_TYPE.ATTACK : Player.SPRITE_TYPE.SELECT;
-        const spriteKey = `${hoveredEntity.config.dimX}-${hoveredEntity.config.dimY}`;
-        const spriteID = player.getSpriteType(typeID, spriteKey);
+    switch(state) {
+        case PlayerCursor.STATE.HOVER_ON_ENTITY: {
+            const hoveredEntity = hover.getEntity(gameContext);
+            const typeID = player.attackVisualizer.attackers.size > 0 ? Player.SPRITE_TYPE.ATTACK : Player.SPRITE_TYPE.SELECT;
+            const spriteKey = `${hoveredEntity.config.dimX}-${hoveredEntity.config.dimY}`;
+            const spriteID = player.getSpriteType(typeID, spriteKey);
+    
+            hover.updateSprite(gameContext, spriteID);
+            break;
+        }
+        case PlayerCursor.STATE.HOVER_ON_NODE: {
+            const spriteID = player.getSpriteType(Player.SPRITE_TYPE.MOVE, "1-1");
 
-        hover.updateSprite(gameContext, spriteID);
-        return;
+            hover.updateSprite(gameContext, spriteID);
+            break;
+        }
+        default: {
+            hover.hideSprite(gameContext);
+            break;
+        }
     }
-
-    if(state === PlayerCursor.STATE.HOVER_ON_NODE) {
-        const spriteID = player.getSpriteType(Player.SPRITE_TYPE.MOVE, "1-1");
-
-        hover.updateSprite(gameContext, spriteID);
-        return;
-    }
-
-    hover.hideSprite(gameContext);
 }
 
-PlayerSelectedState.prototype.deselectEntity = function(gameContext, stateMachine) {
+PlayerSelectedState.prototype.deselectEntity = function(gameContext, player) {
     const { world } = gameContext;
     const { entityManager } = world;
-    const player = stateMachine.getContext();
     const entity = entityManager.getEntity(this.entityID);
 
     if(entity) {
