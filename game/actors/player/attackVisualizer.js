@@ -9,6 +9,10 @@ export const AttackVisualizer = function(camera) {
     this.attackers = new Set();
 }
 
+AttackVisualizer.prototype.hasAnyAttacker = function() {
+    return this.attackers.size > 0;
+}
+
 AttackVisualizer.prototype.clearAttackers = function() {
     this.camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.ATTACK);
     this.attackers.clear();

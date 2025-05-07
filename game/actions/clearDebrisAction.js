@@ -14,9 +14,9 @@ ClearDebrisAction.prototype.onStart = function(gameContext, request) {
 }
 
 ClearDebrisAction.prototype.onEnd = function(gameContext, request) {
-    const { tileX, tileY, cleanerID } = request;
+    const { tileX, tileY, actorID } = request;
 
-    DebrisSystem.endCleaning(gameContext, tileX, tileY, cleanerID);
+    DebrisSystem.endCleaning(gameContext, tileX, tileY, actorID);
 }
 
 ClearDebrisAction.prototype.onUpdate = function(gameContext, request) {
@@ -33,18 +33,10 @@ ClearDebrisAction.prototype.isFinished = function(gameContext, request) {
 }
 
 ClearDebrisAction.prototype.getValidated = function(gameContext, request, messengerID) {
-    const { world } = gameContext;
-    const { mapManager } = world;
-    const worldMap = mapManager.getActiveMap();
+    const { tileX, tileY, actorID } = request;
+    const isCleanable = DebrisSystem.isCleanable(gameContext, tileX, tileY, actorID)
 
-    if(!worldMap) {
-        return null;
-    }
-
-    const { tileX, tileY } = request;
-    const hasDebris = worldMap.hasDebris(tileX, tileY);
-
-    if(!hasDebris) {
+    if(!isCleanable) {
         return null;
     }
 
@@ -52,13 +44,14 @@ ClearDebrisAction.prototype.getValidated = function(gameContext, request, messen
         "timePassed": 0,
         "tileX": tileX,
         "tileY": tileY,
-        "cleanerID": messengerID,
+        "actorID": actorID
     }
 }
 
-ClearDebrisAction.prototype.getTemplate = function(tileX, tileY) {
+ClearDebrisAction.prototype.getTemplate = function(tileX, tileY, actorID) {
     return {
         "tileX": tileX,
-        "tileY": tileY
+        "tileY": tileY,
+        "actorID": actorID
     }
 }

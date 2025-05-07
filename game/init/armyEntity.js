@@ -7,10 +7,18 @@ import { AllianceSystem } from "../systems/alliance.js";
 export const ArmyEntity = function(DEBUG_NAME) {
     Entity.call(this, DEBUG_NAME);
 
+    this.state = ArmyEntity.STATE.NONE;
     this.events = new EventEmitter();
     this.events.listen(ArmyEntity.EVENT.HEALTH_UPDATE);
     this.events.listen(ArmyEntity.EVENT.DAMAGE_UPDATE);
 }
+
+ArmyEntity.STATE = {
+    NONE: 0,
+    IDLE: 1,
+    DOWN: 2,
+    KILL: 3
+};
 
 ArmyEntity.EVENT = {
     HEALTH_UPDATE: "HEALTH_UPDATE",

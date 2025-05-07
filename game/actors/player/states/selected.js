@@ -74,7 +74,7 @@ PlayerSelectedState.prototype.updateCursor = function(gameContext, player) {
     switch(state) {
         case PlayerCursor.STATE.HOVER_ON_ENTITY: {
             const hoveredEntity = hover.getEntity(gameContext);
-            const typeID = player.attackVisualizer.attackers.size > 0 ? Player.SPRITE_TYPE.ATTACK : Player.SPRITE_TYPE.SELECT;
+            const typeID = player.attackVisualizer.hasAnyAttacker() ? Player.SPRITE_TYPE.ATTACK : Player.SPRITE_TYPE.SELECT;
             const spriteKey = `${hoveredEntity.config.dimX}-${hoveredEntity.config.dimY}`;
             const spriteID = player.getSpriteType(typeID, spriteKey);
     

@@ -13,10 +13,12 @@ import { StateMachine } from "../../../source/state/stateMachine.js";
 import { Queue } from "../../../source/queue.js";
 import { GameEvent } from "../../gameEvent.js";
 import { AttackVisualizer } from "./attackVisualizer.js";
+import { PlayerHealState } from "./states/heal.js";
 
 export const Player = function() {
     Actor.call(this);
 
+    this.helper = false;
     this.teamID = null;
     this.inventory = new Inventory();
     this.camera = new ArmyCamera();
@@ -31,6 +33,7 @@ export const Player = function() {
     this.states.addState(Player.STATE.SELECTED, new PlayerSelectedState());
     this.states.addState(Player.STATE.FIRE_MISSION, new PlayerFireMissionState());
     this.states.addState(Player.STATE.BUILD, new PlayerBuildState());
+    this.states.addState(Player.STATE.HEAL, new PlayerHealState());
 }
 
 Player.CAMERA_ID = "ARMY_CAMERA";
@@ -49,7 +52,8 @@ Player.STATE = {
     IDLE: "IDLE",
     SELECTED: "SELECTED",
     FIRE_MISSION: "FIRE_MISSION",
-    BUILD: "BUILD"
+    BUILD: "BUILD",
+    HEAL: "HEAL"
 };
 
 Player.SPRITE_TYPE = {
@@ -122,7 +126,12 @@ Player.prototype.onMakeChoice = function(gameContext) {
 }
 
 Player.prototype.onTurnStart = function(gameContext) {
-    //this.states.setNextState(gameContext, Player.STATE.FIRE_MISSION, { "missionID": "Doomsday" });
+    if(!this.helper) {
+        this.states.setNextState(gameContext, Player.STATE.FIRE_MISSION, { "missionID": "OrbitalLaser" });
+        this.helper = true;
+        return;
+    }
+
     this.states.setNextState(gameContext, Player.STATE.IDLE);
 }
 

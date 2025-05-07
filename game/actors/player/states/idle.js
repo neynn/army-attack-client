@@ -61,7 +61,8 @@ PlayerIdleState.prototype.selectEntity = function(gameContext, player, entity) {
 PlayerIdleState.prototype.queueClearDebris = function(gameContext, player, tileX, tileY) {
     const { world } = gameContext;
     const { actionQueue } = world;
-    const request = actionQueue.createRequest(ACTION_TYPE.CLEAR_DEBRIS, tileX, tileY);
+    const playerID = player.getID();
+    const request = actionQueue.createRequest(ACTION_TYPE.CLEAR_DEBRIS, tileX, tileY, playerID);
     
     if(request) {
         player.inputQueue.enqueueLast(request);
@@ -116,7 +117,7 @@ PlayerIdleState.prototype.updateCursor = function(gameContext, player) {
     switch(state) {
         case PlayerCursor.STATE.HOVER_ON_ENTITY: {
             const hoveredEntity = hover.getEntity(gameContext);
-            const typeID = player.attackVisualizer.attackers.size > 0 ? Player.SPRITE_TYPE.ATTACK : Player.SPRITE_TYPE.SELECT;
+            const typeID = player.attackVisualizer.hasAnyAttacker() ? Player.SPRITE_TYPE.ATTACK : Player.SPRITE_TYPE.SELECT;
             const spriteKey = `${hoveredEntity.config.dimX}-${hoveredEntity.config.dimY}`;
             const spriteID = player.getSpriteType(typeID, spriteKey);
 
