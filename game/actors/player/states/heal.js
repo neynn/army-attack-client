@@ -1,6 +1,7 @@
 import { State } from "../../../../source/state/state.js";
 import { ACTION_TYPE } from "../../../enums.js";
 import { Player } from "../player.js";
+import { PlayerCursor } from "../playerCursor.js";
 
 export const PlayerHealState = function() {}
 
@@ -65,6 +66,28 @@ PlayerHealState.prototype.queueHeal = function(gameContext, player, entityID) {
     }
 }
 
-PlayerHealState.prototype.isValid = function(gameContext, player, tileX, tileY) {}
+PlayerHealState.prototype.isValid = function(gameContext, player, tileX, tileY) {
+    return false;
+}
 
-PlayerHealState.prototype.updateCursor = function(gameContext, player) {}
+PlayerHealState.prototype.updateCursor = function(gameContext, player) {
+    const { hover } = player;
+    const { state } = hover;
+
+    switch(state) {
+        case PlayerCursor.STATE.HOVER_ON_ENTITY: {
+            const hoveredEntity = hover.getEntity(gameContext);
+            const spriteKey = `${hoveredEntity.config.dimX}-${hoveredEntity.config.dimY}`;
+            const spriteID = player.getSpriteType(Player.SPRITE_TYPE.REPAIR, spriteKey);
+
+            hover.updateSprite(gameContext, spriteID);
+            break;
+        }
+        default: {
+            const spriteID = player.getSpriteType(Player.SPRITE_TYPE.REPAIR, "1-1");
+
+            hover.updateSprite(gameContext, spriteID);
+            break;
+        }
+    }
+}   

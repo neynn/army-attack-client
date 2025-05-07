@@ -60,7 +60,8 @@ Player.SPRITE_TYPE = {
     MOVE: "move",
     SELECT: "select",
     ATTACK: "attack",
-    FIRE_MISSION: "powerup"
+    FIRE_MISSION: "powerup",
+    REPAIR: "repair"
 };
 
 Player.prototype = Object.create(Actor.prototype);
@@ -132,7 +133,7 @@ Player.prototype.onTurnStart = function(gameContext) {
         return;
     }
 
-    this.states.setNextState(gameContext, Player.STATE.IDLE);
+    this.states.setNextState(gameContext, Player.STATE.HEAL);
 }
 
 Player.prototype.onTurnEnd = function(gameContext) {

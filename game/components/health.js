@@ -5,6 +5,10 @@ export const HealthComponent = function() {
     this.maxHealth = 0;
 }
 
+HealthComponent.prototype.getMissing = function() {
+    return this.maxHealth - this.health;
+}
+
 HealthComponent.prototype.setHealth = function(value) {
     const health = clampValue(value, this.maxHealth, 0);
 
