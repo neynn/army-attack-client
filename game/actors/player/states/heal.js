@@ -40,8 +40,8 @@ PlayerHealState.prototype.onEvent = function(gameContext, stateMachine, eventID)
 PlayerHealState.prototype.onClick = function(gameContext, stateMachine) {
     const player = stateMachine.getContext();
     const { hover } = player;
-    const { tileX, tileY, currentTarget } = hover;
-    const isValid = this.isValid(gameContext, player, tileX, tileY);
+    const { currentTarget } = hover;
+    const isValid = this.isValid(gameContext, player);
 
     if(isValid) {
         this.queueHeal(gameContext, player, currentTarget);
@@ -66,7 +66,15 @@ PlayerHealState.prototype.queueHeal = function(gameContext, player, entityID) {
     }
 }
 
-PlayerHealState.prototype.isValid = function(gameContext, player, tileX, tileY) {
+PlayerHealState.prototype.isValid = function(gameContext, player) {
+    const { hover } = player;
+    const { tileX, tileY, currentTarget, state } = hover;
+
+    if(state !== PlayerCursor.STATE.HOVER_ON_ENTITY) {
+        return false;
+    }
+
+    //put good code here :)
     return false;
 }
 

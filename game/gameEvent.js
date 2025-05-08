@@ -1,5 +1,6 @@
 import { CLIENT_EVENT } from "./enums.js";
 import { AnimationSystem } from "./systems/animation.js";
+import { ConquerSystem } from "./systems/conquer.js";
 import { DebrisSystem } from "./systems/debris.js";
 import { DropSystem } from "./systems/drop.js";
 import { SpawnSystem } from "./systems/spawn.js";
@@ -26,7 +27,7 @@ GameEvent.TYPE = {
     ENTITY_DOWN: 203,
     ENTITY_KILL: 204,
 
-    TILE_CAPTURED: 300,
+    TILE_CAPTURE: 300,
     DEBRIS_REMOVED: 301,
     DEBRIS_SPAWN: 302,
 
@@ -51,7 +52,7 @@ GameEvent.NAME = {
     [GameEvent.TYPE.ENTITY_DOWN]: "ENTITY_DOWN",
     [GameEvent.TYPE.ENTITY_KILL]: "ENTITY_KILL",
 
-    [GameEvent.TYPE.TILE_CAPTURED]: "TILE_CAPTURED",
+    [GameEvent.TYPE.TILE_CAPTURE]: "TILE_CAPTURE",
     [GameEvent.TYPE.DEBRIS_REMOVED]: "DEBRIS_REMOVED",
 
     [GameEvent.TYPE.DROP]: "DROP",
@@ -81,7 +82,7 @@ GameEvent.prototype.init = function(gameContext) {
     eventBus.on(GameEvent.TYPE.ENTITY_HIT, (event) => this.onEntityHit(gameContext, event));
     eventBus.on(GameEvent.TYPE.ENTITY_DOWN, (event) => this.onEntityDown(gameContext, event));
     eventBus.on(GameEvent.TYPE.ENTITY_KILL, (event) => this.onEntityKill(gameContext, event));
-    eventBus.on(GameEvent.TYPE.TILE_CAPTURED, (event) => this.onTileCaptured(gameContext, event));
+    eventBus.on(GameEvent.TYPE.TILE_CAPTURE, (event) => this.onTileCapture(gameContext, event));
     eventBus.on(GameEvent.TYPE.DEBRIS_REMOVED, (event) => this.onDebrisRemoved(gameContext, event));
     eventBus.on(GameEvent.TYPE.HIT_DROP, (event) => this.onHitDrop(gameContext, event));
     eventBus.on(GameEvent.TYPE.KILL_DROP, (event) => this.onKillDrop(gameContext, event));
@@ -260,8 +261,12 @@ GameEvent.prototype.onEntityDown = function(gameContext, event) {
     console.log("ENTITY_DOWN", event);
 }
 
-GameEvent.prototype.onTileCaptured = function(gameContext, event) {
+GameEvent.prototype.onTileCapture = function(gameContext, event) {
+    const { teamID, tiles } = event;
+
     console.log("TILE_CAPTURED", event);
+
+    ConquerSystem.conquer(gameContext, teamID, tiles);
 }
 
 GameEvent.prototype.onActionAuthorized = function(gameContext, event) {

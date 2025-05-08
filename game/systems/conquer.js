@@ -6,15 +6,7 @@ import { BorderSystem } from "./border.js";
 
 export const ConquerSystem = function() {}
 
-const isTileConquerable = function(gameContext, tileX, tileY, captureTeamID) {
-    const { world } = gameContext;
-    const { mapManager } = world;
-    const worldMap = mapManager.getActiveMap();
-
-    if(!worldMap) {
-        return false;
-    }
-
+const isTileConquerable = function(gameContext, worldMap, tileX, tileY, captureTeamID) {
     const typeID = worldMap.getTile(ArmyMap.LAYER.TYPE, tileX, tileY);
     const tileType = gameContext.tileTypes[typeID];
 
@@ -28,25 +20,52 @@ const isTileConquerable = function(gameContext, tileX, tileY, captureTeamID) {
     return isEnemy; 
 }
 
-ConquerSystem.conquer = function(gameContext, entity, tileX, tileY) {
+ConquerSystem.conquer = function(gameContext, teamID, tiles) {
     const { world } = gameContext;
-    const { mapManager, eventBus } = world;
+    const { mapManager } = world;
+    const worldMap = mapManager.getActiveMap();
 
-    const teamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
-    const { teamID } = teamComponent;
-
-    const isConquerable = isTileConquerable(gameContext, tileX, tileY, teamID);
-
-    if(!isConquerable) {
+    if(!worldMap) {
         return;
     }
 
-    const worldMap = mapManager.getActiveMap();
-    
-    worldMap.placeTile(gameContext.getTeamID(teamID), ArmyMap.LAYER.TEAM, tileX, tileY);
-    worldMap.updateShoreTiles(gameContext, tileX, tileY, 1);
-    worldMap.convertGraphicToTeam(gameContext, tileX, tileY);
-    BorderSystem.updateBorder(gameContext, worldMap, tileX, tileY, 1);
+    for(let i = 0; i < tiles.length; i++) {
+        const { x, y } = tiles[i];
 
-    eventBus.emit(GameEvent.TYPE.TILE_CAPTURED, { "teamID": teamID, tileX, tileY });
+        worldMap.placeTile(gameContext.getTeamID(teamID), ArmyMap.LAYER.TEAM, x, y);
+        worldMap.updateShoreTiles(gameContext, x, y, 1);
+        worldMap.convertGraphicToTeam(gameContext, x, y);
+        BorderSystem.updateBorder(gameContext, worldMap, x, y, 1);
+    }
+}
+
+ConquerSystem.tryConquering = function(gameContext, entity, tileX, tileY) {
+    const { world } = gameContext;
+    const { mapManager, eventBus } = world;
+    const worldMap = mapManager.getActiveMap();
+
+    if(!worldMap) {
+        return;
+    }
+
+    const teamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
+    const { teamID } = teamComponent;
+    const endX = tileX + entity.config.dimX;
+    const endY = tileY + entity.config.dimY;
+    const tiles = [];
+
+    for(let i = tileY; i < endY; i++) {
+        for(let j = tileX; j < endX; j++) {
+            const isConquerable = isTileConquerable(gameContext, worldMap, tileX, tileY, teamID);
+
+            if(isConquerable) {
+                tiles.push({
+                    "x": j,
+                    "y": i
+                });
+            }
+        }
+    }
+
+    eventBus.emit(GameEvent.TYPE.TILE_CAPTURE, { "teamID": teamID, "tiles": tiles });
 }
