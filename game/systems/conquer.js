@@ -56,7 +56,7 @@ ConquerSystem.tryConquering = function(gameContext, entity, tileX, tileY) {
 
     for(let i = tileY; i < endY; i++) {
         for(let j = tileX; j < endX; j++) {
-            const isConquerable = isTileConquerable(gameContext, worldMap, tileX, tileY, teamID);
+            const isConquerable = isTileConquerable(gameContext, worldMap, j, i, teamID);
 
             if(isConquerable) {
                 tiles.push({
@@ -67,5 +67,7 @@ ConquerSystem.tryConquering = function(gameContext, entity, tileX, tileY) {
         }
     }
 
-    eventBus.emit(GameEvent.TYPE.TILE_CAPTURE, { "teamID": teamID, "tiles": tiles });
+    if(tiles.length !== 0) {
+        eventBus.emit(GameEvent.TYPE.TILE_CAPTURE, { "teamID": teamID, "tiles": tiles });
+    }
 }
