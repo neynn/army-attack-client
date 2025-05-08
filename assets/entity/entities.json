@@ -208,8 +208,9 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "healCost": 50,
         "stats": {
-            "story": { "health": 10, "damage": 3, "attackRange": 1, "moveRange": 5, "traits": ["Infantry", "Stealth"] }, 
+            "story": { "health": 10, "damage": 3, "attackRange": 1, "moveRange": 5, "traits": ["Infantry", "Stealth", "Reviveable"] }, 
             "versus": { "health": 10, "damage": 3, "attackRange": 1, "moveRange": 5, "traits": ["Infantry"] }
         },
         "sprites": {

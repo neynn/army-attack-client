@@ -1,4 +1,4 @@
-import { clampValue } from "../../../source/math/math.js";
+import { clampValue } from "../../../../source/math/math.js";
 
 export const Inventory = function() {
     this.items = new Map();
@@ -63,6 +63,35 @@ Inventory.prototype.load = function(blob) {
     for(let i = 0; i < resourceLimits.length; i++) {
 
     }
+}
+
+Inventory.prototype.has = function(type, id, value) {
+    let hasItems = false;
+    
+    switch(type) {
+        case Inventory.TYPE.ITEM: {
+            if(this.items.has(id)) {
+                const count = this.items.get(id);
+
+                hasItems = count >= value;
+            }
+            break;
+        }
+        case Inventory.TYPE.RESOURCE: {
+            if(this.resources.has(id)) {
+                const count = this.resources.get(id);
+
+                hasItems = count >= value;
+            }
+            break;
+        }
+        default: {
+            console.warn(`RewardType ${type} is unknown!`);
+            break;
+        }
+    }
+
+    return hasItems;
 }
 
 Inventory.prototype.init = function(gameContext) {

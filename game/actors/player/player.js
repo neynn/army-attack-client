@@ -2,7 +2,7 @@ import { ACTION_TYPE } from "../../enums.js";
 import { ArmyCamera } from "../../armyCamera.js";
 import { PlayerCursor } from "./playerCursor.js";
 import { RangeVisualizer } from "./rangeVisualizer.js";
-import { Inventory } from "./inventory.js";
+import { Inventory } from "./inventory/inventory.js";
 import { PlayerIdleState } from "./states/idle.js";
 import { PlayerSelectedState } from "./states/selected.js";
 import { PlayerFireMissionState } from "./states/fireMission.js";

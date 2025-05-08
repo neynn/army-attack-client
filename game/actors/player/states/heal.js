@@ -1,5 +1,6 @@
 import { State } from "../../../../source/state/state.js";
 import { ACTION_TYPE } from "../../../enums.js";
+import { HealSystem } from "../../../systems/heal.js";
 import { Player } from "../player.js";
 import { PlayerCursor } from "../playerCursor.js";
 
@@ -68,14 +69,16 @@ PlayerHealState.prototype.queueHeal = function(gameContext, player, entityID) {
 
 PlayerHealState.prototype.isValid = function(gameContext, player) {
     const { hover } = player;
-    const { tileX, tileY, currentTarget, state } = hover;
+    const { currentTarget, state } = hover;
 
     if(state !== PlayerCursor.STATE.HOVER_ON_ENTITY) {
         return false;
     }
 
-    //put good code here :)
-    return false;
+    const playerID = player.getID();
+    const isHealable = HealSystem.isEntityHealable(gameContext, currentTarget, playerID);
+
+    return isHealable;
 }
 
 PlayerHealState.prototype.updateCursor = function(gameContext, player) {

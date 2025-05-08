@@ -8,7 +8,7 @@
     "maxAttackRange": 5,
     "hitDuration": 1,
     "iconDuration": 1.8,
-    "downDuration": 10,
+    "downDuration": 1000,
     "debug": {
         "showInvalidMoveTiles": true
     }

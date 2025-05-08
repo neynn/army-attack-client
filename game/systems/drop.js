@@ -1,5 +1,5 @@
 import { getRandomChance } from "../../source/math/math.js";
-import { Inventory } from "../actors/player/inventory.js";
+import { Inventory } from "../actors/player/inventory/inventory.js";
 
 export const DropSystem = function() {}
 
