@@ -38,7 +38,7 @@ MoveAction.prototype.onEnd = function(gameContext, request) {
     entity.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
     MapSystem.placeEntity(gameContext, entity);
     ConquerSystem.tryConquering(gameContext, entity, targetX, targetY);
-    actionQueue.addImmediateRequest(ACTION_TYPE.COUNTER_MOVE, null, entityID);
+    actionQueue.createImmediateRequest(ACTION_TYPE.COUNTER_MOVE, entityID);
 }
 
 MoveAction.prototype.isFinished = function(gameContext, request) {
@@ -51,7 +51,7 @@ MoveAction.prototype.isFinished = function(gameContext, request) {
     return moveComponent.isPathEmpty();
 }
 
-MoveAction.prototype.getValidated = function(gameContext, request, messengerID) {
+MoveAction.prototype.getValidated = function(gameContext, request) {
     const { entityID, targetX, targetY } = request;
     const { world } = gameContext;
     const { entityManager } = world;
@@ -76,8 +76,9 @@ MoveAction.prototype.getValidated = function(gameContext, request, messengerID) 
     }
 }
 
-MoveAction.prototype.getTemplate = function(entityID, targetX, targetY) {
+MoveAction.prototype.getTemplate = function(actorID, entityID, targetX, targetY) {
     return {
+        "actorID": actorID,
         "entityID": entityID,
         "targetX": targetX,
         "targetY": targetY

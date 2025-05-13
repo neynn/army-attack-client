@@ -60,7 +60,7 @@ PlayerHealState.prototype.queueHeal = function(gameContext, player, entityID) {
     const { world } = gameContext;
     const { actionQueue } = world;
     const playerID = player.getID();
-    const request = actionQueue.createRequest(ACTION_TYPE.HEAL, entityID, playerID);
+    const request = actionQueue.createRequest(ACTION_TYPE.HEAL, playerID, entityID);
 
     if(request) {
         player.inputQueue.enqueueLast(request);

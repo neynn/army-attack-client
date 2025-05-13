@@ -44,7 +44,7 @@ HealAction.prototype.isFinished = function(gameContext, request) {
     return request.timePassed >= constructionDuration;
 }
 
-HealAction.prototype.getValidated = function(gameContext, request, messengerID) {
+HealAction.prototype.getValidated = function(gameContext, request) {
     const { world } = gameContext;
     const { entityManager, turnManager } = world;
     const { actorID, entityID } = request;
@@ -78,9 +78,9 @@ HealAction.prototype.getValidated = function(gameContext, request, messengerID) 
     }
 }
 
-HealAction.prototype.getTemplate = function(entityID, actorID) {
+HealAction.prototype.getTemplate = function(actorID, entityID) {
     return {
-        "entityID": entityID,
-        "actorID": actorID
+        "actorID": actorID,
+        "entityID": entityID
     }
 }

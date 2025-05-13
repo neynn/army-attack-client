@@ -62,7 +62,7 @@ PlayerIdleState.prototype.queueClearDebris = function(gameContext, player, tileX
     const { world } = gameContext;
     const { actionQueue } = world;
     const playerID = player.getID();
-    const request = actionQueue.createRequest(ACTION_TYPE.CLEAR_DEBRIS, tileX, tileY, playerID);
+    const request = actionQueue.createRequest(ACTION_TYPE.CLEAR_DEBRIS, playerID, tileX, tileY);
     
     if(request) {
         player.inputQueue.enqueueLast(request);
@@ -78,6 +78,7 @@ PlayerIdleState.prototype.onClick = function(gameContext, stateMachine) {
 
     switch(state) {
         case PlayerCursor.STATE.HOVER_ON_ENTITY: {
+            const playerID = player.getID();
             const mouseEntity = hover.getEntity(gameContext);
             const isAttackable = mouseEntity.isAttackableByTeam(gameContext, player.teamID);
 
@@ -90,7 +91,7 @@ PlayerIdleState.prototype.onClick = function(gameContext, stateMachine) {
                 return;
             }
         
-            const constructionRequest = ConstructionSystem.onInteract(gameContext, mouseEntity);
+            const constructionRequest = ConstructionSystem.onInteract(gameContext, mouseEntity, playerID);
         
             if(constructionRequest) {
                 player.inputQueue.enqueueLast(constructionRequest);

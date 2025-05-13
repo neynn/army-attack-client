@@ -4,7 +4,7 @@ import { Action } from "./action.js";
 import { ActionRequest } from "./actionRequest.js";
 
 export const ActionQueue = function() {
-    this.actionHandlers = new Map();
+    this.actionTypes = new Map();
     this.maxInstantActions = 100;
     this.immediateQueue = new Queue(100);
     this.executionQueue = new Queue(100);
@@ -34,7 +34,7 @@ ActionQueue.EVENT = {
 };
 
 ActionQueue.prototype.isSendable = function(typeID) {
-    const actionType = this.actionHandlers.get(typeID);
+    const actionType = this.actionTypes.get(typeID);
 
     if(!actionType) {
         return false;
@@ -107,7 +107,7 @@ ActionQueue.prototype.flushExecution = function(gameContext) {
     }
 
     const { type, data } = this.current;
-    const actionType = this.actionHandlers.get(type);
+    const actionType = this.actionTypes.get(type);
 
     this.events.emit(ActionQueue.EVENT.EXECUTION_RUNNING, this.current);
     
@@ -123,7 +123,7 @@ ActionQueue.prototype.startExecution = function(gameContext) {
     }
 
     const { type, data } = this.current;
-    const actionType = this.actionHandlers.get(type);
+    const actionType = this.actionTypes.get(type);
 
     this.state = ActionQueue.STATE.PROCESSING;
     this.events.emit(ActionQueue.EVENT.EXECUTION_RUNNING, this.current);
@@ -137,7 +137,7 @@ ActionQueue.prototype.processExecution = function(gameContext) {
     }
 
     const { type, data } = this.current;
-    const actionType = this.actionHandlers.get(type);
+    const actionType = this.actionTypes.get(type);
 
     actionType.onUpdate(gameContext, data);
 
@@ -152,22 +152,22 @@ ActionQueue.prototype.processExecution = function(gameContext) {
 }
 
 ActionQueue.prototype.createRequest = function(type, ...args) {
-    const actionHandler = this.actionHandlers.get(type);
+    const actionType = this.actionTypes.get(type);
 
-    if(!actionHandler) {
+    if(!actionType) {
         return null;
     }
 
-    const template = actionHandler.getTemplate(...args);
+    const template = actionType.getTemplate(...args);
     const request = new ActionRequest(type, template);
 
     return request;
 }
 
-ActionQueue.prototype.addImmediateRequest = function(type, messengerID, ...args) {
-    const actionHandler = this.actionHandlers.get(type);
+ActionQueue.prototype.createImmediateRequest = function(type, ...args) {
+    const actionType = this.actionTypes.get(type);
 
-    if(!actionHandler) {
+    if(!actionType) {
         return;
     }
 
@@ -175,13 +175,10 @@ ActionQueue.prototype.addImmediateRequest = function(type, messengerID, ...args)
         return;
     }
 
-    const template = actionHandler.getTemplate(...args);
-    const immediateItem = {
-        "messengerID": messengerID,
-        "request": new ActionRequest(type, template)
-    };
+    const template = actionType.getTemplate(...args);
+    const request = new ActionRequest(type, template);
 
-    this.immediateQueue.enqueueLast(immediateItem);
+    this.immediateQueue.enqueueLast(request);
 }
 
 ActionQueue.prototype.updateImmediateQueue = function(gameContext) {
@@ -189,9 +186,8 @@ ActionQueue.prototype.updateImmediateQueue = function(gameContext) {
         return;
     }
 
-    this.immediateQueue.filterUntilFirstHit(element => {
-        const { request, messengerID } = element;
-        const executionItem = this.getExecutionItem(gameContext, request, messengerID);
+    this.immediateQueue.filterUntilFirstHit(request => {
+        const executionItem = this.createExecutionItem(gameContext, request);
 
         if(executionItem) {
             this.enqueue(executionItem);
@@ -204,7 +200,7 @@ ActionQueue.prototype.updateImmediateQueue = function(gameContext) {
 }
 
 ActionQueue.prototype.getInstant = function(typeID) {
-    const actionType = this.actionHandlers.get(typeID);
+    const actionType = this.actionTypes.get(typeID);
 
     if(!actionType) {
         return false;
@@ -216,7 +212,7 @@ ActionQueue.prototype.getInstant = function(typeID) {
 }
 
 ActionQueue.prototype.getPriority = function(typeID) {
-    const actionType = this.actionHandlers.get(typeID);
+    const actionType = this.actionTypes.get(typeID);
 
     if(!actionType) {
         return Action.PRIORITY.NONE;
@@ -227,15 +223,15 @@ ActionQueue.prototype.getPriority = function(typeID) {
     return priority;
 }
 
-ActionQueue.prototype.getExecutionItem = function(gameContext, request, messengerID) {
+ActionQueue.prototype.createExecutionItem = function(gameContext, request) {
     const { type, data } = request;
-    const actionHandler = this.actionHandlers.get(type);
+    const actionType = this.actionTypes.get(type);
 
-    if(!actionHandler) {
+    if(!actionType) {
         return null;
     }
 
-    const validatedData = actionHandler.getValidated(gameContext, data, messengerID);
+    const validatedData = actionType.getValidated(gameContext, data);
 
     if(!validatedData) {
         this.events.emit(ActionQueue.EVENT.EXECUTION_ERROR, request);
@@ -249,12 +245,12 @@ ActionQueue.prototype.getExecutionItem = function(gameContext, request, messenge
 }
 
 ActionQueue.prototype.registerAction = function(typeID, handler) {
-    if(this.actionHandlers.has(typeID)) {
+    if(this.actionTypes.has(typeID)) {
         console.warn(`Action ${typeID} is already registered!`);
         return;
     }
 
-    this.actionHandlers.set(typeID, handler);
+    this.actionTypes.set(typeID, handler);
 }
 
 ActionQueue.prototype.exit = function() {
@@ -271,26 +267,26 @@ ActionQueue.prototype.clearCurrent = function() {
     this.current = null;
 }
 
-ActionQueue.prototype.enqueue = function(executionItem) {
+ActionQueue.prototype.enqueue = function(request) {
     if(this.executionQueue.isFull()) {
         this.events.emit(ActionQueue.EVENT.QUEUE_ERROR, {
             "error": "The execution queue is full. Item has been discarded!",
-            "item": executionItem
+            "item": request
         });
 
         return;
     }
 
-    const { type } = executionItem;
+    const { type } = request;
     const priority = this.getPriority(type);
 
     switch(priority) {
         case Action.PRIORITY.HIGH: {
-            this.executionQueue.enqueueFirst(executionItem);
+            this.executionQueue.enqueueFirst(request);
             break;
         }
         case Action.PRIORITY.LOW: {
-            this.executionQueue.enqueueLast(executionItem);
+            this.executionQueue.enqueueLast(request);
             break;
         }
         default: {

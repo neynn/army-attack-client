@@ -42,7 +42,7 @@ ConstructionAction.prototype.isFinished = function(gameContext, request) {
     return request.timePassed >= constructionDuration;
 }
 
-ConstructionAction.prototype.getValidated = function(gameContext, request, messengerID) {
+ConstructionAction.prototype.getValidated = function(gameContext, request) {
     const { world } = gameContext;
     const { entityManager } = world;
     const { entityID } = request;
@@ -60,8 +60,9 @@ ConstructionAction.prototype.getValidated = function(gameContext, request, messe
     }
 }
 
-ConstructionAction.prototype.getTemplate = function(entityID) {
+ConstructionAction.prototype.getTemplate = function(actorID, entityID) {
     return {
+        "actorID": actorID,
         "entityID": entityID
     }
 }

@@ -27,7 +27,7 @@ AttackAction.prototype.onEnd = function(gameContext, request) {
     AnimationSystem.playIdle(gameContext, attackers);
 
     if(state === AttackSystem.OUTCOME_STATE.IDLE) {
-        actionQueue.addImmediateRequest(ACTION_TYPE.COUNTER_ATTACK, null, id, attackers);
+        actionQueue.createImmediateRequest(ACTION_TYPE.COUNTER_ATTACK, id, attackers);
     }
 }
 
@@ -44,8 +44,8 @@ AttackAction.prototype.isFinished = function(gameContext, request) {
     return request.timePassed >= timeRequired;
 }
 
-AttackAction.prototype.getValidated = function(gameContext, request, messengerID) {
-    const { entityID } = request;
+AttackAction.prototype.getValidated = function(gameContext, request) {
+    const { entityID, actorID } = request;
     const { world } = gameContext; 
     const { entityManager } = world;
     const target = entityManager.getEntity(entityID);
@@ -54,7 +54,7 @@ AttackAction.prototype.getValidated = function(gameContext, request, messengerID
         return null;
     }
 
-    const attackerEntities = AttackSystem.getActiveAttackers(gameContext, target, messengerID);
+    const attackerEntities = AttackSystem.getActiveAttackers(gameContext, target, actorID);
 
     if(!attackerEntities) {
         return null;
@@ -70,8 +70,9 @@ AttackAction.prototype.getValidated = function(gameContext, request, messengerID
     }
 }
 
-AttackAction.prototype.getTemplate = function(entityID) {
+AttackAction.prototype.getTemplate = function(actorID, entityID) {
     return {
+        "actorID": actorID,
         "entityID": entityID
     }
 }

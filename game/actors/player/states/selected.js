@@ -131,7 +131,8 @@ PlayerSelectedState.prototype.onClick = function(gameContext, stateMachine) {
             break;
         }
         case PlayerCursor.STATE.HOVER_ON_NODE: {
-            const request = actionQueue.createRequest(ACTION_TYPE.MOVE, this.entityID, tileX, tileY);
+            const playerID = player.getID();
+            const request = actionQueue.createRequest(ACTION_TYPE.MOVE, playerID, this.entityID, tileX, tileY);
 
             if(request) {
                 player.inputQueue.enqueueLast(request);

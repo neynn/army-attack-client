@@ -72,7 +72,8 @@ PlayerFireMissionState.prototype.updateCursor = function(gameContext, player) {
 PlayerFireMissionState.prototype.queueFireMission = function(gameContext, player, tileX, tileY) {
     const { world } = gameContext;
     const { actionQueue } = world;
-    const request = actionQueue.createRequest(ACTION_TYPE.FIRE_MISSION, this.missionID, tileX, tileY);
+    const playerID = player.getID();
+    const request = actionQueue.createRequest(ACTION_TYPE.FIRE_MISSION, playerID, this.missionID, tileX, tileY);
     
     if(request) {
         player.inputQueue.enqueueLast(request);

@@ -34,7 +34,7 @@ ClearDebrisAction.prototype.isFinished = function(gameContext, request) {
     return request.timePassed >= timeRequired;
 }
 
-ClearDebrisAction.prototype.getValidated = function(gameContext, request, messengerID) {
+ClearDebrisAction.prototype.getValidated = function(gameContext, request) {
     const { tileX, tileY, actorID } = request;
     const isCleanable = DebrisSystem.isCleanable(gameContext, tileX, tileY, actorID)
 
@@ -50,10 +50,10 @@ ClearDebrisAction.prototype.getValidated = function(gameContext, request, messen
     }
 }
 
-ClearDebrisAction.prototype.getTemplate = function(tileX, tileY, actorID) {
+ClearDebrisAction.prototype.getTemplate = function(actorID, tileX, tileY) {
     return {
+        "actorID": actorID,
         "tileX": tileX,
-        "tileY": tileY,
-        "actorID": actorID
+        "tileY": tileY
     }
 }

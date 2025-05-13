@@ -34,7 +34,7 @@ FireMissionAction.prototype.isFinished = function(gameContext, request) {
     return true || request.timePassed >= timeRequired;
 }
 
-FireMissionAction.prototype.getValidated = function(gameContext, request, messengerID) {
+FireMissionAction.prototype.getValidated = function(gameContext, request) {
     const { callID, tileX, tileY } = request;
     const fireMission = FireMissionSystem.getType(gameContext, callID);
 
@@ -59,8 +59,9 @@ FireMissionAction.prototype.getValidated = function(gameContext, request, messen
     }
 }
 
-FireMissionAction.prototype.getTemplate = function(callID, tileX, tileY) {
+FireMissionAction.prototype.getTemplate = function(actorID, callID, tileX, tileY) {
     return {
+        "actorID": actorID,
         "callID": callID,
         "tileX": tileX,
         "tileY": tileY

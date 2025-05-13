@@ -97,7 +97,7 @@ Player.prototype.selectFireMission = function(gameContext, fireMissionID) {
 Player.prototype.queueAttack = function(gameContext, entityID) {
     const { world } = gameContext;
     const { actionQueue } = world;
-    const request = actionQueue.createRequest(ACTION_TYPE.ATTACK, entityID);
+    const request = actionQueue.createRequest(ACTION_TYPE.ATTACK, this.id, entityID);
 
     if(request) {
         this.inputQueue.enqueueLast(request);
@@ -114,7 +114,7 @@ Player.prototype.onMakeChoice = function(gameContext) {
     const { actionQueue, eventBus } = world;
 
     this.inputQueue.filterUntilFirstHit((request) => {
-        const executionItem = actionQueue.getExecutionItem(gameContext, request, this.id);
+        const executionItem = actionQueue.createExecutionItem(gameContext, request);
 
         if(!executionItem) {
             return Queue.FILTER.NO_SUCCESS;
