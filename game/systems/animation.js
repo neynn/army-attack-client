@@ -11,23 +11,15 @@ AnimationSystem.FIRE_OFFSET = {
     REGULAR: 12
 };
 
+AnimationSystem.SOUND_TYPE = {
+    HEAL: "sound_unit_repair",
+    BUTTON: "sound_button_press"
+};
+
 AnimationSystem.SPRITE_TYPE = {
     SELECT: "cursor_move_1x1",
     DELAY: "icon_delay"
 };
-
-const getRandomOffset = function(camera, sizeX, sizeY, maxOffsetX, maxOffsetY) {
-    const offsetX = (Math.random() * 2 - 1) * maxOffsetX;
-    const offsetY = (Math.random() * 2 - 1) * maxOffsetY;
-    const randomX = Math.floor(Math.random() * sizeX);
-    const randomY = Math.floor(Math.random() * sizeY);
-    const { x, y } = camera.transformTileToPosition(randomX, randomY);
-
-    return {
-        "x": x + offsetX,
-        "y": y + offsetY
-    }
-}
 
 AnimationSystem.playIdle = function(gameContext, entities) {
     const { world } = gameContext;
@@ -72,7 +64,7 @@ AnimationSystem.playFire = function(gameContext, targetObject, attackers) {
         const attacker = entityManager.getEntity(attackerID);
         const unitComponent = attacker.getComponent(ArmyEntity.COMPONENT.UNIT);
         const weaponSprite = spriteManager.createSprite(attacker.config.sprites.weapon);
-        const { x, y } = getRandomOffset(camera, target.config.dimX, target.config.dimY, AnimationSystem.FIRE_OFFSET.REGULAR, AnimationSystem.FIRE_OFFSET.REGULAR);
+        const { x, y } = camera.transformSizeToRandomOffset(target.config.dimX, target.config.dimY, AnimationSystem.FIRE_OFFSET.REGULAR, AnimationSystem.FIRE_OFFSET.REGULAR);
 
         LookSystem.lookAtEntity(attacker, target);
         attacker.updateSpriteDirectonal(gameContext, ArmyEntity.SPRITE_TYPE.FIRE, ArmyEntity.SPRITE_TYPE.FIRE_UP);
@@ -83,7 +75,7 @@ AnimationSystem.playFire = function(gameContext, targetObject, attackers) {
 
         if(unitComponent && unitComponent.isArtillery()) {
             const artillerySprite = spriteManager.createSprite(attacker.config.sprites.weapon);
-            const { x, y } = getRandomOffset(camera, target.config.dimX, target.config.dimY, AnimationSystem.FIRE_OFFSET.ARTILLERY, AnimationSystem.FIRE_OFFSET.ARTILLERY);
+            const { x, y } = camera.transformSizeToRandomOffset(target.config.dimX, target.config.dimY, AnimationSystem.FIRE_OFFSET.ARTILLERY, AnimationSystem.FIRE_OFFSET.ARTILLERY);
 
             entitySprite.addChild(artillerySprite);
             artillerySprite.setPosition(x, y);
@@ -128,7 +120,23 @@ AnimationSystem.playCleaning = function(gameContext, tileX, tileY) {
     delaySprite.expire();
     delaySprite.setPosition(x, y);
 
-    soundPlayer.playSound("sound_button_press");
+    soundPlayer.playSound(AnimationSystem.SOUND_TYPE.BUTTON);
+}
+
+AnimationSystem.playHeal = function(gameContext, entity) {
+    const { spriteManager, renderer, client } = gameContext;
+    const { soundPlayer } = client;
+    const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
+    const entitySprite = spriteComponent.getSprite(gameContext);
+    const delaySprite = spriteManager.createSprite(AnimationSystem.SPRITE_TYPE.DELAY, SpriteManager.LAYER.MIDDLE);
+    const camera = renderer.getContext(Player.CAMERA_ID).getCamera();
+    const { x, y } = camera.transformSizeToPositionOffsetCenter(entity.config.dimX, entity.config.dimY);
+
+    entitySprite.addChild(delaySprite);
+    delaySprite.expire();
+    delaySprite.setPosition(x, y);
+
+    soundPlayer.playSound(AnimationSystem.SOUND_TYPE.HEAL);
 }
 
 AnimationSystem.playConstruction = function(gameContext, entity) {

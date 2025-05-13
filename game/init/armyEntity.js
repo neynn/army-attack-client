@@ -122,6 +122,14 @@ ArmyEntity.prototype.updateSprite = function(gameContext, spriteType) {
     }
 }
 
+ArmyEntity.prototype.addHealth = function(health) {
+    const healthComponent = this.getComponent(ArmyEntity.COMPONENT.HEALTH);
+    
+    healthComponent.addHealth(health);
+
+    this.events.emit(ArmyEntity.EVENT.HEALTH_UPDATE, healthComponent.health, healthComponent.maxHealth);
+}
+
 ArmyEntity.prototype.reduceHealth = function(damage) {
     const healthComponent = this.getComponent(ArmyEntity.COMPONENT.HEALTH);
     

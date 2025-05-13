@@ -1,4 +1,22 @@
-export const Action = function() {}
+export const Action = function() {
+    this.priority = Action.PRIORITY.LOW;
+    this.isInstant = false;
+    this.allowSend = false;
+    this.allowReceive = false;
+}
+
+Action.PRIORITY = {
+    LOW: 0,
+    HIGH: 1
+};
+
+Action.prototype.isSendable = function() {
+    return this.allowSend;
+}
+
+Action.prototype.isReceiveable = function() {
+    return this.allowReceive;
+}
 
 Action.prototype.onStart = function(gameContext, data) {}
 Action.prototype.onEnd = function(gameContext, data) {}

@@ -42,7 +42,7 @@ Inventory.prototype.save = function() {
 }
 
 Inventory.prototype.load = function(blob) {
-    const { items, resources, resourceLimits } = blob;
+    const { items, resources } = blob;
 
     for(let i = 0; i < items.length; i++) {
         const { id, value } = items[i];
@@ -58,10 +58,6 @@ Inventory.prototype.load = function(blob) {
         if(this.resources.has(id)) {
             this.resources.set(id, value);
         }
-    }
-
-    for(let i = 0; i < resourceLimits.length; i++) {
-
     }
 }
 
@@ -104,7 +100,7 @@ Inventory.prototype.init = function(gameContext) {
     }
 
     for(const resourceID in gameContext.resourceTypes) {
-        this.resources.set(resourceID, 0);
+        this.resources.set(resourceID, 1000);
     }
 }
 
@@ -126,6 +122,7 @@ Inventory.prototype.remove = function(type, id, value) {
 
                 this.resources.set(id, nextValue);
             }
+            console.log("Taken", value, id);
             break;
         }
         default: {

@@ -98,7 +98,10 @@ AttackSystem.updateTarget = function(gameContext, targetObject) {
 
     switch(state) {
         case AttackSystem.OUTCOME_STATE.DOWN: {
-            DecaySystem.beginDecay(gameContext, entity);
+            DecaySystem.beginDecay(entity);
+            
+            entity.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.DOWN);
+            entity.playSound(gameContext, ArmyEntity.SOUND_TYPE.DEATH);
             break;
         }
         default: {

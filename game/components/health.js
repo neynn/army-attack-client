@@ -15,6 +15,12 @@ HealthComponent.prototype.setHealth = function(value) {
     this.health = health;
 }
 
+HealthComponent.prototype.addHealth = function(value) {
+    const health = clampValue(this.health + value, this.maxHealth, 0);
+
+    this.health = health;
+}
+
 HealthComponent.prototype.reduceHealth = function(value) {
     const health = clampValue(this.health - value, this.maxHealth, 0);
 

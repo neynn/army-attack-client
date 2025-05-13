@@ -307,3 +307,16 @@ Camera2D.prototype.transformTileToPositionCenter = function(tileX, tileY) {
 		"y": positionY
 	}
 }
+
+Camera2D.prototype.transformSizeToRandomOffset = function(sizeX, sizeY, maxOffsetX, maxOffsetY) {
+    const offsetX = (Math.random() * 2 - 1) * maxOffsetX;
+    const offsetY = (Math.random() * 2 - 1) * maxOffsetY;
+    const randomX = Math.floor(Math.random() * sizeX);
+    const randomY = Math.floor(Math.random() * sizeY);
+    const { x, y } = this.transformTileToPosition(randomX, randomY);
+
+    return {
+        "x": x + offsetX,
+        "y": y + offsetY
+    }
+}

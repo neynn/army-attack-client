@@ -7,7 +7,9 @@ import { ConquerSystem } from "../systems/conquer.js";
 import { MapSystem } from "../systems/map.js";
 import { LookSystem } from "../systems/look.js";
 
-export const MoveAction = function() {}
+export const MoveAction = function() {
+    Action.call(this);
+}
 
 MoveAction.prototype = Object.create(Action.prototype);
 MoveAction.prototype.constructor = MoveAction;

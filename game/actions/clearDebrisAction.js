@@ -2,7 +2,9 @@ import { Action } from "../../source/action/action.js";
 import { AnimationSystem } from "../systems/animation.js";
 import { DebrisSystem } from "../systems/debris.js";
 
-export const ClearDebrisAction = function() {}
+export const ClearDebrisAction = function() {
+    Action.call(this);
+}
 
 ClearDebrisAction.prototype = Object.create(Action.prototype);
 ClearDebrisAction.prototype.constructor = ClearDebrisAction;

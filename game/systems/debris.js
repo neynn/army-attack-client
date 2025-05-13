@@ -26,6 +26,12 @@ DebrisSystem.isCleanable = function(gameContext, tileX, tileY, actorID) {
         return false;
     }
 
+    const isOccupied = worldMap.isTileOccupied(tileX, tileY);
+
+    if(isOccupied) {
+        return false;
+    }
+
     const teamID = worldMap.getTile(ArmyMap.LAYER.TEAM, tileX, tileY);
     const isEnemy = AllianceSystem.isEnemy(gameContext, actor.teamID, ArmyMap.TEAM_TYPE[teamID]);
 

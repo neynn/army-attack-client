@@ -2,7 +2,9 @@ import { Action } from "../../source/action/action.js";
 import { AnimationSystem } from "../systems/animation.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 
-export const ConstructionAction = function() {}
+export const ConstructionAction = function() {
+    Action.call(this);
+}
 
 ConstructionAction.prototype = Object.create(Action.prototype);
 ConstructionAction.prototype.constructor = ConstructionAction;

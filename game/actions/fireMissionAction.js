@@ -1,7 +1,9 @@
 import { Action } from "../../source/action/action.js";
 import { FireMissionSystem } from "../systems/fireMission.js";
 
-export const FireMissionAction = function() {}
+export const FireMissionAction = function() {
+    Action.call(this);
+}
 
 FireMissionAction.prototype = Object.create(Action.prototype);
 FireMissionAction.prototype.constructor = FireMissionAction;
@@ -28,9 +30,8 @@ FireMissionAction.prototype.onUpdate = function(gameContext, request) {
 FireMissionAction.prototype.isFinished = function(gameContext, request) {
     const timeRequired = gameContext.settings.hitDuration;
 
-    return true;
-    
-    return request.timePassed >= timeRequired;
+    //Fire Animations have no animation as of yet, so return true immediately.
+    return true || request.timePassed >= timeRequired;
 }
 
 FireMissionAction.prototype.getValidated = function(gameContext, request, messengerID) {

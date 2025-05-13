@@ -1,9 +1,9 @@
 import { EventEmitter } from "../events/eventEmitter.js";
 import { Queue } from "../queue.js";
+import { Action } from "./action.js";
 
 export const ActionQueue = function() {
     this.actionHandlers = new Map();
-    this.actionTypes = {};
     this.maxInstantActions = 100;
     this.immediateQueue = new Queue(100);
     this.executionQueue = new Queue(100);
@@ -25,11 +25,6 @@ ActionQueue.STATE = {
     FLUSH: 3
 };
 
-ActionQueue.PRIORITY = {
-    LOW: "LOW",
-    HIGH: "HIGH"
-};
-
 ActionQueue.EVENT = {
     EXECUTION_DEFER: "EXECUTION_DEFER",
     EXECUTION_ERROR: "EXECUTION_ERROR",
@@ -37,26 +32,16 @@ ActionQueue.EVENT = {
     QUEUE_ERROR: "QUEUE_ERROR"
 };
 
-ActionQueue.prototype.load = function(actionTypes) {
-    if(typeof actionTypes !== "object") {
-        console.error("ActionType cannot be undefined!");
-        return;
-    }
-
-    this.actionTypes = actionTypes;
-}
-
 ActionQueue.prototype.isSendable = function(typeID) {
-    const actionType = this.actionTypes[typeID];
+    const actionType = this.actionHandlers.get(typeID);
 
     if(!actionType) {
         return false;
     }
 
-    const { message } = actionType;
-    const { send } = message;
+    const isSendable = actionType.isSendable();
 
-    return send;
+    return isSendable;
 }
 
 ActionQueue.prototype.updateInstant = function(gameContext) {
@@ -217,25 +202,24 @@ ActionQueue.prototype.updateImmediateQueue = function(gameContext) {
 ActionQueue.prototype.getExecutionItem = function(gameContext, request, messengerID) {
     const { type, data } = request;
     const actionHandler = this.actionHandlers.get(type);
-    const actionType = this.actionTypes[type];
 
     if(!actionHandler) {
         return null;
     }
 
-    const { priority, isInstant } = actionType;
     const validatedData = actionHandler.getValidated(gameContext, data, messengerID);
 
     if(!validatedData) {
-        this.events.emit(ActionQueue.EVENT.EXECUTION_ERROR, request, actionType);
+        this.events.emit(ActionQueue.EVENT.EXECUTION_ERROR, request);
+
         return null;
     }
 
     const executionItem = {
         "type": type,
         "data": validatedData,
-        "priority": priority,
-        "isInstant": isInstant
+        "priority": actionHandler.priority,
+        "isInstant": actionHandler.isInstant
     };
 
     return executionItem;
@@ -244,11 +228,6 @@ ActionQueue.prototype.getExecutionItem = function(gameContext, request, messenge
 ActionQueue.prototype.registerAction = function(typeID, handler) {
     if(this.actionHandlers.has(typeID)) {
         console.warn(`Action ${typeID} is already registered!`);
-        return;
-    }
-
-    if(this.actionTypes[typeID] === undefined) {
-        console.warn(`ActionType ${typeID} does not exist!`);
         return;
     }
 
@@ -280,13 +259,13 @@ ActionQueue.prototype.enqueue = function(executionItem) {
     }
 
     const { priority } = executionItem;
-    
+
     switch(priority) {
-        case ActionQueue.PRIORITY.HIGH: {
+        case Action.PRIORITY.HIGH: {
             this.executionQueue.enqueueFirst(executionItem);
             break;
         }
-        case ActionQueue.PRIORITY.LOW: {
+        case Action.PRIORITY.LOW: {
             this.executionQueue.enqueueLast(executionItem);
             break;
         }

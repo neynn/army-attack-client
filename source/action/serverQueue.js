@@ -8,6 +8,9 @@ const enableServerQueue = function(gameContext) {
 const processUserRequest = function(gameContext, request, messengerID) {
     const { world } = gameContext;
     const { actionQueue } = world;
+    /*
+        Perform IS_MESSENGER_ACTOR check.
+    */
     const executionItem = actionQueue.getExecutionItem(gameContext, request, messengerID);
 
     if(!executionItem) {

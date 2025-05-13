@@ -3,7 +3,9 @@ import { ACTION_TYPE } from "../enums.js";
 import { AnimationSystem } from "../systems/animation.js";
 import { AttackSystem } from "../systems/attack.js";
 
-export const AttackAction = function() {}
+export const AttackAction = function() {
+    Action.call(this);
+}
 
 AttackAction.prototype = Object.create(Action.prototype);
 AttackAction.prototype.constructor = AttackAction;

@@ -27,5 +27,5 @@ export const ACTION_TYPE = {
     DEATH: "Death",
     FIRE_MISSION: "FireMission",
     CLEAR_DEBRIS: "ClearDebris",
-    HEAL: "HEAL"
+    HEAL: "Heal"
 };

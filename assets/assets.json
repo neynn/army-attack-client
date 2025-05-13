@@ -1,5 +1,4 @@
 {
-    "actions": { "directory": ["assets", "config"], "source": "actions.json" },
     "actors": { "directory": ["assets", "config"], "source": "actors.json" },
     "autotilers": { "directory": ["assets", "config"], "source": "autotilers.json" },
     "interfaces": { "directory": ["assets", "config"], "source": "interfaces.json" },

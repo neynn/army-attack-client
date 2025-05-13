@@ -2,7 +2,7 @@ import { ArmyEntity } from "../init/armyEntity.js";
 
 export const DecaySystem = function() {}
 
-DecaySystem.beginDecay = function(gameContext, entity) {
+DecaySystem.beginDecay = function(entity) {
     const reviveableComponent = entity.getComponent(ArmyEntity.COMPONENT.REVIVEABLE);
 
     if(!reviveableComponent) {
@@ -16,6 +16,20 @@ DecaySystem.beginDecay = function(gameContext, entity) {
     }
 
     reviveableComponent.beginDecay();
-    entity.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.DOWN);
-    entity.playSound(gameContext, ArmyEntity.SOUND_TYPE.DEATH);
+}
+
+DecaySystem.endDecay = function(entity) {
+    const reviveableComponent = entity.getComponent(ArmyEntity.COMPONENT.REVIVEABLE);
+
+    if(!reviveableComponent) {
+        return;
+    }
+
+    const avianComponent = entity.getComponent(ArmyEntity.COMPONENT.AVIAN);
+
+    if(avianComponent) {
+        avianComponent.toAir();
+    }
+
+    reviveableComponent.endDecay();
 }

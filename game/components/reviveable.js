@@ -31,6 +31,13 @@ ReviveableComponent.prototype.beginDecay = function() {
     }
 }
 
+ReviveableComponent.prototype.endDecay = function() {
+    if(this.state !== ReviveableComponent.STATE.DEAD) {
+        this.state = ReviveableComponent.STATE.NO_DECAY;
+        this.passedTime = 0;
+    }
+}
+
 ReviveableComponent.prototype.update = function(gameContext, entity) {
     if(this.state === ReviveableComponent.STATE.DECAY) {
         const { timer, world } = gameContext;

@@ -61,7 +61,7 @@ PlayerHealState.prototype.queueHeal = function(gameContext, player, entityID) {
     const { actionQueue } = world;
     const playerID = player.getID();
     const request = actionQueue.createRequest(ACTION_TYPE.HEAL, entityID, playerID);
-    
+
     if(request) {
         player.inputQueue.enqueueLast(request);
     }
@@ -69,14 +69,14 @@ PlayerHealState.prototype.queueHeal = function(gameContext, player, entityID) {
 
 PlayerHealState.prototype.isValid = function(gameContext, player) {
     const { hover } = player;
-    const { currentTarget, state } = hover;
+    const { state } = hover;
 
     if(state !== PlayerCursor.STATE.HOVER_ON_ENTITY) {
         return false;
     }
 
-    const playerID = player.getID();
-    const isHealable = HealSystem.isEntityHealable(gameContext, currentTarget, playerID);
+    const entity = hover.getEntity(gameContext);
+    const isHealable = HealSystem.isEntityHealable(entity, player);
 
     return isHealable;
 }

@@ -2,7 +2,11 @@ import { Action } from "../../source/action/action.js";
 import { AnimationSystem } from "../systems/animation.js";
 import { AttackSystem } from "../systems/attack.js";
 
-export const CounterMoveAction = function() {}
+export const CounterMoveAction = function() {
+    Action.call(this);
+
+    this.priority = Action.PRIORITY.HIGH;
+}
 
 CounterMoveAction.prototype = Object.create(Action.prototype);
 CounterMoveAction.prototype.constructor = CounterMoveAction;

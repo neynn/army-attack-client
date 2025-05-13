@@ -26,6 +26,7 @@ GameEvent.TYPE = {
     ENTITY_HIT: 202,
     ENTITY_DOWN: 203,
     ENTITY_KILL: 204,
+    ENTITY_HEAL: 205,
 
     TILE_CAPTURE: 300,
     DEBRIS_REMOVED: 301,
@@ -40,29 +41,6 @@ GameEvent.TYPE = {
     VERSUS_REQUEST_SKIP_TURN: 1000,
     VERSUS_SKIP_TURN: 1001
 };
-
-GameEvent.NAME = {
-    [GameEvent.TYPE.ACTION_REQUEST]: "ACTION_REQUEST",
-    [GameEvent.TYPE.ACTION_AUTHORIZE]: "ACTION_AUTHORIZE",
-    [GameEvent.TYPE.ACTION_DENY]: "ACTION_DENY",
-
-    [GameEvent.TYPE.ENTITY_DEATH]: "ENTITY_DEATH",
-    [GameEvent.TYPE.ENTITY_DECAY]: "ENTITY_DECAY",
-    [GameEvent.TYPE.ENTITY_HIT]: "ENTITY_HIT",
-    [GameEvent.TYPE.ENTITY_DOWN]: "ENTITY_DOWN",
-    [GameEvent.TYPE.ENTITY_KILL]: "ENTITY_KILL",
-
-    [GameEvent.TYPE.TILE_CAPTURE]: "TILE_CAPTURE",
-    [GameEvent.TYPE.DEBRIS_REMOVED]: "DEBRIS_REMOVED",
-
-    [GameEvent.TYPE.DROP]: "DROP",
-    [GameEvent.TYPE.HIT_DROP]: "HIT_DROP",
-    [GameEvent.TYPE.KILL_DROP]: "KILL_DROP",
-    [GameEvent.TYPE.DEBRIS_DROP]: "DEBRIS_DROP",
-
-    [GameEvent.TYPE.VERSUS_REQUEST_SKIP_TURN]: "VERSUS_REQUEST_SKIP_TURN",
-    [GameEvent.TYPE.VERSUS_SKIP_TURN]: "VERSUS_SKIP_TURN"
-}
 
 GameEvent.KILL_REASON = {
     DECAY: "DECAY",
@@ -82,6 +60,7 @@ GameEvent.prototype.init = function(gameContext) {
     eventBus.on(GameEvent.TYPE.ENTITY_HIT, (event) => this.onEntityHit(gameContext, event));
     eventBus.on(GameEvent.TYPE.ENTITY_DOWN, (event) => this.onEntityDown(gameContext, event));
     eventBus.on(GameEvent.TYPE.ENTITY_KILL, (event) => this.onEntityKill(gameContext, event));
+    eventBus.on(GameEvent.TYPE.ENTITY_HEAL, (event) => this.onEntityHeal(gameContext, event));
     eventBus.on(GameEvent.TYPE.TILE_CAPTURE, (event) => this.onTileCapture(gameContext, event));
     eventBus.on(GameEvent.TYPE.DEBRIS_REMOVED, (event) => this.onDebrisRemoved(gameContext, event));
     eventBus.on(GameEvent.TYPE.HIT_DROP, (event) => this.onHitDrop(gameContext, event));
@@ -252,6 +231,18 @@ GameEvent.prototype.onEntityKill = function(gameContext, event) {
         case GameEvent.MODE.STORY: {
             eventBus.emit(GameEvent.TYPE.KILL_DROP, { "entity": target, "receiverID": "Player"});
             eventBus.emit(GameEvent.TYPE.ENTITY_DEATH, { "entity": target, "reason": reason });
+            break;
+        }
+    }
+}
+
+GameEvent.prototype.onEntityHeal = function(gameContext, event) {
+    const { entity, health } = event;
+
+    console.log("ENTITY_HEAL", event);
+
+    switch(this.mode) {
+        case GameEvent.MODE.STORY: {
             break;
         }
     }
