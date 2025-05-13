@@ -6,8 +6,9 @@ export const Action = function() {
 }
 
 Action.PRIORITY = {
-    LOW: 0,
-    HIGH: 1
+    NONE: 0,
+    LOW: 1,
+    HIGH: 2
 };
 
 Action.prototype.isSendable = function() {

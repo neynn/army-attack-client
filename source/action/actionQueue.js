@@ -1,6 +1,7 @@
 import { EventEmitter } from "../events/eventEmitter.js";
 import { Queue } from "../queue.js";
 import { Action } from "./action.js";
+import { ActionRequest } from "./actionRequest.js";
 
 export const ActionQueue = function() {
     this.actionHandlers = new Map();
@@ -47,7 +48,14 @@ ActionQueue.prototype.isSendable = function(typeID) {
 ActionQueue.prototype.updateInstant = function(gameContext) {
     let instantActionsExecuted = 0;
 
-    while(instantActionsExecuted < this.maxInstantActions && this.current && this.current.isInstant) {
+    while(instantActionsExecuted < this.maxInstantActions && this.current) {
+        const { type } = this.current;
+        const isInstant = this.getInstant(type);
+
+        if(!isInstant) {
+            break;
+        }
+
         this.flushExecution(gameContext);
         this.current = this.executionQueue.getNext();
 
@@ -59,7 +67,7 @@ ActionQueue.prototype.updateInstant = function(gameContext) {
         instantActionsExecuted++;
     }
 
-    const limitReached = instantActionsExecuted === this.maxInstantActions && this.current && this.current.isInstant;
+    const limitReached = instantActionsExecuted === this.maxInstantActions && this.current && this.getInstant(this.current.type);
 
     return limitReached;
 }
@@ -151,10 +159,7 @@ ActionQueue.prototype.createRequest = function(type, ...args) {
     }
 
     const template = actionHandler.getTemplate(...args);
-    const request = {
-        "type": type,
-        "data": template
-    };
+    const request = new ActionRequest(type, template);
 
     return request;
 }
@@ -172,11 +177,8 @@ ActionQueue.prototype.addImmediateRequest = function(type, messengerID, ...args)
 
     const template = actionHandler.getTemplate(...args);
     const immediateItem = {
-        "request": {
-            "type": type,
-            "data": template
-        },
-        "messengerID": messengerID
+        "messengerID": messengerID,
+        "request": new ActionRequest(type, template)
     };
 
     this.immediateQueue.enqueueLast(immediateItem);
@@ -193,10 +195,36 @@ ActionQueue.prototype.updateImmediateQueue = function(gameContext) {
 
         if(executionItem) {
             this.enqueue(executionItem);
+
+            return true;
         }
 
-        return executionItem !== null;
+        return false;
     });
+}
+
+ActionQueue.prototype.getInstant = function(typeID) {
+    const actionType = this.actionHandlers.get(typeID);
+
+    if(!actionType) {
+        return false;
+    }
+
+    const { isInstant } = actionType;
+
+    return isInstant;
+}
+
+ActionQueue.prototype.getPriority = function(typeID) {
+    const actionType = this.actionHandlers.get(typeID);
+
+    if(!actionType) {
+        return Action.PRIORITY.NONE;
+    }
+
+    const { priority } = actionType;
+
+    return priority;
 }
 
 ActionQueue.prototype.getExecutionItem = function(gameContext, request, messengerID) {
@@ -215,12 +243,7 @@ ActionQueue.prototype.getExecutionItem = function(gameContext, request, messenge
         return null;
     }
 
-    const executionItem = {
-        "type": type,
-        "data": validatedData,
-        "priority": actionHandler.priority,
-        "isInstant": actionHandler.isInstant
-    };
+    const executionItem = new ActionRequest(type, validatedData);
 
     return executionItem;
 }
@@ -258,7 +281,8 @@ ActionQueue.prototype.enqueue = function(executionItem) {
         return;
     }
 
-    const { priority } = executionItem;
+    const { type } = executionItem;
+    const priority = this.getPriority(type);
 
     switch(priority) {
         case Action.PRIORITY.HIGH: {
