@@ -67,6 +67,12 @@ Player.SPRITE_TYPE = {
 Player.prototype = Object.create(Actor.prototype);
 Player.prototype.constructor = Player;
 
+Player.prototype.save = function() {
+    return {
+        "inventory": this.inventory.save()
+    }
+}
+
 Player.prototype.getCamera = function() {
     return this.camera;
 }

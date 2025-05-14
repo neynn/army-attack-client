@@ -1,10 +1,8 @@
-import { clampValue } from "../../../../source/math/math.js";
+import { Item } from "./item.js";
 
 export const Inventory = function() {
     this.items = new Map();
-    this.itemLimits = new Map();
     this.resources = new Map();
-    this.resourceLimits = new Map();
 }
 
 Inventory.TYPE = {
@@ -13,50 +11,36 @@ Inventory.TYPE = {
 };
 
 Inventory.prototype.save = function() {
-    const items = [];
-    const resources = [];
+    const items = {};
+    const resources = {};
 
-    for(const [itemID, count] of this.items) {
-        if(count > 0) {
-            items.push({
-                "id": itemID,
-                "value": count
-            });
-        }
-    }
-
-    for(const [resourceID, count] of this.resources) {
-        if(count > 0) {
-            resources.push({
-                "id": resourceID,
-                "value": count
-            });
-        }
-    }
+    this.items.forEach(item => item.write(items));
+    this.resources.forEach(resource => resource.write(resources));
 
     return {
         "items": items,
-        "resources": resources,
-        "resourceLimits": []
+        "resources": resources
     }
 }
 
 Inventory.prototype.load = function(blob) {
     const { items, resources } = blob;
 
-    for(let i = 0; i < items.length; i++) {
-        const { id, value } = items[i];
+    for(const itemID in items) {
+        const count = items[itemID];
+        const item = this.items.get(itemID);
 
-        if(this.items.has(id)) {
-            this.items.set(id, value);
+        if(item) {
+            item.setCount(count);
         }
     }
 
-    for(let i = 0; i < resources.length; i++) {
-        const { id, value } = resources[i];
+    for(const resourceID in resources) {
+        const count = resources[resourceID];
+        const item = this.resources.get(resourceID);
 
-        if(this.resources.has(id)) {
-            this.resources.set(id, value);
+        if(item) {
+            item.setCount(count);
         }
     }
 }
@@ -66,19 +50,21 @@ Inventory.prototype.has = function(type, id, value) {
     
     switch(type) {
         case Inventory.TYPE.ITEM: {
-            if(this.items.has(id)) {
-                const count = this.items.get(id);
+            const item = this.items.get(id);
 
-                hasItems = count >= value;
+            if(item) {
+                hasItems = item.has(value);
             }
+
             break;
         }
         case Inventory.TYPE.RESOURCE: {
-            if(this.resources.has(id)) {
-                const count = this.resources.get(id);
+            const item = this.resources.get(id);
 
-                hasItems = count >= value;
+            if(item) {
+                hasItems = item.has(value);
             }
+
             break;
         }
         default: {
@@ -91,37 +77,49 @@ Inventory.prototype.has = function(type, id, value) {
 }
 
 Inventory.prototype.init = function(gameContext) {
-    for(const itemID in gameContext.itemTypes) {
-        const itemType = gameContext.itemTypes[itemID];
-        const { maxStack = 0 } = itemType;
+    const { itemTypes, resourceTypes } = gameContext;
 
-        this.items.set(itemID, 0);
-        this.itemLimits.set(itemID, maxStack);
+    for(const itemID in itemTypes) {
+        const { maxStack = 0, maxDrop = 1 } = itemTypes[itemID];
+        const item = new Item(itemID);
+
+        item.setMaxDrop(maxDrop);
+        item.setMaxCount(maxStack);
+        item.setCount(0);
+
+        this.items.set(itemID, item);
     }
 
-    for(const resourceID in gameContext.resourceTypes) {
-        this.resources.set(resourceID, 1000);
+    for(const resourceID in resourceTypes) {
+        const { maxDrop = 1 } = resourceTypes[resourceID];
+        const item = new Item(resourceID);
+
+        item.setMaxDrop(maxDrop);
+        item.setMaxCount(999999);
+        item.setCount(1000);
+
+        this.resources.set(resourceID, item);
     }
 }
 
 Inventory.prototype.remove = function(type, id, value) {
     switch(type) {
         case Inventory.TYPE.ITEM: {
-            if(this.items.has(id)) {
-                const count = this.items.get(id);
-                const nextValue = clampValue(count - value, count, 0);
+            const item = this.items.get(id);
 
-                this.items.set(id, nextValue);
+            if(item) {
+                item.remove(value);
             }
+
             break;
         }
         case Inventory.TYPE.RESOURCE: {
-            if(this.resources.has(id)) {
-                const count = this.resources.get(id);
-                const nextValue = clampValue(count - value, count, 0);
+            const item = this.resources.get(id);
 
-                this.resources.set(id, nextValue);
+            if(item) {
+                item.remove(value);
             }
+
             console.log("Taken", value, id);
             break;
         }
@@ -135,22 +133,21 @@ Inventory.prototype.remove = function(type, id, value) {
 Inventory.prototype.add = function(type, id, value) {
     switch(type) {
         case Inventory.TYPE.ITEM: {
-            if(this.items.has(id)) {
-                const count = this.items.get(id);
-                const maxStack = this.itemLimits.get(id);
-                const nextValue = clampValue(count + value, maxStack, count);
+            const item = this.items.get(id);
 
-                this.items.set(id, nextValue);
+            if(item) {
+                item.add(value);
             }
+
             break;
         }
         case Inventory.TYPE.RESOURCE: {
-            if(this.resources.has(id)) {
-                const count = this.resources.get(id);
-                const nextValue = clampValue(count + value, Number.MAX_SAFE_INTEGER, count);
+            const item = this.resources.get(id);
 
-                this.resources.set(id, nextValue);
+            if(item) {
+                item.add(value);
             }
+
             break;
         }
         default: {
