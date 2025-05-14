@@ -4,6 +4,7 @@ export const MoveComponent = function() {
     this.range = 0;
     this.speed = 0;
     this.path = [];
+    this.pathIndex = -1;
     this.distance = 0;
     this.passability = new Set();
     this.flags = MoveComponent.FLAGS.NONE;
@@ -30,8 +31,36 @@ MoveComponent.createStep = function(deltaX, deltaY) {
     }
 }
 
+MoveComponent.prototype.isPathAdvanceRequired = function(distance) {
+    return this.distance >= distance && !this.isPathDone();
+}
+
+MoveComponent.prototype.advancePath = function(distance) {
+    this.distance -= distance;
+    this.pathIndex--;
+}
+
+MoveComponent.prototype.clearPath = function() {
+    this.path = [];
+    this.pathIndex = -1;
+    this.distance = 0;
+}
+
 MoveComponent.prototype.setPath = function(path) {
     this.path = path;
+    this.pathIndex = this.path.length - 1;
+}
+
+MoveComponent.prototype.isPathDone = function() {
+    return this.pathIndex < 0 || this.pathIndex >= this.path.length;
+}
+
+MoveComponent.prototype.getCurrentStep = function() {
+    if(this.pathIndex < 0 || this.pathIndex >= this.path.length) {
+        return null;
+    } 
+
+    return this.path[this.pathIndex];
 }
 
 MoveComponent.prototype.isCoward = function() {
@@ -47,37 +76,22 @@ MoveComponent.prototype.isCloaked = function() {
 }
 
 MoveComponent.prototype.update = function(gameContext, entity) {
-    if(this.path.length !== 0) {
+    if(!this.isPathDone()) {
         MoveSystem.updatePath(gameContext, entity);
-    }
+    } 
 }
 
-MoveComponent.prototype.clear = function() {
-    this.distance = 0;
-    this.path = [];
-}
-
-MoveComponent.prototype.getMoveSpeed = function(deltaTime) {
+MoveComponent.prototype.updateDistance = function(deltaTime) {
     const { speed } = this.getCurrentStep();
-    const moveSpeed = (this.speed / speed) * deltaTime;
+    const deltaDistance = (this.speed / speed) * deltaTime;
 
-    return moveSpeed;
-}
+    this.distance += deltaDistance;
 
-MoveComponent.prototype.getCurrentStep = function() {
-    if(this.path.length === 0) {
-        return null;
-    }
-
-    return this.path[this.path.length - 1];
+    return deltaDistance;
 }
 
 MoveComponent.prototype.hasPassability = function(type) {
     return this.passability.has(type);
-}
-
-MoveComponent.prototype.isPathEmpty = function() {
-    return this.path.length === 0;
 }
 
 MoveComponent.prototype.init = function(config) {

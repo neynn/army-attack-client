@@ -20,7 +20,7 @@ MoveSystem.isMoveable = function(entity) {
 MoveSystem.updatePath = function(gameContext, entity) {
     const moveComponent = entity.getComponent(ArmyEntity.COMPONENT.MOVE);
 
-    if(moveComponent.isPathEmpty()) {
+    if(moveComponent.isPathDone()) {
         return;
     }
 
@@ -28,13 +28,12 @@ MoveSystem.updatePath = function(gameContext, entity) {
     const camera = renderer.getContext(Player.CAMERA_ID).getCamera();
     const deltaTime = timer.getFixedDeltaTime();
     const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
+    const deltaDistance = moveComponent.updateDistance(deltaTime);
     const { deltaX, deltaY } = moveComponent.getCurrentStep();
-    const moveSpeed = moveComponent.getMoveSpeed(deltaTime);
-    
-    positionComponent.updatePosition(deltaX * moveSpeed, deltaY * moveSpeed);
-    moveComponent.distance += moveSpeed;
 
-    while(moveComponent.distance >= gameContext.settings.travelDistance && !moveComponent.isPathEmpty()) {
+    positionComponent.updatePosition(deltaX * deltaDistance, deltaY * deltaDistance);
+
+    while(moveComponent.isPathAdvanceRequired(gameContext.settings.travelDistance)) {
         const { deltaX, deltaY } = moveComponent.getCurrentStep();
         const tileX = positionComponent.tileX + deltaX;
         const tileY = positionComponent.tileY + deltaY;
@@ -42,8 +41,7 @@ MoveSystem.updatePath = function(gameContext, entity) {
         
         positionComponent.setPosition(x, y);
         positionComponent.setTile(tileX, tileY);
-        moveComponent.distance -= gameContext.settings.travelDistance;
-        moveComponent.path.pop();
+        moveComponent.advancePath(gameContext.settings.travelDistance);
     }
 
     updateSpritePosition(gameContext, entity);
@@ -62,7 +60,7 @@ MoveSystem.endMove = function(gameContext, entity, targetX, targetY) {
     }
 
     positionComponent.setTile(targetX, targetY);
-    moveComponent.clear();
+    moveComponent.clearPath();
 
     updateSpritePosition(gameContext, entity);
 }

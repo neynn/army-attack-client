@@ -33,13 +33,6 @@ AttackAction.prototype.onEnd = function(gameContext, request) {
     }
 }
 
-AttackAction.prototype.onUpdate = function(gameContext, request) {
-    const { timer } = gameContext;
-    const deltaTime = timer.getFixedDeltaTime();
-
-    request.timePassed += deltaTime;
-}
-
 AttackAction.prototype.isFinished = function(gameContext, request) {
     const timeRequired = gameContext.settings.hitDuration;
 
@@ -66,7 +59,6 @@ AttackAction.prototype.getValidated = function(gameContext, request) {
     const targetObject = AttackSystem.getAttackTarget(target, attackerEntities);
     
     return {
-        "timePassed": 0,
         "attackers": attackerIDs,
         "target": targetObject
     }

@@ -27,13 +27,6 @@ CounterMoveAction.prototype.onEnd = function(gameContext, request) {
     AnimationSystem.playIdle(gameContext, attackers);
 }
 
-CounterMoveAction.prototype.onUpdate = function(gameContext, request) {
-    const { timer } = gameContext;
-    const deltaTime = timer.getFixedDeltaTime();
-
-    request.timePassed += deltaTime;
-}
-
 CounterMoveAction.prototype.isFinished = function(gameContext, request) {
     const timeRequired = gameContext.settings.hitDuration;
 
@@ -60,7 +53,6 @@ CounterMoveAction.prototype.getValidated = function(gameContext, template) {
     const targetObject = AttackSystem.getAttackTarget(target, attackers);
     
     return {
-        "timePassed": 0,
         "attackers": attackerIDs,
         "target": targetObject
     }

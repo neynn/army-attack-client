@@ -22,5 +22,5 @@ Action.prototype.isReceiveable = function() {
 Action.prototype.onStart = function(gameContext, data) {}
 Action.prototype.onEnd = function(gameContext, data) {}
 Action.prototype.onUpdate = function(gameContext, data) {}
-Action.prototype.isFinished = function(gameContext, data) {}
-Action.prototype.getValidated = function(gameContext, template) {}
+Action.prototype.isFinished = function(gameContext, executionRequest) {}
+Action.prototype.getValidated = function(gameContext, actionRequest) {}

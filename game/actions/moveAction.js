@@ -45,13 +45,14 @@ MoveAction.prototype.onEnd = function(gameContext, request) {
 }
 
 MoveAction.prototype.isFinished = function(gameContext, request) {
-    const { entityID } = request;
+    const { data } = request;
+    const { entityID } = data;
     const { world } = gameContext;
     const { entityManager } = world;
     const entity = entityManager.getEntity(entityID);
     const moveComponent = entity.getComponent(ArmyEntity.COMPONENT.MOVE);
 
-    return moveComponent.isPathEmpty();
+    return moveComponent.isPathDone();
 }
 
 MoveAction.prototype.getValidated = function(gameContext, request) {

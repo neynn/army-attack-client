@@ -23,13 +23,6 @@ ClearDebrisAction.prototype.onEnd = function(gameContext, request) {
     DebrisSystem.endCleaning(gameContext, tileX, tileY, actorID);
 }
 
-ClearDebrisAction.prototype.onUpdate = function(gameContext, request) {
-    const { timer } = gameContext;
-    const deltaTime = timer.getFixedDeltaTime();
-
-    request.timePassed += deltaTime;
-}
-
 ClearDebrisAction.prototype.isFinished = function(gameContext, request) {
     const timeRequired = gameContext.settings.iconDuration;
 
@@ -45,7 +38,6 @@ ClearDebrisAction.prototype.getValidated = function(gameContext, request) {
     }
 
     return {
-        "timePassed": 0,
         "tileX": tileX,
         "tileY": tileY,
         "actorID": actorID

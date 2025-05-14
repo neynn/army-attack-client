@@ -27,13 +27,6 @@ CounterAttackAction.prototype.onEnd = function(gameContext, request) {
     AnimationSystem.playIdle(gameContext, attackers);
 }
 
-CounterAttackAction.prototype.onUpdate = function(gameContext, request) {
-    const { timer } = gameContext;
-    const deltaTime = timer.getFixedDeltaTime();
-
-    request.timePassed += deltaTime;
-}
-
 CounterAttackAction.prototype.isFinished = function(gameContext, request) {
     const timeRequired = gameContext.settings.hitDuration;
 
@@ -68,7 +61,6 @@ CounterAttackAction.prototype.getValidated = function(gameContext, template) {
     const targetObject = AttackSystem.getAttackTarget(pickedTarget, [entity]);
     
     return {
-        "timePassed": 0,
         "attackers": attackerIDs,
         "target": targetObject
     }

@@ -1,7 +1,7 @@
 import { EventEmitter } from "../events/eventEmitter.js";
+import { ExecutionRequest } from "./executionRequest.js";
 import { Queue } from "../queue.js";
 import { Action } from "./action.js";
-import { ActionRequest } from "./actionRequest.js";
 
 export const ActionQueue = function() {
     this.actionTypes = new Map();
@@ -110,8 +110,12 @@ ActionQueue.prototype.flushExecution = function(gameContext) {
     const actionType = this.actionTypes.get(type);
 
     this.events.emit(ActionQueue.EVENT.EXECUTION_RUNNING, this.current);
-    
+    this.current.setState(ExecutionRequest.STATE.RUNNING);
+
     actionType.onStart(gameContext, data);
+
+    this.current.setState(ExecutionRequest.STATE.FINISHED);
+
     actionType.onEnd(gameContext, data);
 
     this.clearCurrent();
@@ -126,6 +130,7 @@ ActionQueue.prototype.startExecution = function(gameContext) {
     const actionType = this.actionTypes.get(type);
 
     this.state = ActionQueue.STATE.PROCESSING;
+    this.current.setState(ExecutionRequest.STATE.RUNNING);
     this.events.emit(ActionQueue.EVENT.EXECUTION_RUNNING, this.current);
         
     actionType.onStart(gameContext, data);
@@ -136,17 +141,21 @@ ActionQueue.prototype.processExecution = function(gameContext) {
         return;
     }
 
+    const { timer } = gameContext;
+    const deltaTime = timer.getFixedDeltaTime();
+
     const { type, data } = this.current;
     const actionType = this.actionTypes.get(type);
 
+    this.current.advance(deltaTime);
+
     actionType.onUpdate(gameContext, data);
 
-    const isFinished = actionType.isFinished(gameContext, data);
-
-    if(this.isSkipping || isFinished) {
+    if(this.isSkipping || actionType.isFinished(gameContext, this.current)) {
         actionType.onEnd(gameContext, data);
 
         this.state = ActionQueue.STATE.ACTIVE;
+        this.current.setState(ExecutionRequest.STATE.FINISHED);
         this.clearCurrent();
     }
 }
@@ -220,7 +229,7 @@ ActionQueue.prototype.createExecutionRequest = function(gameContext, request) {
         return null;
     }
 
-    const executionRequest = new ActionRequest(type, validatedData);
+    const executionRequest = new ExecutionRequest(type, validatedData);
 
     return executionRequest;
 }
@@ -239,8 +248,7 @@ ActionQueue.prototype.exit = function() {
     this.immediateQueue.clear();
     this.executionQueue.clear();
     this.state = ActionQueue.STATE.ACTIVE;
-    this.isSkipping = false;
-    this.current = null;
+    this.clearCurrent();
 }
 
 ActionQueue.prototype.clearCurrent = function() {

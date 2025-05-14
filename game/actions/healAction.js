@@ -33,13 +33,6 @@ HealAction.prototype.onEnd = function(gameContext, request) {
     HealSystem.healEntity(gameContext, entity, health);
 }
 
-HealAction.prototype.onUpdate = function(gameContext, request) {
-    const { timer } = gameContext;
-    const deltaTime = timer.getFixedDeltaTime();
-
-    request.timePassed += deltaTime;
-}
-
 HealAction.prototype.isFinished = function(gameContext, request) {
     const constructionDuration = gameContext.settings.iconDuration;
 
@@ -75,8 +68,7 @@ HealAction.prototype.getValidated = function(gameContext, request) {
         "entityID": entityID,
         "actorID": actorID,
         "health": health,
-        "cost": cost,
-        "timePassed": 0
+        "cost": cost
     }
 }
 

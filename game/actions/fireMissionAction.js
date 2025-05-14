@@ -22,13 +22,6 @@ FireMissionAction.prototype.onEnd = function(gameContext, request) {
     FireMissionSystem.endFireMission(gameContext, callID, tileX, tileY, targets);
 }
 
-FireMissionAction.prototype.onUpdate = function(gameContext, request) {
-    const { timer } = gameContext;
-    const deltaTime = timer.getFixedDeltaTime();
-
-    request.timePassed += deltaTime;
-}
-
 FireMissionAction.prototype.isFinished = function(gameContext, request) {
     const timeRequired = gameContext.settings.hitDuration;
 
@@ -56,8 +49,7 @@ FireMissionAction.prototype.getValidated = function(gameContext, request) {
         "callID": callID,
         "tileX": tileX,
         "tileY": tileY,
-        "targets": targets,
-        "timePassed": 0
+        "targets": targets
     }
 }
 

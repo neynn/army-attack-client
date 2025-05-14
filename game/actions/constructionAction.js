@@ -31,13 +31,6 @@ ConstructionAction.prototype.onEnd = function(gameContext, request) {
     AnimationSystem.setConstructionFrame(gameContext, entity);
 }
 
-ConstructionAction.prototype.onUpdate = function(gameContext, request) {
-    const { timer } = gameContext;
-    const deltaTime = timer.getFixedDeltaTime();
-
-    request.timePassed += deltaTime;
-}
-
 ConstructionAction.prototype.isFinished = function(gameContext, request) {
     const constructionDuration = gameContext.settings.iconDuration;
 
@@ -56,7 +49,6 @@ ConstructionAction.prototype.getValidated = function(gameContext, request) {
     }
 
     return {
-        "timePassed": 0,
         "entityID": entityID,
         "deltaSteps": 1
     }
