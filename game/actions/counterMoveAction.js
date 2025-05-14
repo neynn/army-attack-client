@@ -1,4 +1,6 @@
 import { Action } from "../../source/action/action.js";
+import { ActionRequest } from "../../source/action/actionRequest.js";
+import { ACTION_TYPE } from "../enums.js";
 import { AnimationSystem } from "../systems/animation.js";
 import { AttackSystem } from "../systems/attack.js";
 
@@ -64,8 +66,10 @@ CounterMoveAction.prototype.getValidated = function(gameContext, template) {
     }
 }
 
-CounterMoveAction.prototype.getTemplate = function(entityID) {
-    return {
+CounterMoveAction.createRequest = function(entityID) {
+    const request = new ActionRequest(ACTION_TYPE.COUNTER_MOVE, {
         "entityID": entityID
-    }
+    });
+
+    return request;
 }

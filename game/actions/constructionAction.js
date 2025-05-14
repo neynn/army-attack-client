@@ -1,6 +1,8 @@
 import { Action } from "../../source/action/action.js";
 import { AnimationSystem } from "../systems/animation.js";
 import { ArmyEntity } from "../init/armyEntity.js";
+import { ActionRequest } from "../../source/action/actionRequest.js";
+import { ACTION_TYPE } from "../enums.js";
 
 export const ConstructionAction = function() {
     Action.call(this);
@@ -60,9 +62,11 @@ ConstructionAction.prototype.getValidated = function(gameContext, request) {
     }
 }
 
-ConstructionAction.prototype.getTemplate = function(actorID, entityID) {
-    return {
+ConstructionAction.createRequest = function(actorID, entityID) {
+    const request = new ActionRequest(ACTION_TYPE.CONSTRUCTION, {
         "actorID": actorID,
         "entityID": entityID
-    }
+    });
+
+    return request;
 }

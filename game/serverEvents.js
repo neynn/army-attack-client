@@ -101,11 +101,11 @@ ServerEvents.gameEvent = function(gameContext, payload) {
 
     /*
         TODO: FOR SERVER!
-        When the server sends an action, it sends it as CLIENT_EVENT.EVENT { ACTION_AUTHORIZE { "choice": executionItem, "actorID": messengerID } }
-        const { executionItem } = payload;
-        const { messengerID } = executionItem;
+        When the server sends an action, it sends it as CLIENT_EVENT.EVENT { ACTION_AUTHORIZE { "choice": executionRequest, "actorID": messengerID } }
+        const { executionRequest } = payload;
+        const { messengerID } = executionRequest;
 
-        eventBus.emit(GameEvent.TYPE.ACTION_AUTHORIZE, { "choice": executionItem, "actorID": messengerID });
+        eventBus.emit(GameEvent.TYPE.ACTION_AUTHORIZE, { "choice": executionRequest, "actorID": messengerID });
 
         So force the eventBus to call ACTION_AUTHORIZE with the parameters.
     */

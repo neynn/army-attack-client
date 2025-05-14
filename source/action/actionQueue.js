@@ -151,32 +151,13 @@ ActionQueue.prototype.processExecution = function(gameContext) {
     }
 }
 
-ActionQueue.prototype.createRequest = function(type, ...args) {
-    const actionType = this.actionTypes.get(type);
-
-    if(!actionType) {
-        return null;
-    }
-
-    const template = actionType.getTemplate(...args);
-    const request = new ActionRequest(type, template);
-
-    return request;
-}
-
-ActionQueue.prototype.createImmediateRequest = function(type, ...args) {
+ActionQueue.prototype.addImmediateRequest = function(request) {
+    const { type } = request;
     const actionType = this.actionTypes.get(type);
 
     if(!actionType) {
         return;
     }
-
-    if(this.immediateQueue.isFull()) {
-        return;
-    }
-
-    const template = actionType.getTemplate(...args);
-    const request = new ActionRequest(type, template);
 
     this.immediateQueue.enqueueLast(request);
 }
@@ -187,10 +168,10 @@ ActionQueue.prototype.updateImmediateQueue = function(gameContext) {
     }
 
     this.immediateQueue.filterUntilFirstHit(request => {
-        const executionItem = this.createExecutionItem(gameContext, request);
+        const executionRequest = this.createExecutionRequest(gameContext, request);
 
-        if(executionItem) {
-            this.enqueue(executionItem);
+        if(executionRequest) {
+            this.enqueue(executionRequest);
 
             return true;
         }
@@ -223,7 +204,7 @@ ActionQueue.prototype.getPriority = function(typeID) {
     return priority;
 }
 
-ActionQueue.prototype.createExecutionItem = function(gameContext, request) {
+ActionQueue.prototype.createExecutionRequest = function(gameContext, request) {
     const { type, data } = request;
     const actionType = this.actionTypes.get(type);
 
@@ -239,9 +220,9 @@ ActionQueue.prototype.createExecutionItem = function(gameContext, request) {
         return null;
     }
 
-    const executionItem = new ActionRequest(type, validatedData);
+    const executionRequest = new ActionRequest(type, validatedData);
 
-    return executionItem;
+    return executionRequest;
 }
 
 ActionQueue.prototype.registerAction = function(typeID, handler) {

@@ -1,5 +1,5 @@
 import { State } from "../../../../source/state/state.js";
-import { ACTION_TYPE } from "../../../enums.js";
+import { HealAction } from "../../../actions/healAction.js";
 import { HealSystem } from "../../../systems/heal.js";
 import { Player } from "../player.js";
 import { PlayerCursor } from "../playerCursor.js";
@@ -45,7 +45,7 @@ PlayerHealState.prototype.onClick = function(gameContext, stateMachine) {
     const isValid = this.isValid(gameContext, player);
 
     if(isValid) {
-        this.queueHeal(gameContext, player, currentTarget);
+        this.queueHeal(player, currentTarget);
     } else {
         const { client } = gameContext;
         const { soundPlayer } = client;
@@ -56,15 +56,11 @@ PlayerHealState.prototype.onClick = function(gameContext, stateMachine) {
     stateMachine.setNextState(gameContext, Player.STATE.IDLE);
 }
 
-PlayerHealState.prototype.queueHeal = function(gameContext, player, entityID) {
-    const { world } = gameContext;
-    const { actionQueue } = world;
+PlayerHealState.prototype.queueHeal = function(player, entityID) {
     const playerID = player.getID();
-    const request = actionQueue.createRequest(ACTION_TYPE.HEAL, playerID, entityID);
+    const request = HealAction.createRequest(playerID, entityID);
 
-    if(request) {
-        player.inputQueue.enqueueLast(request);
-    }
+    player.inputQueue.enqueueLast(request);
 }
 
 PlayerHealState.prototype.isValid = function(gameContext, player) {

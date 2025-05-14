@@ -1,6 +1,6 @@
 import { State } from "../../../../source/state/state.js";
+import { FireMissionAction } from "../../../actions/fireMissionAction.js";
 import { ArmyCamera } from "../../../armyCamera.js";
-import { ACTION_TYPE } from "../../../enums.js";
 import { ArmyEntity } from "../../../init/armyEntity.js";
 import { AnimationSystem } from "../../../systems/animation.js";
 import { FireMissionSystem } from "../../../systems/fireMission.js";
@@ -69,15 +69,11 @@ PlayerFireMissionState.prototype.updateCursor = function(gameContext, player) {
     }
 }
 
-PlayerFireMissionState.prototype.queueFireMission = function(gameContext, player, tileX, tileY) {
-    const { world } = gameContext;
-    const { actionQueue } = world;
+PlayerFireMissionState.prototype.queueFireMission = function(player, tileX, tileY) {
     const playerID = player.getID();
-    const request = actionQueue.createRequest(ACTION_TYPE.FIRE_MISSION, playerID, this.missionID, tileX, tileY);
+    const request = FireMissionAction.createRequest(playerID, this.missionID, tileX, tileY);
     
-    if(request) {
-        player.inputQueue.enqueueLast(request);
-    }
+    player.inputQueue.enqueueLast(request);
 }
 
 PlayerFireMissionState.prototype.isValid = function(gameContext, fireMissionID, tileX, tileY) {
@@ -99,7 +95,7 @@ PlayerFireMissionState.prototype.onClick = function(gameContext, stateMachine) {
     const isValid = this.isValid(gameContext, this.missionID, tileX, tileY);
 
     if(isValid) {
-        this.queueFireMission(gameContext, player, tileX, tileY);
+        this.queueFireMission(player, tileX, tileY);
         stateMachine.setNextState(gameContext, Player.STATE.IDLE);
     } else {
         const { client } = gameContext;

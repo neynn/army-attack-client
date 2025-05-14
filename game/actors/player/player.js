@@ -1,4 +1,3 @@
-import { ACTION_TYPE } from "../../enums.js";
 import { ArmyCamera } from "../../armyCamera.js";
 import { PlayerCursor } from "./playerCursor.js";
 import { RangeVisualizer } from "./rangeVisualizer.js";
@@ -14,6 +13,7 @@ import { Queue } from "../../../source/queue.js";
 import { GameEvent } from "../../gameEvent.js";
 import { AttackVisualizer } from "./attackVisualizer.js";
 import { PlayerHealState } from "./states/heal.js";
+import { AttackAction } from "../../actions/attackAction.js";
 
 export const Player = function() {
     Actor.call(this);
@@ -94,14 +94,10 @@ Player.prototype.selectFireMission = function(gameContext, fireMissionID) {
     this.states.setNextState(gameContext, Player.STATE.FIRE_MISSION, { "mission": fireMissionID });
 }
 
-Player.prototype.queueAttack = function(gameContext, entityID) {
-    const { world } = gameContext;
-    const { actionQueue } = world;
-    const request = actionQueue.createRequest(ACTION_TYPE.ATTACK, this.id, entityID);
+Player.prototype.queueAttack = function(entityID) {
+    const request = AttackAction.createRequest(this.id, entityID);
 
-    if(request) {
-        this.inputQueue.enqueueLast(request);
-    }
+    this.inputQueue.enqueueLast(request);
 }
 
 Player.prototype.onClick = function(gameContext) {    
@@ -114,13 +110,13 @@ Player.prototype.onMakeChoice = function(gameContext) {
     const { actionQueue, eventBus } = world;
 
     this.inputQueue.filterUntilFirstHit((request) => {
-        const executionItem = actionQueue.createExecutionItem(gameContext, request);
+        const executionRequest = actionQueue.createExecutionRequest(gameContext, request);
 
-        if(!executionItem) {
+        if(!executionRequest) {
             return Queue.FILTER.NO_SUCCESS;
         }
 
-        eventBus.emit(GameEvent.TYPE.ACTION_REQUEST, { "actorID": this.id, "request": request, "choice": executionItem });
+        eventBus.emit(GameEvent.TYPE.ACTION_REQUEST, { "actorID": this.id, "request": request, "choice": executionRequest });
         
         return Queue.FILTER.SUCCESS;
     });

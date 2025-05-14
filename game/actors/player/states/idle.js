@@ -5,7 +5,7 @@ import { MoveSystem } from "../../../systems/move.js";
 import { PathfinderSystem } from "../../../systems/pathfinder.js";
 import { PlayerCursor } from "../playerCursor.js";
 import { Player } from "../player.js";
-import { ACTION_TYPE } from "../../../enums.js";
+import { ClearDebrisAction } from "../../../actions/clearDebrisAction.js";
 
 export const PlayerIdleState = function() {}
 
@@ -58,15 +58,11 @@ PlayerIdleState.prototype.selectEntity = function(gameContext, player, entity) {
     player.states.setNextState(gameContext, Player.STATE.SELECTED, { "entityID": entityID });
 }
 
-PlayerIdleState.prototype.queueClearDebris = function(gameContext, player, tileX, tileY) {
-    const { world } = gameContext;
-    const { actionQueue } = world;
+PlayerIdleState.prototype.queueClearDebris = function(player, tileX, tileY) {
     const playerID = player.getID();
-    const request = actionQueue.createRequest(ACTION_TYPE.CLEAR_DEBRIS, playerID, tileX, tileY);
+    const request = ClearDebrisAction.createRequest(playerID, tileX, tileY);
     
-    if(request) {
-        player.inputQueue.enqueueLast(request);
-    }
+    player.inputQueue.enqueueLast(request);
 }
 
 PlayerIdleState.prototype.onClick = function(gameContext, stateMachine) {
@@ -83,7 +79,7 @@ PlayerIdleState.prototype.onClick = function(gameContext, stateMachine) {
             const isAttackable = mouseEntity.isAttackableByTeam(gameContext, player.teamID);
 
             if(isAttackable) {
-                player.queueAttack(gameContext, currentTarget);
+                player.queueAttack(currentTarget);
                 return;
             }
         
@@ -105,7 +101,7 @@ PlayerIdleState.prototype.onClick = function(gameContext, stateMachine) {
             break;
         }
         case PlayerCursor.STATE.HOVER_ON_DEBRIS: {
-            this.queueClearDebris(gameContext, player, tileX, tileY);
+            this.queueClearDebris(player, tileX, tileY);
             break;
         }
     }

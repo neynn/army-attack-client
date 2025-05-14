@@ -1,4 +1,6 @@
 import { Action } from "../../source/action/action.js";
+import { ActionRequest } from "../../source/action/actionRequest.js";
+import { ACTION_TYPE } from "../enums.js";
 import { FireMissionSystem } from "../systems/fireMission.js";
 
 export const FireMissionAction = function() {
@@ -59,11 +61,13 @@ FireMissionAction.prototype.getValidated = function(gameContext, request) {
     }
 }
 
-FireMissionAction.prototype.getTemplate = function(actorID, callID, tileX, tileY) {
-    return {
+FireMissionAction.createRequest = function(actorID, callID, tileX, tileY) {
+    const request = new ActionRequest(ACTION_TYPE.FIRE_MISSION, {
         "actorID": actorID,
         "callID": callID,
         "tileX": tileX,
         "tileY": tileY
-    }
+    });
+
+    return request;
 }

@@ -1,4 +1,6 @@
 import { Action } from "../../source/action/action.js";
+import { ActionRequest } from "../../source/action/actionRequest.js";
+import { ACTION_TYPE } from "../enums.js";
 import { AnimationSystem } from "../systems/animation.js";
 import { DecaySystem } from "../systems/decay.js";
 import { HealSystem } from "../systems/heal.js";
@@ -78,9 +80,11 @@ HealAction.prototype.getValidated = function(gameContext, request) {
     }
 }
 
-HealAction.prototype.getTemplate = function(actorID, entityID) {
-    return {
+HealAction.createRequest = function(actorID, entityID) {
+    const request = new ActionRequest(ACTION_TYPE.HEAL, {
         "actorID": actorID,
         "entityID": entityID
-    }
+    });
+
+    return request;
 }

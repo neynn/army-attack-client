@@ -12,13 +12,13 @@ const processUserRequest = function(gameContext, request, messengerID) {
         Perform IS_MESSENGER_ACTOR check.
         Map messengerID to actorID. If IS_MESSENGER_ACTOR && (!request.data.actorID || IS_ACTOR(request.data.actorID);
     */
-    const executionItem = actionQueue.createExecutionItem(gameContext, request);
+    const executionRequest = actionQueue.createExecutionRequest(gameContext, request);
 
-    if(!executionItem) {
+    if(!executionRequest) {
         return;
     }
 
-    actionQueue.enqueue(executionItem);
+    actionQueue.enqueue(executionRequest);
 
     const processNext = () => {
         if(!actionQueue.isEmpty()) {

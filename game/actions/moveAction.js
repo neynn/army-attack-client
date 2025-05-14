@@ -6,6 +6,8 @@ import { ArmyEntity } from "../init/armyEntity.js";
 import { ConquerSystem } from "../systems/conquer.js";
 import { MapSystem } from "../systems/map.js";
 import { LookSystem } from "../systems/look.js";
+import { ActionRequest } from "../../source/action/actionRequest.js";
+import { CounterMoveAction } from "./counterMoveAction.js";
 
 export const MoveAction = function() {
     Action.call(this);
@@ -38,7 +40,8 @@ MoveAction.prototype.onEnd = function(gameContext, request) {
     entity.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
     MapSystem.placeEntity(gameContext, entity);
     ConquerSystem.tryConquering(gameContext, entity, targetX, targetY);
-    actionQueue.createImmediateRequest(ACTION_TYPE.COUNTER_MOVE, entityID);
+
+    actionQueue.addImmediateRequest(CounterMoveAction.createRequest(entityID));
 }
 
 MoveAction.prototype.isFinished = function(gameContext, request) {
@@ -76,11 +79,13 @@ MoveAction.prototype.getValidated = function(gameContext, request) {
     }
 }
 
-MoveAction.prototype.getTemplate = function(actorID, entityID, targetX, targetY) {
-    return {
+MoveAction.createRequest = function(actorID, entityID, targetX, targetY) {
+    const request = new ActionRequest(ACTION_TYPE.MOVE, {
         "actorID": actorID,
         "entityID": entityID,
         "targetX": targetX,
         "targetY": targetY
-    }
+    });
+
+    return request
 }

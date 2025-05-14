@@ -1,12 +1,12 @@
 import { EntityManager } from "../../../../source/entity/entityManager.js";
 import { State } from "../../../../source/state/state.js";
 import { ArmyCamera } from "../../../armyCamera.js";
-import { ACTION_TYPE } from "../../../enums.js";
 import { AnimationSystem } from "../../../systems/animation.js";
 import { LookSystem } from "../../../systems/look.js";
 import { ArmyEntity } from "../../../init/armyEntity.js";
 import { PlayerCursor } from "../playerCursor.js";
 import { Player } from "../player.js";
+import { MoveAction } from "../../../actions/moveAction.js";
 
 export const PlayerSelectedState = function() {
     this.entityID = EntityManager.ID.INVALID;
@@ -110,8 +110,7 @@ PlayerSelectedState.prototype.deselectEntity = function(gameContext, player) {
 }
 
 PlayerSelectedState.prototype.onClick = function(gameContext, stateMachine) {
-    const { world, client } = gameContext;
-    const { actionQueue } = world;
+    const { client } = gameContext;
     const { soundPlayer } = client;
     const player = stateMachine.getContext();
     const { hover } = player;
@@ -123,7 +122,7 @@ PlayerSelectedState.prototype.onClick = function(gameContext, stateMachine) {
             const isAttackable = mouseEntity.isAttackableByTeam(gameContext, player.teamID);
 
             if(isAttackable) {
-                player.queueAttack(gameContext, currentTarget);
+                player.queueAttack(currentTarget);
             } else {
                 soundPlayer.play("sound_error", 0.5); 
             }
@@ -132,11 +131,9 @@ PlayerSelectedState.prototype.onClick = function(gameContext, stateMachine) {
         }
         case PlayerCursor.STATE.HOVER_ON_NODE: {
             const playerID = player.getID();
-            const request = actionQueue.createRequest(ACTION_TYPE.MOVE, playerID, this.entityID, tileX, tileY);
+            const request = MoveAction.createRequest(playerID, this.entityID, tileX, tileY);
 
-            if(request) {
-                player.inputQueue.enqueueLast(request);
-            }
+            player.inputQueue.enqueueLast(request);
             break;
         }
         default: {

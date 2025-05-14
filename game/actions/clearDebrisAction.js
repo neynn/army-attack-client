@@ -1,4 +1,6 @@
 import { Action } from "../../source/action/action.js";
+import { ActionRequest } from "../../source/action/actionRequest.js";
+import { ACTION_TYPE } from "../enums.js";
 import { AnimationSystem } from "../systems/animation.js";
 import { DebrisSystem } from "../systems/debris.js";
 
@@ -50,10 +52,12 @@ ClearDebrisAction.prototype.getValidated = function(gameContext, request) {
     }
 }
 
-ClearDebrisAction.prototype.getTemplate = function(actorID, tileX, tileY) {
-    return {
+ClearDebrisAction.createRequest = function(actorID, tileX, tileY) {
+    const request = new ActionRequest(ACTION_TYPE.CLEAR_DEBRIS, {
         "actorID": actorID,
         "tileX": tileX,
         "tileY": tileY
-    }
+    });
+
+    return request;
 }

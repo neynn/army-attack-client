@@ -24,4 +24,3 @@ Action.prototype.onEnd = function(gameContext, data) {}
 Action.prototype.onUpdate = function(gameContext, data) {}
 Action.prototype.isFinished = function(gameContext, data) {}
 Action.prototype.getValidated = function(gameContext, template) {}
-Action.prototype.getTemplate = function(...args) {}

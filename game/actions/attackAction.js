@@ -1,7 +1,9 @@
 import { Action } from "../../source/action/action.js";
+import { ActionRequest } from "../../source/action/actionRequest.js";
 import { ACTION_TYPE } from "../enums.js";
 import { AnimationSystem } from "../systems/animation.js";
 import { AttackSystem } from "../systems/attack.js";
+import { CounterAttackAction } from "./counterAttackAction.js";
 
 export const AttackAction = function() {
     Action.call(this);
@@ -27,7 +29,7 @@ AttackAction.prototype.onEnd = function(gameContext, request) {
     AnimationSystem.playIdle(gameContext, attackers);
 
     if(state === AttackSystem.OUTCOME_STATE.IDLE) {
-        actionQueue.createImmediateRequest(ACTION_TYPE.COUNTER_ATTACK, id, attackers);
+        actionQueue.addImmediateRequest(CounterAttackAction.createRequest(id, attackers));
     }
 }
 
@@ -70,9 +72,11 @@ AttackAction.prototype.getValidated = function(gameContext, request) {
     }
 }
 
-AttackAction.prototype.getTemplate = function(actorID, entityID) {
-    return {
+AttackAction.createRequest = function(actorID, entityID) {
+    const request = new ActionRequest(ACTION_TYPE.ATTACK, {
         "actorID": actorID,
         "entityID": entityID
-    }
+    });
+    
+    return request;
 }

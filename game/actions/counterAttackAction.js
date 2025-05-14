@@ -1,4 +1,6 @@
 import { Action } from "../../source/action/action.js";
+import { ActionRequest } from "../../source/action/actionRequest.js";
+import { ACTION_TYPE } from "../enums.js";
 import { AnimationSystem } from "../systems/animation.js";
 import { AttackSystem } from "../systems/attack.js";
 
@@ -72,9 +74,11 @@ CounterAttackAction.prototype.getValidated = function(gameContext, template) {
     }
 }
 
-CounterAttackAction.prototype.getTemplate = function(entityID, attackers) {
-    return {
+CounterAttackAction.createRequest = function(entityID, attackers) {
+    const request = new ActionRequest(ACTION_TYPE.COUNTER_ATTACK, {
         "entityID": entityID,
         "attackers": attackers
-    }
+    });
+
+    return request;
 }
