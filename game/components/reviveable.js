@@ -17,6 +17,10 @@ ReviveableComponent.STATE = {
     DEAD: 2
 };
 
+ReviveableComponent.prototype.isDecaying = function() {
+    return this.state === ReviveableComponent.STATE.DECAY;
+}
+
 ReviveableComponent.prototype.isAlive = function() {
     return this.state === ReviveableComponent.STATE.NO_DECAY;
 }

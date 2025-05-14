@@ -1,5 +1,5 @@
 export const SpriteComponent = function() {
-    this.spriteID = -1;
+    this.spriteIndex = -1;
     this.isFlippable = false;
 }
 
@@ -13,25 +13,41 @@ SpriteComponent.FLIP_STATE = {
     FLIPPED: 1
 };
 
+SpriteComponent.prototype.setIndex = function(index) {
+    this.spriteIndex = index;
+}
+
+SpriteComponent.prototype.destroy = function(gameContext) {
+    const { spriteManager } = gameContext;
+
+    spriteManager.destroySprite(this.spriteIndex);
+}
+
+SpriteComponent.prototype.swapLayer = function(gameContext, layerID) {
+    const { spriteManager } = gameContext;
+    
+    spriteManager.swapLayer(this.spriteIndex, layerID);
+}
+
 SpriteComponent.prototype.setPosition = function(gameContext, positionX, positionY) {
     const { spriteManager } = gameContext;
-    const sprite = spriteManager.getSprite(this.spriteID);
+    const sprite = spriteManager.getSprite(this.spriteIndex);
 
     sprite.setPosition(positionX, positionY);
 }
 
 SpriteComponent.prototype.getSprite = function(gameContext) {
     const { spriteManager } = gameContext;
-    const sprite = spriteManager.getSprite(this.spriteID);
+    const sprite = spriteManager.getSprite(this.spriteIndex);
 
     return sprite;
 }
 
 SpriteComponent.prototype.change = function(gameContext, sheetID, animationID) {
     const { spriteManager } = gameContext;
-    
+
     if(sheetID !== undefined) {
-        spriteManager.updateSprite(this.spriteID, sheetID, animationID);
+        spriteManager.updateSprite(this.spriteIndex, sheetID, animationID);
     }
 }
 
@@ -41,7 +57,7 @@ SpriteComponent.prototype.flip = function(gameContext, state) {
     }
 
     const { spriteManager } = gameContext;
-    const sprite = spriteManager.getSprite(this.spriteID);
+    const sprite = spriteManager.getSprite(this.spriteIndex);
 
     switch(state) {
         case SpriteComponent.FLIP_STATE.UNFLIPPED: {

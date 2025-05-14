@@ -98,8 +98,7 @@ const createDefaultSprite = function(gameContext, entity, tileX, tileY) {
     positionComponent.positionX = x;
     positionComponent.positionY = y;
 
-    spriteComponent.spriteID = sprite.getIndex();
-
+    spriteComponent.setIndex(sprite.getIndex());
     sprite.setPosition(x, y);
 
     return sprite;
@@ -114,7 +113,7 @@ const COMPONENT_INIT = {
 ArmyEntityFactory.prototype.onCreate = function(gameContext, config) {
     const { world } = gameContext;
     const { entityManager } = world;
-    const { components, tileX = -1, tileY = -1, team = null, type = null } = config;
+    const { tileX = -1, tileY = -1, team = null, type = null } = config;
     const entityType = entityManager.getEntityType(type);
 
     if(!entityType) {
@@ -143,8 +142,6 @@ ArmyEntityFactory.prototype.onCreate = function(gameContext, config) {
         sprite.freeze();
         sprite.setFrame(0);
     }
-
-    entityManager.loadComponents(entity, components);
     
     return entity;
 }

@@ -89,13 +89,13 @@ SpawnSystem.createEntity = function(gameContext, config) {
 }
 
 SpawnSystem.destroyEntity = function(gameContext, entity) {
-    const { world, spriteManager } = gameContext;
+    const { world } = gameContext;
     const { entityManager } = world;
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const entityID = entity.getID();
 
     MapSystem.removeEntity(gameContext, entity);
-    spriteManager.destroySprite(spriteComponent.spriteID);
+    spriteComponent.destroy(gameContext);
     entityManager.markEntity(EntityManager.MARK_TYPE.DELETE, entityID);
 
     unloadEntitySprites(gameContext, entity);

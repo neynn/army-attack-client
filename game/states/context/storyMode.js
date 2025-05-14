@@ -50,7 +50,7 @@ StoryModeState.prototype.saveSnapshot = function(gameContext) {
     entityManager.forAllEntities((entityID, entity) => {
         const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
         const teamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
-        const savedComponents = entity.save();
+        const savedData = entity.save();
         const owners = turnManager.getOwnersOf(entityID);
         
         entities.push({
@@ -59,7 +59,7 @@ StoryModeState.prototype.saveSnapshot = function(gameContext) {
             "tileY": positionComponent.tileY,
             "team": teamComponent.teamID,
             "owners": owners,
-            "components": savedComponents
+            "data": savedData
         });
     });
     

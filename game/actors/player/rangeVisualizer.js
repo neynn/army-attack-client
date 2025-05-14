@@ -48,13 +48,13 @@ RangeVisualizer.prototype.show = function(gameContext, entity) {
         return;
     }
 
-    const { tileManager, spriteManager } = gameContext;
+    const { tileManager } = gameContext;
     const autotiler = tileManager.getAutotilerByID(ArmyMap.AUTOTILER.RANGE);
     const { range } = attackComponent;
     const { tileX, tileY } = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
-    const { spriteID } = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
+    const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
 
-    spriteManager.swapLayer(spriteID, SpriteManager.LAYER.TOP);
+    spriteComponent.swapLayer(gameContext, SpriteManager.LAYER.TOP);
 
     const startX = tileX - range;
     const startY = tileY - range;
@@ -77,16 +77,16 @@ RangeVisualizer.prototype.show = function(gameContext, entity) {
 }
 
 RangeVisualizer.prototype.hide = function(gameContext) {
-    const { spriteManager, world } = gameContext;
+    const { world } = gameContext;
     const { entityManager } = world;
     const entity = entityManager.getEntity(this.lastTarget);
 
     this.camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.RANGE);
 
     if(entity) {
-        const { spriteID } = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
+        const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
         
-        spriteManager.swapLayer(spriteID, SpriteManager.LAYER.MIDDLE);
+        spriteComponent.swapLayer(gameContext, SpriteManager.LAYER.MIDDLE);
     }
 }
 

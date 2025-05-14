@@ -111,23 +111,6 @@ EntityManager.prototype.update = function(gameContext) {
     this.pendingRemovals.clear();
 }
 
-EntityManager.prototype.loadComponents = function(entity, components) {
-    if(!components) {
-        return;
-    }
-
-    for(const componentID in components) {
-        if(!this.components.has(componentID)) {
-            Logger.log(Logger.CODE.ENGINE_ERROR, "Component is not registered!", "EntityManager.prototype.loadComponents", { "id": componentID }); 
-            continue;
-        }
-
-        const blob = components[componentID];
-
-        entity.loadComponent(componentID, blob);
-    }
-}
-
 EntityManager.prototype.initComponents = function(entity, components) {
     if(!components) {
         return;
@@ -212,8 +195,9 @@ EntityManager.prototype.createEntity = function(gameContext, config, externalID)
 
     const entityID = externalID !== undefined ? externalID : EntityManager.ID.NEXT++;
 
+    entity.load(gameContext, config);
     entity.setID(entityID);
-
+    
     this.entityMap.set(entityID, this.entities.length);
     this.entities.push(entity);
     this.events.emit(EntityManager.EVENT.ENTITY_CREATE, entityID, entity);

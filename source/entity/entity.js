@@ -42,6 +42,8 @@ Entity.prototype.getComponent = function(componentID) {
     return component;
 }
 
+Entity.prototype.load = function(gameContext, blob) {}
+
 Entity.prototype.save = function() {
     const blob = {};
 
@@ -74,11 +76,7 @@ Entity.prototype.initComponent = function(componentID, config) {
     }
 }
 
-Entity.prototype.loadComponent = function(componentID, blob) {
-    if(!blob) {
-        return;
-    }
-    
+Entity.prototype.loadComponent = function(componentID, blob) {    
     const component = this.components.get(componentID);
 
     if(component && typeof component.load === "function") {
