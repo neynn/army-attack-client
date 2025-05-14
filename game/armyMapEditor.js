@@ -142,7 +142,7 @@ ArmyMapEditor.prototype.initRenderEvents = function(gameContext) {
             const renderY = i * height - y;
             const renderX = j * width - x;
 
-            this.camera.drawTile(graphics, context, id, renderX, renderY);
+            this.camera.drawTileEasy(graphics, id, context, renderX, renderY);
 
             context.fillStyle = this.overlayColor;
             context.fillText(name, renderX + halfWidth, renderY);  
@@ -376,7 +376,9 @@ ArmyMapEditor.prototype.initButtons = function(gameContext) {
         }, { id: this.id });
 
         button.addCustomRender((context, localX, localY) => {
-            this.camera.drawTile(graphics, context, tileID, localX, localY, this.slotButtonSize, this.slotButtonSize);
+            this.camera.setRelativeScale(this.slotButtonSize, this.slotButtonSize);
+            this.camera.drawTileEasy(graphics, tileID, context, localX, localY);
+            this.camera.resetScale();
         });
     }
 } 

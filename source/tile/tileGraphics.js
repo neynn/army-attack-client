@@ -12,58 +12,21 @@ TileGraphics.DEFAULT = {
     FRAME_TIME: 1
 };
 
-TileGraphics.COLOR = {
-    EMPTY_TILE_FIRST: "#000000",
-    EMPTY_TILE_SECOND: "#701867"
-};
-
-TileGraphics.prototype.drawEmptyTile = function(context, renderX, renderY, scaleX , scaleY, tileWidth, tileHeight) {
-    const scaledX = tileWidth * 0.5 * scaleX;
-    const scaledY = tileHeight * 0.5 * scaleY;
-
-    context.fillStyle = TileGraphics.COLOR.EMPTY_TILE_FIRST;
-    context.fillRect(renderX, renderY, scaledX, scaledY);
-    context.fillRect(renderX + scaledX, renderY + scaledY, scaledX, scaledY);
-
-    context.fillStyle = TileGraphics.COLOR.EMPTY_TILE_SECOND;
-    context.fillRect(renderX + scaledX, renderY, scaledX, scaledY);
-    context.fillRect(renderX, renderY + scaledY, scaledX, scaledY);
-}
-
-TileGraphics.prototype.drawTile = function(context, tileID, renderX, renderY, scaleX, scaleY, tileWidth, tileHeight) {
+TileGraphics.prototype.getValidContainer = function(tileID) {
     const index = tileID - 1;
 
     if(index < 0 || index >= this.containers.length) {
-        this.drawEmptyTile(context, renderX, renderY, scaleX, scaleY, tileWidth, tileHeight);
-        return;
+        return null;
     }
 
     const container = this.containers[index];
-    const { texture, frames, frameIndex, frameCount } = container;
+    const { texture, frameCount } = container;
 
     if(texture === null || frameCount === 0) {
-        this.drawEmptyTile(context, renderX, renderY, scaleX, scaleY, tileWidth, tileHeight);
-        return;
+        return null;
     }
 
-    const { bitmap } = texture;
-    const currentFrame = frames[frameIndex];
-    const frameLength = currentFrame.length;
-
-    for(let i = 0; i < frameLength; ++i) {
-        const component = currentFrame[i];
-        const { frameX, frameY, frameW, frameH, shiftX, shiftY } = component;
-        const drawX = renderX + shiftX * scaleX;
-        const drawY = renderY + shiftY * scaleY;
-        const drawWidth = frameW * scaleX;
-        const drawHeight = frameH * scaleY;
-
-        context.drawImage(
-            bitmap,
-            frameX, frameY, frameW, frameH,
-            drawX, drawY, drawWidth, drawHeight
-        );
-    }
+    return container;
 }
 
 TileGraphics.prototype.onTextureLoad = function(textureID, texture) {

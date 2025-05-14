@@ -15,8 +15,15 @@ export const Camera2D = function() {
     this.startY = -1;
     this.endX = -1;
     this.endY = -1;
+    this.scaleX = 1;
+    this.scaleY = 1;
     this.overlays = new Map();
 }
+
+Camera2D.COLOR = {
+    EMPTY_TILE_FIRST: "#000000",
+    EMPTY_TILE_SECOND: "#701867"
+};
 
 Camera2D.MAP_OUTLINE = {
     LINE_SIZE: 2,
@@ -25,6 +32,16 @@ Camera2D.MAP_OUTLINE = {
 
 Camera2D.prototype = Object.create(Camera.prototype);
 Camera2D.prototype.constructor = Camera2D;
+
+Camera2D.prototype.setRelativeScale = function(tileWidth, tileHeight) {
+    this.scaleX = tileWidth / this.tileWidth;
+    this.scaleY = tileHeight / this.tileHeight;
+}
+
+Camera.prototype.resetScale = function() {
+    this.scaleX = 1;
+    this.scaleY = 1;
+}
 
 Camera2D.prototype.createOverlay = function(overlayID) {
     if(this.overlays.has(overlayID)) {
@@ -70,18 +87,51 @@ Camera2D.prototype.clearOverlay = function(overlayID) {
     overlay.length = 0;
 }
 
-Camera2D.prototype.drawEmptyTile = function(graphics, context, renderX, renderY, targetWidth = this.tileWidth, targetHeight = this.tileHeight) {
-    const scaleX = targetWidth / this.tileWidth;
-    const scaleY = targetHeight / this.tileHeight;
+Camera2D.prototype.drawEmptyTile = function(context, renderX, renderY) {
+    const width = this.halfTileWidth * this.scaleX;
+    const height = this.halfTileHeight * this.scaleY;
 
-    graphics.drawEmptyTile(context, renderX, renderY, scaleX, scaleY, this.tileWidth, this.tileHeight);
+    context.fillStyle = Camera2D.COLOR.EMPTY_TILE_FIRST;
+    context.fillRect(renderX, renderY, width, height);
+    context.fillRect(renderX + width, renderY + height, width, height);
+
+    context.fillStyle = Camera2D.COLOR.EMPTY_TILE_SECOND;
+    context.fillRect(renderX + width, renderY, width, height);
+    context.fillRect(renderX, renderY + height, width, height);
 }
 
-Camera2D.prototype.drawTile = function(graphics, context, tileID, renderX, renderY, targetWidth = this.tileWidth, targetHeight = this.tileHeight) {
-    const scaleX = targetWidth / this.tileWidth;
-    const scaleY = targetHeight / this.tileHeight;
+Camera2D.prototype.drawTileEasy = function(graphics, tileID, context, renderX, renderY) {
+    const container = graphics.getValidContainer(tileID);
 
-    graphics.drawTile(context, tileID, renderX, renderY, scaleX, scaleY, this.tileWidth, this.tileHeight);
+    if(!container) {
+        this.drawEmptyTile(context, renderX, renderY);
+    } else {
+        this.drawTile(container, context, renderX, renderY);
+    }
+}
+
+Camera2D.prototype.drawTile = function(container, context, renderX, renderY) {
+    const { texture, frames, frameIndex } = container;
+    const { bitmap } = texture;
+    const currentFrame = frames[frameIndex];
+    const frameLength = currentFrame.length;
+    const scaleX = this.scaleX;
+    const scaleY = this.scaleY;
+
+    for(let i = 0; i < frameLength; ++i) {
+        const component = currentFrame[i];
+        const { frameX, frameY, frameW, frameH, shiftX, shiftY } = component;
+        const drawX = renderX + shiftX * scaleX;
+        const drawY = renderY + shiftY * scaleY;
+        const drawWidth = frameW * scaleX;
+        const drawHeight = frameH * scaleY;
+
+        context.drawImage(
+            bitmap,
+            frameX, frameY, frameW, frameH,
+            drawX, drawY, drawWidth, drawHeight
+        );
+    }
 }
 
 Camera2D.prototype.drawOverlay = function(graphics, context, overlayID) {
@@ -91,14 +141,22 @@ Camera2D.prototype.drawOverlay = function(graphics, context, overlayID) {
         return;
     }
 
-    for(let i = 0; i < overlay.length; i++) {
+    const startX = this.startX;
+    const startY = this.startY;
+    const endX = this.endX;
+    const endY = this.endY;
+    const viewportX = this.viewportX;
+    const viewportY = this.viewportY;
+    const overlaySize = overlay.length;
+
+    for(let i = 0; i < overlaySize; ++i) {
         const { id, x, y, drawX, drawY } = overlay[i];
 
-        if(x >= this.startX && x <= this.endX && y >= this.startY && y <= this.endY) {
-            const renderX = drawX - this.viewportX;
-            const renderY = drawY - this.viewportY;
-    
-            graphics.drawTile(context, id, renderX, renderY, 1, 1, this.tileWidth, this.tileHeight);
+        if(x >= startX && x <= endX && y >= startY && y <= endY) {
+            const renderX = drawX - viewportX;
+            const renderY = drawY - viewportY;
+
+            this.drawTileEasy(graphics, id, context, renderX, renderY);
         }
     }
 }
@@ -125,18 +183,39 @@ Camera2D.prototype.drawLayer = function(graphics, context, layer) {
 }
 
 Camera2D.prototype.drawTileBuffer = function(graphics, context, buffer) {
-    for(let i = this.startY; i <= this.endY; ++i) {
-        const tileRow = i * this.mapWidth;
-        const renderY = i * this.tileHeight - this.viewportY;
+    const startX = this.startX;
+    const startY = this.startY;
+    const endX = this.endX;
+    const endY = this.endY;
+    const mapWidth = this.mapWidth;
+    const tileWidth = this.tileWidth;
+    const tileHeight = this.tileHeight;
+    const viewportX = this.viewportX;
+    const viewportY = this.viewportY;
+    const cache = Object.create(null);
 
-        for(let j = this.startX; j <= this.endX; ++j) {
+    for(let i = startY; i <= endY; ++i) {
+        const tileRow = i * mapWidth;
+        const renderY = i * tileHeight - viewportY;
+
+        for(let j = startX; j <= endX; ++j) {
             const index = tileRow + j;
             const tileID = buffer[index];
 
             if(tileID !== 0) {
-                const renderX = j * this.tileWidth - this.viewportX;
+                const renderX = j * tileWidth - viewportX;
+                let container = cache[tileID];
 
-                graphics.drawTile(context, tileID, renderX, renderY, 1, 1, this.tileWidth, this.tileHeight);
+                if(container === undefined) {
+                    container = graphics.getValidContainer(tileID);
+                    cache[tileID] = container;
+                }
+
+                if(container) {
+                    this.drawTile(container, context, renderX, renderY);
+                } else {
+                    this.drawEmptyTile(context, renderX, renderY);
+                }
             }
         }
     }
