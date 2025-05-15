@@ -2,7 +2,10 @@
     "player": {
         "TOGGLE_RANGE": "+v",
         "CLICK": "-M1",
-        "ESCAPE": "+Escape"
+        "ESCAPE": "+Escape",
+        "DEBUG_IDLE": "+1",
+        "DEBUG_HEAL": "+2",
+        "DEBUG_FIREMISSION": "+3"
     },
     "editor": {
         "TOGGLE_AUTOTILER": "+a",

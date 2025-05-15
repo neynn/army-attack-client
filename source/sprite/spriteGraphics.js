@@ -20,9 +20,10 @@ SpriteGraphics.prototype.onTextureLoad = function(textureID, texture) {
 
     for(let i = 0; i < identifiers.length; i++) {
         const atlas = this.atlases.get(identifiers[i]);
+        const container = this.getContainer(atlas.getContainerID());
 
-        if(atlas) {
-            this.containers[atlas.getContainerID()].setTexture(texture);
+        if(container) {
+            container.setTexture(texture);
         }
     }
 }

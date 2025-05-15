@@ -18,7 +18,6 @@ import { AttackAction } from "../../actions/attackAction.js";
 export const Player = function() {
     Actor.call(this);
 
-    this.helper = false;
     this.teamID = null;
     this.inventory = new Inventory();
     this.camera = new ArmyCamera();
@@ -129,13 +128,7 @@ Player.prototype.onMakeChoice = function(gameContext) {
 }
 
 Player.prototype.onTurnStart = function(gameContext) {
-    if(!this.helper) {
-        this.states.setNextState(gameContext, Player.STATE.FIRE_MISSION, { "missionID": "OrbitalLaser" });
-        this.helper = true;
-        return;
-    }
-
-    this.states.setNextState(gameContext, Player.STATE.HEAL);
+    this.states.setNextState(gameContext, Player.STATE.IDLE);
 }
 
 Player.prototype.onTurnEnd = function(gameContext) {
