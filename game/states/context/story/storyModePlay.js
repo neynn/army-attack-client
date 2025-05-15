@@ -1,5 +1,6 @@
 import { State } from "../../../../source/state/state.js";
 import { ArmyContext } from "../../../armyContext.js";
+import { DebugHelper } from "../../../debug.js";
 import { SpawnSystem } from "../../../systems/spawn.js";
 
 export const StoryModePlayState = function() {}
@@ -144,6 +145,8 @@ StoryModePlayState.prototype.onEnter = async function(gameContext, stateMachine)
         "team": "Allies",
         "owners": ID.PLAYER
     });
+
+    //DebugHelper.spawnFullEntities(gameContext);
 
     console.timeEnd();
 

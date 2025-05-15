@@ -8,10 +8,10 @@ import { ArmyMap } from "./init/armyMap.js";
 export const ArmyCamera = function() {
     Camera2D.call(this);
 
-    this.createOverlay(ArmyCamera.OVERLAY_TYPE.ATTACK);
-    this.createOverlay(ArmyCamera.OVERLAY_TYPE.MOVE);
-    this.createOverlay(ArmyCamera.OVERLAY_TYPE.RANGE);
-    this.createOverlay(ArmyCamera.OVERLAY_TYPE.FIRE_MISSION);
+    this.overlay.createOverlay(ArmyCamera.OVERLAY_TYPE.ATTACK);
+    this.overlay.createOverlay(ArmyCamera.OVERLAY_TYPE.MOVE);
+    this.overlay.createOverlay(ArmyCamera.OVERLAY_TYPE.RANGE);
+    this.overlay.createOverlay(ArmyCamera.OVERLAY_TYPE.FIRE_MISSION);
     
     this.postDraw = [];
     this.border = new Layer(0, 0);

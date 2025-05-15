@@ -55,7 +55,7 @@ Entity.prototype.save = function() {
                 blob[componentID] = data;
             }
         } else {
-            console.log(`Save not implemented for component ${componentID}`);
+            //console.log(`Save not implemented for component ${componentID}`);
         }
     }
 

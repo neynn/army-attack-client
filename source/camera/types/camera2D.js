@@ -1,10 +1,12 @@
 import { clampValue } from "../../math/math.js";
 import { Renderer } from "../../renderer.js";
 import { Camera } from "../camera.js";
+import { OverlayHandler } from "../overlay/overlayHandler.js";
 
 export const Camera2D = function() {
     Camera.call(this);
 
+    this.overlay = new OverlayHandler();
     this.mapWidth = 0;
     this.mapHeight = 0;
     this.tileWidth = -1;
@@ -17,7 +19,6 @@ export const Camera2D = function() {
     this.endY = -1;
     this.scaleX = 1;
     this.scaleY = 1;
-    this.overlays = new Map();
 }
 
 Camera2D.COLOR = {
@@ -43,48 +44,18 @@ Camera.prototype.resetScale = function() {
     this.scaleY = 1;
 }
 
-Camera2D.prototype.createOverlay = function(overlayID) {
-    if(this.overlays.has(overlayID)) {
-        return;
-    }
-
-    this.overlays.set(overlayID, []);
-}
-
-Camera2D.prototype.destroyOverlay = function(overlayID) {
-    if(!this.overlays.has(overlayID)) {
-        return;
-    }
-
-    this.overlays.delete(overlayID);
-}
-
 Camera2D.prototype.pushOverlay = function(overlayID, tileID, positionX, positionY) {
-    const overlay = this.overlays.get(overlayID);
+    const overlay = this.overlay.getOverlay(overlayID);
 
     if(!overlay) {
         return;
     }
 
-    const element = {
-        "id": tileID,
-        "x": positionX,
-        "y": positionY,
-        "drawX": this.tileWidth * positionX,
-        "drawY": this.tileHeight * positionY
-    };
-
-    overlay.push(element);
+    overlay.add(tileID, positionX, positionY);
 }
 
 Camera2D.prototype.clearOverlay = function(overlayID) {
-    const overlay = this.overlays.get(overlayID);
-
-    if(!overlay) {
-        return;
-    }
-
-    overlay.length = 0;
+    this.overlay.clearOverlay(overlayID);
 }
 
 Camera2D.prototype.drawEmptyTile = function(context, renderX, renderY) {
@@ -135,7 +106,7 @@ Camera2D.prototype.drawTile = function(container, context, renderX, renderY) {
 }
 
 Camera2D.prototype.drawOverlay = function(graphics, context, overlayID) {
-    const overlay = this.overlays.get(overlayID);
+    const overlay = this.overlay.getOverlay(overlayID);
 
     if(!overlay) {
         return;
@@ -145,16 +116,21 @@ Camera2D.prototype.drawOverlay = function(graphics, context, overlayID) {
     const startY = this.startY;
     const endX = this.endX;
     const endY = this.endY;
+    const tileWidth = this.tileWidth;
+    const tileHeight = this.tileHeight;
     const viewportX = this.viewportX;
     const viewportY = this.viewportY;
-    const overlaySize = overlay.length;
+    const { elements, gap } = overlay;
+    const length = elements.length;
 
-    for(let i = 0; i < overlaySize; ++i) {
-        const { id, x, y, drawX, drawY } = overlay[i];
+    for(let i = 0; i < length; i += gap) {
+        const id = elements[i];
+        const x = elements[i + 1];
+        const y = elements[i + 2];
 
         if(x >= startX && x <= endX && y >= startY && y <= endY) {
-            const renderX = drawX - viewportX;
-            const renderY = drawY - viewportY;
+            const renderX = x * tileWidth - viewportX;
+            const renderY = y * tileHeight - viewportY;
 
             this.drawTileEasy(graphics, id, context, renderX, renderY);
         }
