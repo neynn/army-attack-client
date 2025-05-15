@@ -1,6 +1,7 @@
 import { GameEvent } from "../gameEvent.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { AttackSystem } from "./attack.js";
+import { DebrisSystem } from "./debris.js";
 
 export const FireMissionSystem = function() {}
 
@@ -52,9 +53,8 @@ FireMissionSystem.getTargets = function(gameContext, fireMission, tileX, tileY) 
                 continue;
             }
 
-            const isTargetable = this.isTargetable(entity);
-            const healthComponent = entity.getComponent(ArmyEntity.COMPONENT.HEALTH);
-            const isAlive = healthComponent.isAlive();
+            const isTargetable = FireMissionSystem.isTargetable(entity);
+            const isAlive = entity.isAlive();
 
             if(isTargetable && isAlive) {
                 const currentDamage = damage; //TODO Calculate the damage.
@@ -88,33 +88,6 @@ FireMissionSystem.getTargets = function(gameContext, fireMission, tileX, tileY) 
     return targetObjects;
 }
 
-
-FireMissionSystem.isFullyClouded = function(gameContext, fireMission, tileX, tileY) {
-    const { world } = gameContext;
-    const { mapManager } = world;
-    const worldMap = mapManager.getActiveMap();
-
-    if(!worldMap) {
-        return true;
-    }
-
-    const { dimX = 0, dimY = 0 } = fireMission;
-    const endX = tileX + dimX;
-    const endY = tileY + dimY;
-
-    for(let i = tileY; i < endY; i++) {
-        for(let j = tileX; j < endX; j++) {
-            const tileEntity = world.getTileEntity(j, i);
-
-            if(tileEntity && !this.isTargetable(tileEntity)) {
-                return true;
-            }
-        }
-    }
-
-    return false;
-}
-
 FireMissionSystem.isBlocked = function(gameContext, fireMission, tileX, tileY) {
     const { world } = gameContext;
     const { mapManager } = world;
@@ -133,7 +106,7 @@ FireMissionSystem.isBlocked = function(gameContext, fireMission, tileX, tileY) {
         for(let j = tileX; j < endX; j++) {
             const tileEntity = world.getTileEntity(j, i);
 
-            if(tileEntity && !this.isTargetable(tileEntity)) {
+            if(tileEntity && !FireMissionSystem.isTargetable(tileEntity)) {
                 return true;
             }
 
@@ -162,8 +135,8 @@ FireMissionSystem.startFireMission = function(gameContext, missionID, tileX, til
 
 FireMissionSystem.endFireMission = function(gameContext, missionID, tileX, tileY, targetObjects) {
     const { world } = gameContext;
-    const { entityManager, eventBus, mapManager } = world;
-    const worldMap = mapManager.getActiveMap();
+    const { entityManager, eventBus } = world;
+
     const fireMission = FireMissionSystem.getType(gameContext, missionID);
     const { dimX, dimY } = fireMission;
 
@@ -209,24 +182,7 @@ FireMissionSystem.endFireMission = function(gameContext, missionID, tileX, tileY
         }
     }
 
-    const debris = [];
-    const endX = tileX + dimX;
-    const endY = tileY + dimY;
-
-    for(let i = tileY; i < endY; i++) {
-        for(let j = tileX; j < endX; j++) {
-            const tileEntity = world.getTileEntity(j, i);
-            const hasDebris = worldMap.hasDebris(j, i);
-            const isClouded = worldMap.isFullyClouded(j, i);
-
-            if(!tileEntity && !hasDebris && !isClouded) {
-                debris.push({
-                    "x": j,
-                    "y": i
-                });
-            }
-        }
-    }
+    const debris = DebrisSystem.getDebrisSpawnLocations(gameContext, tileX, tileY, dimX, dimY);
 
     if(debris.length !== 0) {
         eventBus.emit(GameEvent.TYPE.DEBRIS_SPAWN, {

@@ -62,3 +62,34 @@ DebrisSystem.spawnDebris = function(gameContext, debris) {
         worldMap.addDebris(1, x, y);
     }
 }
+
+DebrisSystem.getDebrisSpawnLocations = function(gameContext, tileX, tileY, sizeX, sizeY) {
+    const { world } = gameContext;
+    const { mapManager } = world;
+    const worldMap = mapManager.getActiveMap();
+    const debris = [];
+
+    if(!worldMap) {
+        return debris;
+    }
+    
+    const endX = tileX + sizeX;
+    const endY = tileY + sizeY;
+
+    for(let i = tileY; i < endY; i++) {
+        for(let j = tileX; j < endX; j++) {
+            const tileEntity = world.getTileEntity(j, i);
+            const hasDebris = worldMap.hasDebris(j, i);
+            const isClouded = worldMap.isFullyClouded(j, i);
+
+            if(!tileEntity && !hasDebris && !isClouded) {
+                debris.push({
+                    "x": j,
+                    "y": i
+                });
+            }
+        }
+    }
+
+    return debris;
+}

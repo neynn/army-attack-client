@@ -14,8 +14,17 @@ Inventory.prototype.save = function() {
     const items = {};
     const resources = {};
 
-    this.items.forEach(item => item.write(items));
-    this.resources.forEach(resource => resource.write(resources));
+    this.items.forEach((item, id) => {
+        if(item.count > 0) {
+            items[id] = item.count;
+        }
+    });
+
+    this.resources.forEach((resource, id) => {
+        if(resource.count > 0) {
+            resources[id] = resource.count;
+        }
+    });
 
     return {
         "items": items,
@@ -81,7 +90,7 @@ Inventory.prototype.init = function(gameContext) {
 
     for(const itemID in itemTypes) {
         const { maxStack = 0, maxDrop = 1 } = itemTypes[itemID];
-        const item = new Item(itemID);
+        const item = new Item();
 
         item.setMaxDrop(maxDrop);
         item.setMaxCount(maxStack);
@@ -92,7 +101,7 @@ Inventory.prototype.init = function(gameContext) {
 
     for(const resourceID in resourceTypes) {
         const { maxDrop = 1 } = resourceTypes[resourceID];
-        const item = new Item(resourceID);
+        const item = new Item();
 
         item.setMaxDrop(maxDrop);
         item.setMaxCount(999999);

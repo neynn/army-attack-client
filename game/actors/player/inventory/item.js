@@ -1,7 +1,6 @@
 import { clampValue } from "../../../../source/math/math.js";
 
-export const Item = function(id) {
-    this.id = id;
+export const Item = function() {
     this.count = 0;
     this.maxCount = 0;
     this.maxDrop = 1;
@@ -17,12 +16,6 @@ Item.prototype.add = function(value) {
 
 Item.prototype.remove = function(value) {
     this.count = clampValue(this.count - value, this.maxCount, 0);
-}
-
-Item.prototype.write = function(blob) {
-    if(this.count > 0) {
-        blob[this.id] = this.count;
-    }
 }
 
 Item.prototype.setMaxDrop = function(maxDrop) {
