@@ -189,15 +189,15 @@ SpriteManager.prototype.updateSprite = function(spriteIndex, atlasID) {
         return;
     }
 
-    const index = atlas.getSpriteIndex(atlasID);
-    const container = this.graphics.getContainer(index);
+    const containerID = atlas.getContainerID();
+    const container = this.graphics.getContainer(containerID);
 
-    if(container && !sprite.isEqual(index)) {
+    if(container && !sprite.isEqual(containerID)) {
         const { boundsX, boundsY, boundsW, boundsH } = atlas;
         const frameCount = container.getFrameCount();
         const frameTime = container.getFrameTime();
 
-        sprite.init(atlasID, index, frameCount, frameTime, this.timestamp);
+        sprite.init(atlasID, containerID, frameCount, frameTime, this.timestamp);
         sprite.setBounds(boundsX, boundsY, boundsW, boundsH);
     }
 }

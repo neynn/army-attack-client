@@ -3,7 +3,7 @@ export const SpriteAtlas = function() {
     this.boundsY = 0;
     this.boundsW = 0;
     this.boundsH = 0;
-    this.sprites = new Map();
+    this.containerID = -1;
 }
 
 SpriteAtlas.prototype.loadBounds = function(bounds) {
@@ -17,18 +17,10 @@ SpriteAtlas.prototype.loadBounds = function(bounds) {
     }
 }
 
-SpriteAtlas.prototype.setSpriteIndex = function(spriteID, spriteIndex) {
-    if(!this.sprites.has(spriteID)) {
-        this.sprites.set(spriteID, spriteIndex);
-    }
+SpriteAtlas.prototype.setContainerID = function(containerID) {
+    this.containerID = containerID;
 }
 
-SpriteAtlas.prototype.getSpriteIndex = function(spriteID) {
-    const spriteIndex = this.sprites.get(spriteID);
-
-    if(spriteIndex === undefined) {
-        return -1;
-    }
-
-    return spriteIndex;
+SpriteAtlas.prototype.getContainerID = function() {
+    return this.containerID;
 }

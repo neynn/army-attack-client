@@ -4,21 +4,27 @@ import { SpriteAtlas } from "./spriteAtlas.js";
 
 export const SpriteGraphics = function() {
     TextureHandler.call(this);
+
+    this.usedTextures = new Map();
 }
 
 SpriteGraphics.prototype = Object.create(TextureHandler.prototype);
 SpriteGraphics.prototype.constructor = SpriteGraphics;
 
-SpriteGraphics.prototype.onTextureLoad = function(atlasID, texture) {
-    const spriteAtlas = this.atlases.get(atlasID);
+SpriteGraphics.prototype.onTextureLoad = function(textureID, texture) {
+    const identifiers = this.usedTextures.get(textureID);
 
-    if(!spriteAtlas) {
+    if(!identifiers) {
         return;
     }
 
-    const { sprites } = spriteAtlas;
+    for(let i = 0; i < identifiers.length; i++) {
+        const atlas = this.atlases.get(identifiers[i]);
 
-    sprites.forEach((index) => this.containers[index].setTexture(texture));
+        if(atlas) {
+            this.containers[atlas.getContainerID()].setTexture(texture);
+        }
+    }
 }
 
 SpriteGraphics.prototype.load = function(textures, sprites) {
@@ -34,6 +40,14 @@ SpriteGraphics.prototype.load = function(textures, sprites) {
         if(!textureObject) {
             console.warn(`Texture ${texture} of sprite ${spriteID} does not exist!`);
             continue;
+        }
+
+        const usedTextures = this.usedTextures.get(texture);
+
+        if(usedTextures) {
+            usedTextures.push(spriteID);
+        } else {
+            this.usedTextures.set(texture, [spriteID]);
         }
 
         const spriteAtlas = new SpriteAtlas();
@@ -63,9 +77,11 @@ SpriteGraphics.prototype.load = function(textures, sprites) {
         if(frameCount !== 0) {
             const containerID = this.addContainer(container);
 
-            spriteAtlas.setSpriteIndex(spriteID, containerID);
+            spriteAtlas.setContainerID(containerID);
         } else {
             console.warn(`Sprite ${spriteID} has no frames!`);
         }
     }
+
+    console.log(this.usedTextures);
 }
