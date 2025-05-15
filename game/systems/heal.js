@@ -1,6 +1,6 @@
-import { Inventory } from "../actors/player/inventory/inventory.js";
 import { GameEvent } from "../gameEvent.js";
 import { ArmyEntity } from "../init/armyEntity.js";
+import { InventorySystem } from "./inventory.js";
 
 export const HealSystem = function() {}
 
@@ -35,7 +35,10 @@ HealSystem.isEntityHealable = function(entity, actor) {
         return false;
     }
 
-    return hasEnoughSupplies(entity, actor);
+    const missingHealth = HealSystem.getMissingHealth(entity);
+    const requiredSupplies = HealSystem.getSuppliesRequired(entity, missingHealth);
+
+    return InventorySystem.hasEnoughResources(actor, HealSystem.HEAL_RESOURCE, requiredSupplies);
 }
 
 HealSystem.healEntity = function(gameContext, entity, health) {
@@ -46,33 +49,4 @@ HealSystem.healEntity = function(gameContext, entity, health) {
     entity.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
 
     eventBus.emit(GameEvent.TYPE.ENTITY_HEAL, { "entity": entity, "health": health });
-}
-
-HealSystem.takeSupplies = function(actor, cost) {
-    const { inventory } = actor;
-
-    if(!inventory) {
-        return false;
-    }
-
-    inventory.remove(Inventory.TYPE.RESOURCE, HealSystem.HEAL_RESOURCE, cost);
-}
-
-const hasEnoughSupplies = function(entity, actor) {
-    const missingHealth = HealSystem.getMissingHealth(entity);
-    const requiredSupplies = HealSystem.getSuppliesRequired(entity, missingHealth);
-
-    if(requiredSupplies === 0) {
-        return true;
-    }
-
-    const { inventory } = actor;
-
-    if(!inventory) {
-        return false;
-    }
-
-    const hasEnough = inventory.has(Inventory.TYPE.RESOURCE, HealSystem.HEAL_RESOURCE, requiredSupplies);
-    
-    return hasEnough;
 }

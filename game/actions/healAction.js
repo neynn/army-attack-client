@@ -4,6 +4,7 @@ import { ACTION_TYPE } from "../enums.js";
 import { AnimationSystem } from "../systems/animation.js";
 import { DecaySystem } from "../systems/decay.js";
 import { HealSystem } from "../systems/heal.js";
+import { InventorySystem } from "../systems/inventory.js";
 
 export const HealAction = function() {
     Action.call(this);
@@ -19,7 +20,7 @@ HealAction.prototype.onStart = function(gameContext, request) {
     const entity = entityManager.getEntity(entityID);
     const actor = turnManager.getActor(actorID);
 
-    HealSystem.takeSupplies(actor, cost);
+    InventorySystem.takeResource(actor, HealSystem.HEAL_RESOURCE, cost);
     DecaySystem.endDecay(entity);
     AnimationSystem.playHeal(gameContext, entity);
 }
