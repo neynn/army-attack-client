@@ -1,11 +1,19 @@
-export const Texture = function(path) {
+export const Texture = function(path, regions) {
     this.path = path;
+    this.regions = regions;
     this.bitmap = null;
     this.references = 0;
     this.width = 0;
     this.height = 0;
     this.state = Texture.STATE.EMPTY;
 }
+
+Texture.EMPTY_REGION = {
+    "x": 0,
+    "y": 0,
+    "w": 0,
+    "h": 0
+};
 
 Texture.STATE = {
     EMPTY: 0,
@@ -82,4 +90,14 @@ Texture.prototype.removeReference = function() {
     }
 
     return this.references;
+}
+
+Texture.prototype.getRegion = function(regionID) {
+    const region = this.regions[regionID];
+
+    if(!region) {
+        return Texture.EMPTY_REGION;
+    }
+
+    return region;
 }

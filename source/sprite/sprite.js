@@ -47,51 +47,39 @@ Sprite.prototype.onDraw = function(display, localX, localY) {
     if(texture === null || frameCount === 0) {
         return;
     }
-
+    
     const { bitmap } = texture;
 
     if(!bitmap) {
         return;
     }
-    
+
     const spriteFrame = frames[this.currentFrame];
+    const frameLength = spriteFrame.length;
     const isFlipped = (this.flags & Sprite.FLAG.FLIP) !== 0;
     const { context } = display;
 
+    let renderX = localX;
+    let renderY = localY;
+
     if(isFlipped) {
-        const renderX = (localX - this.boundsX) * -1;
-        const renderY = localY + this.boundsY;
-
+        renderX = (localX - this.boundsX) * -1;
+        renderY = localY + this.boundsY;
         display.flip();
-
-        for(let i = 0; i < spriteFrame.length; i++) {
-            const { frameX, frameY, frameW, frameH, shiftX, shiftY } = spriteFrame[i];
-            const drawX = renderX - shiftX;
-            const drawY = renderY + shiftY;
-            
-            context.drawImage(
-                bitmap,
-                frameX, frameY, frameW, frameH,
-                drawX, drawY, frameW, frameH
-            );
-        }
     } else {
-        const renderX = localX + this.boundsX;
-        const renderY = localY + this.boundsY;
-
+        renderX = localX + this.boundsX;
+        renderY = localY + this.boundsY;
         display.unflip();
+    }
 
-        for(let i = 0; i < spriteFrame.length; i++) {
-            const { frameX, frameY, frameW, frameH, shiftX, shiftY } = spriteFrame[i];
-            const drawX = renderX + shiftX;
-            const drawY = renderY + shiftY;
+    for(let i = 0; i < frameLength; ++i) {
+        const { x, y, w, h } = spriteFrame[i];
 
-            context.drawImage(
-                bitmap,
-                frameX, frameY, frameW, frameH,
-                drawX, drawY, frameW, frameH
-            );
-        }
+        context.drawImage(
+            bitmap,
+            x, y, w, h,
+            renderX, renderY, w, h
+        );
     }
 }
 

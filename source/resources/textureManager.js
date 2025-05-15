@@ -33,24 +33,36 @@ TextureManager.DEFAULT = {
     FILE_TYPE: ".png"
 };
 
+TextureManager.prototype.getTexture = function(textureID) {
+    const texture = this.textures.get(textureID);
+
+    if(!texture) {
+        return null;
+    }
+
+    return texture;
+}
+
 TextureManager.prototype.createTextures = function(textureMeta) {
     for(const textureID in textureMeta) {
         const textureConfig = textureMeta[textureID];
-        const { directory, source } = textureConfig;
 
-        this.createTexture(textureID, directory, source);
+        this.createTexture(textureID, textureConfig);
     }
 }
 
-TextureManager.prototype.createTexture = function(textureID, directory, source) {
+TextureManager.prototype.createTexture = function(textureID, config) {
+    const { directory, source, regions } = config;
     const fileName = source ? source : `${textureID}${TextureManager.DEFAULT.FILE_TYPE}`;
     const imagePath = PathHandler.getPath(directory, fileName);
 
-    if(!this.textures.has(textureID)) {
-        const texture = new Texture(imagePath);
-
-        this.textures.set(textureID, texture);
+    if(this.textures.has(textureID)) {
+        return;
     }
+
+    const texture = new Texture(imagePath, regions);
+
+    this.textures.set(textureID, texture);
 }
 
 TextureManager.prototype.requestBitmap = function(textureID) {

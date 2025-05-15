@@ -17,8 +17,6 @@ export const SpriteManager = function() {
     this.layers[SpriteManager.LAYER.UI] = [];
 }
 
-SpriteManager.DEFAULT_ANIMATION_ID = "default";
-
 SpriteManager.LAYER = {
     BOTTOM: 0,
     MIDDLE: 1,
@@ -39,13 +37,13 @@ SpriteManager.prototype.preloadAtlas = function(atlasID) {
     this.graphics.resources.addReference(atlasID);
 }
 
-SpriteManager.prototype.load = function(spriteTypes) {
-    if(!spriteTypes) {
-        Logger.log(Logger.CODE.ENGINE_WARN, "SpriteTypes does not exist!", "SpriteManager.prototype.load", null);
+SpriteManager.prototype.load = function(textures, sprites) {
+    if(!textures || !sprites) {
+        Logger.log(Logger.CODE.ENGINE_WARN, "Textures/Sprites do not exist!", "SpriteManager.prototype.load", null);
         return;
     }
 
-    this.graphics.load(spriteTypes);
+    this.graphics.load(textures, sprites);
 }
 
 SpriteManager.prototype.update = function(gameContext) {
@@ -174,7 +172,7 @@ SpriteManager.prototype.removeSpriteFromLayers = function(spriteIndex) {
     }
 }
 
-SpriteManager.prototype.updateSprite = function(spriteIndex, atlasID, animationID) {
+SpriteManager.prototype.updateSprite = function(spriteIndex, atlasID) {
     const sprite = this.sprites.getReservedElement(spriteIndex);
     
     //console.log("ATT", atlasID, animationID);
@@ -191,8 +189,7 @@ SpriteManager.prototype.updateSprite = function(spriteIndex, atlasID, animationI
         return;
     }
 
-    const spriteID = animationID ?? SpriteManager.DEFAULT_ANIMATION_ID;
-    const index = atlas.getSpriteIndex(spriteID);
+    const index = atlas.getSpriteIndex(atlasID);
     const container = this.graphics.getContainer(index);
 
     if(container && !sprite.isEqual(index)) {

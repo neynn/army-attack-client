@@ -68,7 +68,7 @@ GameContext.prototype.exit = function() {
 }
 
 GameContext.prototype.loadResources = function(resources) {
-    this.spriteManager.load(resources.sprites);
+    this.spriteManager.load(resources.spriteTextures, resources.sprites);
     this.tileManager.load(resources.tiles, resources.tileMeta, resources.autotilers);
     this.uiManager.load(resources.interfaces, resources.icons, resources.fonts);
     this.client.musicPlayer.load(resources.music);

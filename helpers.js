@@ -163,6 +163,61 @@ ${output.join(",\n")}
     saveTemplateAsFile("sprites.json", str);
 }
 
+export const saveSprites2 = function(spriteTypes) {
+    const output = [];
+    const ije = new PrettyJSON(4);
+    
+    for(const typeID in spriteTypes) {
+        const type = spriteTypes[typeID];
+        const { directory, source, bounds, frameTime, frames } = type;
+        const { formatted, unique } = formatFrames_unique(frames);
+        const str = ije
+        .reset()
+        .open(1, typeID)
+        .writeLine("directory", directory)
+        .writeLine("source", source)
+        .writeList("regions", formatted)
+        .close()
+        .build();
+
+        output.push(str);
+    }
+
+    const str = `{
+${output.join(",\n")}
+}`
+
+    saveTemplateAsFile("sprites.json", str);
+}
+
+export const saveSprites3 = function(spriteTypes) {
+    const output = [];
+    const ije = new PrettyJSON(4);
+    
+    for(const typeID in spriteTypes) {
+        const type = spriteTypes[typeID];
+        const { directory, source, bounds, frameTime, frames } = type;
+        const { formatted, unique } = formatFrames_unique(frames);
+        const str = ije
+        .reset()
+        .open(1, typeID)
+        .writeLine("texture", typeID)
+        .writeLine("bounds", {"x":bounds.x,"y":bounds.y,"w":bounds.w,"h":bounds.h})
+        .writeLine("frameTime", frameTime)
+        .writeLine("frames", type.animations.default.frames)
+        .close()
+        .build();
+
+        output.push(str);
+    }
+
+    const str = `{
+${output.join(",\n")}
+}`
+
+    saveTemplateAsFile("sprites.json", str);
+}
+
 export const makeProdFile = function(resources) {
     const prodFile = JSON.stringify(resources);
 

@@ -21,46 +21,41 @@ SpriteGraphics.prototype.onTextureLoad = function(atlasID, texture) {
     sprites.forEach((index) => this.containers[index].setTexture(texture));
 }
 
-SpriteGraphics.prototype.load = function(atlases) {
-    this.resources.createTextures(atlases);
+SpriteGraphics.prototype.load = function(textures, sprites) {
+    this.resources.createTextures(textures);
 
-    const atlasKeys = Object.keys(atlases);
+    const spriteKeys = Object.keys(sprites);
 
-    for(let i = 0; i < atlasKeys.length; i++) {
-        const atlasID = atlasKeys[i];
-        const spriteAtlas = new SpriteAtlas();
-        const atlasConfig = atlases[atlasID];
-        const { animations, frames, frameTime, bounds } = atlasConfig;
+    for(const spriteID of spriteKeys) {
+        const spriteConfig = sprites[spriteID];
+        const { texture, bounds, frameTime, frames } = spriteConfig;
+        const textureObject = this.resources.getTexture(texture);
 
-        spriteAtlas.loadBounds(bounds);
-        
-        this.atlases.set(atlasID, spriteAtlas);
-
-        if(!animations || !frames) {
+        if(!textureObject) {
+            console.warn(`Texture ${texture} of sprite ${spriteID} does not exist!`);
             continue;
         }
 
-        this.createContainers(spriteAtlas, animations, frames, frameTime ?? FrameContainer.DEFAULT.FRAME_TIME);
-    }
-}
+        const spriteAtlas = new SpriteAtlas();
 
-SpriteGraphics.prototype.createContainers = function(atlas, animations, uniqueFrames, defaultFrameTime) {
-    for(const animationID in animations) {
-        const { 
-            frameTime = defaultFrameTime,
-            frames = [] 
-        } = animations[animationID];
+        spriteAtlas.loadBounds(bounds);
+        
+        this.atlases.set(spriteID, spriteAtlas);
+
+        if(!frames) {
+            continue;
+        }
 
         const container = new FrameContainer();
 
-        container.setFrameTime(frameTime);
+        container.setFrameTime(frameTime ?? FrameContainer.DEFAULT.FRAME_TIME);
 
         for(let i = 0; i < frames.length; i++) {
-            const frameID = frames[i];
-            const frameData = uniqueFrames[frameID];
-            const frame = FrameContainer.createFrame(frameData);
+            const region = textureObject.getRegion(frames[i]);
 
-            container.addFrame(frame);
+            if(region) {
+                container.addFrame([region]);
+            }
         }
 
         const frameCount = container.getFrameCount();
@@ -68,9 +63,9 @@ SpriteGraphics.prototype.createContainers = function(atlas, animations, uniqueFr
         if(frameCount !== 0) {
             const containerID = this.addContainer(container);
 
-            atlas.setSpriteIndex(animationID, containerID);
+            spriteAtlas.setSpriteIndex(spriteID, containerID);
         } else {
-            console.warn(`Animation ${animationID} has no frames!`);
+            console.warn(`Sprite ${spriteID} has no frames!`);
         }
     }
 }

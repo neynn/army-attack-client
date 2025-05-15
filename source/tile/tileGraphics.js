@@ -84,8 +84,8 @@ TileGraphics.prototype.load = function(atlases, tileMeta) {
 }
 
 const createGraphic = function(animation, sheet, graphicID) {
-    const { frames = {}, patterns = {}, animations = {} } = sheet;
-    const frameData = frames[graphicID];
+    const { regions = {}, patterns = {}, animations = {} } = sheet;
+    const frameData = regions[graphicID];
 
     if(frameData) {
         const frame = FrameContainer.createFrame(frameData);
@@ -99,7 +99,7 @@ const createGraphic = function(animation, sheet, graphicID) {
     const patternData = patterns[graphicID];
 
     if(patternData) {
-        const frame = FrameContainer.createPatternFrame(patternData, frames);
+        const frame = FrameContainer.createPatternFrame(patternData, regions);
 
         animation.setFrameTime(TileGraphics.DEFAULT.FRAME_TIME);
         animation.addFrame(frame);
@@ -117,7 +117,7 @@ const createGraphic = function(animation, sheet, graphicID) {
 
         for(let i = 0; i < animationFrames.length; i++) {
             const frameID = animationFrames[i];
-            const frameData = frames[frameID];
+            const frameData = regions[frameID];
 
             if(frameData) {
                 const frame = FrameContainer.createFrame(frameData);
@@ -129,7 +129,7 @@ const createGraphic = function(animation, sheet, graphicID) {
             const patternData = patterns[frameID];
 
             if(patternData) {
-                const frame = FrameContainer.createPatternFrame(patternData, frames);
+                const frame = FrameContainer.createPatternFrame(patternData, regions);
 
                 animation.addFrame(frame);
                 continue;

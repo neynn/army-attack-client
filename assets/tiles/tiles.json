@@ -3,7 +3,7 @@
         "directory": ["assets", "tiles"],
         "source": "debris.png",
         "frameTime": 0.03,
-        "frames": {
+        "regions": {
             "Debris_01": {"x":0,"y":0,"w":84,"h":80,"offset":{"x":6,"y":12}}
         }
     },
@@ -11,7 +11,7 @@
         "directory": ["assets", "tiles"],
         "source": "cursor.png",
         "frameTime": 0.03,
-        "frames": {
+        "regions": {
             "Disabled": {"x":0,"y":0,"w":75,"h":75,"offset":{"x":11,"y":11}}
         }
     },
@@ -19,7 +19,7 @@
         "directory": ["assets", "tiles"],
         "source": "ground.png",
         "frameTime": 0.03,
-        "frames": {
+        "regions": {
             "Bg_BadTile_01": {"x":0,"y":0,"w":96,"h":96},
             "Bg_BadTile_02": {"x":192,"y":0,"w":96,"h":96},
             "Bg_BadTile_01_desert": {"x":96,"y":0,"w":96,"h":96},
@@ -37,7 +37,7 @@
         "directory": ["assets", "tiles"],
         "source": "coast.png",
         "frameTime": 0.03,
-        "frames": {
+        "regions": {
             "Bg_WaterTile_01_desert": {"x":0,"y":0,"w":96,"h":96},
             "Bg_CoastTile_ne_01": {"x":96,"y":0,"w":96,"h":96},
             "Bg_CoastTile_ne_02": {"x":192,"y":0,"w":96,"h":96},
@@ -69,7 +69,7 @@
         "directory": ["assets", "tiles"],
         "source": "deco_bad.png",
         "frameTime": 0.03,
-        "frames": {
+        "regions": {
             "Bg_DeadTrees_01": {"x":101,"y":354,"w":92,"h":103,"offset":{"x":2,"y":-9}},
             "Bg_BadTile_Deco_11": {"x":0,"y":0,"w":69,"h":59,"offset":{"x":12,"y":11}},
             "Bg_BadTile_Deco_10": {"x":69,"y":0,"w":77,"h":67,"offset":{"x":11,"y":8}},
@@ -103,7 +103,7 @@
         "directory": ["assets", "tiles"],
         "source": "deco_good.png",
         "frameTime": 0.03,
-        "frames": {
+        "regions": {
             "Bg_Trees_01": {"x":190,"y":348,"w":95,"h":107,"offset":{"x":0,"y":-9}},
             "Bg_GoodTile_Deco_03": {"x":170,"y":69,"w":89,"h":73,"offset":{"x":6,"y":7}},
             "Bg_GoodTile_Deco_02": {"x":259,"y":69,"w":66,"h":73,"offset":{"x":16,"y":7}},
@@ -137,7 +137,7 @@
         "directory": ["assets", "tiles"],
         "source": "river_bad.png",
         "frameTime": 0.03,
-        "frames": {
+        "regions": {
             "Bg_BadRiverTile_04": {"x":0,"y":0,"w":86,"h":104,"offset":{"x":10,"y":-3}},
             "Bg_BadRiverTile_05": {"x":86,"y":0,"w":79,"h":104,"offset":{"x":9,"y":-8}},
             "Bg_BadRiverTile_02": {"x":165,"y":0,"w":82,"h":108,"offset":{"x":4,"y":-12}},
@@ -149,7 +149,7 @@
         "directory": ["assets", "tiles"],
         "source": "river_good.png",
         "frameTime": 0.03,
-        "frames": {
+        "regions": {
             "Bg_RiverTile_01": {"x":0,"y":0,"w":83,"h":105,"offset":{"x":8,"y":-7}},
             "Bg_RiverTile_02": {"x":83,"y":0,"w":83,"h":110,"offset":{"x":4,"y":-11}},
             "Bg_RiverTile_03": {"x":166,"y":0,"w":85,"h":97,"offset":{"x":10,"y":-1}},
@@ -161,7 +161,7 @@
         "directory": ["assets", "tiles"],
         "source": "mountain.png",
         "frameTime": 0.03,
-        "frames": {
+        "regions": {
             "Bg_MountainTile_06": {"x":0,"y":0,"w":96,"h":120,"offset":{"x":0,"y":-23}},
             "Bg_MountainTile_07": {"x":0,"y":120,"w":96,"h":96,"offset":{"x":0,"y":0}},
             "Bg_MountainTile_08": {"x":0,"y":216,"w":96,"h":96,"offset":{"x":0,"y":0}},
@@ -176,7 +176,7 @@
         "directory": ["assets", "tiles"],
         "source": "clouds.png",
         "frameTime": 0.03,
-        "frames": {
+        "regions": {
             "Bg_CloudTile_17": {"x":0,"y":0,"w":96,"h":96},
             "Bg_CloudTile_15": {"x":96,"y":0,"w":96,"h":96},
             "Bg_CloudTile_10": {"x":192,"y":0,"w":96,"h":96},
@@ -196,7 +196,7 @@
         "directory": ["assets", "tiles"],
         "source": "overlay.png",
         "frameTime": 0.03,
-        "frames": {
+        "regions": {
             "grid_attack_1x1": {"x":0,"y":0,"w":96,"h":96},
             "grid_enabled_2x2": {"x":96,"y":0,"w":192,"h":192},
             "grid_enabled_1x1": {"x":288,"y":0,"w":96,"h":96},
@@ -209,7 +209,7 @@
         "directory": ["assets", "tiles"],
         "source": "range.png",
         "frameTime": 0.03,
-        "frames": {
+        "regions": {
             "CENTER": {"x":0,"y":0,"w":48,"h":48},
             "NORTH": {"x":48,"y":0,"w":48,"h":48},
             "SOUTH_EAST": {"x":96,"y":0,"w":48,"h":48},
@@ -281,7 +281,7 @@
         "directory": ["assets", "tiles"],
         "source": "border.png",
         "frameTime": 0.03,
-        "frames": {
+        "regions": {
             "LINE_SHORT_LEFT": {"x":192,"y":0,"w":18,"h":66,"offset":{"x":0,"y":15}},
             "LINE_SHORT_TOP": {"x":210,"y":0,"w":66,"h":18,"offset":{"x":15,"y":0}},
             "LINE_SHORT_BOTTOM": {"x":276,"y":0,"w":66,"h":18,"offset":{"x":15,"y":79}},
