@@ -1,5 +1,5 @@
 import { Logger } from "../logger.js";
-import { TextureManager } from "../resources/textureManager.js";
+import { TextureLoader } from "../resources/textureLoader.js";
 import { UserInterface } from "./userInterface.js";
 import { UIElement } from "./uiElement.js";
 import { TextStyle } from "../graphics/textStyle.js";
@@ -11,7 +11,7 @@ import { TextElement } from "./elements/textElement.js";
 import { SHAPE } from "../math/constants.js";
 
 export const UIManager = function() {
-    this.resources = new TextureManager();
+    this.resources = new TextureLoader();
     this.interfaceStack = [];
     this.interfaceTypes = {};
 }

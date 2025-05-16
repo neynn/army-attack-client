@@ -1,36 +1,39 @@
-import { FrameContainer } from "../graphics/frameContainer.js";
 import { TextureHandler } from "../resources/textureHandler.js";
-import { SpriteAtlas } from "./spriteAtlas.js";
+import { SpriteContainer } from "./spriteContainer.js";
 
 export const SpriteGraphics = function() {
     TextureHandler.call(this);
 
-    this.usedTextures = new Map();
+    this.containerMap = new Map();
+    this.textureMap = new Map();
 }
 
 SpriteGraphics.prototype = Object.create(TextureHandler.prototype);
 SpriteGraphics.prototype.constructor = SpriteGraphics;
 
-SpriteGraphics.prototype.onTextureLoad = function(textureID, texture) {
-    const identifiers = this.usedTextures.get(textureID);
+SpriteGraphics.prototype.loadBitmap = function(spriteID) {
+    const textureID = this.textureMap.get(spriteID);
 
-    if(!identifiers) {
+    if(!textureID) {
         return;
     }
 
-    for(let i = 0; i < identifiers.length; i++) {
-        const atlas = this.atlases.get(identifiers[i]);
-        const container = this.getContainer(atlas.getContainerID());
+    this.resources.requestBitmap(textureID);
+}
 
-        if(container) {
-            container.setTexture(texture);
-        }
+SpriteGraphics.prototype.getContainerID = function(spriteID) {
+    const index = this.containerMap.get(spriteID);
+
+    if(index === undefined) {
+        return -1;
     }
+
+    return index;
 }
 
 SpriteGraphics.prototype.load = function(textures, sprites) {
     this.resources.createTextures(textures);
-
+    
     const spriteKeys = Object.keys(sprites);
 
     for(const spriteID of spriteKeys) {
@@ -38,51 +41,22 @@ SpriteGraphics.prototype.load = function(textures, sprites) {
         const { texture, bounds, frameTime, frames } = spriteConfig;
         const textureObject = this.resources.getTexture(texture);
 
-        if(!textureObject) {
+        if(!textureObject || !frames) {
             console.warn(`Texture ${texture} of sprite ${spriteID} does not exist!`);
             continue;
         }
 
-        const usedTextures = this.usedTextures.get(texture);
+        const spriteContainer = new SpriteContainer(textureObject, bounds, frameTime);
+        const frameCount = spriteContainer.initFrames(frames);
 
-        if(usedTextures) {
-            usedTextures.push(spriteID);
-        } else {
-            this.usedTextures.set(texture, [spriteID]);
-        }
-
-        const spriteAtlas = new SpriteAtlas();
-
-        spriteAtlas.loadBounds(bounds);
-        
-        this.atlases.set(spriteID, spriteAtlas);
-
-        if(!frames) {
+        if(frameCount === 0) {
+            console.warn(`Sprite ${spriteID} has no frames!`);
             continue;
         }
 
-        const container = new FrameContainer();
+        const containerID = this.addContainer(spriteContainer);
 
-        container.setFrameTime(frameTime ?? FrameContainer.DEFAULT.FRAME_TIME);
-
-        for(let i = 0; i < frames.length; i++) {
-            const region = textureObject.getRegion(frames[i]);
-
-            if(region) {
-                container.addFrame([region]);
-            }
-        }
-
-        const frameCount = container.getFrameCount();
-
-        if(frameCount !== 0) {
-            const containerID = this.addContainer(container);
-
-            spriteAtlas.setContainerID(containerID);
-        } else {
-            console.warn(`Sprite ${spriteID} has no frames!`);
-        }
+        this.containerMap.set(spriteID, containerID);
+        this.textureMap.set(spriteID, texture);
     }
-
-    console.log(this.usedTextures);
 }

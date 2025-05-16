@@ -172,32 +172,29 @@ SpriteManager.prototype.removeSpriteFromLayers = function(spriteIndex) {
     }
 }
 
-SpriteManager.prototype.updateSprite = function(spriteIndex, atlasID) {
+SpriteManager.prototype.updateSprite = function(spriteIndex, spriteID) {
     const sprite = this.sprites.getReservedElement(spriteIndex);
-    
-    //console.log("ATT", atlasID, animationID);
 
     if(!sprite) {
         Logger.log(Logger.CODE.ENGINE_WARN, "Sprite is not reserved!", "SpriteManager.prototype.updateSprite", { "spriteID": spriteIndex });
         return;
     }
 
-    const atlas = this.graphics.getAtlas(atlasID);
+    const containerID = this.graphics.getContainerID(spriteID);
+    const container = this.graphics.getContainer(containerID);
 
-    if(!atlas) {
-        Logger.log(Logger.CODE.ENGINE_WARN, "Atlas does not exist!", "SpriteManager.prototype.updateSprite", { "atlasID": atlasID, "spriteID": spriteIndex });
+    if(!container) {
+        Logger.log(Logger.CODE.ENGINE_WARN, "Container does not exist!", "SpriteManager.prototype.updateSprite", { "containerID": containerID, "spriteID": spriteIndex });
         return;
     }
 
-    const containerID = atlas.getContainerID();
-    const container = this.graphics.getContainer(containerID);
+    if(!sprite.isEqual(containerID)) {
+        const { frameTime, frameCount, bounds } = container;
+        const { x, y, w, h } = bounds;
 
-    if(container && !sprite.isEqual(containerID)) {
-        const { boundsX, boundsY, boundsW, boundsH } = atlas;
-        const frameCount = container.getFrameCount();
-        const frameTime = container.getFrameTime();
-
-        sprite.init(atlasID, containerID, frameCount, frameTime, this.timestamp);
-        sprite.setBounds(boundsX, boundsY, boundsW, boundsH);
+        sprite.init(spriteID, containerID, frameCount, frameTime, this.timestamp);
+        sprite.setBounds(x, y, w, h);
+        
+        this.graphics.loadBitmap(spriteID);
     }
 }

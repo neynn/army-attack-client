@@ -43,21 +43,14 @@ Sprite.prototype.onDraw = function(display, localX, localY) {
     }
 
     const { texture, frames, frameCount } = container;
-
-    if(texture === null || frameCount === 0) {
-        return;
-    }
-    
     const { bitmap } = texture;
 
-    if(!bitmap) {
+    if(frameCount === 0 || !bitmap) {
         return;
     }
 
-    const spriteFrame = frames[this.currentFrame];
-    const frameLength = spriteFrame.length;
+    const currentFrame = frames[this.currentFrame];
     const isFlipped = (this.flags & Sprite.FLAG.FLIP) !== 0;
-    const { context } = display;
 
     let renderX = localX;
     let renderY = localY;
@@ -72,15 +65,10 @@ Sprite.prototype.onDraw = function(display, localX, localY) {
         display.unflip();
     }
 
-    for(let i = 0; i < frameLength; ++i) {
-        const { x, y, w, h } = spriteFrame[i];
+    const { x, y, w, h } = currentFrame;
+    const { context } = display;
 
-        context.drawImage(
-            bitmap,
-            x, y, w, h,
-            renderX, renderY, w, h
-        );
-    }
+    context.drawImage(bitmap, x, y, w, h, renderX, renderY, w, h);
 }
 
 Sprite.prototype.onUpdate = function(timestamp, deltaTime) {

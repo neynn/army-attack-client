@@ -2,38 +2,38 @@ import { EventEmitter } from "../events/eventEmitter.js";
 import { Texture } from "./texture.js";
 import { PathHandler } from "./pathHandler.js";
 
-export const TextureManager = function() {
-    this.autoLoad = true;
-    this.textureType = TextureManager.TEXTURE_TYPE.BITMAP;
+export const TextureLoader = function() {
     this.textures = new Map();
+    this.textureType = TextureLoader.TEXTURE_TYPE.BITMAP;
+    this.autoLoad = true;
 
     this.events = new EventEmitter();
-    this.events.listen(TextureManager.EVENT.TEXTURE_LOAD);
-    this.events.listen(TextureManager.EVENT.TEXTURE_UNLOAD);
-    this.events.listen(TextureManager.EVENT.TEXTURE_ERROR);
+    this.events.listen(TextureLoader.EVENT.TEXTURE_LOAD);
+    this.events.listen(TextureLoader.EVENT.TEXTURE_UNLOAD);
+    this.events.listen(TextureLoader.EVENT.TEXTURE_ERROR);
 }
 
-TextureManager.TEXTURE_TYPE = {
+TextureLoader.TEXTURE_TYPE = {
     BITMAP: 0,
     RAW: 1
 };
 
-TextureManager.EVENT = {
+TextureLoader.EVENT = {
     TEXTURE_LOAD: "TEXTURE_LOAD",
     TEXTURE_UNLOAD: "TEXTURE_UNLOAD",
     TEXTURE_ERROR: "TEXTURE_ERROR"
 };
 
-TextureManager.SIZE = {
+TextureLoader.SIZE = {
     MB: 1048576,
     LARGE: 2048 * 2048 * 4
 };
 
-TextureManager.DEFAULT = {
+TextureLoader.DEFAULT = {
     FILE_TYPE: ".png"
 };
 
-TextureManager.prototype.getTexture = function(textureID) {
+TextureLoader.prototype.getTexture = function(textureID) {
     const texture = this.textures.get(textureID);
 
     if(!texture) {
@@ -43,7 +43,7 @@ TextureManager.prototype.getTexture = function(textureID) {
     return texture;
 }
 
-TextureManager.prototype.createTextures = function(textureMeta) {
+TextureLoader.prototype.createTextures = function(textureMeta) {
     for(const textureID in textureMeta) {
         const textureConfig = textureMeta[textureID];
 
@@ -51,9 +51,9 @@ TextureManager.prototype.createTextures = function(textureMeta) {
     }
 }
 
-TextureManager.prototype.createTexture = function(textureID, config) {
+TextureLoader.prototype.createTexture = function(textureID, config) {
     const { directory, source, regions } = config;
-    const fileName = source ? source : `${textureID}${TextureManager.DEFAULT.FILE_TYPE}`;
+    const fileName = source ? source : `${textureID}${TextureLoader.DEFAULT.FILE_TYPE}`;
     const imagePath = PathHandler.getPath(directory, fileName);
 
     if(this.textures.has(textureID)) {
@@ -65,7 +65,7 @@ TextureManager.prototype.createTexture = function(textureID, config) {
     this.textures.set(textureID, texture);
 }
 
-TextureManager.prototype.requestBitmap = function(textureID) {
+TextureLoader.prototype.requestBitmap = function(textureID) {
     const texture = this.textures.get(textureID);
 
     if(!texture || texture.state !== Texture.STATE.EMPTY) {
@@ -74,10 +74,10 @@ TextureManager.prototype.requestBitmap = function(textureID) {
 
     texture.requestBitmap()
     .then((bitmap) => this.onBitmapLoad(textureID, texture, bitmap))
-    .catch((error) => this.events.emit(TextureManager.EVENT.TEXTURE_ERROR, textureID, error));
+    .catch((error) => this.events.emit(TextureLoader.EVENT.TEXTURE_ERROR, textureID, error));
 }
 
-TextureManager.prototype.createImageData = function(bitmap) {
+TextureLoader.prototype.createImageData = function(bitmap) {
     const { width, height } = bitmap;
     const canvas = document.createElement("canvas");
 
@@ -95,19 +95,19 @@ TextureManager.prototype.createImageData = function(bitmap) {
     return pixelArray;
 }
 
-TextureManager.prototype.onBitmapLoad = function(textureID, texture, bitmap) {
+TextureLoader.prototype.onBitmapLoad = function(textureID, texture, bitmap) {
     let imageData = bitmap;
 
-    if(this.textureType === TextureManager.TEXTURE_TYPE.RAW) {
+    if(this.textureType === TextureLoader.TEXTURE_TYPE.RAW) {
         imageData = this.createImageData(bitmap);
     }
 
     texture.setImageData(bitmap, bitmap.width, bitmap.height);
 
-    this.events.emit(TextureManager.EVENT.TEXTURE_LOAD, textureID, texture);
+    this.events.emit(TextureLoader.EVENT.TEXTURE_LOAD, textureID, texture);
 }
 
-TextureManager.prototype.getBitmap = function(textureID) {
+TextureLoader.prototype.getBitmap = function(textureID) {
     const texture = this.textures.get(textureID);
 
     if(!texture) {
@@ -127,7 +127,7 @@ TextureManager.prototype.getBitmap = function(textureID) {
     return null;
 }
 
-TextureManager.prototype.addReference = function(textureID) {
+TextureLoader.prototype.addReference = function(textureID) {
     const texture = this.textures.get(textureID);
 
     if(!texture) {
@@ -139,7 +139,7 @@ TextureManager.prototype.addReference = function(textureID) {
     return references;
 }
 
-TextureManager.prototype.removeReference = function(textureID) {
+TextureLoader.prototype.removeReference = function(textureID) {
     const texture = this.textures.get(textureID);
 
     if(!texture) {

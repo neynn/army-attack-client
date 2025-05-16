@@ -3,6 +3,8 @@ import { TextureHandler } from "../resources/textureHandler.js";
 
 export const TileGraphics = function() {
     TextureHandler.call(this);
+
+    this.atlases = new Map();
 }
 
 TileGraphics.prototype = Object.create(TextureHandler.prototype);

@@ -1,13 +1,12 @@
-import { TextureManager } from "./textureManager.js";
+import { TextureLoader } from "./textureLoader.js";
 
 export const TextureHandler = function() {
-    this.resources = new TextureManager();
-    this.atlases = new Map();
+    this.resources = new TextureLoader();
     this.containers = [];
     this.activeContainers = [];
     this.autoRequest = true;
 
-    this.resources.events.on(TextureManager.EVENT.TEXTURE_LOAD, (textureID, texture) => {
+    this.resources.events.on(TextureLoader.EVENT.TEXTURE_LOAD, (textureID, texture) => {
         this.onTextureLoad(textureID, texture);
     },  { permanent: true });
 }
@@ -26,20 +25,6 @@ TextureHandler.prototype.addContainer = function(container) {
     this.containers.push(container);
 
     return this.containers.length - 1;
-}
-
-TextureHandler.prototype.getAtlas = function(atlasID) {
-    const textureAtlas = this.atlases.get(atlasID);
-
-    if(!textureAtlas) {
-        return null;
-    }
-
-    if(this.autoRequest) {
-        this.resources.requestBitmap(atlasID);
-    }
-
-    return textureAtlas;
 }
 
 TextureHandler.prototype.getContainer = function(index) {
