@@ -1,5 +1,5 @@
-import { FrameContainer } from "../graphics/frameContainer.js";
 import { TextureHandler } from "../resources/textureHandler.js";
+import { TileContainer } from "./tileContainer.js";
 
 export const TileGraphics = function() {
     TextureHandler.call(this);
@@ -53,7 +53,7 @@ TileGraphics.prototype.load = function(atlases, tileMeta) {
     for(let i = 0; i < tileMeta.length; i++) {
         const { graphics } = tileMeta[i];
         const [atlas, texture] = graphics;
-        const container = new FrameContainer();
+        const container = new TileContainer();
         const atlasConfig = atlases[atlas];
 
         this.addContainer(container);
@@ -90,7 +90,7 @@ const createGraphic = function(animation, sheet, graphicID) {
     const frameData = regions[graphicID];
 
     if(frameData) {
-        const frame = FrameContainer.createFrame(frameData);
+        const frame = TileContainer.createFrame(frameData);
 
         animation.setFrameTime(TileGraphics.DEFAULT.FRAME_TIME);
         animation.addFrame(frame);
@@ -101,7 +101,7 @@ const createGraphic = function(animation, sheet, graphicID) {
     const patternData = patterns[graphicID];
 
     if(patternData) {
-        const frame = FrameContainer.createPatternFrame(patternData, regions);
+        const frame = TileContainer.createPatternFrame(patternData, regions);
 
         animation.setFrameTime(TileGraphics.DEFAULT.FRAME_TIME);
         animation.addFrame(frame);
@@ -122,7 +122,7 @@ const createGraphic = function(animation, sheet, graphicID) {
             const frameData = regions[frameID];
 
             if(frameData) {
-                const frame = FrameContainer.createFrame(frameData);
+                const frame = TileContainer.createFrame(frameData);
 
                 animation.addFrame(frame);
                 continue;
@@ -131,7 +131,7 @@ const createGraphic = function(animation, sheet, graphicID) {
             const patternData = patterns[frameID];
 
             if(patternData) {
-                const frame = FrameContainer.createPatternFrame(patternData, regions);
+                const frame = TileContainer.createPatternFrame(patternData, regions);
 
                 animation.addFrame(frame);
                 continue;
