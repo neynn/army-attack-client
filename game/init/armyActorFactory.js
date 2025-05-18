@@ -55,7 +55,7 @@ ArmyActorFactory.prototype.onCreate = function(gameContext, config) {
             actor.teamID = team ?? null;
             actor.setConfig(actorType);
     
-            //context.createBuffer(400, 400);
+            //context.createBuffer(600, 600);
             //context.setDisplayMode(CameraContext.DISPLAY_MODE.RESOLUTION_FIXED);
             context.setPositionMode(CameraContext.POSITION_MODE.AUTO_CENTER);
             camera.setTileSize(gameContext.settings.tileWidth, gameContext.settings.tileHeight);

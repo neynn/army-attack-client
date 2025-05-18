@@ -26,47 +26,21 @@ Camera.VIEWPORT_MODE = {
 
 Camera.prototype.update = function(gameContext, renderContext) {}
 
-Camera.prototype.setWorldSize = function(worldWidth, worldHeight) {
-    this.worldWidth = worldWidth;
-    this.worldHeight = worldHeight;
-
-    this.reloadViewport();
-}
-
-Camera.prototype.setViewportSize = function(width, height) {
-    this.viewportWidth = width;
-    this.viewportHeight = height;
-}
-
-Camera.prototype.centerWorld = function() {
-    const positionX = this.worldWidth / 2;
-    const positionY = this.worldHeight / 2;
-
-    this.centerViewport(positionX, positionY);
-}
-
-Camera.prototype.reloadViewport = function() {
-    if(this.worldWidth <= this.viewportWidth) {
-        this.viewportX_limit = 0;
-    } else {
-        this.viewportX_limit = this.worldWidth - this.viewportWidth;
+Camera.prototype.getViewport = function() {
+    return {
+        "x": this.viewportX,
+        "y": this.viewportY,
+        "w": this.viewportWidth,
+        "h": this.viewportHeight
     }
-
-    if(this.worldHeight <= this.viewportHeight) {
-        this.viewportY_limit = 0;
-    } else {
-        this.viewportY_limit = this.worldHeight - this.viewportHeight;
-    }
-
-    this.limitViewport();
 }
 
 Camera.prototype.alignViewport = function() {
-    if(this.worldWidth < this.viewportWidth) {
+    if(this.worldWidth !== 0 && this.viewportWidth !== 0 && this.worldWidth < this.viewportWidth) {
         this.viewportWidth = this.worldWidth;
     }
 
-    if(this.worldHeight < this.viewportHeight) {
+    if(this.worldHeight !== 0 && this.viewportHeight !== 0 && this.worldHeight < this.viewportHeight) {
         this.viewportHeight = this.worldHeight;
     }
 }
@@ -89,13 +63,53 @@ Camera.prototype.limitViewport = function() {
     }
 }
 
+Camera.prototype.bindViewport = function() {
+    this.viewportType = Camera.VIEWPORT_TYPE.BOUND;
+
+    this.limitViewport();
+}
+
+Camera.prototype.freeViewport = function() {
+    this.viewportType = Camera.VIEWPORT_TYPE.FREE;
+}
+
+Camera.prototype.reloadViewport = function() {
+    if(this.worldWidth <= this.viewportWidth) {
+        this.viewportX_limit = 0;
+    } else {
+        this.viewportX_limit = this.worldWidth - this.viewportWidth;
+    }
+
+    if(this.worldHeight <= this.viewportHeight) {
+        this.viewportY_limit = 0;
+    } else {
+        this.viewportY_limit = this.worldHeight - this.viewportHeight;
+    }
+
+    this.limitViewport();
+}
+
+Camera.prototype.setWorldSize = function(worldWidth, worldHeight) {
+    this.worldWidth = worldWidth;
+    this.worldHeight = worldHeight;
+
+    this.reloadViewport();
+}
+
+Camera.prototype.setViewportSize = function(width, height) {
+    this.viewportWidth = width;
+    this.viewportHeight = height;
+
+    this.reloadViewport();
+}
+
 Camera.prototype.moveViewport = function(viewportX, viewportY) {
     if(this.viewportMode === Camera.VIEWPORT_MODE.FIXED) {
         return;
     }
 
-    this.viewportX = Math.trunc(viewportX);
-    this.viewportY = Math.trunc(viewportY);
+    this.viewportX = Math.floor(viewportX);
+    this.viewportY = Math.floor(viewportY);
 
     this.limitViewport();
 }
@@ -105,34 +119,22 @@ Camera.prototype.dragViewport = function(dragX, dragY) {
         return;
     }
 
-    const positionX = this.viewportX + dragX;
-    const positionY = this.viewportY + dragY;
+    const viewportX = this.viewportX + dragX;
+    const viewportY = this.viewportY + dragY;
     
-    this.moveViewport(positionX, positionY);
+    this.moveViewport(viewportX, viewportY);
 }
 
-Camera.prototype.centerViewport = function(positionX, positionY) {
+Camera.prototype.centerViewportOn = function(positionX, positionY) {
     const viewportX = positionX - this.viewportWidth / 2;
     const viewportY = positionY - this.viewportHeight / 2;
 
     this.moveViewport(viewportX, viewportY);
 }
 
-Camera.prototype.bindViewport = function() {
-    this.viewportType = Camera.VIEWPORT_TYPE.BOUND;
-    this.limitViewport();
-}
+Camera.prototype.centerViewportOnWorld = function() {
+    const viewportX = this.worldWidth / 2;
+    const viewportY = this.worldHeight / 2;
 
-Camera.prototype.freeViewport = function() {
-    this.viewportType = Camera.VIEWPORT_TYPE.FREE;
-    this.limitViewport();
-}
-
-Camera.prototype.getViewport = function() {
-    return {
-        "x": this.viewportX,
-        "y": this.viewportY,
-        "w": this.viewportWidth,
-        "h": this.viewportHeight
-    }
+    this.centerViewportOn(viewportX, viewportY);
 }

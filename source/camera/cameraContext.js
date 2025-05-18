@@ -36,9 +36,10 @@ CameraContext.prototype.getID = function() {
     return this.id;
 }
 
-CameraContext.prototype.setWindow = function(windowWidth, windowHeight) {
+CameraContext.prototype.setWindowSize = function(windowWidth, windowHeight) {
     this.windowWidth = windowWidth;
     this.windowHeight = windowHeight;
+    this.camera.setViewportSize(this.windowWidth, this.windowHeight);
 }
 
 CameraContext.prototype.setScaleMode = function(modeID) {
