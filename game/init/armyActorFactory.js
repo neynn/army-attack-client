@@ -57,7 +57,9 @@ ArmyActorFactory.prototype.onCreate = function(gameContext, config) {
     
             //context.createBuffer(600, 600);
             //context.setDisplayMode(CameraContext.DISPLAY_MODE.RESOLUTION_FIXED);
+            //context.setScaleMode(CameraContext.SCALE_MODE.WHOLE);
             context.setPositionMode(CameraContext.POSITION_MODE.AUTO_CENTER);
+
             camera.setTileSize(gameContext.settings.tileWidth, gameContext.settings.tileHeight);
 
             addDragEvent(gameContext);

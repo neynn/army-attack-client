@@ -255,7 +255,7 @@ ArmyContext.prototype.onMapCreate = function(mapID, worldMap) {
             camera.setMapSize(width, height);
             camera.initBorder(this);
 
-            context.reload();
+            context.refreshFull();
         }
     });
 

@@ -35,16 +35,6 @@ Camera.prototype.getViewport = function() {
     }
 }
 
-Camera.prototype.alignViewport = function() {
-    if(this.worldWidth !== 0 && this.viewportWidth !== 0 && this.worldWidth < this.viewportWidth) {
-        this.viewportWidth = this.worldWidth;
-    }
-
-    if(this.worldHeight !== 0 && this.viewportHeight !== 0 && this.worldHeight < this.viewportHeight) {
-        this.viewportHeight = this.worldHeight;
-    }
-}
-
 Camera.prototype.limitViewport = function() {
     if(this.viewportType !== Camera.VIEWPORT_TYPE.BOUND) {
         return;
@@ -87,6 +77,18 @@ Camera.prototype.reloadViewport = function() {
     }
 
     this.limitViewport();
+}
+
+Camera.prototype.alignViewport = function() {
+    if(this.worldWidth !== 0 && this.viewportWidth !== 0 && this.worldWidth < this.viewportWidth) {
+        this.viewportWidth = this.worldWidth;
+    }
+
+    if(this.worldHeight !== 0 && this.viewportHeight !== 0 && this.worldHeight < this.viewportHeight) {
+        this.viewportHeight = this.worldHeight;
+    }
+
+    this.reloadViewport();
 }
 
 Camera.prototype.setWorldSize = function(worldWidth, worldHeight) {

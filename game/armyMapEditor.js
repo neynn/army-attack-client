@@ -417,7 +417,7 @@ ArmyMapEditor.prototype.resizeCurrentMap = function(gameContext) {
     this.camera.setMapSize(newWidth, newHeight);
     this.camera.resizeBorder(newWidth, newHeight);
 
-    renderer.getContext(this.id).reload();
+    renderer.getContext(this.id).refreshFull();
 }
 
 ArmyMapEditor.prototype.paintTile = function(gameContext) {
