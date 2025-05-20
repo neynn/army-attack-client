@@ -14,8 +14,10 @@
             "text": "MISSION_TEXT_OASIS_TEST_1",
             "icon": null,
             "type": null,
-            "objectives": [],
             "required": [],
+            "objectives": [
+                { "type": "OBJECTIVE_TYPE", "parameter": "OBJECTIVE_PARAMETER", "value": 1 }
+            ],
             "rewards": [
                 { "type": "Resource", "id": "Gold", "value": 999 },
                 { "type": "Item", "id": "unit_artillery", "value": 1 }

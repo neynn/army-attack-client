@@ -22,6 +22,8 @@ MissionHandler.prototype.init = function(missions) {
             this.missions.set(missionID, mission);
         }
     }
+
+    this.unlockMissions();
 }
 
 MissionHandler.prototype.allRequiredCompleted = function(required) {
@@ -55,11 +57,21 @@ MissionHandler.prototype.unlockMissions = function() {
 }
 
 MissionHandler.prototype.load = function(blob) {
-    for(const missionID in blob) {
+    const { started, finished } = blob;
+    
+    for(const missionID of finished) {
         const mission = this.missions.get(missionID);
 
         if(mission) {
-            mission.state = blob[missionID];
+            mission.state = Mission.STATE.COMPLETED;
+        }
+    }
+
+    for(const { id, objectives } of started) {
+        const mission = this.missions.get(id);
+
+        if(mission) {
+            mission.loadProgress(objectives);
         }
     }
 
@@ -67,20 +79,43 @@ MissionHandler.prototype.load = function(blob) {
 }
 
 MissionHandler.prototype.save = function() {
-    const blob = {};
+    const started = [];
+    const finished = [];
 
     for(const [missionID, mission] of this.missions) {
-        blob[missionID] = mission.state;
+        switch(mission.state) {
+            case Mission.STATE.STARTED: {
+                started.push({
+                    "id": missionID,
+                    "objectives": mission.saveProgress()
+                });
+                break;
+            }
+            case Mission.STATE.COMPLETED: {
+                finished.push(missionID);
+                break;
+            }
+        }
     }
 
-    return blob;
+    return {
+        "started": started,
+        "finished": finished
+    }
 }
 
-MissionHandler.prototype.onObjective = function(objectiveType, parameter) {
+MissionHandler.prototype.onObjective = function(type, parameter) {
     for(const [missionID, mission] of this.missions) {
-        if(mission.state === Mission.STATE.STARTED) {
-            //check objective.
-            //if objective is done, then proceed.
+        mission.onObjective(type, parameter);
+
+        const isCompleteable = mission.isCompleteable();
+
+        if(isCompleteable) {
+            const isFirstCompletion = mission.complete();
+
+            if(isFirstCompletion) {
+                this.events.emit(MissionHandler.EVENT.MISSION_COMPLETED, missionID, mission);
+            }
         }
     }
 }
