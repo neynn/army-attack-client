@@ -6,13 +6,6 @@
     "brushSizes": [0, 1, 2, 3, 4],
     "hiddenSets": ["overlay"],
     "interfaceID": "MAP_EDITOR",
-    "layerFill": {
-        "ground": 1,
-        "decoration": 0,
-        "cloud": 0,
-        "type": 0,
-        "team": 0
-    },
     "defaultMap": {
         "type": "EmptyVersus",
         "music": "music_remastered",

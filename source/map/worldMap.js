@@ -41,46 +41,6 @@ WorldMap.prototype.updateAutotiler = function(autotiler, tileX, tileY, layerID) 
     }
 }
 
-WorldMap.prototype.updateRect = function(tileX, tileY, width, height, onUpdate) {
-    if(typeof onUpdate !== "function") {
-        return;
-    }
-
-    const endX = tileX + width;
-    const endY = tileY + height;
-
-    for(let i = tileY; i <= endY; i++) {
-        const row = i * this.width;
-
-        for(let j = tileX; j <= endX; j++) {
-            const index = row + j;
-
-            onUpdate(index, j, i);
-        }
-    }
-}
-
-WorldMap.prototype.updateArea = function(tileX, tileY, range, onUpdate) {
-    if(typeof onUpdate !== "function") {
-        return;
-    }
-
-    const startX = tileX - range;
-    const startY = tileY - range;
-    const endX = tileX + range;
-    const endY = tileY + range;
-
-    for(let i = startY; i <= endY; i++) {
-        const row = i * this.width;
-
-        for(let j = startX; j <= endX; j++) {
-            const index = row + j;
-
-            onUpdate(index, j, i);
-        }
-    }
-}
-
 WorldMap.prototype.autotile = function(autotiler, tileX, tileY, layerID) {
     const tileID = this.getTile(layerID, tileX, tileY);
 

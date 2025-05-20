@@ -14,7 +14,6 @@ export const MapEditor = function() {
     this.mapID = null;
     this.pageIndex = 0;
     this.activityStack = [];
-    this.layerFill = {};
     this.autoState = MapEditor.AUTOTILER_STATE.INACTIVE;
     this.hiddenSets = new Set();
     this.slots = [];
