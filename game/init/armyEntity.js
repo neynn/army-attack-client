@@ -4,9 +4,11 @@ import { DirectionComponent } from "../components/direction.js";
 import { SpriteComponent } from "../components/sprite.js";
 import { AllianceSystem } from "../systems/alliance.js";
 
-export const ArmyEntity = function(DEBUG_NAME) {
+export const ArmyEntity = function(config, DEBUG_NAME) {
     Entity.call(this, DEBUG_NAME);
 
+    this.config = config;
+    
     this.events = new EventEmitter();
     this.events.listen(ArmyEntity.EVENT.HEALTH_UPDATE);
     this.events.listen(ArmyEntity.EVENT.DAMAGE_UPDATE);

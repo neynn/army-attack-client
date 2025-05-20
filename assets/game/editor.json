@@ -18,14 +18,12 @@
         "music": "music_remastered",
         "width": 20,
         "height": 20,
-        "graphics": {
-            "layers": {
-                "ground": { "fill": 1, "opacity": 1, "autoGenerate": false },
-                "decoration": { "fill": 0, "opacity": 1, "autoGenerate": false },
-                "cloud": { "fill": 0, "opacity": 1, "autoGenerate": true },
-                "type": { "fill": 0, "opacity": 1, "autoGenerate": false },
-                "team": { "fill": 0, "opacity": 1, "autoGenerate": false }
-            }
+        "data": {
+            "ground": { "fill": 1 },
+            "decoration": { "fill": 0 },
+            "cloud": { "fill": 0 },
+            "type": { "fill": 0 },
+            "team": { "fill": 0 }
         }
     }
 }

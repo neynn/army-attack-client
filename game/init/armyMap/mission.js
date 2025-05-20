@@ -32,6 +32,10 @@ Mission.prototype.start = function() {
 }
 
 Mission.prototype.complete = function() {
+    if(this.state === Mission.STATE.COMPLETED) {
+        return false;
+    }
+
     const previousState = this.state;
 
     this.state = Mission.STATE.COMPLETED;

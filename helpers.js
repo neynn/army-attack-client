@@ -60,7 +60,6 @@ export const saveMap = function(mapID, map2D) {
         .download("map_" + mapID);
     }
 
-    const graphics = map2D.saveMeta();
     const layers = map2D.saveLayers();
     const flags = map2D.saveFlags();
 
@@ -70,9 +69,6 @@ export const saveMap = function(mapID, map2D) {
     .writeLine("width", map2D.width)
     .writeLine("height", map2D.height)
     .writeLine("flags", flags)
-    .openList("graphics")
-    .writeList("layers", graphics)
-    .closeList()
     .writeList("data", layers)
     .close()
     .download("map_" + mapID);

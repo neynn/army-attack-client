@@ -19,26 +19,17 @@ const parseMap2D = function(gameContext, map2D, config) {
     const { tileManager } = gameContext;
     const containerCount = tileManager.graphics.getContainerCount();
 
-    const { 
-        graphics = {},
+    const {
         data = {}
     } = config;
 
     map2D.init(config);
 
-    const { 
-        layers = {}
-    } = graphics;
-
-    for(const layerID in layers) {
-        const config = layers[layerID];
-        const { opacity, autoGenerate } = config;
+    for(const layerID in data) {
         const layer = map2D.createLayer(layerID);
 
         layer.initBuffer(containerCount);
         layer.decode(data[layerID]);
-        layer.setOpacity(opacity);
-        layer.setAutoGenerate(autoGenerate);
     }
 }
 
@@ -47,24 +38,17 @@ const parseMap2DEmpty = function(gameContext, map2D, config) {
     const containerCount = tileManager.graphics.getContainerCount();
 
     const { 
-        graphics = {}
+        data = {}
     } = config;
 
     map2D.init(config);
     
-    const {
-        layers = {}
-    } = graphics;
-
-    for(const layerID in layers) {
-        const config = layers[layerID];
-        const { fill, opacity, autoGenerate } = config;
+    for(const layerID in data) {
+        const { fill } = data[layerID];
         const layer = map2D.createLayer(layerID);
 
         layer.initBuffer(containerCount);
         layer.fill(fill);
-        layer.setOpacity(opacity);
-        layer.setAutoGenerate(autoGenerate);
     }
 }
 

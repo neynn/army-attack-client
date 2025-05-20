@@ -73,9 +73,9 @@ AttackSystem.isAttackCounterable = function(entity) {
 
 AttackSystem.getState = function(target, damage, isBulldozed) {
     const healthComponent = target.getComponent(ArmyEntity.COMPONENT.HEALTH);
-    const remainder = healthComponent.getRemainder(damage);
+    const isFatal = healthComponent.isFatal(damage);
 
-    if(remainder <= 0) {
+    if(isFatal) {
         const isReviveable = target.hasComponent(ArmyEntity.COMPONENT.REVIVEABLE);
 
         if(isReviveable && !isBulldozed) {

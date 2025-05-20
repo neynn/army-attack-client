@@ -9,12 +9,6 @@ HealthComponent.prototype.getMissing = function() {
     return this.maxHealth - this.health;
 }
 
-HealthComponent.prototype.setHealth = function(value) {
-    const health = clampValue(value, this.maxHealth, 0);
-
-    this.health = health;
-}
-
 HealthComponent.prototype.addHealth = function(value) {
     const health = clampValue(this.health + value, this.maxHealth, 0);
 
@@ -22,9 +16,13 @@ HealthComponent.prototype.addHealth = function(value) {
 }
 
 HealthComponent.prototype.reduceHealth = function(value) {
-    const health = clampValue(this.health - value, this.maxHealth, 0);
+    const health = this.health - value;
 
-    this.health = health;
+    if(health < 0) {
+        this.health = 0;
+    } else {
+        this.health = health;
+    }
 }
 
 HealthComponent.prototype.toMax = function() {
@@ -39,10 +37,10 @@ HealthComponent.prototype.isFull = function() {
     return this.health >= this.maxHealth;
 }
 
-HealthComponent.prototype.getRemainder = function(damage) {
-    const health = clampValue(this.health - damage, this.maxHealth, 0);
+HealthComponent.prototype.isFatal = function(damage) {
+    const health = this.health - damage;
 
-    return health;
+    return health <= 0;
 }
 
 HealthComponent.prototype.save = function() {

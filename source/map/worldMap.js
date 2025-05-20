@@ -10,18 +10,6 @@ export const WorldMap = function() {
     this.entities = new Map();
 }
 
-WorldMap.prototype.saveMeta = function() {
-    const meta = [];
-
-    for(const [layerID, layer] of this.layers) {
-        const { autoGenerate, opacity } = layer;
-
-        meta.push(`"${layerID}": { "opacity": ${opacity}, "autoGenerate": ${autoGenerate} }`);
-    }
-
-    return meta;
-}
-
 WorldMap.prototype.saveLayers = function() {
     const layers = [];
 
@@ -119,7 +107,7 @@ WorldMap.prototype.autotile = function(autotiler, tileX, tileY, layerID) {
 
 WorldMap.prototype.createLayer = function(id) {
     if(this.layers.has(id)) {
-        return null;
+        return this.layers.get(id);
     }
 
     const layer = new Layer(this.width, this.height);
@@ -271,13 +259,8 @@ WorldMap.prototype.setLayerOpacity = function(layerID, opacity) {
     layer.setOpacity(opacity);
 } 
 
-WorldMap.prototype.resize = function(width, height, fillMapping) {
-    for(const [layerID, layer] of this.layers) {
-        const fill = fillMapping[layerID] ?? 0;
-
-        layer.resize(width, height, fill);
-    }
-
+WorldMap.prototype.resize = function(width, height) {
+    this.layers.forEach(layer => layer.resize(width, height));
     this.width = width;
     this.height = height;
 }

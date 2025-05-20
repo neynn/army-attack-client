@@ -38,7 +38,7 @@ MissionHandler.prototype.allRequiredCompleted = function(required) {
 }
 
 MissionHandler.prototype.unlockMissions = function() {
-    this.missions.forEach((mission) => {
+    for(const [missionID, mission] of this.missions) {
         if(mission.state === Mission.STATE.HIDDEN) {
             const required = mission.getRequired();
             const allCompleted = this.allRequiredCompleted(required);
@@ -47,11 +47,11 @@ MissionHandler.prototype.unlockMissions = function() {
                 const hasStarted = mission.start();
 
                 if(hasStarted) {
-                    this.events.emit(MissionHandler.EVENT.MISSION_STARTED, mission);
+                    this.events.emit(MissionHandler.EVENT.MISSION_STARTED, missionID, mission);
                 }
             }
         }
-    });
+    }
 }
 
 MissionHandler.prototype.load = function(blob) {
@@ -76,8 +76,11 @@ MissionHandler.prototype.save = function() {
     return blob;
 }
 
-MissionHandler.prototype.onEvent = function(objectiveID, parameter) {
+MissionHandler.prototype.onObjective = function(objectiveType, parameter) {
     for(const [missionID, mission] of this.missions) {
-
+        if(mission.state === Mission.STATE.STARTED) {
+            //check objective.
+            //if objective is done, then proceed.
+        }
     }
 }

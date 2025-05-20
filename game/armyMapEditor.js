@@ -45,7 +45,6 @@ ArmyMapEditor.prototype.init = function(config) {
         overlayColor = this.overlayColor,
         slotSize = this.slotButtonSize,
         defaultMap = this.defaultMap,
-        layerFill = this.layerFill,
         interfaceID = null
     } = config;
 
@@ -55,7 +54,6 @@ ArmyMapEditor.prototype.init = function(config) {
     this.overlayColor = overlayColor;
     this.interfaceID = interfaceID;
     this.slotButtonSize = slotSize;
-    this.layerFill = layerFill;
     this.defaultMap = defaultMap;
     this.brushSizes.setValues(brushSizes);
 
@@ -412,7 +410,7 @@ ArmyMapEditor.prototype.resizeCurrentMap = function(gameContext) {
     const newWidth = clampValue(parsedWidth, this.maxWidth, 1);
     const newHeight = clampValue(parsedHeight, this.maxHeight, 1);
 
-    gameMap.resize(newWidth, newHeight, this.layerFill);
+    gameMap.resize(newWidth, newHeight);
 
     this.camera.setMapSize(newWidth, newHeight);
     this.camera.resizeBorder(newWidth, newHeight);

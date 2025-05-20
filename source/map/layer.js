@@ -5,6 +5,7 @@ export const Layer = function(width, height) {
     this.width = width;
     this.height = height;
     this.type = Layer.BUFFER_TYPE.BIT_0;
+    this.fillValue = 0;
 }
 
 Layer.BUFFER_TYPE = {
@@ -41,6 +42,8 @@ Layer.prototype.fill = function(id) {
     for(let i = 0; i < length; ++i) {
         this.buffer[i] = id;
     }
+
+    this.fillValue = id;
 }
 
 Layer.prototype.initBuffer = function(count) {
@@ -88,12 +91,13 @@ Layer.prototype.setAutoGenerate = function(autoGenerate) {
     this.autoGenerate = autoGenerate ?? this.autoGenerate;
 }
 
-Layer.prototype.resize = function(newWidth, newHeight, fill = 0) {
+Layer.prototype.resize = function(newWidth, newHeight) {
     const layerSize = newWidth * newHeight;
     const ArrayType = this.buffer.constructor;
     const newBuffer = new ArrayType(layerSize);
-    
-    if(fill !== 0) {
+    const fill = this.fillValue;
+
+    if(fill !== 0) { //TODO: Fill value may be greater than byte size of buffer.
         for(let i = 0; i < layerSize; ++i) {
             newBuffer[i] = fill;
         }

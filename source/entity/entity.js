@@ -16,12 +16,6 @@ Entity.prototype.getID = function() {
     return this.id;
 }
 
-Entity.prototype.setConfig = function(config) {
-    if(config !== undefined) {
-        this.config = config;
-    }
-} 
-
 Entity.prototype.update = function(gameContext) {
     for(let i = 0; i < this.activeComponents.length; ++i) {
         this.activeComponents[i].update(gameContext, this);
