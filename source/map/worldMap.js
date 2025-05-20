@@ -117,14 +117,6 @@ WorldMap.prototype.autotile = function(autotiler, tileX, tileY, layerID) {
     return responseID;
 }
 
-WorldMap.prototype.setWidth = function(width) {
-    this.width = width;
-}
-
-WorldMap.prototype.setHeight = function(height) {
-    this.height = height;
-}
-
 WorldMap.prototype.createLayer = function(id) {
     if(this.layers.has(id)) {
         return null;
@@ -286,8 +278,8 @@ WorldMap.prototype.resize = function(width, height, fillMapping) {
         layer.resize(width, height, fill);
     }
 
-    this.setWidth(width);
-    this.setHeight(height);
+    this.width = width;
+    this.height = height;
 }
 
 WorldMap.prototype.clearTile = function(layerID, tileX, tileY) {

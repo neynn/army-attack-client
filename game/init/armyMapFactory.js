@@ -20,15 +20,11 @@ const parseMap2D = function(gameContext, map2D, config) {
     const containerCount = tileManager.graphics.getContainerCount();
 
     const { 
-        width = 0,
-        height = 0,
         graphics = {},
         data = {}
     } = config;
 
-    map2D.setWidth(width);
-    map2D.setHeight(height);
-    map2D.loadMeta(config);
+    map2D.init(config);
 
     const { 
         layers = {}
@@ -51,14 +47,10 @@ const parseMap2DEmpty = function(gameContext, map2D, config) {
     const containerCount = tileManager.graphics.getContainerCount();
 
     const { 
-        width = 0,
-        height = 0,
-        graphics = {},
+        graphics = {}
     } = config;
 
-    map2D.setWidth(width);
-    map2D.setHeight(height);
-    map2D.loadMeta(config);
+    map2D.init(config);
     
     const {
         layers = {}

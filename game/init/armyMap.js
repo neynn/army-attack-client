@@ -2,6 +2,7 @@ import { Autotiler } from "../../source/tile/autotiler.js";
 import { WorldMap } from "../../source/map/worldMap.js";
 import { AllianceSystem } from "../systems/alliance.js";
 import { BorderSystem } from "../systems/border.js";
+import { MissionHandler } from "./armyMap/missionHandler.js";
 
 export const ArmyMap = function() {
     WorldMap.call(this, null);
@@ -10,6 +11,7 @@ export const ArmyMap = function() {
     this.type = ArmyMap.TYPE.NONE;
     this.flags = ArmyMap.FLAG.NONE;
     this.debris = new Map();
+    this.missions = new MissionHandler();
 }
 
 ArmyMap.FLAG = {
@@ -162,16 +164,17 @@ ArmyMap.prototype.saveFlags = function() {
     return flags;
 }
 
-ArmyMap.prototype.loadMeta = function(meta) {
-    if(!meta) {
-        return;
-    }
-
+ArmyMap.prototype.init = function(config = {}) {
     const {
+        width = 0,
+        height = 0,
         flags = [],
-        music = null
-    } = meta;
+        music = null,
+        missions = {}
+    } = config;
 
+    this.width = width;
+    this.height = height;
     this.music = music;
 
     for(let i = 0; i < flags.length; i++) {
@@ -182,6 +185,8 @@ ArmyMap.prototype.loadMeta = function(meta) {
             this.flags |= flag;
         }
     }
+
+    this.missions.init(missions);
 }
 
 ArmyMap.prototype.reload = function(gameContext) {
