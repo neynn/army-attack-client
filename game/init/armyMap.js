@@ -62,6 +62,24 @@ ArmyMap.CONVERTABLE_LAYERS = [
 ArmyMap.prototype = Object.create(WorldMap.prototype);
 ArmyMap.prototype.constructor = ArmyMap;
 
+ArmyMap.prototype.save = function() {
+    const missions = this.missions.save();
+    const debris = [];
+
+    this.debris.forEach(({type, x, y}) => {
+        debris.push({
+            "type": type,
+            "x": x,
+            "y": y
+        });
+    });
+
+    return {
+        "missions": missions,
+        "debris": debris
+    }
+}
+
 ArmyMap.prototype.isFullyClouded = function(tileX, tileY) {
     const tileID = this.getTile(ArmyMap.LAYER.CLOUD, tileX, tileY);
 

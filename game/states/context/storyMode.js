@@ -25,7 +25,7 @@ StoryModeState.prototype.onEvent = function(gameContext, stateMachine, eventID, 
     switch(eventID) {
         case ArmyContext.EVENT.STORY_SAVE: {
             const snapshot = this.saveSnapshot(gameContext);
-            
+
             console.log(snapshot);
             break;
         }
@@ -34,7 +34,9 @@ StoryModeState.prototype.onEvent = function(gameContext, stateMachine, eventID, 
 
 StoryModeState.prototype.saveSnapshot = function(gameContext) {
     const { world } = gameContext;
-    const { turnManager, entityManager } = world;
+    const { turnManager, entityManager, mapManager } = world;
+    const activeMap = mapManager.getActiveMap();
+
     const entities = [];
     const actors = [];
 
@@ -66,7 +68,8 @@ StoryModeState.prototype.saveSnapshot = function(gameContext) {
     return {
         "time": Date.now(),
         "actors": actors,
-        "entities": entities
+        "entities": entities,
+        "maps": activeMap.save()
     }
 }
 
