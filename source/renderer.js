@@ -2,7 +2,6 @@ import { Camera } from "./camera/camera.js";
 import { Display } from "./camera/display.js";
 import { EffectManager } from "./effects/effectManager.js";
 import { EventEmitter } from "./events/eventEmitter.js";
-import { isRectangleRectangleIntersect } from "./math/math.js";
 import { CameraContext } from "./camera/cameraContext.js";
 
 export const Renderer = function() {
@@ -108,21 +107,6 @@ Renderer.prototype.destroyContext = function(contextID) {
     }
 }
 
-Renderer.prototype.drawContextDebug = function() {
-    const { context } = this.display;
-
-    context.globalAlpha = 1;
-    context.strokeStyle = "#eeeeee";
-    context.lineWidth = 3;
-
-    for(let i = 0; i < this.contexts.length; i++) {
-        const cameraContext = this.contexts[i];
-        const { x, y, w, h } = cameraContext.getBounds();
-
-        context.strokeRect(x, y, w, h);
-    }
-}
-
 Renderer.prototype.update = function(gameContext) {
     const { timer, uiManager } = gameContext; 
     const deltaTime = timer.getDeltaTime();
@@ -138,7 +122,9 @@ Renderer.prototype.update = function(gameContext) {
     this.effects.update(this.display, deltaTime);
 
     if(Renderer.DEBUG.CONTEXT) {
-        this.drawContextDebug();
+        for(let i = 0; i < this.contexts.length; i++) {
+            this.contexts[i].debug(this.display.context);
+        }
     }
 
     this.display.save();
@@ -193,11 +179,7 @@ Renderer.prototype.getWindow = function() {
 Renderer.prototype.getCollidedContext = function(mouseX, mouseY, mouseRange) {
     for(let i = this.contexts.length - 1; i >= 0; i--) {
         const context = this.contexts[i];
-        const { x, y, w, h } = context.getBounds();
-        const isColliding = isRectangleRectangleIntersect(
-            x, y, w, h,
-            mouseX, mouseY, mouseRange, mouseRange
-        );
+        const isColliding = context.isColliding(mouseX, mouseY, mouseRange);
 
         if(isColliding) {
             return context;

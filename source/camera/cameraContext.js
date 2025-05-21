@@ -1,4 +1,5 @@
 import { Display } from "./display.js";
+import { isRectangleRectangleIntersect } from "../math/math.js";
 
 export const CameraContext = function(id, camera, windowWidth, windowHeight) {
     this.id = id;
@@ -39,17 +40,6 @@ CameraContext.prototype.getID = function() {
 
 CameraContext.prototype.getCamera = function() {
     return this.camera;
-}
-
-CameraContext.prototype.getBounds = function() {
-    const { w, h } = this.camera.getViewport();
-
-    return {
-        "x": this.positionX,
-        "y": this.positionY,
-        "w": w * this.scale,
-        "h": h * this.scale
-    }
 }
 
 CameraContext.prototype.getWorldPosition = function(screenX, screenY) {
@@ -251,13 +241,36 @@ CameraContext.prototype.update = function(gameContext, display) {
         case CameraContext.DISPLAY_MODE.RESOLUTION_FIXED: {
             const { context } = display;
             const { canvas, width, height } = this.display;
-            const { x, y, w, h } = this.getBounds();
+            const { w, h } = this.camera.getViewport();
 
             this.display.clear();
             this.camera.update(gameContext, this.display);
 
-            context.drawImage(canvas, 0, 0, width, height, x, y, w, h);
+            context.drawImage(
+                canvas,
+                0, 0, width, height,
+                this.positionX, this.positionY, w * this.scale, h * this.scale
+            );
             break;
         }
     }
+}
+
+CameraContext.prototype.debug = function(context) {
+    const { w, h } = this.camera.getViewport();
+
+    context.globalAlpha = 1;
+    context.strokeStyle = "#eeeeee";
+    context.lineWidth = 3;
+    context.strokeRect(this.positionX, this.positionY, w * this.scale, h * this.scale);
+}
+
+CameraContext.prototype.isColliding = function(mouseX, mouseY, mouseRange) {
+    const { w, h } = this.camera.getViewport();
+    const isColliding = isRectangleRectangleIntersect(
+        this.positionX, this.positionY, w * this.scale, h * this.scale,
+        mouseX, mouseY, mouseRange, mouseRange
+    );
+
+    return isColliding;
 }
