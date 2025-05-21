@@ -54,7 +54,7 @@ ReviveableComponent.prototype.update = function(gameContext, entity) {
             this.passedTime = gameContext.settings.downDuration;
             this.state = ReviveableComponent.STATE.DEAD;
 
-            eventBus.emit(GameEvent.TYPE.ENTITY_DECAY, { entity });
+            eventBus.emit(GameEvent.TYPE.ENTITY_DECAY, { "entity": entity });
         }
     }
 }

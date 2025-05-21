@@ -141,8 +141,8 @@ DropSystem.getKillReward = function(entity) {
     return drops;
 }
 
-DropSystem.getDebrisReward = function(gameContext, debrisID) {
-    const debrisType = gameContext.debrisTypes[debrisID];
+DropSystem.getDebrisReward = function(gameContext, typeID) {
+    const debrisType = gameContext.debrisTypes[typeID];
 
     if(!debrisType) {
         return null;

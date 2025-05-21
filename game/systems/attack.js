@@ -123,7 +123,7 @@ AttackSystem.endAttack = function(gameContext, target) {
 
             eventBus.emit(GameEvent.TYPE.ENTITY_KILL, { 
                 "reason": GameEvent.KILL_REASON.ATTACK,
-                "target": entity,
+                "entity": entity,
                 "damage": damage
             });
             break;
@@ -133,7 +133,7 @@ AttackSystem.endAttack = function(gameContext, target) {
 
             eventBus.emit(GameEvent.TYPE.ENTITY_HIT, { 
                 "reason": GameEvent.KILL_REASON.ATTACK,
-                "target": entity,
+                "entity": entity,
                 "damage": damage
             });
             break;
@@ -141,13 +141,13 @@ AttackSystem.endAttack = function(gameContext, target) {
         case AttackSystem.OUTCOME_STATE.DOWN: {
             eventBus.emit(GameEvent.TYPE.ENTITY_DOWN, { 
                 "reason": GameEvent.KILL_REASON.ATTACK,
-                "target": entity,
+                "entity": entity,
                 "damage": damage
             });
 
             eventBus.emit(GameEvent.TYPE.ENTITY_HIT, { 
                 "reason": GameEvent.KILL_REASON.ATTACK,
-                "target": entity,
+                "entity": entity,
                 "damage": damage
             });
             break;

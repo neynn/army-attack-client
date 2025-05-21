@@ -112,14 +112,13 @@ Renderer.prototype.update = function(gameContext) {
     const deltaTime = timer.getDeltaTime();
 
     this.display.clear();
+    this.effects.update(this.display, deltaTime);
 
     for(let i = 0; i < this.contexts.length; i++) {
         this.display.save();
         this.contexts[i].update(gameContext, this.display);
         this.display.reset();
     }
-
-    this.effects.update(this.display, deltaTime);
 
     if(Renderer.DEBUG.CONTEXT) {
         for(let i = 0; i < this.contexts.length; i++) {
@@ -142,8 +141,8 @@ Renderer.prototype.update = function(gameContext) {
 
 Renderer.prototype.drawFPS = function(timer) {
     const { context } = this.display;
-    const fps = timer.getFPS();
-    const text = `FPS: ${Math.round(fps)}`;
+    const fps = Math.round(timer.getFPS());
+    const text = `FPS: ${fps}`;
 
     if(fps >= 60) {
         context.fillStyle = Renderer.FPS_COLOR.GOOD;
@@ -161,9 +160,7 @@ Renderer.prototype.onWindowResize = function(width, height) {
     this.display.onWindowResize(width, height);
 
     for(let i = 0; i < this.contexts.length; i++) {
-        const context = this.contexts[i];
-
-        context.onWindowResize(this.display.width, this.display.height);
+        this.contexts[i].onWindowResize(this.display.width, this.display.height);
     }
     
     this.events.emit(Renderer.EVENT.SCREEN_RESIZE, width, height);

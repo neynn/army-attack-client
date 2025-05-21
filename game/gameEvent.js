@@ -33,10 +33,6 @@ GameEvent.TYPE = {
     DEBRIS_SPAWN: 302,
 
     DROP: 400,
-    HIT_DROP: 401,
-    KILL_DROP: 402,
-    DEBRIS_DROP: 403,
-
 
     VERSUS_REQUEST_SKIP_TURN: 1000,
     VERSUS_SKIP_TURN: 1001
@@ -63,9 +59,6 @@ GameEvent.prototype.init = function(gameContext) {
     eventBus.on(GameEvent.TYPE.ENTITY_HEAL, (event) => this.onEntityHeal(gameContext, event));
     eventBus.on(GameEvent.TYPE.TILE_CAPTURE, (event) => this.onTileCapture(gameContext, event));
     eventBus.on(GameEvent.TYPE.DEBRIS_REMOVED, (event) => this.onDebrisRemoved(gameContext, event));
-    eventBus.on(GameEvent.TYPE.HIT_DROP, (event) => this.onHitDrop(gameContext, event));
-    eventBus.on(GameEvent.TYPE.KILL_DROP, (event) => this.onKillDrop(gameContext, event));
-    eventBus.on(GameEvent.TYPE.DEBRIS_DROP, (event) => this.onDebrisDrop(gameContext, event));
     eventBus.on(GameEvent.TYPE.DEBRIS_SPAWN, (event) => this.onDebrisSpawn(gameContext, event));
     eventBus.on(GameEvent.TYPE.DROP, (event) => this.onDrop(gameContext, event));
 }
@@ -93,26 +86,6 @@ GameEvent.prototype.onDrop = function(gameContext, event) {
     DropSystem.dropItems(gameContext, drops, receiver.inventory);
 }
 
-GameEvent.prototype.onDebrisDrop = function(gameContext, event) {
-    const { world } = gameContext;
-    const { eventBus } = world;
-    const { debrisID, receiverID } = event;
-    const drops = DropSystem.getDebrisReward(gameContext, debrisID);
-
-    console.log("DEBRIS_DROP", event);
-
-    if(!drops) {
-        return;
-    }
-
-    switch(this.mode) {
-        case GameEvent.MODE.STORY: {
-            eventBus.emit(GameEvent.TYPE.DROP, { "drops": drops, "receiverID": receiverID });
-            break;
-        }
-    }
-}
-
 GameEvent.prototype.onDebrisRemoved = function(gameContext, event) {
     const { world } = gameContext;
     const { eventBus } = world;
@@ -122,7 +95,11 @@ GameEvent.prototype.onDebrisRemoved = function(gameContext, event) {
 
     switch(this.mode) {
         case GameEvent.MODE.STORY: {
-            eventBus.emit(GameEvent.TYPE.DEBRIS_DROP, { "receiverID": cleanerID, "debrisID": "Debris" });
+            const drops = DropSystem.getDebrisReward(gameContext, "Debris");
+
+            if(drops) {
+                eventBus.emit(GameEvent.TYPE.DROP, { "drops": drops, "receiverID": cleanerID });
+            }
             break;
         }
     }
@@ -136,46 +113,6 @@ GameEvent.prototype.onDebrisSpawn = function(gameContext, event) {
     switch(this.mode) {
         case GameEvent.MODE.STORY: {
             DebrisSystem.spawnDebris(gameContext, debris);
-            break;
-        }
-    }
-}
-
-GameEvent.prototype.onKillDrop = function(gameContext, event) {
-    const { world } = gameContext;
-    const { eventBus } = world;
-    const { entity, receiverID } = event;
-    const killRewards = DropSystem.getKillReward(entity);
-
-    console.log("KILL_DROP", event);
-
-    if(!killRewards) {
-        return;
-    }
-
-    switch(this.mode) {
-        case GameEvent.MODE.STORY: {
-            eventBus.emit(GameEvent.TYPE.DROP, { "drops": killRewards, "receiverID": receiverID });
-            break;
-        }
-    }
-}
-
-GameEvent.prototype.onHitDrop = function(gameContext, event) {
-    const { world } = gameContext;
-    const { eventBus } = world;
-    const { entity, receiverID } = event;
-    const hitRewards = DropSystem.getHitReward(entity);
-
-    console.log("HIT_DROP", event);
-
-    if(!hitRewards) {
-        return;
-    }
-
-    switch(this.mode) {
-        case GameEvent.MODE.STORY: {
-            eventBus.emit(GameEvent.TYPE.DROP, { "drops": hitRewards, "receiverID": receiverID });
             break;
         }
     }
@@ -208,13 +145,17 @@ GameEvent.prototype.onEntityDecay = function(gameContext, event) {
 GameEvent.prototype.onEntityHit = function(gameContext, event) {
     const { world } = gameContext;
     const { eventBus } = world;
-    const { target } = event;
+    const { entity } = event;
 
     console.log("ENTITY_HIT", event);
 
     switch(this.mode) {
         case GameEvent.MODE.STORY: {
-            eventBus.emit(GameEvent.TYPE.HIT_DROP, { "entity": target, "receiverID": "Player"});
+            const hitRewards = DropSystem.getHitReward(entity);
+
+            if(hitRewards) {
+                eventBus.emit(GameEvent.TYPE.DROP, { "drops": hitRewards, "receiverID": "Player" });
+            }
             break;
         }
     }
@@ -223,14 +164,19 @@ GameEvent.prototype.onEntityHit = function(gameContext, event) {
 GameEvent.prototype.onEntityKill = function(gameContext, event) {
     const { world } = gameContext;
     const { eventBus } = world;
-    const { target, reason } = event;
+    const { entity, reason } = event;
 
     console.log("ENTITY_KILL", event);
 
     switch(this.mode) {
         case GameEvent.MODE.STORY: {
-            eventBus.emit(GameEvent.TYPE.KILL_DROP, { "entity": target, "receiverID": "Player"});
-            eventBus.emit(GameEvent.TYPE.ENTITY_DEATH, { "entity": target, "reason": reason });
+            const killRewards = DropSystem.getKillReward(entity);
+
+            if(killRewards) {
+                eventBus.emit(GameEvent.TYPE.DROP, { "drops": killRewards, "receiverID": "Player" });
+            }
+
+            eventBus.emit(GameEvent.TYPE.ENTITY_DEATH, { "entity": entity, "reason": reason });
             break;
         }
     }

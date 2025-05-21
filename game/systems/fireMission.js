@@ -150,7 +150,7 @@ FireMissionSystem.endFireMission = function(gameContext, missionID, tileX, tileY
     
                 eventBus.emit(GameEvent.TYPE.ENTITY_KILL, { 
                     "reason": GameEvent.KILL_REASON.FIRE_MISSION,
-                    "target": entity,
+                    "entity": entity,
                     "damage": damage
                 });
                 break;
@@ -160,7 +160,7 @@ FireMissionSystem.endFireMission = function(gameContext, missionID, tileX, tileY
     
                 eventBus.emit(GameEvent.TYPE.ENTITY_HIT, { 
                     "reason": GameEvent.KILL_REASON.FIRE_MISSION,
-                    "target": entity,
+                    "entity": entity,
                     "damage": damage
                 });
                 break;
@@ -168,13 +168,13 @@ FireMissionSystem.endFireMission = function(gameContext, missionID, tileX, tileY
             case AttackSystem.OUTCOME_STATE.DOWN: {
                 eventBus.emit(GameEvent.TYPE.ENTITY_DOWN, { 
                     "reason": GameEvent.KILL_REASON.FIRE_MISSION,
-                    "target": entity,
+                    "entity": entity,
                     "damage": damage
                 });
     
                 eventBus.emit(GameEvent.TYPE.ENTITY_HIT, { 
                     "reason": GameEvent.KILL_REASON.FIRE_MISSION,
-                    "target": entity,
+                    "entity": entity,
                     "damage": damage
                 });
                 break;
