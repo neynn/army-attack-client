@@ -204,12 +204,10 @@ Camera2D.prototype.drawSprite = function(display, sprite, realTime, deltaTime) {
     const viewportBottomEdge = viewportTopEdge + this.viewportHeight;
     const isVisible = sprite.isVisible(viewportRightEdge, viewportLeftEdge, viewportBottomEdge, viewportTopEdge);
 
-    if(!isVisible) {
-        return;
+    if(isVisible) {
+        sprite.update(realTime, deltaTime);
+        sprite.draw(display, viewportLeftEdge, viewportTopEdge);
     }
-
-    sprite.update(realTime, deltaTime);
-    sprite.draw(display, viewportLeftEdge, viewportTopEdge);
 }
 
 Camera2D.prototype.drawSpriteLayer = function(display, spriteLayer, realTime, deltaTime) {
