@@ -60,14 +60,15 @@ ArmyCamera.prototype.drawDebris = function(tileManager, context, worldMap) {
 
 ArmyCamera.prototype.drawDrops = function(display, worldMap, realTime, deltaTime) {
     const { drops } = worldMap;
+    const dropElements = drops.drops;
 
-    drops.drops.forEach((drop) => {
-        const { sprite } = drop;
+    for(let i = 0; i < dropElements.length; i++) {
+        const { sprite } = dropElements[i];
 
         if(sprite) {
             this.drawSprite(display, sprite, realTime, deltaTime);
         }
-    });
+    }
 }
 
 ArmyCamera.prototype.update = function(gameContext, display) {
@@ -98,8 +99,8 @@ ArmyCamera.prototype.update = function(gameContext, display) {
     this.drawOverlay(graphics, context, ArmyCamera.OVERLAY_TYPE.RANGE);
     this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.TOP), realTime, deltaTime);
     this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.UI), realTime, deltaTime);
-    display.unflip();
     this.drawDrops(display, worldMap, realTime, deltaTime);
+    display.unflip();
     this.drawLayer(graphics, context, worldMap.getLayer(ArmyMap.LAYER.CLOUD));
 
     if(Renderer.DEBUG.MAP) {

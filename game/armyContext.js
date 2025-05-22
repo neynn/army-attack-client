@@ -36,6 +36,7 @@ import { ArmyCamera } from "./armyCamera.js";
 import { TownComponent } from "./components/town.js";
 import { ClearDebrisAction } from "./actions/clearDebrisAction.js";
 import { HealAction } from "./actions/healAction.js";
+import { MapManager } from "../source/map/mapManager.js";
 
 export const ArmyContext = function() {
     GameContext.call(this);
@@ -55,6 +56,10 @@ export const ArmyContext = function() {
 
     this.eventHandler = new GameEvent();
     this.modeID = ArmyContext.GAME_MODE.NONE;
+
+    this.world.mapManager.events.on(MapManager.EVENT.MAP_CREATE, (mapID, worldMap) => {
+        this.onMapCreate(mapID, worldMap);
+    }, { permanent: true });
 }
 
 ArmyContext.prototype = Object.create(GameContext.prototype);
@@ -277,19 +282,6 @@ ArmyContext.prototype.getTeamID = function(teamName) {
     }
 
     return team.id;
-}
-
-ArmyContext.prototype.getTileDefaultTeamID = function(tileName) {
-    const tile = this.tileTypes[tileName];
-
-    if(!tile) {
-        return -1;
-    }
-
-    const { defaultTeam } = tile;
-    const teamID = this.getTeamID(defaultTeam);
-
-    return teamID;
 }
 
 ArmyContext.prototype.getTeamName = function(teamID) {

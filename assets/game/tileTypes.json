@@ -4,39 +4,39 @@
         "color": "#000000",
         "name": "Ground",
         "passability": "Land",
-        "defaultTeam": null,
         "hasBorder": true,
         "isConquerable": true,
-        "hasForm": false
+        "hasForm": false,
+        "canDebrisSpawn": true
     },
     "1": {
         "id": 1,
         "color": "#ff0000",
         "name": "Mountain",
         "passability": "Mountain",
-        "defaultTeam": null,
         "hasBorder": false,
         "isConquerable": false,
-        "hasForm": false
+        "hasForm": false,
+        "canDebrisSpawn": false
     },
     "2": {
         "id": 2,
         "color": "#0000ff",
         "name": "Sea",
         "passability": "Sea",
-        "defaultTeam": null,
         "hasBorder": false,
         "isConquerable": false,
-        "hasForm": false
+        "hasForm": false,
+        "canDebrisSpawn": false
     },
     "3": {
         "id": 3,
         "color": "#00ffff",
         "name": "Shore",
         "passability": "Shore",
-        "defaultTeam": "Neutral",
         "hasBorder": false,
         "isConquerable": false,
-        "hasForm": true
+        "hasForm": true,
+        "canDebrisSpawn": false
     }
 }

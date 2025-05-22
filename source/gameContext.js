@@ -8,7 +8,6 @@ import { TileManager } from "./tile/tileManager.js";
 import { Renderer } from "./renderer.js";
 import { World } from "./world.js";
 import { LanguageHandler } from "./languageHandler.js";
-import { MapManager } from "./map/mapManager.js";
 
 export const GameContext = function() {
     this.client = new Client();
@@ -46,17 +45,11 @@ export const GameContext = function() {
             this.uiManager.onClick(cursorX, cursorY, this.client.cursor.radius);
         }
     }, { permanent: true });
-    
-    this.world.mapManager.events.on(MapManager.EVENT.MAP_CREATE, (mapID, worldMap) => {
-        this.onMapCreate(mapID, worldMap);
-    }, { permanent: true });
 
     this.states.events.on(StateMachine.EVENT.STATE_EXIT, () => {
         this.exit();
     }, { permanent: true });
 }
-
-GameContext.prototype.onMapCreate = function(mapID, worldMap) {}
 
 GameContext.prototype.exit = function() {
     this.client.exit(this);

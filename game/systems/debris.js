@@ -63,6 +63,25 @@ DebrisSystem.spawnDebris = function(gameContext, debris) {
     }
 }
 
+DebrisSystem.canDebrisSpawn = function(gameContext, worldMap, tileX, tileY) {
+    const typeID = worldMap.getTile(ArmyMap.LAYER.TYPE, tileX, tileY);
+    const tileType = gameContext.tileTypes[typeID];
+
+    if(!tileType || !tileType.canDebrisSpawn) {
+        return false;
+    }
+
+    if(!worldMap.hasDebris(tileX, tileY)) {
+        if(worldMap.getTopEntity(tileX, tileY) === null) {
+            if(!worldMap.isFullyClouded(tileX, tileY)) {
+                return true;
+            }
+        }
+    }
+    
+    return false;
+}
+
 DebrisSystem.getDebrisSpawnLocations = function(gameContext, tileX, tileY, sizeX, sizeY) {
     const { world } = gameContext;
     const { mapManager } = world;
@@ -78,11 +97,9 @@ DebrisSystem.getDebrisSpawnLocations = function(gameContext, tileX, tileY, sizeX
 
     for(let i = tileY; i < endY; i++) {
         for(let j = tileX; j < endX; j++) {
-            const tileEntity = world.getTileEntity(j, i);
-            const hasDebris = worldMap.hasDebris(j, i);
-            const isClouded = worldMap.isFullyClouded(j, i);
+            const canSpawn = DebrisSystem.canDebrisSpawn(gameContext, worldMap, j, i);
 
-            if(!tileEntity && !hasDebris && !isClouded) {
+            if(canSpawn) {
                 debris.push({
                     "x": j,
                     "y": i
