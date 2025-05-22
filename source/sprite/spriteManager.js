@@ -172,19 +172,12 @@ SpriteManager.prototype.removeSpriteFromLayers = function(spriteIndex) {
     }
 }
 
-SpriteManager.prototype.updateSprite = function(spriteIndex, spriteID) {
-    const sprite = this.sprites.getReservedElement(spriteIndex);
-
-    if(!sprite) {
-        Logger.log(Logger.CODE.ENGINE_WARN, "Sprite is not reserved!", "SpriteManager.prototype.updateSprite", { "spriteID": spriteIndex });
-        return;
-    }
-
+SpriteManager.prototype.updateSpriteGraphics = function(sprite, spriteID) {
     const containerID = this.graphics.getContainerID(spriteID);
     const container = this.graphics.getContainer(containerID);
 
     if(!container) {
-        Logger.log(Logger.CODE.ENGINE_WARN, "Container does not exist!", "SpriteManager.prototype.updateSprite", { "containerID": containerID, "spriteID": spriteIndex });
+        Logger.log(Logger.CODE.ENGINE_WARN, "Container does not exist!", "SpriteManager.prototype.updateSpriteGraphics", { "containerID": containerID });
         return;
     }
 
@@ -197,4 +190,23 @@ SpriteManager.prototype.updateSprite = function(spriteIndex, spriteID) {
         
         this.graphics.loadBitmap(spriteID);
     }
+}
+
+SpriteManager.prototype.updateSprite = function(spriteIndex, spriteID) {
+    const sprite = this.sprites.getReservedElement(spriteIndex);
+
+    if(!sprite) {
+        Logger.log(Logger.CODE.ENGINE_WARN, "Sprite is not reserved!", "SpriteManager.prototype.updateSprite", { "spriteID": spriteIndex });
+        return;
+    }
+
+    this.updateSpriteGraphics(sprite, spriteID);
+}
+
+SpriteManager.prototype.createCustomSprite = function(spriteID) {
+    const sprite = new Sprite(this, -1, spriteID);
+
+    this.updateSpriteGraphics(sprite, spriteID);
+
+    return sprite;
 }

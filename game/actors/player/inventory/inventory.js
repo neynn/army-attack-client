@@ -5,6 +5,13 @@ export const Inventory = function() {
     this.resources = new Map();
 }
 
+Inventory.COUNTER_TO_ENERGY_RATIO = 100;
+
+Inventory.ID = {
+    ENERGY: "Energy",
+    ENERGY_COUNTER: "EnergyCounter"
+};
+
 Inventory.TYPE = {
     RESOURCE: "Resource",
     ITEM: "Item"
@@ -164,4 +171,6 @@ Inventory.prototype.add = function(type, id, value) {
             break;
         }
     }
+
+    console.log("ADD", type, id, value)
 }

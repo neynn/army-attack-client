@@ -58,6 +58,18 @@ ArmyCamera.prototype.drawDebris = function(tileManager, context, worldMap) {
     });
 }
 
+ArmyCamera.prototype.drawDrops = function(display, worldMap, realTime, deltaTime) {
+    const { drops } = worldMap;
+
+    drops.drops.forEach((drop) => {
+        const { sprite } = drop;
+
+        if(sprite) {
+            this.drawSprite(display, sprite, realTime, deltaTime);
+        }
+    });
+}
+
 ArmyCamera.prototype.update = function(gameContext, display) {
     const { world, timer, spriteManager, tileManager } = gameContext;
     const { graphics } = tileManager;
@@ -87,6 +99,7 @@ ArmyCamera.prototype.update = function(gameContext, display) {
     this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.TOP), realTime, deltaTime);
     this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.UI), realTime, deltaTime);
     display.unflip();
+    this.drawDrops(display, worldMap, realTime, deltaTime);
     this.drawLayer(graphics, context, worldMap.getLayer(ArmyMap.LAYER.CLOUD));
 
     if(Renderer.DEBUG.MAP) {

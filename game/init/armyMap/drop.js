@@ -1,8 +1,9 @@
 import { isRectangleRectangleIntersect } from "../../../source/math/math.js";
 
-export const Drop = function(item, inventory) {
+export const Drop = function(item, inventory, sprite) {
     this.item = item; //Ref to the item that will be added. it is of type ItemType { id, type, value }
     this.inventory = inventory; //Ref to the inventory that gets the drop.
+    this.sprite = sprite;
     this.positionX = -1;
     this.positionY = -1;
     this.width = 0;
@@ -10,9 +11,9 @@ export const Drop = function(item, inventory) {
     this.targetX = -1;
     this.targetY = -1;
     this.timePassed = 0; //move much time has passed
-    this.maxTime = 0; //Time until collection
-    this.spriteID = -1; //id of the associated sprite.
+    this.maxTime = 3; //Time until collection
     this.state = Drop.STATE.JUMPING;
+    this.sprite.setPosition(this.positionX, this.positionY);
 }
 
 Drop.STATE = {
@@ -37,6 +38,7 @@ Drop.prototype.update = function(gameContext, deltaTime) {
             this.timePassed += deltaTime;
 
             if(this.timePassed >= this.maxTime) {
+                this.collect();
                 this.state = Drop.STATE.COLLECTING_AUTO;
                 this.targetX = -1; //Anywhere outside the screen
                 this.targetY = -1; //Anywhere outside the screen

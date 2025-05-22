@@ -31,6 +31,19 @@ DropHandler.prototype.getMaxDrop = function(gameContext, type, id) {
     }
 }
 
+DropHandler.prototype.createDrop = function(gameContext, type, id, value, inventory) {
+    const { spriteManager } = gameContext;
+    const sprite = spriteManager.createCustomSprite("red_infantry_fire");
+
+    const drop = new Drop({
+        "type": type,
+        "id": id,
+        "value": value
+    }, inventory, sprite);
+
+    this.drops.push(drop);
+}
+
 DropHandler.prototype.createDrops = function(gameContext, drops, inventory) {
     for(let i = 0; i < drops.length; i++) {
         const { type, id, value } = drops[i];
@@ -44,27 +57,20 @@ DropHandler.prototype.createDrops = function(gameContext, drops, inventory) {
         let toDrop = value;
 
         while(toDrop >= maxDrop) {
+            this.createDrop(gameContext, type, id, maxDrop, inventory);
             toDrop -= maxDrop;
-
-            inventory.add(type, id, maxDrop);
         }
 
         if(toDrop !== 0) {
-            inventory.add(type, id, toDrop);
+            this.createDrop(gameContext, type, id, toDrop, inventory);
         }
     }
 
-    let energyDrops = 0;
-    let energyCounter = inventory.resources.get("EnergyCounter");
+    const energyCounter = inventory.resources.get(Inventory.ID.ENERGY_COUNTER);
 
-    while(energyCounter >= 100) {
-        energyCounter -= 100;
-        energyDrops++;
-    }
-
-    if(energyDrops > 0) {
-        inventory.resources.set("EnergyCounter", energyCounter);
-        inventory.add(Inventory.TYPE.RESOURCE, "Energy", energyDrops);
+    while(energyCounter.has(Inventory.COUNTER_TO_ENERGY_RATIO)) {
+        this.createDrop(gameContext, Inventory.TYPE.RESOURCE, Inventory.ID.ENERGY, 1, inventory);
+        energyCounter.remove(Inventory.COUNTER_TO_ENERGY_RATIO);
     }
 }
 

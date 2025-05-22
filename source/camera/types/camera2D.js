@@ -197,6 +197,21 @@ Camera2D.prototype.drawTileBuffer = function(graphics, context, buffer) {
     }
 }
 
+Camera2D.prototype.drawSprite = function(display, sprite, realTime, deltaTime) {
+    const viewportLeftEdge = this.viewportX;
+    const viewportTopEdge = this.viewportY;
+    const viewportRightEdge = viewportLeftEdge + this.viewportWidth;
+    const viewportBottomEdge = viewportTopEdge + this.viewportHeight;
+    const isVisible = sprite.isVisible(viewportRightEdge, viewportLeftEdge, viewportBottomEdge, viewportTopEdge);
+
+    if(!isVisible) {
+        return;
+    }
+
+    sprite.update(realTime, deltaTime);
+    sprite.draw(display, viewportLeftEdge, viewportTopEdge);
+}
+
 Camera2D.prototype.drawSpriteLayer = function(display, spriteLayer, realTime, deltaTime) {
     const viewportLeftEdge = this.viewportX;
     const viewportTopEdge = this.viewportY;
