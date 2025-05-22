@@ -6,7 +6,6 @@ import { SpriteComponent } from "../components/sprite.js";
 import { DirectionComponent } from "../components/direction.js";
 import { PositionComponent } from "../components/position.js";
 import { ArmyEntity } from "./armyEntity.js";
-import { Player } from "../actors/player/player.js";
 
 export const ArmyEntityFactory = function() {
     Factory.call(this, "ARMY_ENTITY_FACTORY");
@@ -86,11 +85,10 @@ const addDefaultComponents = function(entity, stats, tileX, tileY, teamID, typeI
 }
 
 const createSprite = function(gameContext, entity, tileX, tileY) {
-    const { spriteManager, renderer } = gameContext;
+    const { spriteManager, transform2D } = gameContext;
     const spriteType = entity.getSpriteID(ArmyEntity.SPRITE_TYPE.IDLE);
-    const camera = renderer.getContext(Player.CAMERA_ID).getCamera();
     const sprite = spriteManager.createSprite(spriteType, SpriteManager.LAYER.MIDDLE);
-    const { x, y } = camera.transformTileToPositionCenter(tileX, tileY);
+    const { x, y } = transform2D.transformTileToWorldCenter(tileX, tileY);
 
     const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);

@@ -1,7 +1,6 @@
 import { SpriteManager } from "../../source/sprite/spriteManager.js";
 import { SpriteComponent } from "../components/sprite.js";
 import { ArmyEntity } from "../init/armyEntity.js";
-import { Player } from "../actors/player/player.js";
 import { LookSystem } from "./look.js";
 
 export const AnimationSystem = function() {}
@@ -35,12 +34,11 @@ AnimationSystem.playIdle = function(gameContext, entities) {
 }
 
 AnimationSystem.playDeath = function(gameContext, entity) {
-    const { spriteManager, renderer } = gameContext;
+    const { spriteManager, transform2D } = gameContext;
     const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
     const spriteType = entity.getSpriteID(ArmyEntity.SPRITE_TYPE.DEATH);
     const deathAnimation = spriteManager.createSprite(spriteType, SpriteManager.LAYER.MIDDLE);
-    const camera = renderer.getContext(Player.CAMERA_ID).getCamera();
-    const { x, y } = camera.transformSizeToPositionOffsetCenter(entity.config.dimX, entity.config.dimY);
+    const { x, y } = transform2D.transformSizeToWorldOffsetCenter(entity.config.dimX, entity.config.dimY);
     const positionX = positionComponent.positionX + x;
     const positionY = positionComponent.positionY + y;
 
@@ -51,20 +49,19 @@ AnimationSystem.playDeath = function(gameContext, entity) {
 }
 
 AnimationSystem.playFire = function(gameContext, targetObject, attackers) {
-    const { world, spriteManager, renderer } = gameContext;
+    const { world, spriteManager, transform2D } = gameContext;
     const { entityManager } = world;
     const { id } = targetObject;
     const target = entityManager.getEntity(id);
     const spriteComponent = target.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const entitySprite = spriteComponent.getSprite(gameContext);
-    const camera = renderer.getContext(Player.CAMERA_ID).getCamera();
 
     for(let i = 0; i < attackers.length; i++) {
         const attackerID = attackers[i];
         const attacker = entityManager.getEntity(attackerID);
         const unitComponent = attacker.getComponent(ArmyEntity.COMPONENT.UNIT);
         const weaponSprite = spriteManager.createSprite(attacker.config.sprites.weapon);
-        const { x, y } = camera.transformSizeToRandomOffset(target.config.dimX, target.config.dimY, AnimationSystem.FIRE_OFFSET.REGULAR, AnimationSystem.FIRE_OFFSET.REGULAR);
+        const { x, y } = transform2D.transformSizeToRandomOffset(target.config.dimX, target.config.dimY, AnimationSystem.FIRE_OFFSET.REGULAR, AnimationSystem.FIRE_OFFSET.REGULAR);
 
         LookSystem.lookAtEntity(attacker, target);
         attacker.updateSpriteDirectonal(gameContext, ArmyEntity.SPRITE_TYPE.FIRE, ArmyEntity.SPRITE_TYPE.FIRE_UP);
@@ -75,7 +72,7 @@ AnimationSystem.playFire = function(gameContext, targetObject, attackers) {
 
         if(unitComponent && unitComponent.isArtillery()) {
             const artillerySprite = spriteManager.createSprite(attacker.config.sprites.weapon);
-            const { x, y } = camera.transformSizeToRandomOffset(target.config.dimX, target.config.dimY, AnimationSystem.FIRE_OFFSET.ARTILLERY, AnimationSystem.FIRE_OFFSET.ARTILLERY);
+            const { x, y } = transform2D.transformSizeToRandomOffset(target.config.dimX, target.config.dimY, AnimationSystem.FIRE_OFFSET.ARTILLERY, AnimationSystem.FIRE_OFFSET.ARTILLERY);
 
             entitySprite.addChild(artillerySprite);
             artillerySprite.setPosition(x, y);
@@ -111,11 +108,10 @@ AnimationSystem.stopSelect = function(gameContext, entity) {
 }
 
 AnimationSystem.playCleaning = function(gameContext, tileX, tileY) {
-    const { spriteManager, renderer, client } = gameContext;
+    const { spriteManager, transform2D, client } = gameContext;
     const { soundPlayer } = client;
     const delaySprite = spriteManager.createSprite(AnimationSystem.SPRITE_TYPE.DELAY, SpriteManager.LAYER.MIDDLE);
-    const camera = renderer.getContext(Player.CAMERA_ID).getCamera();
-    const { x, y } = camera.transformTileToPositionCenter(tileX, tileY);
+    const { x, y } = transform2D.transformTileToWorldCenter(tileX, tileY);
 
     delaySprite.expire();
     delaySprite.setPosition(x, y);
@@ -124,13 +120,12 @@ AnimationSystem.playCleaning = function(gameContext, tileX, tileY) {
 }
 
 AnimationSystem.playHeal = function(gameContext, entity) {
-    const { spriteManager, renderer, client } = gameContext;
+    const { spriteManager, transform2D, client } = gameContext;
     const { soundPlayer } = client;
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const entitySprite = spriteComponent.getSprite(gameContext);
     const delaySprite = spriteManager.createSprite(AnimationSystem.SPRITE_TYPE.DELAY, SpriteManager.LAYER.MIDDLE);
-    const camera = renderer.getContext(Player.CAMERA_ID).getCamera();
-    const { x, y } = camera.transformSizeToPositionOffsetCenter(entity.config.dimX, entity.config.dimY);
+    const { x, y } = transform2D.transformSizeToWorldOffsetCenter(entity.config.dimX, entity.config.dimY);
 
     entitySprite.addChild(delaySprite);
     delaySprite.expire();
@@ -140,12 +135,11 @@ AnimationSystem.playHeal = function(gameContext, entity) {
 }
 
 AnimationSystem.playConstruction = function(gameContext, entity) {
-    const { spriteManager, renderer } = gameContext;
+    const { spriteManager, transform2D } = gameContext;
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const entitySprite = spriteComponent.getSprite(gameContext);
     const delaySprite = spriteManager.createSprite(AnimationSystem.SPRITE_TYPE.DELAY);
-    const camera = renderer.getContext(Player.CAMERA_ID).getCamera();
-    const { x, y } = camera.transformSizeToPositionOffsetCenter(entity.config.dimX, entity.config.dimY);
+    const { x, y } = transform2D.transformSizeToWorldOffsetCenter(entity.config.dimX, entity.config.dimY);
 
     entitySprite.addChild(delaySprite);
     delaySprite.expire();

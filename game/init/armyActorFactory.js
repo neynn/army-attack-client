@@ -48,7 +48,7 @@ ArmyActorFactory.prototype.onCreate = function(gameContext, config) {
         case ACTOR_TYPE.PLAYER: {
             const actor = new Player();
             const camera = actor.getCamera();
-            const context = renderer.createContext(Player.CAMERA_ID, camera);
+            const context = renderer.createContext("PLAYER_CAMERA", camera);
 
             actor.inventory.init(gameContext);
             actor.hover.createSprite(gameContext);

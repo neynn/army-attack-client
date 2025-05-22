@@ -1,7 +1,6 @@
 import { SimpleText } from "../../source/graphics/drawable/simpleText.js";
 import { TextStyle } from "../../source/graphics/textStyle.js";
 import { ArmyEntity } from "../init/armyEntity.js";
-import { Player } from "../actors/player/player.js";
 import { SpriteComponent } from "../components/sprite.js";
 
 export const CardSystem = function() {}
@@ -72,9 +71,8 @@ const getTeamSprites = function(gameContext, entity) {
 }
 
 const getCardOffset = function(gameContext, entity) {
-    const { renderer } = gameContext;
-    const camera = renderer.getContext(Player.CAMERA_ID).getCamera();
-    const { x, y } = camera.transformSizeToPositionOffset(entity.config.dimX, entity.config.dimY);
+    const { transform2D } = gameContext;
+    const { x, y } = transform2D.transformSizeToWorldOffset(entity.config.dimX, entity.config.dimY);
 
     return {
         "x": x - 48,

@@ -1,5 +1,4 @@
 import { ArmyEntity } from "../init/armyEntity.js";
-import { Player } from "../actors/player/player.js";
 
 export const MoveSystem = function() {}
 
@@ -24,8 +23,7 @@ MoveSystem.updatePath = function(gameContext, entity) {
         return;
     }
 
-    const { timer, renderer } = gameContext;
-    const camera = renderer.getContext(Player.CAMERA_ID).getCamera();
+    const { timer, transform2D } = gameContext;
     const deltaTime = timer.getFixedDeltaTime();
     const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
     const deltaDistance = moveComponent.updateDistance(deltaTime);
@@ -37,7 +35,7 @@ MoveSystem.updatePath = function(gameContext, entity) {
         const { deltaX, deltaY } = moveComponent.getCurrentStep();
         const tileX = positionComponent.tileX + deltaX;
         const tileY = positionComponent.tileY + deltaY;
-        const { x, y } = camera.transformTileToPositionCenter(tileX, tileY);
+        const { x, y } = transform2D.transformTileToWorldCenter(tileX, tileY);
         
         positionComponent.setPosition(x, y);
         positionComponent.setTile(tileX, tileY);
@@ -48,17 +46,12 @@ MoveSystem.updatePath = function(gameContext, entity) {
 }
 
 MoveSystem.endMove = function(gameContext, entity, targetX, targetY) {
-    const { renderer } = gameContext;
-    const camera = renderer.getContext(Player.CAMERA_ID).getCamera();
+    const { transform2D } = gameContext;
     const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
     const moveComponent = entity.getComponent(ArmyEntity.COMPONENT.MOVE);
-
-    if(camera) {
-        const { x, y } = camera.transformTileToPositionCenter(targetX, targetY);
+    const { x, y } = transform2D.transformTileToWorldCenter(targetX, targetY);
         
-        positionComponent.setPosition(x, y);
-    }
-
+    positionComponent.setPosition(x, y);
     positionComponent.setTile(targetX, targetY);
     moveComponent.clearPath();
 

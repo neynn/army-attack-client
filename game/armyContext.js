@@ -119,6 +119,8 @@ ArmyContext.prototype.init = function(resources) {
     this.editorConfig = resources.editor;
     this.keybinds = resources.keybinds;
 
+    this.transform2D.setSize(resources.settings.tileWidth, resources.settings.tileHeight);
+
     this.world.actionQueue.registerAction(ACTION_TYPE.ATTACK, new AttackAction());
     this.world.actionQueue.registerAction(ACTION_TYPE.CONSTRUCTION, new ConstructionAction());
     this.world.actionQueue.registerAction(ACTION_TYPE.COUNTER_ATTACK, new CounterAttackAction());

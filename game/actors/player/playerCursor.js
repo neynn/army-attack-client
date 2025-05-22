@@ -138,18 +138,18 @@ PlayerCursor.prototype.autoAlignSprite = function(gameContext) {
 }
 
 PlayerCursor.prototype.alignSprite = function(gameContext) {
-    const { spriteManager } = gameContext;
+    const { spriteManager, transform2D } = gameContext;
     const sprite = spriteManager.getSprite(this.spriteIndex);
-    const { x, y } = this.camera.transformTileToPositionCenter(this.tileX, this.tileY);
+    const { x, y } = transform2D.transformTileToWorldCenter(this.tileX, this.tileY);
 
     sprite.setPosition(x, y);
 }
 
 PlayerCursor.prototype.alignSpriteEntity = function(gameContext, entity) {
-    const { spriteManager } = gameContext;
+    const { spriteManager, transform2D } = gameContext;
     const sprite = spriteManager.getSprite(this.spriteIndex);
     const { tileX, tileY } = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
-    const { x, y } = this.camera.transformTileToPositionCenter(tileX, tileY);
+    const { x, y } = transform2D.transformTileToWorldCenter(tileX, tileY);
 
     sprite.setPosition(x, y);
 }

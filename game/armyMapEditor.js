@@ -119,7 +119,7 @@ ArmyMapEditor.prototype.initCamera = function(gameContext) {
 }
 
 ArmyMapEditor.prototype.initRenderEvents = function(gameContext) {
-    const { tileManager } = gameContext;
+    const { tileManager, transform2D } = gameContext;
     const { graphics } = tileManager;
 
     this.camera.addPostDraw((context) => {    
@@ -131,7 +131,7 @@ ArmyMapEditor.prototype.initRenderEvents = function(gameContext) {
     
         const cursorTile = gameContext.getMouseTile();
         const { x, y } = this.camera.getViewport();
-        const { width, height, halfWidth } = this.camera.getTileDimensions();
+        const { width, height, halfWidth } = transform2D.getTileDimensions();
 
         context.globalAlpha = this.overlayAlpha;
         context.textAlign = "center";

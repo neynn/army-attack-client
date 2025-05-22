@@ -2,8 +2,8 @@ import { ActionQueue } from "./action/actionQueue.js";
 import { TurnManager } from "./turn/turnManager.js";
 import { EntityManager } from "./entity/entityManager.js";
 import { WorldEventHandler } from "./worldEventHandler.js";
-import { Logger } from "./logger.js";
 import { MapManager } from "./map/mapManager.js";
+import { Logger } from "./logger.js";
 
 export const World = function() {
     this.actionQueue = new ActionQueue();

@@ -8,6 +8,7 @@ import { TileManager } from "./tile/tileManager.js";
 import { Renderer } from "./renderer.js";
 import { World } from "./world.js";
 import { LanguageHandler } from "./languageHandler.js";
+import { Transform2D } from "./transform2D.js";
 
 export const GameContext = function() {
     this.client = new Client();
@@ -18,6 +19,7 @@ export const GameContext = function() {
     this.uiManager = new UIManager();
     this.language = new LanguageHandler();
     this.states = new StateMachine(this);
+    this.transform2D = new Transform2D();
     this.timer = new Timer();
     
     this.timer.input = () => {
@@ -93,8 +95,7 @@ GameContext.prototype.getMouseTile = function() {
     }
 
     const { x, y } = context.getWorldPosition(this.client.cursor.positionX, this.client.cursor.positionY);
-    const camera = context.getCamera();
-    const mouseTile = camera.transformPositionToTile(x, y);
+    const mouseTile = this.transform2D.transformWorldToTile(x, y);
 
     return mouseTile;
 }

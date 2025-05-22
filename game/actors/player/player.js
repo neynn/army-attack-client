@@ -35,8 +35,6 @@ export const Player = function() {
     this.states.addState(Player.STATE.HEAL, new PlayerHealState());
 }
 
-Player.CAMERA_ID = "ARMY_CAMERA";
-
 Player.COMMAND = {
     CLICK: "CLICK",
     TOGGLE_RANGE: "TOGGLE_RANGE"
