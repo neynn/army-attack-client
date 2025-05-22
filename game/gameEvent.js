@@ -73,7 +73,7 @@ GameEvent.prototype.onMoveCounter = function(gameContext, event) {
 
 GameEvent.prototype.onDrop = function(gameContext, event) {
     const { world } = gameContext;
-    const { turnManager } = world;
+    const { turnManager, mapManager } = world;
     const { drops, receiverID } = event;
     const receiver = turnManager.getActor(receiverID);
 
@@ -81,9 +81,13 @@ GameEvent.prototype.onDrop = function(gameContext, event) {
         return;
     }
     
-    console.log("DROP", event);
+    const worldMap = mapManager.getActiveMap();
+    
+    if(worldMap) {
+        console.log("DROP", event);
 
-    DropSystem.dropItems(gameContext, drops, receiver.inventory);
+        worldMap.drops.createDrops(gameContext, drops, receiver.inventory);
+    }
 }
 
 GameEvent.prototype.onDebrisRemoved = function(gameContext, event) {

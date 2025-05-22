@@ -25,6 +25,10 @@ MapManager.EVENT = {
 MapManager.prototype = Object.create(FactoryOwner.prototype);
 MapManager.prototype.constructor = MapManager;
 
+MapManager.prototype.update = function(gameContext) {
+    this.loadedMaps.forEach(worldMap => worldMap.update(gameContext));
+}
+
 MapManager.prototype.createMapByID = async function(gameContext, mapID) {
     const mapData = await this.fetchMapData(mapID);
 

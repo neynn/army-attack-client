@@ -10,6 +10,8 @@ export const WorldMap = function() {
     this.entities = new Map();
 }
 
+WorldMap.prototype.update = function(gameContext) {}
+
 WorldMap.prototype.saveLayers = function() {
     const layers = [];
 

@@ -3,6 +3,7 @@ import { WorldMap } from "../../source/map/worldMap.js";
 import { AllianceSystem } from "../systems/alliance.js";
 import { BorderSystem } from "../systems/border.js";
 import { MissionHandler } from "./armyMap/missionHandler.js";
+import { DropHandler } from "./armyMap/dropHandler.js";
 
 export const ArmyMap = function() {
     WorldMap.call(this, null);
@@ -12,6 +13,7 @@ export const ArmyMap = function() {
     this.flags = ArmyMap.FLAG.NONE;
     this.debris = new Map();
     this.missions = new MissionHandler();
+    this.drops = new DropHandler();
 }
 
 ArmyMap.FLAG = {
@@ -61,6 +63,10 @@ ArmyMap.CONVERTABLE_LAYERS = [
 
 ArmyMap.prototype = Object.create(WorldMap.prototype);
 ArmyMap.prototype.constructor = ArmyMap;
+
+ArmyMap.prototype.update = function(gameContext) {
+    this.drops.update(gameContext, this);
+}
 
 ArmyMap.prototype.save = function() {
     const missions = this.missions.save();

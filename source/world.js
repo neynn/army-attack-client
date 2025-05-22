@@ -63,6 +63,7 @@ World.prototype.exit = function() {
 World.prototype.update = function(gameContext) {
     this.actionQueue.update(gameContext);
     this.turnManager.update(gameContext);
+    this.mapManager.update(gameContext);
     this.entityManager.update(gameContext);
 }
 
