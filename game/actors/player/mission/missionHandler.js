@@ -1,12 +1,8 @@
-import { EventEmitter } from "../../../../source/events/eventEmitter.js";
 import { GameEvent } from "../../../gameEvent.js";
 import { Mission } from "./mission.js";
 
 export const MissionHandler = function() {
     this.missions = new Map();
-
-    this.events = new EventEmitter();
-    this.events.listen(MissionHandler.EVENT.MISSION_STARTED);
 }
 
 MissionHandler.EVENT = {
@@ -45,11 +41,7 @@ MissionHandler.prototype.unlockMissions = function() {
             const allCompleted = this.allRequiredCompleted(required);
 
             if(allCompleted) {
-                const hasStarted = mission.start();
-
-                if(hasStarted) {
-                    this.events.emit(MissionHandler.EVENT.MISSION_STARTED, missionID, mission);
-                }
+                mission.start();
             }
         }
     }
