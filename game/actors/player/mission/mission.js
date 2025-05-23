@@ -44,13 +44,13 @@ Mission.prototype.initObjectives = function(objectives) {
     }
 }
 
-Mission.prototype.onObjective = function(type, parameter) {
+Mission.prototype.onObjective = function(type, parameter, count) {
     if(this.state !== Mission.STATE.STARTED) {
         return;
     }
 
     for(let i = 0; i < this.objectives.length; i++) {
-        this.objectives[i].onObjective(type, parameter);
+        this.objectives[i].onObjective(type, parameter, count);
     }
 }
 

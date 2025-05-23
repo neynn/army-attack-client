@@ -2,7 +2,6 @@ import { Autotiler } from "../../source/tile/autotiler.js";
 import { WorldMap } from "../../source/map/worldMap.js";
 import { AllianceSystem } from "../systems/alliance.js";
 import { BorderSystem } from "../systems/border.js";
-import { MissionHandler } from "./armyMap/missionHandler.js";
 import { DropHandler } from "./armyMap/dropHandler.js";
 
 export const ArmyMap = function() {
@@ -12,7 +11,6 @@ export const ArmyMap = function() {
     this.type = ArmyMap.TYPE.NONE;
     this.flags = ArmyMap.FLAG.NONE;
     this.debris = new Map();
-    this.missions = new MissionHandler();
     this.drops = new DropHandler();
 }
 
@@ -69,7 +67,6 @@ ArmyMap.prototype.update = function(gameContext) {
 }
 
 ArmyMap.prototype.save = function() {
-    const missions = this.missions.save();
     const debris = [];
 
     this.debris.forEach(({type, x, y}) => {
@@ -81,7 +78,6 @@ ArmyMap.prototype.save = function() {
     });
 
     return {
-        "missions": missions,
         "debris": debris
     }
 }
@@ -201,8 +197,7 @@ ArmyMap.prototype.init = function(config = {}) {
         width = 0,
         height = 0,
         flags = [],
-        music = null,
-        missions = {}
+        music = null
     } = config;
 
     this.width = width;
@@ -217,8 +212,6 @@ ArmyMap.prototype.init = function(config = {}) {
             this.flags |= flag;
         }
     }
-
-    this.missions.init(missions);
 }
 
 ArmyMap.prototype.reload = function(gameContext) {

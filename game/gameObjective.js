@@ -1,17 +1,28 @@
 export const GameObjective = function() {}
 
 GameObjective.TYPE = {
-    DESTROY: "Destroy"
-}
+    DESTROY: "Destroy",
+    CONQUER: "Conquer"
+};
 
 GameObjective.prototype.onEntityKill = function(gameContext, entity, actorID) {
     const { world } = gameContext;
-    const { mapManager } = world;
-    const activeMap = mapManager.getActiveMap();
+    const { turnManager } = world;
+    const actor = turnManager.getActor(actorID);
 
-    if(activeMap) {
+    if(actor && actor.missions) {
         const entityType = entity.config.id;
 
-        activeMap.missions.onObjective(gameContext, GameObjective.TYPE.DESTROY, entityType, actorID);
+        actor.missions.onObjective(gameContext, GameObjective.TYPE.DESTROY, entityType, 1, actorID);
+    }
+}
+
+GameObjective.prototype.onTileCapture = function(gameContext, count, actorID) {
+    const { world } = gameContext;
+    const { turnManager } = world;
+    const actor = turnManager.getActor(actorID);
+
+    if(actor && actor.missions) {
+        actor.missions.onObjective(gameContext, GameObjective.TYPE.CONQUER, null, count, actorID);
     }
 }

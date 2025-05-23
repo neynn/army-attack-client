@@ -233,11 +233,18 @@ GameEvent.prototype.onEntityDown = function(gameContext, event) {
 }
 
 GameEvent.prototype.onTileCapture = function(gameContext, event) {
-    const { teamID, tiles } = event;
+    const { actor, teamID, tiles } = event;
 
     console.log("TILE_CAPTURED", event);
 
-    ConquerSystem.conquer(gameContext, teamID, tiles);
+    switch(this.mode) {
+        case GameEvent.MODE.STORY: {
+            ConquerSystem.conquer(gameContext, teamID, tiles);
+
+            this.objective.onTileCapture(gameContext, tiles.length, actor);
+            break;
+        }
+    }
 }
 
 GameEvent.prototype.onActionAuthorized = function(gameContext, event) {

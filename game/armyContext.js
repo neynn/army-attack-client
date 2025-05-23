@@ -57,8 +57,8 @@ export const ArmyContext = function() {
     this.eventHandler = new GameEvent();
     this.modeID = ArmyContext.GAME_MODE.NONE;
 
-    this.world.mapManager.events.on(MapManager.EVENT.MAP_CREATE, (mapID, worldMap) => {
-        this.onMapCreate(mapID, worldMap);
+    this.world.mapManager.events.on(MapManager.EVENT.MAP_CREATE, (mapID, mapData, worldMap) => {
+        this.onMapCreate(worldMap);
     }, { permanent: true });
 }
 
@@ -252,7 +252,7 @@ ArmyContext.prototype.getConversionID = function(tileID, teamID) {
     return convertedID;
 }
 
-ArmyContext.prototype.onMapCreate = function(mapID, worldMap) {
+ArmyContext.prototype.onMapCreate = function(worldMap) {
     const { width, height, music } = worldMap;
 
     this.renderer.forAllContexts((contextID, context) => {

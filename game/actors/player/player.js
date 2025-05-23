@@ -14,6 +14,7 @@ import { GameEvent } from "../../gameEvent.js";
 import { AttackVisualizer } from "./attackVisualizer.js";
 import { PlayerHealState } from "./states/heal.js";
 import { AttackAction } from "../../actions/attackAction.js";
+import { MissionHandler } from "./mission/missionHandler.js";
 
 export const Player = function() {
     Actor.call(this);
@@ -25,7 +26,8 @@ export const Player = function() {
     this.hover = new PlayerCursor(this.camera);
     this.attackVisualizer = new AttackVisualizer(this.camera);
     this.rangeVisualizer = new RangeVisualizer(this.camera);
-
+    this.missions = new MissionHandler();
+    
     this.states = new StateMachine(this);
     this.states.addState(Player.STATE.SPECTATE, new PlayerSpectateState());
     this.states.addState(Player.STATE.IDLE, new PlayerIdleState());
@@ -66,6 +68,7 @@ Player.prototype.constructor = Player;
 
 Player.prototype.save = function() {
     return {
+        "missions": this.missions.save(),
         "inventory": this.inventory.save()
     }
 }

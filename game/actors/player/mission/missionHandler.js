@@ -1,5 +1,5 @@
-import { EventEmitter } from "../../../source/events/eventEmitter.js";
-import { GameEvent } from "../../gameEvent.js";
+import { EventEmitter } from "../../../../source/events/eventEmitter.js";
+import { GameEvent } from "../../../gameEvent.js";
 import { Mission } from "./mission.js";
 
 export const MissionHandler = function() {
@@ -103,12 +103,12 @@ MissionHandler.prototype.save = function() {
     }
 }
 
-MissionHandler.prototype.onObjective = function(gameContext, type, parameter, actorID) {
+MissionHandler.prototype.onObjective = function(gameContext, type, parameter, count, actorID) {
     const { world } = gameContext;
     const { eventBus } = world;
 
     for(const [missionID, mission] of this.missions) {
-        mission.onObjective(type, parameter);
+        mission.onObjective(type, parameter, count);
 
         const isCompleteable = mission.isCompleteable();
 

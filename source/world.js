@@ -48,7 +48,7 @@ World.prototype.addDebug = function() {
     }
 
     if(World.DEBUG.LOG_MAP_EVENTS) {
-        this.mapManager.events.on(MapManager.EVENT.MAP_CREATE, (id, map) => console.log(id, map), { permanent: true });
+        this.mapManager.events.on(MapManager.EVENT.MAP_CREATE, (id, data, map) => console.log(id, data, map), { permanent: true });
         this.mapManager.events.on(MapManager.EVENT.MAP_DESTROY, (id) => console.log(id), { permanent: true });
     }
 }

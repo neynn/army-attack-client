@@ -52,7 +52,7 @@ MapManager.prototype.createMap = function(gameContext, mapID, mapData) {
 
     this.addMap(mapID, worldMap);
     this.updateActiveMap(mapID);
-    this.events.emit(MapManager.EVENT.MAP_CREATE, mapID, worldMap);
+    this.events.emit(MapManager.EVENT.MAP_CREATE, mapID, mapData, worldMap);
 
     return worldMap;
 }

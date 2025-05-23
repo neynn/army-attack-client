@@ -26,12 +26,12 @@ Objective.prototype.load = function(blob) {
     }
 }
 
-Objective.prototype.onObjective = function(type, parameter) {
+Objective.prototype.onObjective = function(type, parameter, count) {
     if(this.state !== Objective.STATE.INCOMPLETE || this.type !== type || this.parameter !== parameter) {
         return;
     }
 
-    this.value++;
+    this.value += count;
 
     if(this.value >= this.maxValue) {
         this.state = Objective.STATE.COMPLETE;

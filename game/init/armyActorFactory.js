@@ -6,6 +6,7 @@ import { OtherPlayer } from "../actors/otherPlayer.js";
 import { EnemyActor } from "../actors/enemyActor.js";
 import { CameraContext } from "../../source/camera/cameraContext.js";
 import { ArmyContext } from "../armyContext.js";
+import { MapManager } from "../../source/map/mapManager.js";
 
 export const ArmyActorFactory = function() {
     Factory.call(this, "ARMY_ACTOR_FACOTRY");
@@ -39,7 +40,7 @@ const addDragEvent = function(gameContext) {
 
 ArmyActorFactory.prototype.onCreate = function(gameContext, config) {
     const { client, renderer, world } = gameContext;
-    const { turnManager } = world;
+    const { turnManager, mapManager } = world;
     const { router } = client;
     const { type, team } = config;
     const actorType = turnManager.getActorType(type);
@@ -55,6 +56,12 @@ ArmyActorFactory.prototype.onCreate = function(gameContext, config) {
             actor.teamID = team ?? null;
             actor.setConfig(actorType);
     
+            mapManager.events.on(MapManager.EVENT.MAP_CREATE, (id, data, map) => {
+                if(data.missions) {
+                    actor.missions.init(data.missions);
+                }
+            });
+
             //context.createBuffer(600, 600);
             //context.setDisplayMode(CameraContext.DISPLAY_MODE.RESOLUTION_FIXED);
             //context.setScaleMode(CameraContext.SCALE_MODE.WHOLE);

@@ -31,7 +31,7 @@ MoveAction.prototype.onStart = function(gameContext, request) {
 }
 
 MoveAction.prototype.onEnd = function(gameContext, request) {
-    const { targetX, targetY, entityID } = request;
+    const { actorID, targetX, targetY, entityID } = request;
     const { world } = gameContext;
     const { entityManager, actionQueue } = world;
     const entity = entityManager.getEntity(entityID);
@@ -39,7 +39,7 @@ MoveAction.prototype.onEnd = function(gameContext, request) {
     MoveSystem.endMove(gameContext, entity, targetX, targetY);
     entity.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
     MapSystem.placeEntity(gameContext, entity);
-    ConquerSystem.tryConquering(gameContext, entity, targetX, targetY);
+    ConquerSystem.tryConquering(gameContext, entity, targetX, targetY, actorID);
 
     actionQueue.addImmediateRequest(CounterMoveAction.createRequest(entityID));
 }
@@ -56,7 +56,7 @@ MoveAction.prototype.isFinished = function(gameContext, request) {
 }
 
 MoveAction.prototype.getValidated = function(gameContext, request) {
-    const { entityID, targetX, targetY } = request;
+    const { actorID, entityID, targetX, targetY } = request;
     const { world } = gameContext;
     const { entityManager } = world;
     const entity = entityManager.getEntity(entityID);
@@ -73,6 +73,7 @@ MoveAction.prototype.getValidated = function(gameContext, request) {
     }
 
     return {
+        "actorID": actorID,
         "entityID": entityID,
         "targetX": targetX,
         "targetY": targetY,

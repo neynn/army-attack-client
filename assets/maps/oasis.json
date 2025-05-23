@@ -16,7 +16,8 @@
             "type": null,
             "required": [],
             "objectives": [
-                { "type": "Destroy", "parameter": "red_tank", "value": 1 }
+                { "type": "Destroy", "parameter": "red_tank", "value": 1 },
+                { "type": "Conquer", "value": 5 }
             ],
             "rewards": [
                 { "type": "Resource", "id": "Gold", "value": 999 },

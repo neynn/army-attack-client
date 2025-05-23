@@ -39,7 +39,7 @@ ConquerSystem.conquer = function(gameContext, teamID, tiles) {
     }
 }
 
-ConquerSystem.tryConquering = function(gameContext, entity, tileX, tileY) {
+ConquerSystem.tryConquering = function(gameContext, entity, tileX, tileY, actorID) {
     const { world } = gameContext;
     const { mapManager, eventBus } = world;
     const worldMap = mapManager.getActiveMap();
@@ -68,6 +68,10 @@ ConquerSystem.tryConquering = function(gameContext, entity, tileX, tileY) {
     }
 
     if(tiles.length !== 0) {
-        eventBus.emit(GameEvent.TYPE.TILE_CAPTURE, { "teamID": teamID, "tiles": tiles });
+        eventBus.emit(GameEvent.TYPE.TILE_CAPTURE, {
+            "teamID": teamID,
+            "tiles": tiles,
+            "actor": actorID
+        });
     }
 }
