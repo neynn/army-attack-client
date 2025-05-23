@@ -16,7 +16,7 @@
             "type": null,
             "required": [],
             "objectives": [
-                { "type": "OBJECTIVE_TYPE", "parameter": "OBJECTIVE_PARAMETER", "value": 1 }
+                { "type": "Destroy", "parameter": "red_tank", "value": 1 }
             ],
             "rewards": [
                 { "type": "Resource", "id": "Gold", "value": 999 },

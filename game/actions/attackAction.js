@@ -22,10 +22,10 @@ AttackAction.prototype.onStart = function(gameContext, request) {
 AttackAction.prototype.onEnd = function(gameContext, request) {
     const { world } = gameContext;
     const { actionQueue } = world;
-    const { attackers, target } = request;
+    const { actorID, attackers, target } = request;
     const { id, state } = target;
 
-    AttackSystem.endAttack(gameContext, target, attackers);
+    AttackSystem.endAttack(gameContext, target, actorID);
     AnimationSystem.playIdle(gameContext, attackers);
 
     if(state === AttackSystem.OUTCOME_STATE.IDLE) {
@@ -59,6 +59,7 @@ AttackAction.prototype.getValidated = function(gameContext, request) {
     const targetObject = AttackSystem.getAttackTarget(target, attackerEntities);
     
     return {
+        "actorID": actorID,
         "attackers": attackerIDs,
         "target": targetObject
     }

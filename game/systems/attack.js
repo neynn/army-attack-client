@@ -111,7 +111,7 @@ AttackSystem.updateTarget = function(gameContext, targetObject) {
     }
 }
 
-AttackSystem.endAttack = function(gameContext, target) {
+AttackSystem.endAttack = function(gameContext, target, actorID) {
     const { world } = gameContext;
     const { entityManager, eventBus } = world;
     const { id, state, damage } = target;
@@ -124,7 +124,8 @@ AttackSystem.endAttack = function(gameContext, target) {
             eventBus.emit(GameEvent.TYPE.ENTITY_KILL, { 
                 "reason": GameEvent.KILL_REASON.ATTACK,
                 "entity": entity,
-                "damage": damage
+                "damage": damage,
+                "actor": actorID
             });
             break;
         }
@@ -134,7 +135,8 @@ AttackSystem.endAttack = function(gameContext, target) {
             eventBus.emit(GameEvent.TYPE.ENTITY_HIT, { 
                 "reason": GameEvent.KILL_REASON.ATTACK,
                 "entity": entity,
-                "damage": damage
+                "damage": damage,
+                "actor": actorID
             });
             break;
         }
@@ -142,13 +144,15 @@ AttackSystem.endAttack = function(gameContext, target) {
             eventBus.emit(GameEvent.TYPE.ENTITY_DOWN, { 
                 "reason": GameEvent.KILL_REASON.ATTACK,
                 "entity": entity,
-                "damage": damage
+                "damage": damage,
+                "actor": actorID
             });
 
             eventBus.emit(GameEvent.TYPE.ENTITY_HIT, { 
                 "reason": GameEvent.KILL_REASON.ATTACK,
                 "entity": entity,
-                "damage": damage
+                "damage": damage,
+                "actor": actorID
             });
             break;
         }

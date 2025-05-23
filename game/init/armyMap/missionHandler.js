@@ -1,4 +1,5 @@
 import { EventEmitter } from "../../../source/events/eventEmitter.js";
+import { GameEvent } from "../../gameEvent.js";
 import { Mission } from "./mission.js";
 
 export const MissionHandler = function() {
@@ -6,12 +7,10 @@ export const MissionHandler = function() {
 
     this.events = new EventEmitter();
     this.events.listen(MissionHandler.EVENT.MISSION_STARTED);
-    this.events.listen(MissionHandler.EVENT.MISSION_COMPLETED);
 }
 
 MissionHandler.EVENT = {
-    MISSION_STARTED: "MISSION_STARTED",
-    MISSION_COMPLETED: "MISSION_COMPLETED"
+    MISSION_STARTED: "MISSION_STARTED"
 };
 
 MissionHandler.prototype.init = function(missions) {
@@ -104,7 +103,10 @@ MissionHandler.prototype.save = function() {
     }
 }
 
-MissionHandler.prototype.onObjective = function(type, parameter) {
+MissionHandler.prototype.onObjective = function(gameContext, type, parameter, actorID) {
+    const { world } = gameContext;
+    const { eventBus } = world;
+
     for(const [missionID, mission] of this.missions) {
         mission.onObjective(type, parameter);
 
@@ -114,7 +116,11 @@ MissionHandler.prototype.onObjective = function(type, parameter) {
             const isFirstCompletion = mission.complete();
 
             if(isFirstCompletion) {
-                this.events.emit(MissionHandler.EVENT.MISSION_COMPLETED, missionID, mission);
+                eventBus.emit(GameEvent.TYPE.MISSION_COMPLETE, {
+                    "id": missionID,
+                    "mission": mission,
+                    "actor": actorID
+                });
             }
         }
     }

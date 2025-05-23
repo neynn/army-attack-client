@@ -44,7 +44,11 @@ DebrisSystem.endCleaning = function(gameContext, tileX, tileY, cleanerID) {
     const worldMap = mapManager.getActiveMap();
 
     worldMap.removeDebris(tileX, tileY);
-    eventBus.emit(GameEvent.TYPE.DEBRIS_REMOVED, { tileX, tileY, cleanerID });
+    eventBus.emit(GameEvent.TYPE.DEBRIS_REMOVED, { 
+        "tileX": tileX,
+        "tileY": tileY,
+        "actor": cleanerID 
+    });
 }
 
 DebrisSystem.spawnDebris = function(gameContext, debris) {

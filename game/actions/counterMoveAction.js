@@ -23,7 +23,7 @@ CounterMoveAction.prototype.onStart = function(gameContext, request) {
 CounterMoveAction.prototype.onEnd = function(gameContext, request) {
     const { attackers, target } = request;
     
-    AttackSystem.endAttack(gameContext, target, attackers);
+    AttackSystem.endAttack(gameContext, target, null);
     AnimationSystem.playIdle(gameContext, attackers);
 }
 

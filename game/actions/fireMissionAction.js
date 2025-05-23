@@ -17,9 +17,9 @@ FireMissionAction.prototype.onStart = function(gameContext, request) {
 }
 
 FireMissionAction.prototype.onEnd = function(gameContext, request) {
-    const { callID, tileX, tileY, targets } = request;
+    const { actorID, callID, tileX, tileY, targets } = request;
 
-    FireMissionSystem.endFireMission(gameContext, callID, tileX, tileY, targets);
+    FireMissionSystem.endFireMission(gameContext, callID, actorID, tileX, tileY, targets);
 }
 
 FireMissionAction.prototype.isFinished = function(gameContext, request) {
@@ -30,7 +30,7 @@ FireMissionAction.prototype.isFinished = function(gameContext, request) {
 }
 
 FireMissionAction.prototype.getValidated = function(gameContext, request) {
-    const { callID, tileX, tileY } = request;
+    const { actorID, callID, tileX, tileY } = request;
     const fireMission = FireMissionSystem.getType(gameContext, callID);
 
     if(!fireMission) {
@@ -46,6 +46,7 @@ FireMissionAction.prototype.getValidated = function(gameContext, request) {
     const targets = FireMissionSystem.getTargets(gameContext, fireMission, tileX, tileY);
 
     return {
+        "actorID": actorID,
         "callID": callID,
         "tileX": tileX,
         "tileY": tileY,

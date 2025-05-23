@@ -23,7 +23,7 @@ CounterAttackAction.prototype.onStart = function(gameContext, request) {
 CounterAttackAction.prototype.onEnd = function(gameContext, request) {
     const { attackers, target } = request;
 
-    AttackSystem.endAttack(gameContext, target, attackers);
+    AttackSystem.endAttack(gameContext, target, null);
     AnimationSystem.playIdle(gameContext, attackers);
 }
 

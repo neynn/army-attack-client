@@ -133,7 +133,7 @@ FireMissionSystem.startFireMission = function(gameContext, missionID, tileX, til
     soundPlayer.play(fireMission.sounds.fire);
 }
 
-FireMissionSystem.endFireMission = function(gameContext, missionID, tileX, tileY, targetObjects) {
+FireMissionSystem.endFireMission = function(gameContext, missionID, actorID, tileX, tileY, targetObjects) {
     const { world } = gameContext;
     const { entityManager, eventBus } = world;
 
@@ -151,7 +151,8 @@ FireMissionSystem.endFireMission = function(gameContext, missionID, tileX, tileY
                 eventBus.emit(GameEvent.TYPE.ENTITY_KILL, { 
                     "reason": GameEvent.KILL_REASON.FIRE_MISSION,
                     "entity": entity,
-                    "damage": damage
+                    "damage": damage,
+                    "actor": actorID
                 });
                 break;
             }
@@ -161,7 +162,8 @@ FireMissionSystem.endFireMission = function(gameContext, missionID, tileX, tileY
                 eventBus.emit(GameEvent.TYPE.ENTITY_HIT, { 
                     "reason": GameEvent.KILL_REASON.FIRE_MISSION,
                     "entity": entity,
-                    "damage": damage
+                    "damage": damage,
+                    "actor": actorID
                 });
                 break;
             }
@@ -169,13 +171,15 @@ FireMissionSystem.endFireMission = function(gameContext, missionID, tileX, tileY
                 eventBus.emit(GameEvent.TYPE.ENTITY_DOWN, { 
                     "reason": GameEvent.KILL_REASON.FIRE_MISSION,
                     "entity": entity,
-                    "damage": damage
+                    "damage": damage,
+                    "actor": actorID
                 });
     
                 eventBus.emit(GameEvent.TYPE.ENTITY_HIT, { 
                     "reason": GameEvent.KILL_REASON.FIRE_MISSION,
                     "entity": entity,
-                    "damage": damage
+                    "damage": damage,
+                    "actor": actorID
                 });
                 break;
             }
