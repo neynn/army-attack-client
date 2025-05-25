@@ -2,7 +2,8 @@ import { Autotiler } from "../tile/autotiler.js";
 import { TileManager } from "../tile/tileManager.js";
 import { Layer } from "./layer.js";
 
-export const WorldMap = function() {
+export const WorldMap = function(id) {
+    this.id = id;
     this.width = 0;
     this.height = 0;
     this.flags = 0;
@@ -11,6 +12,10 @@ export const WorldMap = function() {
 }
 
 WorldMap.prototype.update = function(gameContext) {}
+
+WorldMap.prototype.getID = function() {
+    return this.id;
+}
 
 WorldMap.prototype.saveLayers = function() {
     const layers = [];

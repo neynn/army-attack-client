@@ -10,6 +10,7 @@ import { ArmyMap } from "./init/armyMap.js";
 import { ArmyCamera } from "./armyCamera.js";
 import { SHAPE } from "../source/math/constants.js";
 import { ArmyContext } from "./armyContext.js";
+import { MapSystem } from "./systems/map.js";
 
 export const ArmyMapEditor = function() {
     MapEditor.call(this);
@@ -324,7 +325,7 @@ ArmyMapEditor.prototype.initUIEvents = function(gameContext) {
 
     editorInterface.addClick("BUTTON_LOAD", async () => {
         const mapID = prompt("MAP-ID?");
-        const worldMap = await mapManager.createMapByID(gameContext, mapID);
+        const worldMap = await MapSystem.createMapByID(gameContext, mapID);
 
         if(worldMap) {
             this.mapID = mapID;
@@ -389,7 +390,7 @@ ArmyMapEditor.prototype.createNewMap = function(gameContext) {
     if(createNew) {
         const mapID = `${Date.now()}`;
 
-        mapManager.createMap(gameContext, mapID, this.defaultMap);
+        MapSystem.createEmptyMap(gameContext, mapID, this.defaultMap);
 
         this.mapID = mapID;
     }

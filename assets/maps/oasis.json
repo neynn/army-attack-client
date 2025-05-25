@@ -4,7 +4,6 @@
     "music": "music_desertscorpion",
     "width": 20,
     "height": 20,
-    "type": "Versus",
     "flags": ["ALLOW_PASSING", "ALLOW_BORDER", "ALLOW_DROPS"],
     "totalPlayers": 2,
     "missions": {

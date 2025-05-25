@@ -1,60 +1,32 @@
 import { EventEmitter } from "../events/eventEmitter.js";
-import { FactoryOwner } from "../factory/factoryOwner.js";
-import { Logger } from "../logger.js";
 import { JSONManager } from "../resources/jsonManager.js";
+import { Logger } from "../logger.js";
 
 export const MapManager = function() {
-    FactoryOwner.call(this);
-
     this.mapTypes = {};
     this.loadedMaps = new Map();
-    this.activeMapID = null;
+    this.activeMap = null;
     this.resources = new JSONManager();
     this.resources.enableCache();
 
     this.events = new EventEmitter();
-    this.events.listen(MapManager.EVENT.MAP_CREATE);
-    this.events.listen(MapManager.EVENT.MAP_DESTROY);
+    this.events.listen(MapManager.EVENT.MAP_ADD);
+    this.events.listen(MapManager.EVENT.MAP_REMOVE);
+    this.events.listen(MapManager.EVENT.MAP_ENABLE);
+    this.events.listen(MapManager.EVENT.MAP_DISABLE);
 }
 
 MapManager.EVENT = {
-    MAP_CREATE: "MAP_CREATE",
-    MAP_DESTROY: "MAP_DESTROY"
+    MAP_ADD: "MAP_ADD",
+    MAP_REMOVE: "MAP_REMOVE",
+    MAP_ENABLE: "MAP_ENABLE",
+    MAP_DISABLE: "MAP_DISABLE"
 };
 
-MapManager.prototype = Object.create(FactoryOwner.prototype);
-MapManager.prototype.constructor = MapManager;
-
 MapManager.prototype.update = function(gameContext) {
-    this.loadedMaps.forEach(worldMap => worldMap.update(gameContext));
-}
-
-MapManager.prototype.createMapByID = async function(gameContext, mapID) {
-    const mapData = await this.fetchMapData(mapID);
-
-    if(!mapData) {
-        Logger.log(Logger.CODE.ENGINE_ERROR, "MapData does not exist!", "MapManager.prototype.createMapByID", { "mapID": mapID });
-        return null;
+    if(this.activeMap) {
+        this.activeMap.update(gameContext);
     }
-
-    const worldMap = this.createMap(gameContext, mapID, mapData);
-
-    return worldMap;
-}
-
-MapManager.prototype.createMap = function(gameContext, mapID, mapData) {
-    const worldMap = this.createProduct(gameContext, mapData);
-
-    if(!worldMap) {
-        Logger.log(Logger.CODE.ENGINE_WARN, "Map could not be created!", "MapManager.prototype.createMap", { "mapID": mapID });
-        return null;
-    }
-
-    this.addMap(mapID, worldMap);
-    this.updateActiveMap(mapID);
-    this.events.emit(MapManager.EVENT.MAP_CREATE, mapID, mapData, worldMap);
-
-    return worldMap;
 }
 
 MapManager.prototype.load = function(mapTypes) {
@@ -86,41 +58,22 @@ MapManager.prototype.fetchMapData = async function(mapID) {
 }
 
 MapManager.prototype.setActiveMap = function(mapID) {
-    if(!this.loadedMaps.has(mapID)) {
-        Logger.log(false, "Map is not loaded!", "MapManager.prototype.setActiveMap", { mapID });
+    const worldMap = this.loadedMaps.get(mapID);
+
+    if(!worldMap || worldMap === this.activeMap) {
         return;
     }
 
-    this.activeMapID = mapID;
+    if(this.activeMap && this.activeMap !== worldMap) {
+        this.clearActiveMap();
+    }
+
+    this.activeMap = worldMap;
+    this.events.emit(MapManager.EVENT.MAP_ENABLE, mapID, worldMap);
 }
 
 MapManager.prototype.getActiveMap = function() {
-    const activeMap = this.loadedMaps.get(this.activeMapID);
-
-    if(!activeMap) {
-        return null;
-    }
-
-    return activeMap;
-}
-
-MapManager.prototype.getActiveMapID = function() {
-    return this.activeMapID;
-}
-
-MapManager.prototype.updateActiveMap = function(mapID) {
-    const activeMapID = this.getActiveMapID();
-    
-    if(activeMapID) {
-        if(activeMapID === mapID) {
-            Logger.log(false, "Map is already active!", "MapManager.prototype.updateActiveMap", { mapID });
-            return;
-        }
-        
-        this.destroyMap(activeMapID);
-    }
-
-    this.setActiveMap(mapID);
+    return this.activeMap;
 }
 
 MapManager.prototype.getMapType = function(mapID) {
@@ -134,20 +87,20 @@ MapManager.prototype.getMapType = function(mapID) {
     return mapType;
 }
 
-MapManager.prototype.destroyMap = function(mapID) {
+MapManager.prototype.removeMap = function(mapID) {
     const loadedMap = this.loadedMaps.get(mapID);
 
     if(!loadedMap) {
-        Logger.log(Logger.CODE.ENGINE_WARN, "Map is not loaded!", "MapManager.prototype.destroyMap", { "mapID": mapID });
+        Logger.log(Logger.CODE.ENGINE_WARN, "Map is not loaded!", "MapManager.prototype.removeMap", { "mapID": mapID });
         return;
     }
 
-    if(this.activeMapID === mapID) {
-        this.activeMapID = null;
+    if(this.activeMap === loadedMap) {
+        this.clearActiveMap();
     }
 
     this.loadedMaps.delete(mapID);
-    this.events.emit(MapManager.EVENT.MAP_DESTROY, mapID);
+    this.events.emit(MapManager.EVENT.MAP_REMOVE, mapID, loadedMap);
 }
 
 MapManager.prototype.getLoadedMap = function(mapID) {
@@ -160,21 +113,28 @@ MapManager.prototype.getLoadedMap = function(mapID) {
     return loadedMap;
 }
 
+MapManager.prototype.clearActiveMap = function() {
+    if(this.activeMap) {
+        const mapID = this.activeMap.getID();
+
+        this.events.emit(MapManager.EVENT.MAP_DISABLE, mapID, this.activeMap);
+    }
+
+    this.activeMap = null;
+}
+
 MapManager.prototype.exit = function() {
     this.events.muteAll();
     this.loadedMaps.clear();
-    this.activeMapID = null;
+    this.clearActiveMap();
 }
 
-MapManager.prototype.hasLoadedMap = function(mapID) {
-    return this.loadedMaps.has(mapID);
-}
-
-MapManager.prototype.addMap = function(mapID, gameMap) {
+MapManager.prototype.addMap = function(mapID, worldMap) {
     if(this.loadedMaps.has(mapID)) {
-        Logger.log(false, "Map already exists!", "MapManager.prototype.addMap", { mapID });
+        Logger.log(Logger.CODE.ENGINE_WARN, "Map already exists!", "MapManager.prototype.addMap", { "mapID": mapID });
         return;
     }
 
-    this.loadedMaps.set(mapID, gameMap);
+    this.loadedMaps.set(mapID, worldMap);
+    this.events.emit(MapManager.EVENT.MAP_ADD, mapID, worldMap);
 }

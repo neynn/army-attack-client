@@ -1,11 +1,12 @@
 import { CLIENT_EVENT } from "./enums.js";
+import { MapSystem } from "./systems/map.js";
 import { SpawnSystem } from "./systems/spawn.js";
 
 export const ServerEvents = {};
 
 ServerEvents.instanceGame = async function(gameContext, payload) {
     const { world, client } = gameContext;
-    const { turnManager, mapManager } = world;
+    const { turnManager } = world;
     const { socket } = client;
     const { actors, entities, mapID, mapData, playerID } = payload;
 
@@ -18,7 +19,7 @@ ServerEvents.instanceGame = async function(gameContext, payload) {
 
     /* Map-Instancing */
     if(!mapData) {
-        const worldMap = await mapManager.createMapByID(gameContext, mapID);
+        const worldMap = await MapSystem.createMapByID(gameContext, mapID);
 
         if(!worldMap) {
             socket.messageRoom(CLIENT_EVENT.INSTANCE_MAP, { "success": false, "error": "NO_MAP_FILE" });
@@ -26,7 +27,7 @@ ServerEvents.instanceGame = async function(gameContext, payload) {
             socket.messageRoom(CLIENT_EVENT.INSTANCE_MAP, { "success": true, "error": null }); 
         }
     } else {
-        mapManager.createMap(gameContext, mapID, mapData);
+        MapSystem.createMapByData(gameContext, mapID, mapData);
 
         socket.messageRoom(CLIENT_EVENT.INSTANCE_MAP, { "success": true, "error": null });
     }
@@ -57,12 +58,11 @@ ServerEvents.instanceEntityBatch = function(gameContext, payload) {
 }
 
 ServerEvents.instanceMapFromData = function(gameContext, payload) {
-    const { client, world } = gameContext;
-    const { mapManager } = world;
+    const { client } = gameContext;
     const { socket } = client;
     const { mapID, mapData } = payload;
 
-    mapManager.createMap(gameContext, mapID, mapData);
+    MapSystem.createMapByData(gameContext, mapID, mapData);
 
     socket.messageRoom(CLIENT_EVENT.INSTANCE_MAP, {
         "success": true,
@@ -71,11 +71,10 @@ ServerEvents.instanceMapFromData = function(gameContext, payload) {
 }
 
 ServerEvents.instanceMapFromID = async function(gameContext, payload) {
-    const { client, world } = gameContext;
-    const { mapManager } = world;
+    const { client } = gameContext;
     const { socket } = client;
     const { mapID } = payload;
-    const worldMap = await mapManager.createMapByID(gameContext, mapID);
+    const worldMap = await MapSystem.createMapByID(gameContext, mapID);
 
     if(!worldMap) {
         socket.messageRoom(CLIENT_EVENT.INSTANCE_MAP, {

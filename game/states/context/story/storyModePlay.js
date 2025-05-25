@@ -1,6 +1,7 @@
 import { State } from "../../../../source/state/state.js";
 import { ArmyContext } from "../../../armyContext.js";
 import { DebugHelper } from "../../../debug.js";
+import { MapSystem } from "../../../systems/map.js";
 import { SpawnSystem } from "../../../systems/spawn.js";
 
 export const StoryModePlayState = function() {}
@@ -14,7 +15,7 @@ const ID = {
 }
 const initStoryMode = async function(gameContext) {
     const { world } = gameContext;
-    const { turnManager, mapManager } = world;
+    const { turnManager } = world;
 
     const player = turnManager.createActor(gameContext, {
         "type": "Player",
@@ -31,7 +32,7 @@ const initStoryMode = async function(gameContext) {
 
     turnManager.setActorOrder(gameContext, [ID.PLAYER, ID.ENEMY]);
 
-    const worldMap = await mapManager.createMapByID(gameContext, "oasis");
+    const worldMap = await MapSystem.createMapByID(gameContext, "oasis");
 
     if(!worldMap) {
         return false;

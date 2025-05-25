@@ -21,7 +21,6 @@ import { CounterAttackAction } from "./actions/counterAttackAction.js";
 import { CounterMoveAction } from "./actions/counterMoveAction.js";
 import { ArmyEntityFactory } from "./init/armyEntityFactory.js";
 import { ArmyActorFactory } from "./init/armyActorFactory.js";
-import { ArmyMapFactory } from "./init/armyMapFactory.js";
 import { ArmyEntity } from "./init/armyEntity.js";
 import { SpriteComponent } from "./components/sprite.js";
 import { ProductionComponent } from "./components/production.js";
@@ -57,8 +56,8 @@ export const ArmyContext = function() {
     this.eventHandler = new GameEvent();
     this.modeID = ArmyContext.GAME_MODE.NONE;
 
-    this.world.mapManager.events.on(MapManager.EVENT.MAP_CREATE, (mapID, mapData, worldMap) => {
-        this.onMapCreate(worldMap);
+    this.world.mapManager.events.on(MapManager.EVENT.MAP_ENABLE, (mapID, worldMap) => {
+        this.onMapEnable(worldMap);
     }, { permanent: true });
 }
 
@@ -144,9 +143,6 @@ ArmyContext.prototype.init = function(resources) {
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.TEAM, TeamComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.TOWN, TownComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.UNIT, UnitComponent);
-
-    this.world.mapManager.registerFactory(ArmyContext.FACTORY.MAP, new ArmyMapFactory());
-    this.world.mapManager.selectFactory(ArmyContext.FACTORY.MAP);
 
     this.world.entityManager.registerFactory(ArmyContext.FACTORY.ENTITY, new ArmyEntityFactory());
     this.world.entityManager.selectFactory(ArmyContext.FACTORY.ENTITY);
@@ -252,7 +248,7 @@ ArmyContext.prototype.getConversionID = function(tileID, teamID) {
     return convertedID;
 }
 
-ArmyContext.prototype.onMapCreate = function(worldMap) {
+ArmyContext.prototype.onMapEnable = function(worldMap) {
     const { width, height, music } = worldMap;
 
     this.renderer.forAllContexts((contextID, context) => {

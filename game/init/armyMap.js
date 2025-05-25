@@ -4,14 +4,15 @@ import { AllianceSystem } from "../systems/alliance.js";
 import { BorderSystem } from "../systems/border.js";
 import { DropHandler } from "./armyMap/dropHandler.js";
 
-export const ArmyMap = function() {
-    WorldMap.call(this, null);
+export const ArmyMap = function(id) {
+    WorldMap.call(this, id);
 
     this.music = null;
     this.type = ArmyMap.TYPE.NONE;
     this.flags = ArmyMap.FLAG.NONE;
     this.debris = new Map();
     this.drops = new DropHandler();
+    this.missions = {};
 }
 
 ArmyMap.FLAG = {
@@ -197,12 +198,14 @@ ArmyMap.prototype.init = function(config = {}) {
         width = 0,
         height = 0,
         flags = [],
-        music = null
+        music = null,
+        missions = this.missions
     } = config;
 
     this.width = width;
     this.height = height;
     this.music = music;
+    this.missions = missions;
 
     for(let i = 0; i < flags.length; i++) {
         const flagID = flags[i];

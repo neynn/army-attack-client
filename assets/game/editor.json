@@ -7,7 +7,6 @@
     "hiddenSets": ["overlay"],
     "interfaceID": "MAP_EDITOR",
     "defaultMap": {
-        "type": "EmptyVersus",
         "music": "music_remastered",
         "width": 20,
         "height": 20,

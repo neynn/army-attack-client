@@ -16,14 +16,14 @@ export const World = function() {
         this.turnManager.removeEntity(entityID);
     }, { permanent: true });
     
-    //this.addDebug();
+    this.addDebug();
 }
 
 World.DEBUG = {
-    LOG_ACTION_EVENTS: 1,
-    LOG_TURN_EVENTS: 1,
-    LOG_ENTITY_EVENTS: 1,
-    LOG_MAP_EVENTS: 1
+    LOG_ACTION_EVENTS: 0,
+    LOG_TURN_EVENTS: 0,
+    LOG_ENTITY_EVENTS: 0,
+    LOG_MAP_EVENTS: 0
 };
 
 World.prototype.addDebug = function() {
@@ -48,8 +48,10 @@ World.prototype.addDebug = function() {
     }
 
     if(World.DEBUG.LOG_MAP_EVENTS) {
-        this.mapManager.events.on(MapManager.EVENT.MAP_CREATE, (id, data, map) => console.log(id, data, map), { permanent: true });
-        this.mapManager.events.on(MapManager.EVENT.MAP_DESTROY, (id) => console.log(id), { permanent: true });
+        this.mapManager.events.on(MapManager.EVENT.MAP_ENABLE, (id, map) => console.log("MAP_ENABLE", id, map), { permanent: true });
+        this.mapManager.events.on(MapManager.EVENT.MAP_DISABLE, (id, map) => console.log("MAP_DISABLE", id, map), { permanent: true });
+        this.mapManager.events.on(MapManager.EVENT.MAP_ADD, (id, map) => console.log("MAP_ADD", id, map), { permanent: true });
+        this.mapManager.events.on(MapManager.EVENT.MAP_REMOVE, (id, map) => console.log("MAP_REMOVE", id, map), { permanent: true });
     }
 }
 
