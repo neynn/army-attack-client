@@ -82,7 +82,7 @@ GameEvent.prototype.onMoveCounter = function(gameContext, event) {
 GameEvent.prototype.onMissionComplete = function(gameContext, event) {
     const { world } = gameContext;
     const { eventBus } = world;
-    const { id, mission, actor } = event;
+    const { id, mission, actorID } = event;
     const rewards = mission.getRewards();
 
     console.log("MISSION_COMPLETE", event);
@@ -91,7 +91,7 @@ GameEvent.prototype.onMissionComplete = function(gameContext, event) {
         case GameEvent.MODE.STORY: {
 
             if(rewards.length !== 0) {
-                eventBus.emit(GameEvent.TYPE.DROP, { "drops": rewards, "receiverID": actor });
+                eventBus.emit(GameEvent.TYPE.DROP, { "drops": rewards, "receiverID": actorID });
             }
 
             break;

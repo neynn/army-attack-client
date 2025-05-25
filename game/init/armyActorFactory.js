@@ -58,7 +58,10 @@ ArmyActorFactory.prototype.onCreate = function(gameContext, config) {
     
             mapManager.events.on(MapManager.EVENT.MAP_CREATE, (id, data, map) => {
                 if(data.missions) {
-                    actor.missions.init(data.missions);
+                    actor.missions.createGroup(id, data.missions);
+                    actor.missions.selectGroup(id);
+                } else {
+                    actor.missions.deselectGroup();
                 }
             });
 
