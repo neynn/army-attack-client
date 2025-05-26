@@ -1,10 +1,5 @@
 import { SpriteManager } from "../../source/sprite/spriteManager.js";
 import { Factory } from "../../source/factory/factory.js";
-import { HealthComponent } from "../components/health.js";
-import { TeamComponent } from "../components/team.js";
-import { SpriteComponent } from "../components/sprite.js";
-import { DirectionComponent } from "../components/direction.js";
-import { PositionComponent } from "../components/position.js";
 import { ArmyEntity } from "./armyEntity.js";
 
 export const ArmyEntityFactory = function() {
@@ -52,13 +47,10 @@ const initMoveComponent = function(entityType, component, stats) {
     component.speed = moveSpeed;
 }
 
-const addDefaultComponents = function(entity, stats, tileX, tileY, teamID, typeID, customHealth) {
-    const positionComponent = new PositionComponent();
-    const spriteComponent = new SpriteComponent();
-    const directionComponent = new DirectionComponent();
-    const healthComponent = new HealthComponent();
-    const teamComponent = new TeamComponent();
-
+const setupComponents = function(entity, stats, tileX, tileY, teamID, typeID, customHealth) {
+    const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
+    const healthComponent = entity.getComponent(ArmyEntity.COMPONENT.HEALTH);
+    const teamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
     const {
         health = 1,
         maxHealth = health
@@ -76,12 +68,6 @@ const addDefaultComponents = function(entity, stats, tileX, tileY, teamID, typeI
     healthComponent.maxHealth = maxHealth;
 
     teamComponent.teamID = teamID;
-
-    entity.addComponent(ArmyEntity.COMPONENT.POSITION, positionComponent);
-    entity.addComponent(ArmyEntity.COMPONENT.SPRITE, spriteComponent);
-    entity.addComponent(ArmyEntity.COMPONENT.DIRECTION, directionComponent);
-    entity.addComponent(ArmyEntity.COMPONENT.HEALTH, healthComponent);
-    entity.addComponent(ArmyEntity.COMPONENT.TEAM, teamComponent);
 }
 
 const createSprite = function(gameContext, entity, tileX, tileY) {
@@ -128,11 +114,12 @@ ArmyEntityFactory.prototype.onCreate = function(gameContext, config) {
 
     const entity = new ArmyEntity(entityType, type);
     
-    addDefaultComponents(entity, statConfig, tileX, tileY, team, type, health);
+    entityManager.addArchetypeComponents(entity, archetype);
+
+    setupComponents(entity, statConfig, tileX, tileY, team, type, health);
 
     const sprite = createSprite(gameContext, entity, tileX, tileY);
 
-    entityManager.addArchetypeComponents(entity, archetype);
     entityManager.addTraitComponents(entity, statConfig.traits);
 
     for(const componentID in COMPONENT_INIT) {

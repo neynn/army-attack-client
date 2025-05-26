@@ -12,7 +12,7 @@ export const EntityManager = function() {
     this.entityTypes = {};
     this.components = new Map();
     this.entities = new Map();
-    this.pendingRemovals = new Set();
+    this.pendingRemovals = [];
     this.activeEntities = [];
 
     this.events = new EventEmitter();
@@ -64,7 +64,7 @@ EntityManager.prototype.exit = function() {
     this.events.muteAll();
     this.entities.clear();
     this.activeEntities.length = 0;
-    this.pendingRemovals.clear();
+    this.pendingRemovals.length = 0;
     this.nextID = 0;
 }
 
@@ -94,7 +94,7 @@ EntityManager.prototype.markEntity = function(markType, entityID) {
 
     switch(markType) {
         case EntityManager.MARK_TYPE.DELETE: {
-            this.pendingRemovals.add(entityID);
+            this.pendingRemovals.push(entityID);
             break;
         }
     }
@@ -105,11 +105,11 @@ EntityManager.prototype.update = function(gameContext) {
         this.activeEntities[i].update(gameContext);
     }
 
-    for(const entityID of this.pendingRemovals) {
-        this.destroyEntity(entityID);
+    for(let i = 0; i < this.pendingRemovals.length; i++) {
+        this.destroyEntity(this.pendingRemovals[i]);
     }
 
-    this.pendingRemovals.clear();
+    this.pendingRemovals.length = 0;
 }
 
 EntityManager.prototype.addArchetypeComponents = function(entity, archetypeID) {
@@ -166,11 +166,13 @@ EntityManager.prototype.createEntity = function(gameContext, config, externalID)
         return null;
     }
 
-    //TODO: if creation fails and no entity is returned, then check if it was added to active entities!!!
-
     entity.load(gameContext, config);
     entity.setID(entityID);
     
+    if(entity.isActive()) {
+        this.activeEntities.push(entity);
+    }
+
     this.entities.set(entityID, entity);
     this.events.emit(EntityManager.EVENT.ENTITY_CREATE, entityID, entity);
 
@@ -203,18 +205,8 @@ EntityManager.prototype.addComponent = function(entity, componentID) {
     }
 
     const instance = component.createInstance();
-    const isComponentActive = component.isActive();
-    const wasEntityActive = entity.isActive();
 
     entity.addComponent(componentID, instance);
-
-    if(isComponentActive && !wasEntityActive) {
-        const isEntityActive = entity.isActive();
-
-        if(isEntityActive) {
-            this.activeEntities.push(entity);
-        }
-    }
 
     return instance;
 }
