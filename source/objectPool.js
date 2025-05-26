@@ -42,7 +42,13 @@ ObjectPool.prototype.freeElement = function(index) {
 
 ObjectPool.prototype.reserveElement = function() {
     if(this.openSlots.length === 0) {
-        return null;
+        if(this.size === 0) {
+            this.size = 1;
+        } else {
+            this.size *= 2;
+        }
+
+        this.allocate();
     }
 
     const index = this.openSlots.pop();

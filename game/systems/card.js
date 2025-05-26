@@ -40,7 +40,7 @@ const addDamageText = function(entity, statCard) {
 
 const createAttackerCard = function(gameContext, entity, cardType) {
     const { spriteManager } = gameContext;
-    const statCard = spriteManager.createSprite(cardType, null);
+    const statCard = spriteManager.createSprite(cardType);
 
     addHealthText(entity, statCard);
     addDamageText(entity, statCard);
@@ -50,7 +50,7 @@ const createAttackerCard = function(gameContext, entity, cardType) {
 
 const createNormalCard = function(gameContext, entity, cardType) {
     const { spriteManager } = gameContext;
-    const statCard = spriteManager.createSprite(cardType, null);
+    const statCard = spriteManager.createSprite(cardType);
 
     addHealthText(entity, statCard);
 

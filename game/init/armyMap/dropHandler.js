@@ -33,7 +33,7 @@ DropHandler.prototype.getMaxDrop = function(gameContext, type, id) {
 
 DropHandler.prototype.createDrop = function(gameContext, type, id, value, inventory) {
     const { spriteManager } = gameContext;
-    const sprite = spriteManager.createCustomSprite("red_infantry_fire");
+    const sprite = spriteManager.createSprite("red_infantry_fire");
 
     const drop = new Drop({
         "type": type,
@@ -84,6 +84,7 @@ DropHandler.prototype.update = function(gameContext, worldMap) {
         drop.update(gameContext, fixedDeltaTime);
 
         if(drop.state === Drop.STATE.COLLECTED) {
+            drop.sprite.terminate();
             this.drops.splice(i, 1);
         }
     }

@@ -216,8 +216,9 @@ Camera2D.prototype.drawSpriteLayer = function(display, spriteLayer, realTime, de
     const viewportRightEdge = viewportLeftEdge + this.viewportWidth;
     const viewportBottomEdge = viewportTopEdge + this.viewportHeight;
     const visibleSprites = [];
+    const length = spriteLayer.length;
 
-    for(let i = 0; i < spriteLayer.length; i++) {
+    for(let i = 0; i < length; ++i) {
         const sprite = spriteLayer[i];
         const isVisible = sprite.isVisible(viewportRightEdge, viewportLeftEdge, viewportBottomEdge, viewportTopEdge);
 

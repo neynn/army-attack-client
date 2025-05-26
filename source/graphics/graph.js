@@ -112,9 +112,9 @@ Graph.prototype.draw = function(display, viewportX, viewportY) {
         const localY = positions.pop();
         const localX = positions.pop();
         const graph = stack.pop();
-        const { children } = graph;
+        const { children, opacity } = graph;
 
-        display.context.globalAlpha = this.opacity;
+        display.context.globalAlpha = opacity;
         graph.onDraw(display, localX, localY);
 
         for(let i = children.length - 1; i >= 0; i--) {
@@ -131,21 +131,21 @@ Graph.prototype.draw = function(display, viewportX, viewportY) {
 }
 
 Graph.prototype.getGraph = function() {
-    const result = [];
     const stack = [this];
+    let index = 0;
 
-    while(stack.length !== 0) {
-        const graph = stack.pop();
+    while(index < stack.length) {
+        const graph = stack[index];
         const { children } = graph;
 
-        for(let i = children.length - 1; i >= 0; i--) {            
+        for(let i = 0; i < children.length; i++) {
             stack.push(children[i]);
         }
 
-        result.push(graph);
+        index++;
     }
 
-    return result;
+    return stack;
 }
 
 Graph.prototype.getID = function() {

@@ -6,7 +6,7 @@ import { SpriteGraphics } from "./spriteGraphics.js";
 export const SpriteManager = function() {
     this.graphics = new SpriteGraphics();
     this.spriteTracker = new Set();
-    this.sprites = new ObjectPool(2500, (index) => new Sprite(this, index, index));
+    this.sprites = new ObjectPool(1024, (index) => new Sprite(this, index, index));
     this.sprites.allocate();
     this.timestamp = 0;
 
@@ -54,6 +54,7 @@ SpriteManager.prototype.update = function(gameContext) {
 }
 
 SpriteManager.prototype.exit = function() {
+    this.spriteTracker.clear();
     this.sprites.forAllReserved((sprite) => sprite.closeGraph());
     this.sprites.freeAll();
 
@@ -62,7 +63,7 @@ SpriteManager.prototype.exit = function() {
     }
 }
 
-SpriteManager.prototype.createSprite = function(typeID, layerID = null, animationID) {
+SpriteManager.prototype.createSprite = function(typeID, layerID = null) {
     const sprite = this.sprites.reserveElement();
 
     if(!sprite) {
@@ -77,10 +78,9 @@ SpriteManager.prototype.createSprite = function(typeID, layerID = null, animatio
     }
 
     const spriteID = sprite.getID();
-    const spriteIndex = sprite.getIndex();
 
     this.spriteTracker.add(spriteID);
-    this.updateSprite(spriteIndex, typeID, animationID);
+    this.updateSpriteGraphics(sprite, typeID);
 
     return sprite;
 }
@@ -201,12 +201,4 @@ SpriteManager.prototype.updateSprite = function(spriteIndex, spriteID) {
     }
 
     this.updateSpriteGraphics(sprite, spriteID);
-}
-
-SpriteManager.prototype.createCustomSprite = function(spriteID) {
-    const sprite = new Sprite(this, -1, spriteID);
-
-    this.updateSpriteGraphics(sprite, spriteID);
-
-    return sprite;
 }
