@@ -1,10 +1,7 @@
 import { EventEmitter } from "../events/eventEmitter.js";
-import { FactoryOwner } from "../factory/factoryOwner.js";
 import { Logger } from "../logger.js";
 
 export const TurnManager = function() {
-    FactoryOwner.call(this);
-
     this.actorTypes = {};
     this.actors = new Map();
     this.actorOrder = [];
@@ -12,23 +9,20 @@ export const TurnManager = function() {
     this.actionsLeft = 0;
 
     this.events = new EventEmitter();
-    this.events.listen(TurnManager.EVENT.ACTOR_CREATE);
-    this.events.listen(TurnManager.EVENT.ACTOR_DESTROY);
+    this.events.listen(TurnManager.EVENT.ACTOR_ADD);
+    this.events.listen(TurnManager.EVENT.ACTOR_REMOVE);
     this.events.listen(TurnManager.EVENT.ACTOR_CHANGE);
     this.events.listen(TurnManager.EVENT.ACTIONS_REDUCE);
     this.events.listen(TurnManager.EVENT.ACTIONS_CLEAR);
 }
 
 TurnManager.EVENT = {
-    ACTOR_CREATE: "ACTOR_CREATE",
-    ACTOR_DESTROY: "ACTOR_DESTROY",
+    ACTOR_ADD: "ACTOR_ADD",
+    ACTOR_REMOVE: "ACTOR_REMOVE",
     ACTOR_CHANGE: "ACTOR_CHANGE",
     ACTIONS_REDUCE: "ACTIONS_REDUCE",
     ACTIONS_CLEAR: "ACTIONS_CLEAR"
 };
-
-TurnManager.prototype = Object.create(FactoryOwner.prototype);
-TurnManager.prototype.constructor = TurnManager;
 
 TurnManager.prototype.load = function(actorTypes) {
     if(actorTypes) {
@@ -66,35 +60,24 @@ TurnManager.prototype.forAllActors = function(onCall) {
     });
 }
 
-TurnManager.prototype.createActor = function(gameContext, config, actorID) {
+TurnManager.prototype.addActor = function(actorID, actor) {
     if(this.actors.has(actorID)) {
-        Logger.log(Logger.CODE.ENGINE_WARN, "ActorID is already taken!", "TurnManager.prototype.createActor", { "actorID": actorID });
-        return null;
+        Logger.log(Logger.CODE.ENGINE_WARN, "ActorID is already taken!", "TurnManager.prototype.addActor", { "actorID": actorID });
+        return;
     }
 
-    const actor = this.createProduct(gameContext, config);
-
-    if(!actor) {
-        Logger.log(Logger.CODE.ENGINE_WARN, "Actor could not be created!", "TurnManager.prototype.createActor", { "actorID": actorID });
-        return null;
-    }
-    
-    actor.setID(actorID);
-    
     this.actors.set(actorID, actor);
-    this.events.emit(TurnManager.EVENT.ACTOR_CREATE, actorID, actor);
-
-    return actor;
+    this.events.emit(TurnManager.EVENT.ACTOR_ADD, actorID, actor);
 }
 
-TurnManager.prototype.destroyActor = function(actorID) {
+TurnManager.prototype.removeActor = function(actorID) {
     if(!this.actors.has(actorID)) {
-        Logger.log(Logger.CODE.ENGINE_WARN, "Actor does not exist!", "TurnManager.prototype.destroyActor", { "actorID": actorID });
+        Logger.log(Logger.CODE.ENGINE_WARN, "Actor does not exist!", "TurnManager.prototype.removeActor", { "actorID": actorID });
         return;
     }
 
     this.actors.delete(actorID);
-    this.events.emit(TurnManager.EVENT.ACTOR_DESTROY, actorID);
+    this.events.emit(TurnManager.EVENT.ACTOR_REMOVE, actorID);
 }
 
 TurnManager.prototype.getActor = function(actorID) {

@@ -1,5 +1,4 @@
 import { Cursor } from "../../source/client/cursor.js";
-import { Factory } from "../../source/factory/factory.js";
 import { Player } from "../actors/player/player.js";
 import { createStoryModeUI } from "../storyUI.js";
 import { OtherPlayer } from "../actors/otherPlayer.js";
@@ -8,46 +7,21 @@ import { CameraContext } from "../../source/camera/cameraContext.js";
 import { ArmyContext } from "../armyContext.js";
 import { MapManager } from "../../source/map/mapManager.js";
 
-export const ArmyActorFactory = function() {
-    Factory.call(this, "ARMY_ACTOR_FACOTRY");
-}
-
-ArmyActorFactory.prototype = Object.create(Factory.prototype);
-ArmyActorFactory.prototype.constructor = ArmyActorFactory;
-
 const ACTOR_TYPE = {
     PLAYER: "Player",
     ENEMY: "Enemy",
     OTHER_PLAYER: "OtherPlayer"
 };
 
-const addDragEvent = function(gameContext) {
-    const { client } = gameContext;
-    const { cursor } = client;
-
-    cursor.events.on(Cursor.EVENT.BUTTON_DRAG, (buttonID, deltaX, deltaY) => {
-        if(buttonID !== Cursor.BUTTON.LEFT) {
-            return;
-        }
-
-        const context = gameContext.getContextAtMouse();
-
-        if(context) {
-            context.dragCamera(deltaX, deltaY);
-        }
-    });
-}
-
-ArmyActorFactory.prototype.onCreate = function(gameContext, config) {
+const createActor = function(gameContext, actorID, team, type) {
     const { client, renderer, world } = gameContext;
     const { turnManager, mapManager } = world;
-    const { router } = client;
-    const { type, team } = config;
+    const { router, cursor } = client;
     const actorType = turnManager.getActorType(type);
 
     switch(type) {
         case ACTOR_TYPE.PLAYER: {
-            const actor = new Player();
+            const actor = new Player(actorID);
             const camera = actor.getCamera();
             const context = renderer.createContext("PLAYER_CAMERA", camera);
 
@@ -72,7 +46,17 @@ ArmyActorFactory.prototype.onCreate = function(gameContext, config) {
 
             camera.setTileSize(gameContext.settings.tileWidth, gameContext.settings.tileHeight);
 
-            addDragEvent(gameContext);
+            cursor.events.on(Cursor.EVENT.BUTTON_DRAG, (buttonID, deltaX, deltaY) => {
+                if(buttonID !== Cursor.BUTTON.LEFT) {
+                    return;
+                }
+
+                const context = gameContext.getContextAtMouse();
+
+                if(context) {
+                    context.dragCamera(deltaX, deltaY);
+                }
+            });
 
             router.load(gameContext, gameContext.keybinds.player);
             router.on(Player.COMMAND.TOGGLE_RANGE, () => actor.rangeVisualizer.toggle(gameContext));
@@ -87,12 +71,12 @@ ArmyActorFactory.prototype.onCreate = function(gameContext, config) {
             return actor;
         }
         case ACTOR_TYPE.ENEMY: {
-            const actor = new EnemyActor();
+            const actor = new EnemyActor(actorID);
 
             return actor;
         }
         case ACTOR_TYPE.OTHER_PLAYER: {
-            const actor = new OtherPlayer();
+            const actor = new OtherPlayer(actorID);
 
             return actor;
         }
@@ -101,4 +85,50 @@ ArmyActorFactory.prototype.onCreate = function(gameContext, config) {
             break;
         }
     }
+
+    return null;
+}
+
+export const ActorSystem = function() {}
+
+ActorSystem.STORY_ID = {
+    PLAYER: "Player",
+    ENEMY: "Enemy"
+};
+
+ActorSystem.createActor = function(gameContext, actorID, config) {
+    const { world } = gameContext;
+    const { turnManager } = world;
+    const { team, type } = config;
+    const actor = createActor(gameContext, actorID, team, type);
+
+    if(actor) {
+        turnManager.addActor(actorID, actor);
+    }
+
+    return actor;
+}
+
+ActorSystem.createStoryPlayer = function(gameContext, team) {
+    const { world } = gameContext;
+    const { turnManager } = world;
+    const actor = createActor(gameContext, ActorSystem.STORY_ID.PLAYER, team, ACTOR_TYPE.PLAYER);
+
+    if(actor) {
+        turnManager.addActor(ActorSystem.STORY_ID.PLAYER, actor);
+    }
+
+    return actor;
+}
+
+ActorSystem.createStoryEnemy = function(gameContext, team) {
+    const { world } = gameContext;
+    const { turnManager } = world;
+    const actor = createActor(gameContext, ActorSystem.STORY_ID.ENEMY, team, ACTOR_TYPE.ENEMY);
+
+    if(actor) {
+        turnManager.addActor(ActorSystem.STORY_ID.ENEMY, actor);
+    }
+
+    return actor;
 }

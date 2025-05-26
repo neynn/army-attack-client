@@ -1,6 +1,7 @@
 import { StateMachine } from "../../../source/state/stateMachine.js";
 import { ArmyContext } from "../../armyContext.js";
 import { ArmyEntity } from "../../init/armyEntity.js";
+import { ActorSystem } from "../../systems/actor.js";
 import { SpawnSystem } from "../../systems/spawn.js";
 import { StoryModeIntroState } from "./story/storyModeIntro.js";
 import { StoryModePlayState } from "./story/storyModePlay.js";
@@ -75,16 +76,14 @@ StoryModeState.prototype.saveSnapshot = function(gameContext) {
 
 StoryModeState.prototype.loadSnapshot = function(gameContext, snapshot) {
     const { time, entities, actors } = snapshot;
-    const { world } = gameContext;
-    const { turnManager } = world;
 
     for(let i = 0; i < actors.length; i++) {
         const actor = actors[i];
 
-        turnManager.createActor(this, actor, "ID");
+        ActorSystem.createActor(gameContext, "ID", actor);
     }
 
     for(const entity of entities) {
-        SpawnSystem.createEntity(this, entity);
+        SpawnSystem.createEntity(gameContext, entity);
     }
 }

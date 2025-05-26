@@ -4,7 +4,7 @@ import { Logger } from "../logger.js";
 
 export const MapManager = function() {
     this.mapTypes = {};
-    this.loadedMaps = new Map();
+    this.maps = new Map();
     this.activeMap = null;
     this.resources = new JSONManager();
     this.resources.enableCache();
@@ -31,7 +31,7 @@ MapManager.prototype.update = function(gameContext) {
 
 MapManager.prototype.load = function(mapTypes) {
     if(typeof mapTypes !== "object") {
-        Logger.log(false, "MapTypes cannot be undefined!", "MapManager.prototype.load", null);
+        Logger.log(Logger.CODE.ENGINE_WARN, "MapTypes cannot be undefined!", "MapManager.prototype.load", null);
         return;
     }
 
@@ -58,7 +58,7 @@ MapManager.prototype.fetchMapData = async function(mapID) {
 }
 
 MapManager.prototype.setActiveMap = function(mapID) {
-    const worldMap = this.loadedMaps.get(mapID);
+    const worldMap = this.maps.get(mapID);
 
     if(!worldMap || worldMap === this.activeMap) {
         return;
@@ -88,7 +88,7 @@ MapManager.prototype.getMapType = function(mapID) {
 }
 
 MapManager.prototype.removeMap = function(mapID) {
-    const loadedMap = this.loadedMaps.get(mapID);
+    const loadedMap = this.maps.get(mapID);
 
     if(!loadedMap) {
         Logger.log(Logger.CODE.ENGINE_WARN, "Map is not loaded!", "MapManager.prototype.removeMap", { "mapID": mapID });
@@ -99,12 +99,12 @@ MapManager.prototype.removeMap = function(mapID) {
         this.clearActiveMap();
     }
 
-    this.loadedMaps.delete(mapID);
+    this.maps.delete(mapID);
     this.events.emit(MapManager.EVENT.MAP_REMOVE, mapID, loadedMap);
 }
 
 MapManager.prototype.getLoadedMap = function(mapID) {
-    const loadedMap = this.loadedMaps.get(mapID);
+    const loadedMap = this.maps.get(mapID);
 
     if(!loadedMap) {
         return null;
@@ -125,16 +125,16 @@ MapManager.prototype.clearActiveMap = function() {
 
 MapManager.prototype.exit = function() {
     this.events.muteAll();
-    this.loadedMaps.clear();
+    this.maps.clear();
     this.clearActiveMap();
 }
 
 MapManager.prototype.addMap = function(mapID, worldMap) {
-    if(this.loadedMaps.has(mapID)) {
+    if(this.maps.has(mapID)) {
         Logger.log(Logger.CODE.ENGINE_WARN, "Map already exists!", "MapManager.prototype.addMap", { "mapID": mapID });
         return;
     }
 
-    this.loadedMaps.set(mapID, worldMap);
+    this.maps.set(mapID, worldMap);
     this.events.emit(MapManager.EVENT.MAP_ADD, mapID, worldMap);
 }

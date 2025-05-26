@@ -20,7 +20,6 @@ import { ReviveableComponent } from "./components/reviveable.js";
 import { CounterAttackAction } from "./actions/counterAttackAction.js";
 import { CounterMoveAction } from "./actions/counterMoveAction.js";
 import { ArmyEntityFactory } from "./init/armyEntityFactory.js";
-import { ArmyActorFactory } from "./init/armyActorFactory.js";
 import { ArmyEntity } from "./init/armyEntity.js";
 import { SpriteComponent } from "./components/sprite.js";
 import { ProductionComponent } from "./components/production.js";
@@ -146,9 +145,6 @@ ArmyContext.prototype.init = function(resources) {
 
     this.world.entityManager.registerFactory(ArmyContext.FACTORY.ENTITY, new ArmyEntityFactory());
     this.world.entityManager.selectFactory(ArmyContext.FACTORY.ENTITY);
-
-    this.world.turnManager.registerFactory(ArmyContext.FACTORY.ACTOR, new ArmyActorFactory());
-    this.world.turnManager.selectFactory(ArmyContext.FACTORY.ACTOR);
 
     this.eventHandler.init(this);
     

@@ -1,8 +1,8 @@
 import { Actor } from "../../source/turn/actor.js";
 import { GameEvent } from "../gameEvent.js";
 
-export const EnemyActor = function() {
-    Actor.call(this);
+export const EnemyActor = function(id) {
+    Actor.call(this, id);
 
     this.teamID = null;
 }

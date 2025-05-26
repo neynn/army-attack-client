@@ -1,6 +1,5 @@
 import { UIManager } from "../source/ui/uiManager.js";
 import { UserInterface } from "../source/ui/userInterface.js";
-import { ArmyActorFactory } from "./init/armyActorFactory.js";
 
 export const createStoryModeUI = function(gameContext) {
     const { world, uiManager } = gameContext;

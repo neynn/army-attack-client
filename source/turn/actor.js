@@ -1,5 +1,5 @@
-export const Actor = function() {
-    this.id = null;
+export const Actor = function(id) {
+    this.id = id;
     this.config = {};
     this.entities = new Set();
     this.maxActions = 1;

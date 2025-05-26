@@ -16,8 +16,8 @@ import { PlayerHealState } from "./states/heal.js";
 import { AttackAction } from "../../actions/attackAction.js";
 import { MissionHandler } from "./mission/missionHandler.js";
 
-export const Player = function() {
-    Actor.call(this);
+export const Player = function(id) {
+    Actor.call(this, id);
 
     this.teamID = null;
     this.inventory = new Inventory();

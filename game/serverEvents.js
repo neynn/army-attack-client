@@ -1,12 +1,12 @@
 import { CLIENT_EVENT } from "./enums.js";
+import { ActorSystem } from "./systems/actor.js";
 import { MapSystem } from "./systems/map.js";
 import { SpawnSystem } from "./systems/spawn.js";
 
 export const ServerEvents = {};
 
 ServerEvents.instanceGame = async function(gameContext, payload) {
-    const { world, client } = gameContext;
-    const { turnManager } = world;
+    const { client } = gameContext;
     const { socket } = client;
     const { actors, entities, mapID, mapData, playerID } = payload;
 
@@ -14,7 +14,7 @@ ServerEvents.instanceGame = async function(gameContext, payload) {
     for(let i = 0; i < actors.length; i++) {
         const { actorID, actorSetup } = actors[i];
 
-        turnManager.createActor(gameContext, actorSetup, actorID);
+        ActorSystem.createActor(gameContext, actorID, actorSetup);
     }
 
     /* Map-Instancing */
@@ -40,11 +40,9 @@ ServerEvents.instanceGame = async function(gameContext, payload) {
 }
 
 ServerEvents.instanceActor = function(gameContext, payload) {
-    const { world } = gameContext;
-    const { turnManager } = world;
     const { actorID, actorSetup } = payload;
 
-    turnManager.createActor(gameContext, actorSetup, actorID);
+    ActorSystem.createActor(gameContext, actorID, actorSetup);
 }
 
 ServerEvents.instanceEntityBatch = function(gameContext, payload) {
