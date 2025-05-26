@@ -4,6 +4,16 @@ export const Entity = function(DEBUG_NAME = "") {
     this.config = {};
     this.components = new Map();
     this.activeComponents = [];
+    this.type = Entity.TYPE.INACTIVE;
+}
+
+Entity.TYPE = {
+    INACTIVE: 0,
+    ACTIVE: 1
+};
+
+Entity.prototype.isActive = function() {
+    return this.type === Entity.TYPE.ACTIVE;
 }
 
 Entity.prototype.setID = function(id) {
@@ -89,6 +99,7 @@ Entity.prototype.addComponent = function(componentID, component) {
 
     if(typeof component.update === "function") {
         this.activeComponents.push(component);
+        this.type = Entity.TYPE.ACTIVE;
     }
 }
 
@@ -105,6 +116,11 @@ Entity.prototype.removeComponent = function(componentID) {
         if(activeComponent === component) {
             this.activeComponents[i] = this.activeComponents[this.activeComponents.length - 1];
             this.activeComponents.pop();
+
+            if(this.activeComponents.length === 0) {
+                this.type = Entity.TYPE.INACTIVE;
+            }
+
             break;
         }
     }

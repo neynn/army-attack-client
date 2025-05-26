@@ -6,6 +6,7 @@ import { Component } from "./component.js";
 export const EntityManager = function() {
     FactoryOwner.call(this);
 
+    this.nextID = 0;
     this.traits = {};
     this.archetypes = {};
     this.entityTypes = {};
@@ -13,6 +14,7 @@ export const EntityManager = function() {
     this.entityMap = new Map();
     this.entities = [];
     this.pendingRemovals = new Set();
+    this.activeEntities = [];
 
     this.events = new EventEmitter();
     this.events.listen(EntityManager.EVENT.ENTITY_CREATE);
@@ -29,7 +31,6 @@ EntityManager.EVENT = {
 };
 
 EntityManager.ID = {
-    NEXT: 0,
     INVALID: -1
 };
 
@@ -64,6 +65,7 @@ EntityManager.prototype.exit = function() {
     this.events.muteAll();
     this.entityMap.clear();
     this.entities = [];
+    this.nextID = 0;
 }
 
 EntityManager.prototype.registerComponent = function(componentID, componentClass) {
@@ -111,37 +113,20 @@ EntityManager.prototype.update = function(gameContext) {
     this.pendingRemovals.clear();
 }
 
-EntityManager.prototype.initComponents = function(entity, components) {
-    if(!components) {
-        return;
-    }
-
-    for(const componentID in components) {
-        const component = this.components.get(componentID);
-
-        if(!component) {
-            Logger.log(Logger.CODE.ENGINE_ERROR, "Component is not registered!", "EntityManager.prototype.buildComponents", { "id": componentID }); 
-            continue;
-        }
-
-        if(!entity.hasComponent(componentID)) {
-            const instance = component.createInstance();
-
-            entity.addComponent(componentID, instance);
-        }
-        
-        entity.initComponent(componentID, components[componentID]);
-    }
-}
-
 EntityManager.prototype.addArchetypeComponents = function(entity, archetypeID) {
     const archetype = this.archetypes[archetypeID];
 
-    if(!archetype) {
+    if(!archetype || !archetype.components) {
         return;
     }
 
-    this.initComponents(entity, archetype.components);
+    for(const componentID in archetype.components) {
+        if(!entity.hasComponent(componentID)) {
+            this.addComponent(entity, componentID);
+        }
+        
+        entity.initComponent(componentID, archetype.components[componentID]);
+    }
 }
 
 EntityManager.prototype.addTraitComponents = function(entity, traits) {
@@ -149,11 +134,17 @@ EntityManager.prototype.addTraitComponents = function(entity, traits) {
         const traitID = traits[i];
         const trait = this.traits[traitID];
 
-        if(!trait) {
+        if(!trait || !trait.components) {
             continue;
         }
 
-        this.initComponents(entity, trait.components);
+        for(const componentID in trait.components) {
+            if(!entity.hasComponent(componentID)) {
+                this.addComponent(entity, componentID);
+            }
+        
+            entity.initComponent(componentID, trait.components[componentID]);
+        }
     }
 }
 
@@ -186,14 +177,13 @@ EntityManager.prototype.getEntity = function(entityID) {
 }
 
 EntityManager.prototype.createEntity = function(gameContext, config, externalID) {
+    const entityID = externalID !== undefined ? externalID : this.nextID++;
     const entity = this.createProduct(gameContext, config);
 
     if(!entity) {
-        Logger.log(Logger.CODE.ENGINE_ERROR, "Factory has not returned an entity!", "EntityManager.prototype.createEntity", { "id": externalID, "config": config });
+        Logger.log(Logger.CODE.ENGINE_ERROR, "Factory has not returned an entity!", "EntityManager.prototype.createEntity", { "id": entityID, "config": config });
         return null;
     }
-
-    const entityID = externalID !== undefined ? externalID : EntityManager.ID.NEXT++;
 
     entity.load(gameContext, config);
     entity.setID(entityID);
@@ -245,4 +235,29 @@ EntityManager.prototype.destroyEntity = function(entityID) {
 
     Logger.log(Logger.CODE.ENGINE_WARN, "Entity does not exist!", "EntityManager.prototype.destroyEntity", { "id": entityID, "index": index });
     return EntityManager.ID.INVALID;
+}
+
+EntityManager.prototype.addComponent = function(entity, componentID) {
+    const component = this.components.get(componentID);
+
+    if(!component) {
+        Logger.log(Logger.CODE.ENGINE_ERROR, "Component is not registered!", "EntityManager.prototype.addComponent", { "id": componentID }); 
+        return null;
+    }
+
+    const instance = component.createInstance();
+    const isComponentActive = component.isActive();
+    const wasEntityActive = entity.isActive();
+
+    entity.addComponent(componentID, instance);
+
+    if(isComponentActive && !wasEntityActive) {
+        const isEntityActive = entity.isActive();
+
+        if(isEntityActive) {
+            this.activeEntities.push(entity);
+        }
+    }
+
+    return instance;
 }
