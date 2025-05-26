@@ -1,5 +1,6 @@
 export const ObjectPool = function(size, allocator) {
     this.allocator = allocator;
+    this.originalSize = size;
     this.size = size;
     this.elements = [];
     this.openSlots = [];
@@ -82,16 +83,17 @@ ObjectPool.prototype.getElement = function(index) {
     return this.elements[index];
 }
 
-ObjectPool.prototype.clear = function() {
+ObjectPool.prototype.reset = function() {
+    this.size = this.originalSize;
     this.elements.length = 0;
     this.openSlots.length = 0;
     this.reservedElements.clear();
+    this.allocate();
 }
 
-ObjectPool.prototype.freeAll = function() {
-    for(const index of this.reservedElements) {
-        this.openSlots.push(index);
-    }
-
-    this.reservedElements.clear();
+ObjectPool.prototype.destroy = function() {
+    this.size = 0;
+    this.elements.length = 0;
+    this.openSlots.length = 0;
+    this.reserveElement.clear();
 }

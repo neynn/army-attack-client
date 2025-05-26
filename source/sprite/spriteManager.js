@@ -56,7 +56,7 @@ SpriteManager.prototype.update = function(gameContext) {
 SpriteManager.prototype.exit = function() {
     this.spriteTracker.clear();
     this.sprites.forAllReserved((sprite) => sprite.closeGraph());
-    this.sprites.freeAll();
+    this.sprites.reset();
 
     for(let i = 0; i < this.layers.length; i++) {
         this.layers[i].length = 0;
