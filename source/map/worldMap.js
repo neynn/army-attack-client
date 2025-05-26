@@ -11,6 +11,10 @@ export const WorldMap = function(id) {
     this.entities = new Map();
 }
 
+WorldMap.prototype.load = function(blob) {}
+
+WorldMap.prototype.save = function() {}
+
 WorldMap.prototype.update = function(gameContext) {}
 
 WorldMap.prototype.getID = function() {

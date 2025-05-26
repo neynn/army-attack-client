@@ -5,11 +5,9 @@ export const Actor = function(id) {
     this.maxActions = 1;
 }
 
-Actor.prototype.save = function() {
-    return {
-        "INFO": "SAVE IS NOT REGISTERED!"
-    };
-}
+Actor.prototype.load = function(blob) {}
+
+Actor.prototype.save = function() {}
 
 Actor.prototype.update = function(gameContext) {}
 
@@ -29,10 +27,6 @@ Actor.prototype.setMaxActions = function(maxActions) {
 
 Actor.prototype.getID = function() {
     return this.id;
-}
-
-Actor.prototype.setID = function(id) {
-    this.id = id;
 }
 
 Actor.prototype.addEntity = function(entityID) {

@@ -38,6 +38,18 @@ MapManager.prototype.load = function(mapTypes) {
     this.mapTypes = mapTypes;
 }
 
+MapManager.prototype.forAllMaps = function(onCall) {
+    if(typeof onCall !== "function") {
+        return;
+    }
+
+    this.maps.forEach((map) => {
+        const mapID = map.getID();
+
+        onCall(mapID, map);
+    });
+}
+
 MapManager.prototype.fetchMapData = async function(mapID) {
     const mapType = this.getMapType(mapID);
 

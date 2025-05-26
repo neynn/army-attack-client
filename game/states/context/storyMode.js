@@ -36,18 +36,20 @@ StoryModeState.prototype.onEvent = function(gameContext, stateMachine, eventID, 
 StoryModeState.prototype.saveSnapshot = function(gameContext) {
     const { world } = gameContext;
     const { turnManager, entityManager, mapManager } = world;
-    const activeMap = mapManager.getActiveMap();
 
     const entities = [];
     const actors = [];
+    const maps = [];
 
     turnManager.forAllActors((actorID, actor) => {
         const saveData = actor.save();
 
-        actors.push({
-            "id": actorID,
-            "data": saveData
-        });
+        if(saveData) {
+            actors.push({
+                "id": actorID,
+                "data": saveData
+            });
+        }
     });
 
     entityManager.forAllEntities((entityID, entity) => {
@@ -66,11 +68,22 @@ StoryModeState.prototype.saveSnapshot = function(gameContext) {
         });
     });
     
+    mapManager.forAllMaps((mapID, map) => {
+        const saveData = map.save();
+
+        if(saveData) {
+            maps.push({
+                "id": mapID,
+                "data": saveData
+            });
+        }
+    });
+
     return {
         "time": Date.now(),
         "actors": actors,
         "entities": entities,
-        "maps": activeMap.save()
+        "maps": maps
     }
 }
 
