@@ -11,9 +11,10 @@ export const EntityManager = function() {
     this.archetypes = {};
     this.entityTypes = {};
     this.components = new Map();
-    this.entities = new Map();
+
+    this.entities = [];
+    this.entityMap = new Map();
     this.pendingRemovals = [];
-    this.activeEntities = [];
 
     this.events = new EventEmitter();
     this.events.listen(EntityManager.EVENT.ENTITY_CREATE);
@@ -62,8 +63,8 @@ EntityManager.prototype.getEntityType = function(typeID) {
 
 EntityManager.prototype.exit = function() {
     this.events.muteAll();
-    this.entities.clear();
-    this.activeEntities.length = 0;
+    this.entityMap.clear();
+    this.entities.length = 0;
     this.pendingRemovals.length = 0;
     this.nextID = 0;
 }
@@ -80,15 +81,16 @@ EntityManager.prototype.registerComponent = function(componentID, componentClass
 }
 
 EntityManager.prototype.forAllEntities = function(onCall) {
-    this.entities.forEach((entity) => {
+    for(let i = 0; i < this.entities.length; ++i) {
+        const entity = this.entities[i];
         const entityID = entity.getID();
 
         onCall(entityID, entity);
-    });
+    }
 }
 
 EntityManager.prototype.markEntity = function(markType, entityID) {
-    if(!this.entities.has(entityID)) {
+    if(!this.entityMap.has(entityID)) {
         return;
     }
 
@@ -101,8 +103,8 @@ EntityManager.prototype.markEntity = function(markType, entityID) {
 }
 
 EntityManager.prototype.update = function(gameContext) {
-    for(let i = 0; i < this.activeEntities.length; ++i) {
-        this.activeEntities[i].update(gameContext);
+    for(let i = 0; i < this.entities.length; ++i) {
+        this.entities[i].update(gameContext);
     }
 
     for(let i = 0; i < this.pendingRemovals.length; ++i) {
@@ -110,6 +112,109 @@ EntityManager.prototype.update = function(gameContext) {
     }
 
     this.pendingRemovals.length = 0;
+}
+
+EntityManager.prototype.getEntity = function(entityID) {
+    const index = this.entityMap.get(entityID);
+
+    if(index === undefined || index < 0 || index >= this.entities.length) {
+        return null;
+    }
+
+    const entity = this.entities[index];
+    const targetID = entity.getID();
+
+    if(entityID === targetID) {
+        return entity;
+    }
+
+    for(let i = 0; i < this.entities.length; ++i) {
+        const entity = this.entities[i];
+        const currentID = entity.getID();
+
+        if(currentID === entityID) {
+            this.entityMap.set(entityID, i);
+            return entity;
+        }
+    }
+
+    return null;
+}
+
+EntityManager.prototype.createEntity = function(gameContext, config, externalID) {
+    const entityID = externalID !== undefined ? externalID : this.nextID++;
+
+    if(this.entityMap.has(entityID)) {
+        return null;
+    }
+
+    const entity = this.createProduct(gameContext, config);
+
+    if(!entity) {
+        Logger.log(Logger.CODE.ENGINE_ERROR, "Factory has not returned an entity!", "EntityManager.prototype.createEntity", { "id": entityID, "config": config });
+        return null;
+    }
+
+    entity.setID(entityID);
+
+    this.entityMap.set(entityID, this.entities.length);
+    this.entities.push(entity);
+    this.events.emit(EntityManager.EVENT.ENTITY_CREATE, entityID, entity);
+
+    return entity;
+}
+
+EntityManager.prototype.destroyEntityAtIndex = function(index, entityID) {
+    const swapEntityIndex = this.entities.length - 1;
+    const swapEntity = this.entities[swapEntityIndex];
+    const swapEntityID = swapEntity.getID();
+
+    this.entityMap.set(swapEntityID, index);
+    this.entityMap.delete(entityID);
+    this.entities[index] = this.entities[swapEntityIndex];
+    this.entities.pop();
+    this.events.emit(EntityManager.EVENT.ENTITY_DESTROY, entityID);
+}
+
+EntityManager.prototype.destroyEntity = function(entityID) {
+    const index = this.entityMap.get(entityID);
+
+    if(index === undefined || index < 0 || index >= this.entities.length) {
+        return;
+    }
+
+    const entity = this.entities[index];
+    const targetID = entity.getID();
+
+    if(entityID === targetID) {
+        this.destroyEntityAtIndex(index, entityID);
+        return;
+    }
+    
+    for(let i = 0; i < this.entities.length; ++i) {
+        const entity = this.entities[i];
+        const currentID = entity.getID();
+
+        if(entityID === currentID) {
+            this.destroyEntityAtIndex(i, entityID);
+            return;
+        }
+    }
+}
+
+EntityManager.prototype.addComponent = function(entity, componentID) {
+    const component = this.components.get(componentID);
+
+    if(!component) {
+        Logger.log(Logger.CODE.ENGINE_ERROR, "Component is not registered!", "EntityManager.prototype.addComponent", { "id": componentID }); 
+        return null;
+    }
+
+    const instance = component.createInstance();
+
+    entity.addComponent(componentID, instance);
+
+    return instance;
 }
 
 EntityManager.prototype.addArchetypeComponents = function(entity, archetypeID) {
@@ -145,84 +250,4 @@ EntityManager.prototype.addTraitComponents = function(entity, traits) {
             entity.initComponent(componentID, trait.components[componentID]);
         }
     }
-}
-
-EntityManager.prototype.getEntity = function(entityID) {
-    const entity = this.entities.get(entityID);
-
-    if(!entity) {
-        return null;
-    }
-
-    return entity;
-}
-
-EntityManager.prototype.createEntity = function(gameContext, config, externalID) {
-    const entityID = externalID !== undefined ? externalID : this.nextID++;
-
-    if(this.entities.has(entityID)) {
-        return null;
-    }
-
-    const entity = this.createProduct(gameContext, config);
-
-    if(!entity) {
-        Logger.log(Logger.CODE.ENGINE_ERROR, "Factory has not returned an entity!", "EntityManager.prototype.createEntity", { "id": entityID, "config": config });
-        return null;
-    }
-
-    entity.setID(entityID);
-    
-    if(entity.isActive()) {
-        this.activeEntities.push(entity);
-    }
-
-    this.entities.set(entityID, entity);
-    this.events.emit(EntityManager.EVENT.ENTITY_CREATE, entityID, entity);
-
-    return entity;
-}
-
-EntityManager.prototype.destroyEntity = function(entityID) {
-    const entity = this.entities.get(entityID);
-
-    if(!entity) {
-        return;
-    }
-    
-    const isActive = entity.isActive();
-
-    if(isActive) {
-        this.removeActiveEntity(entity);
-    }
-
-    this.entities.delete(entityID);
-    this.events.emit(EntityManager.EVENT.ENTITY_DESTROY, entityID);
-}
-
-EntityManager.prototype.addComponent = function(entity, componentID) {
-    const component = this.components.get(componentID);
-
-    if(!component) {
-        Logger.log(Logger.CODE.ENGINE_ERROR, "Component is not registered!", "EntityManager.prototype.addComponent", { "id": componentID }); 
-        return null;
-    }
-
-    const instance = component.createInstance();
-
-    entity.addComponent(componentID, instance);
-
-    return instance;
-}
-
-EntityManager.prototype.removeActiveEntity = function(entity) {
-    for(let i = 0; i < this.activeEntities.length; ++i) {
-        if(this.activeEntities[i] === entity) {
-            this.activeEntities[i] = this.activeEntities[this.activeEntities.length - 1];
-            this.activeEntities.pop();
-            return true;
-        }
-    }
-
-    return false;
 }
