@@ -35,6 +35,7 @@ import { TownComponent } from "./components/town.js";
 import { ClearDebrisAction } from "./actions/clearDebrisAction.js";
 import { HealAction } from "./actions/healAction.js";
 import { MapManager } from "../source/map/mapManager.js";
+import { Camera2D } from "../source/camera/types/camera2D.js";
 
 export const ArmyContext = function() {
     GameContext.call(this);
@@ -250,11 +251,13 @@ ArmyContext.prototype.onMapEnable = function(worldMap) {
     this.renderer.forAllContexts((contextID, context) => {
         const camera = context.getCamera();
 
-        if(camera instanceof ArmyCamera) {
+        if(camera instanceof Camera2D) {
             camera.setMapSize(width, height);
-            camera.initBorder(this);
-
             context.refreshFull();
+        }
+
+        if(camera instanceof ArmyCamera) {
+            camera.initBorder(this);
         }
     });
 

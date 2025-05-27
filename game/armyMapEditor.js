@@ -7,10 +7,10 @@ import { Brush } from "../source/map/editor/brush.js";
 import { EditorButton } from "../source/map/editor/editorButton.js";
 import { saveMap } from "../helpers.js";
 import { ArmyMap } from "./init/armyMap.js";
-import { ArmyCamera } from "./armyCamera.js";
 import { SHAPE } from "../source/math/constants.js";
 import { ArmyContext } from "./armyContext.js";
 import { MapSystem } from "./systems/map.js";
+import { ArmyEditorCamera } from "./armyEditorCamera.js";
 
 export const ArmyMapEditor = function() {
     MapEditor.call(this);
@@ -29,8 +29,7 @@ export const ArmyMapEditor = function() {
     this.buttonHandler.addButton("L3", "cloud", "TEXT_L3");
     this.buttonHandler.addButton("LC", "type", "TEXT_LC");
     this.buttonHandler.getButton("LC").setType(EditorButton.TYPE.TYPE);
-
-    this.camera = new ArmyCamera();
+    this.camera = new ArmyEditorCamera(this);
 }
 
 ArmyMapEditor.prototype = Object.create(MapEditor.prototype);
@@ -117,38 +116,6 @@ ArmyMapEditor.prototype.initCamera = function(gameContext) {
     const context = renderer.createContext(this.id, this.camera);
     
     context.setPosition(0, 0);
-}
-
-ArmyMapEditor.prototype.initRenderEvents = function(gameContext) {
-    const { tileManager, transform2D } = gameContext;
-    const { graphics } = tileManager;
-
-    this.camera.addPostDraw((context) => {    
-        const button = this.buttonHandler.getActiveButton();
-
-        if(button && button.type !== EditorButton.TYPE.GRAPHICS) {
-            return;
-        }
-    
-        const cursorTile = gameContext.getMouseTile();
-        const { x, y } = this.camera.getViewport();
-        const { width, height, halfWidth } = transform2D.getTileDimensions();
-
-        context.globalAlpha = this.overlayAlpha;
-        context.textAlign = "center";
-
-        this.brush.paint(cursorTile.x, cursorTile.y, (j, i, id, name) => {
-            const renderY = i * height - y;
-            const renderX = j * width - x;
-
-            this.camera.drawTileEasy(graphics, id, context, renderX, renderY);
-
-            context.fillStyle = this.overlayColor;
-            context.fillText(name, renderX + halfWidth, renderY);  
-        });
-
-        context.globalAlpha = 1;
-    });
 }
 
 ArmyMapEditor.prototype.initCursorEvents = function(gameContext) {
@@ -383,8 +350,6 @@ ArmyMapEditor.prototype.initButtons = function(gameContext) {
 } 
 
 ArmyMapEditor.prototype.createNewMap = function(gameContext) {
-    const { world } = gameContext;
-    const { mapManager } = world;
     const createNew = confirm("This will create and load a brand new map! Proceed?");
 
     if(createNew) {

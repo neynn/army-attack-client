@@ -42,6 +42,10 @@ const createAttackerCard = function(gameContext, entity, cardType) {
     const { spriteManager } = gameContext;
     const statCard = spriteManager.createSprite(cardType);
 
+    if(!statCard) {
+        return null;
+    }
+
     addHealthText(entity, statCard);
     addDamageText(entity, statCard);
 
@@ -51,6 +55,10 @@ const createAttackerCard = function(gameContext, entity, cardType) {
 const createNormalCard = function(gameContext, entity, cardType) {
     const { spriteManager } = gameContext;
     const statCard = spriteManager.createSprite(cardType);
+
+    if(!statCard) {
+        return null;
+    }
 
     addHealthText(entity, statCard);
 
@@ -81,7 +89,6 @@ const getCardOffset = function(gameContext, entity) {
 }
 
 const createStatCard = function(gameContext, entity) {
-    const { x, y } = getCardOffset(gameContext, entity);
     const teamSprites = getTeamSprites(gameContext, entity);
     
     if(!teamSprites) {
@@ -92,21 +99,13 @@ const createStatCard = function(gameContext, entity) {
         const statCardType = teamSprites[CardSystem.SPRITE_TYPE.LARGE];
 
         if(statCardType) {
-            const statCard = createAttackerCard(gameContext, entity, statCardType);
-
-            statCard.setPosition(x, y);
-
-            return statCard;
+            return createAttackerCard(gameContext, entity, statCardType);
         }        
     } else {
         const statCardType = teamSprites[CardSystem.SPRITE_TYPE.SMALL];
 
         if(statCardType) {
-            const statCard = createNormalCard(gameContext, entity, statCardType);
-
-            statCard.setPosition(x, y);
-
-            return statCard;
+            return createNormalCard(gameContext, entity, statCardType);
         }
     }
 
@@ -123,6 +122,9 @@ CardSystem.generateStatCard = function(gameContext, entity) {
     const statCard = createStatCard(gameContext, entity);
 
     if(statCard) {
+        const { x, y } = getCardOffset(gameContext, entity);
+
+        statCard.setPosition(x, y);
         sprite.addChild(statCard, SpriteComponent.SPRITE_ID.CARD);
     }
 }

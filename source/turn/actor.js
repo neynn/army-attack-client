@@ -17,10 +17,6 @@ Actor.prototype.onTurnStart = function(gameContext) {}
 
 Actor.prototype.onTurnEnd = function(gameContext) {}
 
-Actor.prototype.onEntityAdd = function(entityID) {}
-
-Actor.prototype.onEntityRemove = function(entityID) {}
-
 Actor.prototype.setMaxActions = function(maxActions) {
     this.maxActions = maxActions;
 }
@@ -32,14 +28,12 @@ Actor.prototype.getID = function() {
 Actor.prototype.addEntity = function(entityID) {
     if(!this.entities.has(entityID)) {
         this.entities.add(entityID);
-        this.onEntityAdd(entityID);
     }
 }
 
 Actor.prototype.removeEntity = function(entityID) {
     if(this.entities.has(entityID)) {
         this.entities.delete(entityID);
-        this.onEntityRemove(entityID);
     }
 }
 

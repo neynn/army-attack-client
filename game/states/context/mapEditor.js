@@ -27,7 +27,6 @@ MapEditorState.prototype.onEnter = function(gameContext, stateMachine) {
     this.mapEditor.initUI(gameContext);
     this.mapEditor.initSlots(gameContext);
     this.mapEditor.loadBrushSets(tileManager.getInversion());
-    this.mapEditor.initRenderEvents(gameContext);
     this.mapEditor.initCursorEvents(gameContext);
     this.mapEditor.initUIEvents(gameContext);
     this.mapEditor.initButtons(gameContext);

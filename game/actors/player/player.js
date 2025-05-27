@@ -80,12 +80,6 @@ Player.prototype.getCamera = function() {
     return this.camera;
 }
 
-Player.prototype.onEntityRemove = function(entityID) {
-    if(this.states.isCurrent(Player.STATE.SELECTED)) {
-        //TODO: Go back to regular on removal!
-    }
-}
-
 Player.prototype.getSpriteType = function(typeID, spriteKey) {
     const spriteType = this.config.sprites[typeID];
     const spriteID = spriteType[spriteKey];

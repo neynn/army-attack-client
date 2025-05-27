@@ -1,35 +1,26 @@
 import { Renderer } from "../source/renderer.js";
 import { Camera2D } from "../source/camera/types/camera2D.js";
 import { SpriteManager } from "../source/sprite/spriteManager.js";
-import { PathfinderSystem } from "./systems/pathfinder.js";
-import { Layer } from "../source/map/layer.js";
 import { ArmyMap } from "./init/armyMap.js";
+import { EditorButton } from "../source/map/editor/editorButton.js";
 
-export const ArmyCamera = function() {
+export const ArmyEditorCamera = function(editor) {
     Camera2D.call(this);
 
-    this.overlay.createOverlay(ArmyCamera.OVERLAY_TYPE.ATTACK);
-    this.overlay.createOverlay(ArmyCamera.OVERLAY_TYPE.MOVE);
-    this.overlay.createOverlay(ArmyCamera.OVERLAY_TYPE.RANGE);
-    this.overlay.createOverlay(ArmyCamera.OVERLAY_TYPE.FIRE_MISSION);
-    this.border = new Layer(0, 0);
+    this.editor = editor;
 }
 
-ArmyCamera.OVERLAY_TYPE = {
+ArmyEditorCamera.OVERLAY_TYPE = {
     ATTACK: "ATTACK",
     MOVE: "MOVE",
     RANGE: "RANGE",
     FIRE_MISSION: "FIRE_MISSION"
 };
 
-ArmyCamera.prototype = Object.create(Camera2D.prototype);
-ArmyCamera.prototype.constructor = ArmyCamera;
+ArmyEditorCamera.prototype = Object.create(Camera2D.prototype);
+ArmyEditorCamera.prototype.constructor = ArmyEditorCamera;
 
-ArmyCamera.prototype.resizeBorder = function(newWidth, newHeight) {
-    this.border.resize(newWidth, newHeight);
-}
-
-ArmyCamera.prototype.drawDebris = function(tileManager, context, worldMap) {
+ArmyEditorCamera.prototype.drawDebris = function(tileManager, context, worldMap) {
     const { graphics } = tileManager;
     const { debris } = worldMap;
     const debrisID = tileManager.getTileID("debris", "Debris_01");
@@ -48,20 +39,7 @@ ArmyCamera.prototype.drawDebris = function(tileManager, context, worldMap) {
     });
 }
 
-ArmyCamera.prototype.drawDrops = function(display, worldMap, realTime, deltaTime) {
-    const { drops } = worldMap;
-    const dropElements = drops.drops;
-
-    for(let i = 0; i < dropElements.length; i++) {
-        const { sprite } = dropElements[i];
-
-        if(sprite) {
-            this.drawSprite(display, sprite, realTime, deltaTime);
-        }
-    }
-}
-
-ArmyCamera.prototype.update = function(gameContext, display) {
+ArmyEditorCamera.prototype.update = function(gameContext, display) {
     const { world, timer, spriteManager, tileManager } = gameContext;
     const { graphics } = tileManager;
     const { mapManager } = world;
@@ -77,28 +55,23 @@ ArmyCamera.prototype.update = function(gameContext, display) {
 
     this.updateWorldBounds();
     this.drawLayer(graphics, context, worldMap.getLayer(ArmyMap.LAYER.GROUND));
-    this.drawLayer(graphics, context, this.border);
     this.drawLayer(graphics, context, worldMap.getLayer(ArmyMap.LAYER.DECORATION));
     this.drawDebris(tileManager, context, worldMap);
-    this.drawOverlay(graphics, context, ArmyCamera.OVERLAY_TYPE.MOVE);
-    this.drawOverlay(graphics, context, ArmyCamera.OVERLAY_TYPE.ATTACK);
     this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.BOTTOM), realTime, deltaTime);
     this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.MIDDLE), realTime, deltaTime);
     display.unflip();
-    this.drawOverlay(graphics, context, ArmyCamera.OVERLAY_TYPE.FIRE_MISSION);
-    this.drawOverlay(graphics, context, ArmyCamera.OVERLAY_TYPE.RANGE);
     this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.TOP), realTime, deltaTime);
     this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.UI), realTime, deltaTime);
-    this.drawDrops(display, worldMap, realTime, deltaTime);
     display.unflip();
     this.drawLayer(graphics, context, worldMap.getLayer(ArmyMap.LAYER.CLOUD));
+    this.postDraw(gameContext, context);
 
     if(Renderer.DEBUG.MAP) {
         this.debugMap(context, worldMap);
     }
 }
 
-ArmyCamera.prototype.debugMap = function(context, worldMap) {
+ArmyEditorCamera.prototype.debugMap = function(context, worldMap) {
     const scaleX = Math.floor(this.tileWidth / 6);
     const scaleY = Math.floor(this.tileHeight / 6);
 
@@ -122,42 +95,28 @@ ArmyCamera.prototype.debugMap = function(context, worldMap) {
     this.drawMapOutlines(context);
 }
 
-ArmyCamera.prototype.updateMoveOverlay = function(gameContext, nodeList, enableTileID, attackTileID, ) {
-    const { world } = gameContext;
-    const showInvalidTiles = gameContext.settings.debug.showInvalidMoveTiles;
-
-    this.clearOverlay(ArmyCamera.OVERLAY_TYPE.MOVE);
-
-    for(let i = 0; i < nodeList.length; i++) {
-        const { node, state } = nodeList[i];
-        const { positionX, positionY } = node;
-
-        if(state !== PathfinderSystem.NODE_STATE.VALID) {
-            if(showInvalidTiles) {
-                this.pushOverlay(ArmyCamera.OVERLAY_TYPE.MOVE, attackTileID, positionX, positionY);
-            }
-
-        } else {
-            const tileEntity = world.getTileEntity(positionX, positionY);
-
-            if(!tileEntity) {
-                this.pushOverlay(ArmyCamera.OVERLAY_TYPE.MOVE, enableTileID, positionX, positionY);
-            }
-        } 
-    }
-}
-
-ArmyCamera.prototype.initBorder = function(gameContext) {
-    const { tileManager } = gameContext;
+ArmyEditorCamera.prototype.postDraw = function(gameContext, context) {
+    const { tileManager, transform2D } = gameContext;
     const { graphics } = tileManager;
-    const containerCount = graphics.getContainerCount();
+    const button = this.editor.buttonHandler.getActiveButton();
 
-    this.border.resize(this.mapWidth, this.mapHeight);
-    this.border.initBuffer(containerCount);
-}
+    if(button && button.type !== EditorButton.TYPE.GRAPHICS) {
+        return;
+    }
+    
+    const { x, y } = gameContext.getMouseTile();
+    const { width, height, halfWidth } = transform2D.getTileDimensions();
 
-ArmyCamera.prototype.updateBorder = function(borderID, tileX, tileY) {
-    const index = tileY * this.mapWidth + tileX;
+    context.globalAlpha = this.editor.overlayAlpha;
+    context.fillStyle = this.editor.overlayColor;
+    context.textAlign = "center";
 
-    this.border.setItem(borderID, index);
+    this.editor.brush.paint(x, y, (j, i, id, name) => {
+        const renderY = i * height - this.viewportY;
+        const renderX = j * width - this.viewportX;
+
+        this.drawTileEasy(graphics, id, context, renderX, renderY);
+
+        context.fillText(name, renderX + halfWidth, renderY);  
+    });
 }

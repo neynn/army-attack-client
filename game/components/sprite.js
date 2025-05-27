@@ -44,11 +44,11 @@ SpriteComponent.prototype.getSprite = function(gameContext) {
     return sprite;
 }
 
-SpriteComponent.prototype.change = function(gameContext, sheetID, animationID) {
+SpriteComponent.prototype.change = function(gameContext, sheetID) {
     const { spriteManager } = gameContext;
 
     if(sheetID !== undefined) {
-        spriteManager.updateSprite(this.spriteIndex, sheetID, animationID);
+        spriteManager.updateSprite(this.spriteIndex, sheetID);
     }
 }
 
