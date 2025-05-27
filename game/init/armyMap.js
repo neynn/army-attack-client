@@ -142,7 +142,7 @@ ArmyMap.prototype.updateClouds = function(autotiler, tileX, tileY, width, height
 }
 
 ArmyMap.prototype.hasDebris = function(tileX, tileY) {
-    const index = this.getListID(tileX, tileY);
+    const index = this.getIndex(tileX, tileY);
 
     if(index === -1) {
         return false;
@@ -152,7 +152,7 @@ ArmyMap.prototype.hasDebris = function(tileX, tileY) {
 }
 
 ArmyMap.prototype.removeDebris = function(tileX, tileY) {
-    const index = this.getListID(tileX, tileY);
+    const index = this.getIndex(tileX, tileY);
 
     if(index === -1) {
         return;
@@ -164,7 +164,7 @@ ArmyMap.prototype.removeDebris = function(tileX, tileY) {
 }
 
 ArmyMap.prototype.addDebris = function(type, tileX, tileY) {
-    const index = this.getListID(tileX, tileY);
+    const index = this.getIndex(tileX, tileY);
 
     if(index === -1) {
         return;

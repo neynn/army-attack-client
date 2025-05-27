@@ -31,7 +31,7 @@ MoveSystem.updatePath = function(gameContext, entity) {
 
     positionComponent.updatePosition(deltaX * deltaDistance, deltaY * deltaDistance);
 
-    while(moveComponent.isPathAdvanceRequired(gameContext.settings.travelDistance)) {
+    while(moveComponent.canPathAdvance(gameContext.settings.travelDistance)) {
         const { deltaX, deltaY } = moveComponent.getCurrentStep();
         const tileX = positionComponent.tileX + deltaX;
         const tileY = positionComponent.tileY + deltaY;

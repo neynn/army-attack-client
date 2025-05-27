@@ -31,7 +31,7 @@ MoveComponent.createStep = function(deltaX, deltaY) {
     }
 }
 
-MoveComponent.prototype.isPathAdvanceRequired = function(distance) {
+MoveComponent.prototype.canPathAdvance = function(distance) {
     return this.distance >= distance && !this.isPathDone();
 }
 

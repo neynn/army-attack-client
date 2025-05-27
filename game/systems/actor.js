@@ -1,6 +1,5 @@
 import { Cursor } from "../../source/client/cursor.js";
 import { Player } from "../actors/player/player.js";
-import { createStoryModeUI } from "../storyUI.js";
 import { OtherPlayer } from "../actors/otherPlayer.js";
 import { EnemyActor } from "../actors/enemyActor.js";
 import { CameraContext } from "../../source/camera/cameraContext.js";
@@ -66,8 +65,6 @@ const createActor = function(gameContext, actorID, team, type) {
             router.on("DEBUG_HEAL", () => actor.states.setNextState(gameContext, Player.STATE.HEAL));
             router.on("DEBUG_FIREMISSION", () => actor.states.setNextState(gameContext, Player.STATE.FIRE_MISSION, { "missionID": "OrbitalLaser" }));
             router.on("DEBUG_SELL", () => actor.states.setNextState(gameContext, Player.STATE.SELL));
-
-            createStoryModeUI(gameContext);
             
             return actor;
         }

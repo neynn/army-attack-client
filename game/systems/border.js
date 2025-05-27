@@ -6,7 +6,7 @@ BorderSystem.updateBorder = function(gameContext, worldMap, tileX, tileY, range)
     const { world } = gameContext;
     const { turnManager } = world;
     
-    if(!gameContext.settings.drawBorder) {
+    if(!gameContext.settings.calculateBorder) {
         return;
     }
 

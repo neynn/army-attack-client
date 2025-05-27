@@ -115,7 +115,7 @@ WorldMap.prototype.getTileCoords = function(index) {
     }
 }
 
-WorldMap.prototype.getListID = function(tileX, tileY) {
+WorldMap.prototype.getIndex = function(tileX, tileY) {
     if(this.isTileOutOfBounds(tileX, tileY)) {
         return -1;
     }
@@ -124,8 +124,8 @@ WorldMap.prototype.getListID = function(tileX, tileY) {
 }
 
 WorldMap.prototype.getEntities = function(tileX, tileY) {
-    const listID = this.getListID(tileX, tileY);
-    const list = this.entities.get(listID);
+    const index = this.getIndex(tileX, tileY);
+    const list = this.entities.get(index);
 
     if(!list) {
         return [];
@@ -135,8 +135,8 @@ WorldMap.prototype.getEntities = function(tileX, tileY) {
 }
 
 WorldMap.prototype.getTopEntity = function(tileX, tileY) {
-    const listID = this.getListID(tileX, tileY);
-    const list = this.entities.get(listID);
+    const index = this.getIndex(tileX, tileY);
+    const list = this.entities.get(index);
 
     if(!list || list.length === 0) {
         return null;
@@ -146,8 +146,8 @@ WorldMap.prototype.getTopEntity = function(tileX, tileY) {
 }
 
 WorldMap.prototype.getBottomEntity = function(tileX, tileY) {
-    const listID = this.getListID(tileX, tileY);
-    const list = this.entities.get(listID);
+    const index = this.getIndex(tileX, tileY);
+    const list = this.entities.get(index);
 
     if(!list || list.length === 0) {
         return null;
@@ -157,8 +157,8 @@ WorldMap.prototype.getBottomEntity = function(tileX, tileY) {
 }
 
 WorldMap.prototype.isTileOccupied = function(tileX, tileY) {
-    const listID = this.getListID(tileX, tileY);
-    const list = this.entities.get(listID);
+    const index = this.getIndex(tileX, tileY);
+    const list = this.entities.get(index);
 
     if(!list) {
         return false;
@@ -173,13 +173,13 @@ WorldMap.prototype.removeEntity = function(tileX, tileY, rangeX, rangeY, entityI
 
         for(let j = 0; j < rangeX; j++) {
             const locationX = tileX + j;
-            const listID = this.getListID(locationX, locationY);
+            const index = this.getIndex(locationX, locationY);
 
-            if(listID !== -1) {
-                const list = this.entities.get(listID);
+            if(index !== -1) {
+                const list = this.entities.get(index);
 
                 if(!list) {
-                    return;
+                    continue;
                 }
             
                 for(let i = 0; i < list.length; i++) {
@@ -192,7 +192,7 @@ WorldMap.prototype.removeEntity = function(tileX, tileY, rangeX, rangeY, entityI
                 }
             
                 if(list.length === 0) {
-                    this.entities.delete(listID);
+                    this.entities.delete(index);
                 }
             }
         }
@@ -205,13 +205,13 @@ WorldMap.prototype.addEntity = function(tileX, tileY, rangeX, rangeY, entityID) 
 
         for(let j = 0; j < rangeX; j++) {
             const locationX = tileX + j;
-            const listID = this.getListID(locationX, locationY);
+            const index = this.getIndex(locationX, locationY);
 
-            if(listID !== -1) {
-                const list = this.entities.get(listID);
+            if(index !== -1) {
+                const list = this.entities.get(index);
 
                 if(!list) {
-                    this.entities.set(listID, [entityID]);
+                    this.entities.set(index, [entityID]);
                 } else {
                     list.push(entityID);
                 }

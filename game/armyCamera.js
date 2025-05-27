@@ -77,7 +77,11 @@ ArmyCamera.prototype.update = function(gameContext, display) {
 
     this.updateWorldBounds();
     this.drawLayer(graphics, context, worldMap.getLayer(ArmyMap.LAYER.GROUND));
-    this.drawLayer(graphics, context, this.border);
+
+    if(gameContext.settings.drawBorder) {
+        this.drawLayer(graphics, context, this.border);
+    }
+
     this.drawLayer(graphics, context, worldMap.getLayer(ArmyMap.LAYER.DECORATION));
     this.drawDebris(tileManager, context, worldMap);
     this.drawOverlay(graphics, context, ArmyCamera.OVERLAY_TYPE.MOVE);
