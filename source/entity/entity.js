@@ -12,6 +12,10 @@ Entity.TYPE = {
     ACTIVE: 1
 };
 
+Entity.DEBUG = {
+    LOG_COMPONENT: 0
+};
+
 Entity.prototype.isActive = function() {
     return this.type === Entity.TYPE.ACTIVE;
 }
@@ -46,24 +50,34 @@ Entity.prototype.getComponent = function(componentID) {
     return component;
 }
 
-Entity.prototype.load = function(gameContext, blob) {}
+Entity.prototype.load = function(components) {
+    for(const componentID in components) {
+        const data = components[componentID];
+
+        if(data) {
+            this.loadComponent(componentID, data);
+        }
+    }
+}
 
 Entity.prototype.save = function() {
-    const blob = {};
+    const components = {};
 
     for(const [componentID, component] of this.components) {
         if(typeof component.save === "function") {
             const data = component.save();
 
             if(data) {
-                blob[componentID] = data;
+                components[componentID] = data;
             }
         } else {
-            //console.log(`Save not implemented for component ${componentID}`);
+            if(Entity.DEBUG.LOG_COMPONENT) {
+                console.log(`Save not implemented for component ${componentID}`);
+            }
         }
     }
 
-    return blob;
+    return components;
 }
 
 Entity.prototype.initComponent = function(componentID, config) {
@@ -76,17 +90,21 @@ Entity.prototype.initComponent = function(componentID, config) {
     if(component && typeof component.init === "function") {
         component.init(config);
     } else {
-        console.log(`Init not implemented for component ${componentID}`);
+        if(Entity.DEBUG.LOG_COMPONENT) {
+            console.log(`Init not implemented for component ${componentID}`);       
+        }
     }
 }
 
-Entity.prototype.loadComponent = function(componentID, blob) {    
+Entity.prototype.loadComponent = function(componentID, data) {    
     const component = this.components.get(componentID);
 
     if(component && typeof component.load === "function") {
-        component.load(blob);
+        component.load(data);
     } else {
-        console.log(`Load not implemented for component ${componentID}`);
+        if(Entity.DEBUG.LOG_COMPONENT) {
+            console.log(`Load not implemented for component ${componentID}`);   
+        }
     }
 }
 

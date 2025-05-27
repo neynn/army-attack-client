@@ -48,22 +48,9 @@ const loadEntitySprites = function(gameContext, entity) {
     }
 }
 
-SpawnSystem.createEntity = function(gameContext, config) {
+const registerOwners = function(gameContext, owners, entityID) {
     const { world } = gameContext;
-    const { entityManager, turnManager } = world;
-
-    if(!config) {
-        return null;
-    }
-    
-    const { owners, id } = config;
-    const entity = entityManager.createEntity(gameContext, config, id);
-
-    if(!entity) {
-        return null;
-    }
-    
-    const entityID = entity.getID();
+    const { turnManager } = world;
 
     switch(typeof owners) {
         case "string": {
@@ -71,17 +58,35 @@ SpawnSystem.createEntity = function(gameContext, config) {
             break;
         }
         case "object": {
-            for(let i = 0; i < owners.length; i++) {
-                const owner = owners[i];
-
-                turnManager.addEntity(owner, entityID);
+            for(const ownerID of owners) {
+                turnManager.addEntity(ownerID, entityID);
             }
             break;
         }
     }
+}
 
+SpawnSystem.createEntity = function(gameContext, config) {
+    if(!config) {
+        return null;
+    }
+
+    const { world } = gameContext;
+    const { entityManager } = world;
+    const { owners, id, data } = config;
+    const entity = entityManager.createEntity(gameContext, config, id);
+
+    if(!entity) {
+        return null;
+    }
+    
+    if(data) {
+        entity.load(data);
+    }
+
+    registerOwners(gameContext, owners, entity.getID());
     loadEntitySprites(gameContext, entity);
-
+    entity.determineSprite(gameContext);
     MapSystem.placeEntity(gameContext, entity);
     CardSystem.generateStatCard(gameContext, entity);
 

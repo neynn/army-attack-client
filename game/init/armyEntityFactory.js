@@ -47,7 +47,7 @@ const initMoveComponent = function(entityType, component, stats) {
     component.speed = moveSpeed;
 }
 
-const setupComponents = function(entity, stats, tileX, tileY, teamID, typeID, customHealth) {
+const setupComponents = function(entity, stats, tileX, tileY, teamID, customHealth) {
     const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
     const healthComponent = entity.getComponent(ArmyEntity.COMPONENT.HEALTH);
     const teamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
@@ -116,7 +116,7 @@ ArmyEntityFactory.prototype.onCreate = function(gameContext, config) {
     
     entityManager.addArchetypeComponents(entity, archetype);
 
-    setupComponents(entity, statConfig, tileX, tileY, team, type, health);
+    setupComponents(entity, statConfig, tileX, tileY, team, health);
 
     const sprite = createSprite(gameContext, entity, tileX, tileY);
 

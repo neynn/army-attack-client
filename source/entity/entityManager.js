@@ -159,14 +159,18 @@ EntityManager.prototype.getEntity = function(entityID) {
 
 EntityManager.prototype.createEntity = function(gameContext, config, externalID) {
     const entityID = externalID !== undefined ? externalID : this.nextID++;
+
+    if(this.entities.has(entityID)) {
+        return null;
+    }
+
     const entity = this.createProduct(gameContext, config);
 
-    if(!entity || this.entities.has(entityID)) {
+    if(!entity) {
         Logger.log(Logger.CODE.ENGINE_ERROR, "Factory has not returned an entity!", "EntityManager.prototype.createEntity", { "id": entityID, "config": config });
         return null;
     }
 
-    entity.load(gameContext, config);
     entity.setID(entityID);
     
     if(entity.isActive()) {

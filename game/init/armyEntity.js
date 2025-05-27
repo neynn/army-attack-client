@@ -176,26 +176,6 @@ ArmyEntity.prototype.isAttackableByTeam = function(gameContext, team) {
     return isEnemy;
 }
 
-ArmyEntity.prototype.load = function(gameContext, blob) {
-    const { data } = blob;
-
-    if(data) {
-        for(const componentID in data) {
-            if(!this.components.has(componentID)) {
-                continue;
-            }
-
-            const component = data[componentID];
-
-            if(component) {
-                this.loadComponent(componentID, component);
-            }
-        }
-    }
-
-    this.determineSprite(gameContext);
-}
-
 ArmyEntity.prototype.determineSprite = function(gameContext) {
     const reviveableComponent = this.getComponent(ArmyEntity.COMPONENT.REVIVEABLE);
 
