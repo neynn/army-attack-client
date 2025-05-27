@@ -9,6 +9,7 @@ import { Renderer } from "./renderer.js";
 import { World } from "./world.js";
 import { LanguageHandler } from "./languageHandler.js";
 import { Transform2D } from "./transform2D.js";
+import { FontHandler } from "./fontHandler.js";
 
 export const GameContext = function() {
     this.client = new Client();
@@ -18,6 +19,7 @@ export const GameContext = function() {
     this.spriteManager = new SpriteManager();
     this.uiManager = new UIManager();
     this.language = new LanguageHandler();
+    this.fonts = new FontHandler();
     this.states = new StateMachine(this);
     this.transform2D = new Transform2D();
     this.timer = new Timer();
@@ -65,7 +67,8 @@ GameContext.prototype.exit = function() {
 GameContext.prototype.loadResources = function(resources) {
     this.spriteManager.load(resources.spriteTextures, resources.sprites);
     this.tileManager.load(resources.tiles, resources.tileMeta, resources.autotilers);
-    this.uiManager.load(resources.interfaces, resources.icons, resources.fonts);
+    this.uiManager.load(resources.interfaces, resources.icons);
+    this.fonts.load(resources.fonts);
     this.client.musicPlayer.load(resources.music);
     this.client.soundPlayer.load(resources.sounds);
     this.client.socket.load(resources.network.socket);

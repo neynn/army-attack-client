@@ -1,6 +1,6 @@
 export const FactoryOwner = function() {
     this.factories = new Map();
-    this.selectedFactory = null;
+    this.currentFactory = null;
 }
 
 FactoryOwner.prototype.registerFactory = function(factoryID, factory) {
@@ -12,25 +12,25 @@ FactoryOwner.prototype.registerFactory = function(factoryID, factory) {
 }
 
 FactoryOwner.prototype.selectFactory = function(factoryID) {
-    if(!this.factories.has(factoryID)) {
+    const factory = this.factories.get(factoryID);
+
+    if(!factory) {
         return;
     }
 
-    this.selectedFactory = factoryID;
+    this.currentFactory = factory;
 }
 
 FactoryOwner.prototype.deselectFactory = function() {
-    this.selectFactory = null;
+    this.currentFactory = null;
 }
 
 FactoryOwner.prototype.createProduct = function(gameContext, config) {
-    const factory = this.factories.get(this.selectedFactory);
-
-    if(!factory) {
+    if(!this.currentFactory) {
         return null;
     }
 
-    const product = factory.create(gameContext, config);
+    const product = this.currentFactory.create(gameContext, config);
 
     return product;
 }

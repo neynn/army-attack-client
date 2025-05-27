@@ -12,7 +12,6 @@ export const ArmyMap = function(id) {
     this.flags = ArmyMap.FLAG.NONE;
     this.debris = new Map();
     this.drops = new DropHandler();
-    this.missions = {};
 }
 
 ArmyMap.FLAG = {
@@ -198,14 +197,12 @@ ArmyMap.prototype.init = function(config = {}) {
         width = 0,
         height = 0,
         flags = [],
-        music = null,
-        missions = this.missions
+        music = null
     } = config;
 
     this.width = width;
     this.height = height;
     this.music = music;
-    this.missions = missions;
 
     for(let i = 0; i < flags.length; i++) {
         const flagID = flags[i];

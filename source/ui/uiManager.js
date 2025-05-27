@@ -33,7 +33,7 @@ UIManager.ELEMENT_TYPE_MAP = {
     "SCROLLBAR": UIManager.ELEMENT_TYPE.SCROLLBAR
 };
 
-UIManager.prototype.load = function(interfaceTypes, iconTypes, fontTypes) {
+UIManager.prototype.load = function(interfaceTypes, iconTypes) {
     if(typeof interfaceTypes === "object") {
         this.interfaceTypes = interfaceTypes;
     } else {

@@ -1,40 +1,10 @@
 import { ArmyEntity } from "../init/armyEntity.js";
 import { ArmyMap } from "../init/armyMap.js";
 
-const MAP_TYPE = {
-    NORMAL: "Normal",
-    EMPTY: "Empty"
-};
+const createMap = function(id, data) {
+    const worldMap = new ArmyMap(id);
 
-const createMap = function(gameContext, mapID, mapData, mapType) {
-    const { tileManager } = gameContext;
-    const { data = {} } = mapData;
-    const containerCount = tileManager.graphics.getContainerCount();
-    const worldMap = new ArmyMap(mapID);
-
-    worldMap.init(mapData);
-
-    switch(mapType) {
-        case MAP_TYPE.NORMAL: {
-            for(const layerID in data) {
-                const layer = worldMap.createLayer(layerID);
-
-                layer.initBuffer(containerCount);
-                layer.decode(data[layerID]);
-            }
-            break;
-        }
-        case MAP_TYPE.EMPTY: {
-            for(const layerID in data) {
-                const { fill } = data[layerID];
-                const layer = worldMap.createLayer(layerID);
-
-                layer.initBuffer(containerCount);
-                layer.fill(fill);
-            }
-            break;
-        }
-    }
+    worldMap.init(data);
 
     return worldMap;
 }
@@ -70,15 +40,8 @@ MapSystem.removeEntity = function(gameContext, entity) {
 MapSystem.createMapByID = async function(gameContext, mapID) {
     const { world } = gameContext;
     const { mapManager } = world;
-    const mapData = await mapManager.fetchMapData(mapID);
+    const worldMap = await mapManager.createMapByID(gameContext, mapID, createMap);
 
-    if(!mapData) {
-        return null;
-    }
-
-    const worldMap = createMap(gameContext, mapID, mapData, MAP_TYPE.NORMAL);
-
-    mapManager.addMap(mapID, worldMap);
     mapManager.setActiveMap(mapID);
 
     return worldMap;
@@ -87,9 +50,8 @@ MapSystem.createMapByID = async function(gameContext, mapID) {
 MapSystem.createMapByData = function(gameContext, mapID, mapData) {
     const { world } = gameContext;
     const { mapManager } = world;
-    const worldMap = createMap(gameContext, mapID, mapData, MAP_TYPE.NORMAL);
+    const worldMap = mapData.createMapByData(gameContext, mapID, mapData, createMap);
 
-    mapManager.addMap(mapID, worldMap);
     mapManager.setActiveMap(mapID);
 
     return worldMap;
@@ -98,9 +60,8 @@ MapSystem.createMapByData = function(gameContext, mapID, mapData) {
 MapSystem.createEmptyMap = function(gameContext, mapID, mapData) {
     const { world } = gameContext;
     const { mapManager } = world;
-    const worldMap = createMap(gameContext, mapID, mapData, MAP_TYPE.EMPTY);
+    const worldMap = mapManager.createEmptyMap(gameContext, mapID, mapData, createMap);
 
-    mapManager.addMap(mapID, worldMap);
     mapManager.setActiveMap(mapID);
 
     return worldMap;

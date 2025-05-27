@@ -1,7 +1,7 @@
 {
     "name": "MAP_NAME_STRIKE_OASIS",
     "desc": "MAP_DESC_STRIKE_OASIS",
-    "music": "music_remastered",
+    "music": null,
     "width": 20,
     "height": 20,
     "flags": ["ALLOW_PASSING", "ALLOW_BORDER", "ALLOW_DROPS"],

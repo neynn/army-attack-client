@@ -16,11 +16,13 @@ MissionHandler.prototype.deselectGroup = function() {
 }
 
 MissionHandler.prototype.selectGroup = function(groupID) {
-    if(!this.groups.has(groupID)) {
-        return;
-    }
+    const group = this.groups.get(groupID);
 
-    this.current = this.groups.get(groupID);
+    if(group) {
+        this.current = group;
+    } else {
+        this.current = null;
+    }
 }
 
 MissionHandler.prototype.createGroup = function(groupID, missions) {

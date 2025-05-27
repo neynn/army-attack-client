@@ -1,4 +1,4 @@
-import { ResourceManager } from "./source/resourceManager.js";
+import { ResourceLoader } from "./source/resourceLoader.js";
 import { ArmyContext } from "./game/armyContext.js";
 import { makeProdFile, packerToJSONSprites, packerToJSONTiles, saveSprites2, saveSprites3 } from "./helpers.js";
 
@@ -8,8 +8,8 @@ const RESOURCE_PATH = {
 };
 
 const gameContext = new ArmyContext();
-const resourceManager = new ResourceManager();
-const resources = await resourceManager.loadResources(ResourceManager.MODE.DEVELOPER, RESOURCE_PATH.DEV, RESOURCE_PATH.PROD);
+const resourceLoader = new ResourceLoader();
+const resources = await resourceLoader.loadResources(ResourceLoader.MODE.DEVELOPER, RESOURCE_PATH.DEV, RESOURCE_PATH.PROD);
 
 //saveSprites(resources.sprites);
 gameContext.loadResources(resources);
@@ -19,5 +19,5 @@ gameContext.timer.start();
 console.log(resources, gameContext);
 
 /*["river"].forEach(name => {
-	resourceManager.promiseJSON("export/" + name + ".json").then(f => packerToJSONSprites(name, f));
+	resourceLoader.promiseJSON("export/" + name + ".json").then(f => packerToJSONSprites(name, f));
 });*/

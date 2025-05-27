@@ -50,8 +50,8 @@ World.prototype.addDebug = function() {
     if(World.DEBUG.LOG_MAP_EVENTS) {
         this.mapManager.events.on(MapManager.EVENT.MAP_ENABLE, (id, map) => console.log("MAP_ENABLE", id, map), { permanent: true });
         this.mapManager.events.on(MapManager.EVENT.MAP_DISABLE, (id, map) => console.log("MAP_DISABLE", id, map), { permanent: true });
-        this.mapManager.events.on(MapManager.EVENT.MAP_ADD, (id, map) => console.log("MAP_ADD", id, map), { permanent: true });
-        this.mapManager.events.on(MapManager.EVENT.MAP_REMOVE, (id, map) => console.log("MAP_REMOVE", id, map), { permanent: true });
+        this.mapManager.events.on(MapManager.EVENT.MAP_CREATE, (id, data, map) => console.log("MAP_CREATE", id, data, map), { permanent: true });
+        this.mapManager.events.on(MapManager.EVENT.MAP_DELETE, (id, map) => console.log("MAP_DELETE", id, map), { permanent: true });
     }
 }
 
