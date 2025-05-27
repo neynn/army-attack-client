@@ -65,6 +65,7 @@ const createActor = function(gameContext, actorID, team, type) {
             router.on("DEBUG_IDLE", () => actor.states.setNextState(gameContext, Player.STATE.IDLE));
             router.on("DEBUG_HEAL", () => actor.states.setNextState(gameContext, Player.STATE.HEAL));
             router.on("DEBUG_FIREMISSION", () => actor.states.setNextState(gameContext, Player.STATE.FIRE_MISSION, { "missionID": "OrbitalLaser" }));
+            router.on("DEBUG_SELL", () => actor.states.setNextState(gameContext, Player.STATE.SELL));
 
             createStoryModeUI(gameContext);
             

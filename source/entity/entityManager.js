@@ -105,7 +105,7 @@ EntityManager.prototype.update = function(gameContext) {
         this.activeEntities[i].update(gameContext);
     }
 
-    for(let i = 0; i < this.pendingRemovals.length; i++) {
+    for(let i = 0; i < this.pendingRemovals.length; ++i) {
         this.destroyEntity(this.pendingRemovals[i]);
     }
 

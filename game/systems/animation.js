@@ -82,6 +82,26 @@ AnimationSystem.playFire = function(gameContext, targetObject, attackers) {
     }
 }
 
+AnimationSystem.playSell = function(gameContext, entity) {
+    const { spriteManager } = gameContext;
+    const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
+    const entitySprite = spriteComponent.getSprite(gameContext);
+    const moveSprite = spriteManager.createSprite(AnimationSystem.SPRITE_TYPE.SELECT);
+    
+    entitySprite.addChild(moveSprite, SpriteComponent.SPRITE_ID.SELL);
+    moveSprite.setPosition(0, 0);
+}
+
+AnimationSystem.stopSell = function(gameContext, entity) {
+    const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
+    const entitySprite = spriteComponent.getSprite(gameContext);
+    const sellSprite = entitySprite.getChild(SpriteComponent.SPRITE_ID.SELL);
+
+    if(sellSprite) {
+        sellSprite.terminate();
+    }
+}
+
 AnimationSystem.playSelect = function(gameContext, entity) {
     const { spriteManager } = gameContext;
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
@@ -95,15 +115,12 @@ AnimationSystem.playSelect = function(gameContext, entity) {
 }
 
 AnimationSystem.stopSelect = function(gameContext, entity) {
-    const { spriteManager } = gameContext;
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const entitySprite = spriteComponent.getSprite(gameContext);
     const moveSprite = entitySprite.getChild(SpriteComponent.SPRITE_ID.MOVE);
 
     if(moveSprite) {
-        const spriteIndex = moveSprite.getIndex();
-
-        spriteManager.destroySprite(spriteIndex);
+        moveSprite.terminate();
     }
 }
 

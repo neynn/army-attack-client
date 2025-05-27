@@ -5,7 +5,8 @@
         "ESCAPE": "+Escape",
         "DEBUG_IDLE": "+1",
         "DEBUG_HEAL": "+2",
-        "DEBUG_FIREMISSION": "+3"
+        "DEBUG_FIREMISSION": "+3",
+        "DEBUG_SELL": "+4"
     },
     "editor": {
         "TOGGLE_AUTOTILER": "+a",

@@ -5,7 +5,8 @@ export const SpriteComponent = function() {
 
 SpriteComponent.SPRITE_ID = {
     MOVE: "MOVE",
-    CARD: "CARD"
+    CARD: "CARD",
+    SELL: "SELL"
 };
 
 SpriteComponent.FLIP_STATE = {
