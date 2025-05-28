@@ -2,9 +2,7 @@
     "blue_infantry": { 
         "id": "blue_infantry",
         "type": "Entity",
-        "icon": "icon_units_infantry",
-        "buy": { "type": "Resource", "id": "Money", "value": 1500 },
-        "sell": { "type": "Resource", "id": "Money", "value": 150 }
+        "icon": "icon_units_infantry"
     },
     "blue_elite_infantry": { 
         "id": "blue_elite_infantry",

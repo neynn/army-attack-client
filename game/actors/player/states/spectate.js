@@ -1,8 +1,8 @@
-import { State } from "../../../../source/state/state.js";
+import { PlayerState } from "./playerState.js";
 
 export const PlayerSpectateState = function() {}
 
-PlayerSpectateState.prototype = Object.create(State.prototype);
+PlayerSpectateState.prototype = Object.create(PlayerState.prototype);
 PlayerSpectateState.prototype.constructor = PlayerSpectateState;
 
 PlayerSpectateState.prototype.onUpdate = function(gameContext, stateMachine) {

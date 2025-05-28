@@ -29,6 +29,7 @@ GameEvent.TYPE = {
     ENTITY_DOWN: 203,
     ENTITY_KILL: 204,
     ENTITY_HEAL: 205,
+    ENTITY_SELL: 206,
 
     TILE_CAPTURE: 300,
     DEBRIS_REMOVED: 301,
@@ -64,6 +65,7 @@ GameEvent.prototype.init = function(gameContext) {
     eventBus.on(GameEvent.TYPE.ENTITY_DOWN, (event) => this.onEntityDown(gameContext, event));
     eventBus.on(GameEvent.TYPE.ENTITY_KILL, (event) => this.onEntityKill(gameContext, event));
     eventBus.on(GameEvent.TYPE.ENTITY_HEAL, (event) => this.onEntityHeal(gameContext, event));
+    eventBus.on(GameEvent.TYPE.ENTITY_SELL, (event) => this.onEntitySell(gameContext, event));
     eventBus.on(GameEvent.TYPE.TILE_CAPTURE, (event) => this.onTileCapture(gameContext, event));
     eventBus.on(GameEvent.TYPE.DEBRIS_REMOVED, (event) => this.onDebrisRemoved(gameContext, event));
     eventBus.on(GameEvent.TYPE.DEBRIS_SPAWN, (event) => this.onDebrisSpawn(gameContext, event));
@@ -211,6 +213,28 @@ GameEvent.prototype.onEntityKill = function(gameContext, event) {
             this.objective.onEntityKill(gameContext, entity, actor);
             
             eventBus.emit(GameEvent.TYPE.ENTITY_DEATH, { "entity": entity, "reason": reason });
+            break;
+        }
+    }
+}
+
+GameEvent.prototype.onEntitySell = function(gameContext, event) {
+    const { world } = gameContext;
+    const { eventBus } = world;
+    const { actorID, entity } = event;
+
+    console.log("ENTITY_SELL", event);
+    
+    switch(this.mode) {
+        case GameEvent.MODE.STORY: {
+            const sellRewards = DropSystem.getSellReward(entity);
+
+            if(sellRewards) {
+                eventBus.emit(GameEvent.TYPE.DROP, { "drops": sellRewards, "receiverID": actorID });
+            }
+
+            SpawnSystem.destroyEntity(gameContext, entity);
+
             break;
         }
     }

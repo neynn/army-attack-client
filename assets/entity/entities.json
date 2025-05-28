@@ -470,6 +470,8 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "buy": { "type": "Resource", "id": "Money", "value": 1500 },
+        "sell": { "type": "Resource", "id": "Money", "value": 150 },
         "stats": {
             "story": { "health": 5, "damage": 1, "attackRange": 1, "moveRange": 4, "traits": ["Infantry"] }, 
             "versus": { "health": 5, "damage": 1, "attackRange": 1, "moveRange": 4, "traits": ["Infantry"] }
@@ -499,6 +501,8 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "buy": { "type": "Resource", "id": "Money", "value": 1500 },
+        "sell": { "type": "Resource", "id": "Money", "value": 150 },
         "stats": {
             "story": { "health": 8, "damage": 2, "attackRange": 1, "moveRange": 4, "traits": ["Infantry"] }, 
             "versus": { "health": 8, "damage": 2, "attackRange": 1, "moveRange": 4, "traits": ["Infantry"] }

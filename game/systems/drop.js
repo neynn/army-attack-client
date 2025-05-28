@@ -106,3 +106,24 @@ DropSystem.getDebrisReward = function(gameContext, typeID) {
 
     return drops;
 }
+
+DropSystem.getSellReward = function(entity) {
+    const sellReward = entity.config.sell;
+
+    if(!sellReward) {
+        return null;
+    }
+
+    const drops = [];
+    const drop = getDrop(sellReward);
+
+    if(drop) {
+        drops.push(drop);
+    }
+
+    if(drops.length === 0) {
+        return null;
+    }
+
+    return drops;
+}

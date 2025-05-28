@@ -1,12 +1,67 @@
-import { State } from "../../../../source/state/state.js";
+import { GameEvent } from "../../../gameEvent.js";
 import { AnimationSystem } from "../../../systems/animation.js";
+import { SpawnSystem } from "../../../systems/spawn.js";
 import { Player } from "../player.js";
 import { PlayerCursor } from "../playerCursor.js";
+import { PlayerState } from "./playerState.js";
 
 export const PlayerSellState = function() {}
 
-PlayerSellState.prototype = Object.create(State.prototype);
+PlayerSellState.prototype = Object.create(PlayerState.prototype);
 PlayerSellState.prototype.constructor = PlayerSellState;
+
+PlayerSellState.prototype.onClick = function(gameContext, stateMachine) {
+    const { world } = gameContext;
+    const { entityManager } = world;
+
+    const player = stateMachine.getContext();
+    const { hover } = player;
+    const { state, currentTarget } = hover;
+
+    switch(state) {
+        case PlayerCursor.STATE.HOVER_ON_ENTITY: {
+            const hasEntity = player.hasEntity(currentTarget);
+
+            if(hasEntity) {
+                const entity = entityManager.getEntity(currentTarget);
+
+                this.openSellDialog(gameContext, player, entity);
+            }
+
+            break;
+        }
+    }
+}
+
+PlayerSellState.prototype.openSellDialog = function(gameContext, player, entity) {
+    const { world, client } = gameContext;
+    const { soundPlayer } = client;
+    const { actionQueue, eventBus } = world;
+    const isRunning = actionQueue.isRunning();
+
+    if(isRunning) {
+        return;
+    }
+
+    const sellItem = entity.config.sell;
+
+    if(!sellItem) {
+        return;
+    }
+
+    const { id, value } = sellItem;
+    const willSell = confirm(`Sell ${entity.config.id} for ${value} ${id}`);
+
+    if(!willSell) {
+        return;
+    }
+
+    soundPlayer.play("sound_item_sold");
+    eventBus.emit(GameEvent.TYPE.ENTITY_SELL, {
+        "entity": entity,
+        "actorID": player.getID()
+    });
+}
 
 PlayerSellState.prototype.onEnter = function(gameContext, stateMachine, transition) {
     const player = stateMachine.getContext();

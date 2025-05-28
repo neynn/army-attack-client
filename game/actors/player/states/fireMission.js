@@ -1,16 +1,16 @@
-import { State } from "../../../../source/state/state.js";
 import { FireMissionAction } from "../../../actions/fireMissionAction.js";
 import { ArmyCamera } from "../../../armyCamera.js";
 import { ArmyEntity } from "../../../init/armyEntity.js";
 import { AnimationSystem } from "../../../systems/animation.js";
 import { FireMissionSystem } from "../../../systems/fireMission.js";
 import { Player } from "../player.js";
+import { PlayerState } from "./playerState.js";
 
 export const PlayerFireMissionState = function() {
     this.missionID = null;
 }
 
-PlayerFireMissionState.prototype = Object.create(State.prototype);
+PlayerFireMissionState.prototype = Object.create(PlayerState.prototype);
 PlayerFireMissionState.prototype.constructor = PlayerFireMissionState;
 
 PlayerFireMissionState.prototype.onEnter = function(gameContext, stateMachine, transition) {
@@ -44,15 +44,6 @@ PlayerFireMissionState.prototype.onUpdate = function(gameContext, stateMachine) 
     const { hover } = player;
 
     hover.alignSprite(gameContext);
-}
-
-PlayerFireMissionState.prototype.onEvent = function(gameContext, stateMachine, eventID) {
-    switch(eventID) {
-        case Player.EVENT.CLICK: {
-            this.onClick(gameContext, stateMachine);
-            break;
-        }
-    }
 }
 
 PlayerFireMissionState.prototype.updateCursor = function(gameContext, player) {

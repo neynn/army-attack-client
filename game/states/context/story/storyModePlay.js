@@ -58,6 +58,14 @@ StoryModePlayState.prototype.onEnter = async function(gameContext, stateMachine)
     });
 
     SpawnSystem.createEntity(gameContext, { 
+        "type": "blue_infantry",
+        "tileX": 7,
+        "tileY": 7,
+        "team": "Allies",
+        "owners": ActorSystem.STORY_ID.PLAYER
+    });
+
+    SpawnSystem.createEntity(gameContext, { 
         "type": "red_commandobunker",
         "tileX": 6,
         "tileY": 4,

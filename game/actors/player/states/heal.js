@@ -1,12 +1,12 @@
-import { State } from "../../../../source/state/state.js";
 import { HealAction } from "../../../actions/healAction.js";
 import { HealSystem } from "../../../systems/heal.js";
 import { Player } from "../player.js";
 import { PlayerCursor } from "../playerCursor.js";
+import { PlayerState } from "./playerState.js";
 
 export const PlayerHealState = function() {}
 
-PlayerHealState.prototype = Object.create(State.prototype);
+PlayerHealState.prototype = Object.create(PlayerState.prototype);
 PlayerHealState.prototype.constructor = PlayerHealState;
 
 PlayerHealState.prototype.onEnter = function(gameContext, stateMachine) {
@@ -27,15 +27,6 @@ PlayerHealState.prototype.onUpdate = function(gameContext, stateMachine) {
 
     this.updateCursor(gameContext, player);
     hover.autoAlignSprite(gameContext);
-}
-
-PlayerHealState.prototype.onEvent = function(gameContext, stateMachine, eventID) {
-    switch(eventID) {
-        case Player.EVENT.CLICK: {
-            this.onClick(gameContext, stateMachine);
-            break;
-        }
-    }
 }
 
 PlayerHealState.prototype.onClick = function(gameContext, stateMachine) {

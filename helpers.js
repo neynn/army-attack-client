@@ -18,6 +18,53 @@ export const saveTemplateAsFile = (filename, dataObjToWrite) => {
   link.remove();
 }
 
+export const saveEntities = function(entities) {
+    const pj = new PrettyJSON(4);
+
+    pj.open();
+
+    for(const entityID in entities) {
+        const entity = entities[entityID];
+
+        pj
+        .openList(entityID)
+        .writeLine("id", entityID)
+        .writeLine("dimX", entity.dimX ?? 1)
+        .writeLine("dimY", entity.dimY ?? 1)
+        .writeLine("dimZ", entity.dimZ ?? 1)
+        .writeLine("archetype", entity.archetype ?? null);
+
+        if(entity.passability) {
+            pj.writeLine("passability", entity.passability);
+        }
+
+        pj.openList("stats");
+        pj.writeLine("story", entity.stats.story);
+        pj.writeLine("versus", entity.stats.versus);
+        pj.closeList();
+
+        pj.openList("sprites");
+
+        for(const spriteID in entity.sprites) {
+            pj.writeLine(spriteID, entity.sprites[spriteID]);
+        }
+        
+        pj.closeList();
+        pj.openList("sounds");
+
+        for(const soundID in entity.sounds) {
+            pj.writeLine(soundID, entity.sounds[soundID]);
+        }
+
+        pj.closeList();
+        pj.closeList();
+    }
+
+    pj
+    .close()
+    .download("entities");
+}
+
 const createJSONFrames = function(frames) {
     return Object.keys(frames).map(key => {
         const { x, y, w, h } = frames[key].frame;

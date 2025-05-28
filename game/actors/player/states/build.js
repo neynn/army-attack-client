@@ -1,6 +1,6 @@
-import { State } from "../../../../source/state/state.js";
+import { PlayerState } from "./playerState.js";
 
 export const PlayerBuildState = function() {}
 
-PlayerBuildState.prototype = Object.create(State.prototype);
+PlayerBuildState.prototype = Object.create(PlayerState.prototype);
 PlayerBuildState.prototype.constructor = PlayerBuildState;

@@ -52,6 +52,7 @@ export const ArmyContext = function() {
     this.fireCallTypes = {};
     this.keybinds = {};
     this.debrisTypes = {};
+    this.shopItemTypes = {};
 
     this.eventHandler = new GameEvent();
     this.modeID = ArmyContext.GAME_MODE.NONE;
@@ -117,6 +118,7 @@ ArmyContext.prototype.init = function(resources) {
     this.settings = resources.settings;
     this.editorConfig = resources.editor;
     this.keybinds = resources.keybinds;
+    this.shopItemTypes = resources.shopItems;
 
     this.transform2D.setSize(resources.settings.tileWidth, resources.settings.tileHeight);
 

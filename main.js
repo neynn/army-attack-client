@@ -1,6 +1,6 @@
 import { ResourceLoader } from "./source/resourceLoader.js";
 import { ArmyContext } from "./game/armyContext.js";
-import { makeProdFile, packerToJSONSprites, packerToJSONTiles, saveSprites2, saveSprites3 } from "./helpers.js";
+import { makeProdFile, packerToJSONSprites, packerToJSONTiles, saveEntities, saveSprites2, saveSprites3 } from "./helpers.js";
 
 const RESOURCE_PATH = {
 	DEV: "assets/assets.json",

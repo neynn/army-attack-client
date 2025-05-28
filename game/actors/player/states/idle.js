@@ -1,4 +1,3 @@
-import { State } from "../../../../source/state/state.js";
 import { AnimationSystem } from "../../../systems/animation.js";
 import { ConstructionSystem } from "../../../systems/construction.js";
 import { MoveSystem } from "../../../systems/move.js";
@@ -6,10 +5,11 @@ import { PathfinderSystem } from "../../../systems/pathfinder.js";
 import { PlayerCursor } from "../playerCursor.js";
 import { Player } from "../player.js";
 import { ClearDebrisAction } from "../../../actions/clearDebrisAction.js";
+import { PlayerState } from "./playerState.js";
 
 export const PlayerIdleState = function() {}
 
-PlayerIdleState.prototype = Object.create(State.prototype);
+PlayerIdleState.prototype = Object.create(PlayerState.prototype);
 PlayerIdleState.prototype.constructor = PlayerIdleState;
 
 PlayerIdleState.prototype.onExit = function(gameContext, stateMachine) {
@@ -34,15 +34,6 @@ PlayerIdleState.prototype.onUpdate = function(gameContext, stateMachine) {
 
     player.rangeVisualizer.update(gameContext, player);
     player.hover.autoAlignSprite(gameContext);
-}
-
-PlayerIdleState.prototype.onEvent = function(gameContext, stateMachine, eventID) {
-    switch(eventID) {
-        case Player.EVENT.CLICK: {
-            this.onClick(gameContext, stateMachine);
-            break;
-        }
-    }
 }
 
 PlayerIdleState.prototype.selectEntity = function(gameContext, player, entity) {

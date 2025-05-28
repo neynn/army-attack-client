@@ -1,5 +1,4 @@
 import { EntityManager } from "../../../../source/entity/entityManager.js";
-import { State } from "../../../../source/state/state.js";
 import { ArmyCamera } from "../../../armyCamera.js";
 import { AnimationSystem } from "../../../systems/animation.js";
 import { LookSystem } from "../../../systems/look.js";
@@ -7,12 +6,13 @@ import { ArmyEntity } from "../../../init/armyEntity.js";
 import { PlayerCursor } from "../playerCursor.js";
 import { Player } from "../player.js";
 import { MoveAction } from "../../../actions/moveAction.js";
+import { PlayerState } from "./playerState.js";
 
 export const PlayerSelectedState = function() {
     this.entityID = EntityManager.ID.INVALID;
 }
 
-PlayerSelectedState.prototype = Object.create(State.prototype);
+PlayerSelectedState.prototype = Object.create(PlayerState.prototype);
 PlayerSelectedState.prototype.constructor = PlayerSelectedState;
 
 PlayerSelectedState.prototype.onEnter = function(gameContext, stateMachine, transition) {
@@ -37,15 +37,6 @@ PlayerSelectedState.prototype.onUpdate = function(gameContext, stateMachine) {
     this.updateCursor(gameContext, player);
     player.rangeVisualizer.update(gameContext, player);
     hover.autoAlignSprite(gameContext);
-}
-
-PlayerSelectedState.prototype.onEvent = function(gameContext, stateMachine, eventID) {
-    switch(eventID) {
-        case Player.EVENT.CLICK: {
-            this.onClick(gameContext, stateMachine);
-            break;
-        }
-    }
 }
 
 PlayerSelectedState.prototype.updateEntity = function(gameContext, player) {
