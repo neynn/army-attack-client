@@ -4,8 +4,8 @@ export const Drop = function(item, inventory, sprite) {
     this.item = item; //Ref to the item that will be added. it is of type ItemType { id, type, value }
     this.inventory = inventory; //Ref to the inventory that gets the drop.
     this.sprite = sprite;
-    this.positionX = -1;
-    this.positionY = -1;
+    this.positionX = 0;
+    this.positionY = 0;
     this.width = 0;
     this.height = 0;
     this.targetX = -1;
@@ -13,7 +13,6 @@ export const Drop = function(item, inventory, sprite) {
     this.timePassed = 0; //move much time has passed
     this.maxTime = 3; //Time until collection
     this.state = Drop.STATE.JUMPING;
-    this.sprite.setPosition(this.positionX, this.positionY);
 }
 
 Drop.STATE = {
@@ -23,6 +22,12 @@ Drop.STATE = {
     COLLECTING_CURSOR: 3,
     COLLECTED: 4
 };
+
+Drop.prototype.setPosition = function(x, y) {
+    this.positionX = x;
+    this.positionY = y;
+    this.sprite.setPosition(x, y);
+}
 
 Drop.prototype.update = function(gameContext, deltaTime) {
     const { client } = gameContext;

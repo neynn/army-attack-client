@@ -1,4 +1,39 @@
 {
+    "drop_supplies": {
+        "directory": ["assets","sprites","drop"],
+        "source": "supplies.png",
+        "regions": {
+            "0": {"x":0,"y":0,"w":38,"h":49}
+        }
+    },
+    "drop_money": {
+        "directory": ["assets","sprites","drop"],
+        "source": "money.png",
+        "regions": {
+            "0": {"x":0,"y":0,"w":59,"h":42}
+        }
+    },
+    "drop_xp": {
+        "directory": ["assets","sprites","drop"],
+        "source": "xp.png",
+        "regions": {
+            "0": {"x":0,"y":0,"w":56,"h":57}
+        }
+    },
+    "drop_rebar": {
+        "directory": ["assets","sprites","drop"],
+        "source": "rebar.png",
+        "regions": {
+            "0": {"x":0,"y":0,"w":128,"h":128}
+        }
+    },
+    "drop_lumber": {
+        "directory": ["assets","sprites","drop"],
+        "source": "lumber.png",
+        "regions": {
+            "0": {"x":0,"y":0,"w":128,"h":128}
+        }
+    },
     "cursor_repair_4x4": {
         "directory": ["assets","sprites","cursor","cursor_repair"],
         "source": "cursor_repair_4x4.png",

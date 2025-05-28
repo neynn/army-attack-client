@@ -1,5 +1,6 @@
 import { Drop } from "./drop.js";
 import { Inventory } from "../../actors/player/inventory/inventory.js";
+import { getRandomNumber } from "../../../source/math/math.js";
 
 export const DropHandler = function() {
     this.drops = [];
@@ -33,13 +34,15 @@ DropHandler.prototype.getMaxDrop = function(gameContext, type, id) {
 
 DropHandler.prototype.createDrop = function(gameContext, type, id, value, inventory) {
     const { spriteManager } = gameContext;
-    const sprite = spriteManager.createSprite("red_infantry_fire");
+    const sprite = spriteManager.createSprite("drop_money");
 
     const drop = new Drop({
         "type": type,
         "id": id,
         "value": value
     }, inventory, sprite);
+
+    drop.setPosition(100 + getRandomNumber(-50, 50), 100);
 
     this.drops.push(drop);
 }
