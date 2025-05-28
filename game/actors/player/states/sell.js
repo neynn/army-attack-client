@@ -1,6 +1,5 @@
 import { GameEvent } from "../../../gameEvent.js";
 import { AnimationSystem } from "../../../systems/animation.js";
-import { SpawnSystem } from "../../../systems/spawn.js";
 import { Player } from "../player.js";
 import { PlayerCursor } from "../playerCursor.js";
 import { PlayerState } from "./playerState.js";

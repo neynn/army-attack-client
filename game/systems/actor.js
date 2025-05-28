@@ -12,6 +12,15 @@ const ACTOR_TYPE = {
     OTHER_PLAYER: "OtherPlayer"
 };
 
+/**
+ * Creates an actor.
+ * 
+ * @param {*} gameContext 
+ * @param {string} actorID 
+ * @param {string} team 
+ * @param {string} type 
+ * @returns 
+ */
 const createActor = function(gameContext, actorID, team, type) {
     const { client, renderer, world } = gameContext;
     const { turnManager, mapManager } = world;
@@ -88,6 +97,9 @@ const createActor = function(gameContext, actorID, team, type) {
     return null;
 }
 
+/**
+ * Collection of functions revolving around the actors.
+ */
 export const ActorSystem = function() {}
 
 ActorSystem.STORY_ID = {
@@ -95,6 +107,14 @@ ActorSystem.STORY_ID = {
     ENEMY: "Enemy"
 };
 
+/**
+ * Creates and actor based on the config.
+ *  
+ * @param {*} gameContext 
+ * @param {string} actorID 
+ * @param {*} config 
+ * @returns 
+ */
 ActorSystem.createActor = function(gameContext, actorID, config) {
     const { world } = gameContext;
     const { turnManager } = world;
@@ -108,10 +128,17 @@ ActorSystem.createActor = function(gameContext, actorID, config) {
     return actor;
 }
 
-ActorSystem.createStoryPlayer = function(gameContext, team) {
+/**
+ * Creates the stories player actor.
+ * 
+ * @param {*} gameContext 
+ * @param {string} team 
+ * @returns 
+ */
+ActorSystem.createStoryPlayer = function(gameContext, teamID) {
     const { world } = gameContext;
     const { turnManager } = world;
-    const actor = createActor(gameContext, ActorSystem.STORY_ID.PLAYER, team, ACTOR_TYPE.PLAYER);
+    const actor = createActor(gameContext, ActorSystem.STORY_ID.PLAYER, teamID, ACTOR_TYPE.PLAYER);
 
     if(actor) {
         turnManager.addActor(ActorSystem.STORY_ID.PLAYER, actor);
@@ -120,10 +147,17 @@ ActorSystem.createStoryPlayer = function(gameContext, team) {
     return actor;
 }
 
-ActorSystem.createStoryEnemy = function(gameContext, team) {
+/**
+ * Creates the stories enemy actor.
+ * 
+ * @param {*} gameContext 
+ * @param {string} teamID 
+ * @returns 
+ */
+ActorSystem.createStoryEnemy = function(gameContext, teamID) {
     const { world } = gameContext;
     const { turnManager } = world;
-    const actor = createActor(gameContext, ActorSystem.STORY_ID.ENEMY, team, ACTOR_TYPE.ENEMY);
+    const actor = createActor(gameContext, ActorSystem.STORY_ID.ENEMY, teamID, ACTOR_TYPE.ENEMY);
 
     if(actor) {
         turnManager.addActor(ActorSystem.STORY_ID.ENEMY, actor);

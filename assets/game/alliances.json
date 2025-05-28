@@ -1,5 +1,5 @@
 {
-    "Enemy": { "isWalkable": false, "isEntityPassingAllowed": false, "isEnemy": true },
-    "Ally": { "isWalkable": true, "isEntityPassingAllowed": true, "isEnemy": false },
-    "Neutral": { "isWalkable": true, "isEntityPassingAllowed": true, "isEnemy": false }
+    "Enemy": { "isWalkable": false, "isPassable": false, "isEnemy": true },
+    "Ally": { "isWalkable": true, "isPassable": true, "isEnemy": false },
+    "Neutral": { "isWalkable": true, "isPassable": true, "isEnemy": false }
 }

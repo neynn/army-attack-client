@@ -3,8 +3,12 @@ import { ArmyEntity } from "../init/armyEntity.js";
 import { CardSystem } from "./card.js";
 import { MapSystem } from "./map.js";
 
-export const SpawnSystem = function() {}
-
+/**
+ * Preloads the sounds an entity uses.
+ * 
+ * @param {*} gameContext 
+ * @param {*} entity 
+ */
 const loadEntitySounds = function(gameContext, entity) {
     const { client } = gameContext;
     const { soundPlayer } = client;
@@ -21,6 +25,12 @@ const loadEntitySounds = function(gameContext, entity) {
     }
 }
 
+/**
+ * Removes a reference from each sprite the entity uses.
+ * 
+ * @param {*} gameContext 
+ * @param {*} entity 
+ */
 const unloadEntitySprites = function(gameContext, entity) {
     const { spriteManager } = gameContext;
     const { graphics } = spriteManager;
@@ -34,6 +44,12 @@ const unloadEntitySprites = function(gameContext, entity) {
     }
 }
 
+/**
+ * Preloads the sprites an entity uses.
+ * 
+ * @param {*} gameContext 
+ * @param {*} entity 
+ */
 const loadEntitySprites = function(gameContext, entity) {
     const { spriteManager } = gameContext;
     const { sprites } = entity.config;
@@ -48,6 +64,13 @@ const loadEntitySprites = function(gameContext, entity) {
     }
 }
 
+/**
+ * Adds the id of the entity to the owners.
+ * 
+ * @param {*} gameContext 
+ * @param {string[] | string} owners 
+ * @param {int} entityID 
+ */
 const registerOwners = function(gameContext, owners, entityID) {
     const { world } = gameContext;
     const { turnManager } = world;
@@ -66,6 +89,18 @@ const registerOwners = function(gameContext, owners, entityID) {
     }
 }
 
+/**
+ * Collection of functions revolving around the spawning and despawning of entities.
+ */
+export const SpawnSystem = function() {}
+
+/**
+ * Creates an entity based on the specified config.
+ * 
+ * @param {*} gameContext 
+ * @param {SpawnConfig} config 
+ * @returns
+ */
 SpawnSystem.createEntity = function(gameContext, config) {
     if(!config) {
         return null;
@@ -93,6 +128,12 @@ SpawnSystem.createEntity = function(gameContext, config) {
     return entity;
 }
 
+/**
+ * Destroys an entity, the sprite and removes it from the current map.
+ * 
+ * @param {*} gameContext 
+ * @param {*} entity 
+ */
 SpawnSystem.destroyEntity = function(gameContext, entity) {
     const { world } = gameContext;
     const { entityManager } = world;

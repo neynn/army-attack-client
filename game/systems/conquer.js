@@ -4,8 +4,21 @@ import { ArmyMap } from "../init/armyMap.js";
 import { AllianceSystem } from "./alliance.js";
 import { BorderSystem } from "./border.js";
 
+/**
+ * Collection of functions revolving around the capture of tiles.
+ */
 export const ConquerSystem = function() {}
 
+/**
+ * Checks if the tile is conquerable.
+ * 
+ * @param {*} gameContext 
+ * @param {*} worldMap 
+ * @param {int} tileX 
+ * @param {int} tileY 
+ * @param {string} captureTeamID 
+ * @returns 
+ */
 const isTileConquerable = function(gameContext, worldMap, tileX, tileY, captureTeamID) {
     const typeID = worldMap.getTile(ArmyMap.LAYER.TYPE, tileX, tileY);
     const tileType = gameContext.tileTypes[typeID];
@@ -20,6 +33,15 @@ const isTileConquerable = function(gameContext, worldMap, tileX, tileY, captureT
     return isEnemy; 
 }
 
+/**
+ * Changes the specified tiles to the specified team.
+ * Updates the tiles apperance.
+ * 
+ * @param {*} gameContext 
+ * @param {string} teamID 
+ * @param {int[]} tiles [x, y, x, y, ...]
+ * @returns 
+ */
 ConquerSystem.conquer = function(gameContext, teamID, tiles) {
     const { world } = gameContext;
     const { mapManager } = world;
@@ -29,8 +51,9 @@ ConquerSystem.conquer = function(gameContext, teamID, tiles) {
         return;
     }
 
-    for(let i = 0; i < tiles.length; i++) {
-        const { x, y } = tiles[i];
+    for(let i = 0; i < tiles.length; i += 2) {
+        const x = tiles[i];
+        const y = tiles[i + 1];
 
         worldMap.placeTile(gameContext.getTeamID(teamID), ArmyMap.LAYER.TEAM, x, y);
         worldMap.updateShoreTiles(gameContext, x, y, 1);
@@ -39,6 +62,17 @@ ConquerSystem.conquer = function(gameContext, teamID, tiles) {
     }
 }
 
+/**
+ * Tries creating a list of tiles to be conquered based on entity size.
+ * Emits the TILE_CAPTURED event.
+ * 
+ * @param {*} gameContext 
+ * @param {*} entity 
+ * @param {int} tileX 
+ * @param {int} tileY 
+ * @param {string} actorID 
+ * @returns 
+ */
 ConquerSystem.tryConquering = function(gameContext, entity, tileX, tileY, actorID) {
     const { world } = gameContext;
     const { mapManager, eventBus } = world;
@@ -59,19 +93,17 @@ ConquerSystem.tryConquering = function(gameContext, entity, tileX, tileY, actorI
             const isConquerable = isTileConquerable(gameContext, worldMap, j, i, teamID);
 
             if(isConquerable) {
-                tiles.push({
-                    "x": j,
-                    "y": i
-                });
+                tiles.push(j, i);
             }
         }
     }
 
     if(tiles.length !== 0) {
         eventBus.emit(GameEvent.TYPE.TILE_CAPTURE, {
+            "actorID": actorID,
             "teamID": teamID,
+            "count": tiles.length / 2,
             "tiles": tiles,
-            "actor": actorID
         });
     }
 }

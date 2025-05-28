@@ -1,7 +1,11 @@
 import { ArmyEntity } from "../init/armyEntity.js";
 
-export const MoveSystem = function() {}
-
+/**
+ * Updates the sprite of an entity to inherit the position of the entity.
+ * 
+ * @param {*} gameContext 
+ * @param {*} entity 
+ */
 const updateSpritePosition = function(gameContext, entity) {
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
@@ -10,12 +14,30 @@ const updateSpritePosition = function(gameContext, entity) {
     spriteComponent.setPosition(gameContext, positionX, positionY);
 }
 
+/**
+ * Collection of functions revolving around the movement of entities.
+ */
+export const MoveSystem = function() {}
+
+/**
+ * Checks if an entity can be moved.
+ * 
+ * @param {*} entity 
+ * @returns {boolean}
+ */
 MoveSystem.isMoveable = function(entity) {
     const isMoveable = entity.isAlive() && entity.hasComponent(ArmyEntity.COMPONENT.MOVE);
 
     return isMoveable;
 }
 
+/**
+ * Lets the entity follow its current movement path.
+ * 
+ * @param {*} gameContext 
+ * @param {*} entity 
+ * @returns 
+ */
 MoveSystem.updatePath = function(gameContext, entity) {
     const moveComponent = entity.getComponent(ArmyEntity.COMPONENT.MOVE);
 
@@ -45,6 +67,14 @@ MoveSystem.updatePath = function(gameContext, entity) {
     updateSpritePosition(gameContext, entity);
 }
 
+/**
+ * Ends the moving action and puts the entity on the specified position.
+ * 
+ * @param {*} gameContext 
+ * @param {*} entity 
+ * @param {int} targetX 
+ * @param {int} targetY 
+ */
 MoveSystem.endMove = function(gameContext, entity, targetX, targetY) {
     const { transform2D } = gameContext;
     const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);

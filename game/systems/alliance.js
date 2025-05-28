@@ -1,13 +1,30 @@
 import { Logger } from "../../source/logger.js";
 
+/**
+ * Collection of functions revolving around the alliances.
+ */
 export const AllianceSystem = function() {}
 
+AllianceSystem.DEFAULT_ALLIANCE = {
+    "isWalkable": false,
+    "isPassable": false,
+    "isEnemy": false
+};
+
+/**
+ * Returns the alliance type between the two teams.
+ * 
+ * @param {*} gameContext 
+ * @param {string} actorTeamID 
+ * @param {string} reactorTeamID 
+ * @returns {AllianceType}
+ */
 const getAlliance = function(gameContext, actorTeamID, reactorTeamID) {
     const actorTeam = gameContext.teamTypes[actorTeamID];
 
     if(!actorTeam) {
         Logger.log(Logger.CODE.WARN, "TeamType does not exist", "getAlliance", { actorTeamID });
-        return null;
+        return AllianceSystem.DEFAULT_ALLIANCE;
     }
 
     const allianceID = actorTeam.alliances[reactorTeamID];
@@ -15,38 +32,44 @@ const getAlliance = function(gameContext, actorTeamID, reactorTeamID) {
 
     if(!alliance) {
         Logger.log(Logger.CODE.WARN, "AllianceType does not exist", "getAlliance", { actorTeamID, allianceID });
-        return null;
+        return AllianceSystem.DEFAULT_ALLIANCE;
     }
 
     return alliance;
 }
 
-AllianceSystem.isBypassable = function(gameContext, actorTeamID, reactorTeamID) {
-    const alliance = getAlliance(gameContext, actorTeamID, reactorTeamID);
-
-    if(!alliance) {
-        return false;
-    }
-
-    return alliance.isEntityPassingAllowed;
+/**
+ * Returns if teamA can bypass teamB.
+ * 
+ * @param {*} gameContext 
+ * @param {string} actorTeamID 
+ * @param {string} reactorTeamID 
+ * @returns {boolean}
+ */
+AllianceSystem.isPassable = function(gameContext, actorTeamID, reactorTeamID) {
+    return getAlliance(gameContext, actorTeamID, reactorTeamID).isPassable;
 }
 
+/**
+ * Returns if teamA can walk on the tiles of teamB.
+ * 
+ * @param {*} gameContext 
+ * @param {string} actorTeamID 
+ * @param {string} reactorTeamID 
+ * @returns {boolean}
+ */
 AllianceSystem.isWalkable = function(gameContext, actorTeamID, reactorTeamID) {
-    const alliance = getAlliance(gameContext, actorTeamID, reactorTeamID);
-
-    if(!alliance) {
-        return false;
-    }
-
-    return alliance.isWalkable;
+    return getAlliance(gameContext, actorTeamID, reactorTeamID).isWalkable;
 }
 
+/**
+ * Returns if teamA is an enemy of teamB.
+ * 
+ * @param {*} gameContext 
+ * @param {string} actorTeamID 
+ * @param {string} reactorTeamID 
+ * @returns {boolean}
+ */
 AllianceSystem.isEnemy = function(gameContext, actorTeamID, reactorTeamID) {
-    const alliance = getAlliance(gameContext, actorTeamID, reactorTeamID);
-
-    if(!alliance) {
-        return false;
-    }
-
-    return alliance.isEnemy;
+    return getAlliance(gameContext, actorTeamID, reactorTeamID).isEnemy;
 }

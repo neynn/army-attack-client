@@ -1,5 +1,8 @@
 import { Inventory } from "../actors/player/inventory/inventory.js";
 
+/**
+ * Collection of functions revolving around the inventory.
+ */
 export const InventorySystem = function() {}
 
 InventorySystem.takeResource = function(actor, id, value) {

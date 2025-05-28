@@ -1,7 +1,21 @@
 import { ArmyCamera } from "../armyCamera.js";
 
+/**
+ * Collection of functions revolving around the borders.
+ */
 export const BorderSystem = function() {}
 
+/**
+ * 
+ * Updates the border for all actors that have an "ArmyCamera".
+ * 
+ * @param {*} gameContext 
+ * @param {*} worldMap 
+ * @param {int} tileX 
+ * @param {int} tileY 
+ * @param {int} range 
+ * @returns 
+ */
 BorderSystem.updateBorder = function(gameContext, worldMap, tileX, tileY, range) {
     const { world } = gameContext;
     const { turnManager } = world;

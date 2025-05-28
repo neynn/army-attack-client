@@ -16,7 +16,7 @@ CounterAttackAction.prototype.constructor = CounterAttackAction;
 CounterAttackAction.prototype.onStart = function(gameContext, request) {
     const { attackers, target } = request;
 
-    AttackSystem.updateTarget(gameContext, target);
+    AttackSystem.startAttack(gameContext, target);
     AnimationSystem.playFire(gameContext, target, attackers);
 }
 

@@ -25,7 +25,7 @@ MoveAction.prototype.onStart = function(gameContext, request) {
 
     moveComponent.setPath(path);
     entity.playSound(gameContext, ArmyEntity.SOUND_TYPE.MOVE);
-    LookSystem.lookAtTile(entity, targetX, targetY);
+    LookSystem.lookAtTarget(entity, targetX, targetY);
     entity.updateSpriteDirectonal(gameContext, ArmyEntity.SPRITE_TYPE.MOVE, ArmyEntity.SPRITE_TYPE.MOVE_UP);
     MapSystem.removeEntity(gameContext, entity);
 }
@@ -68,7 +68,7 @@ MoveAction.prototype.getValidated = function(gameContext, request) {
     const nodeList = PathfinderSystem.generateNodeList(gameContext, entity);
     const path = PathfinderSystem.generateMovePath(nodeList, targetX, targetY);
 
-    if(path.length === 0) {
+    if(!path) {
         return null;
     }
 

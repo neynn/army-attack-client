@@ -4,14 +4,14 @@ import { ArmyEntity } from "../init/armyEntity.js";
 import { AllianceSystem } from "./alliance.js";
 import { DecaySystem } from "./decay.js";
 
-export const AttackSystem = function() {}
-
-AttackSystem.OUTCOME_STATE = {
-    IDLE: 0,
-    DOWN: 1,
-    DEAD: 2
-};
-
+/**
+ * Uses an AABB collision to check if an attacker and a target overlap in the specified range.
+ * 
+ * @param {*} attacker 
+ * @param {*} target 
+ * @param {int} range 
+ * @returns {boolean}
+ */
 const hasEnoughRange = function(attacker, target, range) {
     const position = attacker.getComponent(ArmyEntity.COMPONENT.POSITION);
     const targetPosition = target.getComponent(ArmyEntity.COMPONENT.POSITION);
@@ -30,6 +30,14 @@ const hasEnoughRange = function(attacker, target, range) {
     return collision;
 }
 
+/**
+ * Gets the unique entities in a range.
+ * 
+ * @param {*} gameContext 
+ * @param {*} entity 
+ * @param {int} range 
+ * @returns {Entity[]}
+ */
 const getSurroundingEntities = function(gameContext, entity, range) {
     const { world } = gameContext;
     const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
@@ -42,6 +50,15 @@ const getSurroundingEntities = function(gameContext, entity, range) {
     return entities;
 }
 
+/**
+ * Filters the entities around an entity in the maximum specified range.
+ * Fails if the entity is dead.
+ * 
+ * @param {*} gameContext 
+ * @param {*} entity 
+ * @param {*} onCheck 
+ * @returns 
+ */
 const filterAliveEntitiesInMaxRange = function(gameContext, entity, onCheck) {
     if(!entity.isAlive()) {
         return [];
@@ -61,6 +78,23 @@ const filterAliveEntitiesInMaxRange = function(gameContext, entity, onCheck) {
     return validEntities;
 }
 
+/**
+ * Collection of functions revolving around the animations.
+ */
+export const AttackSystem = function() {}
+
+AttackSystem.OUTCOME_STATE = {
+    IDLE: 0,
+    DOWN: 1,
+    DEAD: 2
+};
+
+/**
+ * Checks if an entity can counter an attack.
+ * 
+ * @param {*} entity 
+ * @returns {boolean}
+ */
 AttackSystem.isAttackCounterable = function(entity) {
     if(!entity.isAlive()) {
         return false;
@@ -71,6 +105,14 @@ AttackSystem.isAttackCounterable = function(entity) {
     return attackComponent && attackComponent.isAttackCounterable();
 }
 
+/**
+ * Takes the damage and bulldozer result to return the state of the target.
+ * 
+ * @param {*} target 
+ * @param {int} damage 
+ * @param {bool} isBulldozed 
+ * @returns {int}
+ */
 AttackSystem.getState = function(target, damage, isBulldozed) {
     const healthComponent = target.getComponent(ArmyEntity.COMPONENT.HEALTH);
     const isFatal = healthComponent.isFatal(damage);
@@ -88,7 +130,13 @@ AttackSystem.getState = function(target, damage, isBulldozed) {
     return AttackSystem.OUTCOME_STATE.IDLE;
 }
 
-AttackSystem.updateTarget = function(gameContext, targetObject) {
+/**
+ * Starts the attack on a target.
+ * 
+ * @param {*} gameContext 
+ * @param {TargetObject} targetObject 
+ */
+AttackSystem.startAttack = function(gameContext, targetObject) {
     const { world } = gameContext;
     const { entityManager } = world;
     const { id, damage, state } = targetObject;
@@ -111,6 +159,13 @@ AttackSystem.updateTarget = function(gameContext, targetObject) {
     }
 }
 
+/**
+ * Ends the attack on a target and emits events.
+ * 
+ * @param {*} gameContext 
+ * @param {*} target 
+ * @param {string} actorID 
+ */
 AttackSystem.endAttack = function(gameContext, target, actorID) {
     const { world } = gameContext;
     const { entityManager, eventBus } = world;
@@ -159,6 +214,14 @@ AttackSystem.endAttack = function(gameContext, target, actorID) {
     }
 }
 
+/**
+ * Picks a target out of a list.
+ * TODO: add proper ai to filter targets.
+ * 
+ * @param {*} attacker 
+ * @param {*} targets 
+ * @returns 
+ */
 AttackSystem.pickAttackCounterTarget = function(attacker, targets) {
     let index = 0;
     let weakest = targets[0].getHealth();
@@ -176,6 +239,14 @@ AttackSystem.pickAttackCounterTarget = function(attacker, targets) {
     return targets[index];
 }
 
+/**
+ * Returns a list of potential targets the entity can counter.
+ * Fails if the entity cannot counter.
+ * 
+ * @param {*} gameContext 
+ * @param {*} attacker 
+ * @returns 
+ */
 AttackSystem.getAttackCounterTargets = function(gameContext, attacker) {
     const attackComponent = attacker.getComponent(ArmyEntity.COMPONENT.ATTACK);
 
@@ -204,6 +275,14 @@ AttackSystem.getAttackCounterTargets = function(gameContext, attacker) {
     return targets;
 }
 
+/**
+ * Returns a list of attackers that counter the movement of an entity.
+ * Fails if no attackers are present.
+ * 
+ * @param {*} gameContext 
+ * @param {*} target 
+ * @returns 
+ */
 AttackSystem.getMoveCounterAttackers = function(gameContext, target) {
     const targetTeamComponent = target.getComponent(ArmyEntity.COMPONENT.TEAM);
     const attackers = filterAliveEntitiesInMaxRange(gameContext, target, (attacker) => {
@@ -232,6 +311,14 @@ AttackSystem.getMoveCounterAttackers = function(gameContext, target) {
     return attackers;
 }
 
+/**
+ * Returns a list of entites that belong to the actor and can attack the target.
+ * 
+ * @param {*} gameContext 
+ * @param {*} target 
+ * @param {string} actorID 
+ * @returns 
+ */
 AttackSystem.getActiveAttackers = function(gameContext, target, actorID) {
     const { world } = gameContext;
     const { turnManager } = world;
@@ -274,6 +361,14 @@ AttackSystem.getActiveAttackers = function(gameContext, target, actorID) {
     return attackers;
 }
 
+/**
+ * Creates a simple POD target object.
+ * 
+ * @param {int} targetID 
+ * @param {int} damage 
+ * @param {int} state 
+ * @returns {TargetObject}
+ */
 AttackSystem.createTargetObject = function(targetID, damage, state) {
     return {
         "id": targetID,
@@ -282,6 +377,13 @@ AttackSystem.createTargetObject = function(targetID, damage, state) {
     }
 }
 
+/**
+ * Returns a target object for the specified target.
+ * 
+ * @param {*} target 
+ * @param {*} attackers 
+ * @returns {TargetObject}
+ */
 AttackSystem.getAttackTarget = function(target, attackers) {
     const armorComponent = target.getComponent(ArmyEntity.COMPONENT.ARMOR);
 

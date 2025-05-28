@@ -3,6 +3,9 @@ import { SpriteComponent } from "../components/sprite.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { LookSystem } from "./look.js";
 
+/**
+ * Collection of functions revolving around the animations.
+ */
 export const AnimationSystem = function() {}
 
 AnimationSystem.FIRE_OFFSET = {
@@ -20,6 +23,12 @@ AnimationSystem.SPRITE_TYPE = {
     DELAY: "icon_delay"
 };
 
+/**
+ * Plays the idle animation of a list of entities.
+ * 
+ * @param {*} gameContext 
+ * @param {[]} entities 
+ */
 AnimationSystem.playIdle = function(gameContext, entities) {
     const { world } = gameContext;
     const { entityManager } = world;
@@ -33,6 +42,12 @@ AnimationSystem.playIdle = function(gameContext, entities) {
     }
 }
 
+/**
+ * Plays the death animation for an entity.
+ * 
+ * @param {*} gameContext 
+ * @param {*} entity 
+ */
 AnimationSystem.playDeath = function(gameContext, entity) {
     const { spriteManager, transform2D } = gameContext;
     const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
@@ -48,6 +63,13 @@ AnimationSystem.playDeath = function(gameContext, entity) {
     entity.playSound(gameContext, ArmyEntity.SOUND_TYPE.DEATH);
 }
 
+/**
+ * Plays the fire animation for attackers. The weapon animation is added as a child to the target.
+ * 
+ * @param {*} gameContext 
+ * @param {TargetObject} targetObject 
+ * @param {int[]} attackers 
+ */
 AnimationSystem.playFire = function(gameContext, targetObject, attackers) {
     const { world, spriteManager, transform2D } = gameContext;
     const { entityManager } = world;
@@ -82,6 +104,12 @@ AnimationSystem.playFire = function(gameContext, targetObject, attackers) {
     }
 }
 
+/**
+ * Plays the sell animation of an entity.
+ * 
+ * @param {*} gameContext 
+ * @param {*} entity 
+ */
 AnimationSystem.playSell = function(gameContext, entity) {
     const { spriteManager } = gameContext;
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
@@ -92,6 +120,12 @@ AnimationSystem.playSell = function(gameContext, entity) {
     moveSprite.setPosition(0, 0);
 }
 
+/**
+ * Stops the sell animation of an entity.
+ * 
+ * @param {*} gameContext 
+ * @param {*} entity 
+ */
 AnimationSystem.stopSell = function(gameContext, entity) {
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const entitySprite = spriteComponent.getSprite(gameContext);
@@ -102,6 +136,12 @@ AnimationSystem.stopSell = function(gameContext, entity) {
     }
 }
 
+/**
+ * Plays the select animation of an entity.
+ * 
+ * @param {*} gameContext 
+ * @param {*} entity 
+ */
 AnimationSystem.playSelect = function(gameContext, entity) {
     const { spriteManager } = gameContext;
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
@@ -114,6 +154,12 @@ AnimationSystem.playSelect = function(gameContext, entity) {
     entity.playSound(gameContext, ArmyEntity.SOUND_TYPE.SELECT);
 }
 
+/**
+ * Stops the select animation of an entity.
+ * 
+ * @param {*} gameContext 
+ * @param {*} entity 
+ */
 AnimationSystem.stopSelect = function(gameContext, entity) {
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const entitySprite = spriteComponent.getSprite(gameContext);
@@ -124,6 +170,13 @@ AnimationSystem.stopSelect = function(gameContext, entity) {
     }
 }
 
+/**
+ * Plays the cleaning animation at a position.
+ * 
+ * @param {*} gameContext 
+ * @param {int} tileX 
+ * @param {int} tileY 
+ */
 AnimationSystem.playCleaning = function(gameContext, tileX, tileY) {
     const { spriteManager, transform2D, client } = gameContext;
     const { soundPlayer } = client;
@@ -136,6 +189,12 @@ AnimationSystem.playCleaning = function(gameContext, tileX, tileY) {
     soundPlayer.playSound(AnimationSystem.SOUND_TYPE.BUTTON);
 }
 
+/**
+ * Plays the heal animation of an entity.
+ * 
+ * @param {*} gameContext 
+ * @param {*} entity 
+ */
 AnimationSystem.playHeal = function(gameContext, entity) {
     const { spriteManager, transform2D, client } = gameContext;
     const { soundPlayer } = client;
@@ -151,6 +210,12 @@ AnimationSystem.playHeal = function(gameContext, entity) {
     soundPlayer.playSound(AnimationSystem.SOUND_TYPE.HEAL);
 }
 
+/**
+ * Plays the construction animation of an entity.
+ * 
+ * @param {*} gameContext 
+ * @param {*} entity 
+ */
 AnimationSystem.playConstruction = function(gameContext, entity) {
     const { spriteManager, transform2D } = gameContext;
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
@@ -165,6 +230,12 @@ AnimationSystem.playConstruction = function(gameContext, entity) {
     entity.playSound(gameContext, ArmyEntity.SOUND_TYPE.BUILD);
 }
 
+/**
+ * Sets the current frame of the construction sprite of an entity.
+ * 
+ * @param {*} gameContext 
+ * @param {*} entity 
+ */
 AnimationSystem.setConstructionFrame = function(gameContext, entity) {
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const constructionComponent = entity.getComponent(ArmyEntity.COMPONENT.CONSTRUCTION);

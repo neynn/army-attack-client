@@ -3,8 +3,18 @@ import { ArmyEntity } from "../init/armyEntity.js";
 import { AttackSystem } from "./attack.js";
 import { DebrisSystem } from "./debris.js";
 
+/**
+ * Collection of functions revolving around the fire missions.
+ */
 export const FireMissionSystem = function() {}
 
+/**
+ * Returns the config of a fire mission.
+ * 
+ * @param {*} gameContext 
+ * @param {string} fireMissionID 
+ * @returns {FireMissionConfig}
+ */
 FireMissionSystem.getType = function(gameContext, fireMissionID) {
     const fireMission = gameContext.fireCallTypes[fireMissionID];
 
@@ -15,6 +25,12 @@ FireMissionSystem.getType = function(gameContext, fireMissionID) {
     return fireMission;
 } 
 
+/**
+ * Checks if the entity is targetable by any fire mission.
+ * 
+ * @param {*} entity 
+ * @returns {boolean}
+ */
 FireMissionSystem.isTargetable = function(entity) {
     if(entity.hasComponent(ArmyEntity.COMPONENT.TOWN)) {
         return false;
@@ -23,6 +39,15 @@ FireMissionSystem.isTargetable = function(entity) {
     return true;
 }
 
+/**
+ * Returns a list of all potential targets hit by the fire mission.
+ * 
+ * @param {*} gameContext 
+ * @param {FireMissionConfig} fireMission 
+ * @param {int} tileX 
+ * @param {*} tileY 
+ * @returns {{id:int, damage:int, state:int}[]}
+ */
 FireMissionSystem.getTargets = function(gameContext, fireMission, tileX, tileY) {
     const { world } = gameContext;
     const { mapManager, entityManager } = world;
@@ -88,6 +113,15 @@ FireMissionSystem.getTargets = function(gameContext, fireMission, tileX, tileY) 
     return targetObjects;
 }
 
+/**
+ * Checks if the fire mission is blocked by the clouds or an entity.
+ * 
+ * @param {*} gameContext 
+ * @param {FireMissionConfig} fireMission 
+ * @param {int} tileX 
+ * @param {int} tileY 
+ * @returns 
+ */
 FireMissionSystem.isBlocked = function(gameContext, fireMission, tileX, tileY) {
     const { world } = gameContext;
     const { mapManager } = world;
@@ -121,18 +155,38 @@ FireMissionSystem.isBlocked = function(gameContext, fireMission, tileX, tileY) {
     return fullyClouded;
 }
 
+/**
+ * Starts a fire mission.
+ *  
+ * @param {*} gameContext 
+ * @param {string} missionID 
+ * @param {int} tileX 
+ * @param {int} tileY 
+ * @param {TargetObject[]} targetObjects 
+ */
 FireMissionSystem.startFireMission = function(gameContext, missionID, tileX, tileY, targetObjects) {
     const { client } = gameContext;
     const { soundPlayer } = client;
     const fireMission = FireMissionSystem.getType(gameContext, missionID);
     
     for(let i = 0; i < targetObjects.length; i++) {
-        AttackSystem.updateTarget(gameContext, targetObjects[i]);
+        AttackSystem.startAttack(gameContext, targetObjects[i]);
     }
 
     soundPlayer.play(fireMission.sounds.fire);
 }
 
+/**
+ * Ends a fire mission. Emits an event for each target based on its state.
+ * Also emite the DEBRIS_SPAWN event.
+ * 
+ * @param {*} gameContext 
+ * @param {string} missionID 
+ * @param {string} actorID 
+ * @param {int} tileX 
+ * @param {int} tileY 
+ * @param {TargetObject[]} targetObjects 
+ */
 FireMissionSystem.endFireMission = function(gameContext, missionID, actorID, tileX, tileY, targetObjects) {
     const { world } = gameContext;
     const { entityManager, eventBus } = world;

@@ -224,7 +224,7 @@ GameEvent.prototype.onEntitySell = function(gameContext, event) {
     const { actorID, entity } = event;
 
     console.log("ENTITY_SELL", event);
-    
+
     switch(this.mode) {
         case GameEvent.MODE.STORY: {
             const sellRewards = DropSystem.getSellReward(entity);
@@ -257,7 +257,7 @@ GameEvent.prototype.onEntityDown = function(gameContext, event) {
 }
 
 GameEvent.prototype.onTileCapture = function(gameContext, event) {
-    const { actor, teamID, tiles } = event;
+    const { actorID, teamID, tiles, count } = event;
 
     console.log("TILE_CAPTURED", event);
 
@@ -265,7 +265,7 @@ GameEvent.prototype.onTileCapture = function(gameContext, event) {
         case GameEvent.MODE.STORY: {
             ConquerSystem.conquer(gameContext, teamID, tiles);
 
-            this.objective.onTileCapture(gameContext, tiles.length, actor);
+            this.objective.onTileCapture(gameContext, count, actorID);
             break;
         }
     }
