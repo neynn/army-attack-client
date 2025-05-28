@@ -1,6 +1,6 @@
 import { State } from "../../../../source/state/state.js";
 import { ArmyContext } from "../../../armyContext.js";
-import { DebugHelper } from "../../../debug.js";
+import { DebugSystem } from "../../../systems/debug.js";
 import { ActorSystem } from "../../../systems/actor.js";
 import { MapSystem } from "../../../systems/map.js";
 import { SpawnSystem } from "../../../systems/spawn.js";
@@ -145,7 +145,7 @@ StoryModePlayState.prototype.onEnter = async function(gameContext, stateMachine)
         "owners": ActorSystem.STORY_ID.PLAYER
     });
 
-    //DebugHelper.spawnFullEntities(gameContext);
+    //DebugSystem.spawnFullEntities(gameContext);
 
     console.timeEnd();
 
