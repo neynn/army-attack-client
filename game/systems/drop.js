@@ -9,8 +9,8 @@ export const DropSystem = function() {}
  * Returns a drop item based on chance.
  * If no chance is specified, the item always gets returned.
  * 
- * @param {{type:string, id:string, value:int, chance: int}} reward 
- * @returns 
+ * @param {RewardType} reward 
+ * @returns {DropType}
  */
 const getDrop = function(reward) {
     const { type, id, value, chance } = reward;
@@ -40,7 +40,7 @@ const getDrop = function(reward) {
  * Gets a list of rewards from hitting an enemy.
  * 
  * @param {*} entity 
- * @returns {{id: string, type: string, value: int}[]}
+ * @returns {DropType[] | null}
  */
 DropSystem.getHitReward = function(entity) {
     const hitRewards = entity.config.hitRewards;
@@ -71,7 +71,7 @@ DropSystem.getHitReward = function(entity) {
  * Gets a list of rewards from killing an enemy.
  * 
  * @param {*} entity 
- * @returns {{id: string, type: string, value: int}[]}
+ * @returns {DropType[] | null}
  */
 DropSystem.getKillReward = function(entity) {
     const killRewards = entity.config.killRewards;
@@ -102,7 +102,7 @@ DropSystem.getKillReward = function(entity) {
  * Gets a list of rewards from cleaning debris.
  * 
  * @param {*} entity 
- * @returns {{id: string, type: string, value: int}[]}
+ * @returns {DropType[] | null}
  */
 DropSystem.getDebrisReward = function(gameContext, typeID) {
     const debrisType = gameContext.debrisTypes[typeID];
@@ -139,7 +139,7 @@ DropSystem.getDebrisReward = function(gameContext, typeID) {
  * Gets a list of rewards from selling an entity.
  * 
  * @param {*} entity 
- * @returns {{id: string, type: string, value: int}[]}
+ * @returns {DropType[] | null}
  */
 DropSystem.getSellReward = function(entity) {
     const sellReward = entity.config.sell;

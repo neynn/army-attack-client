@@ -1,15 +1,10 @@
 import { Logger } from "../../source/logger.js";
+import { DEFAULT_ALLIANCE } from "../defaultTypes.js";
 
 /**
  * Collection of functions revolving around the alliances.
  */
 export const AllianceSystem = function() {}
-
-AllianceSystem.DEFAULT_ALLIANCE = {
-    "isWalkable": false,
-    "isPassable": false,
-    "isEnemy": false
-};
 
 /**
  * Returns the alliance type between the two teams.
@@ -24,7 +19,7 @@ const getAlliance = function(gameContext, actorTeamID, reactorTeamID) {
 
     if(!actorTeam) {
         Logger.log(Logger.CODE.WARN, "TeamType does not exist", "getAlliance", { actorTeamID });
-        return AllianceSystem.DEFAULT_ALLIANCE;
+        return DEFAULT_ALLIANCE;
     }
 
     const allianceID = actorTeam.alliances[reactorTeamID];
@@ -32,7 +27,7 @@ const getAlliance = function(gameContext, actorTeamID, reactorTeamID) {
 
     if(!alliance) {
         Logger.log(Logger.CODE.WARN, "AllianceType does not exist", "getAlliance", { actorTeamID, allianceID });
-        return AllianceSystem.DEFAULT_ALLIANCE;
+        return DEFAULT_ALLIANCE;
     }
 
     return alliance;

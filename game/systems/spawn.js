@@ -98,7 +98,7 @@ export const SpawnSystem = function() {}
  * Creates an entity based on the specified config.
  * 
  * @param {*} gameContext 
- * @param {SpawnConfig} config 
+ * @param {SpawnConfigType} config 
  * @returns
  */
 SpawnSystem.createEntity = function(gameContext, config) {

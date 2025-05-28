@@ -1,4 +1,5 @@
 import { isRectangleRectangleIntersect } from "../../source/math/math.js";
+import { DefaultTypes } from "../defaultTypes.js";
 import { GameEvent } from "../gameEvent.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { AllianceSystem } from "./alliance.js";
@@ -362,22 +363,6 @@ AttackSystem.getActiveAttackers = function(gameContext, target, actorID) {
 }
 
 /**
- * Creates a simple POD target object.
- * 
- * @param {int} targetID 
- * @param {int} damage 
- * @param {int} state 
- * @returns {TargetObject}
- */
-AttackSystem.createTargetObject = function(targetID, damage, state) {
-    return {
-        "id": targetID,
-        "damage": damage,
-        "state": state
-    }
-}
-
-/**
  * Returns a target object for the specified target.
  * 
  * @param {*} target 
@@ -409,7 +394,7 @@ AttackSystem.getAttackTarget = function(target, attackers) {
 
     const targetID = target.getID();
     const targetState = AttackSystem.getState(target, totalDamage, isBulldozed);
-    const targetObject = AttackSystem.createTargetObject(targetID, totalDamage, targetState);
+    const targetObject = DefaultTypes.createTargetObject(targetID, totalDamage, targetState);
 
     return targetObject;
 }

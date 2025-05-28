@@ -24,10 +24,12 @@ PathfinderSystem.NODE_STATE = {
  * @param {int} state 
  */
 const addNode = function(nodeList, node, state) {
-    nodeList.push({
+    const fullNode = {
         "node": node,
         "state": state
-    });
+    };
+
+    nodeList.push(fullNode);
 }
 
 /**

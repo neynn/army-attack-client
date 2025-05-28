@@ -1,3 +1,4 @@
+import { DefaultTypes } from "../defaultTypes.js";
 import { GameEvent } from "../gameEvent.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { AttackSystem } from "./attack.js";
@@ -13,7 +14,7 @@ export const FireMissionSystem = function() {}
  * 
  * @param {*} gameContext 
  * @param {string} fireMissionID 
- * @returns {FireMissionConfig}
+ * @returns {FireMissionType}
  */
 FireMissionSystem.getType = function(gameContext, fireMissionID) {
     const fireMission = gameContext.fireCallTypes[fireMissionID];
@@ -43,10 +44,10 @@ FireMissionSystem.isTargetable = function(entity) {
  * Returns a list of all potential targets hit by the fire mission.
  * 
  * @param {*} gameContext 
- * @param {FireMissionConfig} fireMission 
+ * @param {FireMissionType} fireMission 
  * @param {int} tileX 
- * @param {*} tileY 
- * @returns {{id:int, damage:int, state:int}[]}
+ * @param {int} tileY 
+ * @returns {TargetObject[]}
  */
 FireMissionSystem.getTargets = function(gameContext, fireMission, tileX, tileY) {
     const { world } = gameContext;
@@ -60,7 +61,6 @@ FireMissionSystem.getTargets = function(gameContext, fireMission, tileX, tileY) 
     const { damage = 0, dimX = 0, dimY = 0 } = fireMission;
     const endX = tileX + dimX;
     const endY = tileY + dimY;
-
     const entityList = new Map();
 
     for(let i = tileY; i < endY; i++) {
@@ -103,8 +103,9 @@ FireMissionSystem.getTargets = function(gameContext, fireMission, tileX, tileY) 
         const { entity, damage } = entry;
 
         if(damage !== 0) {
+            //TODO: Add isBulldozing to FireCallType
             const targetState = AttackSystem.getState(entity, damage, false);
-            const targetObject = AttackSystem.createTargetObject(entityID, damage, targetState);
+            const targetObject = DefaultTypes.createTargetObject(entityID, damage, targetState);
     
             targetObjects.push(targetObject);
         }
@@ -117,7 +118,7 @@ FireMissionSystem.getTargets = function(gameContext, fireMission, tileX, tileY) 
  * Checks if the fire mission is blocked by the clouds or an entity.
  * 
  * @param {*} gameContext 
- * @param {FireMissionConfig} fireMission 
+ * @param {FireMissionType} fireMission 
  * @param {int} tileX 
  * @param {int} tileY 
  * @returns 

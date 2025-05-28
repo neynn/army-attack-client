@@ -1,4 +1,5 @@
 import { ConstructionAction } from "../actions/constructionAction.js";
+import { DefaultTypes } from "../defaultTypes.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { SpawnSystem } from "./spawn.js";
 
@@ -12,7 +13,7 @@ export const ConstructionSystem = function() {}
  * 
  * @param {*} gameContext 
  * @param {*} entity 
- * @returns 
+ * @returns {SpawnConfigType | null}
  */
 const getResult = function(gameContext, entity) {
     const { world } = gameContext;
@@ -28,14 +29,8 @@ const getResult = function(gameContext, entity) {
     const entityID = entity.getID();
     const owners = turnManager.getOwnersOf(entityID);
     const type = entity.config.constructionResult;
-
-    return {
-        "team": teamID,
-        "owners": owners,
-        "type": type,
-        "tileX": tileX,
-        "tileY": tileY
-    }
+    
+    return DefaultTypes.createSpawnConfig(type, teamID, owners, tileX, tileY);
 }
 
 /**
@@ -45,7 +40,7 @@ const getResult = function(gameContext, entity) {
  * @param {*} gameContext 
  * @param {*} entity 
  * @param {string} actorID 
- * @returns 
+ * @returns {ConstructionRequest | null}
  */
 ConstructionSystem.onInteract = function(gameContext, entity, actorID) {
     const constructionComponent = entity.getComponent(ArmyEntity.COMPONENT.CONSTRUCTION);
