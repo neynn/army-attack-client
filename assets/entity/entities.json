@@ -34,6 +34,8 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "buy": { "type": "Resource", "id": "Money", "value": 10000 },
+        "sell": { "type": "Resource", "id": "Money", "value": 1000 },
         "stats": {
             "story": { "health": 4, "damage": 1, "attackRange": 2, "moveRange": 3, "traits": ["Artillery"] }, 
             "versus": { "health": 4, "damage": 1, "attackRange": 2, "moveRange": 3, "traits": ["Artillery"] }
@@ -63,6 +65,8 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "buy": { "type": "Resource", "id": "Money", "value": 10000 },
+        "sell": { "type": "Resource", "id": "Money", "value": 1000 },
         "stats": {
             "story": { "health": 6, "damage": 2, "attackRange": 3, "moveRange": 3, "traits": ["Artillery"] }, 
             "versus": { "health": 6, "damage": 2, "attackRange": 3, "moveRange": 3, "traits": ["Artillery"] }
@@ -92,6 +96,8 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "buy": { "type": "Resource", "id": "Money", "value": 30000 },
+        "sell": { "type": "Resource", "id": "Money", "value": 3000 },
         "stats": {
             "story": { "health": 8, "damage": 2, "attackRange": 2, "moveRange": 4, "traits": ["Artillery", "Reviveable"] }, 
             "versus": { "health": 8, "damage": 2, "attackRange": 2, "moveRange": 4, "traits": ["Artillery"] }
@@ -121,6 +127,8 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "buy": { "type": "Resource", "id": "Money", "value": 30000 },
+        "sell": { "type": "Resource", "id": "Money", "value": 3000 },
         "stats": {
             "story": { "health": 10, "damage": 3, "attackRange": 3, "moveRange": 4, "traits": ["Artillery"] }, 
             "versus": { "health": 10, "damage": 3, "attackRange": 3, "moveRange": 4, "traits": ["Artillery"] }
@@ -150,6 +158,8 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "buy": { "type": "Resource", "id": "Money", "value": 20000 },
+        "sell": { "type": "Resource", "id": "Money", "value": 2000 },
         "stats": {
             "story": { "health": 15, "damage": 3, "attackRange": 1, "moveRange": 6, "traits": ["Armor"] }, 
             "versus": { "health": 15, "damage": 3, "attackRange": 1, "moveRange": 5, "traits": ["Armor"] }
@@ -179,6 +189,8 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "buy": { "type": "Resource", "id": "Money", "value": 20000 },
+        "sell": { "type": "Resource", "id": "Money", "value": 2000 },
         "stats": {
             "story": { "health": 20, "damage": 4, "attackRange": 1, "moveRange": 5, "traits": ["Armor"] }, 
             "versus": { "health": 20, "damage": 4, "attackRange": 1, "moveRange": 5, "traits": ["Armor"] }
@@ -208,6 +220,8 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "buy": { "type": "Resource", "id": "Money", "value": 22000 },
+        "sell": { "type": "Resource", "id": "Money", "value": 2200 },
         "healCost": 50,
         "stats": {
             "story": { "health": 10, "damage": 3, "attackRange": 1, "moveRange": 5, "traits": ["Infantry", "Stealth", "Reviveable"] }, 
@@ -238,6 +252,8 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "buy": { "type": "Resource", "id": "Money", "value": 22000 },
+        "sell": { "type": "Resource", "id": "Money", "value": 2200 },
         "stats": {
             "story": { "health": 15, "damage": 4, "attackRange": 1, "moveRange": 5, "traits": ["Infantry"] }, 
             "versus": { "health": 15, "damage": 4, "attackRange": 1, "moveRange": 5, "traits": ["Infantry"] }
@@ -267,6 +283,8 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "buy": { "type": "Resource", "id": "Gold", "value": 200 },
+        "sell": { "type": "Resource", "id": "Money", "value": 20000 },
         "stats": {
             "story": { "health": 8, "damage": 3, "attackRange": 3, "moveRange": 2, "traits": ["Artillery", "Elite"] }, 
             "versus": { "health": 8, "damage": 3, "attackRange": 3, "moveRange": 2, "traits": ["Artillery"] }
@@ -296,6 +314,8 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "buy": { "type": "Resource", "id": "Gold", "value": 200 },
+        "sell": { "type": "Resource", "id": "Money", "value": 20000 },
         "stats": {
             "story": { "health": 10, "damage": 4, "attackRange": 4, "moveRange": 2, "traits": ["Artillery", "Elite"] }, 
             "versus": { "health": 10, "damage": 4, "attackRange": 4, "moveRange": 2, "traits": ["Artillery"] }
@@ -325,6 +345,8 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "buy": { "type": "Resource", "id": "Gold", "value": 90 },
+        "sell": { "type": "Resource", "id": "Money", "value": 9000 },
         "stats": {
             "story": { "health": 20, "damage": 3, "attackRange": 1, "moveRange": 4, "traits": ["Armor", "Elite"] }, 
             "versus": { "health": 20, "damage": 3, "attackRange": 1, "moveRange": 4, "traits": ["Armor"] }
@@ -354,6 +376,8 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "buy": { "type": "Resource", "id": "Gold", "value": 90 },
+        "sell": { "type": "Resource", "id": "Money", "value": 9000 },
         "stats": {
             "story": { "health": 25, "damage": 4, "attackRange": 1, "moveRange": 4, "traits": ["Armor", "Elite"] }, 
             "versus": { "health": 25, "damage": 4, "attackRange": 1, "moveRange": 4, "traits": ["Armor"] }
@@ -383,6 +407,8 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "buy": { "type": "Resource", "id": "Gold", "value": 500 },
+        "sell": { "type": "Resource", "id": "Money", "value": 50000 },
         "stats": {
             "story": { "health": 30, "damage": 10, "attackRange": 1, "moveRange": 2, "traits": ["Infantry", "Elite"] }, 
             "versus": { "health": 30, "damage": 10, "attackRange": 1, "moveRange": 2, "traits": ["Infantry"] }
@@ -412,6 +438,8 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "buy": { "type": "Resource", "id": "Gold", "value": 30 },
+        "sell": { "type": "Resource", "id": "Money", "value": 3000 },
         "stats": {
             "story": { "health": 5, "damage": 2, "attackRange": 1, "moveRange": 5, "traits": ["Infantry", "Elite"] }, 
             "versus": { "health": 5, "damage": 2, "attackRange": 1, "moveRange": 5, "traits": ["Infantry"] }
@@ -441,6 +469,8 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1, 
         "passability": ["Land"],
+        "buy": { "type": "Resource", "id": "Gold", "value": 30 },
+        "sell": { "type": "Resource", "id": "Money", "value": 3000 },
         "stats": {
             "story": { "health": 8, "damage": 3, "attackRange": 1, "moveRange": 5, "traits": ["Infantry", "Elite"] }, 
             "versus": { "health": 8, "damage": 3, "attackRange": 1, "moveRange": 5, "traits": ["Infantry"] }
@@ -588,6 +618,8 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "buy": { "type": "Resource", "id": "Money", "value": 5000 },
+        "sell": { "type": "Resource", "id": "Money", "value": 500 },
         "stats": {
             "story": { "health": 10, "damage": 2, "attackRange": 1, "moveRange": 10, "traits": ["Armor"] }, 
             "versus": { "health": 10, "damage": 2, "attackRange": 1, "moveRange": 10, "traits": ["Armor"] }
@@ -617,6 +649,8 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "buy": { "type": "Resource", "id": "Money", "value": 5000 },
+        "sell": { "type": "Resource", "id": "Money", "value": 500 },
         "stats": {
             "story": { "health": 15, "damage": 3, "attackRange": 1, "moveRange": 10, "traits": ["Armor"] }, 
             "versus": { "health": 15, "damage": 3, "attackRange": 1, "moveRange": 10, "traits": ["Armor"] }

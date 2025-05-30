@@ -58,7 +58,7 @@ FireMissionSystem.getTargets = function(gameContext, fireMission, tileX, tileY) 
         return [];
     }
 
-    const { damage = 0, dimX = 0, dimY = 0 } = fireMission;
+    const { damage, dimX, dimY, isBulldozing } = fireMission;
     const endX = tileX + dimX;
     const endY = tileY + dimY;
     const entityList = new Map();
@@ -103,8 +103,7 @@ FireMissionSystem.getTargets = function(gameContext, fireMission, tileX, tileY) 
         const { entity, damage } = entry;
 
         if(damage !== 0) {
-            //TODO: Add isBulldozing to FireCallType
-            const targetState = AttackSystem.getState(entity, damage, false);
+            const targetState = AttackSystem.getState(entity, damage, isBulldozing);
             const targetObject = DefaultTypes.createTargetObject(entityID, damage, targetState);
     
             targetObjects.push(targetObject);
@@ -133,7 +132,7 @@ FireMissionSystem.isBlocked = function(gameContext, fireMission, tileX, tileY) {
     }
 
     let fullyClouded = true;
-    const { dimX = 0, dimY = 0 } = fireMission;
+    const { dimX, dimY } = fireMission;
     const endX = tileX + dimX;
     const endY = tileY + dimY;
 
