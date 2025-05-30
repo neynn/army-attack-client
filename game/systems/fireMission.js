@@ -121,7 +121,7 @@ FireMissionSystem.getTargets = function(gameContext, fireMission, tileX, tileY) 
  * @param {FireMissionType} fireMission 
  * @param {int} tileX 
  * @param {int} tileY 
- * @returns 
+ * @returns {boolean}
  */
 FireMissionSystem.isBlocked = function(gameContext, fireMission, tileX, tileY) {
     const { world } = gameContext;

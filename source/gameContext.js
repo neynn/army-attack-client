@@ -8,7 +8,7 @@ import { TileManager } from "./tile/tileManager.js";
 import { Renderer } from "./renderer.js";
 import { World } from "./world.js";
 import { LanguageHandler } from "./languageHandler.js";
-import { Transform2D } from "./transform2D.js";
+import { Transform2D } from "./math/transform2D.js";
 import { FontHandler } from "./fontHandler.js";
 
 export const GameContext = function() {

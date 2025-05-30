@@ -1,6 +1,9 @@
 import { PathHandler } from "./resources/pathHandler.js";
 
-export const ResourceLoader = function() {}
+export const ResourceLoader = function(devPath, prodPath) {
+    this.devPath = devPath;
+    this.prodPath = prodPath;
+}
 
 ResourceLoader.MODE = {
     DEVELOPER: 0,
@@ -29,15 +32,15 @@ ResourceLoader.prototype.loadJSONList = async function(fileList) {
     return files;
 }
 
-ResourceLoader.prototype.loadResources = async function(modeID, devPath, prodPath) {
+ResourceLoader.prototype.loadResources = async function(modeID) {
     switch(modeID) {
         case ResourceLoader.MODE.DEVELOPER: {
-            const files = await this.promiseJSON(devPath);
+            const files = await this.promiseJSON(this.devPath);
             const resources = await this.loadJSONList(files);
             return resources;
         }
         case ResourceLoader.MODE.PRODUCTION: {
-            const resources = await this.promiseJSON(prodPath);
+            const resources = await this.promiseJSON(this.prodPath);
             return resources;
         }
         default: {
