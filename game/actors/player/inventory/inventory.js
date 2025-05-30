@@ -5,6 +5,7 @@ export const Inventory = function() {
     this.resources = new Map();
 }
 
+Inventory.RESOURCE_MAX_COUNT = 999999999;
 Inventory.COUNTER_TO_ENERGY_RATIO = 100;
 
 Inventory.ID = {
@@ -61,116 +62,86 @@ Inventory.prototype.load = function(blob) {
     }
 }
 
-Inventory.prototype.has = function(type, id, value) {
-    let hasItems = false;
-    
+Inventory.prototype.getItem = function(type, id) {
+    let item = null;
+
     switch(type) {
         case Inventory.TYPE.ITEM: {
-            const item = this.items.get(id);
-
-            if(item) {
-                hasItems = item.has(value);
-            }
-
+            item = this.items.get(id);
             break;
         }
         case Inventory.TYPE.RESOURCE: {
-            const item = this.resources.get(id);
-
-            if(item) {
-                hasItems = item.has(value);
-            }
-
+            item = this.resources.get(id);
             break;
         }
         default: {
-            console.warn(`RewardType ${type} is unknown!`);
+            console.warn(`ItemType ${type} is unknown!`);
             break;
         }
     }
 
-    return hasItems;
+    if(!item) {
+        return null;
+    }
+
+    return item;
 }
 
 Inventory.prototype.init = function(gameContext) {
     const { itemTypes, resourceTypes } = gameContext;
 
     for(const itemID in itemTypes) {
-        const { maxStack = 0, maxDrop = 1 } = itemTypes[itemID];
-        const item = new Item();
+        const { maxStack, maxDrop } = itemTypes[itemID];
+        const item = new Item(maxDrop, maxStack);
 
-        item.setMaxDrop(maxDrop);
-        item.setMaxCount(maxStack);
         item.setCount(0);
 
         this.items.set(itemID, item);
     }
 
     for(const resourceID in resourceTypes) {
-        const { maxDrop = 1 } = resourceTypes[resourceID];
-        const item = new Item();
+        const { maxDrop } = resourceTypes[resourceID];
+        const item = new Item(maxDrop, Inventory.RESOURCE_MAX_COUNT);
 
-        item.setMaxDrop(maxDrop);
-        item.setMaxCount(999999);
         item.setCount(1000);
 
         this.resources.set(resourceID, item);
     }
 }
 
+Inventory.prototype.getMaxDrop = function(type, id) {
+    const itemType = this.getItem(type, id);
+
+    if(!itemType) {
+        return 0;
+    }
+
+    return itemType.maxDrop;
+}
+
+Inventory.prototype.has = function(type, id, value) {
+    const itemType = this.getItem(type, id);
+
+    if(!itemType) {
+        return false;
+    }
+
+    return itemType.has(value);
+}
+
 Inventory.prototype.remove = function(type, id, value) {
-    switch(type) {
-        case Inventory.TYPE.ITEM: {
-            const item = this.items.get(id);
+    const itemType = this.getItem(type, id);
 
-            if(item) {
-                item.remove(value);
-            }
-
-            break;
-        }
-        case Inventory.TYPE.RESOURCE: {
-            const item = this.resources.get(id);
-
-            if(item) {
-                item.remove(value);
-            }
-
-            console.log("Taken", value, id);
-            break;
-        }
-        default: {
-            console.warn(`RewardType ${type} is unknown!`);
-            break;
-        }
+    if(itemType) {
+        itemType.remove(value);
     }
 }
 
 Inventory.prototype.add = function(type, id, value) {
-    switch(type) {
-        case Inventory.TYPE.ITEM: {
-            const item = this.items.get(id);
+    const itemType = this.getItem(type, id);
 
-            if(item) {
-                item.add(value);
-            }
-
-            break;
-        }
-        case Inventory.TYPE.RESOURCE: {
-            const item = this.resources.get(id);
-
-            if(item) {
-                item.add(value);
-            }
-
-            break;
-        }
-        default: {
-            console.warn(`RewardType ${type} is unknown!`);
-            break;
-        }
+    if(itemType) {
+        itemType.add(value);
+        console.log("ADD", type, id, value);
     }
-
-    console.log("ADD", type, id, value)
 }

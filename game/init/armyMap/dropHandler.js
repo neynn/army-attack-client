@@ -6,32 +6,6 @@ export const DropHandler = function() {
     this.drops = [];
 }
 
-DropHandler.prototype.getMaxDrop = function(gameContext, type, id) {
-    switch(type) {
-        case Inventory.TYPE.ITEM: {
-            const item = gameContext.itemTypes[id];
-
-            if(!item || !item.maxDrop) {
-                return 0;
-            }
-
-            return item.maxDrop;
-        }
-        case Inventory.TYPE.RESOURCE: {
-            const resource = gameContext.resourceTypes[id];
-
-            if(!resource || !resource.maxDrop) {
-                return 0;
-            }
-
-            return resource.maxDrop;
-        }
-        default: {
-            return 0;
-        }
-    }
-}
-
 DropHandler.prototype.createDrop = function(gameContext, type, id, value, inventory) {
     const { spriteManager } = gameContext;
     const sprite = spriteManager.createSprite("drop_money");
@@ -50,7 +24,7 @@ DropHandler.prototype.createDrop = function(gameContext, type, id, value, invent
 DropHandler.prototype.createDrops = function(gameContext, drops, inventory) {
     for(let i = 0; i < drops.length; i++) {
         const { type, id, value } = drops[i];
-        const maxDrop = this.getMaxDrop(gameContext, type, id);
+        const maxDrop = inventory.getMaxDrop(type, id);
 
         if(maxDrop === 0) {
             inventory.add(type, id, value);
@@ -69,7 +43,7 @@ DropHandler.prototype.createDrops = function(gameContext, drops, inventory) {
         }
     }
 
-    const energyCounter = inventory.resources.get(Inventory.ID.ENERGY_COUNTER);
+    const energyCounter = inventory.getItem(Inventory.TYPE.RESOURCE, Inventory.ID.ENERGY_COUNTER);
 
     while(energyCounter.has(Inventory.COUNTER_TO_ENERGY_RATIO)) {
         this.createDrop(gameContext, Inventory.TYPE.RESOURCE, Inventory.ID.ENERGY, 1, inventory);
