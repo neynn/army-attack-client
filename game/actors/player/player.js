@@ -16,6 +16,7 @@ import { PlayerHealState } from "./states/heal.js";
 import { AttackAction } from "../../actions/attackAction.js";
 import { MissionHandler } from "./mission/missionHandler.js";
 import { PlayerSellState } from "./states/sell.js";
+import { PlayerDebugState } from "./states/debug.js";
 
 export const Player = function(id) {
     Actor.call(this, id);
@@ -37,6 +38,7 @@ export const Player = function(id) {
     this.states.addState(Player.STATE.FIRE_MISSION, new PlayerFireMissionState());
     this.states.addState(Player.STATE.BUILD, new PlayerBuildState());
     this.states.addState(Player.STATE.HEAL, new PlayerHealState());
+    this.states.addState(Player.STATE.DEBUG, new PlayerDebugState());
 }
 
 Player.COMMAND = {
@@ -57,7 +59,8 @@ Player.STATE = {
     FIRE_MISSION: "FIRE_MISSION",
     BUILD: "BUILD",
     HEAL: "HEAL",
-    SELL: "SELL"
+    SELL: "SELL",
+    DEBUG: "DEBUG"
 };
 
 Player.SPRITE_TYPE = {

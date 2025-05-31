@@ -75,7 +75,8 @@ const createActor = function(gameContext, actorID, team, type) {
             router.on("DEBUG_HEAL", () => actor.states.setNextState(gameContext, Player.STATE.HEAL));
             router.on("DEBUG_FIREMISSION", () => actor.states.setNextState(gameContext, Player.STATE.FIRE_MISSION, { "missionID": "OrbitalLaser" }));
             router.on("DEBUG_SELL", () => actor.states.setNextState(gameContext, Player.STATE.SELL));
-            
+            router.on("DEBUG_DEBUG", () => actor.states.setNextState(gameContext, Player.STATE.DEBUG));
+
             return actor;
         }
         case ACTOR_TYPE.ENEMY: {
