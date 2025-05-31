@@ -8,10 +8,10 @@ import { ArmyMap } from "../init/armyMap.js";
  * @param {{}} data 
  * @returns {ArmyMap}
  */
-const createMap = function(id, data) {
+const createMap = function(gameContext, id, data) {
     const worldMap = new ArmyMap(id);
 
-    worldMap.init(data);
+    worldMap.init(gameContext, data);
 
     return worldMap;
 }
@@ -87,7 +87,7 @@ MapSystem.createMapByID = async function(gameContext, mapID) {
 MapSystem.createMapByData = function(gameContext, mapID, mapData) {
     const { world } = gameContext;
     const { mapManager } = world;
-    const worldMap = mapData.createMapByData(gameContext, mapID, mapData, createMap);
+    const worldMap = mapManager.createMapByData(gameContext, mapID, mapData, createMap);
 
     mapManager.setActiveMap(mapID);
 

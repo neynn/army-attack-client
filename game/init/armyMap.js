@@ -3,6 +3,7 @@ import { WorldMap } from "../../source/map/worldMap.js";
 import { AllianceSystem } from "../systems/alliance.js";
 import { BorderSystem } from "../systems/border.js";
 import { DropHandler } from "./armyMap/dropHandler.js";
+import { Shop } from "./armyMap/shop.js";
 
 export const ArmyMap = function(id) {
     WorldMap.call(this, id);
@@ -12,6 +13,7 @@ export const ArmyMap = function(id) {
     this.flags = ArmyMap.FLAG.NONE;
     this.debris = new Map();
     this.drops = new DropHandler();
+    this.shop = new Shop();
 }
 
 ArmyMap.FLAG = {
@@ -192,7 +194,7 @@ ArmyMap.prototype.saveFlags = function() {
     return flags;
 }
 
-ArmyMap.prototype.init = function(config = {}) {
+ArmyMap.prototype.init = function(gameContext, config = {}) {
     const {
         width = 0,
         height = 0,

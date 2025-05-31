@@ -5,7 +5,6 @@ export const Inventory = function() {
     this.resources = new Map();
 }
 
-Inventory.RESOURCE_MAX_COUNT = 999999999;
 Inventory.COUNTER_TO_ENERGY_RATIO = 100;
 
 Inventory.ID = {
@@ -100,8 +99,8 @@ Inventory.prototype.init = function(gameContext) {
     }
 
     for(const resourceID in resourceTypes) {
-        const { maxDrop } = resourceTypes[resourceID];
-        const item = new Item(maxDrop, Inventory.RESOURCE_MAX_COUNT);
+        const { maxStack, maxDrop } = resourceTypes[resourceID];
+        const item = new Item(maxDrop, maxStack);
 
         item.setCount(1000);
 

@@ -40,7 +40,7 @@ MapManager.prototype.createMapByID = async function(gameContext, mapID, onMapCre
     }
 
     const { data } = mapData;
-    const worldMap = onMapCreate(mapID, mapData);
+    const worldMap = onMapCreate(gameContext, mapID, mapData);
 
     if(data) {
         this.loadLayers(gameContext, worldMap, data, MapManager.MAP_TYPE.NORMAL);
@@ -58,7 +58,7 @@ MapManager.prototype.createMapByData = function(gameContext, mapID, mapData, onM
     }
 
     const { data } = mapData;
-    const worldMap = onMapCreate(mapID, mapData);
+    const worldMap = onMapCreate(gameContext, mapID, mapData);
 
     if(data) {
         this.loadLayers(gameContext, worldMap, data, MapManager.MAP_TYPE.NORMAL);
@@ -76,7 +76,7 @@ MapManager.prototype.createEmptyMap = function(gameContext, mapID, mapData, onMa
     }
 
     const { data } = mapData;
-    const worldMap = onMapCreate(mapID, mapData);
+    const worldMap = onMapCreate(gameContext, mapID, mapData);
 
     if(data) {
         this.loadLayers(gameContext, worldMap, data, MapManager.MAP_TYPE.EMPTY);
