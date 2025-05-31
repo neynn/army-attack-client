@@ -114,7 +114,8 @@ AnimationSystem.playSell = function(gameContext, entity) {
     const { spriteManager } = gameContext;
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const entitySprite = spriteComponent.getSprite(gameContext);
-    const moveSprite = spriteManager.createSprite(AnimationSystem.SPRITE_TYPE.SELECT);
+    const spriteType = `cursor_move_${entity.config.dimX}x${entity.config.dimY}`;
+    const moveSprite = spriteManager.createSprite(spriteType);
     
     entitySprite.addChild(moveSprite, SpriteComponent.SPRITE_ID.SELL);
     moveSprite.setPosition(0, 0);

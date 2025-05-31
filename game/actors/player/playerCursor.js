@@ -3,8 +3,7 @@ import { SpriteManager } from "../../../source/sprite/spriteManager.js";
 import { PathfinderSystem } from "../../systems/pathfinder.js";
 import { ArmyEntity } from "../../init/armyEntity.js";
 
-export const PlayerCursor = function(camera) {
-    this.camera = camera;
+export const PlayerCursor = function() {
     this.tileX = -1;
     this.tileY = -1;
     this.spriteIndex = -1;
@@ -13,6 +12,7 @@ export const PlayerCursor = function(camera) {
     this.currentTarget = EntityManager.ID.INVALID;
     this.lastTarget = EntityManager.ID.INVALID;
     this.targetChanged = false;
+    this.tileChanged = false;
 }
 
 PlayerCursor.STATE = {
@@ -22,7 +22,7 @@ PlayerCursor.STATE = {
     HOVER_ON_DEBRIS: 3
 };
 
-PlayerCursor.prototype.updateState = function(gameContext, tileX, tileY) {
+PlayerCursor.prototype.updateState = function(gameContext) {
     const onEntity = this.currentTarget !== EntityManager.ID.INVALID;
 
     if(onEntity) {
@@ -43,7 +43,7 @@ PlayerCursor.prototype.updateState = function(gameContext, tileX, tileY) {
     const worldMap = mapManager.getActiveMap();
 
     if(worldMap) {
-        const isDebris = worldMap.hasDebris(tileX, tileY);
+        const isDebris = worldMap.hasDebris(this.tileX, this.tileY);
 
         if(isDebris) {
             this.state = PlayerCursor.STATE.HOVER_ON_DEBRIS;
@@ -103,6 +103,7 @@ PlayerCursor.prototype.update = function(gameContext) {
     const mouseEntity = world.getTileEntity(x, y);
     const previous = this.currentTarget;
 
+    this.tileChanged = this.tileX !== x || this.tileY !== y;
     this.tileX = x;
     this.tileY = y;
 
@@ -120,7 +121,7 @@ PlayerCursor.prototype.update = function(gameContext) {
         this.lastTarget = previous;
     }
 
-    this.updateState(gameContext, x, y);
+    this.updateState(gameContext);
 }
 
 PlayerCursor.prototype.autoAlignSprite = function(gameContext) {

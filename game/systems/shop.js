@@ -3,10 +3,10 @@ export const ShopSystem = function() {}
 /**
  * Gets the shop type for the current map.
  * 
- * @param {*} gameEvent 
+ * @param {*} gameContext 
  */
-ShopSystem.getShopType = function(gameEvent) {
-    const { world } = gameEvent;
+ShopSystem.getShopType = function(gameContext) {
+    const { world } = gameContext;
     const { mapManager } = world;
     const worldMap = mapManager.getActiveMap();
 

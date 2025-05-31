@@ -24,7 +24,7 @@ export const Player = function(id) {
     this.inventory = new Inventory();
     this.camera = new ArmyCamera();
     this.inputQueue = new Queue(10);
-    this.hover = new PlayerCursor(this.camera);
+    this.hover = new PlayerCursor();
     this.attackVisualizer = new AttackVisualizer(this.camera);
     this.rangeVisualizer = new RangeVisualizer(this.camera);
     this.missions = new MissionHandler();
@@ -45,7 +45,9 @@ Player.COMMAND = {
 };
 
 Player.EVENT = {
-    CLICK: 0
+    CLICK: 0,
+    TILE_CHANGE: 1,
+    TARGET_CHANGE: 2
 };
 
 Player.STATE = {
@@ -105,7 +107,7 @@ Player.prototype.queueAttack = function(entityID) {
 
 Player.prototype.onClick = function(gameContext) {    
     this.hover.update(gameContext);
-    this.states.eventEnter(gameContext, Player.EVENT.CLICK);
+    this.states.eventEnter(gameContext, Player.EVENT.CLICK, null);
 }
 
 Player.prototype.onMakeChoice = function(gameContext) {
@@ -135,5 +137,14 @@ Player.prototype.onTurnEnd = function(gameContext) {
 
 Player.prototype.update = function(gameContext) {
     this.hover.update(gameContext);
+
+    if(this.hover.tileChanged) {
+        this.states.eventEnter(gameContext, Player.EVENT.TILE_CHANGE, null);
+    }
+
+    if(this.hover.targetChanged) {
+        this.states.eventEnter(gameContext, Player.EVENT.TARGET_CHANGE, null);
+    }
+
     this.states.update(gameContext);
 }
