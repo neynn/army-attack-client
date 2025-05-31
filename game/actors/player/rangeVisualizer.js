@@ -115,14 +115,18 @@ RangeVisualizer.prototype.update = function(gameContext, player) {
 }
 
 RangeVisualizer.prototype.enable = function() {
-    this.isEnabled = true;
+    if(!this.isEnabled) {
+        this.isEnabled = true;
+    }
 }
 
-RangeVisualizer.prototype.disable = function(gameContext, camera) {
-    this.isEnabled = false;
+RangeVisualizer.prototype.disable = function(gameContext) {
+    if(this.isEnabled) {
+        this.isEnabled = false;
 
-    if(this.lastTarget !== null)  {
-        this.hide(gameContext, camera);
-        this.lastTarget = null;
+        if(this.lastTarget !== null)  {
+            this.hide(gameContext);
+            this.lastTarget = null;
+        }
     }
 }

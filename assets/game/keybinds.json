@@ -7,6 +7,7 @@
         "DEBUG_HEAL": "+2",
         "DEBUG_FIREMISSION": "+3",
         "DEBUG_SELL": "+4",
+        "DEBUG_PLACE": "+5",
         "DEBUG_DEBUG": "+0"
     },
     "editor": {

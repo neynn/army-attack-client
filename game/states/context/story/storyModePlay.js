@@ -90,7 +90,7 @@ StoryModePlayState.prototype.onEnter = async function(gameContext, stateMachine)
     });
 
     SpawnSystem.createEntity(gameContext, { 
-        "type": "michie_war_machine",
+        "type": "blue_commando_ultimate",
         "tileX": 5,
         "tileY": 5,
         "team": "Allies",

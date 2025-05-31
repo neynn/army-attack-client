@@ -5,7 +5,6 @@ import { Inventory } from "./inventory/inventory.js";
 import { PlayerIdleState } from "./states/idle.js";
 import { PlayerSelectedState } from "./states/selected.js";
 import { PlayerFireMissionState } from "./states/fireMission.js";
-import { PlayerBuildState } from "./states/build.js";
 import { PlayerSpectateState } from "./states/spectate.js";
 import { Actor } from "../../../source/turn/actor.js";
 import { StateMachine } from "../../../source/state/stateMachine.js";
@@ -17,6 +16,7 @@ import { AttackAction } from "../../actions/attackAction.js";
 import { MissionHandler } from "./mission/missionHandler.js";
 import { PlayerSellState } from "./states/sell.js";
 import { PlayerDebugState } from "./states/debug.js";
+import { PlayerPlaceState } from "./states/place.js";
 
 export const Player = function(id) {
     Actor.call(this, id);
@@ -36,7 +36,7 @@ export const Player = function(id) {
     this.states.addState(Player.STATE.SELL, new PlayerSellState());
     this.states.addState(Player.STATE.SELECTED, new PlayerSelectedState());
     this.states.addState(Player.STATE.FIRE_MISSION, new PlayerFireMissionState());
-    this.states.addState(Player.STATE.BUILD, new PlayerBuildState());
+    this.states.addState(Player.STATE.PLACE, new PlayerPlaceState());
     this.states.addState(Player.STATE.HEAL, new PlayerHealState());
     this.states.addState(Player.STATE.DEBUG, new PlayerDebugState());
 }
@@ -57,7 +57,7 @@ Player.STATE = {
     IDLE: "IDLE",
     SELECTED: "SELECTED",
     FIRE_MISSION: "FIRE_MISSION",
-    BUILD: "BUILD",
+    PLACE: "PLACE",
     HEAL: "HEAL",
     SELL: "SELL",
     DEBUG: "DEBUG"
@@ -68,7 +68,8 @@ Player.SPRITE_TYPE = {
     SELECT: "select",
     ATTACK: "attack",
     FIRE_MISSION: "powerup",
-    REPAIR: "repair"
+    REPAIR: "repair",
+    PLACE: "place"
 };
 
 Player.prototype = Object.create(Actor.prototype);
