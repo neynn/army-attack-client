@@ -5,6 +5,12 @@ export const PlayerDebugState = function() {}
 PlayerDebugState.prototype = Object.create(PlayerState.prototype);
 PlayerDebugState.prototype.constructor = PlayerDebugState;
 
+PlayerDebugState.prototype.onEnter = function(gameContext, stateMachine, transition) {
+    const player = stateMachine.getContext();
+
+    player.rangeVisualizer.enable();
+}
+
 PlayerDebugState.prototype.onUpdate = function(gameContext, stateMachine) {
     const player = stateMachine.getContext();
     

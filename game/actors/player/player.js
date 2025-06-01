@@ -69,7 +69,8 @@ Player.SPRITE_TYPE = {
     ATTACK: "attack",
     FIRE_MISSION: "powerup",
     REPAIR: "repair",
-    PLACE: "place"
+    PLACE: "place",
+    DEBRIS: "debris"
 };
 
 Player.prototype = Object.create(Actor.prototype);

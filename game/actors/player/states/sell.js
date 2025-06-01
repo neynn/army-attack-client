@@ -9,6 +9,29 @@ export const PlayerSellState = function() {}
 PlayerSellState.prototype = Object.create(PlayerState.prototype);
 PlayerSellState.prototype.constructor = PlayerSellState;
 
+PlayerSellState.prototype.onEnter = function(gameContext, stateMachine, transition) {
+    const player = stateMachine.getContext();
+
+    this.showSellableObjects(gameContext, player);
+
+    player.rangeVisualizer.disable(gameContext);
+}
+
+PlayerSellState.prototype.onExit = function(gameContext, stateMachine) {
+    const player = stateMachine.getContext();
+
+    this.hideSellableObjects(gameContext, player);
+}
+
+PlayerSellState.prototype.onUpdate = function(gameContext, stateMachine) {
+    const player = stateMachine.getContext();
+    
+    //player.rangeVisualizer.update(gameContext, player);
+    this.updateCursor(gameContext, player);
+
+    player.hover.alignSpriteAuto(gameContext);
+}
+
 PlayerSellState.prototype.onClick = function(gameContext, stateMachine) {
     const { world } = gameContext;
     const { entityManager } = world;
@@ -60,29 +83,6 @@ PlayerSellState.prototype.openSellDialog = function(gameContext, player, entity)
         "entity": entity,
         "actorID": player.getID()
     });
-}
-
-PlayerSellState.prototype.onEnter = function(gameContext, stateMachine, transition) {
-    const player = stateMachine.getContext();
-
-    this.showSellableObjects(gameContext, player);
-    player.rangeVisualizer.disable(gameContext);
-}
-
-PlayerSellState.prototype.onExit = function(gameContext, stateMachine) {
-    const player = stateMachine.getContext();
-
-    this.hideSellableObjects(gameContext, player);
-    player.rangeVisualizer.enable();
-}
-
-PlayerSellState.prototype.onUpdate = function(gameContext, stateMachine) {
-    const player = stateMachine.getContext();
-    
-    //player.rangeVisualizer.update(gameContext, player);
-    this.updateCursor(gameContext, player);
-
-    player.hover.autoAlignSprite(gameContext);
 }
 
 PlayerSellState.prototype.hideSellableObjects = function(gameContext, player) {

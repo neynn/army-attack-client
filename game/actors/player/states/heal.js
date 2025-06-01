@@ -15,18 +15,12 @@ PlayerHealState.prototype.onEnter = function(gameContext, stateMachine) {
     player.rangeVisualizer.disable(gameContext);
 }
 
-PlayerHealState.prototype.onExit = function(gameContext, stateMachine) {
-    const player = stateMachine.getContext();
-
-    player.rangeVisualizer.enable();
-}
-
 PlayerHealState.prototype.onUpdate = function(gameContext, stateMachine) {
     const player = stateMachine.getContext();
     const { hover } = player;
 
     this.updateCursor(gameContext, player);
-    hover.autoAlignSprite(gameContext);
+    hover.alignSpriteAuto(gameContext);
 }
 
 PlayerHealState.prototype.onClick = function(gameContext, stateMachine) {

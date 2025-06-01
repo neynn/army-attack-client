@@ -17,7 +17,6 @@ PlayerPlaceState.prototype.onExit = function(gameContext, stateMachine) {
 
     spriteManager.destroySprite(this.buildSpriteIndex);
     hover.hideSprite(gameContext);
-    player.rangeVisualizer.enable();
 
     this.entityType = null;
     this.buildSpriteIndex = -1;
@@ -39,7 +38,7 @@ PlayerPlaceState.prototype.onEnter = function(gameContext, stateMachine, transit
 PlayerPlaceState.prototype.onUpdate = function(gameContext, stateMachine) {
     const player = stateMachine.getContext();
 
-    player.hover.alignSprite(gameContext);
+    player.hover.alignSpriteTile(gameContext);
 }
 
 PlayerPlaceState.prototype.setupBuildSprite = function(gameContext, player) {

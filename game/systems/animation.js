@@ -130,10 +130,13 @@ AnimationSystem.playSell = function(gameContext, entity) {
 AnimationSystem.stopSell = function(gameContext, entity) {
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const entitySprite = spriteComponent.getSprite(gameContext);
-    const sellSprite = entitySprite.getChild(SpriteComponent.SPRITE_ID.SELL);
 
-    if(sellSprite) {
-        sellSprite.terminate();
+    if(entitySprite) {
+        const sellSprite = entitySprite.getChild(SpriteComponent.SPRITE_ID.SELL);
+
+        if(sellSprite) {
+            sellSprite.terminate();
+        }
     }
 }
 

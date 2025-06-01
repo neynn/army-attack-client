@@ -16,7 +16,10 @@ PlayerSelectedState.prototype = Object.create(PlayerState.prototype);
 PlayerSelectedState.prototype.constructor = PlayerSelectedState;
 
 PlayerSelectedState.prototype.onEnter = function(gameContext, stateMachine, transition) {
+    const player = stateMachine.getContext();
     const { entityID } = transition;
+
+    player.rangeVisualizer.enable();
 
     this.entityID = entityID;
 }
@@ -25,6 +28,7 @@ PlayerSelectedState.prototype.onExit = function(gameContext, stateMachine) {
     const player = stateMachine.getContext();
         
     this.deselectEntity(gameContext, player);
+
     player.attackVisualizer.clearAttackers();
 }
 
@@ -36,7 +40,7 @@ PlayerSelectedState.prototype.onUpdate = function(gameContext, stateMachine) {
     this.updateEntity(gameContext, player);
     this.updateCursor(gameContext, player);
     player.rangeVisualizer.update(gameContext, player);
-    hover.autoAlignSprite(gameContext);
+    hover.alignSpriteAuto(gameContext);
 }
 
 PlayerSelectedState.prototype.updateEntity = function(gameContext, player) {

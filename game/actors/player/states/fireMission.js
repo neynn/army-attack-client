@@ -33,17 +33,16 @@ PlayerFireMissionState.prototype.onEnter = function(gameContext, stateMachine, t
 PlayerFireMissionState.prototype.onExit = function(gameContext, stateMachine) {
     const player = stateMachine.getContext();
 
-    this.missionID = null;
-
-    player.rangeVisualizer.enable();
     player.camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.FIRE_MISSION);
+
+    this.missionID = null;
 }
 
 PlayerFireMissionState.prototype.onUpdate = function(gameContext, stateMachine) {
     const player = stateMachine.getContext();
     const { hover } = player;
 
-    hover.alignSprite(gameContext);
+    hover.alignSpriteTile(gameContext);
 }
 
 PlayerFireMissionState.prototype.updateCursor = function(gameContext, player) {

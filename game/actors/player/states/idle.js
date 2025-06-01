@@ -12,6 +12,12 @@ export const PlayerIdleState = function() {}
 PlayerIdleState.prototype = Object.create(PlayerState.prototype);
 PlayerIdleState.prototype.constructor = PlayerIdleState;
 
+PlayerIdleState.prototype.onEnter = function(gameContext, stateMachine) {
+    const player = stateMachine.getContext();
+
+    player.rangeVisualizer.enable();
+}
+
 PlayerIdleState.prototype.onExit = function(gameContext, stateMachine) {
     const player = stateMachine.getContext();
 
@@ -33,7 +39,7 @@ PlayerIdleState.prototype.onUpdate = function(gameContext, stateMachine) {
     this.updateCursor(gameContext, player);
 
     player.rangeVisualizer.update(gameContext, player);
-    player.hover.autoAlignSprite(gameContext);
+    player.hover.alignSpriteAuto(gameContext);
 }
 
 PlayerIdleState.prototype.selectEntity = function(gameContext, player, entity) {
@@ -115,7 +121,7 @@ PlayerIdleState.prototype.updateCursor = function(gameContext, player) {
             break;
         }
         case PlayerCursor.STATE.HOVER_ON_DEBRIS: {
-            const spriteID = player.getSpriteType(Player.SPRITE_TYPE.SELECT, "1-1");
+            const spriteID = player.getSpriteType(Player.SPRITE_TYPE.DEBRIS, "1-1");
 
             hover.updateSprite(gameContext, spriteID);
             break;

@@ -124,7 +124,7 @@ PlayerCursor.prototype.update = function(gameContext) {
     this.updateState(gameContext);
 }
 
-PlayerCursor.prototype.autoAlignSprite = function(gameContext) {
+PlayerCursor.prototype.alignSpriteAuto = function(gameContext) {
     switch(this.state) {
         case PlayerCursor.STATE.HOVER_ON_ENTITY: {
             const hoverEntity = this.getEntity(gameContext);
@@ -132,13 +132,13 @@ PlayerCursor.prototype.autoAlignSprite = function(gameContext) {
             break;
         }
         default: {
-            this.alignSprite(gameContext);
+            this.alignSpriteTile(gameContext);
             break;
         }
     }
 }
 
-PlayerCursor.prototype.alignSprite = function(gameContext) {
+PlayerCursor.prototype.alignSpriteTile = function(gameContext) {
     const { spriteManager, transform2D } = gameContext;
     const sprite = spriteManager.getSprite(this.spriteIndex);
     const { x, y } = transform2D.transformTileToWorldCenter(this.tileX, this.tileY);
