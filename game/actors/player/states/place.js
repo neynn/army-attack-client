@@ -60,3 +60,11 @@ PlayerPlaceState.prototype.setupBuildSprite = function(gameContext, player) {
         this.buildSpriteIndex = buildSprite.getIndex();
     }
 }
+
+PlayerPlaceState.prototype.highlightPlaceableTiles = function(gameContext, player) {
+    const { world } = gameContext;
+    const { mapManager } = world;
+    const worldMap = mapManager.getActiveMap();
+
+    //TODO
+}

@@ -66,6 +66,7 @@ AttackVisualizer.prototype.updateAttackerSprites = function(gameContext, target,
 }
 
 AttackVisualizer.prototype.updateAttackers = function(gameContext, player) {
+    const { tileManager } = gameContext;
     const { hover, teamID, id } = player;
 
     if(hover.state !== PlayerCursor.STATE.HOVER_ON_ENTITY) {
@@ -88,7 +89,7 @@ AttackVisualizer.prototype.updateAttackers = function(gameContext, player) {
     }
 
     const currentAttackers = new Set();
-    const overlayID = gameContext.getOverlayID(player.config.overlays.attack);
+    const overlayID = tileManager.getTileIDByArray(player.config.overlays.attack);
 
     for(let i = 0; i < activeAttackers.length; i++) {
         const attacker = activeAttackers[i];

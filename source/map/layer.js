@@ -4,16 +4,9 @@ export const Layer = function(width, height) {
     this.autoGenerate = false;
     this.width = width;
     this.height = height;
-    this.type = Layer.BUFFER_TYPE.BIT_0;
+    this.threshold = Layer.BUFFER_THRESHOLD.BIT_0;
     this.fillValue = 0;
 }
-
-Layer.BUFFER_TYPE = {
-    BIT_0: 0,
-    BIT_8: 1,
-    BIT_16: 2,
-    BIT_32: 3
-};
 
 Layer.BUFFER_THRESHOLD = {
     BIT_0: -1,
@@ -21,16 +14,6 @@ Layer.BUFFER_THRESHOLD = {
     BIT_16: 65535,
     BIT_32: 4294967295
 };
-
-Layer.prototype.getBufferType = function(count) {
-    if(count < Layer.BUFFER_THRESHOLD.BIT_8) {
-        return Layer.BUFFER_TYPE.BIT_8;
-    } else if(count < Layer.BUFFER_THRESHOLD.BIT_16) {
-        return Layer.BUFFER_TYPE.BIT_16;
-    }
-
-    return Layer.BUFFER_TYPE.BIT_32;
-}
 
 Layer.prototype.fill = function(id) {
     if(!id) {
@@ -47,25 +30,17 @@ Layer.prototype.fill = function(id) {
 }
 
 Layer.prototype.initBuffer = function(count) {
-    const bufferType = this.getBufferType(count);
     const bufferSize = this.width * this.height;
 
-    switch(bufferType) {
-        case Layer.BUFFER_TYPE.BIT_8: {
-            this.type = Layer.BUFFER_TYPE.BIT_8;
-            this.buffer = new Uint8Array(bufferSize);
-            break;
-        }
-        case Layer.BUFFER_TYPE.BIT_16: {
-            this.type = Layer.BUFFER_TYPE.BIT_16;
-            this.buffer = new Uint16Array(bufferSize);
-            break;
-        }
-        case Layer.BUFFER_TYPE.BIT_32: {
-            this.type = Layer.BUFFER_TYPE.BIT_32;
-            this.buffer = new Uint32Array(bufferSize);
-            break;
-        }
+    if(count < Layer.BUFFER_THRESHOLD.BIT_8) {
+        this.threshold = Layer.BUFFER_THRESHOLD.BIT_8;
+        this.buffer = new Uint8Array(bufferSize);
+    } else if(count < Layer.BUFFER_THRESHOLD.BIT_16) {
+        this.threshold = Layer.BUFFER_THRESHOLD.BIT_16;
+        this.buffer = new Uint16Array(bufferSize);
+    } else {
+        this.threshold = Layer.BUFFER_THRESHOLD.BIT_32;
+        this.buffer = new Uint32Array(bufferSize);
     }
 }
 
@@ -97,7 +72,7 @@ Layer.prototype.resize = function(newWidth, newHeight) {
     const newBuffer = new ArrayType(layerSize);
     const fill = this.fillValue;
 
-    if(fill !== 0) { //TODO: Fill value may be greater than byte size of buffer.
+    if(fill !== 0 && fill <= this.threshold) {
         for(let i = 0; i < layerSize; ++i) {
             newBuffer[i] = fill;
         }

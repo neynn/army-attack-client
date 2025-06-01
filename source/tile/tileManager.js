@@ -67,6 +67,17 @@ TileManager.prototype.getInversion = function() {
     return this.metaInversion;
 }
 
+TileManager.prototype.getTileIDByArray = function(overlay) {
+    if(!overlay) {
+        return TileManager.TILE_ID.EMPTY;
+    }
+
+    const [atlas, texture] = overlay;
+    const tileID = this.getTileID(atlas, texture);
+
+    return tileID;
+}
+
 TileManager.prototype.getTileID = function(atlasID, textureID) {
     const atlas = this.metaInversion[atlasID];
 

@@ -12,7 +12,9 @@ export const ArmyCamera = function() {
     this.overlay.createOverlay(ArmyCamera.OVERLAY_TYPE.MOVE);
     this.overlay.createOverlay(ArmyCamera.OVERLAY_TYPE.RANGE);
     this.overlay.createOverlay(ArmyCamera.OVERLAY_TYPE.FIRE_MISSION);
+
     this.border = new Layer(0, 0);
+    this.place = new Layer(0, 0);
 }
 
 ArmyCamera.OVERLAY_TYPE = {
@@ -151,13 +153,16 @@ ArmyCamera.prototype.updateMoveOverlay = function(gameContext, nodeList, enableT
     }
 }
 
-ArmyCamera.prototype.initBorder = function(gameContext) {
+ArmyCamera.prototype.initCustomLayers = function(gameContext) {
     const { tileManager } = gameContext;
     const { graphics } = tileManager;
     const containerCount = graphics.getContainerCount();
 
     this.border.resize(this.mapWidth, this.mapHeight);
     this.border.initBuffer(containerCount);
+
+    this.place.resize(this.mapWidth, this.mapHeight);
+    this.place.initBuffer(containerCount);
 }
 
 ArmyCamera.prototype.updateBorder = function(borderID, tileX, tileY) {

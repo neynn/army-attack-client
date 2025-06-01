@@ -37,10 +37,12 @@ PlayerIdleState.prototype.onUpdate = function(gameContext, stateMachine) {
 }
 
 PlayerIdleState.prototype.selectEntity = function(gameContext, player, entity) {
+    const { tileManager } = gameContext;
+
     const entityID = entity.getID();
     const nodeList = PathfinderSystem.generateNodeList(gameContext, entity);
-    const enableTileID = gameContext.getOverlayID(player.config.overlays.enable);
-    const attackTileID = gameContext.getOverlayID(player.config.overlays.attack);
+    const enableTileID = tileManager.getTileIDByArray(player.config.overlays.enable);
+    const attackTileID = tileManager.getTileIDByArray(player.config.overlays.attack);
 
     AnimationSystem.playSelect(gameContext, entity);
 

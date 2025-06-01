@@ -259,7 +259,7 @@ ArmyContext.prototype.onMapEnable = function(worldMap) {
         }
 
         if(camera instanceof ArmyCamera) {
-            camera.initBorder(this);
+            camera.initCustomLayers(this);
         }
     });
 
@@ -281,19 +281,4 @@ ArmyContext.prototype.getTeamID = function(teamName) {
     }
 
     return team.id;
-}
-
-ArmyContext.prototype.getTeamName = function(teamID) {
-
-}
-
-ArmyContext.prototype.getOverlayID = function(overlay) {
-    if(!overlay) {
-        return TileManager.TILE_ID.EMPTY;
-    }
-
-    const [atlas, texture] = overlay;
-    const tileID = this.tileManager.getTileID(atlas, texture);
-
-    return tileID;
 }
