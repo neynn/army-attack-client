@@ -172,3 +172,11 @@ Layer.prototype.setItem = function(item, index) {
 
     this.buffer[index] = item;
 }
+
+Layer.prototype.clearItem = function(index) {
+    if(index < 0 || index >= this.buffer.length) {
+        return;
+    }
+
+    this.buffer[index] = 0;
+}

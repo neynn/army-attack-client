@@ -27,12 +27,14 @@ PlayerPlaceState.prototype.onExit = function(gameContext, stateMachine) {
 
 PlayerPlaceState.prototype.onEnter = function(gameContext, stateMachine, transition) {
     const { typeID } = transition;
-    const { world } = gameContext;
+    const { world, tileManager } = gameContext;
     const { entityManager } = world;
     const entityType = entityManager.getEntityType(typeID);
     const player = stateMachine.getContext();
+    const tileID = tileManager.getTileIDByArray(player.config.overlays.enable);
 
     player.rangeVisualizer.disable(gameContext);
+    player.camera.place.fill(tileID);
 
     this.entityType = entityType;
     this.setupBuildSprite(gameContext, player);
@@ -65,15 +67,12 @@ PlayerPlaceState.prototype.setupBuildSprite = function(gameContext, player) {
 }
 
 PlayerPlaceState.prototype.highlightPlaceableTiles = function(gameContext, player) {
-    const { world, tileManager } = gameContext;
+    const { world } = gameContext;
     const { mapManager } = world;
     const worldMap = mapManager.getActiveMap();
     const blockedIndices = worldMap.getBlockedPlaceIndices(gameContext, player.teamID);
-    const tileID = tileManager.getTileIDByArray(player.config.overlays.enable);
 
-    worldMap.onAllTiles((tileX, tileY, index) => {
-        if(!blockedIndices.has(index)) {
-            player.camera.place.setItem(tileID, index);
-        }
-    });
+    for(const index of blockedIndices) {
+        player.camera.place.clearItem(index);
+    }
 } 
