@@ -37,7 +37,6 @@ Timer.prototype.nextFrame = function(timestamp) {
     }
 
     this.render();
-
     this.lastTime = this.realTime;
     this.queue();
 }

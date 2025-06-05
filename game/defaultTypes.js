@@ -50,6 +50,7 @@
 export const DEFAULT_ALLIANCE = {
     "isWalkable": false,
     "isPassable": false,
+    "isPlaceable": false,
     "isEnemy": false
 };
 

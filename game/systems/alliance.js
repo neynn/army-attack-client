@@ -68,3 +68,15 @@ AllianceSystem.isWalkable = function(gameContext, actorTeamID, reactorTeamID) {
 AllianceSystem.isEnemy = function(gameContext, actorTeamID, reactorTeamID) {
     return getAlliance(gameContext, actorTeamID, reactorTeamID).isEnemy;
 }
+
+/**
+ * Returns if teamA can place on teamB.
+ * 
+ * @param {*} gameContext 
+ * @param {string} actorTeamID 
+ * @param {string} reactorTeamID 
+ * @returns 
+ */
+AllianceSystem.isPlaceable = function(gameContext, actorTeamID, reactorTeamID) {
+    return getAlliance(gameContext, actorTeamID, reactorTeamID).isPlaceable;
+}

@@ -1,3 +1,5 @@
+import { ArmyMap } from "../../../init/armyMap.js";
+import { AllianceSystem } from "../../../systems/alliance.js";
 import { Player } from "../player.js";
 import { PlayerState } from "./playerState.js";
 
@@ -13,10 +15,11 @@ PlayerPlaceState.prototype.onExit = function(gameContext, stateMachine) {
     const { spriteManager } = gameContext;
 
     const player = stateMachine.getContext();
-    const { hover } = player;
+    const { hover, camera } = player;
 
     spriteManager.destroySprite(this.buildSpriteIndex);
     hover.hideSprite(gameContext);
+    camera.clearPlace();
 
     this.entityType = null;
     this.buildSpriteIndex = -1;
@@ -33,6 +36,7 @@ PlayerPlaceState.prototype.onEnter = function(gameContext, stateMachine, transit
 
     this.entityType = entityType;
     this.setupBuildSprite(gameContext, player);
+    this.highlightPlaceableTiles(gameContext, player);
 }
 
 PlayerPlaceState.prototype.onUpdate = function(gameContext, stateMachine) {
@@ -61,9 +65,15 @@ PlayerPlaceState.prototype.setupBuildSprite = function(gameContext, player) {
 }
 
 PlayerPlaceState.prototype.highlightPlaceableTiles = function(gameContext, player) {
-    const { world } = gameContext;
+    const { world, tileManager } = gameContext;
     const { mapManager } = world;
     const worldMap = mapManager.getActiveMap();
+    const blockedIndices = worldMap.getBlockedPlaceIndices(gameContext, player.teamID);
+    const tileID = tileManager.getTileIDByArray(player.config.overlays.enable);
 
-    //TODO
-}
+    worldMap.onAllTiles((tileX, tileY, index) => {
+        if(!blockedIndices.has(index)) {
+            player.camera.place.setItem(tileID, index);
+        }
+    });
+} 

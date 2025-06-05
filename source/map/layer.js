@@ -15,6 +15,14 @@ Layer.BUFFER_THRESHOLD = {
     BIT_32: 4294967295
 };
 
+Layer.prototype.clear = function() {
+    const length = this.buffer.length;
+    
+    for(let i = 0; i < length; ++i) {
+        this.buffer[i] = 0;
+    }
+}
+
 Layer.prototype.fill = function(id) {
     if(!id) {
         return;

@@ -21,6 +21,20 @@ WorldMap.prototype.getID = function() {
     return this.id;
 }
 
+WorldMap.prototype.onAllTiles = function(onCheck) {
+    if(typeof onCheck !== "function") {
+        return;
+    }
+
+    for(let i = 0; i < this.height; i++) {
+        for(let j = 0; j < this.width; j++) {
+            const index = i * this.width + j;
+
+            onCheck(j, i, index);
+        }
+    }
+}
+
 WorldMap.prototype.saveLayers = function() {
     const layers = [];
 

@@ -91,6 +91,7 @@ ArmyCamera.prototype.update = function(gameContext, display) {
     this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.BOTTOM), realTime, deltaTime);
     this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.MIDDLE), realTime, deltaTime);
     display.unflip();
+    this.drawLayer(graphics, context, this.place);
     this.drawOverlay(graphics, context, ArmyCamera.OVERLAY_TYPE.FIRE_MISSION);
     this.drawOverlay(graphics, context, ArmyCamera.OVERLAY_TYPE.RANGE);
     this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.TOP), realTime, deltaTime);
@@ -169,4 +170,8 @@ ArmyCamera.prototype.updateBorder = function(borderID, tileX, tileY) {
     const index = tileY * this.mapWidth + tileX;
 
     this.border.setItem(borderID, index);
+}
+
+ArmyCamera.prototype.clearPlace = function() {
+    this.place.clear();
 }

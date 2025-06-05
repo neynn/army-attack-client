@@ -7,7 +7,8 @@
         "hasBorder": true,
         "isConquerable": true,
         "hasForm": false,
-        "canDebrisSpawn": true
+        "canDebrisSpawn": true,
+        "allowPlacement": true
     },
     "1": {
         "id": 1,
@@ -17,7 +18,8 @@
         "hasBorder": false,
         "isConquerable": false,
         "hasForm": false,
-        "canDebrisSpawn": false
+        "canDebrisSpawn": false,
+        "allowPlacement": false
     },
     "2": {
         "id": 2,
@@ -27,7 +29,8 @@
         "hasBorder": false,
         "isConquerable": false,
         "hasForm": false,
-        "canDebrisSpawn": false
+        "canDebrisSpawn": false,
+        "allowPlacement": false
     },
     "3": {
         "id": 3,
@@ -37,6 +40,7 @@
         "hasBorder": false,
         "isConquerable": false,
         "hasForm": true,
-        "canDebrisSpawn": false
+        "canDebrisSpawn": false,
+        "allowPlacement": false
     }
 }

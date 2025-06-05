@@ -150,7 +150,7 @@ Renderer.prototype.drawFPS = function(timer) {
         context.fillStyle = Renderer.FPS_COLOR.BAD;
     }
     
-    context.fontSize = 20;
+    context.font = `10px Arial`;
     context.fillText(text, 0, 10);
 }
 
