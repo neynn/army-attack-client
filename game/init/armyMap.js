@@ -84,48 +84,6 @@ ArmyMap.prototype.save = function() {
     }
 }
 
-ArmyMap.prototype.getBlockedPlaceIndices = function(gameContext, teamName) {
-    const blockedIndices = new Set();
-
-    for(let i = 0; i < this.height; i++) {
-        for(let j = 0; j < this.width; j++) {
-            const index = i * this.width + j;
-            const hasDebris = this.hasDebris(j, i);
-
-            if(hasDebris) {
-                blockedIndices.add(index);
-                continue;
-            }
-
-            const typeID = this.getTile(ArmyMap.LAYER.TYPE, j, i);
-            const type = gameContext.tileTypes[typeID];
-
-            if(!type || !type.allowPlacement) {
-                blockedIndices.add(index);
-                continue;
-            }
-
-            const teamID = this.getTile(ArmyMap.LAYER.TEAM, j, i);
-            const isPlaceable = AllianceSystem.isPlaceable(gameContext, teamName, ArmyMap.TEAM_TYPE[teamID]);
-
-            if(!isPlaceable) {
-                blockedIndices.add(index);
-                continue;
-            }
-
-            const entityID = this.getTopEntity(j, i);
-
-            if(entityID !== null) {
-                //If the entity is a unit and AllianceSystem.isEnemy(), then block all surrounding tiles.
-                blockedIndices.add(index);
-                continue;
-            }
-        }
-    }
-
-    return blockedIndices;
-}
-
 ArmyMap.prototype.isFullyClouded = function(tileX, tileY) {
     const tileID = this.getTile(ArmyMap.LAYER.CLOUD, tileX, tileY);
 

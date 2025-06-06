@@ -2,7 +2,8 @@
     "Player": {
         "overlays": {
             "attack": ["overlay", "grid_attack_1x1"],
-            "enable": ["overlay", "grid_enabled_1x1"]
+            "enable": ["overlay", "grid_enabled_1x1"],
+            "disabled": ["cursor", "Disabled"]
         },
         "sprites": {
             "move": {

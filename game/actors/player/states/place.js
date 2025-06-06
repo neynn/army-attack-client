@@ -1,5 +1,4 @@
-import { ArmyMap } from "../../../init/armyMap.js";
-import { AllianceSystem } from "../../../systems/alliance.js";
+import { PlaceSystem } from "../../../systems/place.js";
 import { Player } from "../player.js";
 import { PlayerState } from "./playerState.js";
 
@@ -67,12 +66,21 @@ PlayerPlaceState.prototype.setupBuildSprite = function(gameContext, player) {
 }
 
 PlayerPlaceState.prototype.highlightPlaceableTiles = function(gameContext, player) {
-    const { world } = gameContext;
-    const { mapManager } = world;
-    const worldMap = mapManager.getActiveMap();
-    const blockedIndices = worldMap.getBlockedPlaceIndices(gameContext, player.teamID);
+    const { tileManager } = gameContext;
+    const tileID = tileManager.getTileIDByArray(player.config.overlays.disabled);
+    const blockedIndices = PlaceSystem.getBlockedPlaceIndices(gameContext, player.teamID);
+    const layer = player.camera.place;
 
-    for(const index of blockedIndices) {
-        player.camera.place.clearItem(index);
+    for(const [index, state] of blockedIndices) {
+        switch(state) {
+            case PlaceSystem.BLOCK_STATE.ENTITY_ATTACK: {
+                layer.setItem(tileID, index);
+                break;
+            }
+            default: {
+                layer.clearItem(index);
+                break;
+            }
+        }
     }
 } 
