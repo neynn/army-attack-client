@@ -32,8 +32,6 @@ AttackVisualizer.prototype.resetAttackers = function(gameContext) {
     const { world } = gameContext;
     const { entityManager } = world;
 
-    this.camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.ATTACK);
-
     for(const attackerID of this.attackers) {
         const attacker = entityManager.getEntity(attackerID);
 
@@ -42,7 +40,7 @@ AttackVisualizer.prototype.resetAttackers = function(gameContext) {
         }
     }
 
-    this.attackers.clear();
+    this.clearAttackers();
 }
 
 AttackVisualizer.prototype.updateAttackerOverlay = function(attackers, overlayID) {

@@ -29,7 +29,7 @@ PlayerSelectedState.prototype.onExit = function(gameContext, stateMachine) {
         
     this.deselectEntity(gameContext, player);
 
-    player.attackVisualizer.clearAttackers();
+    player.attackVisualizer.resetAttackers(gameContext);
 }
 
 PlayerSelectedState.prototype.onUpdate = function(gameContext, stateMachine) {

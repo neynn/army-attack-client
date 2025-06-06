@@ -21,7 +21,7 @@ PlayerIdleState.prototype.onEnter = function(gameContext, stateMachine) {
 PlayerIdleState.prototype.onExit = function(gameContext, stateMachine) {
     const player = stateMachine.getContext();
 
-    player.attackVisualizer.clearAttackers();
+    player.attackVisualizer.resetAttackers(gameContext);
 }
 
 PlayerIdleState.prototype.onUpdate = function(gameContext, stateMachine) {
