@@ -5,6 +5,7 @@ import { EnemyActor } from "../actors/enemyActor.js";
 import { CameraContext } from "../../source/camera/cameraContext.js";
 import { ArmyContext } from "../armyContext.js";
 import { MapManager } from "../../source/map/mapManager.js";
+import { MissionGroup } from "../actors/player/mission/missionGroup.js";
 
 const ACTOR_TYPE = {
     PLAYER: "Player",
@@ -41,7 +42,8 @@ const createActor = function(gameContext, actorID, team, type) {
             mapManager.events.on(MapManager.EVENT.MAP_CREATE, (id, data, map) => {
                 if(data.missions) {
                     actor.missions.createGroup(id, data.missions, (group) => {
-                        console.log(group, "CREATED");
+                        group.events.on(MissionGroup.EVENT.MISSION_STARTED, (id) => console.log(id, "STARTED"));
+                        group.events.on(MissionGroup.EVENT.MISSION_COMPLETED, (id) => console.log(id, "COMPLETED"));
                     });
                 }
             });

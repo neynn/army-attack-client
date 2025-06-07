@@ -25,20 +25,19 @@ MissionHandler.prototype.selectGroup = function(groupID) {
 }
 
 MissionHandler.prototype.createGroup = function(groupID, missions, onCreate) {
-    if(this.groups.has(groupID) || typeof onCreate !== "function") {
+    if(this.groups.has(groupID)) {
         return;
     }
 
     const group = new MissionGroup();
 
+    if(typeof onCreate === "function") {
+        onCreate(group);
+    }
+
     group.init(missions);
 
-    group.events.on(MissionGroup.EVENT.MISSION_STARTED, (id) => console.log(id, "STARTED"));
-    group.events.on(MissionGroup.EVENT.MISSION_COMPLETED, (id) => console.log(id, "FINISHED"));
-
     this.groups.set(groupID, group);
-
-    onCreate(group);
 }
 
 MissionHandler.prototype.load = function(groups) {
