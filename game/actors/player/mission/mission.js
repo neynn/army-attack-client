@@ -36,9 +36,8 @@ Mission.prototype.initObjectives = function(objectives) {
     this.objectives.length = 0;
 
     for(let i = 0; i < objectives.length; i++) {
-        const config = objectives[i];
-        const { type = null, parameter = null, value = 0 } = config;
-        const objective = new Objective(config, type, parameter, value);
+        const { type = null, parameter = null, value = 0 } = objectives[i];
+        const objective = new Objective(type, parameter, value);
 
         this.objectives.push(objective);
     }
@@ -50,7 +49,12 @@ Mission.prototype.onObjective = function(type, parameter, count) {
     }
 
     for(let i = 0; i < this.objectives.length; i++) {
-        this.objectives[i].onObjective(type, parameter, count);
+        const objective = this.objectives[i];
+        const isMatching = objective.isMatching(type, parameter);
+
+        if(isMatching) {
+            objective.progress(count);
+        }
     }
 }
 
@@ -84,31 +88,22 @@ Mission.prototype.getRequired = function() {
     return required;
 }
 
-Mission.prototype.isCompleteable = function() {
-    if(this.state !== Mission.STATE.STARTED) {
+Mission.prototype.complete = function() {
+    if(this.state === Mission.STATE.COMPLETED) {
         return false;
     }
-
-    let allObjectivesCompleted = true;
 
     for(let i = 0; i < this.objectives.length; i++) {
         const objective = this.objectives[i];
 
         if(objective.state === Objective.STATE.INCOMPLETE) {
-            allObjectivesCompleted = false;
-            break;
+            return false;
         }
     }
 
-    return allObjectivesCompleted;
-}
-
-Mission.prototype.complete = function() {
-    const previousState = this.state;
-
     this.state = Mission.STATE.COMPLETED;
 
-    return previousState !== Mission.STATE.COMPLETED;
+    return true;
 }
 
 Mission.prototype.start = function() {
@@ -116,9 +111,7 @@ Mission.prototype.start = function() {
         return false;
     }
 
-    const previousState = this.state;
-
     this.state = Mission.STATE.STARTED;
 
-    return previousState === Mission.STATE.HIDDEN;
+    return true;
 }

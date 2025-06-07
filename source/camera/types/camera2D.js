@@ -307,13 +307,16 @@ Camera2D.prototype.setMapSize = function(mapWidth, mapHeight) {
 Camera2D.prototype.updateWorldBounds = function() {
     const offsetX = 0;
     const offsetY = 1;
-    const startX = Math.floor(this.viewportX / this.tileWidth);
-    const startY = Math.floor(this.viewportY / this.tileHeight);
-    const endX = Math.floor((this.viewportX + this.viewportWidth) / this.tileWidth) + offsetX;
-    const endY = Math.floor((this.viewportY + this.viewportHeight) / this.tileHeight) + offsetY;
 
-    this.startX = clampValue(startX, this.mapWidth - 1, 0);
-    this.startY = clampValue(startY, this.mapHeight - 1, 0);
-    this.endX = clampValue(endX, this.mapWidth - 1, 0);
-    this.endY = clampValue(endY, this.mapHeight - 1, 0);
+    this.startX = Math.floor(this.viewportX / this.tileWidth);
+    this.startY = Math.floor(this.viewportY / this.tileHeight);
+    this.endX = Math.floor((this.viewportX + this.viewportWidth) / this.tileWidth) + offsetX;
+    this.endY = Math.floor((this.viewportY + this.viewportHeight) / this.tileHeight) + offsetY;
+}
+
+Camera2D.prototype.clampWorldBounds = function() {
+    this.startX = clampValue(this.startX, this.mapWidth - 1, 0);
+    this.startY = clampValue(this.startY, this.mapHeight - 1, 0);
+    this.endX = clampValue(this.endX, this.mapWidth - 1, 0);
+    this.endY = clampValue(this.endY, this.mapHeight - 1, 0);
 }

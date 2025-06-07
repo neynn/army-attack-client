@@ -40,7 +40,9 @@ const createActor = function(gameContext, actorID, team, type) {
     
             mapManager.events.on(MapManager.EVENT.MAP_CREATE, (id, data, map) => {
                 if(data.missions) {
-                    actor.missions.createGroup(id, data.missions);
+                    actor.missions.createGroup(id, data.missions, (group) => {
+                        console.log(group, "CREATED");
+                    });
                 }
             });
 

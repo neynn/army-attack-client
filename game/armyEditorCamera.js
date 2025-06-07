@@ -54,6 +54,7 @@ ArmyEditorCamera.prototype.update = function(gameContext, display) {
     const realTime = timer.getRealTime();
 
     this.updateWorldBounds();
+    this.clampWorldBounds();
     this.drawLayer(graphics, context, worldMap.getLayer(ArmyMap.LAYER.GROUND));
     this.drawLayer(graphics, context, worldMap.getLayer(ArmyMap.LAYER.DECORATION));
     this.drawDebris(tileManager, context, worldMap);

@@ -1,4 +1,3 @@
-import { GameEvent } from "../../../gameEvent.js";
 import { MissionGroup } from "./missionGroup.js";
 
 export const MissionHandler = function() {
@@ -25,17 +24,21 @@ MissionHandler.prototype.selectGroup = function(groupID) {
     }
 }
 
-MissionHandler.prototype.createGroup = function(groupID, missions) {
-    if(this.groups.has(groupID)) {
+MissionHandler.prototype.createGroup = function(groupID, missions, onCreate) {
+    if(this.groups.has(groupID) || typeof onCreate !== "function") {
         return;
     }
 
     const group = new MissionGroup();
 
-    group.loadMissions(missions);
-    group.unlockMissions();
+    group.init(missions);
+
+    group.events.on(MissionGroup.EVENT.MISSION_STARTED, (id) => console.log(id, "STARTED"));
+    group.events.on(MissionGroup.EVENT.MISSION_COMPLETED, (id) => console.log(id, "FINISHED"));
 
     this.groups.set(groupID, group);
+
+    onCreate(group);
 }
 
 MissionHandler.prototype.load = function(groups) {
@@ -59,29 +62,7 @@ MissionHandler.prototype.save = function() {
 }
 
 MissionHandler.prototype.onObjective = function(gameContext, type, parameter, count, actorID) {
-    if(!this.current) {
-        return;
-    }
-
-    const { world } = gameContext;
-    const { eventBus } = world;
-    const { missions } = this.current;
-
-    for(const [missionID, mission] of missions) {
-        mission.onObjective(type, parameter, count);
-
-        const isCompleteable = mission.isCompleteable();
-
-        if(isCompleteable) {
-            const isFirstCompletion = mission.complete();
-
-            if(isFirstCompletion) {
-                eventBus.emit(GameEvent.TYPE.MISSION_COMPLETE, {
-                    "id": missionID,
-                    "mission": mission,
-                    "actorID": actorID
-                });
-            }
-        }
+    if(this.current) {
+        this.current.handleObjective(gameContext, type, parameter, count, actorID);
     }
 }

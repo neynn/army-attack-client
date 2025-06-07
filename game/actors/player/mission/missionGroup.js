@@ -1,11 +1,36 @@
+import { EventEmitter } from "../../../../source/events/eventEmitter.js";
+import { GameEvent } from "../../../gameEvent.js";
 import { Mission } from "./mission.js";
 
 export const MissionGroup = function() {
     this.missions = new Map();
+    this.state = MissionGroup.STATE.INCOMPLETE;
+
+    this.events = new EventEmitter();
+    this.events.listen(MissionGroup.EVENT.ALL_COMPLETED);
+    this.events.listen(MissionGroup.EVENT.MISSION_STARTED);
+    this.events.listen(MissionGroup.EVENT.MISSION_COMPLETED);
 }
 
+MissionGroup.EVENT = {
+    ALL_COMPLETED: "ALL_COMPLETED",
+    MISSION_STARTED: "MISSION_STARTED",
+    MISSION_COMPLETED: "MISSION_COMPLETED"
+};
+
+MissionGroup.STATE = {
+    INCOMPLETE: 0,
+    COMPLETE: 1
+};
+
+MissionGroup.KEY = {
+    STARTED: "missions_started",
+    FINISHED: "missions_finished"
+};
+
 MissionGroup.prototype.load = function(missions) {
-    const { started, finished } = missions;
+    const started = missions[MissionGroup.KEY.STARTED];
+    const finished = missions[MissionGroup.KEY.FINISHED];
         
     for(const missionID of finished) {
         const mission = this.missions.get(missionID);
@@ -24,6 +49,7 @@ MissionGroup.prototype.load = function(missions) {
     }
 
     this.unlockMissions();
+    this.updateState();
 }
 
 MissionGroup.prototype.save = function() {
@@ -47,12 +73,12 @@ MissionGroup.prototype.save = function() {
     }
 
     return {
-        "started": started,
-        "finished": finished
+        [MissionGroup.KEY.STARTED]: started,
+        [MissionGroup.KEY.FINISHED]: finished
     }
 }
 
-MissionGroup.prototype.loadMissions = function(missions) {
+MissionGroup.prototype.init = function(missions) {
     for(const missionID in missions) {
         if(!this.missions.has(missionID)) {
             const mission = new Mission(missions[missionID]);
@@ -60,6 +86,9 @@ MissionGroup.prototype.loadMissions = function(missions) {
             this.missions.set(missionID, mission);
         }
     }
+
+    this.unlockMissions();
+    this.updateState();
 }
 
 MissionGroup.prototype.allRequiredCompleted = function(required) {
@@ -75,6 +104,22 @@ MissionGroup.prototype.allRequiredCompleted = function(required) {
     return true;
 }
 
+MissionGroup.prototype.updateState = function() {
+    if(this.state !== MissionGroup.STATE.INCOMPLETE) {
+        return;
+    }
+
+    for(const [missionID, mission] of this.missions) {
+        if(mission.state !== Mission.STATE.COMPLETED) {
+            this.state = MissionGroup.STATE.INCOMPLETE;
+            return;
+        }
+    }
+
+    this.state = MissionGroup.STATE.COMPLETE;
+    this.events.emit(MissionGroup.EVENT.ALL_COMPLETED);
+}
+
 MissionGroup.prototype.unlockMissions = function() {
     for(const [missionID, mission] of this.missions) {
         if(mission.state === Mission.STATE.HIDDEN) {
@@ -82,8 +127,36 @@ MissionGroup.prototype.unlockMissions = function() {
             const allCompleted = this.allRequiredCompleted(required);
 
             if(allCompleted) {
-                mission.start();
+                const hasStarted = mission.start();
+
+                if(hasStarted) {
+                    this.events.emit(MissionGroup.EVENT.MISSION_STARTED, missionID);
+                }
             }
         }
     }
+}
+
+MissionGroup.prototype.handleObjective = function(gameContext, type, parameter, count, actorID) {
+    const { world } = gameContext;
+    const { eventBus } = world;
+
+    for(const [missionID, mission] of this.missions) {
+        mission.onObjective(type, parameter, count);
+
+        const isCompleted = mission.complete();
+
+        if(isCompleted) {
+            this.events.emit(MissionGroup.EVENT.MISSION_COMPLETED, missionID);
+
+            eventBus.emit(GameEvent.TYPE.MISSION_COMPLETE, {
+                "id": missionID,
+                "mission": mission,
+                "actorID": actorID
+            });
+        }
+    }
+
+    this.unlockMissions();
+    this.updateState();
 }

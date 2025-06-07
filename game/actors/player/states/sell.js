@@ -25,8 +25,7 @@ PlayerSellState.prototype.onExit = function(gameContext, stateMachine) {
 
 PlayerSellState.prototype.onUpdate = function(gameContext, stateMachine) {
     const player = stateMachine.getContext();
-    
-    //player.rangeVisualizer.update(gameContext, player);
+
     this.updateCursor(gameContext, player);
 
     player.hover.alignSpriteAuto(gameContext);

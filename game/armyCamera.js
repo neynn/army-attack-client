@@ -78,6 +78,7 @@ ArmyCamera.prototype.update = function(gameContext, display) {
     const realTime = timer.getRealTime();
 
     this.updateWorldBounds();
+    this.clampWorldBounds();
     this.drawLayer(graphics, context, worldMap.getLayer(ArmyMap.LAYER.GROUND));
 
     if(gameContext.settings.drawBorder) {
