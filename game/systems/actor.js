@@ -4,8 +4,6 @@ import { OtherPlayer } from "../actors/otherPlayer.js";
 import { EnemyActor } from "../actors/enemyActor.js";
 import { CameraContext } from "../../source/camera/cameraContext.js";
 import { ArmyContext } from "../armyContext.js";
-import { MapManager } from "../../source/map/mapManager.js";
-import { MissionGroup } from "../actors/player/mission/missionGroup.js";
 
 const ACTOR_TYPE = {
     PLAYER: "Player",
@@ -24,7 +22,7 @@ const ACTOR_TYPE = {
  */
 const createActor = function(gameContext, actorID, team, type) {
     const { client, renderer, world } = gameContext;
-    const { turnManager, mapManager } = world;
+    const { turnManager } = world;
     const { router, cursor } = client;
     const actorType = turnManager.getActorType(type);
 
@@ -38,19 +36,7 @@ const createActor = function(gameContext, actorID, team, type) {
             actor.hover.createSprite(gameContext);
             actor.teamID = team ?? null;
             actor.setConfig(actorType);
-    
-            mapManager.events.on(MapManager.EVENT.MAP_CREATE, (id, data, map) => {
-                if(data.missions) {
-                    actor.missions.createGroup(id, data.missions, (group) => {
-                        group.events.on(MissionGroup.EVENT.MISSION_STARTED, (id) => console.log(id, "STARTED"));
-                        group.events.on(MissionGroup.EVENT.MISSION_COMPLETED, (id) => console.log(id, "COMPLETED"));
-                    });
-                }
-            });
-
-            mapManager.events.on(MapManager.EVENT.MAP_ENABLE, (id, map) => {
-                actor.missions.selectGroup(id);
-            });
+            actor.initMissionEvents(gameContext);
 
             //context.createBuffer(600, 600);
             //context.setDisplayMode(CameraContext.DISPLAY_MODE.RESOLUTION_FIXED);

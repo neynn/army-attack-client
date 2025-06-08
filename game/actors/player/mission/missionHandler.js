@@ -60,8 +60,8 @@ MissionHandler.prototype.save = function() {
     return groups;
 }
 
-MissionHandler.prototype.onObjective = function(gameContext, type, parameter, count, actorID) {
+MissionHandler.prototype.onObjective = function(type, parameter, count) {
     if(this.current) {
-        this.current.handleObjective(gameContext, type, parameter, count, actorID);
+        this.current.handleObjective(type, parameter, count);
     }
 }

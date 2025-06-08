@@ -13,7 +13,7 @@ GameObjective.prototype.onEntityKill = function(gameContext, entity, actorID) {
     if(actor && actor.missions) {
         const entityType = entity.config.id;
 
-        actor.missions.onObjective(gameContext, GameObjective.TYPE.DESTROY, entityType, 1, actorID);
+        actor.missions.onObjective(GameObjective.TYPE.DESTROY, entityType, 1);
     }
 }
 
@@ -23,6 +23,6 @@ GameObjective.prototype.onTileCapture = function(gameContext, count, actorID) {
     const actor = turnManager.getActor(actorID);
 
     if(actor && actor.missions) {
-        actor.missions.onObjective(gameContext, GameObjective.TYPE.CONQUER, null, count, actorID);
+        actor.missions.onObjective(GameObjective.TYPE.CONQUER, null, count);
     }
 }

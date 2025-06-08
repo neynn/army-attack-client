@@ -1,5 +1,4 @@
 import { EventEmitter } from "../../../../source/events/eventEmitter.js";
-import { GameEvent } from "../../../gameEvent.js";
 import { Mission } from "./mission.js";
 
 export const MissionGroup = function() {
@@ -130,30 +129,21 @@ MissionGroup.prototype.unlockMissions = function() {
                 const hasStarted = mission.start();
 
                 if(hasStarted) {
-                    this.events.emit(MissionGroup.EVENT.MISSION_STARTED, missionID);
+                    this.events.emit(MissionGroup.EVENT.MISSION_STARTED, missionID, mission);
                 }
             }
         }
     }
 }
 
-MissionGroup.prototype.handleObjective = function(gameContext, type, parameter, count, actorID) {
-    const { world } = gameContext;
-    const { eventBus } = world;
-
+MissionGroup.prototype.handleObjective = function(type, parameter, count) {
     for(const [missionID, mission] of this.missions) {
         mission.onObjective(type, parameter, count);
 
         const isCompleted = mission.complete();
 
         if(isCompleted) {
-            this.events.emit(MissionGroup.EVENT.MISSION_COMPLETED, missionID);
-
-            eventBus.emit(GameEvent.TYPE.MISSION_COMPLETE, {
-                "id": missionID,
-                "mission": mission,
-                "actorID": actorID
-            });
+            this.events.emit(MissionGroup.EVENT.MISSION_COMPLETED, missionID, mission);
         }
     }
 
