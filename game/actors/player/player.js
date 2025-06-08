@@ -85,10 +85,6 @@ Player.prototype.save = function() {
     }
 }
 
-Player.prototype.getCamera = function() {
-    return this.camera;
-}
-
 Player.prototype.getSpriteType = function(typeID, spriteKey) {
     const spriteType = this.config.sprites[typeID];
     const spriteID = spriteType[spriteKey];
@@ -129,7 +125,7 @@ Player.prototype.onMakeChoice = function(gameContext) {
         }
 
         eventBus.emit(GameEvent.TYPE.ACTION_REQUEST, { "actorID": this.id, "request": request, "choice": executionRequest });
-        
+
         return Queue.FILTER.SUCCESS;
     });
 }
