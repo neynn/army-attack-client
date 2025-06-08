@@ -3,6 +3,7 @@ import { Display } from "./camera/display.js";
 import { EffectManager } from "./effects/effectManager.js";
 import { EventEmitter } from "./events/eventEmitter.js";
 import { CameraContext } from "./camera/cameraContext.js";
+import { Camera2D } from "./camera/types/camera2D.js";
 
 export const Renderer = function() {
     this.contexts = [];
@@ -28,10 +29,10 @@ Renderer.EVENT = {
 };
 
 Renderer.DEBUG = {
-    CONTEXT: false,
-    INTERFACE: false,
-    SPRITES: false,
-    MAP: false
+    CONTEXT: 0,
+    INTERFACE: 0,
+    SPRITES: 0,
+    MAP: 0
 };
 
 Renderer.FPS_COLOR = {
@@ -41,18 +42,6 @@ Renderer.FPS_COLOR = {
 
 Renderer.prototype.exit = function() {
     this.contexts.length = 0;
-}
-
-Renderer.prototype.forAllContexts = function(onCall) {
-    if(typeof onCall !== "function") {
-        return;
-    }
-
-    this.contexts.forEach((context) => {
-        const contextID = context.getID();
-
-        onCall(contextID, context);
-    });
 }
 
 Renderer.prototype.getContext = function(contextID) {
@@ -164,6 +153,19 @@ Renderer.prototype.onWindowResize = function(width, height) {
     }
     
     this.events.emit(Renderer.EVENT.SCREEN_RESIZE, width, height);
+}
+
+Renderer.prototype.onMapEnable = function(mapWidth, mapHeight) {
+    for(let i = 0; i < this.contexts.length; i++) {
+        const context = this.contexts[i];
+        const camera = context.getCamera();
+
+        if(camera instanceof Camera2D) {
+            camera.setMapSize(mapWidth, mapHeight);
+        }
+
+        context.refreshFull();
+    }
 }
 
 Renderer.prototype.getWindow = function() {

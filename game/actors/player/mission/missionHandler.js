@@ -65,3 +65,9 @@ MissionHandler.prototype.onObjective = function(type, parameter, count) {
         this.current.handleObjective(type, parameter, count);
     }
 }
+
+MissionHandler.prototype.getCurrentActiveMissions = function() {
+    if(this.current) {
+        this.current.getActiveMissions();
+    }
+}

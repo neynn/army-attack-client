@@ -1,4 +1,3 @@
-import { ArmyCamera } from "../../armyCamera.js";
 import { PlayerCursor } from "./playerCursor.js";
 import { RangeVisualizer } from "./rangeVisualizer.js";
 import { Inventory } from "./inventory/inventory.js";
@@ -19,13 +18,14 @@ import { PlayerDebugState } from "./states/debug.js";
 import { PlayerPlaceState } from "./states/place.js";
 import { MapManager } from "../../../source/map/mapManager.js";
 import { MissionGroup } from "./mission/missionGroup.js";
+import { ArmyContext } from "../../armyContext.js";
 
-export const Player = function(id) {
+export const Player = function(id, camera) {
     Actor.call(this, id);
 
+    this.camera = camera;
     this.teamID = null;
     this.inventory = new Inventory();
-    this.camera = new ArmyCamera();
     this.inputQueue = new Queue(10);
     this.hover = new PlayerCursor();
     this.attackVisualizer = new AttackVisualizer(this.camera);
@@ -180,5 +180,15 @@ Player.prototype.initMissionEvents = function(gameContext) {
 
     mapManager.events.on(MapManager.EVENT.MAP_ENABLE, (id, map) => {
         this.missions.selectGroup(id);
+        this.camera.initCustomLayers(gameContext);
+
+        if(map.music && gameContext.modeID !== ArmyContext.GAME_MODE.EDIT) {
+            gameContext.client.musicPlayer.playTrack(map.music);
+        }
+
+        map.clearClouds(gameContext, 2, 2, 10, 10);
+        map.addDebris(1, 2, 2);
+        map.addDebris(1, 3, 2);
+        map.addDebris(1, 4, 2);
     });
 }

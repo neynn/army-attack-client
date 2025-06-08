@@ -30,12 +30,9 @@ import { Logger } from "../source/logger.js";
 import { GameEvent } from "./gameEvent.js";
 import { ArmyMap } from "./init/armyMap.js";
 import { FireMissionAction } from "./actions/fireMissionAction.js";
-import { ArmyCamera } from "./armyCamera.js";
 import { TownComponent } from "./components/town.js";
 import { ClearDebrisAction } from "./actions/clearDebrisAction.js";
 import { HealAction } from "./actions/healAction.js";
-import { MapManager } from "../source/map/mapManager.js";
-import { Camera2D } from "../source/camera/types/camera2D.js";
 
 export const ArmyContext = function() {
     GameContext.call(this);
@@ -56,10 +53,6 @@ export const ArmyContext = function() {
 
     this.eventHandler = new GameEvent();
     this.modeID = ArmyContext.GAME_MODE.NONE;
-
-    this.world.mapManager.events.on(MapManager.EVENT.MAP_ENABLE, (mapID, worldMap) => {
-        this.onMapEnable(worldMap);
-    }, { permanent: true });
 }
 
 ArmyContext.prototype = Object.create(GameContext.prototype);
@@ -245,33 +238,7 @@ ArmyContext.prototype.getConversionID = function(tileID, teamID) {
     }
 
     return convertedID;
-}
-
-ArmyContext.prototype.onMapEnable = function(worldMap) {
-    const { width, height, music } = worldMap;
-
-    this.renderer.forAllContexts((contextID, context) => {
-        const camera = context.getCamera();
-
-        if(camera instanceof Camera2D) {
-            camera.setMapSize(width, height);
-            context.refreshFull();
-        }
-
-        if(camera instanceof ArmyCamera) {
-            camera.initCustomLayers(this);
-        }
-    });
-
-    if(music && this.modeID !== ArmyContext.GAME_MODE.EDIT) {
-        this.client.musicPlayer.playTrack(music);
-    }
-
-    worldMap.clearClouds(this, 2, 2, 10, 10);
-    worldMap.addDebris(1, 2, 2);
-    worldMap.addDebris(1, 3, 2);
-    worldMap.addDebris(1, 4, 2);
-}   
+} 
 
 ArmyContext.prototype.getTeamID = function(teamName) {
     const team = this.teamTypes[teamName];

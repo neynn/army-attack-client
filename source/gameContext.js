@@ -10,6 +10,7 @@ import { World } from "./world.js";
 import { LanguageHandler } from "./languageHandler.js";
 import { Transform2D } from "./math/transform2D.js";
 import { FontHandler } from "./fontHandler.js";
+import { MapManager } from "./map/mapManager.js";
 
 export const GameContext = function() {
     this.client = new Client();
@@ -52,6 +53,12 @@ export const GameContext = function() {
 
     this.states.events.on(StateMachine.EVENT.STATE_EXIT, () => {
         this.exit();
+    }, { permanent: true });
+
+    this.world.mapManager.events.on(MapManager.EVENT.MAP_ENABLE, (mapID, worldMap) => {
+        const { width, height } = worldMap;
+
+        this.renderer.onMapEnable(width, height);
     }, { permanent: true });
 }
 

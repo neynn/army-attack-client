@@ -4,12 +4,36 @@ import { OtherPlayer } from "../actors/otherPlayer.js";
 import { EnemyActor } from "../actors/enemyActor.js";
 import { CameraContext } from "../../source/camera/cameraContext.js";
 import { ArmyContext } from "../armyContext.js";
+import { ArmyCamera } from "../armyCamera.js";
 
 const ACTOR_TYPE = {
     PLAYER: "Player",
     ENEMY: "Enemy",
     OTHER_PLAYER: "OtherPlayer"
 };
+
+/**
+ * Creates the player's camera.
+ * 
+ * @param {*} gameContext 
+ * @returns 
+ */
+const createPlayerCamera = function(gameContext) {
+    const { renderer } = gameContext;
+
+    const camera = new ArmyCamera();
+    const context = renderer.createContext("PLAYER_CAMERA", camera);
+
+    //context.createBuffer(600, 600);
+    //context.setDisplayMode(CameraContext.DISPLAY_MODE.RESOLUTION_FIXED);
+    //context.setScaleMode(CameraContext.SCALE_MODE.NONE);
+    context.setPositionMode(CameraContext.POSITION_MODE.AUTO_CENTER);
+
+    camera.bindViewport();
+    camera.setTileSize(gameContext.settings.tileWidth, gameContext.settings.tileHeight);
+
+    return camera;
+}
 
 /**
  * Creates an actor.
@@ -21,29 +45,21 @@ const ACTOR_TYPE = {
  * @returns 
  */
 const createActor = function(gameContext, actorID, team, type) {
-    const { client, renderer, world } = gameContext;
+    const { client, world } = gameContext;
     const { turnManager } = world;
     const { router, cursor } = client;
     const actorType = turnManager.getActorType(type);
 
     switch(type) {
         case ACTOR_TYPE.PLAYER: {
-            const actor = new Player(actorID);
-            const camera = actor.getCamera();
-            const context = renderer.createContext("PLAYER_CAMERA", camera);
+            const camera = createPlayerCamera(gameContext);
+            const actor = new Player(actorID, camera);
 
             actor.inventory.init(gameContext);
             actor.hover.createSprite(gameContext);
             actor.teamID = team ?? null;
             actor.setConfig(actorType);
             actor.initMissionEvents(gameContext);
-
-            //context.createBuffer(600, 600);
-            //context.setDisplayMode(CameraContext.DISPLAY_MODE.RESOLUTION_FIXED);
-            //context.setScaleMode(CameraContext.SCALE_MODE.WHOLE);
-            context.setPositionMode(CameraContext.POSITION_MODE.AUTO_CENTER);
-
-            camera.setTileSize(gameContext.settings.tileWidth, gameContext.settings.tileHeight);
 
             cursor.events.on(Cursor.EVENT.BUTTON_DRAG, (buttonID, deltaX, deltaY) => {
                 if(buttonID !== Cursor.BUTTON.LEFT) {

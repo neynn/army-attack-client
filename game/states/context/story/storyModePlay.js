@@ -28,9 +28,6 @@ const initStoryMode = async function(gameContext) {
         return false;
     }
 
-    const camera = player.getCamera();
-    
-    camera.bindViewport();
     worldMap.reload(gameContext);
 
     return true;

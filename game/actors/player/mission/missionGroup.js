@@ -150,3 +150,15 @@ MissionGroup.prototype.handleObjective = function(type, parameter, count) {
     this.unlockMissions();
     this.updateState();
 }
+
+MissionGroup.prototype.getActiveMissions = function() {
+    const missions = [];
+
+    for(const [missionID, mission] of this.missions) {
+        if(mission.state === Mission.STATE.STARTED) {
+            missions.push(mission);
+        }
+    }
+
+    return missions;
+}
