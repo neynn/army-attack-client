@@ -77,9 +77,9 @@ const getBlockState = function(gameContext, worldMap, tileX, tileY, teamName) {
 PlaceSystem.getBlockedPlaceIndices = function(gameContext, teamName) {
     const { world } = gameContext;
     const { mapManager } = world;
-    const blockedIndices = new Map();
     const worldMap = mapManager.getActiveMap();
-
+    const blockedIndices = new Map();
+    
     if(!worldMap) {
         return blockedIndices;
     }

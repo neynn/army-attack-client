@@ -1,4 +1,4 @@
-import { PrettyJSON } from "./source/exporter.js";
+import { PrettyJSON } from "./plugin/prettyJSON.js";
 
 export const saveTemplateAsFile = (filename, dataObjToWrite) => {
   const blob = new Blob([dataObjToWrite], { type: "text/json" });
