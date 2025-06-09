@@ -9,6 +9,8 @@ import { AllianceSystem } from "./alliance.js";
  */
 export const PathfinderSystem = function() {}
 
+PathfinderSystem.PATHFINDER = new FloodFill(1, 1.5);
+
 PathfinderSystem.NODE_STATE = {
     VALID: 0,
     INVALID_PASSABILITY: 1,
@@ -140,7 +142,7 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
     const isOriginWalkable = isTileWalkable(gameContext, activeMap, entity, tileX, tileY);
     const tileTypes = gameContext.tileTypes;
 
-    FloodFill.search_cross(tileX, tileY, moveComponent.range, activeMap.width, activeMap.height, (next, current) => {
+    PathfinderSystem.PATHFINDER.searchCross(tileX, tileY, moveComponent.range, activeMap.width, activeMap.height, (next) => {
         const { positionX, positionY } = next;
         const isNextPassable = isTilePassable(activeMap, tileTypes, entity, positionX, positionY);
 
@@ -220,7 +222,7 @@ PathfinderSystem.generateMovePath = function(nodeList, targetX, targetY) {
             continue;
         }
 
-        const flatTree = FloodFill.walkTree(node);
+        const flatTree = FloodFill.flattenTree(node);
         const length = flatTree.length;
 
         if(length <= 1) {
