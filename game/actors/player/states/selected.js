@@ -119,7 +119,7 @@ PlayerSelectedState.prototype.onClick = function(gameContext, stateMachine) {
             if(isAttackable) {
                 player.queueAttack(currentTarget);
             } else {
-                soundPlayer.play("sound_error", 0.5); 
+                soundPlayer.play(player.config.sounds.error, 0.5); 
             }
 
             break;
@@ -132,7 +132,7 @@ PlayerSelectedState.prototype.onClick = function(gameContext, stateMachine) {
             break;
         }
         default: {
-            soundPlayer.play("sound_error", 0.5); 
+            soundPlayer.play(player.config.sounds.error, 0.5); 
             break;
         }
     }

@@ -77,7 +77,7 @@ PlayerSellState.prototype.openSellDialog = function(gameContext, player, entity)
         return;
     }
 
-    soundPlayer.play("sound_item_sold");
+    soundPlayer.play(player.config.sounds.sell);
     eventBus.emit(GameEvent.TYPE.ENTITY_SELL, {
         "entity": entity,
         "actorID": player.getID()

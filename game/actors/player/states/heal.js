@@ -35,7 +35,7 @@ PlayerHealState.prototype.onClick = function(gameContext, stateMachine) {
         const { client } = gameContext;
         const { soundPlayer } = client;
         
-        soundPlayer.play("sound_error", 0.5);
+        soundPlayer.play(player.config.sounds.error, 0.5);
     }
 
     stateMachine.setNextState(gameContext, Player.STATE.IDLE);

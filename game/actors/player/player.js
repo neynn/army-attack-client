@@ -152,7 +152,7 @@ Player.prototype.update = function(gameContext) {
     this.states.update(gameContext);
 }
 
-Player.prototype.initMissionEvents = function(gameContext) {
+Player.prototype.initMapEvents = function(gameContext) {
     const { world } = gameContext;
     const { mapManager, eventBus }  = world;
 

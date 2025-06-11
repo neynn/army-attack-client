@@ -59,7 +59,7 @@ const createActor = function(gameContext, actorID, team, type) {
             actor.hover.createSprite(gameContext);
             actor.teamID = team ?? null;
             actor.setConfig(actorType);
-            actor.initMissionEvents(gameContext);
+            actor.initMapEvents(gameContext);
 
             cursor.events.on(Cursor.EVENT.BUTTON_DRAG, (buttonID, deltaX, deltaY) => {
                 if(buttonID !== Cursor.BUTTON.LEFT) {

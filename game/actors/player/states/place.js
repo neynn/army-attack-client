@@ -48,7 +48,9 @@ PlayerPlaceState.prototype.onUpdate = function(gameContext, stateMachine) {
 
 PlayerPlaceState.prototype.onClick = function(gameContext, stateMachine) {
     const player = stateMachine.getContext();
-    const isPlaceable = PlaceSystem.isEntityPlaceable(gameContext, this.entityType.id, player.hover.tileX, player.hover.tileY, player.teamID);
+    const isPlaceable = PlaceSystem.isEntityPlaceable(gameContext, player.hover.tileX, player.hover.tileY, this.entityType.dimX, this.entityType.dimY, player.teamID);
+
+    console.log(isPlaceable);
 }
 
 PlayerPlaceState.prototype.setupBuildSprite = function(gameContext, player) {

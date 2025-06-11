@@ -91,7 +91,7 @@ PlayerFireMissionState.prototype.onClick = function(gameContext, stateMachine) {
         const { client } = gameContext;
         const { soundPlayer } = client;
         
-        soundPlayer.play("sound_error", 0.5);
+        soundPlayer.play(player.config.sounds.error, 0.5);
     }
 }
 
@@ -112,7 +112,7 @@ PlayerFireMissionState.prototype.showBlockedEntities = function(gameContext, pla
             const endX = tileX + entity.config.dimX;
             const endY = tileY + entity.config.dimY;
 
-            for(let i =  tileY; i < endY; i++) {
+            for(let i = tileY; i < endY; i++) {
                 for(let j = tileX; j < endX; j++) {
                     camera.pushOverlay(ArmyCamera.OVERLAY_TYPE.FIRE_MISSION, disabledID, j, i);
                 }

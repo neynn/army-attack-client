@@ -79,7 +79,7 @@ PlaceSystem.getBlockedPlaceIndices = function(gameContext, teamName) {
     const { mapManager } = world;
     const worldMap = mapManager.getActiveMap();
     const blockedIndices = new Map();
-    
+
     if(!worldMap) {
         return blockedIndices;
     }
@@ -99,24 +99,17 @@ PlaceSystem.getBlockedPlaceIndices = function(gameContext, teamName) {
     return blockedIndices;
 }
 
-PlaceSystem.isEntityPlaceable = function(gameContext, typeID, tileX, tileY, teamName) {
+PlaceSystem.isEntityPlaceable = function(gameContext, tileX, tileY, sizeX, sizeY, teamName) {
     const { world } = gameContext;
-    const { entityManager, mapManager } = world;
+    const { mapManager } = world;
     const worldMap = mapManager.getActiveMap();
 
     if(!worldMap) {
         return false;
     }
 
-    const entityType = entityManager.getEntityType(typeID);
-
-    if(!entityType) {
-        return false;
-    }
-
-    const { dimX, dimY } = entityType;
-    const endX = tileX + dimX;
-    const endY = tileY + dimY;
+    const endX = tileX + sizeX;
+    const endY = tileY + sizeY;
 
     for(let i = tileY; i < endY; i++) {
         for(let j = tileX; j < endX; j++) {

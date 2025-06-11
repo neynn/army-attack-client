@@ -51,6 +51,10 @@
             "debris": {
                 "1-1": "cursor_select_1x1"
             }
+        },
+        "sounds": {
+            "error": "sound_error",
+            "sell": "sound_item_sold"
         }
     }
 }
