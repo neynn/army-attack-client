@@ -9,6 +9,13 @@
  */
 
 /**
+ * @typedef {Object} BuyType
+ * @property {string} type
+ * @property {string} id
+ * @property {int} value
+ */
+
+/**
  * @typedef {Object} FireMissionType
  * @property {int} dimX
  * @property {int} dimY
@@ -98,3 +105,18 @@ DefaultTypes.createSpawnConfig = function(type, teamID, owners, tileX, tileY) {
         "tileY": tileY
     }
 }
+
+/**
+ * 
+ * @param {string} type 
+ * @param {string} id 
+ * @param {int} value 
+ * @returns {BuyType}
+ */
+DefaultTypes.createBuyType = function(type, id, value) {
+    return {
+        "type": type,
+        "id": id,
+        "value": value
+    }
+}   

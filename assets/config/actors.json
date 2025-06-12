@@ -54,7 +54,8 @@
         },
         "sounds": {
             "error": "sound_error",
-            "sell": "sound_item_sold"
+            "sell": "sound_item_sold",
+            "place": "sound_item_placed"
         }
     }
 }

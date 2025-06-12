@@ -1,10 +1,13 @@
+import { DefaultTypes } from "../../../defaultTypes.js";
 import { PlaceSystem } from "../../../systems/place.js";
+import { SpawnSystem } from "../../../systems/spawn.js";
 import { Player } from "../player.js";
 import { PlayerState } from "./playerState.js";
 
 export const PlayerPlaceState = function() {
-    this.entityType = null;
     this.buildSpriteIndex = -1;
+    this.entityType = null;
+    this.buyType = null;
 }
 
 PlayerPlaceState.prototype = Object.create(PlayerState.prototype);
@@ -20,15 +23,14 @@ PlayerPlaceState.prototype.onExit = function(gameContext, stateMachine) {
     hover.hideSprite(gameContext);
     camera.clearPlace();
 
-    this.entityType = null;
     this.buildSpriteIndex = -1;
+    this.entityType = null;
+    this.buyType = null;
 }
 
 PlayerPlaceState.prototype.onEnter = function(gameContext, stateMachine, transition) {
-    const { typeID } = transition;
-    const { world, tileManager } = gameContext;
-    const { entityManager } = world;
-    const entityType = entityManager.getEntityType(typeID);
+    const { entityType, buyType } = transition;
+    const { tileManager } = gameContext;
     const player = stateMachine.getContext();
     const tileID = tileManager.getTileIDByArray(player.config.overlays.enable);
 
@@ -36,6 +38,7 @@ PlayerPlaceState.prototype.onEnter = function(gameContext, stateMachine, transit
     player.camera.place.fill(tileID);
 
     this.entityType = entityType;
+    this.buyType = buyType;
     this.setupBuildSprite(gameContext, player);
     this.highlightPlaceableTiles(gameContext, player);
 }
@@ -47,10 +50,29 @@ PlayerPlaceState.prototype.onUpdate = function(gameContext, stateMachine) {
 }
 
 PlayerPlaceState.prototype.onClick = function(gameContext, stateMachine) {
-    const player = stateMachine.getContext();
-    const isPlaceable = PlaceSystem.isEntityPlaceable(gameContext, player.hover.tileX, player.hover.tileY, this.entityType.dimX, this.entityType.dimY, player.teamID);
+    const { client } = gameContext;
+    const { soundPlayer } = client;
 
-    console.log(isPlaceable);
+    const player = stateMachine.getContext();
+    const { hover, teamID } = player;
+    const { tileX, tileY } = hover;
+
+    const isPlaceable = PlaceSystem.isEntityPlaceable(gameContext, tileX, tileY, this.entityType.dimX, this.entityType.dimY, teamID);
+
+    if(!isPlaceable) {
+        soundPlayer.play(player.config.sounds.error);
+        return;
+    }
+
+    const spawnConfig = DefaultTypes.createSpawnConfig(this.entityType.id, teamID, player.getID(), tileX, tileY);
+    const entity = SpawnSystem.createEntity(gameContext, spawnConfig);
+
+    if(entity) {
+        soundPlayer.play(player.config.sounds.place);
+        player.inventory.buyItem(this.buyType);
+    }
+
+    stateMachine.setNextState(gameContext, Player.STATE.IDLE);
 }
 
 PlayerPlaceState.prototype.setupBuildSprite = function(gameContext, player) {

@@ -1,11 +1,11 @@
 export const Listener = function(type) {
     this.id = type;
+    this.nextID = 0;
     this.observers = [];
     this.singleObservers = [];
 }
 
-Listener.ID = {
-    NEXT: 0,
+Listener.CODE = {
     SUPER: -1,
     ERROR: -2
 };
@@ -31,33 +31,29 @@ Listener.prototype.getType = function(options) {
 
 Listener.prototype.getID = function(options) {
     if(!options) {
-        return Listener.ID.NEXT++;
+        return this.nextID++;
     }
 
     const { permanent, id } = options;
 
     if(permanent) {
-        return Listener.ID.SUPER;
+        return Listener.CODE.SUPER;
     }
 
     if(id && typeof id !== "number") {
         return id;
     }
 
-    return Listener.ID.NEXT++;
+    return this.nextID++;
 }
 
 Listener.prototype.emit = function(argsList) {
     for(let i = 0; i < this.observers.length; i++) {
-        const observer = this.observers[i];
-
-        observer.onCall(...argsList);
+        this.observers[i].onCall(...argsList);
     }
 
     for(let i = 0; i < this.singleObservers.length; i++) {
-        const observer = this.singleObservers[i];
-
-        observer.onCall(...argsList);
+        this.singleObservers[i].onCall(...argsList);
     }
 
     this.singleObservers.length = 0;

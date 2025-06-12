@@ -5,6 +5,7 @@ import { EnemyActor } from "../actors/enemyActor.js";
 import { CameraContext } from "../../source/camera/cameraContext.js";
 import { ArmyContext } from "../armyContext.js";
 import { ArmyCamera } from "../armyCamera.js";
+import { DefaultTypes } from "../defaultTypes.js";
 
 const ACTOR_TYPE = {
     PLAYER: "Player",
@@ -46,7 +47,7 @@ const createPlayerCamera = function(gameContext) {
  */
 const createActor = function(gameContext, actorID, team, type) {
     const { client, world } = gameContext;
-    const { turnManager } = world;
+    const { turnManager, entityManager } = world;
     const { router, cursor } = client;
     const actorType = turnManager.getActorType(type);
 
@@ -81,7 +82,10 @@ const createActor = function(gameContext, actorID, team, type) {
             router.on("DEBUG_HEAL", () => actor.states.setNextState(gameContext, Player.STATE.HEAL));
             router.on("DEBUG_FIREMISSION", () => actor.states.setNextState(gameContext, Player.STATE.FIRE_MISSION, { "missionID": "OrbitalLaser" }));
             router.on("DEBUG_SELL", () => actor.states.setNextState(gameContext, Player.STATE.SELL));
-            router.on("DEBUG_PLACE", () => actor.states.setNextState(gameContext, Player.STATE.PLACE, { "typeID": "blue_hq" }));
+            router.on("DEBUG_PLACE", () => actor.states.setNextState(gameContext, Player.STATE.PLACE, {
+                "entityType": entityManager.getEntityType("blue_hq"),
+                "buyType": DefaultTypes.createBuyType("Resource", "Gold", 500)
+            }));
             router.on("DEBUG_DEBUG", () => actor.states.setNextState(gameContext, Player.STATE.DEBUG));
 
             return actor;

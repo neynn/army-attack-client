@@ -30,12 +30,12 @@ EventEmitter.prototype.on = function(eventType, onCall, options) {
     const listener = this.listeners.get(eventType);
 
     if(!listener) {
-        return Listener.ID.ERROR;
+        return Listener.CODE.ERROR;
     }
 
     if(typeof onCall !== "function") {
         console.warn("onCall must be a function!");
-        return Listener.ID.ERROR;
+        return Listener.CODE.ERROR;
     }
 
     const observerType = listener.getType(options);
@@ -47,7 +47,7 @@ EventEmitter.prototype.on = function(eventType, onCall, options) {
 }
 
 EventEmitter.prototype.unsubscribe = function(eventType, subscriberID) {
-    if(subscriberID === Listener.ID.SUPER) {
+    if(subscriberID === Listener.CODE.SUPER) {
         return;
     }
 
@@ -61,7 +61,7 @@ EventEmitter.prototype.unsubscribe = function(eventType, subscriberID) {
 }
 
 EventEmitter.prototype.unsubscribeAll = function(subscriberID) {
-    if(subscriberID === Listener.ID.SUPER) {
+    if(subscriberID === Listener.CODE.SUPER) {
         return;
     }
 
@@ -77,12 +77,12 @@ EventEmitter.prototype.mute = function(eventType) {
         return;
     }
 
-    listener.filterObservers((observer) => observer.id === Listener.ID.SUPER);
+    listener.filterObservers((observer) => observer.id === Listener.CODE.SUPER);
 }
 
 EventEmitter.prototype.muteAll = function() {
     this.listeners.forEach((listener) => {
-        listener.filterObservers((observer) => observer.id === Listener.ID.SUPER);
+        listener.filterObservers((observer) => observer.id === Listener.CODE.SUPER);
     });
 }
 

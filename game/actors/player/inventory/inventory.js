@@ -141,6 +141,18 @@ Inventory.prototype.add = function(type, id, value) {
 
     if(itemType) {
         itemType.add(value);
-        console.log("ADD", type, id, value);
+    }
+}
+
+Inventory.prototype.buyItem = function(buyType) {
+    if(!buyType) {
+        return;
+    }
+
+    const { type, id, value } = buyType;
+    const itemType = this.getItem(type, id);
+
+    if(itemType) {
+        itemType.remove(value);
     }
 }
