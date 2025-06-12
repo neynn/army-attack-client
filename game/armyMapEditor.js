@@ -377,11 +377,7 @@ ArmyMapEditor.prototype.resizeCurrentMap = function(gameContext) {
     const newHeight = clampValue(parsedHeight, this.maxHeight, 1);
 
     gameMap.resize(newWidth, newHeight);
-
-    this.camera.setMapSize(newWidth, newHeight);
-    this.camera.resizeBorder(newWidth, newHeight);
-
-    renderer.getContext(this.id).refreshFull();
+    renderer.onMapSizeUpdate(newWidth, newHeight);
 }
 
 ArmyMapEditor.prototype.paintTile = function(gameContext) {

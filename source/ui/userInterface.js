@@ -32,6 +32,18 @@ UserInterface.prototype.clear = function() {
     this.roots.length = 0;
 }
 
+UserInterface.prototype.isAnyColliding = function() {
+    return this.collisions.current.size > 0;
+}
+
+UserInterface.prototype.handleClick = function(mouseX, mouseY, mouseRange) {
+    for(const elementID of this.collisions.current) {
+        const element = this.elements.get(elementID);
+
+        element.collider.click(mouseX, mouseY, mouseRange);
+    }
+}
+
 UserInterface.prototype.destroyElement = function(name) {
     const element = this.getElement(name);
 

@@ -19,7 +19,7 @@ MapEditorState.prototype.onEnter = function(gameContext, stateMachine) {
 
     gameContext.setGameMode(ArmyContext.GAME_MODE.EDIT);
 
-    uiManager.parseUI(this.mapEditor.interfaceID, gameContext);
+    uiManager.createUIByID(this.mapEditor.interfaceID, gameContext);
     router.load(gameContext, gameContext.keybinds.editor);
     router.on("TOGGLE_AUTOTILER", () => this.mapEditor.toggleAutotiler(gameContext));
     router.on("TOGGLE_ERASER", () => this.mapEditor.toggleEraser(gameContext));
@@ -36,7 +36,7 @@ MapEditorState.prototype.onEnter = function(gameContext, stateMachine) {
 MapEditorState.prototype.onExit = function(gameContext, stateMachine) {
     const { renderer, uiManager } = gameContext;
 
-    uiManager.unparseUI(this.mapEditor.interfaceID);
+    uiManager.destroyUI(this.mapEditor.interfaceID);
     renderer.destroyContext(this.mapEditor.id);
     this.mapEditor = null;
 }

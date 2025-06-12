@@ -56,9 +56,11 @@ const createActor = function(gameContext, actorID, team, type) {
             const camera = createPlayerCamera(gameContext);
             const actor = new Player(actorID, camera);
 
+            camera.initCustomLayers(gameContext);
+
+            actor.teamID = team ?? null;
             actor.inventory.init(gameContext);
             actor.hover.createSprite(gameContext);
-            actor.teamID = team ?? null;
             actor.setConfig(actorType);
             actor.initMapEvents(gameContext);
 

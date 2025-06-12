@@ -294,6 +294,8 @@ Camera2D.prototype.setTileSize = function(tileWidth, tileHeight) {
     this.setWorldSize(worldWidth, worldHeight);
 }
 
+Camera2D.prototype.onMapSizeSet = function() {}
+
 Camera2D.prototype.setMapSize = function(mapWidth, mapHeight) {
     const worldWidth = mapWidth * this.tileWidth;
     const worldHeight = mapHeight * this.tileHeight;
@@ -302,6 +304,7 @@ Camera2D.prototype.setMapSize = function(mapWidth, mapHeight) {
     this.mapHeight = mapHeight;
 
     this.setWorldSize(worldWidth, worldHeight);
+    this.onMapSizeSet();
 }
 
 Camera2D.prototype.updateWorldBounds = function() {

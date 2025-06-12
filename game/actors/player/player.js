@@ -176,7 +176,6 @@ Player.prototype.initMapEvents = function(gameContext) {
 
     mapManager.events.on(MapManager.EVENT.MAP_ENABLE, (id, map) => {
         this.missions.selectGroup(id);
-        this.camera.initCustomLayers(gameContext);
 
         if(map.music && gameContext.modeID !== ArmyContext.GAME_MODE.EDIT) {
             gameContext.client.musicPlayer.playTrack(map.music);

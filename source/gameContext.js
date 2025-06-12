@@ -58,7 +58,7 @@ export const GameContext = function() {
     this.world.mapManager.events.on(MapManager.EVENT.MAP_ENABLE, (mapID, worldMap) => {
         const { width, height } = worldMap;
 
-        this.renderer.onMapEnable(width, height);
+        this.renderer.onMapSizeUpdate(width, height);
     }, { permanent: true });
 }
 

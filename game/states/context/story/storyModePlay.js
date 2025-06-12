@@ -38,7 +38,7 @@ StoryModePlayState.prototype.onEnter = async function(gameContext, stateMachine)
 
     console.time();
     
-    //uiManager.parseUI("STORY_MODE", gameContext);
+    //uiManager.createUIByID("STORY_MODE", gameContext);
 
     const isReady = await initStoryMode(gameContext);
 
@@ -152,5 +152,5 @@ StoryModePlayState.prototype.onEnter = async function(gameContext, stateMachine)
 StoryModePlayState.prototype.onExit = function(gameContext, stateMachine) {
     const { uiManager } = gameContext;
 
-    uiManager.unparseUI("PLAY_GAME");
+    uiManager.destroyUI("PLAY_GAME");
 }

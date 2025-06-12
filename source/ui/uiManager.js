@@ -34,24 +34,17 @@ UIManager.ELEMENT_TYPE_MAP = {
 };
 
 UIManager.prototype.load = function(interfaceTypes, iconTypes) {
-    if(typeof interfaceTypes === "object") {
-        this.interfaceTypes = interfaceTypes;
-    } else {
-        Logger.log(false, "InterfaceTypes cannot be undefined!", "UIManager.prototype.load", null);
+    if(!interfaceTypes || !iconTypes) {
+        Logger.log(Logger.CODE.ENGINE_ERROR, "InterfaceTypes/IconTypes cannot be undefined!", "UIManager.prototype.load", null);
     }
 
-    if(typeof iconTypes === "object") {
-        this.resources.createTextures(iconTypes);
-    } else {
-        Logger.log(false, "IconTypes cannot be undefined!", "UIManager.prototype.load", null);
-    }
+    this.interfaceTypes = interfaceTypes;
+    this.resources.createTextures(iconTypes);
 }
 
 UIManager.prototype.debug = function(display) {
     for(let i = this.interfaceStack.length - 1; i >= 0; i--) {
-        const userInterface = this.interfaceStack[i];
-
-        userInterface.debug(display);
+        this.interfaceStack[i].debug(display);
     }
 }
 
@@ -61,16 +54,13 @@ UIManager.prototype.draw = function(gameContext, display) {
     const deltaTime = timer.getDeltaTime();
 
     for(let i = this.interfaceStack.length - 1; i >= 0; i--) {
-        const userInterface = this.interfaceStack[i];
-
-        userInterface.draw(display, realTime, deltaTime);
+        this.interfaceStack[i].draw(display, realTime, deltaTime);
     }
 }
 
 UIManager.prototype.getInterfaceIndex = function(interfaceID) {
     for(let i = 0; i < this.interfaceStack.length; i++) {
-        const userInterface = this.interfaceStack[i];
-        const currentID = userInterface.getID();
+        const currentID = this.interfaceStack[i].getID();
 
         if(currentID === interfaceID) {
             return i;
@@ -82,32 +72,12 @@ UIManager.prototype.getInterfaceIndex = function(interfaceID) {
 
 UIManager.prototype.update = function(gameContext) {
     for(let i = 0; i < this.interfaceStack.length; i++) {
-        const userInterface = this.interfaceStack[i];
-
-        userInterface.update(gameContext);
+        this.interfaceStack[i].update(gameContext);
     }
 }
 
 UIManager.prototype.exit = function() {
     this.interfaceStack.length = 0;
-}
-
-UIManager.prototype.onClick = function(mouseX, mouseY, mouseRange) {
-    for(let i = this.interfaceStack.length - 1; i >= 0; i--) {
-        const userInterface = this.interfaceStack[i];
-        const { collisions, elements } = userInterface;
-        const current = collisions.getCurrent();
-
-        if(current.size !== 0) {
-            for(const elementID of current) {
-                const element = elements.get(elementID);
-
-                element.collider.click(mouseX, mouseY, mouseRange);
-            }
-
-            break;
-        }
-    }
 }
 
 UIManager.prototype.getInterface = function(interfaceID) {
@@ -120,40 +90,29 @@ UIManager.prototype.getInterface = function(interfaceID) {
     return this.interfaceStack[interfaceIndex];
 }
 
+UIManager.prototype.onClick = function(mouseX, mouseY, mouseRange) {
+    for(let i = this.interfaceStack.length - 1; i >= 0; i--) {
+        const userInterface = this.interfaceStack[i];
+        const isAnyColliding = userInterface.isAnyColliding();
+
+        if(isAnyColliding) {
+            userInterface.handleClick(mouseX, mouseY, mouseRange);
+            break;
+        }
+    }
+}
+
 UIManager.prototype.onWindowResize = function(windowWidth, windowHeight) {
     for(let i = 0; i < this.interfaceStack.length; i++) {
-        const userInterface = this.interfaceStack[i];
-
-        userInterface.updateRootAnchors(windowWidth, windowHeight);
+        this.interfaceStack[i].updateRootAnchors(windowWidth, windowHeight);
     }
 }
 
-UIManager.prototype.parseUI = function(interfaceID, gameContext) {
-    const config = this.interfaceTypes[interfaceID];
-
-    if(!config) {
-        Logger.log(false, "Interface does not exist!", "UIManager.prototype.parseUI", { interfaceID });
-        return;
-    }
-
-    if(this.getInterfaceIndex(interfaceID) !== -1) {
-        return;
-    }
-
-    const userInterface = new UserInterface(interfaceID);
-
-    userInterface.fromConfig(gameContext, config);
-    
-    this.interfaceStack.push(userInterface);
-
-    return userInterface;
-}
-
-UIManager.prototype.unparseUI = function(interfaceID) {
+UIManager.prototype.destroyUI = function(interfaceID) {
     const interfaceIndex = this.getInterfaceIndex(interfaceID);
 
     if(interfaceIndex === -1) {
-        Logger.log(false, "Interface does not exist!", "UIManager.prototype.unparseUI", { interfaceID });
+        Logger.log(Logger.CODE.ENGINE_ERROR, "Interface does not exist!", "UIManager.prototype.destroyUI", { "interfaceID": interfaceID });
         return;
     }
 
@@ -164,15 +123,33 @@ UIManager.prototype.unparseUI = function(interfaceID) {
     this.interfaceStack.splice(interfaceIndex, 1);
 }
 
-UIManager.prototype.removeUI = function(interfaceID) {
-    const interfaceIndex = this.getInterfaceIndex(interfaceID);
-
-    if(interfaceIndex === -1) {
-        Logger.log(false, "Interface does not exist!", "UIManager.prototype.removeUI", { interfaceID });
-        return;
+UIManager.prototype.createUI = function(interfaceID, onCreate) {
+    if(this.getInterfaceIndex(interfaceID) !== -1) {
+        return null;
     }
 
-    this.interfaceStack.splice(interfaceIndex, 1);
+    const userInterface = new UserInterface(interfaceID);
+
+    if(typeof onCreate === "function") {
+        onCreate(userInterface);
+    }
+
+    this.interfaceStack.push(userInterface);
+
+    return userInterface;
+}
+
+UIManager.prototype.createUIByID = function(interfaceID, gameContext) {
+    const config = this.interfaceTypes[interfaceID];
+
+    if(!config) {
+        Logger.log(Logger.CODE.ENGINE_ERROR, "Interface does not exist!", "UIManager.prototype.createUIByID", { "interfaceID": interfaceID });
+        return null;
+    }
+
+    const userInterface = this.createUI(interfaceID, (ui) => ui.fromConfig(gameContext, config));
+
+    return userInterface;
 }
 
 UIManager.prototype.createElement = function(typeID, config, DEBUG_NAME) {
@@ -291,22 +268,4 @@ UIManager.prototype.createElement = function(typeID, config, DEBUG_NAME) {
             return element;
         }
     }
-}
-
-UIManager.prototype.addUI = function(userInterface) {
-    if(!(userInterface instanceof UserInterface)) {
-        return;
-    }
-
-    const interfaceID = userInterface.getID();
-
-    if(this.interfaceTypes[interfaceID]) {
-        return;
-    }
-
-    if(this.getInterfaceIndex(interfaceID) !== -1) {
-        return;
-    }
-    
-    this.interfaceStack.push(userInterface);
 }

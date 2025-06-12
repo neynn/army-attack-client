@@ -62,18 +62,15 @@ ResourceLoader.prototype.loadResources = async function(modeID) {
             const resources = await this.loadJSONList(files);
 
             this.resources = resources;
-
-            return resources;
+            break;
         }
         case ResourceLoader.MODE.PRODUCTION: {
             const resources = await this.promiseJSON(ResourceLoader.PROD_PATH);
 
             this.resources = resources;
-
-            return resources;
-        }
-        default: {
-            return this.resources;
+            break;
         }
     }
+
+    return this.resources;
 }

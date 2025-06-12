@@ -160,11 +160,14 @@ ArmyCamera.prototype.initCustomLayers = function(gameContext) {
     const { graphics } = tileManager;
     const containerCount = graphics.getContainerCount();
 
-    this.border.resize(this.mapWidth, this.mapHeight);
     this.border.initBuffer(containerCount);
-
-    this.place.resize(this.mapWidth, this.mapHeight);
     this.place.initBuffer(containerCount);
+    this.onMapSizeSet();
+}
+
+ArmyCamera.prototype.onMapSizeSet = function() {
+    this.border.resize(this.mapWidth, this.mapHeight);
+    this.place.resize(this.mapWidth, this.mapHeight);
 }
 
 ArmyCamera.prototype.updateBorder = function(borderID, tileX, tileY) {
