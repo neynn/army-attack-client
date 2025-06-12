@@ -1,4 +1,4 @@
-import { GameEvent } from "../gameEvent.js";
+import { ArmyEventHandler } from "../armyEventHandler.js";
 import { ArmyMap } from "../init/armyMap.js";
 import { AllianceSystem } from "./alliance.js";
 
@@ -65,7 +65,7 @@ DebrisSystem.endCleaning = function(gameContext, tileX, tileY, cleanerID) {
     const worldMap = mapManager.getActiveMap();
 
     worldMap.removeDebris(tileX, tileY);
-    eventBus.emit(GameEvent.TYPE.DEBRIS_REMOVED, { 
+    eventBus.emit(ArmyEventHandler.TYPE.DEBRIS_REMOVED, { 
         "tileX": tileX,
         "tileY": tileY,
         "actor": cleanerID 

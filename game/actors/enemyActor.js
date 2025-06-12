@@ -1,5 +1,5 @@
 import { Actor } from "../../source/turn/actor.js";
-import { GameEvent } from "../gameEvent.js";
+import { ArmyEventHandler } from "../armyEventHandler.js";
 
 export const EnemyActor = function(id) {
     Actor.call(this, id);
@@ -14,5 +14,5 @@ EnemyActor.prototype.onMakeChoice = function(gameContext) {
     const { world } = gameContext;
     const { eventBus } = world;
 
-    eventBus.emit(GameEvent.TYPE.ACTION_REQUEST, { "actorID": this.id });
+    eventBus.emit(ArmyEventHandler.TYPE.ACTION_REQUEST, { "actorID": this.id });
 }

@@ -27,7 +27,7 @@ import { DirectionComponent } from "./components/direction.js";
 import { TileManager } from "../source/tile/tileManager.js";
 import { Renderer } from "../source/renderer.js";
 import { Logger } from "../source/logger.js";
-import { GameEvent } from "./gameEvent.js";
+import { ArmyEventHandler } from "./armyEventHandler.js";
 import { ArmyMap } from "./init/armyMap.js";
 import { FireMissionAction } from "./actions/fireMissionAction.js";
 import { TownComponent } from "./components/town.js";
@@ -51,7 +51,7 @@ export const ArmyContext = function() {
     this.debrisTypes = {};
     this.shopItemTypes = {};
 
-    this.eventHandler = new GameEvent();
+    this.eventHandler = new ArmyEventHandler();
     this.modeID = ArmyContext.GAME_MODE.NONE;
 }
 
@@ -142,7 +142,8 @@ ArmyContext.prototype.init = function(resources) {
     this.world.entityManager.registerFactory(ArmyContext.FACTORY.ENTITY, new ArmyEntityFactory());
     this.world.entityManager.selectFactory(ArmyContext.FACTORY.ENTITY);
 
-    this.eventHandler.init(this);
+    this.eventHandler.createEvents();
+    this.eventHandler.addEventExecutor(this);
     
     this.states.addState(ArmyContext.STATE.MAIN_MENU, new MainMenuState());
     this.states.addState(ArmyContext.STATE.STORY_MODE, new StoryModeState());
@@ -155,22 +156,22 @@ ArmyContext.prototype.setGameMode = function(modeID) {
     switch(modeID) {
         case ArmyContext.GAME_MODE.NONE: {
             this.modeID = ArmyContext.GAME_MODE.NONE;
-            this.eventHandler.mode = GameEvent.MODE.NONE;
+            this.eventHandler.mode = ArmyEventHandler.MODE.NONE;
             break;
         }
         case ArmyContext.GAME_MODE.STORY: {
             this.modeID = ArmyContext.GAME_MODE.STORY;
-            this.eventHandler.mode = GameEvent.MODE.STORY;
+            this.eventHandler.mode = ArmyEventHandler.MODE.STORY;
             break;
         }
         case ArmyContext.GAME_MODE.EDIT: {
             this.modeID = ArmyContext.GAME_MODE.EDIT;
-            this.eventHandler.mode = GameEvent.MODE.NONE;
+            this.eventHandler.mode = ArmyEventHandler.MODE.NONE;
             break;
         }
         case ArmyContext.GAME_MODE.VERSUS: {
             this.modeID = ArmyContext.GAME_MODE.VERSUS;
-            this.eventHandler.mode = GameEvent.MODE.VERSUS;
+            this.eventHandler.mode = ArmyEventHandler.MODE.VERSUS;
             break;
         }
     }

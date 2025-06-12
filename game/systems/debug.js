@@ -1,5 +1,5 @@
 import { DefaultTypes } from "../defaultTypes.js";
-import { GameEvent } from "../gameEvent.js";
+import { ArmyEventHandler } from "../armyEventHandler.js";
 import { SpawnSystem } from "./spawn.js";
 
 /**
@@ -16,7 +16,7 @@ DebugSystem.killAllEntities = function(gameContext) {
     const { world } = gameContext;
     const { entityManager, eventBus } = world;
 
-    entityManager.forAllEntities((entityID, entity) => eventBus.emit(GameEvent.TYPE.ENTITY_DEATH, { entity }));
+    entityManager.forAllEntities((entityID, entity) => eventBus.emit(ArmyEventHandler.TYPE.ENTITY_DEATH, { entity }));
 }
 
 /**

@@ -1,4 +1,4 @@
-import { GameEvent } from "../gameEvent.js";
+import { ArmyEventHandler } from "../armyEventHandler.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { ArmyMap } from "../init/armyMap.js";
 import { AllianceSystem } from "./alliance.js";
@@ -99,7 +99,7 @@ ConquerSystem.tryConquering = function(gameContext, entity, tileX, tileY, actorI
     }
 
     if(tiles.length !== 0) {
-        eventBus.emit(GameEvent.TYPE.TILE_CAPTURE, {
+        eventBus.emit(ArmyEventHandler.TYPE.TILE_CAPTURE, {
             "actorID": actorID,
             "teamID": teamID,
             "count": tiles.length / 2,

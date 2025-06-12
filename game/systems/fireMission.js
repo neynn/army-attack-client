@@ -1,5 +1,5 @@
 import { DefaultTypes } from "../defaultTypes.js";
-import { GameEvent } from "../gameEvent.js";
+import { ArmyEventHandler } from "../armyEventHandler.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { AttackSystem } from "./attack.js";
 import { DebrisSystem } from "./debris.js";
@@ -202,8 +202,8 @@ FireMissionSystem.endFireMission = function(gameContext, missionID, actorID, til
             case AttackSystem.OUTCOME_STATE.DEAD: {
                 entity.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
     
-                eventBus.emit(GameEvent.TYPE.ENTITY_KILL, { 
-                    "reason": GameEvent.KILL_REASON.FIRE_MISSION,
+                eventBus.emit(ArmyEventHandler.TYPE.ENTITY_KILL, { 
+                    "reason": ArmyEventHandler.KILL_REASON.FIRE_MISSION,
                     "entity": entity,
                     "damage": damage,
                     "actor": actorID
@@ -213,8 +213,8 @@ FireMissionSystem.endFireMission = function(gameContext, missionID, actorID, til
             case AttackSystem.OUTCOME_STATE.IDLE: {
                 entity.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
     
-                eventBus.emit(GameEvent.TYPE.ENTITY_HIT, { 
-                    "reason": GameEvent.KILL_REASON.FIRE_MISSION,
+                eventBus.emit(ArmyEventHandler.TYPE.ENTITY_HIT, { 
+                    "reason": ArmyEventHandler.KILL_REASON.FIRE_MISSION,
                     "entity": entity,
                     "damage": damage,
                     "actor": actorID
@@ -222,15 +222,15 @@ FireMissionSystem.endFireMission = function(gameContext, missionID, actorID, til
                 break;
             }
             case AttackSystem.OUTCOME_STATE.DOWN: {
-                eventBus.emit(GameEvent.TYPE.ENTITY_DOWN, { 
-                    "reason": GameEvent.KILL_REASON.FIRE_MISSION,
+                eventBus.emit(ArmyEventHandler.TYPE.ENTITY_DOWN, { 
+                    "reason": ArmyEventHandler.KILL_REASON.FIRE_MISSION,
                     "entity": entity,
                     "damage": damage,
                     "actor": actorID
                 });
     
-                eventBus.emit(GameEvent.TYPE.ENTITY_HIT, { 
-                    "reason": GameEvent.KILL_REASON.FIRE_MISSION,
+                eventBus.emit(ArmyEventHandler.TYPE.ENTITY_HIT, { 
+                    "reason": ArmyEventHandler.KILL_REASON.FIRE_MISSION,
                     "entity": entity,
                     "damage": damage,
                     "actor": actorID
@@ -243,7 +243,7 @@ FireMissionSystem.endFireMission = function(gameContext, missionID, actorID, til
     const debris = DebrisSystem.getDebrisSpawnLocations(gameContext, tileX, tileY, dimX, dimY);
 
     if(debris.length !== 0) {
-        eventBus.emit(GameEvent.TYPE.DEBRIS_SPAWN, {
+        eventBus.emit(ArmyEventHandler.TYPE.DEBRIS_SPAWN, {
             "debris": debris
         });
     }

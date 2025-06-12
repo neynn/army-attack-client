@@ -1,6 +1,6 @@
 import { isRectangleRectangleIntersect } from "../../source/math/math.js";
 import { DefaultTypes } from "../defaultTypes.js";
-import { GameEvent } from "../gameEvent.js";
+import { ArmyEventHandler } from "../armyEventHandler.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { AllianceSystem } from "./alliance.js";
 import { DecaySystem } from "./decay.js";
@@ -177,8 +177,8 @@ AttackSystem.endAttack = function(gameContext, target, actorID) {
         case AttackSystem.OUTCOME_STATE.DEAD: {
             entity.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
 
-            eventBus.emit(GameEvent.TYPE.ENTITY_KILL, { 
-                "reason": GameEvent.KILL_REASON.ATTACK,
+            eventBus.emit(ArmyEventHandler.TYPE.ENTITY_KILL, { 
+                "reason": ArmyEventHandler.KILL_REASON.ATTACK,
                 "entity": entity,
                 "damage": damage,
                 "actor": actorID
@@ -188,8 +188,8 @@ AttackSystem.endAttack = function(gameContext, target, actorID) {
         case AttackSystem.OUTCOME_STATE.IDLE: {
             entity.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
 
-            eventBus.emit(GameEvent.TYPE.ENTITY_HIT, { 
-                "reason": GameEvent.KILL_REASON.ATTACK,
+            eventBus.emit(ArmyEventHandler.TYPE.ENTITY_HIT, { 
+                "reason": ArmyEventHandler.KILL_REASON.ATTACK,
                 "entity": entity,
                 "damage": damage,
                 "actor": actorID
@@ -197,15 +197,15 @@ AttackSystem.endAttack = function(gameContext, target, actorID) {
             break;
         }
         case AttackSystem.OUTCOME_STATE.DOWN: {
-            eventBus.emit(GameEvent.TYPE.ENTITY_DOWN, { 
-                "reason": GameEvent.KILL_REASON.ATTACK,
+            eventBus.emit(ArmyEventHandler.TYPE.ENTITY_DOWN, { 
+                "reason": ArmyEventHandler.KILL_REASON.ATTACK,
                 "entity": entity,
                 "damage": damage,
                 "actor": actorID
             });
 
-            eventBus.emit(GameEvent.TYPE.ENTITY_HIT, { 
-                "reason": GameEvent.KILL_REASON.ATTACK,
+            eventBus.emit(ArmyEventHandler.TYPE.ENTITY_HIT, { 
+                "reason": ArmyEventHandler.KILL_REASON.ATTACK,
                 "entity": entity,
                 "damage": damage,
                 "actor": actorID

@@ -1,4 +1,4 @@
-import { GameEvent } from "../../../gameEvent.js";
+import { ArmyEventHandler } from "../../../armyEventHandler.js";
 import { AnimationSystem } from "../../../systems/animation.js";
 import { Player } from "../player.js";
 import { PlayerCursor } from "../playerCursor.js";
@@ -73,15 +73,13 @@ PlayerSellState.prototype.openSellDialog = function(gameContext, player, entity)
     const { id, value } = sellItem;
     const willSell = confirm(`Sell ${entity.config.id} for ${value} ${id}`);
 
-    if(!willSell) {
-        return;
+    if(willSell) {
+        soundPlayer.play(player.config.sounds.sell);
+        eventBus.emit(ArmyEventHandler.TYPE.ENTITY_SELL, {
+            "entity": entity,
+            "actorID": player.getID()
+        });
     }
-
-    soundPlayer.play(player.config.sounds.sell);
-    eventBus.emit(GameEvent.TYPE.ENTITY_SELL, {
-        "entity": entity,
-        "actorID": player.getID()
-    });
 }
 
 PlayerSellState.prototype.hideSellableObjects = function(gameContext, player) {

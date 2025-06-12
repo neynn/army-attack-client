@@ -8,7 +8,7 @@ import { PlayerSpectateState } from "./states/spectate.js";
 import { Actor } from "../../../source/turn/actor.js";
 import { StateMachine } from "../../../source/state/stateMachine.js";
 import { Queue } from "../../../source/queue.js";
-import { GameEvent } from "../../gameEvent.js";
+import { ArmyEventHandler } from "../../armyEventHandler.js";
 import { AttackVisualizer } from "./attackVisualizer.js";
 import { PlayerHealState } from "./states/heal.js";
 import { AttackAction } from "../../actions/attackAction.js";
@@ -124,7 +124,7 @@ Player.prototype.onMakeChoice = function(gameContext) {
             return Queue.FILTER.NO_SUCCESS;
         }
 
-        eventBus.emit(GameEvent.TYPE.ACTION_REQUEST, { "actorID": this.id, "request": request, "choice": executionRequest });
+        eventBus.emit(ArmyEventHandler.TYPE.ACTION_REQUEST, { "actorID": this.id, "request": request, "choice": executionRequest });
 
         return Queue.FILTER.SUCCESS;
     });
@@ -164,7 +164,7 @@ Player.prototype.initMapEvents = function(gameContext) {
                 });
 
                 group.events.on(MissionGroup.EVENT.MISSION_COMPLETED, (id, mission) => {
-                    eventBus.emit(GameEvent.TYPE.MISSION_COMPLETE, {
+                    eventBus.emit(ArmyEventHandler.TYPE.MISSION_COMPLETE, {
                         "id": id,
                         "mission": mission,
                         "actorID": this.id

@@ -1,4 +1,4 @@
-import { GameEvent } from "../gameEvent.js";
+import { ArmyEventHandler } from "../armyEventHandler.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { InventorySystem } from "./inventory.js";
 
@@ -78,5 +78,5 @@ HealSystem.healEntity = function(gameContext, entity, health) {
     entity.addHealth(health);
     entity.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
 
-    eventBus.emit(GameEvent.TYPE.ENTITY_HEAL, { "entity": entity, "health": health });
+    eventBus.emit(ArmyEventHandler.TYPE.ENTITY_HEAL, { "entity": entity, "health": health });
 }
