@@ -2,7 +2,6 @@ import { ArmyEventHandler } from "../armyEventHandler.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { ArmyMap } from "../init/armyMap.js";
 import { AllianceSystem } from "./alliance.js";
-import { BorderSystem } from "./border.js";
 
 /**
  * Collection of functions revolving around the capture of tiles.
@@ -52,13 +51,10 @@ ConquerSystem.conquer = function(gameContext, teamID, tiles) {
     }
 
     for(let i = 0; i < tiles.length; i += 2) {
-        const x = tiles[i];
-        const y = tiles[i + 1];
+        const tileX = tiles[i];
+        const tileY = tiles[i + 1];
 
-        worldMap.placeTile(gameContext.getTeamID(teamID), ArmyMap.LAYER.TEAM, x, y);
-        worldMap.updateShoreTiles(gameContext, x, y, 1);
-        worldMap.convertGraphicToTeam(gameContext, x, y);
-        BorderSystem.updateBorder(gameContext, worldMap, x, y, 1);
+        worldMap.conquerTile(gameContext, gameContext.getTeamID(teamID), tileX, tileY);
     }
 }
 

@@ -1,9 +1,9 @@
 import { Autotiler } from "../../source/tile/autotiler.js";
 import { WorldMap } from "../../source/map/worldMap.js";
 import { AllianceSystem } from "../systems/alliance.js";
-import { BorderSystem } from "../systems/border.js";
 import { DropHandler } from "./armyMap/dropHandler.js";
 import { Shop } from "./armyMap/shop.js";
+import { ArmyCamera } from "../armyCamera.js";
 
 export const ArmyMap = function(id) {
     WorldMap.call(this, id);
@@ -64,6 +64,10 @@ ArmyMap.CONVERTABLE_LAYERS = [
 ArmyMap.prototype = Object.create(WorldMap.prototype);
 ArmyMap.prototype.constructor = ArmyMap;
 
+ArmyMap.prototype.hasFlag = function(flag) {
+    return (this.flags & flag) !== 0;
+}
+
 ArmyMap.prototype.update = function(gameContext) {
     this.drops.update(gameContext, this);
 }
@@ -123,6 +127,43 @@ ArmyMap.prototype.clearClouds = function(gameContext, tileX, tileY, width, heigh
     }
 
     this.updateClouds(cloudAutotiler, tileX, tileY, width, height);
+}
+
+ArmyMap.prototype.conquerTile = function(gameContext, teamID, tileX, tileY) {
+    this.placeTile(teamID, ArmyMap.LAYER.TEAM, tileX, tileY);
+    this.updateShoreTiles(gameContext, tileX, tileY, 1);
+    this.convertGraphicToTeam(gameContext, tileX, tileY);
+    this.updateBorder(gameContext, tileX, tileY, 1);
+}
+
+ArmyMap.prototype.updateBorder = function(gameContext, tileX, tileY, range) {
+    const { world } = gameContext;
+    const { turnManager } = world;
+    
+    if(!gameContext.settings.calculateBorder) {
+        return;
+    }
+
+    turnManager.forAllActors((actorID, actor) => {
+        const { camera, teamID } = actor;
+
+        if(!(camera instanceof ArmyCamera) || teamID === undefined) {
+            return;
+        }
+
+        const startX = tileX - range;
+        const startY = tileY - range;
+        const endX = tileX + range;
+        const endY = tileY + range;
+    
+        for(let i = startY; i <= endY; i++) {
+            for(let j = startX; j <= endX; j++) {
+                const borderID = this.getBorderType(gameContext, j, i, teamID);
+
+                camera.updateBorder(borderID, j, i);
+            }
+        }
+    });
 }
 
 ArmyMap.prototype.updateClouds = function(autotiler, tileX, tileY, width, height) {
@@ -186,7 +227,7 @@ ArmyMap.prototype.saveFlags = function() {
     for(const flagID in ArmyMap.FLAG) {
         const flag = ArmyMap.FLAG[flagID];
 
-        if((this.flags & flag) !== 0) {
+        if(this.hasFlag(flag)) {
             flags.push(flagID);
         }
     }
@@ -217,11 +258,20 @@ ArmyMap.prototype.init = function(gameContext, config = {}) {
 }
 
 ArmyMap.prototype.reload = function(gameContext) {
-    for(let i = 0; i < this.height; i++) {
-        for(let j = 0; j < this.width; j++) {
-            this.updateShoreTiles(gameContext, j, i, 1);
-            this.convertGraphicToTeam(gameContext, j, i);
-            BorderSystem.updateBorder(gameContext, this, j, i, 0);
+    if(this.hasFlag(ArmyMap.FLAG.ALLOW_BORDER)) {
+        for(let i = 0; i < this.height; i++) {
+            for(let j = 0; j < this.width; j++) {
+                this.updateShoreTiles(gameContext, j, i, 1);
+                this.convertGraphicToTeam(gameContext, j, i);
+                this.updateBorder(gameContext, j, i, 0);
+            }
+        }
+    } else {
+        for(let i = 0; i < this.height; i++) {
+            for(let j = 0; j < this.width; j++) {
+                this.updateShoreTiles(gameContext, j, i, 1);
+                this.convertGraphicToTeam(gameContext, j, i);
+            }
         }
     }
 }
@@ -326,7 +376,7 @@ ArmyMap.prototype.convertGraphicToTeam = function(gameContext, tileX, tileY) {
 }
 
 ArmyMap.prototype.getBorderType = function(gameContext, tileX, tileY, teamID) {
-    if((this.flags & ArmyMap.FLAG.ALLOW_BORDER) === 0) {
+    if(!this.hasFlag(ArmyMap.FLAG.ALLOW_BORDER)) {
         return 0;
     }
 

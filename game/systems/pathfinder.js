@@ -98,7 +98,7 @@ const isTileWalkable = function(gameContext, worldMap, entity, tileX, tileY) {
  * @returns {boolean}
  */
 const isPassingAllowed = function(gameContext, worldMap, entity, blocker) {
-    if((worldMap.flags & ArmyMap.FLAG.ALLOW_PASSING) === 0) {
+    if(!worldMap.hasFlag(ArmyMap.FLAG.ALLOW_PASSING)) {
         return false;
     }
 

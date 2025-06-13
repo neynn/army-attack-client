@@ -39,6 +39,7 @@ StoryModePlayState.prototype.initStoryMode = function(gameContext) {
     ];
 
     MapSystem.createMapByID(gameContext, "oasis").then((worldMap) => {
+        console.time();
         worldMap.reload(gameContext);
         worldMap.clearClouds(gameContext, 2, 2, 10, 10);
         worldMap.addDebris(1, 2, 2);
@@ -50,17 +51,16 @@ StoryModePlayState.prototype.initStoryMode = function(gameContext) {
         }
 
         gameContext.states.eventEnter(gameContext, ArmyContext.EVENT.STORY_SAVE, null);
+        console.timeEnd();
     });
 }
 
 StoryModePlayState.prototype.onEnter = async function(gameContext, stateMachine) {
     const { uiManager } = gameContext;
 
-    console.time();
     //uiManager.createUIByID("STORY_MODE", gameContext);
     this.initStoryMode(gameContext);
     //DebugSystem.spawnFullEntities(gameContext);
-    console.timeEnd();
 }
 
 StoryModePlayState.prototype.onExit = function(gameContext, stateMachine) {
