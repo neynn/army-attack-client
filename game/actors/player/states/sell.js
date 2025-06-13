@@ -1,4 +1,5 @@
 import { ArmyEventHandler } from "../../../armyEventHandler.js";
+import { EntitySellEvent } from "../../../events/entitySell.js";
 import { AnimationSystem } from "../../../systems/animation.js";
 import { Player } from "../player.js";
 import { PlayerCursor } from "../playerCursor.js";
@@ -75,10 +76,7 @@ PlayerSellState.prototype.openSellDialog = function(gameContext, player, entity)
 
     if(willSell) {
         soundPlayer.play(player.config.sounds.sell);
-        eventBus.emit(ArmyEventHandler.TYPE.ENTITY_SELL, {
-            "entity": entity,
-            "actorID": player.getID()
-        });
+        eventBus.emit(ArmyEventHandler.TYPE.ENTITY_SELL, EntitySellEvent.createEvent(entity.getID(), player.getID()));
     }
 }
 

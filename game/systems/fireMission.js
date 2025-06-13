@@ -3,10 +3,7 @@ import { ArmyEventHandler } from "../armyEventHandler.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { AttackSystem } from "./attack.js";
 import { DebrisSystem } from "./debris.js";
-import { EntityKillEvent } from "../events/entityKill.js";
 import { DebrisSpawnEvent } from "../events/debrisSpawn.js";
-import { EntityHitEvent } from "../events/entityHit.js";
-import { EntityDownEvent } from "../events/entityDown.js";
 
 /**
  * Collection of functions revolving around the fire missions.

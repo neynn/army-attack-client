@@ -1,6 +1,7 @@
 import { DefaultTypes } from "../defaultTypes.js";
 import { ArmyEventHandler } from "../armyEventHandler.js";
 import { SpawnSystem } from "./spawn.js";
+import { EntityDeathEvent } from "../events/entityDeath.js";
 
 /**
  * Collection of functions revolving around debugging.
@@ -16,7 +17,7 @@ DebugSystem.killAllEntities = function(gameContext) {
     const { world } = gameContext;
     const { entityManager, eventBus } = world;
 
-    entityManager.forAllEntities((entityID, entity) => eventBus.emit(ArmyEventHandler.TYPE.ENTITY_DEATH, { entity }));
+    entityManager.forAllEntities((entityID, entity) => eventBus.emit(ArmyEventHandler.TYPE.ENTITY_DEATH, EntityDeathEvent.createEvent(entityID, "DEBUG")));
 }
 
 /**

@@ -1,4 +1,6 @@
 import { ArmyEventHandler } from "../armyEventHandler.js";
+import { EntityDeathEvent } from "../events/entityDeath.js";
+import { EntityDecayEvent } from "../events/entityDecay.js";
 
 export const ReviveableComponent = function() {
     this.type = ReviveableComponent.TYPE.NONE;
@@ -54,7 +56,7 @@ ReviveableComponent.prototype.update = function(gameContext, entity) {
             this.passedTime = gameContext.settings.downDuration;
             this.state = ReviveableComponent.STATE.DEAD;
 
-            eventBus.emit(ArmyEventHandler.TYPE.ENTITY_DECAY, { "entity": entity });
+            eventBus.emit(ArmyEventHandler.TYPE.ENTITY_DECAY, EntityDecayEvent.createEvent(entity.getID()));
         }
     }
 }

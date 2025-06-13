@@ -10,18 +10,22 @@ EntityHitEvent.prototype.constructor = EntityHitEvent;
 
 EntityHitEvent.prototype.onStory = function(gameContext, event) {
     const { world } = gameContext;
-    const { eventBus } = world;
-    const { entity, actor } = event;
-    const hitRewards = DropSystem.getHitReward(entity);
+    const { eventBus, entityManager } = world;
+    const { entityID, actor } = event;
+    const entity = entityManager.getEntity(entityID);
 
-    if(hitRewards) {
-        eventBus.emit(ArmyEventHandler.TYPE.DROP, DropEvent.createEvent(actor, hitRewards));
+    if(entity) {
+        const hitRewards = DropSystem.getHitReward(entity);
+
+        if(hitRewards) {
+            eventBus.emit(ArmyEventHandler.TYPE.DROP, DropEvent.createEvent(actor, hitRewards));
+        }
     }
 }
 
-EntityHitEvent.createEvent = function(entity, actorID, damage, reason) {
+EntityHitEvent.createEvent = function(entityID, actorID, damage, reason) {
     return {
-        "entity": entity,
+        "entityID": entityID,
         "actorID": actorID,
         "damage": damage,
         "reason": reason

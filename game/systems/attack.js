@@ -188,22 +188,25 @@ AttackSystem.updateTarget = function(gameContext, target, actorID, reason) {
     const { world } = gameContext;
     const { entityManager, eventBus } = world;
     const { id, state, damage } = target;
-    const entity = entityManager.getEntity(id);
 
     switch(state) {
         case AttackSystem.OUTCOME_STATE.DEAD: {
+            const entity = entityManager.getEntity(id);
+
             entity.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
-            eventBus.emit(ArmyEventHandler.TYPE.ENTITY_KILL, EntityKillEvent.createEvent(entity, actorID, damage, reason));
+            eventBus.emit(ArmyEventHandler.TYPE.ENTITY_KILL, EntityKillEvent.createEvent(id, actorID, damage, reason));
             break;
         }
         case AttackSystem.OUTCOME_STATE.IDLE: {
+            const entity = entityManager.getEntity(id);
+            
             entity.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
-            eventBus.emit(ArmyEventHandler.TYPE.ENTITY_HIT, EntityHitEvent.createEvent(entity, actorID, damage, reason));
+            eventBus.emit(ArmyEventHandler.TYPE.ENTITY_HIT, EntityHitEvent.createEvent(id, actorID, damage, reason));
             break;
         }
         case AttackSystem.OUTCOME_STATE.DOWN: {
-            eventBus.emit(ArmyEventHandler.TYPE.ENTITY_DOWN, EntityDownEvent.createEvent(entity, actorID, damage, reason)); 
-            eventBus.emit(ArmyEventHandler.TYPE.ENTITY_HIT, EntityHitEvent.createEvent(entity, actorID, damage, reason));
+            eventBus.emit(ArmyEventHandler.TYPE.ENTITY_DOWN, EntityDownEvent.createEvent(id, actorID, damage, reason)); 
+            eventBus.emit(ArmyEventHandler.TYPE.ENTITY_HIT, EntityHitEvent.createEvent(id, actorID, damage, reason));
             break;
         }
     }

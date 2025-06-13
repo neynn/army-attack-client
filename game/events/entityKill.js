@@ -2,6 +2,7 @@ import { ArmyEventHandler } from "../armyEventHandler.js";
 import { DropSystem } from "../systems/drop.js";
 import { ArmyEvent } from "./armyEvent.js";
 import { DropEvent } from "./drop.js";
+import { EntityDeathEvent } from "./entityDeath.js";
 
 export const EntityKillEvent = function() {}
 
@@ -10,32 +11,33 @@ EntityKillEvent.prototype.constructor = EntityKillEvent;
 
 EntityKillEvent.prototype.onStory = function(gameContext, event) {
     const { world } = gameContext;
-    const { eventBus, turnManager } = world;
+    const { eventBus, entityManager, turnManager } = world;
 
-    const { entity, reason, actorID } = event;
-    const killRewards = DropSystem.getKillReward(entity);
+    const { entityID, reason, actorID } = event;
+    const entity = entityManager.getEntity(entityID);
 
-    if(killRewards) {
-        eventBus.emit(ArmyEventHandler.TYPE.DROP, DropEvent.createEvent(actorID, killRewards));
+    if(entity) {
+        const killRewards = DropSystem.getKillReward(entity);
+
+        if(killRewards) {
+            eventBus.emit(ArmyEventHandler.TYPE.DROP, DropEvent.createEvent(actorID, killRewards));
+        }
+
+        const player = turnManager.getActor(actorID);
+
+        if(player && player.missions) {
+            const entityType = entity.config.id;
+
+            player.missions.onObjective(ArmyEventHandler.OBJECTIVE_TYPE.DESTROY, entityType, 1);
+        }
+        
+        eventBus.emit(ArmyEventHandler.TYPE.ENTITY_DEATH, EntityDeathEvent.createEvent(entityID, reason));
     }
-
-    const player = turnManager.getActor(actorID);
-
-    if(player && player.missions) {
-        const entityType = entity.config.id;
-
-        player.missions.onObjective(ArmyEventHandler.OBJECTIVE_TYPE.DESTROY, entityType, 1);
-    }
-    
-    eventBus.emit(ArmyEventHandler.TYPE.ENTITY_DEATH, {
-        "entity": entity,
-        "reason": reason
-    });
 }
 
-EntityKillEvent.createEvent = function(entity, actorID, damage, reason) {
+EntityKillEvent.createEvent = function(entityID, actorID, damage, reason) {
     return {
-        "entity": entity,
+        "entityID": entityID,
         "actorID": actorID,
         "damage": damage,
         "reason": reason

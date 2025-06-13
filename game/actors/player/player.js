@@ -21,6 +21,7 @@ import { MissionGroup } from "./mission/missionGroup.js";
 import { ArmyContext } from "../../armyContext.js";
 import { UnitLimitHandler } from "./unitLimit/unitLimitHandler.js";
 import { ActionRequestEvent } from "../../events/actionRequest.js";
+import { MissionCompleteEvent } from "../../events/missionComplete.js";
 
 export const Player = function(id, camera) {
     Actor.call(this, id);
@@ -167,11 +168,7 @@ Player.prototype.initMapEvents = function(gameContext) {
                 });
 
                 group.events.on(MissionGroup.EVENT.MISSION_COMPLETED, (id, mission) => {
-                    eventBus.emit(ArmyEventHandler.TYPE.MISSION_COMPLETE, {
-                        "id": id,
-                        "mission": mission,
-                        "actorID": this.id
-                    });
+                    eventBus.emit(ArmyEventHandler.TYPE.MISSION_COMPLETE, MissionCompleteEvent.createEvent(id, mission, this.id));
                 });
             });
 

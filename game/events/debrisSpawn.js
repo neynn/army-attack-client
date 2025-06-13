@@ -14,6 +14,7 @@ DebrisSpawnEvent.prototype.onStory = function(gameContext, event) {
 
 DebrisSpawnEvent.createEvent = function(debris) {
     return {
-        "debris": debris
+        "debris": debris,
+        "count": debris.length
     }
 }

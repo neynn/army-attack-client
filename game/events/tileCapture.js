@@ -20,3 +20,12 @@ TileCaptureEvent.prototype.onStory = function(gameContext, event) {
         actor.missions.onObjective(ArmyEventHandler.OBJECTIVE_TYPE.CONQUER, null, count);
     }
 }
+
+TileCaptureEvent.createEvent = function(actorID, teamID, tiles) {
+    return {
+        "actorID": actorID,
+        "teamID": teamID,
+        "tiles": tiles,
+        "count": tiles.length / 2
+    }
+}

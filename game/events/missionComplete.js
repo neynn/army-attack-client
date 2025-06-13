@@ -11,10 +11,18 @@ MissionCompleteEvent.prototype.onStory = function(gameContext, event) {
     const { world } = gameContext;
     const { eventBus } = world;
 
-    const { id, mission, actorID } = event;
+    const { missionID, mission, actorID } = event;
     const rewards = mission.getRewards();
 
     if(rewards.length !== 0) {
         eventBus.emit(ArmyEventHandler.TYPE.DROP, DropEvent.createEvent(actorID, rewards));
+    }
+}
+
+MissionCompleteEvent.createEvent = function(missionID, mission, actorID) {
+    return {
+        "missionID": missionID,
+        "mission": mission,
+        "actorID": actorID
     }
 }

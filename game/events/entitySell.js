@@ -11,14 +11,25 @@ EntitySellEvent.prototype.constructor = EntitySellEvent;
 
 EntitySellEvent.prototype.onStory = function(gameContext, event) {
     const { world } = gameContext;
-    const { eventBus } = world;
+    const { eventBus, entityManager } = world;
 
-    const { actorID, entity } = event;
-    const sellRewards = DropSystem.getSellReward(entity);
+    const { entityID, actorID } = event;
+    const entity = entityManager.getEntity(entityID);
 
-    if(sellRewards) {
-        eventBus.emit(ArmyEventHandler.TYPE.DROP, DropEvent.createEvent(actorID, sellRewards));
+    if(entity) {
+        const sellRewards = DropSystem.getSellReward(entity);
+
+        if(sellRewards) {
+            eventBus.emit(ArmyEventHandler.TYPE.DROP, DropEvent.createEvent(actorID, sellRewards));
+        }
+
+        SpawnSystem.destroyEntity(gameContext, entity);
     }
+}
 
-    SpawnSystem.destroyEntity(gameContext, entity);
+EntitySellEvent.createEvent = function(entityID, actorID) {
+    return {
+        "entityID": entityID,
+        "actorID": actorID
+    }
 }
