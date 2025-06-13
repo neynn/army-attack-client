@@ -185,10 +185,5 @@ Player.prototype.initMapEvents = function(gameContext) {
         if(map.music && gameContext.modeID !== ArmyContext.GAME_MODE.EDIT) {
             gameContext.client.musicPlayer.playTrack(map.music);
         }
-
-        map.clearClouds(gameContext, 2, 2, 10, 10);
-        map.addDebris(1, 2, 2);
-        map.addDebris(1, 3, 2);
-        map.addDebris(1, 4, 2);
     });
 }
