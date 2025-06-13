@@ -3,6 +3,10 @@ import { ArmyEventHandler } from "../armyEventHandler.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { AttackSystem } from "./attack.js";
 import { DebrisSystem } from "./debris.js";
+import { EntityKillEvent } from "../events/entityKill.js";
+import { DebrisSpawnEvent } from "../events/debrisSpawn.js";
+import { EntityHitEvent } from "../events/entityHit.js";
+import { EntityDownEvent } from "../events/entityDown.js";
 
 /**
  * Collection of functions revolving around the fire missions.
@@ -189,62 +193,17 @@ FireMissionSystem.startFireMission = function(gameContext, missionID, tileX, til
  */
 FireMissionSystem.endFireMission = function(gameContext, missionID, actorID, tileX, tileY, targetObjects) {
     const { world } = gameContext;
-    const { entityManager, eventBus } = world;
+    const { eventBus } = world;
+
+    for(let i = 0; i < targetObjects.length; i++) {
+        AttackSystem.updateTarget(gameContext, targetObjects[i], actorID, ArmyEventHandler.KILL_REASON.FIRE_MISSION);
+    }
 
     const fireMission = FireMissionSystem.getType(gameContext, missionID);
     const { dimX, dimY } = fireMission;
-
-    for(let i = 0; i < targetObjects.length; i++) {
-        const { id, state, damage } = targetObjects[i];
-        const entity = entityManager.getEntity(id);
-
-        switch(state) {
-            case AttackSystem.OUTCOME_STATE.DEAD: {
-                entity.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
-    
-                eventBus.emit(ArmyEventHandler.TYPE.ENTITY_KILL, { 
-                    "reason": ArmyEventHandler.KILL_REASON.FIRE_MISSION,
-                    "entity": entity,
-                    "damage": damage,
-                    "actor": actorID
-                });
-                break;
-            }
-            case AttackSystem.OUTCOME_STATE.IDLE: {
-                entity.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
-    
-                eventBus.emit(ArmyEventHandler.TYPE.ENTITY_HIT, { 
-                    "reason": ArmyEventHandler.KILL_REASON.FIRE_MISSION,
-                    "entity": entity,
-                    "damage": damage,
-                    "actor": actorID
-                });
-                break;
-            }
-            case AttackSystem.OUTCOME_STATE.DOWN: {
-                eventBus.emit(ArmyEventHandler.TYPE.ENTITY_DOWN, { 
-                    "reason": ArmyEventHandler.KILL_REASON.FIRE_MISSION,
-                    "entity": entity,
-                    "damage": damage,
-                    "actor": actorID
-                });
-    
-                eventBus.emit(ArmyEventHandler.TYPE.ENTITY_HIT, { 
-                    "reason": ArmyEventHandler.KILL_REASON.FIRE_MISSION,
-                    "entity": entity,
-                    "damage": damage,
-                    "actor": actorID
-                });
-                break;
-            }
-        }
-    }
-
     const debris = DebrisSystem.getDebrisSpawnLocations(gameContext, tileX, tileY, dimX, dimY);
 
     if(debris.length !== 0) {
-        eventBus.emit(ArmyEventHandler.TYPE.DEBRIS_SPAWN, {
-            "debris": debris
-        });
+        eventBus.emit(ArmyEventHandler.TYPE.DEBRIS_SPAWN, DebrisSpawnEvent.createEvent(debris));
     }
 }

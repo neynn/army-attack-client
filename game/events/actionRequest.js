@@ -32,3 +32,11 @@ ActionRequestEvent.prototype.onStory = function(gameContext, event) {
         eventBus.emit(ArmyEventHandler.TYPE.ACTION_DENY, event);
     }
 }
+
+ActionRequestEvent.createEvent = function(actorID, request = null, choice = null) {
+    return {
+        "actorID": actorID,
+        "request": request,
+        "choice": choice
+    }
+}

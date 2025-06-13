@@ -11,3 +11,9 @@ DebrisSpawnEvent.prototype.onStory = function(gameContext, event) {
 
     DebrisSystem.spawnDebris(gameContext, debris);
 }
+
+DebrisSpawnEvent.createEvent = function(debris) {
+    return {
+        "debris": debris
+    }
+}

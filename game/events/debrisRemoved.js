@@ -1,6 +1,7 @@
 import { ArmyEventHandler } from "../armyEventHandler.js";
 import { DropSystem } from "../systems/drop.js";
 import { ArmyEvent } from "./armyEvent.js";
+import { DropEvent } from "./drop.js";
 
 export const DebrisRemovedEvent = function() {}
 
@@ -11,13 +12,18 @@ DebrisRemovedEvent.prototype.onStory = function(gameContext, event) {
     const { world } = gameContext;
     const { eventBus } = world;
 
-    const { actor } = event;
+    const { actorID } = event;
     const drops = DropSystem.getDebrisReward(gameContext, "Debris");
 
     if(drops) {
-        eventBus.emit(ArmyEventHandler.TYPE.DROP, {
-            "drops": drops,
-            "receiverID": actor
-        });
+        eventBus.emit(ArmyEventHandler.TYPE.DROP, DropEvent.createEvent(actorID, drops));
+    }
+}
+
+DebrisRemovedEvent.createEvent = function(tileX, tileY, actorID) {
+    return {
+        "tileX": tileX,
+        "tileY": tileY,
+        "actorID": actorID
     }
 }

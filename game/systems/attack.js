@@ -4,6 +4,9 @@ import { ArmyEventHandler } from "../armyEventHandler.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { AllianceSystem } from "./alliance.js";
 import { DecaySystem } from "./decay.js";
+import { EntityKillEvent } from "../events/entityKill.js";
+import { EntityHitEvent } from "../events/entityHit.js";
+import { EntityDownEvent } from "../events/entityDown.js";
 
 /**
  * Uses an AABB collision to check if an attacker and a target overlap in the specified range.
@@ -161,13 +164,27 @@ AttackSystem.startAttack = function(gameContext, targetObject) {
 }
 
 /**
- * Ends the attack on a target and emits events.
+ * Ends a regular attack on a target.
  * 
  * @param {*} gameContext 
  * @param {*} target 
  * @param {string} actorID 
  */
 AttackSystem.endAttack = function(gameContext, target, actorID) {
+    AttackSystem.updateTarget(gameContext, target, actorID, ArmyEventHandler.KILL_REASON.ATTACK);
+}
+
+/**
+ * Updates the targets state after the attack is finished.
+ * 
+ * Emits events.
+ * 
+ * @param {*} gameContext 
+ * @param {TargetObject} target 
+ * @param {string} actorID 
+ * @param {string} reason 
+ */
+AttackSystem.updateTarget = function(gameContext, target, actorID, reason) {
     const { world } = gameContext;
     const { entityManager, eventBus } = world;
     const { id, state, damage } = target;
@@ -176,40 +193,17 @@ AttackSystem.endAttack = function(gameContext, target, actorID) {
     switch(state) {
         case AttackSystem.OUTCOME_STATE.DEAD: {
             entity.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
-
-            eventBus.emit(ArmyEventHandler.TYPE.ENTITY_KILL, { 
-                "reason": ArmyEventHandler.KILL_REASON.ATTACK,
-                "entity": entity,
-                "damage": damage,
-                "actor": actorID
-            });
+            eventBus.emit(ArmyEventHandler.TYPE.ENTITY_KILL, EntityKillEvent.createEvent(entity, actorID, damage, reason));
             break;
         }
         case AttackSystem.OUTCOME_STATE.IDLE: {
             entity.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
-
-            eventBus.emit(ArmyEventHandler.TYPE.ENTITY_HIT, { 
-                "reason": ArmyEventHandler.KILL_REASON.ATTACK,
-                "entity": entity,
-                "damage": damage,
-                "actor": actorID
-            });
+            eventBus.emit(ArmyEventHandler.TYPE.ENTITY_HIT, EntityHitEvent.createEvent(entity, actorID, damage, reason));
             break;
         }
         case AttackSystem.OUTCOME_STATE.DOWN: {
-            eventBus.emit(ArmyEventHandler.TYPE.ENTITY_DOWN, { 
-                "reason": ArmyEventHandler.KILL_REASON.ATTACK,
-                "entity": entity,
-                "damage": damage,
-                "actor": actorID
-            });
-
-            eventBus.emit(ArmyEventHandler.TYPE.ENTITY_HIT, { 
-                "reason": ArmyEventHandler.KILL_REASON.ATTACK,
-                "entity": entity,
-                "damage": damage,
-                "actor": actorID
-            });
+            eventBus.emit(ArmyEventHandler.TYPE.ENTITY_DOWN, EntityDownEvent.createEvent(entity, actorID, damage, reason)); 
+            eventBus.emit(ArmyEventHandler.TYPE.ENTITY_HIT, EntityHitEvent.createEvent(entity, actorID, damage, reason));
             break;
         }
     }

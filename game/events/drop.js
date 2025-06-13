@@ -21,3 +21,10 @@ DropEvent.prototype.onStory = function(gameContext, event) {
         worldMap.drops.createDrops(gameContext, drops, receiver.inventory);
     }
 }
+
+DropEvent.createEvent = function(receiverID, drops) {
+    return {
+        "receiverID": receiverID,
+        "drops": drops
+    }
+}

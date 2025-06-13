@@ -20,6 +20,7 @@ import { MapManager } from "../../../source/map/mapManager.js";
 import { MissionGroup } from "./mission/missionGroup.js";
 import { ArmyContext } from "../../armyContext.js";
 import { UnitLimitHandler } from "./unitLimit/unitLimitHandler.js";
+import { ActionRequestEvent } from "../../events/actionRequest.js";
 
 export const Player = function(id, camera) {
     Actor.call(this, id);
@@ -126,7 +127,7 @@ Player.prototype.onMakeChoice = function(gameContext) {
             return Queue.FILTER.NO_SUCCESS;
         }
 
-        eventBus.emit(ArmyEventHandler.TYPE.ACTION_REQUEST, { "actorID": this.id, "request": request, "choice": executionRequest });
+        eventBus.emit(ArmyEventHandler.TYPE.ACTION_REQUEST, ActionRequestEvent.createEvent(this.id, request, executionRequest));
 
         return Queue.FILTER.SUCCESS;
     });
