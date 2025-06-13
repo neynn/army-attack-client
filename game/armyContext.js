@@ -153,6 +153,12 @@ ArmyContext.prototype.init = function(resources) {
 }
 
 ArmyContext.prototype.setGameMode = function(modeID) {
+    const EVENT_TABLE = {};
+
+    for(const eventID in ArmyEventHandler.TYPE) {
+        EVENT_TABLE[ArmyEventHandler.TYPE[eventID]] = 1;
+    }
+
     switch(modeID) {
         case ArmyContext.GAME_MODE.NONE: {
             this.modeID = ArmyContext.GAME_MODE.NONE;
@@ -162,6 +168,7 @@ ArmyContext.prototype.setGameMode = function(modeID) {
         case ArmyContext.GAME_MODE.STORY: {
             this.modeID = ArmyContext.GAME_MODE.STORY;
             this.eventHandler.mode = ArmyEventHandler.MODE.STORY;
+            this.world.eventBus.setEmitableTable(EVENT_TABLE);
             break;
         }
         case ArmyContext.GAME_MODE.EDIT: {

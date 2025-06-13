@@ -1,8 +1,16 @@
 export const WorldEventHandler = function() {
     this.events = new Map();
+    this.emitable = {};
+}
+
+WorldEventHandler.prototype.setEmitableTable = function(table) {
+    if(typeof table === "object") {
+        this.emitable = table;
+    }
 }
 
 WorldEventHandler.prototype.clear = function() {
+    this.emitable = {};
     this.events.clear();
 }
 
@@ -20,10 +28,16 @@ WorldEventHandler.prototype.remove = function(eventID) {
     }
 }
 
+WorldEventHandler.prototype.isEmitable = function(eventID) {
+    const status = this.emitable[eventID];
+
+    return status !== undefined && status !== 0;
+}
+
 WorldEventHandler.prototype.emit = function(eventID, eventData) {
     const handler = this.events.get(eventID);
 
-    if(!handler) {
+    if(!handler || !this.isEmitable(eventID)) {
         return;
     }
 
