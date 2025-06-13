@@ -54,7 +54,7 @@ PlayerPlaceState.prototype.onClick = function(gameContext, stateMachine) {
     const { soundPlayer } = client;
 
     const player = stateMachine.getContext();
-    const { hover, teamID } = player;
+    const { inventory, hover, teamID } = player;
     const { tileX, tileY } = hover;
 
     const isPlaceable = PlaceSystem.isEntityPlaceable(gameContext, tileX, tileY, this.entityType.dimX, this.entityType.dimY, teamID);
@@ -69,7 +69,7 @@ PlayerPlaceState.prototype.onClick = function(gameContext, stateMachine) {
 
     if(entity) {
         soundPlayer.play(player.config.sounds.place);
-        player.inventory.removeBuyType(this.buyType);
+        inventory.removeBuyType(this.buyType);
     }
 
     stateMachine.setNextState(gameContext, Player.STATE.IDLE);

@@ -150,11 +150,8 @@ Inventory.prototype.addBuyType = function(buyType) {
     }
 
     const { type, id, value } = buyType;
-    const itemType = this.getItem(type, id);
 
-    if(itemType) {
-        itemType.add(value);
-    }
+    this.add(type, id, value);
 }
 
 Inventory.prototype.removeBuyType = function(buyType) {
@@ -163,9 +160,16 @@ Inventory.prototype.removeBuyType = function(buyType) {
     }
 
     const { type, id, value } = buyType;
-    const itemType = this.getItem(type, id);
 
-    if(itemType) {
-        itemType.remove(value);
-    }
+    this.remove(type, id, value);
+}
+
+Inventory.prototype.updateEnergyCounter = function() {
+    const energyCounter = this.getItem(Inventory.TYPE.RESOURCE, Inventory.ID.ENERGY_COUNTER);
+    const energyDrops = Math.floor(energyCounter / Inventory.COUNTER_TO_ENERGY_RATIO);
+    const removedCounter = energyDrops * Inventory.COUNTER_TO_ENERGY_RATIO;
+
+    energyCounter.remove(removedCounter);
+
+    return energyDrops;
 }

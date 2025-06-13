@@ -19,7 +19,7 @@ EntitySellEvent.prototype.onStory = function(gameContext, event) {
     if(entity) {
         const sellRewards = DropSystem.getSellReward(entity);
 
-        if(sellRewards) {
+        if(sellRewards.length !== 0) {
             eventBus.emit(ArmyEventHandler.TYPE.DROP, DropEvent.createEvent(actorID, sellRewards));
         }
 

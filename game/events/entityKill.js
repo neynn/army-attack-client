@@ -19,7 +19,7 @@ EntityKillEvent.prototype.onStory = function(gameContext, event) {
     if(entity) {
         const killRewards = DropSystem.getKillReward(entity);
 
-        if(killRewards) {
+        if(killRewards.length !== 0) {
             eventBus.emit(ArmyEventHandler.TYPE.DROP, DropEvent.createEvent(actorID, killRewards));
         }
 

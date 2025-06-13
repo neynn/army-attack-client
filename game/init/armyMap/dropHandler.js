@@ -1,6 +1,7 @@
 import { Drop } from "./drop.js";
 import { Inventory } from "../../actors/player/inventory/inventory.js";
 import { getRandomNumber } from "../../../source/math/math.js";
+import { DefaultTypes } from "../../defaultTypes.js";
 
 export const DropHandler = function() {
     this.drops = [];
@@ -9,12 +10,8 @@ export const DropHandler = function() {
 DropHandler.prototype.createDrop = function(gameContext, type, id, value, inventory) {
     const { spriteManager } = gameContext;
     const sprite = spriteManager.createSprite("drop_money");
-
-    const drop = new Drop({
-        "type": type,
-        "id": id,
-        "value": value
-    }, inventory, sprite);
+    const buyType = DefaultTypes.createBuyType(type, id, value);
+    const drop = new Drop(buyType, inventory, sprite);
 
     drop.setPosition(100 + getRandomNumber(-50, 50), 100);
 
@@ -43,11 +40,10 @@ DropHandler.prototype.createDrops = function(gameContext, drops, inventory) {
         }
     }
 
-    const energyCounter = inventory.getItem(Inventory.TYPE.RESOURCE, Inventory.ID.ENERGY_COUNTER);
+    const energyDrops = inventory.updateEnergyCounter();
 
-    while(energyCounter.has(Inventory.COUNTER_TO_ENERGY_RATIO)) {
-        this.createDrop(gameContext, Inventory.TYPE.RESOURCE, Inventory.ID.ENERGY, 1, inventory);
-        energyCounter.remove(Inventory.COUNTER_TO_ENERGY_RATIO);
+    for(let i = 0; i < energyDrops; i++) {
+        this.createDrop(gameContext, Inventory.TYPE.RESOURCE, Inventory.ID.ENERGY, 1, inventory); 
     }
 }
 

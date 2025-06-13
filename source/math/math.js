@@ -87,6 +87,11 @@ export const loopValue = function(value, upperLimit, lowerLimit) {
 	return value;
 }
 
+/**
+ * Random number between 1 and 100.
+ * 
+ * @returns {int}
+ */
 export const getRandomChance = function() {
 	const random = Math.random() * 100;
 	const chance = Math.floor(random) + 1;

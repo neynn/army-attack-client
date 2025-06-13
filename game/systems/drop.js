@@ -1,4 +1,5 @@
 import { getRandomChance } from "../../source/math/math.js";
+import { DefaultTypes } from "../defaultTypes.js";
 
 /**
  * Collection of functions revolving around the dropping of items.
@@ -13,55 +14,36 @@ export const DropSystem = function() {}
  * @returns {DropType}
  */
 const getDrop = function(reward) {
-    const { type, id, value, chance } = reward;
+    const { type, id, value, chance = 100 } = reward;
+    const randomRoll = getRandomChance();
 
-    if(chance === undefined) {
-        return {
-            "type": type,
-            "id": id,
-            "value": value
-        }
-    }
-
-    const roll = getRandomChance();
-
-    if(chance < roll) {
+    if(chance < randomRoll) {
         return null;
     }
 
-    return {
-        "type": type,
-        "id": id,
-        "value": value
-    }
+    return DefaultTypes.createBuyType(type, id, value);
 }
 
 /**
  * Gets a list of rewards from hitting an enemy.
  * 
  * @param {*} entity 
- * @returns {DropType[] | null}
+ * @returns {DropType[]}
  */
 DropSystem.getHitReward = function(entity) {
     const hitRewards = entity.config.hitRewards;
+    const drops = [];
 
     if(!hitRewards) {
-        return null;
+        return drops;
     }
-
-    const drops = [];
     
     for(let i = 0; i < hitRewards.length; i++) {
-        const reward = hitRewards[i];
-        const drop = getDrop(reward);
+        const drop = getDrop(hitRewards[i]);
 
         if(drop) {
             drops.push(drop);
         }
-    }
-
-    if(drops.length === 0) {
-        return null;
     }
 
     return drops;
@@ -71,28 +53,22 @@ DropSystem.getHitReward = function(entity) {
  * Gets a list of rewards from killing an enemy.
  * 
  * @param {*} entity 
- * @returns {DropType[] | null}
+ * @returns {DropType[]}
  */
 DropSystem.getKillReward = function(entity) {
     const killRewards = entity.config.killRewards;
-
-    if(!killRewards) {
-        return null;
-    }
-
     const drops = [];
 
+    if(!killRewards) {
+        return drops;
+    }
+
     for(let i = 0; i < killRewards.length; i++) {
-        const reward = killRewards[i];
-        const drop = getDrop(reward);
+        const drop = getDrop(killRewards[i]);
 
         if(drop) {
             drops.push(drop);
         }
-    }
-
-    if(drops.length === 0) {
-        return null;
     }
 
     return drops;
@@ -102,34 +78,28 @@ DropSystem.getKillReward = function(entity) {
  * Gets a list of rewards from cleaning debris.
  * 
  * @param {*} entity 
- * @returns {DropType[] | null}
+ * @returns {DropType[]}
  */
 DropSystem.getDebrisReward = function(gameContext, typeID) {
     const debrisType = gameContext.debrisTypes[typeID];
+    const drops = [];
 
     if(!debrisType) {
-        return null;
+        return drops;
     }
 
     const { killRewards } = debrisType;
 
     if(!killRewards) {
-        return null;
+        return drops;
     }
 
-    const drops = [];
-
     for(let i = 0; i < killRewards.length; i++) {
-        const reward = killRewards[i];
-        const drop = getDrop(reward);
+        const drop = getDrop(killRewards[i]);
 
         if(drop) {
             drops.push(drop);
         }
-    }
-
-    if(drops.length === 0) {
-        return null;
     }
 
     return drops;
@@ -139,24 +109,20 @@ DropSystem.getDebrisReward = function(gameContext, typeID) {
  * Gets a list of rewards from selling an entity.
  * 
  * @param {*} entity 
- * @returns {DropType[] | null}
+ * @returns {DropType[]}
  */
 DropSystem.getSellReward = function(entity) {
     const sellReward = entity.config.sell;
+    const drops = [];
 
     if(!sellReward) {
-        return null;
+        return drops;
     }
 
-    const drops = [];
     const drop = getDrop(sellReward);
 
     if(drop) {
         drops.push(drop);
-    }
-
-    if(drops.length === 0) {
-        return null;
     }
 
     return drops;
