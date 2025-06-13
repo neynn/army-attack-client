@@ -144,7 +144,20 @@ Inventory.prototype.add = function(type, id, value) {
     }
 }
 
-Inventory.prototype.buyItem = function(buyType) {
+Inventory.prototype.addBuyType = function(buyType) {
+    if(!buyType) {
+        return;
+    }
+
+    const { type, id, value } = buyType;
+    const itemType = this.getItem(type, id);
+
+    if(itemType) {
+        itemType.add(value);
+    }
+}
+
+Inventory.prototype.removeBuyType = function(buyType) {
     if(!buyType) {
         return;
     }

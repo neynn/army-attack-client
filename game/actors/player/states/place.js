@@ -69,7 +69,7 @@ PlayerPlaceState.prototype.onClick = function(gameContext, stateMachine) {
 
     if(entity) {
         soundPlayer.play(player.config.sounds.place);
-        player.inventory.buyItem(this.buyType);
+        player.inventory.removeBuyType(this.buyType);
     }
 
     stateMachine.setNextState(gameContext, Player.STATE.IDLE);

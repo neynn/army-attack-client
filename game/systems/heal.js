@@ -1,7 +1,8 @@
+import { Inventory } from "../actors/player/inventory/inventory.js";
 import { ArmyEventHandler } from "../armyEventHandler.js";
+import { DefaultTypes } from "../defaultTypes.js";
 import { EntityHealEvent } from "../events/entityHeal.js";
 import { ArmyEntity } from "../init/armyEntity.js";
-import { InventorySystem } from "./inventory.js";
 
 /**
  * Collection of functions revolving around the healing of entities.
@@ -39,6 +40,37 @@ HealSystem.getMissingHealth = function(entity) {
 }
 
 /**
+ * Creates a buyType.
+ * 
+ * @param {int} value 
+ * @returns 
+ */
+HealSystem.getHealCost = function(value) {
+    return DefaultTypes.createBuyType(Inventory.TYPE.RESOURCE, HealSystem.HEAL_RESOURCE, value)
+}
+
+/**
+ * Returns a bool which determines if the actor has enough to heal.
+ * 
+ * @param {*} actor 
+ * @param {int} value 
+ * @returns 
+ */
+HealSystem.hasEnoughResources = function(actor, value) {
+    if(value === 0) {
+        return true;
+    }
+
+    const { inventory } = actor;
+
+    if(!inventory) {
+        return false;
+    }
+
+    return inventory.has(Inventory.TYPE.RESOURCE, HealSystem.HEAL_RESOURCE, value);
+}
+
+/**
  * Checks if an entity can be healed by an actor. The actor needs to own the entity and have enough resources.
  * 
  * @param {*} entity 
@@ -61,8 +93,9 @@ HealSystem.isEntityHealable = function(entity, actor) {
 
     const missingHealth = HealSystem.getMissingHealth(entity);
     const requiredSupplies = HealSystem.getSuppliesRequired(entity, missingHealth);
+    const hasEnoughResources = HealSystem.hasEnoughResources(actor, requiredSupplies);
 
-    return InventorySystem.hasEnoughResources(actor, HealSystem.HEAL_RESOURCE, requiredSupplies);
+    return hasEnoughResources;
 }
 
 /**
