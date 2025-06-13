@@ -4,6 +4,7 @@ import { DebugSystem } from "../../../systems/debug.js";
 import { ActorSystem } from "../../../systems/actor.js";
 import { MapSystem } from "../../../systems/map.js";
 import { SpawnSystem } from "../../../systems/spawn.js";
+import { DefaultTypes } from "../../../defaultTypes.js";
 
 export const StoryModePlayState = function() {}
 
@@ -46,101 +47,18 @@ StoryModePlayState.prototype.onEnter = async function(gameContext, stateMachine)
         return;
     }
 
-    SpawnSystem.createEntity(gameContext, { 
-        "type": "blue_battery",
-        "tileX": 4,
-        "tileY": 4,
-        "team": "Crimson",
-        "owners": ActorSystem.STORY_ID.ENEMY
-    });
-
-    SpawnSystem.createEntity(gameContext, { 
-        "type": "blue_infantry",
-        "tileX": 7,
-        "tileY": 7,
-        "team": "Allies",
-        "owners": ActorSystem.STORY_ID.PLAYER
-    });
-
-    SpawnSystem.createEntity(gameContext, { 
-        "type": "red_commandobunker",
-        "tileX": 6,
-        "tileY": 4,
-        "team": "Crimson",
-        "owners": ActorSystem.STORY_ID.ENEMY
-    });
-
-    SpawnSystem.createEntity(gameContext, { 
-        "type": "red_tank",
-        "tileX": 4,
-        "tileY": 3,
-        "team": "Crimson",
-        "owners": ActorSystem.STORY_ID.ENEMY
-    });
-
-    SpawnSystem.createEntity(gameContext, { 
-        "type": "blue_elite_commando",
-        "tileX": 4,
-        "tileY": 5,
-        "team": "Allies",
-        "owners": ActorSystem.STORY_ID.PLAYER
-    });
-
-    SpawnSystem.createEntity(gameContext, { 
-        "type": "blue_commando_ultimate",
-        "tileX": 5,
-        "tileY": 5,
-        "team": "Allies",
-        "owners": ActorSystem.STORY_ID.PLAYER
-    });
-
-    SpawnSystem.createEntity(gameContext, { 
-        "type": "blue_commando",
-        "tileX": 5,
-        "tileY": 3,
-        "team": "Allies",
-        "owners": ActorSystem.STORY_ID.PLAYER
-    });
-
-    SpawnSystem.createEntity(gameContext, {
-        "type": "red_artillery",
-        "tileX": 2,
-        "tileY": 3,
-        "team": "Allies",
-        "owners": ActorSystem.STORY_ID.PLAYER
-    });
-
-    SpawnSystem.createEntity(gameContext, {
-        "type": "blue_bootcamp_construction",
-        "tileX": 2,
-        "tileY": 9,
-        "team": "Allies",
-        "owners": ActorSystem.STORY_ID.PLAYER
-    });
-
-    SpawnSystem.createEntity(gameContext, { 
-        "type": "blue_elite_infantry",
-        "tileX": 7,
-        "tileY": 3,
-        "team": "Allies",
-        "owners": ActorSystem.STORY_ID.PLAYER
-    });
-
-    SpawnSystem.createEntity(gameContext, { 
-        "type": "red_battletank",
-        "tileX": 3,
-        "tileY": 5,
-        "team": "Allies",
-        "owners": ActorSystem.STORY_ID.PLAYER
-    });
-
-    SpawnSystem.createEntity(gameContext, { 
-        "type": "blue_elite_battletank",
-        "tileX": 3,
-        "tileY": 4,
-        "team": "Allies",
-        "owners": ActorSystem.STORY_ID.PLAYER
-    });
+    SpawnSystem.createEntity(gameContext, DefaultTypes.createSpawnConfig("blue_battery", "Crimson", ActorSystem.STORY_ID.ENEMY, 4, 4));
+    SpawnSystem.createEntity(gameContext, DefaultTypes.createSpawnConfig("blue_infantry", "Allies", ActorSystem.STORY_ID.PLAYER, 7, 7));
+    SpawnSystem.createEntity(gameContext, DefaultTypes.createSpawnConfig("red_commandobunker", "Crimson", ActorSystem.STORY_ID.ENEMY, 6, 4));
+    SpawnSystem.createEntity(gameContext, DefaultTypes.createSpawnConfig("red_tank", "Crimson", ActorSystem.STORY_ID.ENEMY, 4, 3));
+    SpawnSystem.createEntity(gameContext, DefaultTypes.createSpawnConfig("blue_elite_commando", "Allies", ActorSystem.STORY_ID.PLAYER, 4, 5));
+    SpawnSystem.createEntity(gameContext, DefaultTypes.createSpawnConfig("blue_commando_ultimate", "Allies", ActorSystem.STORY_ID.PLAYER, 5, 5));
+    SpawnSystem.createEntity(gameContext, DefaultTypes.createSpawnConfig("blue_commando", "Allies", ActorSystem.STORY_ID.PLAYER, 5, 3));
+    SpawnSystem.createEntity(gameContext, DefaultTypes.createSpawnConfig("red_artillery", "Allies", ActorSystem.STORY_ID.PLAYER, 2, 3));
+    SpawnSystem.createEntity(gameContext, DefaultTypes.createSpawnConfig("blue_bootcamp_construction", "Allies", ActorSystem.STORY_ID.PLAYER, 2, 9));
+    SpawnSystem.createEntity(gameContext, DefaultTypes.createSpawnConfig("blue_elite_infantry", "Allies", ActorSystem.STORY_ID.PLAYER, 7, 3));
+    SpawnSystem.createEntity(gameContext, DefaultTypes.createSpawnConfig("red_battletank", "Allies", ActorSystem.STORY_ID.PLAYER, 3, 5));
+    SpawnSystem.createEntity(gameContext, DefaultTypes.createSpawnConfig("blue_elite_battletank", "Allies", ActorSystem.STORY_ID.PLAYER, 3, 4));
 
     //DebugSystem.spawnFullEntities(gameContext);
 

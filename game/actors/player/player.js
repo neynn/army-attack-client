@@ -19,6 +19,7 @@ import { PlayerPlaceState } from "./states/place.js";
 import { MapManager } from "../../../source/map/mapManager.js";
 import { MissionGroup } from "./mission/missionGroup.js";
 import { ArmyContext } from "../../armyContext.js";
+import { UnitLimitHandler } from "./unitLimit/unitLimitHandler.js";
 
 export const Player = function(id, camera) {
     Actor.call(this, id);
@@ -31,6 +32,7 @@ export const Player = function(id, camera) {
     this.attackVisualizer = new AttackVisualizer(this.camera);
     this.rangeVisualizer = new RangeVisualizer(this.camera);
     this.missions = new MissionHandler();
+    this.limits = new UnitLimitHandler();
     
     this.states = new StateMachine(this);
     this.states.addState(Player.STATE.SPECTATE, new PlayerSpectateState());
@@ -171,12 +173,15 @@ Player.prototype.initMapEvents = function(gameContext) {
                     });
                 });
             });
+
+            this.limits.createGroup(id, (group) => console.log(group));
         }
     });
 
     mapManager.events.on(MapManager.EVENT.MAP_ENABLE, (id, map) => {
         this.missions.selectGroup(id);
-
+        this.limits.selectGroup(id);
+        
         if(map.music && gameContext.modeID !== ArmyContext.GAME_MODE.EDIT) {
             gameContext.client.musicPlayer.playTrack(map.music);
         }
