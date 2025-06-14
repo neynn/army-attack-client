@@ -2,7 +2,6 @@ import { Entity } from "../../source/entity/entity.js";
 import { EventEmitter } from "../../source/events/eventEmitter.js";
 import { DirectionComponent } from "../components/direction.js";
 import { SpriteComponent } from "../components/sprite.js";
-import { AllianceSystem } from "../systems/alliance.js";
 
 export const ArmyEntity = function(config, DEBUG_NAME) {
     Entity.call(this, DEBUG_NAME);
@@ -74,9 +73,9 @@ ArmyEntity.prototype.updateSpriteHorizontal = function(gameContext) {
     const { directionX } = directionComponent;
 
     if(directionX === DirectionComponent.DIRECTION.WEST) {
-        spriteComponent.flip(gameContext, SpriteComponent.FLIP_STATE.FLIPPED);
+        spriteComponent.setFlipState(gameContext, SpriteComponent.FLIP_STATE.FLIPPED);
     } else {
-        spriteComponent.flip(gameContext, SpriteComponent.FLIP_STATE.UNFLIPPED);
+        spriteComponent.setFlipState(gameContext, SpriteComponent.FLIP_STATE.UNFLIPPED);
     }
 }
 
@@ -90,9 +89,9 @@ ArmyEntity.prototype.updateSpriteDirectonal = function(gameContext, southTypeID,
     const { directionX, directionY } = directionComponent;
 
     if(directionX === DirectionComponent.DIRECTION.WEST) {
-        spriteComponent.flip(gameContext, SpriteComponent.FLIP_STATE.FLIPPED);
+        spriteComponent.setFlipState(gameContext, SpriteComponent.FLIP_STATE.FLIPPED);
     } else {
-        spriteComponent.flip(gameContext, SpriteComponent.FLIP_STATE.UNFLIPPED);
+        spriteComponent.setFlipState(gameContext, SpriteComponent.FLIP_STATE.UNFLIPPED);
     }
 
     if(directionY === DirectionComponent.DIRECTION.SOUTH) {
@@ -163,17 +162,6 @@ ArmyEntity.prototype.isAlive = function() {
     const isAlive = healthComponent.isAlive();
 
     return isAlive;
-}
-
-ArmyEntity.prototype.isAttackableByTeam = function(gameContext, team) {
-    if(!this.isAlive()) {
-        return false;
-    }
-
-    const { teamID } = this.getComponent(ArmyEntity.COMPONENT.TEAM);
-    const isEnemy = AllianceSystem.isEnemy(gameContext, teamID, team);
-
-    return isEnemy;
 }
 
 ArmyEntity.prototype.determineSprite = function(gameContext) {

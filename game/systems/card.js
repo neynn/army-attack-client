@@ -1,7 +1,6 @@
 import { SimpleText } from "../../source/graphics/drawable/simpleText.js";
 import { TextStyle } from "../../source/graphics/textStyle.js";
 import { ArmyEntity } from "../init/armyEntity.js";
-import { SpriteComponent } from "../components/sprite.js";
 
 /**
  * Collection of functions revolving around the stat card of an entity.
@@ -30,7 +29,7 @@ const addHealthText = function(entity, statCard) {
     healthText.setText(`${healthComponent.health}/${healthComponent.maxHealth}`);
 
     statCard.addChild(healthText);
-    entity.events.on(ArmyEntity.EVENT.HEALTH_UPDATE, (health, maxHealth) => healthText.setText(`${health}/${maxHealth}`), { id: SpriteComponent.SPRITE_ID.CARD });
+    entity.events.on(ArmyEntity.EVENT.HEALTH_UPDATE, (health, maxHealth) => healthText.setText(`${health}/${maxHealth}`));
 }
 
 /**
@@ -50,7 +49,7 @@ const addDamageText = function(entity, statCard) {
     damageText.setText(`${attackComponent.damage}`);
 
     statCard.addChild(damageText);
-    entity.events.on(ArmyEntity.EVENT.DAMAGE_UPDATE, (damage) => damageText.setText(`${damage}`), { id: SpriteComponent.SPRITE_ID.CARD });
+    entity.events.on(ArmyEntity.EVENT.DAMAGE_UPDATE, (damage) => damageText.setText(`${damage}`));
 }
 
 /**
@@ -184,6 +183,6 @@ CardSystem.generateStatCard = function(gameContext, entity) {
         const { x, y } = getCardOffset(gameContext, entity);
 
         statCard.setPosition(x, y);
-        sprite.addChild(statCard, SpriteComponent.SPRITE_ID.CARD);
+        sprite.addChild(statCard);
     }
 }

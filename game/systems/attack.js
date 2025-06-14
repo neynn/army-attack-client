@@ -7,6 +7,7 @@ import { DecaySystem } from "./decay.js";
 import { EntityKillEvent } from "../events/entityKill.js";
 import { EntityHitEvent } from "../events/entityHit.js";
 import { EntityDownEvent } from "../events/entityDown.js";
+import { ArmyContext } from "../armyContext.js";
 
 /**
  * Uses an AABB collision to check if an attacker and a target overlap in the specified range.
@@ -366,4 +367,25 @@ AttackSystem.getAttackTarget = function(target, attackers) {
     const targetObject = DefaultTypes.createTargetObject(targetID, totalDamage, targetState);
 
     return targetObject;
+}
+
+/**
+ * Checks if a team can target an entity.
+ * 
+ * @param {ArmyContext} gameContext 
+ * @param {ArmyEntity} entity 
+ * @param {string} teamID 
+ * @returns {boolean}
+ */
+AttackSystem.isAttackableByTeam = function(gameContext, entity, teamID) {
+    const isAlive = entity.isAlive();
+
+    if(!isAlive) {
+        return false;
+    }
+
+    const teamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
+    const isEnemy = AllianceSystem.isEnemy(gameContext, teamComponent.teamID, teamID);
+
+    return isEnemy;
 }

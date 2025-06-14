@@ -1,5 +1,5 @@
 import { SpriteManager } from "../../source/sprite/spriteManager.js";
-import { SpriteComponent } from "../components/sprite.js";
+import { ArmyContext } from "../armyContext.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { LookSystem } from "./look.js";
 
@@ -7,6 +7,12 @@ import { LookSystem } from "./look.js";
  * Collection of functions revolving around the animations.
  */
 export const AnimationSystem = function() {}
+
+AnimationSystem.SPRITE_ID = {
+    MOVE: "MOVE",
+    CARD: "CARD",
+    SELL: "SELL"
+};
 
 AnimationSystem.FIRE_OFFSET = {
     ARTILLERY: 48,
@@ -26,14 +32,14 @@ AnimationSystem.SPRITE_TYPE = {
 /**
  * Plays the idle animation of a list of entities.
  * 
- * @param {*} gameContext 
- * @param {[]} entities 
+ * @param {ArmyContext} gameContext 
+ * @param {int[]} entityIDList 
  */
-AnimationSystem.playIdle = function(gameContext, entities) {
+AnimationSystem.playIdle = function(gameContext, entityIDList) {
     const { world } = gameContext;
     const { entityManager } = world;
     
-    for(const entityID of entities) {
+    for(const entityID of entityIDList) {
         const entity = entityManager.getEntity(entityID);
 
         if(entity) {
@@ -45,8 +51,8 @@ AnimationSystem.playIdle = function(gameContext, entities) {
 /**
  * Plays the death animation for an entity.
  * 
- * @param {*} gameContext 
- * @param {*} entity 
+ * @param {ArmyContext} gameContext 
+ * @param {ArmyEntity} entity 
  */
 AnimationSystem.playDeath = function(gameContext, entity) {
     const { spriteManager, transform2D } = gameContext;
@@ -66,11 +72,11 @@ AnimationSystem.playDeath = function(gameContext, entity) {
 /**
  * Plays the fire animation for attackers. The weapon animation is added as a child to the target.
  * 
- * @param {*} gameContext 
+ * @param {ArmyContext} gameContext 
  * @param {TargetObject} targetObject 
- * @param {int[]} attackers 
+ * @param {int[]} attackerIDList 
  */
-AnimationSystem.playFire = function(gameContext, targetObject, attackers) {
+AnimationSystem.playFire = function(gameContext, targetObject, attackerIDList) {
     const { world, spriteManager, transform2D } = gameContext;
     const { entityManager } = world;
     const { id } = targetObject;
@@ -78,9 +84,8 @@ AnimationSystem.playFire = function(gameContext, targetObject, attackers) {
     const spriteComponent = target.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const entitySprite = spriteComponent.getSprite(gameContext);
 
-    for(let i = 0; i < attackers.length; i++) {
-        const attackerID = attackers[i];
-        const attacker = entityManager.getEntity(attackerID);
+    for(let i = 0; i < attackerIDList.length; i++) {
+        const attacker = entityManager.getEntity(attackerIDList[i]);
         const unitComponent = attacker.getComponent(ArmyEntity.COMPONENT.UNIT);
         const weaponSprite = spriteManager.createSprite(attacker.config.sprites.weapon);
         const { x, y } = transform2D.transformSizeToRandomOffset(target.config.dimX, target.config.dimY, AnimationSystem.FIRE_OFFSET.REGULAR, AnimationSystem.FIRE_OFFSET.REGULAR);
@@ -107,8 +112,8 @@ AnimationSystem.playFire = function(gameContext, targetObject, attackers) {
 /**
  * Plays the sell animation of an entity.
  * 
- * @param {*} gameContext 
- * @param {*} entity 
+ * @param {ArmyContext} gameContext 
+ * @param {ArmyEntity} entity 
  */
 AnimationSystem.playSell = function(gameContext, entity) {
     const { spriteManager } = gameContext;
@@ -117,22 +122,22 @@ AnimationSystem.playSell = function(gameContext, entity) {
     const spriteType = `cursor_move_${entity.config.dimX}x${entity.config.dimY}`;
     const moveSprite = spriteManager.createSprite(spriteType);
     
-    entitySprite.addChild(moveSprite, SpriteComponent.SPRITE_ID.SELL);
+    entitySprite.addChild(moveSprite, AnimationSystem.SPRITE_ID.SELL);
     moveSprite.setPosition(0, 0);
 }
 
 /**
  * Stops the sell animation of an entity.
  * 
- * @param {*} gameContext 
- * @param {*} entity 
+ * @param {ArmyContext} gameContext 
+ * @param {ArmyEntity} entity 
  */
 AnimationSystem.stopSell = function(gameContext, entity) {
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const entitySprite = spriteComponent.getSprite(gameContext);
 
     if(entitySprite) {
-        const sellSprite = entitySprite.getChild(SpriteComponent.SPRITE_ID.SELL);
+        const sellSprite = entitySprite.getChild(AnimationSystem.SPRITE_ID.SELL);
 
         if(sellSprite) {
             sellSprite.terminate();
@@ -143,8 +148,8 @@ AnimationSystem.stopSell = function(gameContext, entity) {
 /**
  * Plays the select animation of an entity.
  * 
- * @param {*} gameContext 
- * @param {*} entity 
+ * @param {ArmyContext} gameContext 
+ * @param {ArmyEntity} entity 
  */
 AnimationSystem.playSelect = function(gameContext, entity) {
     const { spriteManager } = gameContext;
@@ -152,7 +157,7 @@ AnimationSystem.playSelect = function(gameContext, entity) {
     const entitySprite = spriteComponent.getSprite(gameContext);
     const moveSprite = spriteManager.createSprite(AnimationSystem.SPRITE_TYPE.SELECT);
     
-    entitySprite.addChild(moveSprite, SpriteComponent.SPRITE_ID.MOVE);
+    entitySprite.addChild(moveSprite, AnimationSystem.SPRITE_ID.MOVE);
     moveSprite.setPosition(0, 0);
     
     entity.playSound(gameContext, ArmyEntity.SOUND_TYPE.SELECT);
@@ -161,13 +166,13 @@ AnimationSystem.playSelect = function(gameContext, entity) {
 /**
  * Stops the select animation of an entity.
  * 
- * @param {*} gameContext 
- * @param {*} entity 
+ * @param {ArmyContext} gameContext 
+ * @param {ArmyEntity} entity 
  */
 AnimationSystem.stopSelect = function(gameContext, entity) {
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const entitySprite = spriteComponent.getSprite(gameContext);
-    const moveSprite = entitySprite.getChild(SpriteComponent.SPRITE_ID.MOVE);
+    const moveSprite = entitySprite.getChild(AnimationSystem.SPRITE_ID.MOVE);
 
     if(moveSprite) {
         moveSprite.terminate();
@@ -177,7 +182,7 @@ AnimationSystem.stopSelect = function(gameContext, entity) {
 /**
  * Plays the cleaning animation at a position.
  * 
- * @param {*} gameContext 
+ * @param {ArmyContext} gameContext 
  * @param {int} tileX 
  * @param {int} tileY 
  */
@@ -196,8 +201,8 @@ AnimationSystem.playCleaning = function(gameContext, tileX, tileY) {
 /**
  * Plays the heal animation of an entity.
  * 
- * @param {*} gameContext 
- * @param {*} entity 
+ * @param {ArmyContext} gameContext 
+ * @param {ArmyEntity} entity 
  */
 AnimationSystem.playHeal = function(gameContext, entity) {
     const { spriteManager, transform2D, client } = gameContext;
@@ -217,8 +222,8 @@ AnimationSystem.playHeal = function(gameContext, entity) {
 /**
  * Plays the construction animation of an entity.
  * 
- * @param {*} gameContext 
- * @param {*} entity 
+ * @param {ArmyContext} gameContext 
+ * @param {ArmyEntity} entity 
  */
 AnimationSystem.playConstruction = function(gameContext, entity) {
     const { spriteManager, transform2D } = gameContext;
@@ -237,8 +242,8 @@ AnimationSystem.playConstruction = function(gameContext, entity) {
 /**
  * Sets the current frame of the construction sprite of an entity.
  * 
- * @param {*} gameContext 
- * @param {*} entity 
+ * @param {ArmyContext} gameContext 
+ * @param {ArmyEntity} entity 
  */
 AnimationSystem.setConstructionFrame = function(gameContext, entity) {
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);

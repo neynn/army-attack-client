@@ -65,7 +65,7 @@ AttackVisualizer.prototype.updateAttackerSprites = function(gameContext, target,
 
 AttackVisualizer.prototype.updateAttackers = function(gameContext, player) {
     const { tileManager } = gameContext;
-    const { hover, teamID, id } = player;
+    const { hover, id } = player;
 
     if(hover.state !== PlayerCursor.STATE.HOVER_ON_ENTITY) {
         this.resetAttackers(gameContext);
@@ -73,12 +73,6 @@ AttackVisualizer.prototype.updateAttackers = function(gameContext, player) {
     }
 
     const mouseEntity = hover.getEntity(gameContext);
-
-    if(!mouseEntity.isAttackableByTeam(gameContext, teamID)) {
-        this.resetAttackers(gameContext);
-        return;
-    }
-
     const activeAttackers = AttackSystem.getActiveAttackers(gameContext, mouseEntity, id);
 
     if(activeAttackers.length === 0) {

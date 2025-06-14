@@ -3,12 +3,6 @@ export const SpriteComponent = function() {
     this.isFlippable = false;
 }
 
-SpriteComponent.SPRITE_ID = {
-    MOVE: "MOVE",
-    CARD: "CARD",
-    SELL: "SELL"
-};
-
 SpriteComponent.FLIP_STATE = {
     UNFLIPPED: 0,
     FLIPPED: 1
@@ -52,7 +46,7 @@ SpriteComponent.prototype.change = function(gameContext, sheetID) {
     }
 }
 
-SpriteComponent.prototype.flip = function(gameContext, state) {
+SpriteComponent.prototype.setFlipState = function(gameContext, state) {
     if(!this.isFlippable) {
         return;
     }

@@ -7,6 +7,7 @@ import { PlayerCursor } from "../playerCursor.js";
 import { Player } from "../player.js";
 import { MoveAction } from "../../../actions/moveAction.js";
 import { PlayerState } from "./playerState.js";
+import { AttackSystem } from "../../../systems/attack.js";
 
 export const PlayerSelectedState = function() {
     this.entityID = EntityManager.ID.INVALID;
@@ -114,7 +115,7 @@ PlayerSelectedState.prototype.onClick = function(gameContext, stateMachine) {
     switch(state) {
         case PlayerCursor.STATE.HOVER_ON_ENTITY: {
             const mouseEntity = hover.getEntity(gameContext);
-            const isAttackable = mouseEntity.isAttackableByTeam(gameContext, player.teamID);
+            const isAttackable = AttackSystem.isAttackableByTeam(gameContext, mouseEntity, player.teamID);
 
             if(isAttackable) {
                 player.queueAttack(currentTarget);

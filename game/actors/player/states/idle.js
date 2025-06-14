@@ -6,6 +6,7 @@ import { PlayerCursor } from "../playerCursor.js";
 import { Player } from "../player.js";
 import { ClearDebrisAction } from "../../../actions/clearDebrisAction.js";
 import { PlayerState } from "./playerState.js";
+import { AttackSystem } from "../../../systems/attack.js";
 
 export const PlayerIdleState = function() {}
 
@@ -67,6 +68,7 @@ PlayerIdleState.prototype.queueClearDebris = function(player, tileX, tileY) {
 PlayerIdleState.prototype.onClick = function(gameContext, stateMachine) {
     const { world } = gameContext;
     const { actionQueue } = world;
+
     const player = stateMachine.getContext();
     const { hover } = player;
     const { state, currentTarget, tileX, tileY } = hover;
@@ -75,7 +77,7 @@ PlayerIdleState.prototype.onClick = function(gameContext, stateMachine) {
         case PlayerCursor.STATE.HOVER_ON_ENTITY: {
             const playerID = player.getID();
             const mouseEntity = hover.getEntity(gameContext);
-            const isAttackable = mouseEntity.isAttackableByTeam(gameContext, player.teamID);
+            const isAttackable = AttackSystem.isAttackableByTeam(gameContext, mouseEntity, player.teamID);
 
             if(isAttackable) {
                 player.queueAttack(currentTarget);

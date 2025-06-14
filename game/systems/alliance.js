@@ -9,7 +9,7 @@ export const AllianceSystem = function() {}
 /**
  * Returns the alliance type between the two teams.
  * 
- * @param {*} gameContext 
+ * @param {ArmyContext} gameContext 
  * @param {string} actorTeamID 
  * @param {string} reactorTeamID 
  * @returns {AllianceType}
@@ -36,7 +36,7 @@ const getAlliance = function(gameContext, actorTeamID, reactorTeamID) {
 /**
  * Returns if teamA can bypass teamB.
  * 
- * @param {*} gameContext 
+ * @param {ArmyContext} gameContext 
  * @param {string} actorTeamID 
  * @param {string} reactorTeamID 
  * @returns {boolean}
@@ -48,7 +48,7 @@ AllianceSystem.isPassable = function(gameContext, actorTeamID, reactorTeamID) {
 /**
  * Returns if teamA can walk on the tiles of teamB.
  * 
- * @param {*} gameContext 
+ * @param {ArmyContext} gameContext 
  * @param {string} actorTeamID 
  * @param {string} reactorTeamID 
  * @returns {boolean}
@@ -60,7 +60,7 @@ AllianceSystem.isWalkable = function(gameContext, actorTeamID, reactorTeamID) {
 /**
  * Returns if teamA is an enemy of teamB.
  * 
- * @param {*} gameContext 
+ * @param {ArmyContext} gameContext 
  * @param {string} actorTeamID 
  * @param {string} reactorTeamID 
  * @returns {boolean}
@@ -72,10 +72,10 @@ AllianceSystem.isEnemy = function(gameContext, actorTeamID, reactorTeamID) {
 /**
  * Returns if teamA can place on teamB.
  * 
- * @param {*} gameContext 
+ * @param {ArmyContext} gameContext 
  * @param {string} actorTeamID 
  * @param {string} reactorTeamID 
- * @returns 
+ * @returns {boolean}
  */
 AllianceSystem.isPlaceable = function(gameContext, actorTeamID, reactorTeamID) {
     return getAlliance(gameContext, actorTeamID, reactorTeamID).isPlaceable;
