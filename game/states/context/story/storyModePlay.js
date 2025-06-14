@@ -35,7 +35,8 @@ StoryModePlayState.prototype.initStoryMode = function(gameContext) {
         DefaultTypes.createSpawnConfig("blue_bootcamp_construction", "Allies", ActorSystem.STORY_ID.PLAYER, 2, 9),
         DefaultTypes.createSpawnConfig("blue_elite_infantry", "Allies", ActorSystem.STORY_ID.PLAYER, 7, 3),
         DefaultTypes.createSpawnConfig("red_battletank", "Allies", ActorSystem.STORY_ID.PLAYER, 3, 5),
-        DefaultTypes.createSpawnConfig("blue_elite_battletank", "Allies", ActorSystem.STORY_ID.PLAYER, 3, 4)
+        DefaultTypes.createSpawnConfig("blue_elite_battletank", "Allies", ActorSystem.STORY_ID.PLAYER, 3, 4),
+        DefaultTypes.createSpawnConfig("blue_guardtower", "Allies", ActorSystem.STORY_ID.PLAYER, 5, 4)
     ];
 
     MapSystem.createMapByID(gameContext, "oasis").then((worldMap) => {

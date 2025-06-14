@@ -13,17 +13,11 @@ export const ConstructionSystem = function() {}
  * 
  * @param {*} gameContext 
  * @param {*} entity 
- * @returns {SpawnConfigType | null}
+ * @returns {SpawnConfigType}
  */
 const getResult = function(gameContext, entity) {
     const { world } = gameContext;
     const { turnManager } = world;
-    const constructionComponent = entity.getComponent(ArmyEntity.COMPONENT.CONSTRUCTION);
-
-    if(!constructionComponent) {
-        return null;
-    }
-
     const { tileX, tileY } = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
     const { teamID } = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
     const entityID = entity.getID();
@@ -56,10 +50,8 @@ ConstructionSystem.onInteract = function(gameContext, entity, actorID) {
         if(!actionQueue.isRunning()) {
             const result = getResult(gameContext, entity);
 
-            if(result) {
-                SpawnSystem.destroyEntity(gameContext, entity);
-                SpawnSystem.createEntity(gameContext, result);
-            }
+            SpawnSystem.destroyEntity(gameContext, entity);
+            SpawnSystem.createEntity(gameContext, result);
         }
     } else {
         const entityID = entity.getID();

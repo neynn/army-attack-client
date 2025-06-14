@@ -11,8 +11,8 @@ import { EntityDownEvent } from "../events/entityDown.js";
 /**
  * Uses an AABB collision to check if an attacker and a target overlap in the specified range.
  * 
- * @param {*} attacker 
- * @param {*} target 
+ * @param {ArmyEntity} attacker 
+ * @param {ArmyEntity} target 
  * @param {int} range 
  * @returns {boolean}
  */
@@ -37,10 +37,10 @@ const hasEnoughRange = function(attacker, target, range) {
 /**
  * Gets the unique entities in a range.
  * 
- * @param {*} gameContext 
- * @param {*} entity 
+ * @param {ArmyContext} gameContext 
+ * @param {ArmyEntity} entity 
  * @param {int} range 
- * @returns {Entity[]}
+ * @returns {ArmyEntity[]}
  */
 const getSurroundingEntities = function(gameContext, entity, range) {
     const { world } = gameContext;
@@ -55,31 +55,56 @@ const getSurroundingEntities = function(gameContext, entity, range) {
 }
 
 /**
- * Filters the entities around an entity in the maximum specified range.
- * Fails if the entity is dead.
+ * Calls a callback for the surrounding entities, if they are alive.
  * 
- * @param {*} gameContext 
- * @param {*} entity 
- * @param {*} onCheck 
+ * @param {ArmyContext} gameContext 
+ * @param {ArmyEntity} entity 
+ * @param {function} onCheck 
  * @returns 
  */
-const filterAliveEntitiesInMaxRange = function(gameContext, entity, onCheck) {
+const checkSurroundingAliveEntities = function(gameContext, entity, onCheck) {
     if(!entity.isAlive()) {
-        return [];
+        return;
     }
 
-    const validEntities = [];
     const nearbyEntities = getSurroundingEntities(gameContext, entity, gameContext.settings.maxAttackRange);
 
     for(let i = 0; i < nearbyEntities.length; i++) {
         const nearbyEntity = nearbyEntities[i];
 
-        if(nearbyEntity.isAlive() && onCheck(nearbyEntity)) {
-            validEntities.push(nearbyEntity);
+        if(nearbyEntity.isAlive()) {
+            onCheck(nearbyEntity);
+        }
+    }
+}
+
+/**
+ * Picks a target out of a list.
+ * TODO: add proper ai to filter targets.
+ * 
+ * @param {ArmyEntity} attacker 
+ * @param {ArmyEntity[]} targets 
+ * @returns 
+ */
+const pickAttackCounterTarget = function(attacker, targets) {
+    if(targets.length === 0) {
+        return null;
+    }
+
+    let index = 0;
+    let weakest = targets[0].getHealth();
+
+    for(let i = 1; i < targets.length; i++) {
+        const target = targets[i];
+        const health = target.getHealth();
+
+        if(weakest > health) {
+            index = i;
+            weakest = health;
         }
     }
 
-    return validEntities;
+    return targets[index];
 }
 
 /**
@@ -94,25 +119,9 @@ AttackSystem.OUTCOME_STATE = {
 };
 
 /**
- * Checks if an entity can counter an attack.
- * 
- * @param {*} entity 
- * @returns {boolean}
- */
-AttackSystem.isAttackCounterable = function(entity) {
-    if(!entity.isAlive()) {
-        return false;
-    }
-
-    const attackComponent = entity.getComponent(ArmyEntity.COMPONENT.ATTACK);
-
-    return attackComponent && attackComponent.isAttackCounterable();
-}
-
-/**
  * Takes the damage and bulldozer result to return the state of the target.
  * 
- * @param {*} target 
+ * @param {ArmyEntity} target 
  * @param {int} damage 
  * @param {bool} isBulldozed 
  * @returns {int}
@@ -137,7 +146,7 @@ AttackSystem.getState = function(target, damage, isBulldozed) {
 /**
  * Starts the attack on a target.
  * 
- * @param {*} gameContext 
+ * @param {ArmyContext} gameContext 
  * @param {TargetObject} targetObject 
  */
 AttackSystem.startAttack = function(gameContext, targetObject) {
@@ -166,8 +175,8 @@ AttackSystem.startAttack = function(gameContext, targetObject) {
 /**
  * Ends a regular attack on a target.
  * 
- * @param {*} gameContext 
- * @param {*} target 
+ * @param {ArmyContext} gameContext 
+ * @param {ArmyEntity} target 
  * @param {string} actorID 
  */
 AttackSystem.endAttack = function(gameContext, target, actorID) {
@@ -179,7 +188,7 @@ AttackSystem.endAttack = function(gameContext, target, actorID) {
  * 
  * Emits events.
  * 
- * @param {*} gameContext 
+ * @param {ArmyContext} gameContext 
  * @param {TargetObject} target 
  * @param {string} actorID 
  * @param {string} reason 
@@ -213,98 +222,67 @@ AttackSystem.updateTarget = function(gameContext, target, actorID, reason) {
 }
 
 /**
- * Picks a target out of a list.
- * TODO: add proper ai to filter targets.
- * 
- * @param {*} attacker 
- * @param {*} targets 
- * @returns 
- */
-AttackSystem.pickAttackCounterTarget = function(attacker, targets) {
-    let index = 0;
-    let weakest = targets[0].getHealth();
-
-    for(let i = 1; i < targets.length; i++) {
-        const target = targets[i];
-        const health = target.getHealth();
-
-        if(weakest > health) {
-            index = i;
-            weakest = health;
-        }
-    }
-
-    return targets[index];
-}
-
-/**
  * Returns a list of potential targets the entity can counter.
  * Fails if the entity cannot counter.
  * 
- * @param {*} gameContext 
- * @param {*} attacker 
- * @returns 
+ * @param {ArmyContext} gameContext 
+ * @param {ArmyEntity} attacker 
+ * @returns {ArmyEntity | null}
  */
-AttackSystem.getAttackCounterTargets = function(gameContext, attacker) {
+AttackSystem.getAttackCounterTarget = function(gameContext, attacker) {
+    const targets = [];
     const attackComponent = attacker.getComponent(ArmyEntity.COMPONENT.ATTACK);
 
     if(!attackComponent || !attackComponent.isAttackCounterable()) {
-        return null;
+        return targets;
     }
 
     const attackerTeamComponent = attacker.getComponent(ArmyEntity.COMPONENT.TEAM);
-    const targets = filterAliveEntitiesInMaxRange(gameContext, attacker, (target) => {
+
+    checkSurroundingAliveEntities(gameContext, attacker, (target) => {
         const hasRange = hasEnoughRange(attacker, target, attackComponent.range);
 
-        if(!hasRange) {
-            return false;
+        if(hasRange) {
+            const targetTeamComponent = target.getComponent(ArmyEntity.COMPONENT.TEAM);
+            const isEnemy = AllianceSystem.isEnemy(gameContext, attackerTeamComponent.teamID, targetTeamComponent.teamID);
+
+            if(isEnemy) {
+                targets.push(target);
+            }
         }
-
-        const targetTeamComponent = target.getComponent(ArmyEntity.COMPONENT.TEAM);
-        const isEnemy = AllianceSystem.isEnemy(gameContext, attackerTeamComponent.teamID, targetTeamComponent.teamID);
-
-        return isEnemy;
     });
-    
-    if(targets.length === 0) {
-        return null;
-    }
 
-    return targets;
+    return pickAttackCounterTarget(attacker, targets);
 }
 
 /**
  * Returns a list of attackers that counter the movement of an entity.
  * Fails if no attackers are present.
  * 
- * @param {*} gameContext 
- * @param {*} target 
- * @returns 
+ * @param {ArmyContext} gameContext 
+ * @param {ArmyEntity} target 
+ * @returns {ArmyEntity[]}
  */
 AttackSystem.getMoveCounterAttackers = function(gameContext, target) {
+    const attackers = [];
     const targetTeamComponent = target.getComponent(ArmyEntity.COMPONENT.TEAM);
-    const attackers = filterAliveEntitiesInMaxRange(gameContext, target, (attacker) => {
+
+    checkSurroundingAliveEntities(gameContext, target, (attacker) => {
         const attackComponent = attacker.getComponent(ArmyEntity.COMPONENT.ATTACK);
 
-        if(!attackComponent || !attackComponent.isMoveCounterable()) {
-            return false;
+        if(attackComponent && attackComponent.isMoveCounterable()) {
+            const hasRange = hasEnoughRange(attacker, target, attackComponent.range);
+
+            if(hasRange) {
+                const attackerTeamComponent = attacker.getComponent(ArmyEntity.COMPONENT.TEAM);
+                const isEnemy = AllianceSystem.isEnemy(gameContext, attackerTeamComponent.teamID, targetTeamComponent.teamID);
+
+                if(isEnemy) {
+                    attackers.push(attacker);
+                }
+            }
         }
-
-        const hasRange = hasEnoughRange(attacker, target, attackComponent.range);
-
-        if(!hasRange) {
-            return false;
-        }
-
-        const attackerTeamComponent = attacker.getComponent(ArmyEntity.COMPONENT.TEAM);
-        const isEnemy = AllianceSystem.isEnemy(gameContext, attackerTeamComponent.teamID, targetTeamComponent.teamID);
-
-        return isEnemy;
     });
-
-    if(attackers.length === 0) {
-        return null;
-    }
 
     return attackers;
 }
@@ -312,49 +290,43 @@ AttackSystem.getMoveCounterAttackers = function(gameContext, target) {
 /**
  * Returns a list of entites that belong to the actor and can attack the target.
  * 
- * @param {*} gameContext 
- * @param {*} target 
+ * @param {ArmyContext} gameContext 
+ * @param {ArmyEntity} target 
  * @param {string} actorID 
- * @returns 
+ * @returns {ArmyEntity[]}
  */
 AttackSystem.getActiveAttackers = function(gameContext, target, actorID) {
     const { world } = gameContext;
     const { turnManager } = world;
     const actor = turnManager.getActor(actorID);
+    const attackers = [];
 
     if(!actor) {
-        return null;
+        return attackers;
     }
 
     const targetTeamComponent = target.getComponent(ArmyEntity.COMPONENT.TEAM);
-    const attackers = filterAliveEntitiesInMaxRange(gameContext, target, (attacker) => {
+
+    checkSurroundingAliveEntities(gameContext, target, (attacker) => {
         const attackerID = attacker.getID();
 
-        if(!actor.hasEntity(attackerID)) {
-            return false;
+        if(actor.hasEntity(attackerID)) {
+            const attackComponent = attacker.getComponent(ArmyEntity.COMPONENT.ATTACK);
+
+            if(attackComponent && attackComponent.isActive()) {
+                const hasRange = hasEnoughRange(attacker, target, attackComponent.range);
+
+                if(hasRange) {
+                    const attackerTeamComponent = attacker.getComponent(ArmyEntity.COMPONENT.TEAM);
+                    const isEnemy = AllianceSystem.isEnemy(gameContext, attackerTeamComponent.teamID, targetTeamComponent.teamID);
+
+                    if(isEnemy) {
+                        attackers.push(attacker);
+                    }
+                }
+            }
         }
-
-        const attackComponent = attacker.getComponent(ArmyEntity.COMPONENT.ATTACK);
-
-        if(!attackComponent || !attackComponent.isActive()) {
-            return false;
-        }
-
-        const hasRange = hasEnoughRange(attacker, target, attackComponent.range);
-
-        if(!hasRange) {
-            return false;
-        }
-
-        const attackerTeamComponent = attacker.getComponent(ArmyEntity.COMPONENT.TEAM);
-        const isEnemy = AllianceSystem.isEnemy(gameContext, attackerTeamComponent.teamID, targetTeamComponent.teamID);
-
-        return isEnemy;
     });
-
-    if(attackers.length === 0) {
-        return null;
-    }
 
     return attackers;
 }
@@ -362,8 +334,8 @@ AttackSystem.getActiveAttackers = function(gameContext, target, actorID) {
 /**
  * Returns a target object for the specified target.
  * 
- * @param {*} target 
- * @param {*} attackers 
+ * @param {ArmyEntity} target 
+ * @param {ArmyEntity[]} attackers 
  * @returns {TargetObject}
  */
 AttackSystem.getAttackTarget = function(target, attackers) {

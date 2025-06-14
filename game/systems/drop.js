@@ -11,7 +11,7 @@ export const DropSystem = function() {}
  * If no chance is specified, the item always gets returned.
  * 
  * @param {RewardType} reward 
- * @returns {DropType}
+ * @returns {ItemTransaction | null}
  */
 const getDrop = function(reward) {
     const { type, id, value, chance = 100 } = reward;
@@ -21,7 +21,7 @@ const getDrop = function(reward) {
         return null;
     }
 
-    return DefaultTypes.createBuyType(type, id, value);
+    return DefaultTypes.createItemTransaction(type, id, value);
 }
 
 /**

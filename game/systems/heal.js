@@ -40,13 +40,15 @@ HealSystem.getMissingHealth = function(entity) {
 }
 
 /**
- * Creates a buyType.
+ * Creates a transaction.
  * 
  * @param {int} value 
- * @returns 
+ * @returns {ItemTransaction}
  */
 HealSystem.getHealCost = function(value) {
-    return DefaultTypes.createBuyType(Inventory.TYPE.RESOURCE, HealSystem.HEAL_RESOURCE, value)
+    const transaction = DefaultTypes.createItemTransaction(Inventory.TYPE.RESOURCE, HealSystem.HEAL_RESOURCE, value);
+
+    return transaction;
 }
 
 /**
@@ -77,7 +79,7 @@ HealSystem.hasEnoughResources = function(actor, value) {
  * @param {*} actor 
  * @returns {boolean} 
  */
-HealSystem.isEntityHealable = function(entity, actor) {
+HealSystem.isEntityHealableBy = function(entity, actor) {
     const entityID = entity.getID();
 
     if(!actor.hasEntity(entityID)) {
@@ -102,15 +104,18 @@ HealSystem.isEntityHealable = function(entity, actor) {
  * Heals an entity for the specified amount and emits the ENTITY_HEAL event.
  * 
  * @param {*} gameContext 
- * @param {*} entity 
+ * @param {int} entityID
+ * @param {string} actorID
  * @param {int} health 
  */
-HealSystem.healEntity = function(gameContext, entity, health) {
+HealSystem.healEntity = function(gameContext, entityID, actorID, health) {
     const { world } = gameContext;
-    const { eventBus } = world;
+    const { eventBus, entityManager } = world;
+    const entity = entityManager.getEntity(entityID);
 
-    entity.addHealth(health);
-    entity.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
-
-    eventBus.emit(ArmyEventHandler.TYPE.ENTITY_HEAL, EntityHealEvent.createEvent(entity.getID(), health));
+    if(entity) {
+        entity.addHealth(health);
+        entity.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
+        eventBus.emit(ArmyEventHandler.TYPE.ENTITY_HEAL, EntityHealEvent.createEvent(entityID, actorID, health));
+    }
 }

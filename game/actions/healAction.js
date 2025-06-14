@@ -23,17 +23,14 @@ HealAction.prototype.onStart = function(gameContext, request) {
     AnimationSystem.playHeal(gameContext, entity);
 
     if(actor.inventory) {
-        actor.inventory.removeBuyType(cost);
+        actor.inventory.removeByTransaction(cost);
     }
 }
 
 HealAction.prototype.onEnd = function(gameContext, request) {
-    const { world } = gameContext;
-    const { entityManager } = world;
-    const { entityID, health } = request;
-    const entity = entityManager.getEntity(entityID);
+    const { entityID, actorID, health } = request;
 
-    HealSystem.healEntity(gameContext, entity, health);
+    HealSystem.healEntity(gameContext, entityID, actorID, health);
 }
 
 HealAction.prototype.isFinished = function(gameContext, request) {
@@ -58,7 +55,7 @@ HealAction.prototype.getValidated = function(gameContext, request) {
         return null;
     }
 
-    const isHealable = HealSystem.isEntityHealable(entity, actor);
+    const isHealable = HealSystem.isEntityHealableBy(entity, actor);
 
     if(!isHealable) {
         return null;

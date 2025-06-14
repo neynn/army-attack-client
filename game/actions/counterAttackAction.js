@@ -43,22 +43,14 @@ CounterAttackAction.prototype.getValidated = function(gameContext, template) {
         return null;
     }
 
-    const isAttackCounterable = AttackSystem.isAttackCounterable(entity);
+    const counterTarget = AttackSystem.getAttackCounterTarget(gameContext, entity);
 
-    if(!isAttackCounterable) {
+    if(!counterTarget) {
         return null;
     }
 
-    const potentialTargets = AttackSystem.getAttackCounterTargets(gameContext, entity);
-
-    if(!potentialTargets) {
-        return null;
-    }
-
-    //TODO: Pick a target based on ai -> damage dealt, or guarantee kill.
-    const pickedTarget = AttackSystem.pickAttackCounterTarget(entity, potentialTargets);
     const attackerIDs = [entity].map(entity => entity.getID());
-    const targetObject = AttackSystem.getAttackTarget(pickedTarget, [entity]);
+    const targetObject = AttackSystem.getAttackTarget(counterTarget, [entity]);
     
     return {
         "attackers": attackerIDs,

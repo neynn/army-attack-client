@@ -10,8 +10,8 @@ export const DropHandler = function() {
 DropHandler.prototype.createDrop = function(gameContext, type, id, value, inventory) {
     const { spriteManager } = gameContext;
     const sprite = spriteManager.createSprite("drop_money");
-    const buyType = DefaultTypes.createBuyType(type, id, value);
-    const drop = new Drop(buyType, inventory, sprite);
+    const transaction = DefaultTypes.createItemTransaction(type, id, value);
+    const drop = new Drop(transaction, inventory, sprite);
 
     drop.setPosition(100 + getRandomNumber(-50, 50), 100);
 

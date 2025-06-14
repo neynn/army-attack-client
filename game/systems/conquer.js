@@ -17,7 +17,7 @@ export const ConquerSystem = function() {}
  * @param {int} tileX 
  * @param {int} tileY 
  * @param {string} captureTeamID 
- * @returns 
+ * @returns {boolean}
  */
 const isTileConquerable = function(gameContext, worldMap, tileX, tileY, captureTeamID) {
     const typeID = worldMap.getTile(ArmyMap.LAYER.TYPE, tileX, tileY);

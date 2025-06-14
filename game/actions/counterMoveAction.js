@@ -45,7 +45,7 @@ CounterMoveAction.prototype.getValidated = function(gameContext, template) {
 
     const attackers = AttackSystem.getMoveCounterAttackers(gameContext, target);
 
-    if(!attackers) {
+    if(attackers.length === 0) {
         return null;
     }
     

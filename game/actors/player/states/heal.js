@@ -57,7 +57,7 @@ PlayerHealState.prototype.isValid = function(gameContext, player) {
     }
 
     const entity = hover.getEntity(gameContext);
-    const isHealable = HealSystem.isEntityHealable(entity, player);
+    const isHealable = HealSystem.isEntityHealableBy(entity, player);
 
     return isHealable;
 }

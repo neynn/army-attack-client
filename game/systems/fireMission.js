@@ -54,9 +54,10 @@ FireMissionSystem.getTargets = function(gameContext, fireMission, tileX, tileY) 
     const { world } = gameContext;
     const { mapManager, entityManager } = world;
     const worldMap = mapManager.getActiveMap();
+    const targetObjects = [];
 
     if(!worldMap) {
-        return [];
+        return targetObjects;
     }
 
     const { damage, dimX, dimY, isBulldozing } = fireMission;
@@ -97,8 +98,6 @@ FireMissionSystem.getTargets = function(gameContext, fireMission, tileX, tileY) 
             }
         }
     }
-
-    const targetObjects = [];
     
     for(const [entityID, entry] of entityList) {
         const { entity, damage } = entry;

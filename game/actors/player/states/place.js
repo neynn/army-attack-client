@@ -7,7 +7,7 @@ import { PlayerState } from "./playerState.js";
 export const PlayerPlaceState = function() {
     this.buildSpriteIndex = -1;
     this.entityType = null;
-    this.buyType = null;
+    this.transaction = null;
 }
 
 PlayerPlaceState.prototype = Object.create(PlayerState.prototype);
@@ -25,12 +25,13 @@ PlayerPlaceState.prototype.onExit = function(gameContext, stateMachine) {
 
     this.buildSpriteIndex = -1;
     this.entityType = null;
-    this.buyType = null;
+    this.transaction = null;
 }
 
 PlayerPlaceState.prototype.onEnter = function(gameContext, stateMachine, transition) {
-    const { entityType, buyType } = transition;
+    const { entityType, transaction } = transition;
     const { tileManager } = gameContext;
+    
     const player = stateMachine.getContext();
     const tileID = tileManager.getTileIDByArray(player.config.overlays.enable);
 
@@ -38,7 +39,8 @@ PlayerPlaceState.prototype.onEnter = function(gameContext, stateMachine, transit
     player.camera.place.fill(tileID);
 
     this.entityType = entityType;
-    this.buyType = buyType;
+    this.transaction = transaction;
+
     this.setupBuildSprite(gameContext, player);
     this.highlightPlaceableTiles(gameContext, player);
 }
@@ -69,7 +71,7 @@ PlayerPlaceState.prototype.onClick = function(gameContext, stateMachine) {
 
     if(entity) {
         soundPlayer.play(player.config.sounds.place);
-        inventory.removeBuyType(this.buyType);
+        inventory.removeByTransaction(this.transaction);
     }
 
     stateMachine.setNextState(gameContext, Player.STATE.IDLE);

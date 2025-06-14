@@ -86,7 +86,7 @@ const createActor = function(gameContext, actorID, team, type) {
             router.on("DEBUG_SELL", () => actor.states.setNextState(gameContext, Player.STATE.SELL));
             router.on("DEBUG_PLACE", () => actor.states.setNextState(gameContext, Player.STATE.PLACE, {
                 "entityType": entityManager.getEntityType("blue_hq"),
-                "buyType": DefaultTypes.createBuyType("Resource", "Gold", 500)
+                "transaction": DefaultTypes.createItemTransaction("Resource", "Gold", 500)
             }));
             router.on("DEBUG_DEBUG", () => actor.states.setNextState(gameContext, Player.STATE.DEBUG));
 

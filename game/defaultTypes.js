@@ -9,7 +9,7 @@
  */
 
 /**
- * @typedef {Object} BuyType
+ * @typedef {Object} ItemTransaction
  * @property {string} type
  * @property {string} id
  * @property {int} value
@@ -111,9 +111,9 @@ DefaultTypes.createSpawnConfig = function(type, teamID, owners, tileX, tileY) {
  * @param {string} type 
  * @param {string} id 
  * @param {int} value 
- * @returns {BuyType}
+ * @returns {ItemTransaction}
  */
-DefaultTypes.createBuyType = function(type, id, value) {
+DefaultTypes.createItemTransaction = function(type, id, value) {
     return {
         "type": type,
         "id": id,

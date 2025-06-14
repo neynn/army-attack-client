@@ -21,3 +21,7 @@ Item.prototype.remove = function(value) {
 Item.prototype.setCount = function(count) {
     this.count = clampValue(count, this.maxCount, 0);
 }
+
+Item.prototype.getCount = function() {
+    return this.count;
+}

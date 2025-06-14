@@ -1,7 +1,7 @@
 import { isRectangleRectangleIntersect } from "../../../source/math/math.js";
 
-export const Drop = function(item, inventory, sprite) {
-    this.item = item; //Ref to the item that will be added. it is of type ItemType { id, type, value }
+export const Drop = function(transaction, inventory, sprite) {
+    this.transaction = transaction; //Ref to the item that will be added. it is of type ItemType { id, type, value }
     this.inventory = inventory; //Ref to the inventory that gets the drop.
     this.sprite = sprite;
     this.positionX = 0;
@@ -79,7 +79,5 @@ Drop.prototype.update = function(gameContext, deltaTime) {
 }
 
 Drop.prototype.collect = function() {
-    const { type, id, value } = this.item;
-
-    this.inventory.add(type, id, value);
+    this.inventory.addByTransaction(this.transaction);
 }

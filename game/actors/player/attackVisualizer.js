@@ -81,7 +81,7 @@ AttackVisualizer.prototype.updateAttackers = function(gameContext, player) {
 
     const activeAttackers = AttackSystem.getActiveAttackers(gameContext, mouseEntity, id);
 
-    if(!activeAttackers) {
+    if(activeAttackers.length === 0) {
         this.resetAttackers(gameContext);
         return;
     }
