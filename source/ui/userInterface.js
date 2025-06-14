@@ -1,4 +1,4 @@
-import { DualSet } from "../dualSet.js";
+import { SwapSet } from "../swapSet.js";
 import { createFadeInEffect } from "../effects/example/fadeIn.js";
 import { createFadeOutEffect } from "../effects/example/fadeOut.js";
 import { TextElement } from "./elements/textElement.js";
@@ -11,7 +11,7 @@ export const UserInterface = function(id) {
     this.nameMap = new Map();
     this.elements = new Map();
     this.state = UserInterface.STATE.VISIBLE;
-    this.collisions = new DualSet();
+    this.collisions = new SwapSet();
 }
 
 UserInterface.STATE = {
@@ -121,7 +121,7 @@ UserInterface.prototype.getCollisions = function(mouseX, mouseY, mouseRange) {
 UserInterface.prototype.updateCollisions = function(mouseX, mouseY, mouseRange) {
     const collisions = this.getCollisions(mouseX, mouseY, mouseRange);
 
-    this.collisions.reset();
+    this.collisions.swap();
 
     if(!collisions) {
         for(const elementID of this.collisions.previous) {
@@ -129,8 +129,6 @@ UserInterface.prototype.updateCollisions = function(mouseX, mouseY, mouseRange) 
 
             element.collider.onCollisionUpdate(UICollider.STATE.NOT_COLLIDED, mouseX, mouseY, mouseRange);
         }
-
-        this.collisions.previous.clear();
         return;
     }
 
@@ -138,12 +136,15 @@ UserInterface.prototype.updateCollisions = function(mouseX, mouseY, mouseRange) 
         const element = collisions[i];
         const elementID = element.getID();
 
-        this.collisions.current.add(elementID);
+        this.collisions.addCurrent(elementID);
+
         element.collider.onCollisionUpdate(UICollider.STATE.COLLIDED, mouseX, mouseY, mouseRange);
     }
 
     for(const elementID of this.collisions.previous) {
-        if(!this.collisions.current.has(elementID)) {
+        const isCurrent = this.collisions.isCurrent(elementID);
+
+        if(!isCurrent) {
             const element = this.elements.get(elementID);
 
             element.collider.onCollisionUpdate(UICollider.STATE.NOT_COLLIDED, mouseX, mouseY, mouseRange);

@@ -231,13 +231,13 @@ AttackSystem.updateTarget = function(gameContext, target, actorID, reason) {
  * @returns {ArmyEntity | null}
  */
 AttackSystem.getAttackCounterTarget = function(gameContext, attacker) {
-    const targets = [];
     const attackComponent = attacker.getComponent(ArmyEntity.COMPONENT.ATTACK);
 
     if(!attackComponent || !attackComponent.isAttackCounterable()) {
-        return targets;
+        return null;
     }
 
+    const targets = [];
     const attackerTeamComponent = attacker.getComponent(ArmyEntity.COMPONENT.TEAM);
 
     checkSurroundingAliveEntities(gameContext, attacker, (target) => {
@@ -253,7 +253,9 @@ AttackSystem.getAttackCounterTarget = function(gameContext, attacker) {
         }
     });
 
-    return pickAttackCounterTarget(attacker, targets);
+    const target = pickAttackCounterTarget(attacker, targets);
+
+    return target;
 }
 
 /**

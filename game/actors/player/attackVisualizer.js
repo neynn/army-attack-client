@@ -1,3 +1,4 @@
+import { SwapSet } from "../../../source/swapSet.js";
 import { ArmyCamera } from "../../armyCamera.js";
 import { ArmyEntity } from "../../init/armyEntity.js";
 import { AttackSystem } from "../../systems/attack.js";
@@ -6,16 +7,15 @@ import { PlayerCursor } from "./playerCursor.js";
 
 export const AttackVisualizer = function(camera) {
     this.camera = camera;
-    this.attackers = new Set();
+    this.attackers = new SwapSet();
 }
 
-AttackVisualizer.prototype.hasAnyAttacker = function() {
-    return this.attackers.size > 0;
+AttackVisualizer.prototype.isAnyAttacking = function() {
+    return this.attackers.current.size > 0;
 }
 
-AttackVisualizer.prototype.clearAttackers = function() {
+AttackVisualizer.prototype.clearOverlay = function() {
     this.camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.ATTACK);
-    this.attackers.clear();
 }
 
 AttackVisualizer.prototype.resetAttackerSprite = function(gameContext, attackerID) {
@@ -32,7 +32,7 @@ AttackVisualizer.prototype.resetAttackers = function(gameContext) {
     const { world } = gameContext;
     const { entityManager } = world;
 
-    for(const attackerID of this.attackers) {
+    for(const attackerID of this.attackers.previous) {
         const attacker = entityManager.getEntity(attackerID);
 
         if(attacker) {
@@ -40,7 +40,7 @@ AttackVisualizer.prototype.resetAttackers = function(gameContext) {
         }
     }
 
-    this.clearAttackers();
+    this.clearOverlay();
 }
 
 AttackVisualizer.prototype.updateAttackerOverlay = function(attackers, overlayID) {
@@ -65,7 +65,9 @@ AttackVisualizer.prototype.updateAttackerSprites = function(gameContext, target,
 
 AttackVisualizer.prototype.updateAttackers = function(gameContext, player) {
     const { tileManager } = gameContext;
-    const { hover, id } = player;
+    const { hover } = player;
+
+    this.attackers.swap();
 
     if(hover.state !== PlayerCursor.STATE.HOVER_ON_ENTITY) {
         this.resetAttackers(gameContext);
@@ -73,32 +75,29 @@ AttackVisualizer.prototype.updateAttackers = function(gameContext, player) {
     }
 
     const mouseEntity = hover.getEntity(gameContext);
-    const activeAttackers = AttackSystem.getActiveAttackers(gameContext, mouseEntity, id);
+    const activeAttackers = AttackSystem.getActiveAttackers(gameContext, mouseEntity, player.getID());
 
     if(activeAttackers.length === 0) {
         this.resetAttackers(gameContext);
         return;
     }
 
-    const currentAttackers = new Set();
-    const overlayID = tileManager.getTileIDByArray(player.config.overlays.attack);
-
     for(let i = 0; i < activeAttackers.length; i++) {
-        const attacker = activeAttackers[i];
-        const attackerID = attacker.getID();
+        const attackerID = activeAttackers[i].getID();
 
-        currentAttackers.add(attackerID);
+        this.attackers.addCurrent(attackerID);
     }
 
-    for(const attackerID of this.attackers) {
-        const isAttacking = currentAttackers.has(attackerID);
+    for(const attackerID of this.attackers.previous) {
+        const isAttacking = this.attackers.isCurrent(attackerID);
 
         if(!isAttacking) {
             this.resetAttackerSprite(gameContext, attackerID);
         }
     }
 
-    this.attackers = currentAttackers;
+    const overlayID = tileManager.getTileIDByArray(player.config.overlays.attack);
+
     this.updateAttackerOverlay(activeAttackers, overlayID);
     this.updateAttackerSprites(gameContext, mouseEntity, activeAttackers);
 }
