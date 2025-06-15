@@ -10,6 +10,7 @@ import { EntityDownEvent } from "./events/entityDown.js";
 import { EntityHealEvent } from "./events/entityHeal.js";
 import { EntityHitEvent } from "./events/entityHit.js";
 import { EntityKillEvent } from "./events/entityKill.js";
+import { EntityMoveEvent } from "./events/entityMove.js";
 import { EntitySellEvent } from "./events/entitySell.js";
 import { MissionCompleteEvent } from "./events/missionComplete.js";
 import { TileCaptureEvent } from "./events/tileCapture.js";
@@ -45,6 +46,7 @@ ArmyEventHandler.TYPE = {
     ENTITY_KILL: 204,
     ENTITY_HEAL: 205,
     ENTITY_SELL: 206,
+    ENTITY_MOVE: 207,
 
     TILE_CAPTURE: 300,
     DEBRIS_REMOVED: 301,
@@ -75,6 +77,7 @@ ArmyEventHandler.prototype.createEvents = function() {
     this.events.set(ArmyEventHandler.TYPE.ENTITY_KILL, new EntityKillEvent());
     this.events.set(ArmyEventHandler.TYPE.ENTITY_HEAL, new EntityHealEvent());
     this.events.set(ArmyEventHandler.TYPE.ENTITY_SELL, new EntitySellEvent());
+    this.events.set(ArmyEventHandler.TYPE.ENTITY_MOVE, new EntityMoveEvent());
 
     this.events.set(ArmyEventHandler.TYPE.TILE_CAPTURE, new TileCaptureEvent());
     this.events.set(ArmyEventHandler.TYPE.DEBRIS_REMOVED, new DebrisRemovedEvent());

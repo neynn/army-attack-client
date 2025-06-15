@@ -245,3 +245,22 @@ PathfinderSystem.generateMovePath = function(nodeList, targetX, targetY) {
 
     return null;
 }
+
+PathfinderSystem.getOrigin = function(targetX, targetY, path) {
+    let originX = targetX;
+    let originY = targetY;
+    let index = path.length - 1;
+
+    while(index >= 0) {
+        const { deltaX, deltaY } = path[index];
+
+        originX -= deltaX;
+        originY -= deltaY;
+        index--;
+    }
+
+    return {
+        "x": originX,
+        "y": originY
+    }
+}

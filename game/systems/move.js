@@ -80,7 +80,7 @@ MoveSystem.endMove = function(gameContext, entity, targetX, targetY) {
     const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
     const moveComponent = entity.getComponent(ArmyEntity.COMPONENT.MOVE);
     const { x, y } = transform2D.transformTileToWorldCenter(targetX, targetY);
-        
+
     positionComponent.setPosition(x, y);
     positionComponent.setTile(targetX, targetY);
     moveComponent.clearPath();

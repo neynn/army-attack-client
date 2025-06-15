@@ -8,6 +8,8 @@ import { MapSystem } from "../systems/map.js";
 import { LookSystem } from "../systems/look.js";
 import { ActionRequest } from "../../source/action/actionRequest.js";
 import { CounterMoveAction } from "./counterMoveAction.js";
+import { ArmyEventHandler } from "../armyEventHandler.js";
+import { EntityMoveEvent } from "../events/entityMove.js";
 
 export const MoveAction = function() {
     Action.call(this);
@@ -32,15 +34,16 @@ MoveAction.prototype.onStart = function(gameContext, request) {
 
 MoveAction.prototype.onEnd = function(gameContext, request) {
     const { world } = gameContext;
-    const { entityManager, actionQueue } = world;
-    const { actorID, targetX, targetY, entityID } = request;
+    const { entityManager, actionQueue, eventBus } = world;
+    const { actorID, targetX, targetY, entityID, path } = request;
     const entity = entityManager.getEntity(entityID);
+    const { x, y } = PathfinderSystem.getOrigin(targetX, targetY, path);
 
     MoveSystem.endMove(gameContext, entity, targetX, targetY);
     entity.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
     MapSystem.placeEntity(gameContext, entity);
+    eventBus.emit(ArmyEventHandler.TYPE.ENTITY_MOVE, EntityMoveEvent.createEvent(entityID, x, y, targetX, targetY));
     ConquerSystem.tryConquering(gameContext, entity, targetX, targetY, actorID);
-
     actionQueue.addImmediateRequest(CounterMoveAction.createRequest(entityID));
 }
 
