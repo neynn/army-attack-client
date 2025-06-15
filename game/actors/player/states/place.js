@@ -114,4 +114,4 @@ PlayerPlaceState.prototype.highlightPlaceableTiles = function(gameContext, playe
             }
         }
     }
-} 
+}

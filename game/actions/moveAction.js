@@ -17,9 +17,9 @@ MoveAction.prototype = Object.create(Action.prototype);
 MoveAction.prototype.constructor = MoveAction;
 
 MoveAction.prototype.onStart = function(gameContext, request) {
-    const { targetX, targetY, entityID, path } = request;
     const { world } = gameContext;
     const { entityManager } = world;
+    const { targetX, targetY, entityID, path } = request;
     const entity = entityManager.getEntity(entityID);
     const moveComponent = entity.getComponent(ArmyEntity.COMPONENT.MOVE);
 
@@ -31,9 +31,9 @@ MoveAction.prototype.onStart = function(gameContext, request) {
 }
 
 MoveAction.prototype.onEnd = function(gameContext, request) {
-    const { actorID, targetX, targetY, entityID } = request;
     const { world } = gameContext;
     const { entityManager, actionQueue } = world;
+    const { actorID, targetX, targetY, entityID } = request;
     const entity = entityManager.getEntity(entityID);
 
     MoveSystem.endMove(gameContext, entity, targetX, targetY);
@@ -44,11 +44,20 @@ MoveAction.prototype.onEnd = function(gameContext, request) {
     actionQueue.addImmediateRequest(CounterMoveAction.createRequest(entityID));
 }
 
-MoveAction.prototype.isFinished = function(gameContext, request) {
-    const { data } = request;
-    const { entityID } = data;
+MoveAction.prototype.onUpdate = function(gameContext, request) {
     const { world } = gameContext;
     const { entityManager } = world;
+    const { entityID } = request;
+    const entity = entityManager.getEntity(entityID);
+
+    MoveSystem.updatePath(gameContext, entity);
+}
+
+MoveAction.prototype.isFinished = function(gameContext, request) {
+    const { world } = gameContext;
+    const { entityManager } = world;
+    const { data } = request;
+    const { entityID } = data;
     const entity = entityManager.getEntity(entityID);
     const moveComponent = entity.getComponent(ArmyEntity.COMPONENT.MOVE);
 
@@ -56,9 +65,9 @@ MoveAction.prototype.isFinished = function(gameContext, request) {
 }
 
 MoveAction.prototype.getValidated = function(gameContext, request) {
-    const { actorID, entityID, targetX, targetY } = request;
     const { world } = gameContext;
     const { entityManager } = world;
+    const { actorID, entityID, targetX, targetY } = request;
     const entity = entityManager.getEntity(entityID);
 
     if(!entity || !entity.isAlive()) {

@@ -12,8 +12,8 @@ export const World = function() {
     this.mapManager = new MapManager();
     this.eventBus = new WorldEventHandler();
 
-    this.entityManager.events.on(EntityManager.EVENT.ENTITY_DESTROY, (entityID) => {
-        this.turnManager.removeEntity(entityID);
+    this.entityManager.events.on(EntityManager.EVENT.ENTITY_DESTROY, (entityID, entity) => {
+        this.turnManager.removeEntity(entityID, entity);
     }, { permanent: true });
     
     this.addDebug();
@@ -44,7 +44,7 @@ World.prototype.addDebug = function() {
 
     if(World.DEBUG.LOG_ENTITY_EVENTS) {
         this.entityManager.events.on(EntityManager.EVENT.ENTITY_CREATE, (id, entity) => console.log(id, entity), { permanent: true });
-        this.entityManager.events.on(EntityManager.EVENT.ENTITY_DESTROY, (id) => console.log(id), { permanent: true });
+        this.entityManager.events.on(EntityManager.EVENT.ENTITY_DESTROY, (id, entity) => console.log(id, entity), { permanent: true });
     }
 
     if(World.DEBUG.LOG_MAP_EVENTS) {
@@ -78,23 +78,23 @@ World.prototype.getTileEntity = function(tileX, tileY) {
     }
 
     const entityID = activeMap.getTopEntity(tileX, tileY);
-    
-    return this.entityManager.getEntity(entityID);
+    const entity = this.entityManager.getEntity(entityID);
+
+    return entity;
 }
 
 World.prototype.getEntitiesInArea = function(startX, startY, endX, endY) {
+    const entities = [];
     const worldMap = this.mapManager.getActiveMap();
 
     if(!worldMap) {
-        return [];
+        return entities;
     }
 
     const entityIDs = worldMap.getAllEntitiesInArea(startX, startY, endX, endY);
-    const entities = [];
 
     for(let i = 0; i < entityIDs.length; i++) {
-        const entityID = entityIDs[i];
-        const entity = this.entityManager.getEntity(entityID);
+        const entity = this.entityManager.getEntity(entityIDs[i]);
 
         if(entity) {
             entities.push(entity);
@@ -105,14 +105,14 @@ World.prototype.getEntitiesInArea = function(startX, startY, endX, endY) {
 } 
 
 World.prototype.getUniqueEntitiesInArea = function(startX, startY, endX, endY) {
+    const entities = [];
     const worldMap = this.mapManager.getActiveMap();
 
     if(!worldMap) {
-        return [];
+        return entities;
     }
 
     const entityIDs = worldMap.getUniqueEntitiesInArea(startX, startY, endX, endY);
-    const entities = [];
 
     for(const entityID of entityIDs) {
         const entity = this.entityManager.getEntity(entityID);
@@ -123,4 +123,23 @@ World.prototype.getUniqueEntitiesInArea = function(startX, startY, endX, endY) {
     }
 
     return entities;
-} 
+}
+
+World.prototype.getEntitiesOwnedBy = function(actorID) {
+    const entities = [];
+    const actor = this.turnManager.getActor(actorID);
+
+    if(!actor) {
+        return entities;
+    }
+
+    for(const entityID of actor.entities) {
+        const entity = this.entityManager.getEntity(entityID);
+
+        if(entity) {
+            entities.push(entity);
+        }
+    }
+
+    return entities;
+}

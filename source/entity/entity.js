@@ -1,7 +1,7 @@
 export const Entity = function(DEBUG_NAME = "") {
     this.DEBUG_NAME = DEBUG_NAME;
     this.id = -1;
-    this.config = {};
+    this.config = null;
     this.components = new Map();
     this.activeComponents = [];
 }
@@ -10,8 +10,14 @@ Entity.DEBUG = {
     LOG_COMPONENT: 0
 };
 
+Entity.prototype.setConfig = function(config) {
+    if(config !== undefined) {
+        this.config = config;
+    }
+}
+
 Entity.prototype.setID = function(id) {
-    if(id !== undefined) {
+    if(this.id === -1 && id !== undefined) {
         this.id = id;
     }
 }
@@ -26,8 +32,8 @@ Entity.prototype.update = function(gameContext) {
     }
 }
 
-Entity.prototype.hasComponent = function(component) {
-    return this.components.has(component);
+Entity.prototype.hasComponent = function(componentID) {
+    return this.components.has(componentID);
 }
 
 Entity.prototype.getComponent = function(componentID) {

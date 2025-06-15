@@ -229,11 +229,13 @@ TurnManager.prototype.update = function(gameContext) {
     }
 }
 
-TurnManager.prototype.removeEntity = function(entityID) {
-    this.actors.forEach(actor => actor.removeEntity(entityID));
+TurnManager.prototype.removeEntity = function(entityID, entity) {
+    this.actors.forEach((actor) => {
+        actor.removeEntity(entityID, entity);
+    });
 }
 
-TurnManager.prototype.addEntity = function(actorID, entityID) {
+TurnManager.prototype.addEntity = function(actorID, entityID, entity) {
     const owner = this.actors.get(actorID);
 
     if(!owner) {
@@ -241,7 +243,7 @@ TurnManager.prototype.addEntity = function(actorID, entityID) {
         return;
     }
 
-    owner.addEntity(entityID);
+    owner.addEntity(entityID, entity);
 }
 
 TurnManager.prototype.getOwnersOf = function(entityID) {

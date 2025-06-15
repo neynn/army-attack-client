@@ -82,6 +82,9 @@ Player.SPRITE_TYPE = {
 Player.prototype = Object.create(Actor.prototype);
 Player.prototype.constructor = Player;
 
+Player.prototype.onEntityAdd = function(entity) {}
+Player.prototype.onEntityRemove = function(entity) {}
+
 Player.prototype.save = function() {
     return {
         "missions": this.missions.save(),

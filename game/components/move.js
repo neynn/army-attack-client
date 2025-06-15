@@ -1,5 +1,3 @@
-import { MoveSystem } from "../systems/move.js";
-
 export const MoveComponent = function() {
     this.range = 0;
     this.speed = 0;
@@ -73,12 +71,6 @@ MoveComponent.prototype.isStealth = function() {
 
 MoveComponent.prototype.isCloaked = function() {
     return (this.flags & MoveComponent.FLAGS.CLOAK) !== 0;
-}
-
-MoveComponent.prototype.update = function(gameContext, entity) {
-    if(!this.isPathDone()) {
-        MoveSystem.updatePath(gameContext, entity);
-    } 
 }
 
 MoveComponent.prototype.updateDistance = function(deltaTime) {

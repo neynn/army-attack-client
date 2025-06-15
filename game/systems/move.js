@@ -42,6 +42,11 @@ MoveSystem.updatePath = function(gameContext, entity) {
     const { timer, transform2D } = gameContext;
     const deltaTime = timer.getFixedDeltaTime();
     const moveComponent = entity.getComponent(ArmyEntity.COMPONENT.MOVE);
+
+    if(moveComponent.isPathDone()) {
+        return;
+    }
+
     const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
     const deltaDistance = moveComponent.updateDistance(deltaTime);
     const { deltaX, deltaY } = moveComponent.getCurrentStep();

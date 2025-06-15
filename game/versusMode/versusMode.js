@@ -1,5 +1,5 @@
-import { getRandomChance } from "../source/math/math.js";
-import { Team } from "./versusMode/team.js";
+import { getRandomChance } from "../../source/math/math.js";
+import { Team } from "./team.js";
 
 /**
  * Server-Side initialization code for the VersusMode.

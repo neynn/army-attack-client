@@ -112,8 +112,10 @@ ArmyEntityFactory.prototype.onCreate = function(gameContext, config) {
         return null;
     }
 
-    const entity = new ArmyEntity(entityType, type);
+    const entity = new ArmyEntity(type);
     
+    entity.setConfig(entityType);
+
     entityManager.addArchetypeComponents(entity, archetype);
 
     setupComponents(entity, statConfig, tileX, tileY, team, health);

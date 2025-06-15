@@ -1,4 +1,3 @@
-import { EntityManager } from "../../source/entity/entityManager.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { CardSystem } from "./card.js";
 import { MapSystem } from "./map.js";
@@ -69,20 +68,21 @@ const loadEntitySprites = function(gameContext, entity) {
  * 
  * @param {*} gameContext 
  * @param {string[] | string} owners 
- * @param {int} entityID 
+ * @param {ArmyEntity} entityID 
  */
-const registerOwners = function(gameContext, owners, entityID) {
+const registerOwners = function(gameContext, owners, entity) {
     const { world } = gameContext;
     const { turnManager } = world;
+    const entityID = entity.getID();
 
     switch(typeof owners) {
         case "string": {
-            turnManager.addEntity(owners, entityID);
+            turnManager.addEntity(owners, entityID, entity);
             break;
         }
         case "object": {
             for(const ownerID of owners) {
-                turnManager.addEntity(ownerID, entityID);
+                turnManager.addEntity(ownerID, entityID, entity);
             }
             break;
         }
@@ -119,7 +119,7 @@ SpawnSystem.createEntity = function(gameContext, config) {
         entity.load(data);
     }
 
-    registerOwners(gameContext, owners, entity.getID());
+    registerOwners(gameContext, owners, entity);
     loadEntitySprites(gameContext, entity);
     entity.determineSprite(gameContext);
     MapSystem.placeEntity(gameContext, entity);
@@ -142,7 +142,7 @@ SpawnSystem.destroyEntity = function(gameContext, entity) {
 
     MapSystem.removeEntity(gameContext, entity);
     spriteComponent.destroy(gameContext);
-    entityManager.markEntity(EntityManager.MARK_TYPE.DELETE, entityID);
+    entityManager.markForDestroy(entityID);
 
     unloadEntitySprites(gameContext, entity);
 }

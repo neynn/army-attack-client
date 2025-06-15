@@ -1,17 +1,16 @@
 import { EventEmitter } from "../events/eventEmitter.js";
 import { FactoryOwner } from "../factory/factoryOwner.js";
 import { Logger } from "../logger.js";
-import { Component } from "./component.js";
 
 export const EntityManager = function() {
     FactoryOwner.call(this);
 
-    this.nextID = 0;
     this.traits = {};
     this.archetypes = {};
     this.entityTypes = {};
     this.components = new Map();
 
+    this.nextID = 0;
     this.entities = [];
     this.entityMap = new Map();
     this.pendingRemovals = [];
@@ -20,10 +19,6 @@ export const EntityManager = function() {
     this.events.listen(EntityManager.EVENT.ENTITY_CREATE);
     this.events.listen(EntityManager.EVENT.ENTITY_DESTROY);
 }
-
-EntityManager.MARK_TYPE = {
-    DELETE: 0
-};
 
 EntityManager.EVENT = {
     ENTITY_CREATE: "ENTITY_CREATE",
@@ -75,9 +70,7 @@ EntityManager.prototype.registerComponent = function(componentID, componentClass
         return;
     }
 
-    const component = new Component(componentClass);
-
-    this.components.set(componentID, component);
+    this.components.set(componentID, componentClass);
 }
 
 EntityManager.prototype.forAllEntities = function(onCall) {
@@ -89,17 +82,12 @@ EntityManager.prototype.forAllEntities = function(onCall) {
     }
 }
 
-EntityManager.prototype.markEntity = function(markType, entityID) {
+EntityManager.prototype.markForDestroy = function(entityID) {
     if(!this.entityMap.has(entityID)) {
         return;
     }
 
-    switch(markType) {
-        case EntityManager.MARK_TYPE.DELETE: {
-            this.pendingRemovals.push(entityID);
-            break;
-        }
-    }
+    this.pendingRemovals.push(entityID);
 }
 
 EntityManager.prototype.update = function(gameContext) {
@@ -168,12 +156,13 @@ EntityManager.prototype.destroyEntityAtIndex = function(index, entityID) {
     const swapEntityIndex = this.entities.length - 1;
     const swapEntity = this.entities[swapEntityIndex];
     const swapEntityID = swapEntity.getID();
+    const oldEntity = this.entities[index];
 
     this.entityMap.set(swapEntityID, index);
     this.entityMap.delete(entityID);
     this.entities[index] = this.entities[swapEntityIndex];
     this.entities.pop();
-    this.events.emit(EntityManager.EVENT.ENTITY_DESTROY, entityID);
+    this.events.emit(EntityManager.EVENT.ENTITY_DESTROY, entityID, oldEntity);
 }
 
 EntityManager.prototype.destroyEntity = function(entityID) {
@@ -202,19 +191,29 @@ EntityManager.prototype.destroyEntity = function(entityID) {
     }
 }
 
-EntityManager.prototype.addComponent = function(entity, componentID) {
-    const component = this.components.get(componentID);
+EntityManager.prototype.createComponentInstance = function(componentID) {
+    const Component = this.components.get(componentID);
 
-    if(!component) {
+    if(!Component) {
         Logger.log(Logger.CODE.ENGINE_ERROR, "Component is not registered!", "EntityManager.prototype.addComponent", { "id": componentID }); 
         return null;
     }
 
-    const instance = component.createInstance();
+    return new Component();
+}
 
-    entity.addComponent(componentID, instance);
+EntityManager.prototype.initComponentMap = function(entity, components) {
+    for(const componentID in components) {
+        if(!entity.hasComponent(componentID)) {
+            const instance = this.createComponentInstance(componentID);
 
-    return instance;
+            if(instance) {
+                entity.addComponent(componentID, instance);
+            }
+        }
+
+        entity.initComponent(componentID, components[componentID]);
+    }
 }
 
 EntityManager.prototype.addArchetypeComponents = function(entity, archetypeID) {
@@ -224,13 +223,7 @@ EntityManager.prototype.addArchetypeComponents = function(entity, archetypeID) {
         return;
     }
 
-    for(const componentID in archetype.components) {
-        if(!entity.hasComponent(componentID)) {
-            this.addComponent(entity, componentID);
-        }
-        
-        entity.initComponent(componentID, archetype.components[componentID]);
-    }
+    this.initComponentMap(entity, archetype.components);
 }
 
 EntityManager.prototype.addTraitComponents = function(entity, traits) {
@@ -242,12 +235,6 @@ EntityManager.prototype.addTraitComponents = function(entity, traits) {
             continue;
         }
 
-        for(const componentID in trait.components) {
-            if(!entity.hasComponent(componentID)) {
-                this.addComponent(entity, componentID);
-            }
-        
-            entity.initComponent(componentID, trait.components[componentID]);
-        }
+        this.initComponentMap(entity, trait.components);
     }
 }
