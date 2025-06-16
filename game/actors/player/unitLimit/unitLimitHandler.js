@@ -5,6 +5,18 @@ export const UnitLimitHandler = function() {
     this.current = null;
 }
 
+UnitLimitHandler.prototype.removeByCost = function(costObject) {
+    if(this.current) {
+        this.current.removeByCost(costObject);
+    }
+}
+
+UnitLimitHandler.prototype.addByCost = function(costObject) {
+    if(this.current) {
+        this.current.addByCost(costObject);
+    }
+}
+
 UnitLimitHandler.prototype.clear = function() {
     this.groups.clear();
     this.current = null;

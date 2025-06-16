@@ -11,7 +11,7 @@ export const EnemyActor = function(id) {
 EnemyActor.prototype = Object.create(Actor.prototype);
 EnemyActor.prototype.constructor = EnemyActor;
 
-EnemyActor.prototype.onMakeChoice = function(gameContext) {
+EnemyActor.prototype.onMakeChoice = function(gameContext, actionsLeft) {
     const { world } = gameContext;
     const { eventBus } = world;
 

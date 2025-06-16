@@ -1,46 +1,4 @@
 {
-    "Infantry": {
-        "name": "TRAIT_NAME_INFANTRY",
-        "desc": "TRAIT_DESC_INFANTRY",
-        "components": {
-            "Unit": { "infantry": 1 } 
-        }
-    },
-    "HeavyInfantry": {
-        "name": "TRAIT_NAME_HEAVY_INFANTRY",
-        "desc": "TRAIT_DESC_HEAVY_INFANTRY",
-        "components": {
-            "Unit": { "infantry": 2 } 
-        }
-    },
-    "Artillery": {
-        "name": "TRAIT_NAME_ARTILLERY",
-        "desc": "TRAIT_DESC_ARTILLERY",
-        "components": { 
-            "Unit": { "artillery": 1 } 
-        }
-    },
-    "HeavyArtillery": {
-        "name": "TRAIT_NAME_HEAVY_ARTILLERY",
-        "desc": "TRAIT_DESC_HEAVY_ARTILLERY",
-        "components": { 
-            "Unit": { "artillery": 2 } 
-        }
-    },
-    "Armor": {
-        "name": "TRAIT_NAME_ARMOR",
-        "desc": "TRAIT_DESC_ARMOR",
-        "components": {
-            "Unit": { "armor": 1 } 
-        }
-    },
-    "HeavyArmor": {
-        "name": "TRAIT_NAME_HEAVY_ARMOR",
-        "desc": "TRAIT_DESC_HEAVY_ARMOR",
-        "components": {
-            "Unit": { "armor": 2 } 
-        }
-    },
     "EliteArmor": {
         "name": "TRAIT_NAME_ELITE_ARMOR",
         "desc": "TRAIT_DESC_ELITE_ARMOR",

@@ -56,7 +56,7 @@ StoryModeState.prototype.saveSnapshot = function(gameContext) {
         const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
         const teamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
         const savedData = entity.save();
-        const owners = turnManager.getOwnersOf(entityID);
+        const owners = turnManager.getOwnersOf(entityID).map(actor => actor.getID());
         
         entities.push({
             "type": entity.config.id,

@@ -12,8 +12,8 @@ export const World = function() {
     this.mapManager = new MapManager();
     this.eventBus = new WorldEventHandler();
 
-    this.entityManager.events.on(EntityManager.EVENT.ENTITY_DESTROY, (entityID, entity) => {
-        this.turnManager.removeEntity(entityID, entity);
+    this.entityManager.events.on(EntityManager.EVENT.ENTITY_DESTROY, (entityID) => {
+        this.turnManager.removeEntity(entityID);
     }, { permanent: true });
     
     this.addDebug();
@@ -44,7 +44,7 @@ World.prototype.addDebug = function() {
 
     if(World.DEBUG.LOG_ENTITY_EVENTS) {
         this.entityManager.events.on(EntityManager.EVENT.ENTITY_CREATE, (id, entity) => console.log(id, entity), { permanent: true });
-        this.entityManager.events.on(EntityManager.EVENT.ENTITY_DESTROY, (id, entity) => console.log(id, entity), { permanent: true });
+        this.entityManager.events.on(EntityManager.EVENT.ENTITY_DESTROY, (id) => console.log(id), { permanent: true });
     }
 
     if(World.DEBUG.LOG_MAP_EVENTS) {

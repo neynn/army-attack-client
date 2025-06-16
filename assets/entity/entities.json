@@ -36,6 +36,7 @@
         "passability": ["Land"],
         "buy": { "type": "Resource", "id": "Money", "value": 10000 },
         "sell": { "type": "Resource", "id": "Money", "value": 1000 },
+        "cost": { "infantry": 0, "armor": 0, "artillery": 1 },
         "stats": {
             "story": { "health": 4, "damage": 1, "attackRange": 2, "moveRange": 3, "traits": ["Artillery"] }, 
             "versus": { "health": 4, "damage": 1, "attackRange": 2, "moveRange": 3, "traits": ["Artillery"] }
@@ -67,6 +68,7 @@
         "passability": ["Land"],
         "buy": { "type": "Resource", "id": "Money", "value": 10000 },
         "sell": { "type": "Resource", "id": "Money", "value": 1000 },
+        "cost": { "infantry": 0, "armor": 0, "artillery": 1 },
         "stats": {
             "story": { "health": 6, "damage": 2, "attackRange": 3, "moveRange": 3, "traits": ["Artillery"] }, 
             "versus": { "health": 6, "damage": 2, "attackRange": 3, "moveRange": 3, "traits": ["Artillery"] }
@@ -98,6 +100,7 @@
         "passability": ["Land"],
         "buy": { "type": "Resource", "id": "Money", "value": 30000 },
         "sell": { "type": "Resource", "id": "Money", "value": 3000 },
+        "cost": { "infantry": 0, "armor": 0, "artillery": 1 },
         "stats": {
             "story": { "health": 8, "damage": 2, "attackRange": 2, "moveRange": 4, "traits": ["Artillery", "Reviveable"] }, 
             "versus": { "health": 8, "damage": 2, "attackRange": 2, "moveRange": 4, "traits": ["Artillery"] }
@@ -129,6 +132,7 @@
         "passability": ["Land"],
         "buy": { "type": "Resource", "id": "Money", "value": 30000 },
         "sell": { "type": "Resource", "id": "Money", "value": 3000 },
+        "cost": { "infantry": 0, "armor": 0, "artillery": 1 },
         "stats": {
             "story": { "health": 10, "damage": 3, "attackRange": 3, "moveRange": 4, "traits": ["Artillery"] }, 
             "versus": { "health": 10, "damage": 3, "attackRange": 3, "moveRange": 4, "traits": ["Artillery"] }
@@ -160,6 +164,7 @@
         "passability": ["Land"],
         "buy": { "type": "Resource", "id": "Money", "value": 20000 },
         "sell": { "type": "Resource", "id": "Money", "value": 2000 },
+        "cost": { "infantry": 0, "armor": 1, "artillery": 0 },
         "stats": {
             "story": { "health": 15, "damage": 3, "attackRange": 1, "moveRange": 6, "traits": ["Armor"] }, 
             "versus": { "health": 15, "damage": 3, "attackRange": 1, "moveRange": 5, "traits": ["Armor"] }
@@ -191,6 +196,7 @@
         "passability": ["Land"],
         "buy": { "type": "Resource", "id": "Money", "value": 20000 },
         "sell": { "type": "Resource", "id": "Money", "value": 2000 },
+        "cost": { "infantry": 0, "armor": 1, "artillery": 0 },
         "stats": {
             "story": { "health": 20, "damage": 4, "attackRange": 1, "moveRange": 5, "traits": ["Armor"] }, 
             "versus": { "health": 20, "damage": 4, "attackRange": 1, "moveRange": 5, "traits": ["Armor"] }
@@ -222,6 +228,7 @@
         "passability": ["Land"],
         "buy": { "type": "Resource", "id": "Money", "value": 22000 },
         "sell": { "type": "Resource", "id": "Money", "value": 2200 },
+        "cost": { "infantry": 1, "armor": 0, "artillery": 0 },
         "healCost": 50,
         "stats": {
             "story": { "health": 10, "damage": 3, "attackRange": 1, "moveRange": 5, "traits": ["Infantry", "Stealth", "Reviveable"] }, 
@@ -254,6 +261,7 @@
         "passability": ["Land"],
         "buy": { "type": "Resource", "id": "Money", "value": 22000 },
         "sell": { "type": "Resource", "id": "Money", "value": 2200 },
+        "cost": { "infantry": 1, "armor": 0, "artillery": 0 },
         "stats": {
             "story": { "health": 15, "damage": 4, "attackRange": 1, "moveRange": 5, "traits": ["Infantry"] }, 
             "versus": { "health": 15, "damage": 4, "attackRange": 1, "moveRange": 5, "traits": ["Infantry"] }
@@ -285,6 +293,7 @@
         "passability": ["Land"],
         "buy": { "type": "Resource", "id": "Gold", "value": 200 },
         "sell": { "type": "Resource", "id": "Money", "value": 20000 },
+        "cost": { "infantry": 0, "armor": 0, "artillery": 1 },
         "stats": {
             "story": { "health": 8, "damage": 3, "attackRange": 3, "moveRange": 2, "traits": ["Artillery", "Elite"] }, 
             "versus": { "health": 8, "damage": 3, "attackRange": 3, "moveRange": 2, "traits": ["Artillery"] }
@@ -316,6 +325,7 @@
         "passability": ["Land"],
         "buy": { "type": "Resource", "id": "Gold", "value": 200 },
         "sell": { "type": "Resource", "id": "Money", "value": 20000 },
+        "cost": { "infantry": 0, "armor": 0, "artillery": 1 },
         "stats": {
             "story": { "health": 10, "damage": 4, "attackRange": 4, "moveRange": 2, "traits": ["Artillery", "Elite"] }, 
             "versus": { "health": 10, "damage": 4, "attackRange": 4, "moveRange": 2, "traits": ["Artillery"] }
@@ -347,6 +357,7 @@
         "passability": ["Land"],
         "buy": { "type": "Resource", "id": "Gold", "value": 90 },
         "sell": { "type": "Resource", "id": "Money", "value": 9000 },
+        "cost": { "infantry": 0, "armor": 1, "artillery": 0 },
         "stats": {
             "story": { "health": 20, "damage": 3, "attackRange": 1, "moveRange": 4, "traits": ["Armor", "Elite"] }, 
             "versus": { "health": 20, "damage": 3, "attackRange": 1, "moveRange": 4, "traits": ["Armor"] }
@@ -378,6 +389,7 @@
         "passability": ["Land"],
         "buy": { "type": "Resource", "id": "Gold", "value": 90 },
         "sell": { "type": "Resource", "id": "Money", "value": 9000 },
+        "cost": { "infantry": 0, "armor": 1, "artillery": 0 },
         "stats": {
             "story": { "health": 25, "damage": 4, "attackRange": 1, "moveRange": 4, "traits": ["Armor", "Elite"] }, 
             "versus": { "health": 25, "damage": 4, "attackRange": 1, "moveRange": 4, "traits": ["Armor"] }
@@ -409,6 +421,7 @@
         "passability": ["Land"],
         "buy": { "type": "Resource", "id": "Gold", "value": 500 },
         "sell": { "type": "Resource", "id": "Money", "value": 50000 },
+        "cost": { "infantry": 1, "armor": 0, "artillery": 0 },
         "stats": {
             "story": { "health": 30, "damage": 10, "attackRange": 1, "moveRange": 2, "traits": ["Infantry", "Elite"] }, 
             "versus": { "health": 30, "damage": 10, "attackRange": 1, "moveRange": 2, "traits": ["Infantry"] }
@@ -440,6 +453,7 @@
         "passability": ["Land"],
         "buy": { "type": "Resource", "id": "Gold", "value": 30 },
         "sell": { "type": "Resource", "id": "Money", "value": 3000 },
+        "cost": { "infantry": 1, "armor": 0, "artillery": 0 },
         "stats": {
             "story": { "health": 5, "damage": 2, "attackRange": 1, "moveRange": 5, "traits": ["Infantry", "Elite"] }, 
             "versus": { "health": 5, "damage": 2, "attackRange": 1, "moveRange": 5, "traits": ["Infantry"] }
@@ -471,6 +485,7 @@
         "passability": ["Land"],
         "buy": { "type": "Resource", "id": "Gold", "value": 30 },
         "sell": { "type": "Resource", "id": "Money", "value": 3000 },
+        "cost": { "infantry": 1, "armor": 0, "artillery": 0 },
         "stats": {
             "story": { "health": 8, "damage": 3, "attackRange": 1, "moveRange": 5, "traits": ["Infantry", "Elite"] }, 
             "versus": { "health": 8, "damage": 3, "attackRange": 1, "moveRange": 5, "traits": ["Infantry"] }
@@ -502,6 +517,7 @@
         "passability": ["Land"],
         "buy": { "type": "Resource", "id": "Money", "value": 1500 },
         "sell": { "type": "Resource", "id": "Money", "value": 150 },
+        "cost": { "infantry": 1, "armor": 0, "artillery": 0 },
         "upgrade": {
             "result": "blue_infantry_ultimate",
             "items": [
@@ -542,6 +558,7 @@
         "passability": ["Land"],
         "buy": { "type": "Resource", "id": "Money", "value": 1500 },
         "sell": { "type": "Resource", "id": "Money", "value": 150 },
+        "cost": { "infantry": 1, "armor": 0, "artillery": 0 },
         "stats": {
             "story": { "health": 8, "damage": 2, "attackRange": 1, "moveRange": 4, "traits": ["Infantry"] }, 
             "versus": { "health": 8, "damage": 2, "attackRange": 1, "moveRange": 4, "traits": ["Infantry"] }
@@ -571,6 +588,7 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "cost": { "infantry": 0, "armor": 1, "artillery": 1 },
         "stats": {
             "story": { "health": 22, "damage": 4, "attackRange": 2, "moveRange": 4, "traits": ["Armor", "Artillery"] }, 
             "versus": { "health": 22, "damage": 4, "attackRange": 2, "moveRange": 4, "traits": ["Armor", "Artillery"] }
@@ -599,6 +617,7 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "cost": { "infantry": 1, "armor": 0, "artillery": 0 },
         "stats": {
             "story": { "health": 5, "damage": 1, "attackRange": 4, "moveRange": 4, "traits": ["Infantry"] }, 
             "versus": { "health": 5, "damage": 1, "attackRange": 4, "moveRange": 4, "traits": ["Infantry"] }
@@ -629,6 +648,7 @@
         "passability": ["Land"],
         "buy": { "type": "Resource", "id": "Money", "value": 5000 },
         "sell": { "type": "Resource", "id": "Money", "value": 500 },
+        "cost": { "infantry": 0, "armor": 1, "artillery": 0 },
         "stats": {
             "story": { "health": 10, "damage": 2, "attackRange": 1, "moveRange": 10, "traits": ["Armor"] }, 
             "versus": { "health": 10, "damage": 2, "attackRange": 1, "moveRange": 10, "traits": ["Armor"] }
@@ -660,6 +680,7 @@
         "passability": ["Land"],
         "buy": { "type": "Resource", "id": "Money", "value": 5000 },
         "sell": { "type": "Resource", "id": "Money", "value": 500 },
+        "cost": { "infantry": 0, "armor": 1, "artillery": 0 },
         "stats": {
             "story": { "health": 15, "damage": 3, "attackRange": 1, "moveRange": 10, "traits": ["Armor"] }, 
             "versus": { "health": 15, "damage": 3, "attackRange": 1, "moveRange": 10, "traits": ["Armor"] }
@@ -689,6 +710,7 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "cost": { "infantry": 0, "armor": 0, "artillery": 1 },
         "stats": {
             "story": { "health": 2, "damage": 1, "attackRange": 2, "moveRange": 3, "traits": ["Artillery"] }, 
             "versus": { "health": 2, "damage": 1, "attackRange": 2, "moveRange": 3, "traits": ["Artillery"] }
@@ -738,6 +760,7 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "cost": { "infantry": 0, "armor": 0, "artillery": 1 },
         "stats": {
             "story": { "health": 4, "damage": 2, "attackRange": 3, "moveRange": 3, "traits": ["Artillery"] }, 
             "versus": { "health": 4, "damage": 2, "attackRange": 3, "moveRange": 3, "traits": ["Artillery"] }
@@ -787,6 +810,7 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "cost": { "infantry": 0, "armor": 0, "artillery": 1 },
         "stats": {
             "story": { "health": 4, "damage": 2, "attackRange": 2, "moveRange": 4, "traits": ["Artillery"] }, 
             "versus": { "health": 4, "damage": 2, "attackRange": 2, "moveRange": 4, "traits": ["Artillery"] }
@@ -837,6 +861,7 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "cost": { "infantry": 0, "armor": 0, "artillery": 1 },
         "stats": {
             "story": { "health": 6, "damage": 3, "attackRange": 3, "moveRange": 4, "traits": ["Artillery"] }, 
             "versus": { "health": 6, "damage": 3, "attackRange": 3, "moveRange": 4, "traits": ["Artillery"] }
@@ -887,6 +912,7 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "cost": { "infantry": 0, "armor": 1, "artillery": 0 },
         "stats": {
             "story": { "health": 20, "damage": 4, "attackRange": 1, "moveRange": 4, "traits": ["Armor", "Bulldoze"] }, 
             "versus": { "health": 20, "damage": 4, "attackRange": 1, "moveRange": 4, "traits": ["Armor"] }
@@ -939,6 +965,7 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "cost": { "infantry": 0, "armor": 1, "artillery": 0 },
         "stats": {
             "story": { "health": 25, "damage": 5, "attackRange": 1, "moveRange": 4, "traits": ["Armor"] }, 
             "versus": { "health": 25, "damage": 5, "attackRange": 1, "moveRange": 4, "traits": ["Armor"] }
@@ -991,6 +1018,7 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "cost": { "infantry": 0, "armor": 1, "artillery": 0 },
         "stats": {
             "story": { "health": 30, "damage": 10, "attackRange": 1, "moveRange": 2, "traits": ["Armor"] }, 
             "versus": { "health": 30, "damage": 10, "attackRange": 1, "moveRange": 2, "traits": ["Armor"] }
@@ -1043,6 +1071,7 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "cost": { "infantry": 0, "armor": 1, "artillery": 0 },
         "stats": {
             "story": { "health": 10, "damage": 3, "attackRange": 1, "moveRange": 4, "traits": ["Armor"] }, 
             "versus": { "health": 10, "damage": 3, "attackRange": 1, "moveRange": 4, "traits": ["Armor"] }
@@ -1093,6 +1122,7 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "cost": { "infantry": 0, "armor": 1, "artillery": 0 },
         "stats": {
             "story": { "health": 15, "damage": 4, "attackRange": 1, "moveRange": 4, "traits": ["Armor"] }, 
             "versus": { "health": 15, "damage": 4, "attackRange": 1, "moveRange": 4, "traits": ["Armor"] }
@@ -1143,6 +1173,7 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land", "Mountain"],
+        "cost": { "infantry": 1, "armor": 0, "artillery": 0 },
         "stats": {
             "story": { "health": 12, "damage": 3, "attackRange": 1, "moveRange": 3, "traits": ["Infantry"] }, 
             "versus": { "health": 12, "damage": 3, "attackRange": 1, "moveRange": 3, "traits": ["Infantry"] }
@@ -1188,6 +1219,7 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land", "Mountain"],
+        "cost": { "infantry": 1, "armor": 0, "artillery": 0 },
         "stats": {
             "story": { "health": 15, "damage": 4, "attackRange": 1, "moveRange": 3, "traits": ["Infantry"] }, 
             "versus": { "health": 15, "damage": 4, "attackRange": 1, "moveRange": 3, "traits": ["Infantry"] }
@@ -1233,6 +1265,7 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "cost": { "infantry": 1, "armor": 0, "artillery": 0 },
         "stats": {
             "story": { "health": 2, "damage": 1, "attackRange": 1, "moveRange": 4, "traits": ["Infantry"] }, 
             "versus": { "health": 2, "damage": 1, "attackRange": 1, "moveRange": 4, "traits": ["Infantry"] }
@@ -1284,6 +1317,7 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "cost": { "infantry": 1, "armor": 0, "artillery": 0 },
         "stats": {
             "story": { "health": 4, "damage": 2, "attackRange": 1, "moveRange": 4, "traits": ["Infantry"] }, 
             "versus": { "health": 4, "damage": 2, "attackRange": 1, "moveRange": 4, "traits": ["Infantry"] }
@@ -1335,6 +1369,7 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land", "Mountain"],
+        "cost": { "infantry": 1, "armor": 0, "artillery": 0 },
         "stats": {
             "story": { "health": 2, "damage": 2, "attackRange": 1, "moveRange": 3, "traits": ["Infantry", "Avian"] }, 
             "versus": { "health": 2, "damage": 2, "attackRange": 1, "moveRange": 3, "traits": ["Infantry"] }
@@ -1380,6 +1415,7 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land", "Mountain"],
+        "cost": { "infantry": 1, "armor": 0, "artillery": 0 },
         "stats": {
             "story": { "health": 4, "damage": 3, "attackRange": 1, "moveRange": 3, "traits": ["Infantry"] }, 
             "versus": { "health": 4, "damage": 3, "attackRange": 1, "moveRange": 3, "traits": ["Infantry"] }
@@ -1425,6 +1461,7 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "cost": { "infantry": 1, "armor": 0, "artillery": 0 },
         "stats": {
             "story": { "health": 1, "damage": 1, "attackRange": 1, "moveRange": 4, "traits": ["Infantry"] }, 
             "versus": { "health": 1, "damage": 1, "attackRange": 1, "moveRange": 4, "traits": ["Infantry"] }
@@ -1475,6 +1512,7 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "cost": { "infantry": 1, "armor": 0, "artillery": 0 },
         "stats": {
             "story": { "health": 2, "damage": 2, "attackRange": 1, "moveRange": 4, "traits": ["Infantry"] }, 
             "versus": { "health": 2, "damage": 2, "attackRange": 1, "moveRange": 4, "traits": ["Infantry"] }
@@ -1525,6 +1563,7 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "cost": { "infantry": 1, "armor": 0, "artillery": 0 },
         "stats": {
             "story": { "health": 8, "damage": 2, "attackRange": 1, "moveRange": 5, "traits": ["Infantry"] }, 
             "versus": { "health": 8, "damage": 2, "attackRange": 1, "moveRange": 5, "traits": ["Infantry"] }
@@ -1575,6 +1614,7 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "cost": { "infantry": 1, "armor": 0, "artillery": 0 },
         "stats": {
             "story": { "health": 10, "damage": 3, "attackRange": 1, "moveRange": 5, "traits": ["Infantry"] }, 
             "versus": { "health": 10, "damage": 3, "attackRange": 1, "moveRange": 5, "traits": ["Infantry"] }
@@ -1625,6 +1665,7 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "cost": { "infantry": 0, "armor": 1, "artillery": 0 },
         "stats": {
             "story": { "health": 3, "damage": 1, "attackRange": 1, "moveRange": 3, "traits": ["Armor"] }, 
             "versus": { "health": 3, "damage": 1, "attackRange": 1, "moveRange": 3, "traits": ["Armor"] }
@@ -1668,6 +1709,7 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "cost": { "infantry": 0, "armor": 1, "artillery": 0 },
         "stats": {
             "story": { "health": 5, "damage": 2, "attackRange": 1, "moveRange": 3, "traits": ["Armor"] }, 
             "versus": { "health": 5, "damage": 2, "attackRange": 1, "moveRange": 3, "traits": ["Armor"] }
@@ -1711,6 +1753,7 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "cost": { "infantry": 0, "armor": 1, "artillery": 0 },
         "stats": {
             "story": { "health": 8, "damage": 3, "attackRange": 1, "moveRange": 3, "traits": ["Armor"] }, 
             "versus": { "health": 8, "damage": 3, "attackRange": 1, "moveRange": 3, "traits": ["Armor"] }
@@ -1755,6 +1798,7 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "cost": { "infantry": 0, "armor": 1, "artillery": 0 },
         "stats": {
             "story": { "health": 10, "damage": 4, "attackRange": 1, "moveRange": 3, "traits": ["Armor"] }, 
             "versus": { "health": 10, "damage": 4, "attackRange": 1, "moveRange": 3, "traits": ["Armor"] }
@@ -1799,6 +1843,7 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "cost": { "infantry": 0, "armor": 1, "artillery": 0 },
         "stats": {
             "story": { "health": 5, "damage": 0, "attackRange": 0, "moveRange": 8, "traits": ["Armor"] }, 
             "versus": { "health": 5, "damage": 0, "attackRange": 0, "moveRange": 8, "traits": ["Armor"] }
@@ -1843,6 +1888,7 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "cost": { "infantry": 0, "armor": 1, "artillery": 0 },
         "stats": {
             "story": { "health": 8, "damage": 0, "attackRange": 0, "moveRange": 8, "traits": ["Armor"] }, 
             "versus": { "health": 8, "damage": 0, "attackRange": 0, "moveRange": 8, "traits": ["Armor"] }
@@ -1887,6 +1933,7 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "cost": { "infantry": 0, "armor": 1, "artillery": 0 },
         "stats": {
             "story": { "health": 4, "damage": 2, "attackRange": 1, "moveRange": 10, "traits": ["Armor"] }, 
             "versus": { "health": 4, "damage": 2, "attackRange": 1, "moveRange": 10, "traits": ["Armor"] }
@@ -1939,6 +1986,7 @@
         "archetype": "Unit",
         "dimX": 1, "dimY": 1, "dimZ": 1,
         "passability": ["Land"],
+        "cost": { "infantry": 0, "armor": 1, "artillery": 0 },
         "stats": {
             "story": { "health": 8, "damage": 3, "attackRange": 1, "moveRange": 10, "traits": ["Armor"] }, 
             "versus": { "health": 8, "damage": 3, "attackRange": 1, "moveRange": 10, "traits": ["Armor"] }

@@ -21,7 +21,7 @@ const getResult = function(gameContext, entity) {
     const { tileX, tileY } = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
     const { teamID } = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
     const entityID = entity.getID();
-    const owners = turnManager.getOwnersOf(entityID);
+    const owners = turnManager.getOwnersOf(entityID).map(actor => actor.getID());
     const type = entity.config.constructionResult;
     
     return DefaultTypes.createSpawnConfig(type, teamID, owners, tileX, tileY);

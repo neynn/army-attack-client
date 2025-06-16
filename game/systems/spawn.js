@@ -1,6 +1,7 @@
 import { ArmyEntity } from "../init/armyEntity.js";
 import { CardSystem } from "./card.js";
 import { MapSystem } from "./map.js";
+import { UnitLimitSystem } from "./unitLimit.js";
 
 /**
  * Preloads the sounds an entity uses.
@@ -77,12 +78,12 @@ const registerOwners = function(gameContext, owners, entity) {
 
     switch(typeof owners) {
         case "string": {
-            turnManager.addEntity(owners, entityID, entity);
+            turnManager.addEntity(owners, entityID);
             break;
         }
         case "object": {
             for(const ownerID of owners) {
-                turnManager.addEntity(ownerID, entityID, entity);
+                turnManager.addEntity(ownerID, entityID);
             }
             break;
         }
@@ -121,10 +122,12 @@ SpawnSystem.createEntity = function(gameContext, config) {
 
     registerOwners(gameContext, owners, entity);
     loadEntitySprites(gameContext, entity);
+
     entity.determineSprite(gameContext);
     MapSystem.placeEntity(gameContext, entity);
     CardSystem.generateStatCard(gameContext, entity);
-
+    UnitLimitSystem.addEntity(gameContext, entity);
+    
     return entity;
 }
 
@@ -141,6 +144,7 @@ SpawnSystem.destroyEntity = function(gameContext, entity) {
     const entityID = entity.getID();
 
     MapSystem.removeEntity(gameContext, entity);
+    UnitLimitSystem.removeEntity(gameContext, entity);
     spriteComponent.destroy(gameContext);
     entityManager.markForDestroy(entityID);
 

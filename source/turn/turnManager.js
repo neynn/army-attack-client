@@ -225,17 +225,17 @@ TurnManager.prototype.update = function(gameContext) {
     const actor = this.getNextActor(gameContext);
 
     if(actor && this.actionsLeft > 0) {
-        actor.onMakeChoice(gameContext)
+        actor.onMakeChoice(gameContext, this.actionsLeft);
     }
 }
 
-TurnManager.prototype.removeEntity = function(entityID, entity) {
+TurnManager.prototype.removeEntity = function(entityID) {
     this.actors.forEach((actor) => {
-        actor.removeEntity(entityID, entity);
+        actor.removeEntity(entityID);
     });
 }
 
-TurnManager.prototype.addEntity = function(actorID, entityID, entity) {
+TurnManager.prototype.addEntity = function(actorID, entityID) {
     const owner = this.actors.get(actorID);
 
     if(!owner) {
@@ -243,7 +243,7 @@ TurnManager.prototype.addEntity = function(actorID, entityID, entity) {
         return;
     }
 
-    owner.addEntity(entityID, entity);
+    owner.addEntity(entityID);
 }
 
 TurnManager.prototype.getOwnersOf = function(entityID) {
@@ -251,9 +251,7 @@ TurnManager.prototype.getOwnersOf = function(entityID) {
 
     this.actors.forEach((actor) => {
         if(actor.hasEntity(entityID)) {
-            const actorID = actor.getID();
-
-            owners.push(actorID);
+            owners.push(actor);
         }
     });
 

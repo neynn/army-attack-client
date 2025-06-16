@@ -156,13 +156,12 @@ EntityManager.prototype.destroyEntityAtIndex = function(index, entityID) {
     const swapEntityIndex = this.entities.length - 1;
     const swapEntity = this.entities[swapEntityIndex];
     const swapEntityID = swapEntity.getID();
-    const oldEntity = this.entities[index];
 
     this.entityMap.set(swapEntityID, index);
     this.entityMap.delete(entityID);
     this.entities[index] = this.entities[swapEntityIndex];
     this.entities.pop();
-    this.events.emit(EntityManager.EVENT.ENTITY_DESTROY, entityID, oldEntity);
+    this.events.emit(EntityManager.EVENT.ENTITY_DESTROY, entityID);
 }
 
 EntityManager.prototype.destroyEntity = function(entityID) {

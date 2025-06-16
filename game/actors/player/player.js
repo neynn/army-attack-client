@@ -82,9 +82,6 @@ Player.SPRITE_TYPE = {
 Player.prototype = Object.create(Actor.prototype);
 Player.prototype.constructor = Player;
 
-Player.prototype.onEntityAdd = function(entity) {}
-Player.prototype.onEntityRemove = function(entity) {}
-
 Player.prototype.save = function() {
     return {
         "missions": this.missions.save(),
@@ -120,7 +117,7 @@ Player.prototype.onClick = function(gameContext) {
     this.states.eventEnter(gameContext, Player.EVENT.CLICK, null);
 }
 
-Player.prototype.onMakeChoice = function(gameContext) {
+Player.prototype.onMakeChoice = function(gameContext, actionsLeft) {
     const { world } = gameContext;
     const { actionQueue, eventBus } = world;
 

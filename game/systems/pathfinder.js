@@ -246,6 +246,14 @@ PathfinderSystem.generateMovePath = function(nodeList, targetX, targetY) {
     return null;
 }
 
+/**
+ * Returns the origin point of a move.
+ * 
+ * @param {int} targetX 
+ * @param {int} targetY 
+ * @param {Step[]} path 
+ * @returns 
+ */
 PathfinderSystem.getOrigin = function(targetX, targetY, path) {
     let originX = targetX;
     let originY = targetY;
