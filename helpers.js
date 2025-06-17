@@ -1,5 +1,53 @@
 import { PrettyJSON } from "./plugin/prettyJSON.js";
 
+export const generateAnimations = function(fname, regions) {
+    const file = new PrettyJSON(4);
+
+    file.open();
+
+    file.openList("animations");
+
+    const keys = Object.keys(regions);
+
+    for(let i = 0; i < keys.length; i += 4) {
+        const frame1 = keys[i + 0];
+        const frame2 = keys[i + 1];
+        const frame3 = keys[i + 2];
+        const frame4 = keys[i + 3];
+
+        file.openList(`${i/4}`);
+        file.writeLine("frameTime", 0.1);
+        file.writeLine("frames", [frame1, frame2, frame3, frame4]);
+        file.closeList();
+    }
+
+    file
+    .close()
+    .download(fname);
+}
+
+export const generateAutoSheet = function(fname, tileWidth, tileHeight, rows, columns) {
+    const file = new PrettyJSON(4);
+
+    file.open();
+
+    for(let i = 0; i < rows; i++) {
+        const positionY = tileHeight * i;
+        const row = i * columns;
+
+        for(let j = 0; j < columns; j++) {
+            const positionX = tileWidth * j;
+            const index = row + j;
+
+            file.writeLine(`${index}`, {"x":positionX,"y":positionY,"w":tileWidth,"h":tileHeight});
+        }
+    }
+
+    file
+    .close()
+    .download(fname);
+} 
+
 export const saveTemplateAsFile = (filename, dataObjToWrite) => {
   const blob = new Blob([dataObjToWrite], { type: "text/json" });
   const link = document.createElement("a");

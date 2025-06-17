@@ -1,3 +1,4 @@
+import { ArmyContext } from "../armyContext.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { CardSystem } from "./card.js";
 import { MapSystem } from "./map.js";
@@ -6,8 +7,8 @@ import { UnitLimitSystem } from "./unitLimit.js";
 /**
  * Preloads the sounds an entity uses.
  * 
- * @param {*} gameContext 
- * @param {*} entity 
+ * @param {ArmyContext} gameContext 
+ * @param {ArmyEntity} entity 
  */
 const loadEntitySounds = function(gameContext, entity) {
     const { client } = gameContext;
@@ -28,8 +29,8 @@ const loadEntitySounds = function(gameContext, entity) {
 /**
  * Removes a reference from each sprite the entity uses.
  * 
- * @param {*} gameContext 
- * @param {*} entity 
+ * @param {ArmyContext} gameContext 
+ * @param {ArmyEntity} entity 
  */
 const unloadEntitySprites = function(gameContext, entity) {
     const { spriteManager } = gameContext;
@@ -47,8 +48,8 @@ const unloadEntitySprites = function(gameContext, entity) {
 /**
  * Preloads the sprites an entity uses.
  * 
- * @param {*} gameContext 
- * @param {*} entity 
+ * @param {ArmyContext} gameContext 
+ * @param {ArmyEntity} entity 
  */
 const loadEntitySprites = function(gameContext, entity) {
     const { spriteManager } = gameContext;
@@ -56,9 +57,9 @@ const loadEntitySprites = function(gameContext, entity) {
     const blocked = new Set(["airdrop"]);
 
     for(const spriteType in sprites) {
-        const spriteID = sprites[spriteType];
-
         if(!blocked.has(spriteType)) {
+            const spriteID = sprites[spriteType];
+
             spriteManager.preloadAtlas(spriteID);
         }
     }
@@ -67,7 +68,7 @@ const loadEntitySprites = function(gameContext, entity) {
 /**
  * Adds the id of the entity to the owners.
  * 
- * @param {*} gameContext 
+ * @param {ArmyContext} gameContext 
  * @param {string[] | string} owners 
  * @param {ArmyEntity} entityID 
  */
@@ -98,7 +99,7 @@ export const SpawnSystem = function() {}
 /**
  * Creates an entity based on the specified config.
  * 
- * @param {*} gameContext 
+ * @param {ArmyContext} gameContext 
  * @param {SpawnConfigType} config 
  * @returns
  */
@@ -134,8 +135,8 @@ SpawnSystem.createEntity = function(gameContext, config) {
 /**
  * Destroys an entity, the sprite and removes it from the current map.
  * 
- * @param {*} gameContext 
- * @param {*} entity 
+ * @param {ArmyContext} gameContext 
+ * @param {ArmyEntity} entity 
  */
 SpawnSystem.destroyEntity = function(gameContext, entity) {
     const { world } = gameContext;

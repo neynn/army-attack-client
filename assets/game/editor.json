@@ -11,7 +11,7 @@
         "width": 20,
         "height": 20,
         "data": {
-            "ground": { "fill": 1 },
+            "ground": { "fill": 201 },
             "decoration": { "fill": 0 },
             "cloud": { "fill": 0 },
             "type": { "fill": 0 },
