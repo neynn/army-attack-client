@@ -1,21 +1,17 @@
-import { Cursor } from "../source/client/cursor.js";
-import { MapEditor } from "../source/map/mapEditor.js";
-import { clampValue } from "../source/math/math.js";
-import { UIManager } from "../source/ui/uiManager.js";
-import { UICollider } from "../source/ui/uiCollider.js";
-import { Brush } from "../source/map/editor/brush.js";
-import { EditorButton } from "../source/map/editor/editorButton.js";
-import { saveMap } from "../helpers.js";
-import { ArmyMap } from "./init/armyMap.js";
-import { SHAPE } from "../source/math/constants.js";
-import { ArmyContext } from "./armyContext.js";
-import { MapSystem } from "./systems/map.js";
-import { ArmyEditorCamera } from "./armyEditorCamera.js";
+import { Cursor } from "../../client/cursor.js";
+import { MapEditor } from "../mapEditor.js";
+import { clampValue } from "../../math/math.js";
+import { UIManager } from "../../ui/uiManager.js";
+import { UICollider } from "../../ui/uiCollider.js";
+import { SHAPE } from "../../math/constants.js";
+import { Brush } from "./brush.js";
+import { EditorButton } from "./editorButton.js";
 
-export const ArmyMapEditor = function() {
+export const MapEditorController = function() {
     MapEditor.call(this);
 
-    this.id = "ARMY_MAP_EDITOR";
+    this.id = "MAP_EDITOR_CONTROLLER";
+    this.camera = null;
     this.interfaceID = null;
     this.maxWidth = 100;
     this.maxHeight = 100;
@@ -29,13 +25,23 @@ export const ArmyMapEditor = function() {
     this.buttonHandler.addButton("L3", "cloud", "TEXT_L3");
     this.buttonHandler.addButton("LC", "type", "TEXT_LC");
     this.buttonHandler.getButton("LC").setType(EditorButton.TYPE.TYPE);
-    this.camera = new ArmyEditorCamera(this);
 }
 
-ArmyMapEditor.prototype = Object.create(MapEditor.prototype);
-ArmyMapEditor.prototype.constructor = ArmyMapEditor;
+MapEditorController.prototype = Object.create(MapEditor.prototype);
+MapEditorController.prototype.constructor = MapEditorController;
 
-ArmyMapEditor.prototype.init = function(config) {
+MapEditorController.prototype.setMapID = function(mapID) {
+    this.mapID = mapID;
+}
+
+MapEditorController.prototype.destroy = function(gameContext) {
+    const { renderer, uiManager } = gameContext;
+
+    uiManager.destroyUI(this.interfaceID);
+    renderer.destroyContext(this.id);
+}
+
+MapEditorController.prototype.init = function(config) {
     const {
         brushSizes = [0],
         hiddenSets = [],
@@ -64,7 +70,7 @@ ArmyMapEditor.prototype.init = function(config) {
     }
 }
 
-ArmyMapEditor.prototype.initUI = function(gameContext) {
+MapEditorController.prototype.initUI = function(gameContext) {
     const { uiManager } = gameContext;
     const editorInterface = uiManager.getInterface(this.interfaceID);
 
@@ -76,7 +82,7 @@ ArmyMapEditor.prototype.initUI = function(gameContext) {
     });
 }
 
-ArmyMapEditor.prototype.initSlots = function(gameContext) {
+MapEditorController.prototype.initSlots = function(gameContext) {
     const { uiManager } = gameContext;
     const SLOT_START_Y = 100;
     const editorInterface = uiManager.getInterface(this.interfaceID);
@@ -107,18 +113,18 @@ ArmyMapEditor.prototype.initSlots = function(gameContext) {
     this.slots = buttons;
 }
 
-ArmyMapEditor.prototype.initCamera = function(gameContext) {
+MapEditorController.prototype.initCamera = function(gameContext, camera) {
     const { renderer } = gameContext;
-
-    this.camera.freeViewport();
-    this.camera.setTileSize(gameContext.settings.tileWidth, gameContext.settings.tileHeight)
-
-    const context = renderer.createContext(this.id, this.camera);
+    const context = renderer.createContext(this.id, camera);
     
     context.setPosition(0, 0);
+
+    this.camera = camera;
+    this.camera.freeViewport();
+    this.camera.setTileSize(gameContext.settings.tileWidth, gameContext.settings.tileHeight)
 }
 
-ArmyMapEditor.prototype.initCursorEvents = function(gameContext) {
+MapEditorController.prototype.initCursorEvents = function(gameContext) {
     const { client } = gameContext;
     const { cursor } = client;
 
@@ -142,7 +148,7 @@ ArmyMapEditor.prototype.initCursorEvents = function(gameContext) {
             return;
         }
 
-        this.paintTile(gameContext);
+        this.paint(gameContext);
     });
 
     cursor.events.on(Cursor.EVENT.BUTTON_CLICK, (buttonID) => {
@@ -150,7 +156,7 @@ ArmyMapEditor.prototype.initCursorEvents = function(gameContext) {
             return;
         }
 
-        this.paintTile(gameContext);
+        this.paint(gameContext);
     });
 
     cursor.events.on(Cursor.EVENT.BUTTON_DRAG, (buttonID, deltaX, deltaY) => {
@@ -166,7 +172,7 @@ ArmyMapEditor.prototype.initCursorEvents = function(gameContext) {
     });
 }
 
-ArmyMapEditor.prototype.disableEraserButton = function(gameContext) {
+MapEditorController.prototype.disableEraserButton = function(gameContext) {
     const { uiManager } = gameContext;
     const editorInterface = uiManager.getInterface(this.interfaceID);
     const text = editorInterface.getElement("TEXT_ERASER");
@@ -176,7 +182,7 @@ ArmyMapEditor.prototype.disableEraserButton = function(gameContext) {
     color.setColorRGBA(238, 238, 238, 255);
 }
 
-ArmyMapEditor.prototype.toggleEraser = function(gameContext) {
+MapEditorController.prototype.toggleEraser = function(gameContext) {
     const { uiManager } = gameContext;
     const editorInterface = uiManager.getInterface(this.interfaceID);
     const nextState = this.brush.toggleEraser();
@@ -196,7 +202,7 @@ ArmyMapEditor.prototype.toggleEraser = function(gameContext) {
     }
 }
 
-ArmyMapEditor.prototype.toggleAutotiler = function(gameContext) {
+MapEditorController.prototype.toggleAutotiler = function(gameContext) {
     const { uiManager } = gameContext;
     const editorInterface = uiManager.getInterface(this.interfaceID);
     const nextState = this.toggleAutotiling();
@@ -216,110 +222,7 @@ ArmyMapEditor.prototype.toggleAutotiler = function(gameContext) {
     }
 }
 
-ArmyMapEditor.prototype.initUIEvents = function(gameContext) {
-    const { uiManager, world, states } = gameContext;
-    const { mapManager } = world;
-    const editorInterface = uiManager.getInterface(this.interfaceID);
-
-    editorInterface.addClick("BUTTON_BACK", () => {
-        states.setNextState(gameContext, ArmyContext.STATE.MAIN_MENU);
-    });
-
-    editorInterface.addClick("BUTTON_AUTO", () => {
-        this.toggleAutotiler(gameContext);
-    });
-
-    editorInterface.addClick("BUTTON_TILESET_MODE", () => {
-        this.scrollMode(1);
-        this.initButtons(gameContext);
-        this.updateMenuText(gameContext);
-    });
-
-    editorInterface.addClick("BUTTON_TILESET_LEFT", () => {
-        this.scrollBrushSet(-1);
-        this.initButtons(gameContext);
-        this.updateMenuText(gameContext);
-    });
-
-    editorInterface.addClick("BUTTON_TILESET_RIGHT", () => {
-        this.scrollBrushSet(1);
-        this.initButtons(gameContext);
-        this.updateMenuText(gameContext);
-    });
-
-    editorInterface.addClick("BUTTON_PAGE_LAST", () => {
-        this.scrollPage(-1);
-        this.initButtons(gameContext);
-        this.updateMenuText(gameContext);
-    }); 
-
-    editorInterface.addClick("BUTTON_PAGE_NEXT", () => {
-        this.scrollPage(1);
-        this.initButtons(gameContext);
-        this.updateMenuText(gameContext);
-    });  
-
-    editorInterface.addClick("BUTTON_SCROLL_SIZE", () => {
-        this.scrollBrushSize(1);
-        this.updateMenuText(gameContext);
-    }); 
-
-    editorInterface.addClick("BUTTON_L1", () => {
-        this.scrollLayerButton(gameContext, "L1", this.interfaceID);
-    });
-
-    editorInterface.addClick("BUTTON_L2", () => {
-        this.scrollLayerButton(gameContext, "L2", this.interfaceID);
-    });
-
-    editorInterface.addClick("BUTTON_L3", () => {
-        this.scrollLayerButton(gameContext, "L3", this.interfaceID);
-    });
-
-    editorInterface.addClick("BUTTON_LC", () => {
-        this.scrollLayerButton(gameContext, "LC", this.interfaceID);
-    });
-
-    editorInterface.addClick("BUTTON_SAVE", () => {
-        const mapData = mapManager.getLoadedMap(this.mapID);
-        
-        saveMap(this.mapID, mapData);
-    });
-
-    editorInterface.addClick("BUTTON_CREATE", () => {
-        this.createNewMap(gameContext);
-    });
-
-    editorInterface.addClick("BUTTON_LOAD", async () => {
-        const mapID = prompt("MAP-ID?");
-        const worldMap = await MapSystem.createMapByID(gameContext, mapID);
-
-        if(worldMap) {
-            this.mapID = mapID;
-        }
-    });
-
-    editorInterface.addClick("BUTTON_RESIZE", () => {
-        this.resizeCurrentMap(gameContext);
-    }); 
-
-    editorInterface.addClick("BUTTON_UNDO", () => {
-        this.undo(gameContext);
-    }); 
-
-    editorInterface.addClick("BUTTON_ERASER", () => {
-        this.toggleEraser(gameContext);
-    });
-
-    editorInterface.addClick("BUTTON_VIEW_ALL", () => {
-        this.buttonHandler.resetButtons(editorInterface);
-        this.updateLayerOpacity(gameContext);
-        this.disableEraserButton(gameContext);
-        this.brush.reset();
-    });
-}
-
-ArmyMapEditor.prototype.initButtons = function(gameContext) {
+MapEditorController.prototype.initButtons = function(gameContext) {
     const { uiManager, tileManager } = gameContext;
     const { graphics } = tileManager;
     const editorInterface = uiManager.getInterface(this.interfaceID);
@@ -349,19 +252,7 @@ ArmyMapEditor.prototype.initButtons = function(gameContext) {
     }
 } 
 
-ArmyMapEditor.prototype.createNewMap = function(gameContext) {
-    const createNew = confirm("This will create and load a brand new map! Proceed?");
-
-    if(createNew) {
-        const mapID = `${Date.now()}`;
-
-        MapSystem.createEmptyMap(gameContext, mapID, this.defaultMap);
-
-        this.mapID = mapID;
-    }
-}
-
-ArmyMapEditor.prototype.resizeCurrentMap = function(gameContext) {
+MapEditorController.prototype.resizeCurrentMap = function(gameContext) {
     const { world, renderer } = gameContext;
     const { mapManager } = world;
     const gameMap = mapManager.getLoadedMap(this.mapID);
@@ -380,23 +271,7 @@ ArmyMapEditor.prototype.resizeCurrentMap = function(gameContext) {
     renderer.onMapSizeUpdate(newWidth, newHeight);
 }
 
-ArmyMapEditor.prototype.paintTile = function(gameContext) {
-    const { tileManager } = gameContext;
-
-    this.paint(gameContext, (worldMap, tileID, tileX, tileY) => {
-        const tileMeta = tileManager.getMeta(tileID);
-
-        if(tileMeta) {
-            const { defaultType } = tileMeta;
-
-            if(defaultType !== undefined) {
-                worldMap.placeTile(defaultType, ArmyMap.LAYER.TYPE, tileX, tileY);
-            }
-        }
-    });
-}
-
-ArmyMapEditor.prototype.updateMenuText = function(gameContext) {
+MapEditorController.prototype.updateMenuText = function(gameContext) {
     const { uiManager } = gameContext;
     const editorInterface = uiManager.getInterface(this.interfaceID);
 
@@ -417,7 +292,7 @@ ArmyMapEditor.prototype.updateMenuText = function(gameContext) {
     editorInterface.setText("TEXT_SIZE",  this.getSizeText());
 }
 
-ArmyMapEditor.prototype.getPageText = function() {
+MapEditorController.prototype.getPageText = function() {
     const maxPagesNeeded = Math.ceil(this.brush.pallet.length / this.slots.length);
     const showMaxPagesNeeded = maxPagesNeeded === 0 ? 1 : maxPagesNeeded;
     const showCurrentPage = this.pageIndex + 1;
@@ -425,7 +300,7 @@ ArmyMapEditor.prototype.getPageText = function() {
     return `${showCurrentPage} / ${showMaxPagesNeeded}`;
 }
 
-ArmyMapEditor.prototype.getSizeText = function() {
+MapEditorController.prototype.getSizeText = function() {
     const info = this.brushSizes.getInfo();
     const drawArea = this.brush.getDrawArea();
 

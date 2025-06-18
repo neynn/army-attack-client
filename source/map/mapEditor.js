@@ -177,7 +177,9 @@ MapEditor.prototype.updateLayerOpacity = function(gameContext) {
     this.buttonHandler.updateLayers(worldMap);
 }
 
-MapEditor.prototype.paint = function(gameContext, onPaint) {
+MapEditor.prototype.onPaint = function(gameContext, worldMap, tileID, tileX, tileY) {}
+
+MapEditor.prototype.paint = function(gameContext) {
     const button = this.buttonHandler.getActiveButton();
 
     if(!button) {
@@ -188,10 +190,6 @@ MapEditor.prototype.paint = function(gameContext, onPaint) {
 
     if(type === EditorButton.TYPE.TYPE) {
         this.incrementTypeIndex(gameContext, layerID);
-        return;
-    }
-
-    if(typeof onPaint !== "function") {
         return;
     }
 
@@ -215,7 +213,7 @@ MapEditor.prototype.paint = function(gameContext, onPaint) {
         if(tileID !== null && tileID !== brushID) {
             worldMap.placeTile(brushID, layerID, j, i);
 
-            onPaint(worldMap, brushID, j, i);
+            this.onPaint(gameContext, worldMap, brushID, j, i);
 
             if(this.autoState === MapEditor.AUTOTILER_STATE.INACTIVE) {
                 actionsTaken.push({
