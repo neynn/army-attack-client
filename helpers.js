@@ -1,11 +1,12 @@
 import { PrettyJSON } from "./plugin/prettyJSON.js";
 
-export const generateAnimations = function(fname, regions) {
+export const generateAnimations = function(fname, rName, resouces) {
+    const regions = resouces.tiles[rName].regions;
     const file = new PrettyJSON(4);
 
-    file.open();
-
-    file.openList("animations");
+    file
+    .open()
+    .openList("animations");
 
     const keys = Object.keys(regions);
 
@@ -15,10 +16,7 @@ export const generateAnimations = function(fname, regions) {
         const frame3 = keys[i + 2];
         const frame4 = keys[i + 3];
 
-        file.openList(`${i/4}`);
-        file.writeLine("frameTime", 0.1);
-        file.writeLine("frames", [frame1, frame2, frame3, frame4]);
-        file.closeList();
+        file.writeLine(`ANIMATION_${i/4}`, { "frameTime": 0.25, "frames": [frame1, frame2, frame3, frame4] });
     }
 
     file
