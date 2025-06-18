@@ -73,14 +73,23 @@ WorldMap.prototype.autotile = function(autotiler, tileX, tileY, layerID) {
         return TileManager.TILE_ID.EMPTY;
     }
 
+    const isInverted = autotiler.getInvertedState();
     const responseID = autotiler.run(tileX, tileY, (x, y) => {
         const nextID = this.getTile(layerID, x, y);
 
-        if(autotiler.hasMember(nextID) || nextID === null) {
-            return Autotiler.RESPONSE.VALID;
+        if(nextID === null) {
+            if(isInverted) {
+                return Autotiler.RESPONSE.INVALID;
+            } else {
+                return Autotiler.RESPONSE.VALID;
+            }
         }
 
-        return Autotiler.RESPONSE.INVALID;
+        if(!autotiler.hasMember(nextID)) {
+            return Autotiler.RESPONSE.INVALID;
+        }
+
+        return Autotiler.RESPONSE.VALID;
     });
 
     if(responseID !== TileManager.TILE_ID.EMPTY) {

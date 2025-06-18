@@ -1,6 +1,7 @@
 {
     "battalion_road": {
         "type": "MIN_4",
+        "isInverted": true,
         "members": [
             ["road", "0"],
             ["road", "1"],

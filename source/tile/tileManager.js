@@ -45,15 +45,15 @@ TileManager.prototype.load = function(tileAtlases, tileMeta, autotilers) {
     
     for(const autotilerID in autotilers) {
         const config = autotilers[autotilerID];
-        const { type = Autotiler.TYPE.NONE, values = {}, members = [] } = config;
-        const autotiler = this.createAutotiler(type, values, members);
+        const autotiler = this.createAutotiler(config);
 
         this.autotilers.set(autotilerID, autotiler);
     }
 }
 
-TileManager.prototype.createAutotiler = function(type, values, members) {
-    const autotiler = new Autotiler(TileManager.TILE_ID.EMPTY);
+TileManager.prototype.createAutotiler = function(config) {
+    const { type = Autotiler.TYPE.NONE, values = {}, members = [], isInverted = false } = config;
+    const autotiler = new Autotiler(TileManager.TILE_ID.EMPTY, isInverted);
 
     autotiler.setType(type);
 
