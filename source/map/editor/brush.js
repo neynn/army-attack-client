@@ -1,10 +1,15 @@
 export const Brush = function() {
     this.size = 0;
-    this.id = -1;
-    this.name = "";
     this.pallet = [];
     this.palletData = {};
+
+    this.id = -1;
+    this.name = "";
     this.mode = Brush.MODE.NONE;
+
+    this.previousID = -1;
+    this.previousName = "";
+    this.previousMode = Brush.MODE.NONE;
 }
 
 Brush.ID = {
@@ -96,10 +101,23 @@ Brush.prototype.getDrawArea = function() {
     return (this.size + 1) * 2 - 1;
 }
 
+Brush.prototype.recordPrevious = function() {
+    this.previousID = this.id;
+    this.previousName = this.name;
+    this.previousMode = this.mode;
+}
+
+Brush.prototype.applyPrevious = function() {
+    this.id = this.previousID;
+    this.name = this.previousName;
+    this.mode = this.previousMode;
+}
+
 Brush.prototype.toggleEraser = function() {
     if(this.mode === Brush.MODE.ERASE) {
-        this.reset();
+        this.applyPrevious();
     } else {
+        this.recordPrevious();
         this.enableEraser();
     }
 

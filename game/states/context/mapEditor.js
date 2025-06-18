@@ -50,7 +50,7 @@ MapEditorState.prototype.onEnter = function(gameContext, stateMachine) {
     this.controller.initUI(gameContext);
     this.controller.initSlots(gameContext);
     this.controller.initCursorEvents(gameContext);
-    this.controller.updatePalletButtons(gameContext);
+    this.controller.updatePalletButtonEvents(gameContext);
     this.controller.updateMenuText(gameContext);
     this.initUIEvents(gameContext);
 
@@ -77,31 +77,31 @@ MapEditorState.prototype.initUIEvents = function(gameContext) {
 
     editorInterface.addClick("BUTTON_TILESET_MODE", () => {
         this.controller.editor.scrollMode(1);
-        this.controller.updatePalletButtons(gameContext);
+        this.controller.updatePalletButtonEvents(gameContext);
         this.controller.updateMenuText(gameContext);
     });
 
     editorInterface.addClick("BUTTON_TILESET_LEFT", () => {
         this.controller.editor.scrollBrushSet(-1);
-        this.controller.updatePalletButtons(gameContext);
+        this.controller.updatePalletButtonEvents(gameContext);
         this.controller.updateMenuText(gameContext);
     });
 
     editorInterface.addClick("BUTTON_TILESET_RIGHT", () => {
         this.controller.editor.scrollBrushSet(1);
-        this.controller.updatePalletButtons(gameContext);
+        this.controller.updatePalletButtonEvents(gameContext);
         this.controller.updateMenuText(gameContext);
     });
 
     editorInterface.addClick("BUTTON_PAGE_LAST", () => {
         this.controller.editor.scrollPage(-1);
-        this.controller.updatePalletButtons(gameContext);
+        this.controller.updatePalletButtonEvents(gameContext);
         this.controller.updateMenuText(gameContext);
     }); 
 
     editorInterface.addClick("BUTTON_PAGE_NEXT", () => {
         this.controller.editor.scrollPage(1);
-        this.controller.updatePalletButtons(gameContext);
+        this.controller.updatePalletButtonEvents(gameContext);
         this.controller.updateMenuText(gameContext);
     });  
 

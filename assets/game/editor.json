@@ -6,6 +6,9 @@
     "brushSizes": [0, 1, 2, 3, 4],
     "hiddenSets": ["overlay"],
     "interfaceID": "MAP_EDITOR",
+    "textColorView": [238, 238, 238, 255],
+    "textColorEdit": [252, 252, 63, 255],
+    "textColorHide": [207, 55, 35, 255],
     "defaultMap": {
         "music": "music_remastered",
         "width": 20,

@@ -14,8 +14,11 @@ export const MapEditorController = function() {
     this.maxWidth = 100;
     this.maxHeight = 100;
     this.overlayAlpha = 0.75;
-    this.slotButtonSize = 50;
     this.overlayColor = "#eeeeee";
+    this.slotButtonSize = 50;
+    this.textColorView = [238, 238, 238, 255];
+    this.textColorEdit = [252, 252, 63, 255];
+    this.textColorHide = [207, 55, 35, 255];
     this.defaultMap = {};
     this.buttonHandler = new ButtonHandler();
     this.editor = new MapEditor();
@@ -60,6 +63,9 @@ MapEditorController.prototype.init = function(config) {
         overlayColor = this.overlayColor,
         slotSize = this.slotButtonSize,
         defaultMap = this.defaultMap,
+        textColorView = this.textColorView,
+        textColorEdit = this.textColorEdit,
+        textColorHide = this.textColorHide,
         interfaceID = null
     } = config;
 
@@ -70,6 +76,9 @@ MapEditorController.prototype.init = function(config) {
     this.interfaceID = interfaceID;
     this.slotButtonSize = slotSize;
     this.defaultMap = defaultMap;
+    this.textColorView = textColorView;
+    this.textColorEdit = textColorEdit;
+    this.textColorHide = textColorHide;
 
     this.editor.brushSizes.setValues(brushSizes);
 
@@ -191,7 +200,7 @@ MapEditorController.prototype.clickLayerButton = function(gameContext, buttonID)
 
     const editorInterface = uiManager.getInterface(this.interfaceID);
 
-    this.buttonHandler.onClick(editorInterface, buttonID);
+    this.buttonHandler.onClick(editorInterface, this, buttonID);
     this.buttonHandler.updateLayers(worldMap);
 }
 
@@ -205,15 +214,20 @@ MapEditorController.prototype.viewAllLayers = function(gameContext) {
     }
 
     const editorInterface = uiManager.getInterface(this.interfaceID);
+    
+    this.resetBrush(editorInterface);
+    this.buttonHandler.resetButtons(editorInterface, this);
+    this.buttonHandler.updateLayers(worldMap);
+}
+
+MapEditorController.prototype.resetBrush = function(editorInterface) {
     const text = editorInterface.getElement("TEXT_ERASER");
     const { style } = text;
     const { color } = style;
 
-    color.setColorRGBA(238, 238, 238, 255);
-    
+    color.setColorArray(this.textColorView);
+
     this.editor.brush.reset();
-    this.buttonHandler.resetButtons(editorInterface);
-    this.buttonHandler.updateLayers(worldMap);
 }
 
 MapEditorController.prototype.toggleEraser = function(gameContext) {
@@ -227,11 +241,11 @@ MapEditorController.prototype.toggleEraser = function(gameContext) {
 
     switch(nextState) {
         case Brush.MODE.ERASE: {
-            color.setColorRGBA(252, 252, 63, 255);
+            color.setColorArray(this.textColorEdit);
             break;
         }
         default: {
-            color.setColorRGBA(238, 238, 238, 255);
+            color.setColorArray(this.textColorView);
             break;
         }
     }
@@ -248,17 +262,17 @@ MapEditorController.prototype.toggleAutotiler = function(gameContext) {
 
     switch(nextState) {
         case MapEditor.AUTOTILER_STATE.INACTIVE: {
-            color.setColorRGBA(238, 238, 238, 255);
+            color.setColorArray(this.textColorView);
             break;
         }
         case MapEditor.AUTOTILER_STATE.ACTIVE: {
-            color.setColorRGBA(252, 252, 63, 255);
+            color.setColorArray(this.textColorEdit);
             break;
         }
     }
 }
 
-MapEditorController.prototype.updatePalletButtons = function(gameContext) {
+MapEditorController.prototype.updatePalletButtonEvents = function(gameContext) {
     const { uiManager, tileManager } = gameContext;
     const { graphics } = tileManager;
     const editorInterface = uiManager.getInterface(this.interfaceID);
@@ -277,6 +291,7 @@ MapEditorController.prototype.updatePalletButtons = function(gameContext) {
         }
 
         button.collider.events.on(UICollider.EVENT.CLICKED, () => {
+            this.resetBrush(editorInterface);
             this.editor.brush.selectFromPallet(palletID);
         }, { id: MapEditorController.EVENT_ID });
 

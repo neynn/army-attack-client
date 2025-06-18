@@ -25,16 +25,52 @@ ButtonHandler.prototype.updateLayers = function(worldMap) {
     }
 }
 
-ButtonHandler.prototype.onClick = function(userInterface, buttonID) {
+ButtonHandler.prototype.updateButtonTextColor = function(button, controller, userInterface) {
+    const text = userInterface.getElement(button.textID);
+
+    if(!text) {
+        return;
+    }
+
+    const { style } = text;
+    const { color } = style;
+    
+    switch(button.state) {
+        case EditorButton.STATE.EDIT: {
+            color.setColorArray(controller.textColorEdit);
+            break;
+        }
+        case EditorButton.STATE.HIDDEN: {   
+            color.setColorArray(controller.textColorHide);
+            break;
+        }
+        case EditorButton.STATE.VISIBLE: {
+            color.setColorArray(controller.textColorView);
+            break;
+        }
+    }
+}
+
+ButtonHandler.prototype.resetButtons = function(userInterface, controller) {
+    this.buttons.forEach((button) => {
+        button.setState(EditorButton.STATE.VISIBLE);
+
+        this.updateButtonTextColor(button, controller, userInterface);
+    });
+
+    this.activeButton = null;
+}
+
+ButtonHandler.prototype.onClick = function(userInterface, controller, buttonID) {
     const button = this.buttons.get(buttonID);
 
     if(!button) {
         return;
     }
 
-    const nextState = button.scrollState(userInterface);
+    const nextState = button.scrollState();
 
-    button.updateTextColor(userInterface);
+    this.updateButtonTextColor(button, controller, userInterface);
 
     switch(nextState) {
         case EditorButton.STATE.EDIT: {
@@ -42,7 +78,8 @@ ButtonHandler.prototype.onClick = function(userInterface, buttonID) {
 
             if(activeButton) {
                 activeButton.setState(EditorButton.STATE.VISIBLE);
-                activeButton.updateTextColor(userInterface);
+
+                this.updateButtonTextColor(activeButton, controller, userInterface);
             }
     
             this.activeButton = buttonID;
@@ -55,8 +92,6 @@ ButtonHandler.prototype.onClick = function(userInterface, buttonID) {
             break;
         }
     }
-
-    return this.activeButton;
 }
 
 ButtonHandler.prototype.createButton = function(buttonID, layerID, textID) {
@@ -85,15 +120,6 @@ ButtonHandler.prototype.getActiveLayer = function() {
     }
 
     return layerID;
-}
-
-ButtonHandler.prototype.resetButtons = function(userInterface) {
-    this.buttons.forEach((button) => {
-        button.setState(EditorButton.STATE.VISIBLE);
-        button.updateTextColor(userInterface);
-    });
-
-    this.activeButton = null;
 }
 
 ButtonHandler.prototype.getButton = function(buttonID) {

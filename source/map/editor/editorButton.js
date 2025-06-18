@@ -18,27 +18,8 @@ EditorButton.STATE = {
     EDIT: 2
 };
 
-EditorButton.STATE_COLOR = {
-    [EditorButton.STATE.HIDDEN]: [207, 55, 35, 255],
-    [EditorButton.STATE.VISIBLE]: [238, 238, 238, 255],
-    [EditorButton.STATE.EDIT]: [252, 252, 63, 255]
-};
-
 EditorButton.prototype.setType = function(typeID) {
     this.type = typeID;
-}
-
-EditorButton.prototype.updateTextColor = function(userInterface) {
-    const text = userInterface.getElement(this.textID);
-
-    if(!text) {
-        return;
-    }
-
-    const { style } = text;
-    const { color } = style;
-    
-    color.setColorArray(EditorButton.STATE_COLOR[this.state]);
 }
 
 EditorButton.prototype.setState = function(state) {
@@ -62,6 +43,8 @@ EditorButton.prototype.setState = function(state) {
             break;
         }
     }
+
+    return this.state;
 }
 
 EditorButton.prototype.scrollState = function() {
