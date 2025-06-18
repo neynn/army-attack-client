@@ -206,6 +206,7 @@ MapEditor.prototype.paint = function(gameContext, onPaint) {
     const actionsTaken = [];
     const { x, y } = gameContext.getMouseTile();
     const { id } = this.brush;
+    //TODO: add autotiler mode, not based on tiles autotiler.
     const autotiler = tileManager.getAutotilerByTile(id);
 
     this.brush.paint(x, y, (j, i, brushID, brushName) => {

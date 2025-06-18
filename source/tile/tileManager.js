@@ -45,15 +45,40 @@ TileManager.prototype.load = function(tileAtlases, tileMeta, autotilers) {
     
     for(const autotilerID in autotilers) {
         const config = autotilers[autotilerID];
-        const { type, values, members } = config;
-        const autotiler = new Autotiler(autotilerID);
-
-        autotiler.loadType(type);
-        autotiler.loadValues(this, values);
-        autotiler.loadMembers(this, members);
+        const { type = Autotiler.TYPE.NONE, values = {}, members = [] } = config;
+        const autotiler = this.createAutotiler(type, values, members);
 
         this.autotilers.set(autotilerID, autotiler);
     }
+}
+
+TileManager.prototype.createAutotiler = function(type, values, members) {
+    const autotiler = new Autotiler(TileManager.TILE_ID.EMPTY);
+
+    autotiler.setType(type);
+
+    for(let i = 0; i < members.length; i++) {
+        const [atlas, texture] = members[i];
+        const tileID = this.getTileID(atlas, texture);
+
+        if(tileID !== TileManager.TILE_ID.EMPTY) {
+            autotiler.addMember(tileID);
+        }
+    }
+
+    for(const indexID in values) {
+        const graphics = values[indexID];
+
+        if(graphics) {
+            const [atlas, texture] = graphics;
+            const tileID = this.getTileID(atlas, texture);
+            const index = Number(indexID);
+
+            autotiler.setValue(index, tileID);
+        }
+    }
+
+    return autotiler;
 }
 
 TileManager.prototype.update = function(gameContext) {
