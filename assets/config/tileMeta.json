@@ -278,5 +278,18 @@
     { "graphics": ["shore", "ANIMATION_8"] },
     { "graphics": ["shore", "ANIMATION_9"] },
     { "graphics": ["shore", "ANIMATION_10"] },
-    { "graphics": ["shore", "ANIMATION_11"] }
+    { "graphics": ["shore", "ANIMATION_11"] },
+
+    { "graphics": ["water", "ANIMATION_0"] },
+    { "graphics": ["water", "ANIMATION_1"] },
+    { "graphics": ["water", "ANIMATION_2"] },
+    { "graphics": ["water", "ANIMATION_3"] },
+    { "graphics": ["water", "ANIMATION_4"] },
+    { "graphics": ["water", "ANIMATION_5"] },
+    { "graphics": ["water", "ANIMATION_6"] },
+    { "graphics": ["water", "ANIMATION_7"] },
+    { "graphics": ["water", "ANIMATION_8"] },
+    { "graphics": ["water", "ANIMATION_9"] },
+    { "graphics": ["water", "ANIMATION_10"] },
+    { "graphics": ["water", "ANIMATION_11"] }
 ]
