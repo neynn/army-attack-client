@@ -4,10 +4,10 @@ import { SpriteManager } from "../source/sprite/spriteManager.js";
 import { ArmyMap } from "./init/armyMap.js";
 import { EditorButton } from "../source/map/editor/editorButton.js";
 
-export const ArmyEditorCamera = function(editor) {
+export const ArmyEditorCamera = function(controller) {
     Camera2D.call(this);
 
-    this.editor = editor;
+    this.controller = controller;
 }
 
 ArmyEditorCamera.OVERLAY_TYPE = {
@@ -87,9 +87,6 @@ ArmyEditorCamera.prototype.debugMap = function(context, worldMap) {
     context.fillStyle = "#00ff00";
     this.drawBufferData(context, worldMap.getLayer("team").getBuffer(), this.tileWidth - scaleX, scaleY);
 
-    context.fillStyle = "#0000ff";
-    this.drawBufferData(context, this.border.getBuffer(), scaleX, this.tileHeight - scaleY);
-
     context.fillStyle = "#ffff00";
     this.drawBufferData(context, worldMap.getLayer("ground").getBuffer(), this.tileWidth - scaleX, this.tileHeight - scaleY);
 
@@ -99,7 +96,7 @@ ArmyEditorCamera.prototype.debugMap = function(context, worldMap) {
 ArmyEditorCamera.prototype.postDraw = function(gameContext, context) {
     const { tileManager, transform2D } = gameContext;
     const { graphics } = tileManager;
-    const button = this.editor.buttonHandler.getActiveButton();
+    const button = this.controller.buttonHandler.getActiveButton();
 
     if(button && button.type !== EditorButton.TYPE.GRAPHICS) {
         return;
@@ -108,11 +105,11 @@ ArmyEditorCamera.prototype.postDraw = function(gameContext, context) {
     const { x, y } = gameContext.getMouseTile();
     const { width, height, halfWidth } = transform2D.getTileDimensions();
 
-    context.globalAlpha = this.editor.overlayAlpha;
-    context.fillStyle = this.editor.overlayColor;
+    context.globalAlpha = this.controller.overlayAlpha;
+    context.fillStyle = this.controller.overlayColor;
     context.textAlign = "center";
 
-    this.editor.brush.paint(x, y, (j, i, id, name) => {
+    this.controller.editor.brush.paint(x, y, (j, i, id, name) => {
         const renderY = i * height - this.viewportY;
         const renderX = j * width - this.viewportX;
 

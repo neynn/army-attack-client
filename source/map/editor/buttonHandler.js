@@ -59,14 +59,16 @@ ButtonHandler.prototype.onClick = function(userInterface, buttonID) {
     return this.activeButton;
 }
 
-ButtonHandler.prototype.addButton = function(buttonID, layerID, textID) {
+ButtonHandler.prototype.createButton = function(buttonID, layerID, textID) {
     if(this.buttons.has(buttonID)) {
-        return;
+        return this.buttons.get(buttonID);
     }
 
     const button = new EditorButton(layerID, textID);
 
     this.buttons.set(buttonID, button);
+
+    return button;
 }
 
 ButtonHandler.prototype.getActiveLayer = function() {

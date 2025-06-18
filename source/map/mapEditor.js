@@ -1,17 +1,14 @@
 import { loopValue } from "../math/math.js";
 import { Scroller } from "../scroller.js";
 import { Brush } from "./editor/brush.js";
-import { ButtonHandler } from "./editor/buttonHandler.js";
-import { EditorButton } from "./editor/editorButton.js";
 
 export const MapEditor = function() {
+    this.mapID = null;
     this.brush = new Brush();
-    this.buttonHandler = new ButtonHandler();
     this.brushSets = new Scroller();
     this.brushSizes = new Scroller();
     this.modes = new Scroller([MapEditor.MODE.DRAW, MapEditor.MODE.AUTOTILE]);
     this.mode = MapEditor.MODE.DRAW;
-    this.mapID = null;
     this.pageIndex = 0;
     this.activityStack = [];
     this.autoState = MapEditor.AUTOTILER_STATE.INACTIVE;
@@ -47,14 +44,6 @@ MapEditor.prototype.toggleAutotiling = function() {
     }
 
     return this.autoState;
-}
-
-MapEditor.prototype.scrollLayerButton = function(gameContext, buttonID, interfaceID) {
-    const { uiManager } = gameContext;
-    const editorInterface = uiManager.getInterface(interfaceID);
-
-    this.buttonHandler.onClick(editorInterface, buttonID);
-    this.updateLayerOpacity(gameContext);
 }
 
 MapEditor.prototype.scrollBrushSize = function(delta = 0) {
@@ -165,34 +154,9 @@ MapEditor.prototype.undo = function(gameContext) {
     }
 }
 
-MapEditor.prototype.updateLayerOpacity = function(gameContext) {
-    const { world } = gameContext;
-    const { mapManager } = world;
-    const worldMap = mapManager.getLoadedMap(this.mapID);
-
-    if(!worldMap) {
-        return;
-    }
-
-    this.buttonHandler.updateLayers(worldMap);
-}
-
 MapEditor.prototype.onPaint = function(gameContext, worldMap, tileID, tileX, tileY) {}
 
-MapEditor.prototype.paint = function(gameContext) {
-    const button = this.buttonHandler.getActiveButton();
-
-    if(!button) {
-        return;
-    }
-
-    const { type, layerID } = button;
-
-    if(type === EditorButton.TYPE.TYPE) {
-        this.incrementTypeIndex(gameContext, layerID);
-        return;
-    }
-
+MapEditor.prototype.paint = function(gameContext, layerID) {
     const { world, tileManager } = gameContext;
     const { mapManager } = world;
     const worldMap = mapManager.getLoadedMap(this.mapID);

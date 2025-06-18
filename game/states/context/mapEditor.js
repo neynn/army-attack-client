@@ -5,6 +5,7 @@ import { ArmyEditorCamera } from "../../armyEditorCamera.js";
 import { MapEditorController } from "../../../source/map/editor/mapEditorController.js";
 import { ArmyMap } from "../../init/armyMap.js";
 import { MapSystem } from "../../systems/map.js";
+import { EditorButton } from "../../../source/map/editor/editorButton.js";
 
 export const MapEditorState = function() {
     this.controller = null;
@@ -20,7 +21,15 @@ MapEditorState.prototype.onEnter = function(gameContext, stateMachine) {
     this.controller = new MapEditorController();
     this.controller.init(gameContext.editorConfig);
     this.controller.initCamera(gameContext, new ArmyEditorCamera(this.controller));
-    this.controller.onPaint = function(gameContext, worldMap, tileID, tileX, tileY) {
+
+    this.controller.buttonHandler.createButton("L1", "ground", "TEXT_L1");
+    this.controller.buttonHandler.createButton("L2", "decoration", "TEXT_L2");
+    this.controller.buttonHandler.createButton("L3", "cloud", "TEXT_L3");
+    this.controller.buttonHandler.createButton("LC", "type", "TEXT_LC").setType(EditorButton.TYPE.TYPE);
+
+    //TODO
+    this.controller.editor.loadBrushSets(tileManager.getInversion());
+    this.controller.editor.onPaint = function(gameContext, worldMap, tileID, tileX, tileY) {
         const { tileManager } = gameContext;
         const tileMeta = tileManager.getMeta(tileID);
 
@@ -40,9 +49,8 @@ MapEditorState.prototype.onEnter = function(gameContext, stateMachine) {
     
     this.controller.initUI(gameContext);
     this.controller.initSlots(gameContext);
-    this.controller.loadBrushSets(tileManager.getInversion());
     this.controller.initCursorEvents(gameContext);
-    this.controller.initButtons(gameContext);
+    this.controller.updatePalletButtons(gameContext);
     this.controller.updateMenuText(gameContext);
     this.initUIEvents(gameContext);
 
@@ -68,60 +76,60 @@ MapEditorState.prototype.initUIEvents = function(gameContext) {
     });
 
     editorInterface.addClick("BUTTON_TILESET_MODE", () => {
-        this.controller.scrollMode(1);
-        this.controller.initButtons(gameContext);
+        this.controller.editor.scrollMode(1);
+        this.controller.updatePalletButtons(gameContext);
         this.controller.updateMenuText(gameContext);
     });
 
     editorInterface.addClick("BUTTON_TILESET_LEFT", () => {
-        this.controller.scrollBrushSet(-1);
-        this.controller.initButtons(gameContext);
+        this.controller.editor.scrollBrushSet(-1);
+        this.controller.updatePalletButtons(gameContext);
         this.controller.updateMenuText(gameContext);
     });
 
     editorInterface.addClick("BUTTON_TILESET_RIGHT", () => {
-        this.controller.scrollBrushSet(1);
-        this.controller.initButtons(gameContext);
+        this.controller.editor.scrollBrushSet(1);
+        this.controller.updatePalletButtons(gameContext);
         this.controller.updateMenuText(gameContext);
     });
 
     editorInterface.addClick("BUTTON_PAGE_LAST", () => {
-        this.controller.scrollPage(-1);
-        this.controller.initButtons(gameContext);
+        this.controller.editor.scrollPage(-1);
+        this.controller.updatePalletButtons(gameContext);
         this.controller.updateMenuText(gameContext);
     }); 
 
     editorInterface.addClick("BUTTON_PAGE_NEXT", () => {
-        this.controller.scrollPage(1);
-        this.controller.initButtons(gameContext);
+        this.controller.editor.scrollPage(1);
+        this.controller.updatePalletButtons(gameContext);
         this.controller.updateMenuText(gameContext);
     });  
 
     editorInterface.addClick("BUTTON_SCROLL_SIZE", () => {
-        this.controller.scrollBrushSize(1);
+        this.controller.editor.scrollBrushSize(1);
         this.controller.updateMenuText(gameContext);
     }); 
 
     editorInterface.addClick("BUTTON_L1", () => {
-        this.controller.scrollLayerButton(gameContext, "L1", this.controller.interfaceID);
+        this.controller.clickLayerButton(gameContext, "L1");
     });
 
     editorInterface.addClick("BUTTON_L2", () => {
-        this.controller.scrollLayerButton(gameContext, "L2", this.controller.interfaceID);
+        this.controller.clickLayerButton(gameContext, "L2");
     });
 
     editorInterface.addClick("BUTTON_L3", () => {
-        this.controller.scrollLayerButton(gameContext, "L3", this.controller.interfaceID);
+        this.controller.clickLayerButton(gameContext, "L3");
     });
 
     editorInterface.addClick("BUTTON_LC", () => {
-        this.controller.scrollLayerButton(gameContext, "LC", this.controller.interfaceID);
+        this.controller.clickLayerButton(gameContext, "LC");
     });
 
     editorInterface.addClick("BUTTON_SAVE", () => {
-        const mapData = mapManager.getLoadedMap(this.controller.mapID);
+        const mapData = mapManager.getLoadedMap(this.controller.editor.mapID);
         
-        saveMap(this.controller.mapID, mapData);
+        saveMap(this.controller.editor.mapID, mapData);
     });
 
     editorInterface.addClick("BUTTON_CREATE", () => {
@@ -141,7 +149,7 @@ MapEditorState.prototype.initUIEvents = function(gameContext) {
         const worldMap = await MapSystem.createMapByID(gameContext, mapID);
 
         if(worldMap) {
-            this.controller.mapID = mapID;
+            this.controller.editor.mapID = mapID;
         }
     });
 
@@ -150,7 +158,7 @@ MapEditorState.prototype.initUIEvents = function(gameContext) {
     }); 
 
     editorInterface.addClick("BUTTON_UNDO", () => {
-        this.controller.undo(gameContext);
+        this.controller.editor.undo(gameContext);
     }); 
 
     editorInterface.addClick("BUTTON_ERASER", () => {
@@ -158,9 +166,6 @@ MapEditorState.prototype.initUIEvents = function(gameContext) {
     });
 
     editorInterface.addClick("BUTTON_VIEW_ALL", () => {
-        this.controller.buttonHandler.resetButtons(editorInterface);
-        this.controller.updateLayerOpacity(gameContext);
-        this.controller.disableEraserButton(gameContext);
-        this.controller.brush.reset();
+        this.controller.viewAllLayers(gameContext);
     });
 }
