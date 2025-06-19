@@ -9,11 +9,9 @@ export const MapEditor = function() {
     this.brushSizes = new Scroller();
     this.modes = new Scroller([MapEditor.MODE.DRAW, MapEditor.MODE.AUTOTILE]);
     this.mode = MapEditor.MODE.DRAW;
-    this.pageIndex = 0;
     this.activityStack = [];
     this.autoState = MapEditor.AUTOTILER_STATE.INACTIVE;
     this.hiddenSets = new Set();
-    this.slots = [];
 }
 
 MapEditor.AUTOTILER_STATE = {
@@ -61,28 +59,18 @@ MapEditor.prototype.scrollMode = function(delta = 0) {
         this.mode = mode;
     }
 
-    this.reloadAll();
+    this.reloadBrush();
 }
 
 MapEditor.prototype.scrollBrushSet = function(delta) {
     const brushSet = this.brushSets.loop(delta);
 
     if(brushSet !== null) {
-        this.reloadAll();
+        this.reloadBrush();
     }
 }
 
-MapEditor.prototype.scrollPage = function(delta = 0) {
-    const maxPagesNeeded = Math.ceil(this.brush.pallet.length / this.slots.length);
-
-    if(maxPagesNeeded <= 0) {
-        this.pageIndex = 0;
-    } else {
-        this.pageIndex = loopValue(this.pageIndex + delta, maxPagesNeeded - 1, 0);
-    }
-}
-
-MapEditor.prototype.reloadAll = function() {
+MapEditor.prototype.reloadBrush = function() {
     switch(this.mode) {
         case MapEditor.MODE.DRAW: {
             const pallet = this.brushSets.getValue();
@@ -102,11 +90,10 @@ MapEditor.prototype.reloadAll = function() {
         }
     }
 
-    this.pageIndex = 0;
     this.brush.reset();
 }
 
-MapEditor.prototype.loadBrushSets = function(invertedTileMeta) {
+MapEditor.prototype.initBrushSets = function(invertedTileMeta) {
     const sets = [];
 
     for(const setID in invertedTileMeta) {
@@ -128,8 +115,7 @@ MapEditor.prototype.loadBrushSets = function(invertedTileMeta) {
     }
 
     this.brushSets.setValues(sets);
-    this.scrollBrushSet(0);
-    this.reloadAll();
+    this.reloadBrush();
 }
 
 MapEditor.prototype.undo = function(gameContext) {

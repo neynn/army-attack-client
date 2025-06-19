@@ -1,6 +1,6 @@
 import { Cursor } from "../../client/cursor.js";
 import { MapEditor } from "../mapEditor.js";
-import { clampValue } from "../../math/math.js";
+import { clampValue, loopValue } from "../../math/math.js";
 import { UIManager } from "../../ui/uiManager.js";
 import { UICollider } from "../../ui/uiCollider.js";
 import { SHAPE } from "../../math/constants.js";
@@ -22,6 +22,9 @@ export const MapEditorController = function() {
     this.defaultMap = {};
     this.buttonHandler = new ButtonHandler();
     this.editor = new MapEditor();
+
+    this.palletButtons = [];
+    this.pageIndex = 0;
 }
 
 MapEditorController.EVENT_ID = "MAP_EDITOR_CONTROLLER";
@@ -99,17 +102,19 @@ MapEditorController.prototype.initUI = function(gameContext) {
     });
 }
 
-MapEditorController.prototype.initSlots = function(gameContext) {
-    const { uiManager } = gameContext;
+MapEditorController.prototype.initPalletButtons = function(gameContext) {
     const SLOT_START_Y = 100;
-    const editorInterface = uiManager.getInterface(this.interfaceID);
-    const buttonRows = 7;
-    const buttonColumns = 7;
-    const buttons = [];
+    const BUTTON_ROWS = 5;
+    const BUTTON_COLUMNS = 5;
 
-    for(let i = 0; i < buttonRows; i++) {
-        for(let j = 0; j < buttonColumns; j++) {
-            const buttonID = `BUTTON_${i * buttonColumns + j}`;
+    const { uiManager } = gameContext;
+    const editorInterface = uiManager.getInterface(this.interfaceID);
+
+    this.palletButtons.length = 0;
+
+    for(let i = 0; i < BUTTON_ROWS; i++) {
+        for(let j = 0; j < BUTTON_COLUMNS; j++) {
+            const buttonID = `BUTTON_${i * BUTTON_COLUMNS + j}`;
             const posX = this.slotButtonSize * j;
             const posY = this.slotButtonSize * i + SLOT_START_Y;
             const button = uiManager.createElement(UIManager.ELEMENT_TYPE.BUTTON, {
@@ -121,13 +126,12 @@ MapEditorController.prototype.initSlots = function(gameContext) {
             }, buttonID);
 
             editorInterface.addElement(button, buttonID);
-            buttons.push(buttonID);
+        
+            this.palletButtons.push(buttonID);
         }
     }
 
-    editorInterface.linkElements("CONTAINER_TILES", buttons);
-
-    this.editor.slots = buttons;
+    editorInterface.linkElements("CONTAINER_TILES", this.palletButtons);
 }
 
 MapEditorController.prototype.initCamera = function(gameContext, camera) {
@@ -139,6 +143,20 @@ MapEditorController.prototype.initCamera = function(gameContext, camera) {
     this.camera = camera;
     this.camera.freeViewport();
     this.camera.setTileSize(gameContext.settings.tileWidth, gameContext.settings.tileHeight)
+}
+
+MapEditorController.prototype.resetPage = function() {
+    this.pageIndex = 0;
+}
+
+MapEditorController.prototype.scrollPage = function(delta) {
+    const maxPagesNeeded = Math.ceil(this.editor.brush.pallet.length / this.palletButtons.length);
+
+    if(maxPagesNeeded <= 0) {
+        this.pageIndex = 0;
+    } else {
+        this.pageIndex = loopValue(this.pageIndex + delta, maxPagesNeeded - 1, 0);
+    }
 }
 
 MapEditorController.prototype.initCursorEvents = function(gameContext) {
@@ -272,34 +290,37 @@ MapEditorController.prototype.toggleAutotiler = function(gameContext) {
     }
 }
 
+MapEditorController.prototype.mapPageIndex = function(index) {
+    return this.pageIndex * this.palletButtons.length + index;
+}
+
 MapEditorController.prototype.updatePalletButtonEvents = function(gameContext) {
     const { uiManager, tileManager } = gameContext;
     const { graphics } = tileManager;
     const editorInterface = uiManager.getInterface(this.interfaceID);
 
-    for(let i = 0; i < this.editor.slots.length; i++) {
-        const buttonID = this.editor.slots[i];
-        const palletID = this.editor.brush.getPalletIndex(this.editor.pageIndex, this.editor.slots.length, i);
-        const tileID = this.editor.brush.getTileID(palletID);
+    for(let i = 0; i < this.palletButtons.length; i++) {
+        const palletIndex = this.mapPageIndex(i);
+        const tileID = this.editor.brush.getTileID(palletIndex);
+
+        const buttonID = this.palletButtons[i];
         const button = editorInterface.getElement(buttonID);
 
         button.collider.events.unsubscribe(UICollider.EVENT.CLICKED, MapEditorController.EVENT_ID);
         button.clearCustomRenders();
 
-        if(tileID === Brush.ID.INVALID) {
-            continue;
+        if(tileID !== Brush.ID.INVALID) {
+            button.collider.events.on(UICollider.EVENT.CLICKED, () => {
+                this.resetBrush(editorInterface);
+                this.editor.brush.selectFromPallet(palletIndex);
+            }, { id: MapEditorController.EVENT_ID });
+
+            button.addCustomRender((context, localX, localY) => {
+                this.camera.setRelativeScale(this.slotButtonSize, this.slotButtonSize);
+                this.camera.drawTileEasy(graphics, tileID, context, localX, localY);
+                this.camera.resetScale();
+            });
         }
-
-        button.collider.events.on(UICollider.EVENT.CLICKED, () => {
-            this.resetBrush(editorInterface);
-            this.editor.brush.selectFromPallet(palletID);
-        }, { id: MapEditorController.EVENT_ID });
-
-        button.addCustomRender((context, localX, localY) => {
-            this.camera.setRelativeScale(this.slotButtonSize, this.slotButtonSize);
-            this.camera.drawTileEasy(graphics, tileID, context, localX, localY);
-            this.camera.resetScale();
-        });
     }
 } 
 
@@ -344,9 +365,9 @@ MapEditorController.prototype.updateMenuText = function(gameContext) {
 }
 
 MapEditorController.prototype.getPageText = function() {
-    const maxPagesNeeded = Math.ceil(this.editor.brush.pallet.length / this.editor.slots.length);
+    const maxPagesNeeded = Math.ceil(this.editor.brush.pallet.length / this.palletButtons.length);
     const showMaxPagesNeeded = maxPagesNeeded === 0 ? 1 : maxPagesNeeded;
-    const showCurrentPage = this.editor.pageIndex + 1;
+    const showCurrentPage = this.pageIndex + 1;
 
     return `${showCurrentPage} / ${showMaxPagesNeeded}`;
 }

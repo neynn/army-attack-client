@@ -28,7 +28,7 @@ MapEditorState.prototype.onEnter = function(gameContext, stateMachine) {
     this.controller.buttonHandler.createButton("LC", "type", "TEXT_LC").setType(EditorButton.TYPE.TYPE);
 
     //TODO
-    this.controller.editor.loadBrushSets(tileManager.getInversion());
+    this.controller.editor.initBrushSets(tileManager.getInversion());
     this.controller.editor.onPaint = function(gameContext, worldMap, tileID, tileX, tileY) {
         const { tileManager } = gameContext;
         const tileMeta = tileManager.getMeta(tileID);
@@ -48,7 +48,7 @@ MapEditorState.prototype.onEnter = function(gameContext, stateMachine) {
     router.on("TOGGLE_ERASER", () => this.controller.toggleEraser(gameContext));
     
     this.controller.initUI(gameContext);
-    this.controller.initSlots(gameContext);
+    this.controller.initPalletButtons(gameContext);
     this.controller.initCursorEvents(gameContext);
     this.controller.updatePalletButtonEvents(gameContext);
     this.controller.updateMenuText(gameContext);
@@ -77,30 +77,33 @@ MapEditorState.prototype.initUIEvents = function(gameContext) {
 
     editorInterface.addClick("BUTTON_TILESET_MODE", () => {
         this.controller.editor.scrollMode(1);
+        this.controller.resetPage();
         this.controller.updatePalletButtonEvents(gameContext);
         this.controller.updateMenuText(gameContext);
     });
 
     editorInterface.addClick("BUTTON_TILESET_LEFT", () => {
         this.controller.editor.scrollBrushSet(-1);
+        this.controller.resetPage();
         this.controller.updatePalletButtonEvents(gameContext);
         this.controller.updateMenuText(gameContext);
     });
 
     editorInterface.addClick("BUTTON_TILESET_RIGHT", () => {
         this.controller.editor.scrollBrushSet(1);
+        this.controller.resetPage();
         this.controller.updatePalletButtonEvents(gameContext);
         this.controller.updateMenuText(gameContext);
     });
 
     editorInterface.addClick("BUTTON_PAGE_LAST", () => {
-        this.controller.editor.scrollPage(-1);
+        this.controller.scrollPage(-1);
         this.controller.updatePalletButtonEvents(gameContext);
         this.controller.updateMenuText(gameContext);
     }); 
 
     editorInterface.addClick("BUTTON_PAGE_NEXT", () => {
-        this.controller.editor.scrollPage(1);
+        this.controller.scrollPage(1);
         this.controller.updatePalletButtonEvents(gameContext);
         this.controller.updateMenuText(gameContext);
     });  

@@ -1,7 +1,6 @@
 export const Brush = function() {
     this.size = 0;
     this.pallet = [];
-    this.palletData = {};
 
     this.id = -1;
     this.name = "";
@@ -29,10 +28,9 @@ Brush.prototype.selectFromPallet = function(index) {
         return;
     }
 
-    const tileName = this.pallet[index];
-    const tileID = this.palletData[tileName];
+    const { id, name } = this.pallet[index];
 
-    this.setBrush(tileID, tileName);
+    this.setBrush(id, name);
 }
 
 Brush.prototype.getTileID = function(index) {
@@ -40,39 +38,30 @@ Brush.prototype.getTileID = function(index) {
         return Brush.ID.INVALID;
     }
 
-    const tileName = this.pallet[index];
-    const tileID = this.palletData[tileName];
+    const { id } = this.pallet[index];
 
-    if(tileID === undefined) {
+    if(id === undefined) {
         return Brush.ID.INVALID;
     }
 
-    return tileID;
-}
-
-Brush.prototype.getPalletIndex = function(pageIndex, slotCount, slot) {
-    const palletIndex = pageIndex * slotCount + slot;
-
-    if(palletIndex >= this.pallet.length) {
-        return -1;
-    }
-
-    return palletIndex;
+    return id;
 }
 
 Brush.prototype.clearPallet = function() {
     this.pallet.length = 0;
-    this.palletData = {};
 }
 
 Brush.prototype.loadPallet = function(palletData) {
     this.pallet.length = 0;
 
-    for(const tileID in palletData) {
-        this.pallet.push(tileID);
-    }
+    for(const tileName in palletData) {
+        const tileID = palletData[tileName];
 
-    this.palletData = palletData;
+        this.pallet.push({
+            "id": tileID,
+            "name": tileName
+        });
+    }
 }
 
 Brush.prototype.setBrush = function(id, name) {
