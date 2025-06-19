@@ -150,7 +150,7 @@ MapEditorController.prototype.resetPage = function() {
 }
 
 MapEditorController.prototype.scrollPage = function(delta) {
-    const maxPagesNeeded = Math.ceil(this.editor.brush.pallet.length / this.palletButtons.length);
+    const maxPagesNeeded = Math.ceil(this.editor.brush.getPalletSize() / this.palletButtons.length);
 
     if(maxPagesNeeded <= 0) {
         this.pageIndex = 0;
@@ -347,9 +347,9 @@ MapEditorController.prototype.updateMenuText = function(gameContext) {
     const { uiManager } = gameContext;
     const editorInterface = uiManager.getInterface(this.interfaceID);
 
-    editorInterface.setText("TEXT_TILESET_MODE", `MODE: ${MapEditor.MODE_NAME[this.editor.mode]}`);
+    editorInterface.setText("TEXT_TILESET_MODE", `MODE: ${MapEditor.MODE_NAME[this.editor.modes.getValue()]}`);
 
-    switch(this.editor.mode) {
+    switch(this.editor.modes.getValue()) {
         case MapEditor.MODE.DRAW: {
             editorInterface.setText("TEXT_TILESET", `${this.editor.brushSets.getValue()?.id}`);
             break;
@@ -365,7 +365,7 @@ MapEditorController.prototype.updateMenuText = function(gameContext) {
 }
 
 MapEditorController.prototype.getPageText = function() {
-    const maxPagesNeeded = Math.ceil(this.editor.brush.pallet.length / this.palletButtons.length);
+    const maxPagesNeeded = Math.ceil(this.editor.brush.getPalletSize() / this.palletButtons.length);
     const showMaxPagesNeeded = maxPagesNeeded === 0 ? 1 : maxPagesNeeded;
     const showCurrentPage = this.pageIndex + 1;
 

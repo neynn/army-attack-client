@@ -8,7 +8,6 @@ export const MapEditor = function() {
     this.brushSets = new Scroller();
     this.brushSizes = new Scroller();
     this.modes = new Scroller([MapEditor.MODE.DRAW, MapEditor.MODE.AUTOTILE]);
-    this.mode = MapEditor.MODE.DRAW;
     this.activityStack = [];
     this.autoState = MapEditor.AUTOTILER_STATE.INACTIVE;
     this.hiddenSets = new Set();
@@ -56,10 +55,8 @@ MapEditor.prototype.scrollMode = function(delta = 0) {
     const mode = this.modes.loop(delta);
 
     if(mode !== null) {
-        this.mode = mode;
+        this.reloadBrush();
     }
-
-    this.reloadBrush();
 }
 
 MapEditor.prototype.scrollBrushSet = function(delta) {
@@ -71,7 +68,9 @@ MapEditor.prototype.scrollBrushSet = function(delta) {
 }
 
 MapEditor.prototype.reloadBrush = function() {
-    switch(this.mode) {
+    const brushMode = this.modes.getValue();
+
+    switch(brushMode) {
         case MapEditor.MODE.DRAW: {
             const pallet = this.brushSets.getValue();
 
@@ -183,7 +182,7 @@ MapEditor.prototype.paint = function(gameContext, layerID) {
     if(actionsTaken.length !== 0) {
         this.activityStack.push({
             "mapID": this.mapID,
-            "mode": this.mode,
+            "mode": this.modes.getValue(),
             "actions": actionsTaken
         });
     }

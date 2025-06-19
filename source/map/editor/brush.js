@@ -22,6 +22,10 @@ Brush.MODE = {
     DRAW: 2
 };
 
+Brush.prototype.getPalletSize = function() {
+    return this.pallet.length;
+}
+
 Brush.prototype.selectFromPallet = function(index) {
     if(index < 0 || index >= this.pallet.length) {
         this.setBrush(Brush.ID.INVALID, "");
