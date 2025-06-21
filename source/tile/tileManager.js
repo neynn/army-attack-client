@@ -52,8 +52,8 @@ TileManager.prototype.load = function(tileAtlases, tileMeta, autotilers) {
 }
 
 TileManager.prototype.createAutotiler = function(config) {
-    const { type = Autotiler.TYPE.NONE, values = {}, members = [], isInverted = false } = config;
-    const autotiler = new Autotiler(TileManager.TILE_ID.EMPTY, isInverted);
+    const { type = Autotiler.TYPE.NONE, values = {}, members = [] } = config;
+    const autotiler = new Autotiler(TileManager.TILE_ID.EMPTY);
 
     autotiler.setType(type);
 

@@ -49,31 +49,13 @@ WorldMap.prototype.saveLayers = function() {
     return layers;
 }
 
-WorldMap.prototype.updateAutotiler = function(autotiler, tileX, tileY, layerID) {
-    if(!autotiler) {
-        return;
-    }
-
-    const startX = tileX - 1;
-    const startY = tileY - 1;
-    const endX = tileX + 1;
-    const endY = tileY + 1;
-
-    for(let i = startY; i <= endY; i++) {
-        for(let j = startX; j <= endX; j++) {
-            this.autotile(autotiler, j, i, layerID);
-        }
-    }
-}
-
-WorldMap.prototype.autotile = function(autotiler, tileX, tileY, layerID) {
+WorldMap.prototype.applyAutotiler = function(autotiler, tileX, tileY, layerID, isInverted) {
     const tileID = this.getTile(layerID, tileX, tileY);
 
     if(!autotiler.hasMember(tileID)) {
         return TileManager.TILE_ID.EMPTY;
     }
 
-    const isInverted = autotiler.getInvertedState();
     const responseID = autotiler.run(tileX, tileY, (x, y) => {
         const nextID = this.getTile(layerID, x, y);
 

@@ -173,13 +173,13 @@ ArmyMap.prototype.updateClouds = function(autotiler, tileX, tileY, width, height
     const endCornerY = tileY + height;
 
     for(let i = startCornerY; i <= endCornerY; i++) {
-        this.autotile(autotiler, startCornerX, i, ArmyMap.LAYER.CLOUD);
-        this.autotile(autotiler, endCornerX, i, ArmyMap.LAYER.CLOUD);
+        this.applyAutotiler(autotiler, startCornerX, i, ArmyMap.LAYER.CLOUD, false);
+        this.applyAutotiler(autotiler, endCornerX, i, ArmyMap.LAYER.CLOUD, false);
     }
 
     for(let j = startCornerX; j <= endCornerX; j++) {
-        this.autotile(autotiler, j, startCornerY, ArmyMap.LAYER.CLOUD);
-        this.autotile(autotiler, j, endCornerY, ArmyMap.LAYER.CLOUD);
+        this.applyAutotiler(autotiler, j, startCornerY, ArmyMap.LAYER.CLOUD, false);
+        this.applyAutotiler(autotiler, j, endCornerY, ArmyMap.LAYER.CLOUD, false);
     }
 }
 

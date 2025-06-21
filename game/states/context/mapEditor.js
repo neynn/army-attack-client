@@ -46,6 +46,7 @@ MapEditorState.prototype.onEnter = function(gameContext, stateMachine) {
     router.load(gameContext, gameContext.keybinds.editor);
     router.on("TOGGLE_AUTOTILER", () => this.controller.toggleAutotiler(gameContext));
     router.on("TOGGLE_ERASER", () => this.controller.toggleEraser(gameContext));
+    router.on("TOGGLE_INVERSION", () => this.controller.toggleInversion(gameContext));
     
     this.controller.initUI(gameContext);
     this.controller.initPalletButtons(gameContext);
@@ -66,6 +67,10 @@ MapEditorState.prototype.initUIEvents = function(gameContext) {
     const { uiManager, world, states } = gameContext;
     const { mapManager } = world;
     const editorInterface = uiManager.getInterface(this.controller.interfaceID);
+
+    editorInterface.addClick("BUTTON_INVERT", () => {
+        this.controller.toggleInversion(gameContext);
+    });
 
     editorInterface.addClick("BUTTON_BACK", () => {
         states.setNextState(gameContext, ArmyContext.STATE.MAIN_MENU);

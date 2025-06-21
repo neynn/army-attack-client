@@ -12,7 +12,8 @@
     },
     "editor": {
         "TOGGLE_AUTOTILER": "+a",
-        "TOGGLE_ERASER": "+r"
+        "TOGGLE_ERASER": "+e",
+        "TOGGLE_INVERSION": "+q"
     },
     "debug": {
         "DEBUG_MAP": "+F1",

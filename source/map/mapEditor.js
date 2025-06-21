@@ -9,13 +9,14 @@ export const MapEditor = function() {
     this.brushSizes = new Scroller();
     this.modes = new Scroller([MapEditor.MODE.DRAW, MapEditor.MODE.AUTOTILE]);
     this.activityStack = [];
-    this.autoState = MapEditor.AUTOTILER_STATE.INACTIVE;
     this.hiddenSets = new Set();
+    this.autoState = MapEditor.AUTOTILER_STATE.INACTIVE;
 }
 
 MapEditor.AUTOTILER_STATE = {
     INACTIVE: 0,
-    ACTIVE: 1
+    ACTIVE: 1,
+    ACTIVE_INVERTED: 2
 };
 
 MapEditor.MODE = {
@@ -28,13 +29,28 @@ MapEditor.MODE_NAME = {
     [MapEditor.MODE.AUTOTILE]: "AUTOTILE"
 };
 
+MapEditor.prototype.toggleInversion = function() {
+    switch(this.autoState) {
+        case MapEditor.AUTOTILER_STATE.ACTIVE: {
+            this.autoState = MapEditor.AUTOTILER_STATE.ACTIVE_INVERTED;
+            break;
+        }
+        case MapEditor.AUTOTILER_STATE.ACTIVE_INVERTED: {
+            this.autoState = MapEditor.AUTOTILER_STATE.ACTIVE;
+            break;
+        }
+    }
+
+    return this.autoState;
+}
+
 MapEditor.prototype.toggleAutotiling = function() {
     switch(this.autoState) {
         case MapEditor.AUTOTILER_STATE.INACTIVE: {
             this.autoState = MapEditor.AUTOTILER_STATE.ACTIVE;
             break;
         }
-        case MapEditor.AUTOTILER_STATE.ACTIVE: {
+        default: {
             this.autoState = MapEditor.AUTOTILER_STATE.INACTIVE;
             break;
         }
@@ -141,6 +157,7 @@ MapEditor.prototype.undo = function(gameContext) {
 
 MapEditor.prototype.onPaint = function(gameContext, worldMap, tileID, tileX, tileY) {}
 
+//inversion is an option, not a static feature!
 MapEditor.prototype.paint = function(gameContext, layerID) {
     const { world, tileManager } = gameContext;
     const { mapManager } = world;
@@ -154,28 +171,61 @@ MapEditor.prototype.paint = function(gameContext, layerID) {
     const { x, y } = gameContext.getMouseTile();
     const { id } = this.brush;
     //TODO: add autotiler mode, not based on tiles autotiler.
+    //TODO: add 3 brush mode variations: 1. regular, 2. autotiler 3. autocorrecter
     const autotiler = tileManager.getAutotilerByTile(id);
 
-    this.brush.paint(x, y, (j, i, brushID, brushName) => {
-        const tileID = worldMap.getTile(layerID, j, i);
+    this.brush.paint(x, y, (tileX, tileY, brushID, brushName) => {
+        const tileID = worldMap.getTile(layerID, tileX, tileY);
 
         if(tileID !== null && tileID !== brushID) {
-            worldMap.placeTile(brushID, layerID, j, i);
+            worldMap.placeTile(brushID, layerID, tileX, tileY);
 
-            this.onPaint(gameContext, worldMap, brushID, j, i);
-
-            if(this.autoState === MapEditor.AUTOTILER_STATE.INACTIVE) {
-                actionsTaken.push({
-                    "layerID": layerID,
-                    "tileX": j,
-                    "tileY": i,
-                    "oldID": tileID
-                });
-            }
+            this.onPaint(gameContext, worldMap, brushID, tileX, tileY);
         }
 
-        if(this.autoState === MapEditor.AUTOTILER_STATE.ACTIVE) {
-            worldMap.updateAutotiler(autotiler, j, i, layerID);
+        switch(this.autoState) {
+            case MapEditor.AUTOTILER_STATE.INACTIVE: {
+                actionsTaken.push({
+                    "layerID": layerID,
+                    "tileX": tileX,
+                    "tileY": tileY,
+                    "oldID": tileID
+                });
+
+                break;
+            }
+            case MapEditor.AUTOTILER_STATE.ACTIVE: {
+                if(autotiler) {
+                    const startX = tileX - 1;
+                    const startY = tileY - 1;
+                    const endX = tileX + 1;
+                    const endY = tileY + 1;
+
+                    for(let i = startY; i <= endY; i++) {
+                        for(let j = startX; j <= endX; j++) {
+                            worldMap.applyAutotiler(autotiler, j, i, layerID, false);
+                        }
+                    }
+                }
+
+                break;
+            }
+            case MapEditor.AUTOTILER_STATE.ACTIVE_INVERTED: {
+                if(autotiler) {
+                    const startX = tileX - 1;
+                    const startY = tileY - 1;
+                    const endX = tileX + 1;
+                    const endY = tileY + 1;
+
+                    for(let i = startY; i <= endY; i++) {
+                        for(let j = startX; j <= endX; j++) {
+                            worldMap.applyAutotiler(autotiler, j, i, layerID, true);
+                        }
+                    }
+                }
+
+                break;
+            }
         }
     });
 

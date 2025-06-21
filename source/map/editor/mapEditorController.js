@@ -248,16 +248,39 @@ MapEditorController.prototype.resetBrush = function(editorInterface) {
     this.editor.brush.reset();
 }
 
-MapEditorController.prototype.toggleEraser = function(gameContext) {
+MapEditorController.prototype.toggleInversion = function(gameContext) {
+    const autoState = this.editor.toggleInversion();
+
+    this.updateInversionText(gameContext, autoState);
+}
+
+MapEditorController.prototype.updateInversionText = function(gameContext, stateID) {
+    const { uiManager } = gameContext;
+    const editorInterface = uiManager.getInterface(this.interfaceID);
+    const text = editorInterface.getElement("TEXT_INVERT");
+    const { style } = text;
+    const { color } = style;
+
+    switch(stateID) {
+        case MapEditor.AUTOTILER_STATE.ACTIVE_INVERTED: {
+            color.setColorArray(this.textColorEdit);
+            break;
+        }
+        default: {
+            color.setColorArray(this.textColorView);
+            break;
+        }
+    }
+}
+
+MapEditorController.prototype.updateEraserText = function(gameContext, stateID) {
     const { uiManager } = gameContext;
     const editorInterface = uiManager.getInterface(this.interfaceID);
     const text = editorInterface.getElement("TEXT_ERASER");
     const { style } = text;
     const { color } = style;
 
-    const nextState = this.editor.brush.toggleEraser();
-
-    switch(nextState) {
+    switch(stateID) {
         case Brush.MODE.ERASE: {
             color.setColorArray(this.textColorEdit);
             break;
@@ -267,6 +290,12 @@ MapEditorController.prototype.toggleEraser = function(gameContext) {
             break;
         }
     }
+}
+
+MapEditorController.prototype.toggleEraser = function(gameContext) {
+    const nextState = this.editor.brush.toggleEraser();
+
+    this.updateEraserText(gameContext, nextState);
 }
 
 MapEditorController.prototype.toggleAutotiler = function(gameContext) {
@@ -281,6 +310,7 @@ MapEditorController.prototype.toggleAutotiler = function(gameContext) {
     switch(nextState) {
         case MapEditor.AUTOTILER_STATE.INACTIVE: {
             color.setColorArray(this.textColorView);
+            this.updateInversionText(gameContext, nextState);
             break;
         }
         case MapEditor.AUTOTILER_STATE.ACTIVE: {
