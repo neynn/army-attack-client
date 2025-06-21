@@ -10,7 +10,6 @@ export const MapEditor = function() {
     this.brushSizes = new Scroller();
     this.modes = new Scroller([MapEditor.MODE.DRAW, MapEditor.MODE.AUTOTILE]);
     this.activityStack = [];
-    this.hiddenSets = new Set();
     this.autotiler = new EditorAutotiler();
 }
 
@@ -73,16 +72,25 @@ MapEditor.prototype.reloadBrush = function() {
     this.brush.reset();
 }
 
-MapEditor.prototype.initBrushSets = function(invertedTileMeta) {
+MapEditor.prototype.initBrushSets = function(brushSets, hiddenSets) {
     const sets = [];
 
-    for(const setID in invertedTileMeta) {
-        if(this.hiddenSets.has(setID)) {
+    for(const setID in brushSets) {
+        let isHidden = false;
+
+        for(let i = 0; i < hiddenSets.length; i++) {
+            if(setID === hiddenSets[i]) {
+                isHidden = true;
+                break;
+            }
+        }
+
+        if(isHidden) {
             continue;
         }
 
         const brushSet = {};
-        const set = invertedTileMeta[setID];
+        const set = brushSets[setID];
 
         for(const tileID in set) {
             brushSet[tileID] = set[tileID];

@@ -19,7 +19,7 @@ MapEditorState.prototype.onEnter = function(gameContext, stateMachine) {
     const { router } = client;
 
     this.controller = new MapEditorController();
-    this.controller.init(gameContext.editorConfig);
+    this.controller.init(gameContext.editorConfig, tileManager.getInversion());
     this.controller.initCamera(gameContext, new ArmyEditorCamera(this.controller));
 
     this.controller.buttonHandler.createButton("L1", "ground", "TEXT_L1");
@@ -28,7 +28,6 @@ MapEditorState.prototype.onEnter = function(gameContext, stateMachine) {
     this.controller.buttonHandler.createButton("LC", "type", "TEXT_LC").setType(EditorButton.TYPE.TYPE);
 
     //TODO
-    this.controller.editor.initBrushSets(tileManager.getInversion());
     this.controller.editor.onPaint = function(gameContext, worldMap, tileID, tileX, tileY) {
         const { tileManager } = gameContext;
         const tileMeta = tileManager.getMeta(tileID);

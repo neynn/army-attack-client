@@ -57,7 +57,7 @@ MapEditorController.prototype.destroy = function(gameContext) {
     renderer.destroyContext(MapEditorController.EVENT_ID);
 }
 
-MapEditorController.prototype.init = function(config) {
+MapEditorController.prototype.init = function(config, brushSets) {
     const {
         brushSizes = [0],
         hiddenSets = [],
@@ -85,10 +85,7 @@ MapEditorController.prototype.init = function(config) {
     this.textColorHide = textColorHide;
 
     this.editor.brushSizes.setValues(brushSizes);
-
-    for(let i = 0; i < hiddenSets.length; i++) {
-        this.editor.hiddenSets.add(hiddenSets[i]);
-    }
+    this.editor.initBrushSets(brushSets, hiddenSets);
 }
 
 MapEditorController.prototype.initUI = function(gameContext) {
