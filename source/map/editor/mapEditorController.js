@@ -7,6 +7,7 @@ import { SHAPE } from "../../math/constants.js";
 import { Brush } from "./brush.js";
 import { EditorButton } from "./editorButton.js";
 import { ButtonHandler } from "./buttonHandler.js";
+import { EditorAutotiler } from "./autotiler.js";
 
 export const MapEditorController = function() {
     this.camera = null;
@@ -248,12 +249,6 @@ MapEditorController.prototype.resetBrush = function(editorInterface) {
     this.editor.brush.reset();
 }
 
-MapEditorController.prototype.toggleInversion = function(gameContext) {
-    const autoState = this.editor.toggleInversion();
-
-    this.updateInversionText(gameContext, autoState);
-}
-
 MapEditorController.prototype.updateInversionText = function(gameContext, stateID) {
     const { uiManager } = gameContext;
     const editorInterface = uiManager.getInterface(this.interfaceID);
@@ -262,7 +257,7 @@ MapEditorController.prototype.updateInversionText = function(gameContext, stateI
     const { color } = style;
 
     switch(stateID) {
-        case MapEditor.AUTOTILER_STATE.ACTIVE_INVERTED: {
+        case EditorAutotiler.STATE.ACTIVE_INVERTED: {
             color.setColorArray(this.textColorEdit);
             break;
         }
@@ -292,6 +287,26 @@ MapEditorController.prototype.updateEraserText = function(gameContext, stateID) 
     }
 }
 
+MapEditorController.prototype.updateAutoText = function(gameContext, stateID) {
+    const { uiManager } = gameContext;
+    const editorInterface = uiManager.getInterface(this.interfaceID);
+    const text = editorInterface.getElement("TEXT_AUTO");
+    const { style } = text;
+    const { color } = style;
+
+    switch(stateID) {
+        case EditorAutotiler.STATE.INACTIVE: {
+            color.setColorArray(this.textColorView);
+            this.updateInversionText(gameContext, nextState);
+            break;
+        }
+        case EditorAutotiler.STATE.ACTIVE: {
+            color.setColorArray(this.textColorEdit);
+            break;
+        }
+    }
+}
+
 MapEditorController.prototype.toggleEraser = function(gameContext) {
     const nextState = this.editor.brush.toggleEraser();
 
@@ -299,25 +314,15 @@ MapEditorController.prototype.toggleEraser = function(gameContext) {
 }
 
 MapEditorController.prototype.toggleAutotiler = function(gameContext) {
-    const { uiManager } = gameContext;
-    const editorInterface = uiManager.getInterface(this.interfaceID);
-    const text = editorInterface.getElement("TEXT_AUTO");
-    const { style } = text;
-    const { color } = style;
+    const nextState = this.editor.autotiler.toggleAutotiling();
 
-    const nextState = this.editor.toggleAutotiling();
+    this.updateAutoText(gameContext, nextState);
+}
 
-    switch(nextState) {
-        case MapEditor.AUTOTILER_STATE.INACTIVE: {
-            color.setColorArray(this.textColorView);
-            this.updateInversionText(gameContext, nextState);
-            break;
-        }
-        case MapEditor.AUTOTILER_STATE.ACTIVE: {
-            color.setColorArray(this.textColorEdit);
-            break;
-        }
-    }
+MapEditorController.prototype.toggleInversion = function(gameContext) {
+    const inversionState = this.editor.autotiler.toggleInversion();
+
+    this.updateInversionText(gameContext, inversionState);
 }
 
 MapEditorController.prototype.mapPageIndex = function(index) {
