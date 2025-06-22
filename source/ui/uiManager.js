@@ -271,9 +271,6 @@ UIManager.prototype.createElementFromConfig = function(config, DEBUG_NAME) {
 }
 
 UIManager.prototype.createInterfaceFromConfig = function(gameContext, userInterfaceType, userInterface) {
-    const { renderer } = gameContext;
-    const { w, h } = renderer.getWindow();
-
     for(const elementID in userInterfaceType) {
         const config = userInterfaceType[elementID];
         const element = this.createElementFromConfig(config, elementID);
@@ -283,27 +280,12 @@ UIManager.prototype.createInterfaceFromConfig = function(gameContext, userInterf
     
     for(const elementID in userInterfaceType) {
         const element = userInterface.getElement(elementID);
-
-        if(!element) {
-            continue;
-        }
-
         const config = userInterfaceType[elementID];
         const { children, effects } = config;
 
         userInterface.addEffects(gameContext, element, effects);
         userInterface.addChildrenByID(elementID, children);
     }
-
-    for(const elementKey in userInterfaceType) {
-        const element = userInterface.getElement(elementKey);
-
-        if(!element.hasParent()) {
-            userInterface.roots.push(element);
-        }
-    }
-
-    userInterface.updateRootAnchors(w, h);
 }
 
 UIManager.prototype.createUIByID = function(interfaceID, gameContext) {
@@ -318,6 +300,8 @@ UIManager.prototype.createUIByID = function(interfaceID, gameContext) {
 
     if(userInterface) {
         this.createInterfaceFromConfig(gameContext, config, userInterface);
+
+        userInterface.refreshRootElements(gameContext);
     }
 
     return userInterface;

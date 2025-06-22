@@ -21,7 +21,7 @@ UserInterface.STATE = {
 
 UserInterface.EFFECT_CLASS = {
     "FADE_IN": createFadeInEffect,
-    "FADE_OUT": createFadeOutEffect
+    "FADE_OUT": createFadeOutEffect 
 };
 
 UserInterface.prototype.clear = function() {
@@ -104,34 +104,25 @@ UserInterface.prototype.getElement = function(name) {
 
 UserInterface.prototype.getCollisions = function(mouseX, mouseY, mouseRange) {
     if(this.state !== UserInterface.STATE.VISIBLE) {
-        return null;
+        return [];
     }
 
     for(let i = 0; i < this.roots.length; i++) {
         const element = this.roots[i];
         const collisions = element.getCollisions(mouseX, mouseY, mouseRange);
 
-        if(collisions !== null && collisions.length > 0) {
+        if(collisions.length > 0) {
             return collisions;
         }
     }
 
-    return null;
+    return [];
 }
 
 UserInterface.prototype.updateCollisions = function(mouseX, mouseY, mouseRange) {
     const collisions = this.getCollisions(mouseX, mouseY, mouseRange);
 
     this.collisions.swap();
-
-    if(!collisions) {
-        for(const elementID of this.collisions.previous) {
-            const element = this.elements.get(elementID);
-
-            element.collider.onCollisionUpdate(UICollider.STATE.NOT_COLLIDED, mouseX, mouseY, mouseRange);
-        }
-        return;
-    }
 
     for(let i = 0; i < collisions.length; i++) {
         const element = collisions[i];
@@ -203,19 +194,19 @@ UserInterface.prototype.addEffects = function(gameContext, element, effectList) 
     }
 }
 
-UserInterface.prototype.rootElement = function(gameContext, name) {
+UserInterface.prototype.refreshRootElements = function(gameContext) {
     const { renderer } = gameContext;
-    const element = this.getElement(name);
+    const { w, h } = renderer.getWindow();
 
-    if(!element) {
-        return;
+    this.roots.length = 0;
+
+    for(const [elementID, element] of this.elements) {
+        if(!element.hasParent()) {
+            this.roots.push(element);
+        }
     }
 
-    const { w, h } = renderer.getWindow();
-    
-    element.updateAnchor(w, h);
-
-    this.roots.push(element);
+    this.updateRootAnchors(w, h);
 }
 
 UserInterface.prototype.updateRootAnchors = function(width, height) {
