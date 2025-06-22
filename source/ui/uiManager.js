@@ -1,7 +1,6 @@
 import { Logger } from "../logger.js";
 import { TextureLoader } from "../resources/textureLoader.js";
 import { UserInterface } from "./userInterface.js";
-import { UIElement } from "./uiElement.js";
 import { TextStyle } from "../graphics/textStyle.js";
 import { Button } from "./elements/button.js";
 import { Container } from "./elements/container.js";
@@ -123,37 +122,31 @@ UIManager.prototype.destroyUI = function(interfaceID) {
     this.interfaceStack.splice(interfaceIndex, 1);
 }
 
-UIManager.prototype.createUI = function(interfaceID, onCreate) {
+UIManager.prototype.createUI = function(interfaceID) {
     if(this.getInterfaceIndex(interfaceID) !== -1) {
         return null;
     }
 
     const userInterface = new UserInterface(interfaceID);
 
-    if(typeof onCreate === "function") {
-        onCreate(userInterface);
-    }
-
     this.interfaceStack.push(userInterface);
 
     return userInterface;
 }
 
-UIManager.prototype.createUIByID = function(interfaceID, gameContext) {
-    const config = this.interfaceTypes[interfaceID];
+UIManager.prototype.parseTypeID = function(typeName) {
+    const typeID = UIManager.ELEMENT_TYPE_MAP[typeName];
 
-    if(!config) {
-        Logger.log(Logger.CODE.ENGINE_ERROR, "Interface does not exist!", "UIManager.prototype.createUIByID", { "interfaceID": interfaceID });
-        return null;
+    if(typeID === undefined) {
+        return typeName;
     }
 
-    const userInterface = this.createUI(interfaceID, (ui) => ui.fromConfig(gameContext, config));
-
-    return userInterface;
+    return typeID;
 }
 
-UIManager.prototype.createElement = function(typeID, config, DEBUG_NAME) {
+UIManager.prototype.createElementFromConfig = function(config, DEBUG_NAME) {
     const {
+        type,
         position = { x: 0, y: 0 },
         width = 0,
         height = 0,
@@ -162,6 +155,7 @@ UIManager.prototype.createElement = function(typeID, config, DEBUG_NAME) {
     } = config;
 
     const { x, y } = position;
+    const typeID = this.parseTypeID(type);
 
     switch(typeID) {
         case UIManager.ELEMENT_TYPE.BUTTON: {
@@ -215,7 +209,7 @@ UIManager.prototype.createElement = function(typeID, config, DEBUG_NAME) {
             const texture = this.resources.getTexture(image);
 
             this.resources.requestBitmap(image);
-            
+
             element.setPosition(x, y);
             element.setOpacity(opacity);
             element.setOrigin(x, y);
@@ -260,16 +254,71 @@ UIManager.prototype.createElement = function(typeID, config, DEBUG_NAME) {
             return element;
         }
         default: {
-            Logger.log(Logger.CODE.ENGINE_WARN, "ElementType does not exist!", "UIManager.prototype.createElement", { "type": typeID });
+            const element = new Container(DEBUG_NAME);
 
-            const element = new UIElement(DEBUG_NAME);
-    
             element.setPosition(x, y);
             element.setOpacity(opacity);
             element.setOrigin(x, y);
             element.setAnchor(anchor);
 
+            element.setSize(width, height);
+
+            Logger.log(Logger.CODE.ENGINE_WARN, "ElementType does not exist!", "UIManager.prototype.createElement", { "type": typeID });
+
             return element;
         }
     }
+}
+
+UIManager.prototype.createInterfaceFromConfig = function(gameContext, userInterfaceType, userInterface) {
+    const { renderer } = gameContext;
+    const { w, h } = renderer.getWindow();
+
+    for(const elementID in userInterfaceType) {
+        const config = userInterfaceType[elementID];
+        const element = this.createElementFromConfig(config, elementID);
+
+        userInterface.addElement(element, elementID);   
+    }
+    
+    for(const elementID in userInterfaceType) {
+        const element = userInterface.getElement(elementID);
+
+        if(!element) {
+            continue;
+        }
+
+        const config = userInterfaceType[elementID];
+        const { children, effects } = config;
+
+        userInterface.addEffects(gameContext, element, effects);
+        userInterface.addChildrenByID(elementID, children);
+    }
+
+    for(const elementKey in userInterfaceType) {
+        const element = userInterface.getElement(elementKey);
+
+        if(!element.hasParent()) {
+            userInterface.roots.push(element);
+        }
+    }
+
+    userInterface.updateRootAnchors(w, h);
+}
+
+UIManager.prototype.createUIByID = function(interfaceID, gameContext) {
+    const config = this.interfaceTypes[interfaceID];
+
+    if(!config) {
+        Logger.log(Logger.CODE.ENGINE_ERROR, "Interface does not exist!", "UIManager.prototype.createUIByID", { "interfaceID": interfaceID });
+        return null;
+    }
+
+    const userInterface = this.createUI(interfaceID);
+
+    if(userInterface) {
+        this.createInterfaceFromConfig(gameContext, config, userInterface);
+    }
+
+    return userInterface;
 }

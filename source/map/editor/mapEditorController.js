@@ -1,13 +1,13 @@
 import { Cursor } from "../../client/cursor.js";
 import { MapEditor } from "../mapEditor.js";
 import { clampValue, loopValue } from "../../math/math.js";
-import { UIManager } from "../../ui/uiManager.js";
 import { UICollider } from "../../ui/uiCollider.js";
 import { SHAPE } from "../../math/constants.js";
 import { Brush } from "./brush.js";
 import { EditorButton } from "./editorButton.js";
 import { ButtonHandler } from "./buttonHandler.js";
 import { EditorAutotiler } from "./autotiler.js";
+import { Button } from "../../ui/elements/button.js";
 
 export const MapEditorController = function() {
     this.camera = null;
@@ -113,15 +113,14 @@ MapEditorController.prototype.initPalletButtons = function(gameContext) {
     for(let i = 0; i < BUTTON_ROWS; i++) {
         for(let j = 0; j < BUTTON_COLUMNS; j++) {
             const buttonID = `BUTTON_${i * BUTTON_COLUMNS + j}`;
+            const button = new Button(buttonID);
             const posX = this.slotButtonSize * j;
             const posY = this.slotButtonSize * i + SLOT_START_Y;
-            const button = uiManager.createElement(UIManager.ELEMENT_TYPE.BUTTON, {
-                "shape": SHAPE.RECTANGLE,
-                "position": { "x": posX, "y": posY },
-                "width": this.slotButtonSize,
-                "height": this.slotButtonSize,
-                "opacity": 1
-            }, buttonID);
+
+            button.setShape(SHAPE.RECTANGLE);
+            button.setSize(this.slotButtonSize, this.slotButtonSize);
+            button.setPosition(posX, posY);
+            button.setOrigin(posX, posY);
 
             editorInterface.addElement(button, buttonID);
         
@@ -129,7 +128,7 @@ MapEditorController.prototype.initPalletButtons = function(gameContext) {
         }
     }
 
-    editorInterface.linkElements("CONTAINER_TILES", this.palletButtons);
+    editorInterface.addChildrenByID("CONTAINER_TILES", this.palletButtons);
 }
 
 MapEditorController.prototype.initCamera = function(gameContext, camera) {

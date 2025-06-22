@@ -3,7 +3,6 @@ import { createFadeInEffect } from "../effects/example/fadeIn.js";
 import { createFadeOutEffect } from "../effects/example/fadeOut.js";
 import { TextElement } from "./elements/textElement.js";
 import { UICollider } from "./uiCollider.js";
-import { UIManager } from "./uiManager.js";
 
 export const UserInterface = function(id) {
     this.id = id;
@@ -51,6 +50,8 @@ UserInterface.prototype.destroyElement = function(name) {
         return;
     }
 
+    const elementID = element.getID();
+    
     element.closeGraph();
 
     this.elements.delete(elementID);
@@ -161,7 +162,7 @@ UserInterface.prototype.addElement = function(element, name) {
     }
 }
 
-UserInterface.prototype.linkElements = function(parentID, children) {
+UserInterface.prototype.addChildrenByID = function(parentID, children) {
     if(!children) {
         return;
     }
@@ -200,46 +201,6 @@ UserInterface.prototype.addEffects = function(gameContext, element, effectList) 
             effects.addEffect(effect);
         }
     }
-}
-
-UserInterface.prototype.fromConfig = function(gameContext, userInterface) {
-    const { renderer, uiManager } = gameContext;
-    const { w, h } = renderer.getWindow();
-
-    for(const elementID in userInterface) {
-        const config = userInterface[elementID];
-        const { type } = config;
-        const typeID = UIManager.ELEMENT_TYPE_MAP[type];
-
-        if(typeID !== undefined) {
-            const element = uiManager.createElement(typeID, config, elementID);
-
-            this.addElement(element, elementID);
-        }
-    }
-    
-    for(const elementID in userInterface) {
-        const config = userInterface[elementID];
-        const { children, effects } = config;
-        const element = this.getElement(elementID);
-
-        if(!element) {
-            continue;
-        }
-
-        this.addEffects(gameContext, element, effects);
-        this.linkElements(elementID, children);
-    }
-
-    for(const elementKey in userInterface) {
-        const element = this.getElement(elementKey);
-
-        if(!element.hasParent()) {
-            this.roots.push(element);
-        }
-    }
-
-    this.updateRootAnchors(w, h);
 }
 
 UserInterface.prototype.rootElement = function(gameContext, name) {
