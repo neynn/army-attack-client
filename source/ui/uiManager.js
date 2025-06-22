@@ -205,19 +205,23 @@ UIManager.prototype.createElement = function(typeID, config, DEBUG_NAME) {
             return element;
         }
         case UIManager.ELEMENT_TYPE.ICON: {
-            const element = new Icon(this.resources, DEBUG_NAME);
+            const element = new Icon(DEBUG_NAME);
             const {
                 image = null,
                 scaleX = 1,
                 scaleY = 1
             } = config;
 
+            const texture = this.resources.getTexture(image);
+
+            this.resources.requestBitmap(image);
+            
             element.setPosition(x, y);
             element.setOpacity(opacity);
             element.setOrigin(x, y);
             element.setAnchor(anchor);
             element.setSize(width, height);
-            element.setImage(image);
+            element.setTexture(texture);
             element.setScale(scaleX, scaleY);
 
             return element;

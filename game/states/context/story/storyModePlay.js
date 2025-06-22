@@ -59,7 +59,7 @@ StoryModePlayState.prototype.initStoryMode = function(gameContext) {
 StoryModePlayState.prototype.onEnter = async function(gameContext, stateMachine) {
     const { uiManager } = gameContext;
 
-    //uiManager.createUIByID("STORY_MODE", gameContext);
+    uiManager.createUIByID("STORY_MODE", gameContext);
     this.initStoryMode(gameContext);
     //DebugSystem.spawnFullEntities(gameContext);
 }

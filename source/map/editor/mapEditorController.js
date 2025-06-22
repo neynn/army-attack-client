@@ -59,8 +59,6 @@ MapEditorController.prototype.destroy = function(gameContext) {
 
 MapEditorController.prototype.init = function(config, brushSets) {
     const {
-        brushSizes = [0],
-        hiddenSets = [],
         maxWidth = this.maxWidth,
         maxHeight = this.maxHeight,
         overlayAlpha = this.overlayAlpha,
@@ -70,6 +68,8 @@ MapEditorController.prototype.init = function(config, brushSets) {
         textColorView = this.textColorView,
         textColorEdit = this.textColorEdit,
         textColorHide = this.textColorHide,
+        brushSizes = [0],
+        hiddenSets = [],
         interfaceID = null
     } = config;
 
@@ -294,7 +294,7 @@ MapEditorController.prototype.updateAutoText = function(gameContext, stateID) {
     switch(stateID) {
         case EditorAutotiler.STATE.INACTIVE: {
             color.setColorArray(this.textColorView);
-            this.updateInversionText(gameContext, nextState);
+            this.updateInversionText(gameContext, stateID);
             break;
         }
         case EditorAutotiler.STATE.ACTIVE: {

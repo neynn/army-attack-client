@@ -52,7 +52,7 @@ TextureLoader.prototype.createTextures = function(textureMeta) {
 }
 
 TextureLoader.prototype.createTexture = function(textureID, config) {
-    const { directory, source, regions } = config;
+    const { directory, source, regions = {} } = config;
     const fileName = source ? source : `${textureID}${TextureLoader.DEFAULT.FILE_TYPE}`;
     const imagePath = PathHandler.getPath(directory, fileName);
 
