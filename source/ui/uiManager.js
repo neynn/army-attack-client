@@ -1,43 +1,20 @@
 import { Logger } from "../logger.js";
 import { TextureLoader } from "../resources/textureLoader.js";
+import { UIParser } from "./parser.js";
 import { UserInterface } from "./userInterface.js";
-import { TextStyle } from "../graphics/textStyle.js";
-import { Button } from "./elements/button.js";
-import { Container } from "./elements/container.js";
-import { Icon } from "./elements/icon.js";
-import { Scrollbar } from "./elements/scrollbar.js";
-import { TextElement } from "./elements/textElement.js";
-import { SHAPE } from "../math/constants.js";
 
 export const UIManager = function() {
     this.resources = new TextureLoader();
+    this.parser = new UIParser();
     this.interfaceStack = [];
-    this.interfaceTypes = {};
 }
-
-UIManager.ELEMENT_TYPE = {
-    NONE: 0,
-    TEXT: 1,
-    BUTTON: 2,
-    ICON: 3,
-    CONTAINER: 4,
-    SCROLLBAR: 5
-};
-
-UIManager.ELEMENT_TYPE_MAP = {
-    "BUTTON": UIManager.ELEMENT_TYPE.BUTTON,
-    "TEXT": UIManager.ELEMENT_TYPE.TEXT,
-    "ICON": UIManager.ELEMENT_TYPE.ICON,
-    "CONTAINER": UIManager.ELEMENT_TYPE.CONTAINER,
-    "SCROLLBAR": UIManager.ELEMENT_TYPE.SCROLLBAR
-};
 
 UIManager.prototype.load = function(interfaceTypes, iconTypes) {
     if(!interfaceTypes || !iconTypes) {
         Logger.log(Logger.CODE.ENGINE_ERROR, "InterfaceTypes/IconTypes cannot be undefined!", "UIManager.prototype.load", null);
     }
 
-    this.interfaceTypes = interfaceTypes;
+    this.parser.load(interfaceTypes);
     this.resources.createTextures(iconTypes);
 }
 
@@ -134,172 +111,11 @@ UIManager.prototype.createUI = function(interfaceID) {
     return userInterface;
 }
 
-UIManager.prototype.parseTypeID = function(typeName) {
-    const typeID = UIManager.ELEMENT_TYPE_MAP[typeName];
-
-    if(typeID === undefined) {
-        return typeName;
-    }
-
-    return typeID;
-}
-
-UIManager.prototype.createElementFromConfig = function(config, DEBUG_NAME) {
-    const {
-        type,
-        position = { x: 0, y: 0 },
-        width = 0,
-        height = 0,
-        anchor = "TOP_LEFT",
-        opacity = 1
-    } = config;
-
-    const { x, y } = position;
-    const typeID = this.parseTypeID(type);
-
-    switch(typeID) {
-        case UIManager.ELEMENT_TYPE.BUTTON: {
-            const element = new Button(DEBUG_NAME);
-            const { shape = SHAPE.RECTANGLE, radius = width } = config;
-
-            element.setPosition(x, y);
-            element.setOpacity(opacity);
-            element.setOrigin(x, y);
-            element.setAnchor(anchor);
-
-            switch(shape) {
-                case SHAPE.RECTANGLE: {
-                    element.setSize(width, height);
-                    element.setShape(SHAPE.RECTANGLE);
-                    break;
-                }
-                case SHAPE.CIRCLE: {
-                    element.setSize(radius, radius);
-                    element.setShape(SHAPE.CIRCLE);
-                    break;
-                }
-                default: {
-                    Logger.log(Logger.CODE.ENGINE_WARN, "Shape does not exist!", "UIManager.prototype.createElement", { "shapeID": shape });
-                    break;
-                }
-            }
-
-            return element;
-        }
-        case UIManager.ELEMENT_TYPE.CONTAINER: {
-            const element = new Container(DEBUG_NAME);
-
-            element.setPosition(x, y);
-            element.setOpacity(opacity);
-            element.setOrigin(x, y);
-            element.setAnchor(anchor);
-
-            element.setSize(width, height);
-
-            return element;
-        }
-        case UIManager.ELEMENT_TYPE.ICON: {
-            const element = new Icon(DEBUG_NAME);
-            const {
-                image = null,
-                scaleX = 1,
-                scaleY = 1
-            } = config;
-
-            const texture = this.resources.getTexture(image);
-
-            this.resources.requestBitmap(image);
-
-            element.setPosition(x, y);
-            element.setOpacity(opacity);
-            element.setOrigin(x, y);
-            element.setAnchor(anchor);
-            element.setSize(width, height);
-            element.setTexture(texture);
-            element.setScale(scaleX, scaleY);
-
-            return element;
-        }
-        case UIManager.ELEMENT_TYPE.SCROLLBAR: {
-            const element = new Scrollbar(DEBUG_NAME);
-
-            element.setPosition(x, y);
-            element.setOpacity(opacity);
-            element.setOrigin(x, y);
-            element.setAnchor(anchor);
-
-            return element;
-        }
-        case UIManager.ELEMENT_TYPE.TEXT: {
-            const element = new TextElement(DEBUG_NAME);
-            const { 
-                text = "ERROR",
-                fontType = TextStyle.DEFAULT.FONT_TYPE,
-                fontSize = TextStyle.DEFAULT.FONT_SIZE,
-                align = TextStyle.TEXT_ALIGNMENT.LEFT,
-                color = [0, 0, 0, 255]
-            } = config;
-
-            element.setPosition(x, y);
-            element.setOpacity(opacity);
-            element.setOrigin(x, y);
-            element.setAnchor(anchor);
-
-            element.setText(text);
-            element.style.setFontType(fontType);
-            element.style.setFontSize(fontSize);
-            element.style.setAlignment(align);
-            element.style.color.setColorArray(color);
-
-            return element;
-        }
-        default: {
-            const element = new Container(DEBUG_NAME);
-
-            element.setPosition(x, y);
-            element.setOpacity(opacity);
-            element.setOrigin(x, y);
-            element.setAnchor(anchor);
-
-            element.setSize(width, height);
-
-            Logger.log(Logger.CODE.ENGINE_WARN, "ElementType does not exist!", "UIManager.prototype.createElement", { "type": typeID });
-
-            return element;
-        }
-    }
-}
-
-UIManager.prototype.createInterfaceFromConfig = function(gameContext, userInterfaceType, userInterface) {
-    for(const elementID in userInterfaceType) {
-        const config = userInterfaceType[elementID];
-        const element = this.createElementFromConfig(config, elementID);
-
-        userInterface.addElement(element, elementID);   
-    }
-    
-    for(const elementID in userInterfaceType) {
-        const element = userInterface.getElement(elementID);
-        const config = userInterfaceType[elementID];
-        const { children, effects } = config;
-
-        userInterface.addEffects(gameContext, element, effects);
-        userInterface.addChildrenByID(elementID, children);
-    }
-}
-
 UIManager.prototype.createUIByID = function(interfaceID, gameContext) {
-    const config = this.interfaceTypes[interfaceID];
-
-    if(!config) {
-        Logger.log(Logger.CODE.ENGINE_ERROR, "Interface does not exist!", "UIManager.prototype.createUIByID", { "interfaceID": interfaceID });
-        return null;
-    }
-
     const userInterface = this.createUI(interfaceID);
 
     if(userInterface) {
-        this.createInterfaceFromConfig(gameContext, config, userInterface);
+        this.parser.createInterfaceFromConfig(gameContext, interfaceID, userInterface);
 
         userInterface.refreshRootElements(gameContext);
     }
