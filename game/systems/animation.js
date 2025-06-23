@@ -9,9 +9,9 @@ import { LookSystem } from "./look.js";
 export const AnimationSystem = function() {}
 
 AnimationSystem.SPRITE_ID = {
-    MOVE: "MOVE",
-    CARD: "CARD",
-    SELL: "SELL"
+    MOVE: 0,
+    CARD: 1,
+    SELL: 2
 };
 
 AnimationSystem.FIRE_OFFSET = {

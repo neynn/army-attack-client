@@ -1,10 +1,10 @@
 import { TextStyle } from "../graphics/textStyle.js";
+import { SHAPE } from "../math/constants.js";
 import { Button } from "./elements/button.js";
 import { Container } from "./elements/container.js";
 import { Icon } from "./elements/icon.js";
 import { Scrollbar } from "./elements/scrollbar.js";
 import { TextElement } from "./elements/textElement.js";
-import { SHAPE } from "../math/constants.js";
 
 export const UIParser = function() {
     this.interfaceTypes = {};

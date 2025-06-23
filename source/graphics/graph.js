@@ -5,7 +5,7 @@ export const Graph = function(DEBUG_NAME = "") {
     this.positionX = 0;
     this.positionY = 0;
     this.opacity = 1;
-    this.name = "";
+    this.customID = Graph.ID.INVALID;
     this.parent = null;
     this.children = [];
 }
@@ -114,7 +114,7 @@ Graph.prototype.draw = function(display, viewportX, viewportY) {
         const graph = stack.pop();
         const { children, opacity } = graph;
 
-        display.context.globalAlpha = opacity;
+        display.setAlpha(opacity);
         graph.onDraw(display, localX, localY);
 
         for(let i = children.length - 1; i >= 0; i--) {
@@ -185,11 +185,11 @@ Graph.prototype.hasParent = function() {
     return this.parent !== null;
 }
 
-Graph.prototype.hasChild = function(name) {
+Graph.prototype.isReserved = function(customID) {
     for(let i = 0; i < this.children.length; i++) {
         const child = this.children[i];
 
-        if(child.name === name) {
+        if(child.customID === customID) {
             return true;
         }
     }
@@ -209,11 +209,11 @@ Graph.prototype.getChildByID = function(id) {
     return null;
 }
 
-Graph.prototype.getChild = function(name) {
+Graph.prototype.getChild = function(customID) {
     for(let i = 0; i < this.children.length; i++) {
         const child = this.children[i];
 
-        if(child.name === name) {
+        if(child.customID === customID) {
             return child;
         }
     }
@@ -245,15 +245,7 @@ Graph.prototype.closeGraph = function() {
     this.children.length = 0;
 }
 
-Graph.prototype.getChildName = function(childID, name) {
-    if(typeof name !== "string" || this.hasChild(name)) {
-        return childID;
-    }
-
-    return name;
-}
-
-Graph.prototype.addChild = function(child, name) {
+Graph.prototype.addChild = function(child, customID = Graph.ID.INVALID) {
     const childID = child.getID();
     const activeChild = this.findByID(childID);
 
@@ -261,19 +253,19 @@ Graph.prototype.addChild = function(child, name) {
         return null;
     }
 
-    const childName = this.getChildName(childID, name);
+    const usedID = this.isReserved(customID) ? Graph.ID.INVALID : customID;
 
-    child.setName(childName);
+    child.setCustomID(usedID);
     child.setParent(this);
 
     this.children.push(child);
 
-    return childName;
+    return usedID;
 }
 
-Graph.prototype.setName = function(name) {
-    if(name !== undefined) {
-        this.name = name;
+Graph.prototype.setCustomID = function(customID) {
+    if(customID !== undefined) {
+        this.customID = customID;
     }
 }
 

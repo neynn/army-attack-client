@@ -165,11 +165,10 @@ UserInterface.prototype.addChildrenByID = function(parentID, children) {
     }
 
     for(let i = 0; i < children.length; i++) {
-        const childID = children[i];
-        const child = this.getElement(childID);
+        const child = this.getElement(children[i]);
 
         if(child) {
-            parent.addChild(child, childID);
+            parent.addChild(child);
         }
     }
 }

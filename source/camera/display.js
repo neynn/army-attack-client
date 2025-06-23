@@ -155,3 +155,19 @@ Display.prototype.getImageData = function() {
 
     return this.imageData;
 }
+
+Display.prototype.stackAlpha = function(alpha) {
+    const nextAlpha = alpha * this.context.globalAlpha;
+
+    if(nextAlpha < 0) {
+        this.context.globalAlpha = 0;
+    } else if(nextAlpha > 1) {
+        this.context.globalAlpha = 1;
+    } else {
+        this.context.globalAlpha = nextAlpha;
+    }
+}
+
+Display.prototype.setAlpha = function(alpha) {
+    this.context.globalAlpha = alpha;
+}
