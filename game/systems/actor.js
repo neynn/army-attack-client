@@ -6,6 +6,7 @@ import { CameraContext } from "../../source/camera/cameraContext.js";
 import { ArmyContext } from "../armyContext.js";
 import { ArmyCamera } from "../armyCamera.js";
 import { DefaultTypes } from "../defaultTypes.js";
+import { ACTOR_ID } from "../enums.js";
 
 const ACTOR_TYPE = {
     PLAYER: "Player",
@@ -116,11 +117,6 @@ const createActor = function(gameContext, actorID, team, type) {
  */
 export const ActorSystem = function() {}
 
-ActorSystem.STORY_ID = {
-    PLAYER: "Player",
-    ENEMY: "Enemy"
-};
-
 /**
  * Creates and actor based on the config.
  *  
@@ -152,10 +148,10 @@ ActorSystem.createActor = function(gameContext, actorID, config) {
 ActorSystem.createStoryPlayer = function(gameContext, teamID) {
     const { world } = gameContext;
     const { turnManager } = world;
-    const actor = createActor(gameContext, ActorSystem.STORY_ID.PLAYER, teamID, ACTOR_TYPE.PLAYER);
+    const actor = createActor(gameContext, ACTOR_ID.STORY_PLAYER, teamID, ACTOR_TYPE.PLAYER);
 
     if(actor) {
-        turnManager.addActor(ActorSystem.STORY_ID.PLAYER, actor);
+        turnManager.addActor(ACTOR_ID.STORY_PLAYER, actor);
     }
 
     return actor;
@@ -171,10 +167,10 @@ ActorSystem.createStoryPlayer = function(gameContext, teamID) {
 ActorSystem.createStoryEnemy = function(gameContext, teamID) {
     const { world } = gameContext;
     const { turnManager } = world;
-    const actor = createActor(gameContext, ActorSystem.STORY_ID.ENEMY, teamID, ACTOR_TYPE.ENEMY);
+    const actor = createActor(gameContext, ACTOR_ID.STORY_ENEMY, teamID, ACTOR_TYPE.ENEMY);
 
     if(actor) {
-        turnManager.addActor(ActorSystem.STORY_ID.ENEMY, actor);
+        turnManager.addActor(ACTOR_ID.STORY_ENEMY, actor);
     }
 
     return actor;

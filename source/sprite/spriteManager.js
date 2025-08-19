@@ -1,10 +1,10 @@
 import { Logger } from "../logger.js";
 import { Sprite } from "./sprite.js";
 import { ObjectPool } from "../objectPool.js";
-import { SpriteGraphics } from "./spriteGraphics.js";
+import { SpriteTextureHandler } from "./spriteTextureHandler.js";
 
 export const SpriteManager = function() {
-    this.graphics = new SpriteGraphics();
+    this.graphics = new SpriteTextureHandler();
     this.spriteTracker = new Set();
     this.sprites = new ObjectPool(1024, (index) => new Sprite(this, index, index));
     this.sprites.allocate();
@@ -80,7 +80,7 @@ SpriteManager.prototype.createSprite = function(typeID, layerID = null) {
     const spriteID = sprite.getID();
 
     this.spriteTracker.add(spriteID);
-    this.updateSpriteGraphics(sprite, typeID);
+    this.updateSpriteTexture(sprite, typeID);
 
     return sprite;
 }
@@ -172,20 +172,20 @@ SpriteManager.prototype.removeSpriteFromLayers = function(spriteIndex) {
     }
 }
 
-SpriteManager.prototype.updateSpriteGraphics = function(sprite, spriteID) {
-    const containerID = this.graphics.getContainerID(spriteID);
-    const container = this.graphics.getContainer(containerID);
+SpriteManager.prototype.updateSpriteTexture = function(sprite, spriteID) {
+    const containerIndex = this.graphics.getContainerIndex(spriteID);
+    const container = this.graphics.getContainer(containerIndex);
 
     if(!container) {
-        Logger.log(Logger.CODE.ENGINE_WARN, "Container does not exist!", "SpriteManager.prototype.updateSpriteGraphics", { "containerID": containerID });
+        Logger.log(Logger.CODE.ENGINE_WARN, "Container does not exist!", "SpriteManager.prototype.updateSpriteTexture", { "containerIndex": containerIndex });
         return;
     }
 
-    if(!sprite.isEqual(containerID)) {
+    if(!sprite.isEqual(containerIndex)) {
         const { frameTime, frameCount, bounds } = container;
         const { x, y, w, h } = bounds;
 
-        sprite.init(spriteID, containerID, frameCount, frameTime, this.timestamp);
+        sprite.init(spriteID, containerIndex, frameCount, frameTime, this.timestamp);
         sprite.setBounds(x, y, w, h);
         
         this.graphics.loadBitmap(spriteID);
@@ -200,5 +200,5 @@ SpriteManager.prototype.updateSprite = function(spriteIndex, spriteID) {
         return;
     }
 
-    this.updateSpriteGraphics(sprite, spriteID);
+    this.updateSpriteTexture(sprite, spriteID);
 }

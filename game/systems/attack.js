@@ -215,8 +215,8 @@ AttackSystem.updateTarget = function(gameContext, target, actorID, reason) {
             break;
         }
         case AttackSystem.OUTCOME_STATE.DOWN: {
-            eventBus.emit(ArmyEventHandler.TYPE.ENTITY_DOWN, EntityDownEvent.createEvent(id, actorID, damage, reason)); 
             eventBus.emit(ArmyEventHandler.TYPE.ENTITY_HIT, EntityHitEvent.createEvent(id, actorID, damage, reason));
+            eventBus.emit(ArmyEventHandler.TYPE.ENTITY_DOWN, EntityDownEvent.createEvent(id, actorID, damage, reason)); 
             break;
         }
     }

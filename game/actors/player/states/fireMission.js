@@ -33,7 +33,7 @@ PlayerFireMissionState.prototype.onEnter = function(gameContext, stateMachine, t
 PlayerFireMissionState.prototype.onExit = function(gameContext, stateMachine) {
     const player = stateMachine.getContext();
 
-    player.camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.FIRE_MISSION);
+    player.camera.clearOverlay(ArmyCamera.OVERLAY.FIRE_MISSION);
 
     this.missionID = null;
 }
@@ -101,7 +101,7 @@ PlayerFireMissionState.prototype.showBlockedEntities = function(gameContext, pla
     const { camera } = player;
     const disabledID = tileManager.getTileIDByArray(player.config.overlays.disabled);
 
-    camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.FIRE_MISSION);
+    camera.clearOverlay(ArmyCamera.OVERLAY.FIRE_MISSION);
 
     entityManager.forAllEntities((entityID, entity) => {
         const isTargetable = FireMissionSystem.isTargetable(entity);
@@ -114,7 +114,7 @@ PlayerFireMissionState.prototype.showBlockedEntities = function(gameContext, pla
 
             for(let i = tileY; i < endY; i++) {
                 for(let j = tileX; j < endX; j++) {
-                    camera.pushOverlay(ArmyCamera.OVERLAY_TYPE.FIRE_MISSION, disabledID, j, i);
+                    camera.pushOverlay(ArmyCamera.OVERLAY.FIRE_MISSION, disabledID, j, i);
                 }
             }
         }

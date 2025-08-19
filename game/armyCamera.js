@@ -1,34 +1,47 @@
 import { Renderer } from "../source/renderer.js";
-import { Camera2D } from "../source/camera/types/camera2D.js";
+import { Camera2D } from "../source/camera/camera2D.js";
 import { SpriteManager } from "../source/sprite/spriteManager.js";
 import { PathfinderSystem } from "./systems/pathfinder.js";
 import { Layer } from "../source/map/layer.js";
 import { ArmyMap } from "./init/armyMap.js";
+import { Overlay } from "../source/camera/overlay.js";
 
 export const ArmyCamera = function() {
     Camera2D.call(this);
 
-    this.overlay.createOverlay(ArmyCamera.OVERLAY_TYPE.ATTACK);
-    this.overlay.createOverlay(ArmyCamera.OVERLAY_TYPE.MOVE);
-    this.overlay.createOverlay(ArmyCamera.OVERLAY_TYPE.RANGE);
-    this.overlay.createOverlay(ArmyCamera.OVERLAY_TYPE.FIRE_MISSION);
-
+    this.overlays = [];
+    this.overlays[ArmyCamera.OVERLAY.ATTACK] = new Overlay();
+    this.overlays[ArmyCamera.OVERLAY.MOVE] = new Overlay();
+    this.overlays[ArmyCamera.OVERLAY.RANGE] = new Overlay();
+    this.overlays[ArmyCamera.OVERLAY.FIRE_MISSION] = new Overlay();
     this.border = new Layer(0, 0);
     this.place = new Layer(0, 0);
 }
 
-ArmyCamera.OVERLAY_TYPE = {
-    ATTACK: "ATTACK",
-    MOVE: "MOVE",
-    RANGE: "RANGE",
-    FIRE_MISSION: "FIRE_MISSION"
+ArmyCamera.OVERLAY = {
+    ATTACK: 0,
+    MOVE: 1,
+    RANGE: 2,
+    FIRE_MISSION: 3
 };
 
 ArmyCamera.prototype = Object.create(Camera2D.prototype);
 ArmyCamera.prototype.constructor = ArmyCamera;
 
-ArmyCamera.prototype.resizeBorder = function(newWidth, newHeight) {
-    this.border.resize(newWidth, newHeight);
+ArmyCamera.prototype.pushOverlay = function(index, tileID, positionX, positionY) {
+    if(index < 0 || index >= this.overlays.length) {
+        return;
+    }
+
+    this.overlays[index].add(tileID, positionX, positionY);
+}
+
+ArmyCamera.prototype.clearOverlay = function(index) {
+    if(index < 0 || index >= this.overlays.length) {
+        return;
+    }
+
+    this.overlays[index].clear();
 }
 
 ArmyCamera.prototype.drawDebris = function(tileManager, context, worldMap) {
@@ -87,14 +100,14 @@ ArmyCamera.prototype.update = function(gameContext, display) {
 
     this.drawLayer(graphics, context, worldMap.getLayer(ArmyMap.LAYER.DECORATION));
     this.drawDebris(tileManager, context, worldMap);
-    this.drawOverlay(graphics, context, ArmyCamera.OVERLAY_TYPE.MOVE);
-    this.drawOverlay(graphics, context, ArmyCamera.OVERLAY_TYPE.ATTACK);
+    this.drawOverlay(graphics, context, this.overlays[ArmyCamera.OVERLAY.MOVE]);
+    this.drawOverlay(graphics, context, this.overlays[ArmyCamera.OVERLAY.ATTACK]);
     this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.BOTTOM), realTime, deltaTime);
     this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.MIDDLE), realTime, deltaTime);
     display.unflip();
     this.drawLayer(graphics, context, this.place);
-    this.drawOverlay(graphics, context, ArmyCamera.OVERLAY_TYPE.FIRE_MISSION);
-    this.drawOverlay(graphics, context, ArmyCamera.OVERLAY_TYPE.RANGE);
+    this.drawOverlay(graphics, context, this.overlays[ArmyCamera.OVERLAY.FIRE_MISSION]);
+    this.drawOverlay(graphics, context, this.overlays[ArmyCamera.OVERLAY.RANGE]);
     this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.TOP), realTime, deltaTime);
     this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.UI), realTime, deltaTime);
     this.drawDrops(display, worldMap, realTime, deltaTime);
@@ -134,7 +147,7 @@ ArmyCamera.prototype.updateMoveOverlay = function(gameContext, nodeList, enableT
     const { world } = gameContext;
     const showInvalidTiles = gameContext.settings.debug.showInvalidMoveTiles;
 
-    this.clearOverlay(ArmyCamera.OVERLAY_TYPE.MOVE);
+    this.clearOverlay(ArmyCamera.OVERLAY.MOVE);
 
     for(let i = 0; i < nodeList.length; i++) {
         const { node, state } = nodeList[i];
@@ -142,14 +155,14 @@ ArmyCamera.prototype.updateMoveOverlay = function(gameContext, nodeList, enableT
 
         if(state !== PathfinderSystem.NODE_STATE.VALID) {
             if(showInvalidTiles) {
-                this.pushOverlay(ArmyCamera.OVERLAY_TYPE.MOVE, attackTileID, positionX, positionY);
+                this.pushOverlay(ArmyCamera.OVERLAY.MOVE, attackTileID, positionX, positionY);
             }
 
         } else {
             const tileEntity = world.getTileEntity(positionX, positionY);
 
             if(!tileEntity) {
-                this.pushOverlay(ArmyCamera.OVERLAY_TYPE.MOVE, enableTileID, positionX, positionY);
+                this.pushOverlay(ArmyCamera.OVERLAY.MOVE, enableTileID, positionX, positionY);
             }
         } 
     }
@@ -162,10 +175,10 @@ ArmyCamera.prototype.initCustomLayers = function(gameContext) {
 
     this.border.initBuffer(containerCount);
     this.place.initBuffer(containerCount);
-    this.onMapSizeSet();
+    this.onMapSizeUpdate();
 }
 
-ArmyCamera.prototype.onMapSizeSet = function() {
+ArmyCamera.prototype.onMapSizeUpdate = function() {
     this.border.resize(this.mapWidth, this.mapHeight);
     this.place.resize(this.mapWidth, this.mapHeight);
 }

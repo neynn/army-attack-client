@@ -40,9 +40,7 @@ ActionQueue.prototype.isSendable = function(typeID) {
         return false;
     }
 
-    const isSendable = actionType.isSendable();
-
-    return isSendable;
+    return actionType.isSendable;
 }
 
 ActionQueue.prototype.updateInstant = function(gameContext) {

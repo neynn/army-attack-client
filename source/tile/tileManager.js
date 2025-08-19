@@ -1,8 +1,8 @@
-import { TileGraphics } from "./tileGraphics.js";
+import { TileTextureHandler } from "./tileTextureHandler.js";
 import { Autotiler } from "./autotiler.js";
 
 export const TileManager = function() {
-    this.graphics = new TileGraphics();
+    this.graphics = new TileTextureHandler();
     this.autotilers = new Map();
     this.metaInversion = {};
     this.meta = [];

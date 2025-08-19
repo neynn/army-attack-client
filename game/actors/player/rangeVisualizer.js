@@ -71,7 +71,7 @@ RangeVisualizer.prototype.show = function(gameContext, entity) {
                 return Autotiler.RESPONSE.INVALID;
             });
 
-            this.camera.pushOverlay(ArmyCamera.OVERLAY_TYPE.RANGE, tileID, j, i);
+            this.camera.pushOverlay(ArmyCamera.OVERLAY.RANGE, tileID, j, i);
         }
     }
 }
@@ -81,7 +81,7 @@ RangeVisualizer.prototype.hide = function(gameContext) {
     const { entityManager } = world;
     const entity = entityManager.getEntity(this.lastTarget);
 
-    this.camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.RANGE);
+    this.camera.clearOverlay(ArmyCamera.OVERLAY.RANGE);
 
     if(entity) {
         const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);

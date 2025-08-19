@@ -1,12 +1,10 @@
-import { clampValue } from "../../math/math.js";
-import { Renderer } from "../../renderer.js";
-import { Camera } from "../camera.js";
-import { OverlayHandler } from "../overlay/overlayHandler.js";
+import { clampValue } from "../math/math.js";
+import { Renderer } from "../renderer.js";
+import { Camera } from "./camera.js";
 
 export const Camera2D = function() {
     Camera.call(this);
 
-    this.overlay = new OverlayHandler();
     this.mapWidth = 0;
     this.mapHeight = 0;
     this.tileWidth = -1;
@@ -42,20 +40,6 @@ Camera2D.prototype.setRelativeScale = function(tileWidth, tileHeight) {
 Camera.prototype.resetScale = function() {
     this.scaleX = 1;
     this.scaleY = 1;
-}
-
-Camera2D.prototype.pushOverlay = function(overlayID, tileID, positionX, positionY) {
-    const overlay = this.overlay.getOverlay(overlayID);
-
-    if(!overlay) {
-        return;
-    }
-
-    overlay.add(tileID, positionX, positionY);
-}
-
-Camera2D.prototype.clearOverlay = function(overlayID) {
-    this.overlay.clearOverlay(overlayID);
 }
 
 Camera2D.prototype.drawEmptyTile = function(context, renderX, renderY) {
@@ -105,13 +89,7 @@ Camera2D.prototype.drawTile = function(container, context, renderX, renderY) {
     }
 }
 
-Camera2D.prototype.drawOverlay = function(graphics, context, overlayID) {
-    const overlay = this.overlay.getOverlay(overlayID);
-
-    if(!overlay) {
-        return;
-    }
-
+Camera2D.prototype.drawOverlay = function(graphics, context, overlay) {
     const startX = this.startX;
     const startY = this.startY;
     const endX = this.endX;
@@ -120,13 +98,13 @@ Camera2D.prototype.drawOverlay = function(graphics, context, overlayID) {
     const tileHeight = this.tileHeight;
     const viewportX = this.viewportX;
     const viewportY = this.viewportY;
-    const { elements, gap } = overlay;
-    const length = elements.length;
+    const { elements, count } = overlay;
 
-    for(let i = 0; i < length; i += gap) {
-        const id = elements[i];
-        const x = elements[i + 1];
-        const y = elements[i + 2];
+    for(let i = 0; i < count; i++) {
+        const index = i * 3;
+        const id = elements[index];
+        const x = elements[index + 1];
+        const y = elements[index + 2];
 
         if(x >= startX && x <= endX && y >= startY && y <= endY) {
             const renderX = x * tileWidth - viewportX;
@@ -288,7 +266,7 @@ Camera2D.prototype.setTileSize = function(tileWidth, tileHeight) {
     this.setWorldSize(worldWidth, worldHeight);
 }
 
-Camera2D.prototype.onMapSizeSet = function() {}
+Camera2D.prototype.onMapSizeUpdate = function() {}
 
 Camera2D.prototype.setMapSize = function(mapWidth, mapHeight) {
     const worldWidth = mapWidth * this.tileWidth;
@@ -298,7 +276,7 @@ Camera2D.prototype.setMapSize = function(mapWidth, mapHeight) {
     this.mapHeight = mapHeight;
 
     this.setWorldSize(worldWidth, worldHeight);
-    this.onMapSizeSet();
+    this.onMapSizeUpdate();
 }
 
 Camera2D.prototype.updateWorldBounds = function() {

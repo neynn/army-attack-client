@@ -5,6 +5,7 @@ import { ActorSystem } from "../../../systems/actor.js";
 import { MapSystem } from "../../../systems/map.js";
 import { SpawnSystem } from "../../../systems/spawn.js";
 import { DefaultTypes } from "../../../defaultTypes.js";
+import { ACTOR_ID, TEAM_TYPE } from "../../../enums.js";
 
 export const StoryModePlayState = function() {}
 
@@ -15,28 +16,28 @@ StoryModePlayState.prototype.initStoryMode = function(gameContext) {
     const { world } = gameContext;
     const { turnManager } = world;
 
-    const player = ActorSystem.createStoryPlayer(gameContext, "Allies");
-    const enemy = ActorSystem.createStoryEnemy(gameContext, "Crimson");
+    const player = ActorSystem.createStoryPlayer(gameContext, TEAM_TYPE.ALLIES);
+    const enemy = ActorSystem.createStoryEnemy(gameContext, TEAM_TYPE.CRIMSON);
 
     player.setMaxActions(1);
     enemy.setMaxActions(1);
 
-    turnManager.setActorOrder(gameContext, [ActorSystem.STORY_ID.PLAYER, ActorSystem.STORY_ID.ENEMY]);
+    turnManager.setActorOrder(gameContext, [ACTOR_ID.STORY_PLAYER, ACTOR_ID.STORY_ENEMY]);
 
     const entities = [
-        DefaultTypes.createSpawnConfig("blue_battery", "Crimson", ActorSystem.STORY_ID.ENEMY, 4, 4),
-        DefaultTypes.createSpawnConfig("blue_infantry", "Allies", ActorSystem.STORY_ID.PLAYER, 7, 7),
-        DefaultTypes.createSpawnConfig("red_commandobunker", "Crimson", ActorSystem.STORY_ID.ENEMY, 6, 4),
-        DefaultTypes.createSpawnConfig("red_tank", "Crimson", ActorSystem.STORY_ID.ENEMY, 4, 3),
-        DefaultTypes.createSpawnConfig("blue_elite_commando", "Allies", ActorSystem.STORY_ID.PLAYER, 4, 5),
-        DefaultTypes.createSpawnConfig("blue_commando_ultimate", "Allies", ActorSystem.STORY_ID.PLAYER, 5, 5),
-        DefaultTypes.createSpawnConfig("blue_commando", "Allies", ActorSystem.STORY_ID.PLAYER, 5, 3),
-        DefaultTypes.createSpawnConfig("red_artillery", "Allies", ActorSystem.STORY_ID.PLAYER, 2, 3),
-        DefaultTypes.createSpawnConfig("blue_bootcamp_construction", "Allies", ActorSystem.STORY_ID.PLAYER, 2, 9),
-        DefaultTypes.createSpawnConfig("blue_elite_infantry", "Allies", ActorSystem.STORY_ID.PLAYER, 7, 3),
-        DefaultTypes.createSpawnConfig("red_battletank", "Allies", ActorSystem.STORY_ID.PLAYER, 3, 5),
-        DefaultTypes.createSpawnConfig("blue_elite_battletank", "Allies", ActorSystem.STORY_ID.PLAYER, 3, 4),
-        DefaultTypes.createSpawnConfig("blue_guardtower", "Allies", ActorSystem.STORY_ID.PLAYER, 5, 4)
+        DefaultTypes.createSpawnConfig("blue_battery", TEAM_TYPE.CRIMSON, ACTOR_ID.STORY_ENEMY, 4, 4),
+        DefaultTypes.createSpawnConfig("blue_infantry", TEAM_TYPE.ALLIES, ACTOR_ID.STORY_PLAYER, 7, 7),
+        DefaultTypes.createSpawnConfig("red_commandobunker", TEAM_TYPE.CRIMSON, ACTOR_ID.STORY_ENEMY, 6, 4),
+        DefaultTypes.createSpawnConfig("red_tank", TEAM_TYPE.CRIMSON, ACTOR_ID.STORY_ENEMY, 4, 3),
+        DefaultTypes.createSpawnConfig("blue_elite_commando", TEAM_TYPE.ALLIES, ACTOR_ID.STORY_PLAYER, 4, 5),
+        DefaultTypes.createSpawnConfig("blue_commando_ultimate", TEAM_TYPE.ALLIES, ACTOR_ID.STORY_PLAYER, 5, 5),
+        DefaultTypes.createSpawnConfig("blue_commando", TEAM_TYPE.ALLIES, ACTOR_ID.STORY_PLAYER, 5, 3),
+        DefaultTypes.createSpawnConfig("red_artillery", TEAM_TYPE.ALLIES, ACTOR_ID.STORY_PLAYER, 2, 3),
+        DefaultTypes.createSpawnConfig("blue_bootcamp_construction", TEAM_TYPE.ALLIES, ACTOR_ID.STORY_PLAYER, 2, 9),
+        DefaultTypes.createSpawnConfig("blue_elite_infantry", TEAM_TYPE.ALLIES, ACTOR_ID.STORY_PLAYER, 7, 3),
+        DefaultTypes.createSpawnConfig("red_battletank", TEAM_TYPE.ALLIES, ACTOR_ID.STORY_PLAYER, 3, 5),
+        DefaultTypes.createSpawnConfig("blue_elite_battletank", TEAM_TYPE.ALLIES, ACTOR_ID.STORY_PLAYER, 3, 4),
+        DefaultTypes.createSpawnConfig("blue_guardtower", TEAM_TYPE.ALLIES, ACTOR_ID.STORY_PLAYER, 5, 4)
     ];
 
     MapSystem.createMapByID(gameContext, "oasis").then((worldMap) => {

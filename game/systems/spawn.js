@@ -208,6 +208,10 @@ const registerOwners = function(gameContext, owners, entity) {
     const entityID = entity.getID();
 
     switch(typeof owners) {
+        case "number": {
+            turnManager.addEntity(owners, entityID);
+            break;
+        }
         case "string": {
             turnManager.addEntity(owners, entityID);
             break;

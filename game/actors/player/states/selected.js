@@ -99,7 +99,7 @@ PlayerSelectedState.prototype.deselectEntity = function(gameContext, player) {
         AnimationSystem.stopSelect(gameContext, entity);
     }
 
-    player.camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.MOVE);
+    player.camera.clearOverlay(ArmyCamera.OVERLAY.MOVE);
     player.hover.clearNodes();
 
     this.entityID = EntityManager.ID.INVALID;

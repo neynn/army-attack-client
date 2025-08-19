@@ -15,7 +15,7 @@ AttackVisualizer.prototype.isAnyAttacking = function() {
 }
 
 AttackVisualizer.prototype.clearOverlay = function() {
-    this.camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.ATTACK);
+    this.camera.clearOverlay(ArmyCamera.OVERLAY.ATTACK);
 }
 
 AttackVisualizer.prototype.resetAttackerSprite = function(gameContext, attackerID) {
@@ -35,7 +35,7 @@ AttackVisualizer.prototype.resetAttackers = function(gameContext) {
     for(const attackerID of this.attackers.previous) {
         const attacker = entityManager.getEntity(attackerID);
 
-        if(attacker) {
+        if(attacker && attacker.isAlive()) {
             attacker.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
         }
     }
@@ -44,13 +44,13 @@ AttackVisualizer.prototype.resetAttackers = function(gameContext) {
 }
 
 AttackVisualizer.prototype.updateAttackerOverlay = function(attackers, overlayID) {
-    this.camera.clearOverlay(ArmyCamera.OVERLAY_TYPE.ATTACK);
+    this.camera.clearOverlay(ArmyCamera.OVERLAY.ATTACK);
 
     for(let i = 0; i < attackers.length; i++) {
         const attacker = attackers[i];
         const { tileX, tileY } = attacker.getComponent(ArmyEntity.COMPONENT.POSITION);
 
-        this.camera.pushOverlay(ArmyCamera.OVERLAY_TYPE.ATTACK, overlayID, tileX, tileY);
+        this.camera.pushOverlay(ArmyCamera.OVERLAY.ATTACK, overlayID, tileX, tileY);
     }
 }
 

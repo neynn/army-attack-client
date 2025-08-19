@@ -1,7 +1,7 @@
 import { TextureLoader } from "../resources/textureLoader.js";
 import { TileContainer } from "./tileContainer.js";
 
-export const TileGraphics = function() {
+export const TileTextureHandler = function() {
     this.loader = new TextureLoader();
     this.containers = [];
     this.activeContainers = [];
@@ -12,15 +12,15 @@ export const TileGraphics = function() {
     }, { permanent: true });
 }
 
-TileGraphics.DEFAULT = {
+TileTextureHandler.DEFAULT = {
     FRAME_TIME: 1
 };
 
-TileGraphics.prototype.getContainerCount = function() {
+TileTextureHandler.prototype.getContainerCount = function() {
     return this.containers.length;
 }
 
-TileGraphics.prototype.getValidContainer = function(tileID) {
+TileTextureHandler.prototype.getValidContainer = function(tileID) {
     const index = tileID - 1;
 
     if(index < 0 || index >= this.containers.length) {
@@ -37,7 +37,7 @@ TileGraphics.prototype.getValidContainer = function(tileID) {
     return container;
 }
 
-TileGraphics.prototype.onTextureLoad = function(textureID, texture) {
+TileTextureHandler.prototype.onTextureLoad = function(textureID, texture) {
     const indices = this.atlases.get(textureID);
 
     if(!indices) {
@@ -53,14 +53,14 @@ TileGraphics.prototype.onTextureLoad = function(textureID, texture) {
     }
 }
 
-TileGraphics.prototype.load = function(atlases, tileMeta) {
+TileTextureHandler.prototype.load = function(atlases, tileMeta) {
     this.loader.createTextures(atlases);
 
     for(let i = 0; i < tileMeta.length; i++) {
         const { graphics } = tileMeta[i];
-        const [atlas, texture] = graphics;
+        const [atlasID, graphicID] = graphics;
         const container = new TileContainer();
-        const atlasConfig = atlases[atlas];
+        const atlasConfig = atlases[atlasID];
 
         this.containers.push(container);
 
@@ -68,30 +68,28 @@ TileGraphics.prototype.load = function(atlases, tileMeta) {
             continue;
         }
 
-        createGraphic(container, atlasConfig, texture);
+        TileTextureHandler.initContainer(container, atlasConfig, graphicID);
 
         const frameCount = container.getFrameCount();
 
-        if(frameCount === 0) {
-            continue;
-        }
+        if(frameCount > 0) {
+            if(frameCount > 1) {
+                this.activeContainers.push(i);
+            }
 
-        if(frameCount > 1) {
-            this.activeContainers.push(i);
-        }
-        
-        const usedSheet = this.atlases.get(atlas);
+            const usedSheet = this.atlases.get(atlasID);
 
-        if(usedSheet) {
-            usedSheet.push(i);
-        } else {
-            this.atlases.set(atlas, [i]);
-            this.loader.requestBitmap(atlas);
+            if(usedSheet) {
+                usedSheet.push(i);
+            } else {
+                this.atlases.set(atlasID, [i]);
+                this.loader.requestBitmap(atlasID);
+            }
         }
     }
 }
 
-TileGraphics.prototype.update = function(timestamp) {
+TileTextureHandler.prototype.update = function(timestamp) {
     for(let i = 0; i < this.activeContainers.length; i++) {
         const index = this.activeContainers[i];
         const container = this.containers[index];
@@ -100,17 +98,16 @@ TileGraphics.prototype.update = function(timestamp) {
     }
 }
 
-const createGraphic = function(animation, sheet, graphicID) {
-    const { regions = {}, patterns = {}, animations = {} } = sheet;
+TileTextureHandler.initContainer = function(container, atlas, graphicID) {
+    const { regions = {}, patterns = {}, animations = {} } = atlas;
     const frameData = regions[graphicID];
 
     if(frameData) {
         const frame = TileContainer.createFrame(frameData);
 
-        animation.setFrameTime(TileGraphics.DEFAULT.FRAME_TIME);
-        animation.addFrame(frame);
-
-        return animation;
+        container.setFrameTime(TileTextureHandler.DEFAULT.FRAME_TIME);
+        container.addFrame(frame);
+        return;
     } 
 
     const patternData = patterns[graphicID];
@@ -118,19 +115,18 @@ const createGraphic = function(animation, sheet, graphicID) {
     if(patternData) {
         const frame = TileContainer.createPatternFrame(patternData, regions);
 
-        animation.setFrameTime(TileGraphics.DEFAULT.FRAME_TIME);
-        animation.addFrame(frame);
-
-        return animation;
+        container.setFrameTime(TileTextureHandler.DEFAULT.FRAME_TIME);
+        container.addFrame(frame);
+        return;
     }
 
     const animationData = animations[graphicID];
 
     if(animationData) {
-        const frameTime = animationData.frameTime ?? TileGraphics.DEFAULT.FRAME_TIME;
+        const frameTime = animationData.frameTime ?? TileTextureHandler.DEFAULT.FRAME_TIME;
         const animationFrames = animationData.frames ?? [];
 
-        animation.setFrameTime(frameTime);
+        container.setFrameTime(frameTime);
 
         for(let i = 0; i < animationFrames.length; i++) {
             const frameID = animationFrames[i];
@@ -139,7 +135,7 @@ const createGraphic = function(animation, sheet, graphicID) {
             if(frameData) {
                 const frame = TileContainer.createFrame(frameData);
 
-                animation.addFrame(frame);
+                container.addFrame(frame);
                 continue;
             }
 
@@ -148,13 +144,9 @@ const createGraphic = function(animation, sheet, graphicID) {
             if(patternData) {
                 const frame = TileContainer.createPatternFrame(patternData, regions);
 
-                animation.addFrame(frame);
+                container.addFrame(frame);
                 continue;
             }
         }
-
-        return animation;
     }
-
-    return animation;
 }

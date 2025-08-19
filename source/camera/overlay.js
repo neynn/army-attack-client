@@ -1,7 +1,6 @@
 export const Overlay = function() {
     this.elements = [];
     this.count = 0;
-    this.gap = 3;
 }
 
 Overlay.prototype.add = function(id, x, y) {

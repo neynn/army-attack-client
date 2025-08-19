@@ -29,3 +29,15 @@ export const ACTION_TYPE = {
     CLEAR_DEBRIS: "ClearDebris",
     HEAL: "Heal"
 };
+
+export const ACTOR_ID = {
+    STORY_PLAYER: "PLAYER",
+    STORY_ENEMY: "ENEMY"
+};
+
+export const TEAM_TYPE = {
+    ALLIES: "Allies",
+    CRIMSON: "Crimson",
+    NEUTRAL: "Neutral",
+    VERSUS: "Versus"
+};

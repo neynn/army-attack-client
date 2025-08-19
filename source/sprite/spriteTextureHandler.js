@@ -1,20 +1,14 @@
 import { TextureLoader } from "../resources/textureLoader.js";
 import { SpriteContainer } from "./spriteContainer.js";
 
-export const SpriteGraphics = function() {
+export const SpriteTextureHandler = function() {
     this.loader = new TextureLoader();
     this.indexMap = new Map();
     this.textureMap = new Map();
     this.containers = [];
 }
 
-SpriteGraphics.prototype.addContainer = function(container) {
-    this.containers.push(container);
-
-    return this.containers.length - 1;
-}
-
-SpriteGraphics.prototype.getContainer = function(index) {
+SpriteTextureHandler.prototype.getContainer = function(index) {
     if(index < 0 || index >= this.containers.length) {
         return null;
     }
@@ -22,7 +16,7 @@ SpriteGraphics.prototype.getContainer = function(index) {
     return this.containers[index];
 }
 
-SpriteGraphics.prototype.getContainerID = function(spriteID) {
+SpriteTextureHandler.prototype.getContainerIndex = function(spriteID) {
     const index = this.indexMap.get(spriteID);
 
     if(index === undefined) {
@@ -32,7 +26,7 @@ SpriteGraphics.prototype.getContainerID = function(spriteID) {
     return index;
 }
 
-SpriteGraphics.prototype.loadBitmap = function(spriteID) {
+SpriteTextureHandler.prototype.loadBitmap = function(spriteID) {
     const textureID = this.textureMap.get(spriteID);
 
     if(!textureID) {
@@ -42,12 +36,10 @@ SpriteGraphics.prototype.loadBitmap = function(spriteID) {
     this.loader.requestBitmap(textureID);
 }
 
-SpriteGraphics.prototype.load = function(textures, sprites) {
+SpriteTextureHandler.prototype.load = function(textures, sprites) {
     this.loader.createTextures(textures);
     
-    const spriteKeys = Object.keys(sprites);
-
-    for(const spriteID of spriteKeys) {
+    for(const spriteID in sprites) {
         const spriteConfig = sprites[spriteID];
         const { texture, bounds, frameTime, frames } = spriteConfig;
         const textureObject = this.loader.getTexture(texture);
@@ -65,9 +57,8 @@ SpriteGraphics.prototype.load = function(textures, sprites) {
             continue;
         }
 
-        const containerIndex = this.addContainer(spriteContainer);
-
-        this.indexMap.set(spriteID, containerIndex);
+        this.containers.push(spriteContainer);
+        this.indexMap.set(spriteID, this.containers.length - 1);
         this.textureMap.set(spriteID, texture);
     }
 }

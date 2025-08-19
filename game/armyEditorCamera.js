@@ -1,5 +1,5 @@
 import { Renderer } from "../source/renderer.js";
-import { Camera2D } from "../source/camera/types/camera2D.js";
+import { Camera2D } from "../source/camera/camera2D.js";
 import { SpriteManager } from "../source/sprite/spriteManager.js";
 import { ArmyMap } from "./init/armyMap.js";
 import { EditorButton } from "../source/map/editor/editorButton.js";
@@ -9,13 +9,6 @@ export const ArmyEditorCamera = function(controller) {
 
     this.controller = controller;
 }
-
-ArmyEditorCamera.OVERLAY_TYPE = {
-    ATTACK: "ATTACK",
-    MOVE: "MOVE",
-    RANGE: "RANGE",
-    FIRE_MISSION: "FIRE_MISSION"
-};
 
 ArmyEditorCamera.prototype = Object.create(Camera2D.prototype);
 ArmyEditorCamera.prototype.constructor = ArmyEditorCamera;

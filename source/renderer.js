@@ -3,7 +3,7 @@ import { Display } from "./camera/display.js";
 import { EffectManager } from "./effects/effectManager.js";
 import { EventEmitter } from "./events/eventEmitter.js";
 import { CameraContext } from "./camera/cameraContext.js";
-import { Camera2D } from "./camera/types/camera2D.js";
+import { Camera2D } from "./camera/camera2D.js";
 
 export const Renderer = function() {
     this.contexts = [];

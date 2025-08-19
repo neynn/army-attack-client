@@ -2,6 +2,7 @@ import { DefaultTypes } from "../defaultTypes.js";
 import { ArmyEventHandler } from "../armyEventHandler.js";
 import { SpawnSystem } from "./spawn.js";
 import { EntityDeathEvent } from "../events/entityDeath.js";
+import { TEAM_TYPE } from "../enums.js";
 
 /**
  * Collection of functions revolving around debugging.
@@ -39,7 +40,7 @@ DebugSystem.spawnFullEntities = function(gameContext) {
 
     for(let i = 0; i < height; i++) {
         for(let j = 0; j < width; j++) {
-            SpawnSystem.createEntity(gameContext, DefaultTypes.createSpawnConfig("red_battletank", "Crimson", [], j, i));     
+            SpawnSystem.createEntity(gameContext, DefaultTypes.createSpawnConfig("red_battletank", TEAM_TYPE.CRIMSON, [], j, i));     
         }
     }
 }
