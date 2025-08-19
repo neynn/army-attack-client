@@ -58,7 +58,7 @@ ArmyCamera.prototype.drawDebris = function(tileManager, context, worldMap) {
             const renderX = x * this.tileWidth - this.viewportX;
             const renderY = y * this.tileHeight - this.viewportY;
 
-            this.drawTileEasy(graphics, debrisID, context, renderX, renderY);
+            this.drawTileSafe(graphics, debrisID, context, renderX, renderY);
         }
     });
 }

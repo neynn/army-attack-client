@@ -74,7 +74,7 @@ TileTextureHandler.prototype.load = function(atlases, tileMeta) {
 
         if(frameCount > 0) {
             if(frameCount > 1) {
-                this.activeContainers.push(i);
+                this.activeContainers.push(container);
             }
 
             const usedSheet = this.atlases.get(atlasID);
@@ -91,10 +91,7 @@ TileTextureHandler.prototype.load = function(atlases, tileMeta) {
 
 TileTextureHandler.prototype.update = function(timestamp) {
     for(let i = 0; i < this.activeContainers.length; i++) {
-        const index = this.activeContainers[i];
-        const container = this.containers[index];
-
-        container.updateFrameIndex(timestamp);
+        this.activeContainers[i].updateFrameIndex(timestamp);
     }
 }
 

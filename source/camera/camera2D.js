@@ -55,13 +55,46 @@ Camera2D.prototype.drawEmptyTile = function(context, renderX, renderY) {
     context.fillRect(renderX, renderY + height, width, height);
 }
 
-Camera2D.prototype.drawTileEasy = function(graphics, tileID, context, renderX, renderY) {
-    const container = graphics.getValidContainer(tileID);
+Camera2D.prototype.drawTileSafe = function(graphics, tileID, context, renderX, renderY) {
+    const index = tileID - 1;
 
-    if(!container) {
+    if(index < 0 || index >= graphics.containers.length) {
         this.drawEmptyTile(context, renderX, renderY);
-    } else {
-        this.drawTile(container, context, renderX, renderY);
+        return;
+    }
+
+    const container = graphics.containers[index];
+    const { texture, frameCount, frames, frameIndex } = container;
+
+    if(texture === null || frameCount === 0) {
+        this.drawEmptyTile(context, renderX, renderY);
+        return;
+    }
+
+    const { bitmap } = texture;
+    const currentFrame = frames[frameIndex];
+
+    this.drawFrame(context, bitmap, currentFrame, renderX, renderY);
+}
+
+Camera2D.prototype.drawFrame = function(context, bitmap, frame, renderX, renderY) {
+    const frameLength = frame.length;
+    const scaleX = this.scaleX;
+    const scaleY = this.scaleY;
+
+    for(let i = 0; i < frameLength; ++i) {
+        const component = frame[i];
+        const { frameX, frameY, frameW, frameH, shiftX, shiftY } = component;
+        const drawX = renderX + shiftX * scaleX;
+        const drawY = renderY + shiftY * scaleY;
+        const drawWidth = frameW * scaleX;
+        const drawHeight = frameH * scaleY;
+
+        context.drawImage(
+            bitmap,
+            frameX, frameY, frameW, frameH,
+            drawX, drawY, drawWidth, drawHeight
+        );
     }
 }
 
@@ -110,7 +143,7 @@ Camera2D.prototype.drawOverlay = function(graphics, context, overlay) {
             const renderX = x * tileWidth - viewportX;
             const renderY = y * tileHeight - viewportY;
 
-            this.drawTileEasy(graphics, id, context, renderX, renderY);
+            this.drawTileSafe(graphics, id, context, renderX, renderY);
         }
     }
 }
@@ -157,13 +190,8 @@ Camera2D.prototype.drawTileBuffer = function(graphics, context, buffer) {
 
             if(tileID !== 0) {
                 const renderX = j * tileWidth - viewportX;
-                const container = graphics.getValidContainer(tileID);
 
-                if(container) {
-                    this.drawTile(container, context, renderX, renderY);
-                } else {
-                    this.drawEmptyTile(context, renderX, renderY);
-                }
+                this.drawTileSafe(graphics, tileID, context, renderX, renderY);
             }
         }
     }

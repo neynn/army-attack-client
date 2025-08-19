@@ -11,35 +11,37 @@ TileContainer.DEFAULT = {
     FRAME_TIME: 1
 };
 
-TileContainer.createFrame = function(frameData) {
-    if(!frameData) {
-        console.warn("FrameData does not exist!");
-        return null;
-    }
-
-    const frame = [];
-    const { x, y, w, h, offset } = frameData;
-
-    const component = {
+TileContainer.createComponent = function(x, y, w, h, offsetX, offsetY) {
+    return {
         "frameX": x,
         "frameY": y,
         "frameW": w,
         "frameH": h,
-        "shiftX": (offset?.x ?? 0),
-        "shiftY": (offset?.y ?? 0)
-    };
-    
-    frame.push(component);
+        "shiftX": offsetX,
+        "shiftY": offsetY 
+    }
+}
 
-    return frame;
+TileContainer.createFrame = function(frameData) {
+    if(!frameData) {
+        console.warn("FrameData does not exist!");
+        return [];
+    }
+
+    const { x, y, w, h, offset } = frameData;
+    const offsetX = (offset?.x ?? 0);
+    const offsetY = (offset?.y ?? 0);
+    const component = TileContainer.createComponent(x, y, w, h, offsetX, offsetY);
+    
+    return [component];
 }
 
 TileContainer.createPatternFrame = function(pattern, frames) {
-    if(!pattern) {
-        return null;
-    }
-
     const frame = [];
+
+    if(!pattern) {
+        return frame;
+    }
 
     for(let i = 0; i < pattern.length; i++) {
         const { id, shiftX, shiftY } = pattern[i];
@@ -51,21 +53,11 @@ TileContainer.createPatternFrame = function(pattern, frames) {
         }
 
         const { x, y, w, h, offset } = frameData;
-
-        const component = {
-            "frameX": x,
-            "frameY": y,
-            "frameW": w,
-            "frameH": h,
-            "shiftX": (offset?.x ?? 0) + (shiftX ?? 0),
-            "shiftY": (offset?.y ?? 0) + (shiftY ?? 0)
-        };
+        const offsetX = (offset?.x ?? 0) + (shiftX ?? 0);
+        const offsetY = (offset?.y ?? 0) + (shiftY ?? 0);
+        const component = TileContainer.createComponent(x, y, w, h, offsetX, offsetY);
 
         frame.push(component);
-    }
-
-    if(frame.length === 0) {
-        return null;
     }
 
     return frame;

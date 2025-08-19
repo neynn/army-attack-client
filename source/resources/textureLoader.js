@@ -33,6 +33,24 @@ TextureLoader.DEFAULT = {
     FILE_TYPE: ".png"
 };
 
+TextureLoader.createImageData = function(bitmap) {
+    const { width, height } = bitmap;
+    const canvas = document.createElement("canvas");
+
+    canvas.width = width;
+    canvas.height = height;
+
+    const context = canvas.getContext("2d");
+
+    context.imageSmoothingEnabled = false;
+    context.drawImage(bitmap, 0, 0);
+
+    const imageData = context.getImageData(0, 0, width, height);
+    const pixelArray = imageData.data;
+
+    return pixelArray;
+}
+
 TextureLoader.prototype.getTexture = function(textureID) {
     const texture = this.textures.get(textureID);
 
@@ -77,29 +95,11 @@ TextureLoader.prototype.requestBitmap = function(textureID) {
     .catch((error) => this.events.emit(TextureLoader.EVENT.TEXTURE_ERROR, textureID, error));
 }
 
-TextureLoader.prototype.createImageData = function(bitmap) {
-    const { width, height } = bitmap;
-    const canvas = document.createElement("canvas");
-
-    canvas.width = width;
-    canvas.height = height;
-
-    const context = canvas.getContext("2d");
-
-    context.imageSmoothingEnabled = false;
-    context.drawImage(bitmap, 0, 0);
-
-    const imageData = context.getImageData(0, 0, width, height);
-    const pixelArray = imageData.data;
-
-    return pixelArray;
-}
-
 TextureLoader.prototype.onBitmapLoad = function(textureID, texture, bitmap) {
     let imageData = bitmap;
 
     if(this.textureType === TextureLoader.TEXTURE_TYPE.RAW) {
-        imageData = this.createImageData(bitmap);
+        imageData = TextureLoader.createImageData(bitmap);
     }
 
     texture.setImageData(bitmap, bitmap.width, bitmap.height);

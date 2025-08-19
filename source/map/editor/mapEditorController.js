@@ -348,7 +348,7 @@ MapEditorController.prototype.updatePalletButtonEvents = function(gameContext) {
 
             button.addCustomRender((context, localX, localY) => {
                 this.camera.setRelativeScale(this.slotButtonSize, this.slotButtonSize);
-                this.camera.drawTileEasy(graphics, tileID, context, localX, localY);
+                this.camera.drawTileSafe(graphics, tileID, context, localX, localY);
                 this.camera.resetScale();
             });
         }

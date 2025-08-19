@@ -195,7 +195,7 @@ UserInterface.prototype.addEffects = function(gameContext, element, effectList) 
 
 UserInterface.prototype.refreshRootElements = function(gameContext) {
     const { renderer } = gameContext;
-    const { w, h } = renderer.getWindow();
+    const { windowWidth, windowHeight } = renderer;
 
     this.roots.length = 0;
 
@@ -205,7 +205,7 @@ UserInterface.prototype.refreshRootElements = function(gameContext) {
         }
     }
 
-    this.updateRootAnchors(w, h);
+    this.updateRootAnchors(windowWidth, windowHeight);
 }
 
 UserInterface.prototype.updateRootAnchors = function(width, height) {

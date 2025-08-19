@@ -29,10 +29,10 @@ Renderer.EVENT = {
 };
 
 Renderer.DEBUG = {
-    CONTEXT: 0,
-    INTERFACE: 0,
-    SPRITES: 0,
-    MAP: 0
+    CONTEXT: false,
+    INTERFACE: false,
+    SPRITES: false,
+    MAP: false
 };
 
 Renderer.FPS_COLOR = {
@@ -125,10 +125,10 @@ Renderer.prototype.update = function(gameContext) {
         uiManager.debug(this.display);
     }
 
-    this.drawFPS(timer);
+    this.drawInfo(timer);
 }
 
-Renderer.prototype.drawFPS = function(timer) {
+Renderer.prototype.drawInfo = function(timer) {
     const { context } = this.display;
     const fps = Math.round(timer.getFPS());
     const text = `FPS: ${fps}`;
@@ -139,8 +139,20 @@ Renderer.prototype.drawFPS = function(timer) {
         context.fillStyle = Renderer.FPS_COLOR.BAD;
     }
     
-    context.font = `10px Arial`;
-    context.fillText(text, 0, 10);
+    const TEXT_SIZE = 10;
+    const WINDOW_Y = 0;
+    const DEBUG_Y = TEXT_SIZE * 5;
+
+    context.globalAlpha = 1;
+    context.font = `${TEXT_SIZE}px Arial`;
+    context.fillText(text, 0, WINDOW_Y + TEXT_SIZE);
+    context.fillText(`WindowX: ${this.windowWidth}`, 0, WINDOW_Y + TEXT_SIZE * 2);
+    context.fillText(`WindowY: ${this.windowHeight}`, 0, WINDOW_Y + TEXT_SIZE * 3);
+
+    context.fillText(`DEBUG-CONTEXT: ${Renderer.DEBUG.CONTEXT}`, 0, DEBUG_Y);
+    context.fillText(`DEBUG-INTERFACE: ${Renderer.DEBUG.INTERFACE}`, 0, DEBUG_Y + TEXT_SIZE);
+    context.fillText(`DEBUG-SPRITES: ${Renderer.DEBUG.SPRITES}`, 0, DEBUG_Y + TEXT_SIZE * 2);
+    context.fillText(`DEBUG-MAP: ${Renderer.DEBUG.MAP}`, 0, DEBUG_Y + TEXT_SIZE * 3);
 }
 
 Renderer.prototype.onWindowResize = function(width, height) {
@@ -165,13 +177,6 @@ Renderer.prototype.onMapSizeUpdate = function(mapWidth, mapHeight) {
         }
 
         context.refreshFull();
-    }
-}
-
-Renderer.prototype.getWindow = function() {
-    return {
-        "w": this.windowWidth,
-        "h": this.windowHeight
     }
 }
 

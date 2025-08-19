@@ -27,7 +27,7 @@ ArmyEditorCamera.prototype.drawDebris = function(tileManager, context, worldMap)
             const renderX = x * this.tileWidth - this.viewportX;
             const renderY = y * this.tileHeight - this.viewportY;
 
-            this.drawTileEasy(graphics, debrisID, context, renderX, renderY);
+            this.drawTileSafe(graphics, debrisID, context, renderX, renderY);
         }
     });
 }
@@ -106,7 +106,7 @@ ArmyEditorCamera.prototype.postDraw = function(gameContext, context) {
         const renderY = i * height - this.viewportY;
         const renderX = j * width - this.viewportX;
 
-        this.drawTileEasy(graphics, id, context, renderX, renderY);
+        this.drawTileSafe(graphics, id, context, renderX, renderY);
 
         context.fillText(name, renderX + halfWidth, renderY);  
     });
