@@ -168,7 +168,6 @@ Camera2D.prototype.drawTileBuffer = function(graphics, context, buffer) {
     const tileHeight = this.tileHeight;
     const viewportX = this.viewportX;
     const viewportY = this.viewportY;
-    const cache = Object.create(null);
 
     for(let i = startY; i <= endY; ++i) {
         const tileRow = i * mapWidth;
@@ -180,12 +179,7 @@ Camera2D.prototype.drawTileBuffer = function(graphics, context, buffer) {
 
             if(tileID !== 0) {
                 const renderX = j * tileWidth - viewportX;
-                let container = cache[tileID];
-
-                if(container === undefined) {
-                    container = graphics.getValidContainer(tileID);
-                    cache[tileID] = container;
-                }
+                const container = graphics.getValidContainer(tileID);
 
                 if(container) {
                     this.drawTile(container, context, renderX, renderY);

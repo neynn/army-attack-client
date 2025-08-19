@@ -94,11 +94,7 @@ ArmyEventHandler.prototype.addEventExecutor = function(gameContext) {
     const { world } = gameContext;
     const { eventBus } = world;
 
-    for(const eventName in ArmyEventHandler.TYPE) {
-        const eventID = ArmyEventHandler.TYPE[eventName];
-
-        eventBus.on(eventID, (event) => this.executeEvent(gameContext, eventID, event));
-    }
+    eventBus.onEvent((eventID, event) => this.executeEvent(gameContext, eventID, event));
 }
 
 ArmyEventHandler.prototype.executeEvent = function(gameContext, eventID, event) {

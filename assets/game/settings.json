@@ -1,6 +1,6 @@
 {
-    "tileWidth": 56,
-    "tileHeight": 56,
+    "tileWidth": 96,
+    "tileHeight": 96,
     "travelDistance": 96,
     "calculateBorder": true,
     "drawBorder": true,

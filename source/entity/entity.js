@@ -1,6 +1,6 @@
-export const Entity = function(DEBUG_NAME = "") {
+export const Entity = function(id, DEBUG_NAME = "") {
     this.DEBUG_NAME = DEBUG_NAME;
-    this.id = -1;
+    this.id = id;
     this.config = null;
     this.components = new Map();
     this.activeComponents = [];
@@ -13,12 +13,6 @@ Entity.DEBUG = {
 Entity.prototype.setConfig = function(config) {
     if(config !== undefined) {
         this.config = config;
-    }
-}
-
-Entity.prototype.setID = function(id) {
-    if(this.id === -1 && id !== undefined) {
-        this.id = id;
     }
 }
 

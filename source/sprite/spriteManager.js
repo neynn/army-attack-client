@@ -33,8 +33,8 @@ SpriteManager.prototype.getLayer = function(layerIndex) {
 }
 
 SpriteManager.prototype.preloadAtlas = function(atlasID) {
-    this.graphics.resources.requestBitmap(atlasID);
-    this.graphics.resources.addReference(atlasID);
+    this.graphics.loader.requestBitmap(atlasID);
+    this.graphics.loader.addReference(atlasID);
 }
 
 SpriteManager.prototype.load = function(textures, sprites) {

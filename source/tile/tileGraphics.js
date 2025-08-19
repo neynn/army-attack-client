@@ -1,18 +1,24 @@
-import { TextureHandler } from "../resources/textureHandler.js";
+import { TextureLoader } from "../resources/textureLoader.js";
 import { TileContainer } from "./tileContainer.js";
 
 export const TileGraphics = function() {
-    TextureHandler.call(this);
-
+    this.loader = new TextureLoader();
+    this.containers = [];
+    this.activeContainers = [];
     this.atlases = new Map();
-}
 
-TileGraphics.prototype = Object.create(TextureHandler.prototype);
-TileGraphics.prototype.constructor = TileGraphics;
+    this.loader.events.on(TextureLoader.EVENT.TEXTURE_LOAD, (textureID, texture) => {
+        this.onTextureLoad(textureID, texture);
+    }, { permanent: true });
+}
 
 TileGraphics.DEFAULT = {
     FRAME_TIME: 1
 };
+
+TileGraphics.prototype.getContainerCount = function() {
+    return this.containers.length;
+}
 
 TileGraphics.prototype.getValidContainer = function(tileID) {
     const index = tileID - 1;
@@ -48,7 +54,7 @@ TileGraphics.prototype.onTextureLoad = function(textureID, texture) {
 }
 
 TileGraphics.prototype.load = function(atlases, tileMeta) {
-    this.resources.createTextures(atlases);
+    this.loader.createTextures(atlases);
 
     for(let i = 0; i < tileMeta.length; i++) {
         const { graphics } = tileMeta[i];
@@ -56,7 +62,7 @@ TileGraphics.prototype.load = function(atlases, tileMeta) {
         const container = new TileContainer();
         const atlasConfig = atlases[atlas];
 
-        this.addContainer(container);
+        this.containers.push(container);
 
         if(!atlasConfig) {
             continue;
@@ -80,8 +86,17 @@ TileGraphics.prototype.load = function(atlases, tileMeta) {
             usedSheet.push(i);
         } else {
             this.atlases.set(atlas, [i]);
-            this.resources.requestBitmap(atlas);
+            this.loader.requestBitmap(atlas);
         }
+    }
+}
+
+TileGraphics.prototype.update = function(timestamp) {
+    for(let i = 0; i < this.activeContainers.length; i++) {
+        const index = this.activeContainers[i];
+        const container = this.containers[index];
+
+        container.updateFrameIndex(timestamp);
     }
 }
 

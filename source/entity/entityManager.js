@@ -1,10 +1,7 @@
 import { EventEmitter } from "../events/eventEmitter.js";
-import { FactoryOwner } from "../factory/factoryOwner.js";
 import { Logger } from "../logger.js";
 
 export const EntityManager = function() {
-    FactoryOwner.call(this);
-
     this.traits = {};
     this.archetypes = {};
     this.entityTypes = {};
@@ -28,9 +25,6 @@ EntityManager.EVENT = {
 EntityManager.ID = {
     INVALID: -1
 };
-
-EntityManager.prototype = Object.create(FactoryOwner.prototype);
-EntityManager.prototype.constructor = EntityManager;
 
 EntityManager.prototype.load = function(entityTypes, traits, archetypes) {
     if(entityTypes) {
@@ -129,21 +123,19 @@ EntityManager.prototype.getEntity = function(entityID) {
     return null;
 }
 
-EntityManager.prototype.createEntity = function(gameContext, config, externalID) {
+EntityManager.prototype.createEntity = function(onCreate, externalID) {
     const entityID = externalID !== undefined ? externalID : this.nextID++;
 
     if(this.entityMap.has(entityID)) {
         return null;
     }
 
-    const entity = this.createProduct(gameContext, config);
+    const entity = onCreate(entityID);
 
     if(!entity) {
         Logger.log(Logger.CODE.ENGINE_ERROR, "Factory has not returned an entity!", "EntityManager.prototype.createEntity", { "id": entityID, "config": config });
         return null;
     }
-
-    entity.setID(entityID);
 
     this.entityMap.set(entityID, this.entities.length);
     this.entities.push(entity);

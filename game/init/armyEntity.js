@@ -3,8 +3,8 @@ import { EventEmitter } from "../../source/events/eventEmitter.js";
 import { DirectionComponent } from "../components/direction.js";
 import { SpriteComponent } from "../components/sprite.js";
 
-export const ArmyEntity = function(DEBUG_NAME) {
-    Entity.call(this, DEBUG_NAME);
+export const ArmyEntity = function(id, DEBUG_NAME) {
+    Entity.call(this, id, DEBUG_NAME);
 
     this.events = new EventEmitter();
     this.events.listen(ArmyEntity.EVENT.HEALTH_UPDATE);

@@ -1,28 +1,29 @@
-import { TextureHandler } from "../resources/textureHandler.js";
+import { TextureLoader } from "../resources/textureLoader.js";
 import { SpriteContainer } from "./spriteContainer.js";
 
 export const SpriteGraphics = function() {
-    TextureHandler.call(this);
-
-    this.containerMap = new Map();
+    this.loader = new TextureLoader();
+    this.indexMap = new Map();
     this.textureMap = new Map();
+    this.containers = [];
 }
 
-SpriteGraphics.prototype = Object.create(TextureHandler.prototype);
-SpriteGraphics.prototype.constructor = SpriteGraphics;
+SpriteGraphics.prototype.addContainer = function(container) {
+    this.containers.push(container);
 
-SpriteGraphics.prototype.loadBitmap = function(spriteID) {
-    const textureID = this.textureMap.get(spriteID);
+    return this.containers.length - 1;
+}
 
-    if(!textureID) {
-        return;
+SpriteGraphics.prototype.getContainer = function(index) {
+    if(index < 0 || index >= this.containers.length) {
+        return null;
     }
 
-    this.resources.requestBitmap(textureID);
+    return this.containers[index];
 }
 
 SpriteGraphics.prototype.getContainerID = function(spriteID) {
-    const index = this.containerMap.get(spriteID);
+    const index = this.indexMap.get(spriteID);
 
     if(index === undefined) {
         return -1;
@@ -31,15 +32,25 @@ SpriteGraphics.prototype.getContainerID = function(spriteID) {
     return index;
 }
 
+SpriteGraphics.prototype.loadBitmap = function(spriteID) {
+    const textureID = this.textureMap.get(spriteID);
+
+    if(!textureID) {
+        return;
+    }
+
+    this.loader.requestBitmap(textureID);
+}
+
 SpriteGraphics.prototype.load = function(textures, sprites) {
-    this.resources.createTextures(textures);
+    this.loader.createTextures(textures);
     
     const spriteKeys = Object.keys(sprites);
 
     for(const spriteID of spriteKeys) {
         const spriteConfig = sprites[spriteID];
         const { texture, bounds, frameTime, frames } = spriteConfig;
-        const textureObject = this.resources.getTexture(texture);
+        const textureObject = this.loader.getTexture(texture);
 
         if(!textureObject || !frames) {
             console.warn(`Texture ${texture} of sprite ${spriteID} does not exist!`);
@@ -54,9 +65,9 @@ SpriteGraphics.prototype.load = function(textures, sprites) {
             continue;
         }
 
-        const containerID = this.addContainer(spriteContainer);
+        const containerIndex = this.addContainer(spriteContainer);
 
-        this.containerMap.set(spriteID, containerID);
+        this.indexMap.set(spriteID, containerIndex);
         this.textureMap.set(spriteID, texture);
     }
 }
