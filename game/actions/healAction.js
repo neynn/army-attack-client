@@ -1,6 +1,9 @@
 import { Action } from "../../source/action/action.js";
 import { ActionRequest } from "../../source/action/actionRequest.js";
+import { Inventory } from "../actors/player/inventory/inventory.js";
+import { DefaultTypes } from "../defaultTypes.js";
 import { ACTION_TYPE } from "../enums.js";
+import { ArmyEntity } from "../init/armyEntity.js";
 import { AnimationSystem } from "../systems/animation.js";
 import { DecaySystem } from "../systems/decay.js";
 import { HealSystem } from "../systems/heal.js";
@@ -15,7 +18,7 @@ HealAction.prototype.constructor = HealAction;
 HealAction.prototype.onStart = function(gameContext, request) {
     const { world } = gameContext;
     const { entityManager, turnManager } = world;
-    const { entityID, actorID, cost } = request;
+    const { entityID, actorID, transaction } = request;
     const entity = entityManager.getEntity(entityID);
     const actor = turnManager.getActor(actorID);
 
@@ -23,7 +26,7 @@ HealAction.prototype.onStart = function(gameContext, request) {
     AnimationSystem.playHeal(gameContext, entity);
 
     if(actor.inventory) {
-        actor.inventory.removeByTransaction(cost);
+        actor.inventory.handleTransaction(transaction);
     }
 }
 
@@ -61,15 +64,15 @@ HealAction.prototype.getValidated = function(gameContext, request) {
         return null;
     }
 
-    const health = HealSystem.getMissingHealth(entity);
-    const supplyCost = HealSystem.getSuppliesRequired(entity, health);
-    const cost = HealSystem.getHealCost(supplyCost);
+    const missingHealth = entity.getComponent(ArmyEntity.COMPONENT.HEALTH).getMissing();
+    const supplyCost = HealSystem.getSuppliesRequired(entity, missingHealth);
+    const transaction = DefaultTypes.createItemTransaction(Inventory.TYPE.RESOURCE, HealSystem.HEAL_RESOURCE, -supplyCost);
 
     return {
         "entityID": entityID,
         "actorID": actorID,
-        "health": health,
-        "cost": cost
+        "health": missingHealth,
+        "transaction": transaction
     }
 }
 

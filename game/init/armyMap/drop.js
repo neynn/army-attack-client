@@ -79,5 +79,5 @@ Drop.prototype.update = function(gameContext, deltaTime) {
 }
 
 Drop.prototype.collect = function() {
-    this.inventory.addByTransaction(this.transaction);
+    this.inventory.handleTransaction(this.transaction);
 }

@@ -20,11 +20,12 @@ DropHandler.prototype.createDrop = function(gameContext, type, id, value, invent
 
 DropHandler.prototype.createDrops = function(gameContext, drops, inventory) {
     for(let i = 0; i < drops.length; i++) {
-        const { type, id, value } = drops[i];
+        const drop = drops[i];
+        const { type, id, value } = drop;
         const maxDrop = inventory.getMaxDrop(type, id);
 
         if(maxDrop === 0) {
-            inventory.add(type, id, value);
+            inventory.handleTransaction(drop);
             continue;
         }
 

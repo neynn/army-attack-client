@@ -71,7 +71,7 @@ PlayerPlaceState.prototype.onClick = function(gameContext, stateMachine) {
 
     if(entity) {
         soundPlayer.play(player.config.sounds.place);
-        inventory.removeByTransaction(this.transaction);
+        inventory.handleTransaction(this.transaction);
     }
 
     stateMachine.setNextState(gameContext, Player.STATE.IDLE);

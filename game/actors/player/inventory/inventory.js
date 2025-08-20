@@ -120,56 +120,28 @@ Inventory.prototype.getMaxDrop = function(type, id) {
 
 Inventory.prototype.has = function(type, id, value) {
     const itemType = this.getItem(type, id);
+    const hasItem = itemType && itemType.has(value);
 
-    if(!itemType) {
-        return false;
-    }
-
-    return itemType.has(value);
+    return hasItem;
 }
 
-Inventory.prototype.remove = function(type, id, value) {
-    const itemType = this.getItem(type, id);
+Inventory.prototype.handleTransaction = function(transaction) {
+    if(transaction) {
+        const { type, id, value } = transaction;
+        const itemType = this.getItem(type, id);
 
-    if(itemType) {
-        itemType.remove(value);
+        if(itemType) {
+            itemType.update(value);
+        }
     }
-}
-
-Inventory.prototype.add = function(type, id, value) {
-    const itemType = this.getItem(type, id);
-
-    if(itemType) {
-        itemType.add(value);
-    }
-}
-
-Inventory.prototype.addByTransaction = function(itemTransaction) {
-    if(!itemTransaction) {
-        return;
-    }
-
-    const { type, id, value } = itemTransaction;
-
-    this.add(type, id, value);
-}
-
-Inventory.prototype.removeByTransaction = function(itemTransaction) {
-    if(!itemTransaction) {
-        return;
-    }
-
-    const { type, id, value } = itemTransaction;
-
-    this.remove(type, id, value);
 }
 
 Inventory.prototype.updateEnergyCounter = function() {
     const energyCounter = this.getItem(Inventory.TYPE.RESOURCE, Inventory.ID.ENERGY_COUNTER);
     const energyDrops = Math.floor(energyCounter.getCount() / Inventory.COUNTER_TO_ENERGY_RATIO);
-    const removedCounter = energyDrops * Inventory.COUNTER_TO_ENERGY_RATIO;
+    const counterSpent = energyDrops * Inventory.COUNTER_TO_ENERGY_RATIO;
 
-    energyCounter.remove(removedCounter);
+    energyCounter.update(-counterSpent);
 
     return energyDrops;
 }

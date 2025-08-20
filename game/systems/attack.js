@@ -136,7 +136,7 @@ AttackSystem.getAttackTarget = function(target, attackers) {
     let isBulldozed = false;
 
     if(armorComponent) {
-        totalArmor += armorComponent.getArmor();
+        totalArmor += armorComponent.armor;
     }
 
     for(let i = 0; i < attackers.length; i++) {

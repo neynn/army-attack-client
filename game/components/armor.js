@@ -9,7 +9,3 @@ ArmorComponent.prototype.init = function(config) {
         this.armor = armor;
     }
 }
-
-ArmorComponent.prototype.getArmor = function() {
-    return this.armor;
-}

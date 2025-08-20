@@ -1,6 +1,5 @@
 import { Inventory } from "../actors/player/inventory/inventory.js";
 import { ArmyEventHandler } from "../armyEventHandler.js";
-import { DefaultTypes } from "../defaultTypes.js";
 import { EntityHealEvent } from "../events/entityHeal.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 
@@ -24,31 +23,6 @@ HealSystem.getSuppliesRequired = function(entity, missingHealth) {
     const supplyCost = missingHealth * costPerPoint;
 
     return supplyCost;
-}
-
-/**
- * Returns the missing health of an entity.
- * 
- * @param {*} entity 
- * @returns {int}
- */
-HealSystem.getMissingHealth = function(entity) {
-    const healthComponent = entity.getComponent(ArmyEntity.COMPONENT.HEALTH);
-    const missingHealth = healthComponent.getMissing();
-
-    return missingHealth;
-}
-
-/**
- * Creates a transaction.
- * 
- * @param {int} value 
- * @returns {ItemTransaction}
- */
-HealSystem.getHealCost = function(value) {
-    const transaction = DefaultTypes.createItemTransaction(Inventory.TYPE.RESOURCE, HealSystem.HEAL_RESOURCE, value);
-
-    return transaction;
 }
 
 /**
@@ -87,13 +61,12 @@ HealSystem.isEntityHealableBy = function(entity, actor) {
     }
 
     const healthComponent = entity.getComponent(ArmyEntity.COMPONENT.HEALTH);
-    const isFull = healthComponent.isFull();
 
-    if(isFull) {
+    if(healthComponent.isFull()) {
         return false;
     }
 
-    const missingHealth = HealSystem.getMissingHealth(entity);
+    const missingHealth = healthComponent.getMissing();
     const requiredSupplies = HealSystem.getSuppliesRequired(entity, missingHealth);
     const hasEnoughResources = HealSystem.hasEnoughResources(actor, requiredSupplies);
 
@@ -116,6 +89,6 @@ HealSystem.healEntity = function(gameContext, entityID, actorID, health) {
     if(entity) {
         entity.addHealth(health);
         entity.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
-        eventBus.emit(ArmyEventHandler.TYPE.ENTITY_HEAL, EntityHealEvent.createEvent(entityID, actorID, health));
+        eventBus.emit(ArmyEventHandler.TYPE.ENTITY_HEAL, EntityHealEvent.createEvent(entityID, health));
     }
 }
