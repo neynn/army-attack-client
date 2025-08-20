@@ -102,7 +102,10 @@ PlayerPlaceState.prototype.highlightPlaceableTiles = function(gameContext, playe
     const blockedIndices = PlaceSystem.getBlockedPlaceIndices(gameContext, player.teamID);
     const layer = player.camera.place;
 
-    for(const [index, state] of blockedIndices) {
+    for(let i = 0; i < blockedIndices.length; i += 2) {
+        const index = blockedIndices[i];
+        const state = blockedIndices[i + 1];
+
         switch(state) {
             case PlaceSystem.BLOCK_STATE.ENTITY_ATTACK: {
                 layer.setItem(tileID, index);

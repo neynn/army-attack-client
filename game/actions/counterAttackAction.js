@@ -43,7 +43,7 @@ CounterAttackAction.prototype.getValidated = function(gameContext, template) {
         return null;
     }
 
-    const counterTarget = AttackSystem.getAttackCounterTarget(gameContext, entity);
+    const counterTarget = entity.getAttackCounterTarget(gameContext);
 
     if(!counterTarget) {
         return null;

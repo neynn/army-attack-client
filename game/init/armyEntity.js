@@ -1,7 +1,9 @@
 import { Entity } from "../../source/entity/entity.js";
 import { EventEmitter } from "../../source/events/eventEmitter.js";
+import { isRectangleRectangleIntersect } from "../../source/math/math.js";
 import { DirectionComponent } from "../components/direction.js";
 import { SpriteComponent } from "../components/sprite.js";
+import { AllianceSystem } from "../systems/alliance.js";
 
 export const ArmyEntity = function(id, DEBUG_NAME) {
     Entity.call(this, id, DEBUG_NAME);
@@ -104,12 +106,13 @@ ArmyEntity.prototype.updateSpriteDirectonal = function(gameContext, southTypeID,
 }
 
 ArmyEntity.prototype.updateSprite = function(gameContext, spriteType) {
+    const { spriteManager } = gameContext;
     const spriteID = this.config.sprites[spriteType];
 
     if(spriteID) {
         const spriteComponent = this.getComponent(ArmyEntity.COMPONENT.SPRITE);
 
-        spriteComponent.change(gameContext, spriteID);
+        spriteManager.updateSprite(spriteComponent.spriteIndex, spriteID);
     }
 }
 
@@ -172,4 +175,152 @@ ArmyEntity.prototype.determineSprite = function(gameContext) {
             this.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.DOWN);
         }
     }
+}
+
+ArmyEntity.prototype.getSurroundingEntities = function(gameContext, range) {
+    const { world } = gameContext;
+    const positionComponent = this.getComponent(ArmyEntity.COMPONENT.POSITION);
+    const startX = positionComponent.tileX - range;
+    const startY = positionComponent.tileY - range;
+    const endX = positionComponent.tileX + this.config.dimX + range;
+    const endY = positionComponent.tileY + this.config.dimY + range;
+    const entities = world.getUniqueEntitiesInArea(startX, startY, endX, endY);
+
+    return entities;
+}
+
+ArmyEntity.prototype.canCounterAttack = function() {
+    const attackComponent = this.getComponent(ArmyEntity.COMPONENT.ATTACK);
+    const canCounterAttack = attackComponent && attackComponent.isAttackCounterable() && this.isAlive();
+
+    return canCounterAttack;
+}
+
+ArmyEntity.prototype.canCounterMove = function() {
+    const attackComponent = this.getComponent(ArmyEntity.COMPONENT.ATTACK);
+    const canCounterMove = attackComponent && attackComponent.isMoveCounterable() && this.isAlive();
+
+    return canCounterMove;
+}
+
+ArmyEntity.prototype.canActivelyAttack = function() {
+    const attackComponent = this.getComponent(ArmyEntity.COMPONENT.ATTACK);
+    const canActivelyAttack = attackComponent && attackComponent.isActive() && this.isAlive();
+
+    return canActivelyAttack;
+}
+
+ArmyEntity.prototype.getAttackCounterTarget = function(gameContext) {
+    if(!this.canCounterAttack()) {
+        return null;
+    }
+
+    const attackComponent = this.getComponent(ArmyEntity.COMPONENT.ATTACK);
+    const teamComponent = this.getComponent(ArmyEntity.COMPONENT.TEAM);
+    const surroundingEntities = this.getSurroundingEntities(gameContext, attackComponent.range);
+    let target = null;
+
+    for(let i = 0; i < surroundingEntities.length; i++) {
+        const entity = surroundingEntities[i];
+        const entityTeamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
+        const isTargetable = entity.isAlive() && AllianceSystem.isEnemy(gameContext, teamComponent.teamID, entityTeamComponent.teamID);
+
+        if(isTargetable) {
+            if(!target) {
+                target = entity;
+            } else {
+                if(entity.getHealth() < target.getHealth()) {
+                    target = entity;
+                }
+            }
+        }
+    }
+
+    return target;
+}
+
+ArmyEntity.prototype.getMoveCounterAttackers = function(gameContext) {
+    const teamComponent = this.getComponent(ArmyEntity.COMPONENT.TEAM);
+    const potentialAttackers = this.getSurroundingEntities(gameContext, gameContext.settings.maxAttackRange);
+    const attackers = [];
+
+    if(!this.isAlive()) {
+        return attackers;
+    }
+
+    for(let i = 0; i < potentialAttackers.length; i++) {
+        const potentialAttacker = potentialAttackers[i];
+
+        if(potentialAttacker.canCounterMove()) {
+            const attackerAttackComponent = potentialAttacker.getComponent(ArmyEntity.COMPONENT.ATTACK);
+            const attackerTeamComponent = potentialAttacker.getComponent(ArmyEntity.COMPONENT.TEAM);
+            const isMoveCounterable = potentialAttacker.isColliding(this, attackerAttackComponent.range) && AllianceSystem.isEnemy(gameContext, attackerTeamComponent.teamID, teamComponent.teamID);
+
+            if(isMoveCounterable) {
+                attackers.push(potentialAttacker);
+            }
+        }
+    }
+
+    return attackers;
+}
+
+ArmyEntity.prototype.getActiveAttackers = function(gameContext, actorID) {
+    const { world } = gameContext;
+    const { turnManager } = world;
+    const actor = turnManager.getActor(actorID);
+    const attackers = [];
+
+    if(!actor || !this.isAlive()) {
+        return attackers;
+    }
+
+    const teamComponent = this.getComponent(ArmyEntity.COMPONENT.TEAM);
+    const potentialAttackers = this.getSurroundingEntities(gameContext, gameContext.settings.maxAttackRange);
+
+    for(let i = 0; i < potentialAttackers.length; i++) {
+        const potentialAttacker = potentialAttackers[i];
+        const attackerID = potentialAttacker.getID();
+
+        if(actor.hasEntity(attackerID) && potentialAttacker.canActivelyAttack()) {
+            const attackerAttackComponent = potentialAttacker.getComponent(ArmyEntity.COMPONENT.ATTACK);
+            const attackerTeamComponent = potentialAttacker.getComponent(ArmyEntity.COMPONENT.TEAM);
+            const isActiveAttacker = potentialAttacker.isColliding(this, attackerAttackComponent.range) && AllianceSystem.isEnemy(gameContext, attackerTeamComponent.teamID, teamComponent.teamID);
+
+            if(isActiveAttacker) {
+                attackers.push(potentialAttacker);
+            }
+        }
+    }
+
+    return attackers;
+}
+
+ArmyEntity.prototype.isColliding = function(target, range) {
+    const position = this.getComponent(ArmyEntity.COMPONENT.POSITION);
+    const targetPosition = target.getComponent(ArmyEntity.COMPONENT.POSITION);
+
+    const collision = isRectangleRectangleIntersect(
+        position.tileX - range,
+        position.tileY - range,
+        this.config.dimX - 1 + range * 2,
+        this.config.dimY - 1 + range * 2,
+        targetPosition.tileX,
+        targetPosition.tileY,
+        target.config.dimX - 1,
+        target.config.dimY - 1
+    );
+
+    return collision;
+}
+
+ArmyEntity.prototype.isAttackableByTeam = function(gameContext, teamID) {
+    if(!this.isAlive()) {
+        return false;
+    }
+
+    const teamComponent = this.getComponent(ArmyEntity.COMPONENT.TEAM);
+    const isEnemy = AllianceSystem.isEnemy(gameContext, teamComponent.teamID, teamID);
+
+    return isEnemy;
 }

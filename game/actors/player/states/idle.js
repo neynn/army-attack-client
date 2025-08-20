@@ -77,7 +77,7 @@ PlayerIdleState.prototype.onClick = function(gameContext, stateMachine) {
         case PlayerCursor.STATE.HOVER_ON_ENTITY: {
             const playerID = player.getID();
             const mouseEntity = hover.getEntity(gameContext);
-            const isAttackable = AttackSystem.isAttackableByTeam(gameContext, mouseEntity, player.teamID);
+            const isAttackable = mouseEntity.isAttackableByTeam(gameContext, player.teamID);
 
             if(isAttackable) {
                 player.queueAttack(currentTarget);

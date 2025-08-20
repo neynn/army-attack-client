@@ -49,7 +49,7 @@ AttackAction.prototype.getValidated = function(gameContext, request) {
         return null;
     }
 
-    const attackerEntities = AttackSystem.getActiveAttackers(gameContext, target, actorID);
+    const attackerEntities = target.getActiveAttackers(gameContext, actorID);
 
     if(attackerEntities.length === 0) {
         return null;

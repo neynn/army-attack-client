@@ -38,14 +38,6 @@ SpriteComponent.prototype.getSprite = function(gameContext) {
     return sprite;
 }
 
-SpriteComponent.prototype.change = function(gameContext, sheetID) {
-    const { spriteManager } = gameContext;
-
-    if(sheetID !== undefined) {
-        spriteManager.updateSprite(this.spriteIndex, sheetID);
-    }
-}
-
 SpriteComponent.prototype.setFlipState = function(gameContext, state) {
     if(!this.isFlippable) {
         return;

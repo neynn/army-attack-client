@@ -115,7 +115,7 @@ PlayerSelectedState.prototype.onClick = function(gameContext, stateMachine) {
     switch(state) {
         case PlayerCursor.STATE.HOVER_ON_ENTITY: {
             const mouseEntity = hover.getEntity(gameContext);
-            const isAttackable = AttackSystem.isAttackableByTeam(gameContext, mouseEntity, player.teamID);
+            const isAttackable = mouseEntity.isAttackableByTeam(gameContext, player.teamID);
 
             if(isAttackable) {
                 player.queueAttack(currentTarget);

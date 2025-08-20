@@ -28,6 +28,7 @@ StoryModePlayState.prototype.initStoryMode = function(gameContext) {
         DefaultTypes.createSpawnConfig("blue_battery", TEAM_TYPE.CRIMSON, ACTOR_ID.STORY_ENEMY, 4, 4),
         DefaultTypes.createSpawnConfig("blue_infantry", TEAM_TYPE.ALLIES, ACTOR_ID.STORY_PLAYER, 7, 7),
         DefaultTypes.createSpawnConfig("red_commandobunker", TEAM_TYPE.CRIMSON, ACTOR_ID.STORY_ENEMY, 6, 4),
+        DefaultTypes.createSpawnConfig("red_guardtower", TEAM_TYPE.CRIMSON, ACTOR_ID.STORY_ENEMY, 9, 4),
         DefaultTypes.createSpawnConfig("red_tank", TEAM_TYPE.CRIMSON, ACTOR_ID.STORY_ENEMY, 4, 3),
         DefaultTypes.createSpawnConfig("blue_elite_commando", TEAM_TYPE.ALLIES, ACTOR_ID.STORY_PLAYER, 4, 5),
         DefaultTypes.createSpawnConfig("blue_commando_ultimate", TEAM_TYPE.ALLIES, ACTOR_ID.STORY_PLAYER, 5, 5),

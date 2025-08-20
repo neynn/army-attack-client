@@ -79,7 +79,7 @@ PlaceSystem.getBlockedPlaceIndices = function(gameContext, teamName) {
     const { world } = gameContext;
     const { mapManager } = world;
     const worldMap = mapManager.getActiveMap();
-    const blockedIndices = new Map();
+    const blockedIndices = [];
 
     if(!worldMap) {
         return blockedIndices;
@@ -92,7 +92,7 @@ PlaceSystem.getBlockedPlaceIndices = function(gameContext, teamName) {
             if(blockState !== PlaceSystem.BLOCK_STATE.NONE) {
                 const index = i * worldMap.width + j;
 
-                blockedIndices.set(index, blockState);
+                blockedIndices.push(index, blockState);
             }
         }
     }
