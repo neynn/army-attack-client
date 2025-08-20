@@ -1,4 +1,5 @@
 import { ArmyEventHandler } from "../armyEventHandler.js";
+import { OBJECTIVE_TYPE } from "../enums.js";
 import { ConquerSystem } from "../systems/conquer.js";
 import { ArmyEvent } from "./armyEvent.js";
 
@@ -17,7 +18,7 @@ TileCaptureEvent.prototype.onStory = function(gameContext, event) {
     ConquerSystem.conquer(gameContext, teamID, tiles);
 
     if(actor && actor.missions) {
-        actor.missions.onObjective(ArmyEventHandler.OBJECTIVE_TYPE.CONQUER, null, count);
+        actor.missions.onObjective(OBJECTIVE_TYPE.CONQUER, null, count);
     }
 }
 

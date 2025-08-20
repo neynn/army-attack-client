@@ -1,5 +1,6 @@
 import { FloodFill } from "../../source/pathfinders/floodFill.js";
 import { MoveComponent } from "../components/move.js";
+import { getTeamName } from "../enums.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { ArmyMap } from "../init/armyMap.js";
 import { AllianceSystem } from "./alliance.js";
@@ -37,23 +38,17 @@ const addNode = function(nodeList, node, state) {
 /**
  * Checks if the tile is passable by the entity.
  * 
+ * @param {*} gameContext 
  * @param {*} worldMap 
- * @param {*} tileTypes 
  * @param {*} entity 
  * @param {int} tileX 
  * @param {int} tileY 
  * @returns {boolean}
  */
-const isTilePassable = function(worldMap, tileTypes, entity, tileX, tileY) {
+const isTilePassable = function(gameContext, worldMap, entity, tileX, tileY) {
     const tileTypeID = worldMap.getTile(ArmyMap.LAYER.TYPE, tileX, tileY);
     const moveComponent = entity.getComponent(ArmyEntity.COMPONENT.MOVE);
-    const tileType = tileTypes[tileTypeID];
-
-    if(!tileType) {
-        return false;
-    }
-
-    const { passability } = tileType;
+    const { passability } = gameContext.getTileType(tileTypeID);
     const isTilePassable = moveComponent.hasPassability(passability);
 
     if(!isTilePassable) {
@@ -81,7 +76,7 @@ const isTileWalkable = function(gameContext, worldMap, entity, tileX, tileY) {
     const moveComponent = entity.getComponent(ArmyEntity.COMPONENT.MOVE);
 
     const tileTeamID = worldMap.getTile(ArmyMap.LAYER.TEAM, tileX, tileY);
-    const isTileWalkable = AllianceSystem.isWalkable(gameContext, teamID, ArmyMap.TEAM_TYPE[tileTeamID]);
+    const isTileWalkable = AllianceSystem.isWalkable(gameContext, teamID, getTeamName(tileTeamID));
     const isWalkable = isTileWalkable || moveComponent.isStealth();
 
     return isWalkable;
@@ -140,11 +135,10 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
     const moveComponent = entity.getComponent(ArmyEntity.COMPONENT.MOVE);
     const { tileX, tileY } = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
     const isOriginWalkable = isTileWalkable(gameContext, activeMap, entity, tileX, tileY);
-    const tileTypes = gameContext.tileTypes;
 
     PathfinderSystem.PATHFINDER.searchCross(tileX, tileY, moveComponent.range, activeMap.width, activeMap.height, (next) => {
         const { positionX, positionY } = next;
-        const isNextPassable = isTilePassable(activeMap, tileTypes, entity, positionX, positionY);
+        const isNextPassable = isTilePassable(gameContext, activeMap, entity, positionX, positionY);
 
         if(!isNextPassable) {
             addNode(nodes, next, PathfinderSystem.NODE_STATE.INVALID_PASSABILITY);

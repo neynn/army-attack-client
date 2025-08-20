@@ -1,4 +1,5 @@
 import { ArmyEventHandler } from "../armyEventHandler.js";
+import { getTeamID, getTeamName } from "../enums.js";
 import { TileCaptureEvent } from "../events/tileCapture.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { ArmyMap } from "../init/armyMap.js";
@@ -21,14 +22,14 @@ export const ConquerSystem = function() {}
  */
 const isTileConquerable = function(gameContext, worldMap, tileX, tileY, captureTeamID) {
     const typeID = worldMap.getTile(ArmyMap.LAYER.TYPE, tileX, tileY);
-    const tileType = gameContext.tileTypes[typeID];
+    const tileType = gameContext.getTileType(typeID);
 
-    if(!tileType || !tileType.isConquerable) {
+    if(!tileType.isConquerable) {
         return false;
     }
 
     const teamID = worldMap.getTile(ArmyMap.LAYER.TEAM, tileX, tileY);
-    const isEnemy = AllianceSystem.isEnemy(gameContext, captureTeamID, ArmyMap.TEAM_TYPE[teamID]);
+    const isEnemy = AllianceSystem.isEnemy(gameContext, captureTeamID, getTeamName(teamID));
 
     return isEnemy; 
 }
@@ -38,11 +39,11 @@ const isTileConquerable = function(gameContext, worldMap, tileX, tileY, captureT
  * Updates the tiles apperance.
  * 
  * @param {*} gameContext 
- * @param {string} teamID 
+ * @param {string} teamName
  * @param {int[]} tiles [x, y, x, y, ...]
  * @returns 
  */
-ConquerSystem.conquer = function(gameContext, teamID, tiles) {
+ConquerSystem.conquer = function(gameContext, teamName, tiles) {
     const { world } = gameContext;
     const { mapManager } = world;
     const worldMap = mapManager.getActiveMap();
@@ -55,7 +56,7 @@ ConquerSystem.conquer = function(gameContext, teamID, tiles) {
         const tileX = tiles[i];
         const tileY = tiles[i + 1];
 
-        worldMap.conquerTile(gameContext, gameContext.getTeamID(teamID), tileX, tileY);
+        worldMap.conquerTile(gameContext, getTeamID(teamName), tileX, tileY);
     }
 }
 

@@ -4,6 +4,7 @@ import { AllianceSystem } from "../systems/alliance.js";
 import { DropHandler } from "./armyMap/dropHandler.js";
 import { Shop } from "./armyMap/shop.js";
 import { ArmyCamera } from "../armyCamera.js";
+import { getTeamName } from "../enums.js";
 
 export const ArmyMap = function(id) {
     WorldMap.call(this, id);
@@ -32,13 +33,6 @@ ArmyMap.TYPE = {
     STRIKE: 3,
     EMPTY_STORY: 4,
     EMPTY_VERSUS: 5
-};
-
-ArmyMap.TEAM_TYPE = {
-    0: "Crimson",
-    1: "Allies",
-    2: "Neutral",
-    3: "Versus"
 };
 
 ArmyMap.AUTOTILER = {
@@ -158,7 +152,7 @@ ArmyMap.prototype.updateBorder = function(gameContext, tileX, tileY, range) {
     
         for(let i = startY; i <= endY; i++) {
             for(let j = startX; j <= endX; j++) {
-                const borderID = this.getBorderType(gameContext, j, i, teamID);
+                const borderID = this.getBorderID(gameContext, j, i, teamID);
 
                 camera.updateBorder(borderID, j, i);
             }
@@ -185,22 +179,15 @@ ArmyMap.prototype.updateClouds = function(autotiler, tileX, tileY, width, height
 
 ArmyMap.prototype.hasDebris = function(tileX, tileY) {
     const index = this.getIndex(tileX, tileY);
+    const hasDebris = index !== -1 && this.debris.has(index);
 
-    if(index === -1) {
-        return false;
-    }
-
-    return this.debris.has(index);
+    return hasDebris;
 }
 
 ArmyMap.prototype.removeDebris = function(tileX, tileY) {
     const index = this.getIndex(tileX, tileY);
 
-    if(index === -1) {
-        return;
-    }
-
-    if(this.debris.has(index)) {
+    if(index !== -1 && this.debris.has(index)) {
         this.debris.delete(index);
     }
 }
@@ -208,17 +195,13 @@ ArmyMap.prototype.removeDebris = function(tileX, tileY) {
 ArmyMap.prototype.addDebris = function(type, tileX, tileY) {
     const index = this.getIndex(tileX, tileY);
 
-    if(index === -1) {
-        return;
-    }
-
-    if(!this.debris.has(index)) {
+    if(index !== -1 && !this.debris.has(index)) {
         this.debris.set(index, {
             "type": type,
             "x": tileX,
             "y": tileY
         });
-    }   
+    }
 }
 
 ArmyMap.prototype.saveFlags = function() {
@@ -276,33 +259,8 @@ ArmyMap.prototype.reload = function(gameContext) {
     }
 }
 
-ArmyMap.prototype.getAnimationForm = function(gameContext, tileID) {
-    const { tileManager } = gameContext;
-    const tileMeta = tileManager.getMeta(tileID);
-
-    if(!tileMeta) {
-        return null;
-    }
-
-    const { graphics } = tileMeta;
-    const [atlas, texture] = graphics;
-    const setForm = gameContext.tileFormConditions[atlas];
-
-    if(!setForm) {
-        return null;
-    }
-
-    const animationForm = setForm[texture];
-
-    if(!animationForm) {
-        return null;
-    }
-
-    return animationForm;
-}
-
 ArmyMap.prototype.isFormValid = function(gameContext, groundID, tileX, tileY, teamID) {
-    const animationForm = this.getAnimationForm(gameContext, groundID);
+    const animationForm = gameContext.getAnimationForm(groundID);
 
     if(!animationForm) {
         return false;
@@ -338,23 +296,19 @@ ArmyMap.prototype.updateShoreTiles = function(gameContext, tileX, tileY, range) 
     for(let i = startY; i <= endY; i++) {
         for(let j = startX; j <= endX; j++) {
             const typeID = this.getTile(ArmyMap.LAYER.TYPE, j, i);
-            const tileType = gameContext.tileTypes[typeID];
+            const tileType = gameContext.getTileType(typeID);
 
-            if(!tileType || !tileType.hasForm) {
-                continue;
-            }
+            if(tileType.hasForm) {
+                const groundID = this.getTile(ArmyMap.LAYER.GROUND, j, i);
+                const isFormValid = this.isFormValid(gameContext, groundID, j, i, teamID);
 
-            const groundID = this.getTile(ArmyMap.LAYER.GROUND, j, i);
-            const isFormValid = this.isFormValid(gameContext, groundID, j, i, teamID);
+                if(isFormValid) {
+                    const conversionID = gameContext.getConversionID(groundID, teamID);
 
-            if(!isFormValid) {
-                continue;
-            }
-
-            const conversionID = gameContext.getConversionID(groundID, teamID);
-        
-            if(tileManager.hasMeta(conversionID)) {
-                this.placeTile(conversionID, ArmyMap.LAYER.GROUND, j, i);
+                    if(tileManager.hasMeta(conversionID)) {
+                        this.placeTile(conversionID, ArmyMap.LAYER.GROUND, j, i);
+                    }
+                }
             }
         }
     }
@@ -375,24 +329,23 @@ ArmyMap.prototype.convertGraphicToTeam = function(gameContext, tileX, tileY) {
     }
 }
 
-ArmyMap.prototype.getBorderType = function(gameContext, tileX, tileY, teamID) {
+ArmyMap.prototype.getBorderID = function(gameContext, tileX, tileY, teamID) {
     if(!this.hasFlag(ArmyMap.FLAG.ALLOW_BORDER)) {
         return 0;
     }
 
     const { tileManager } = gameContext;
-    const tileTypes = gameContext.tileTypes;
     const autotiler = tileManager.getAutotilerByID(ArmyMap.AUTOTILER.BORDER);
     
     const centerTypeID = this.getTile(ArmyMap.LAYER.TYPE, tileX, tileY);
-    const centerType = tileTypes[centerTypeID];
+    const centerType = gameContext.getTileType(centerTypeID);
 
-    if(!centerType || !centerType.hasBorder) {
+    if(!centerType.hasBorder) {
         return 0;
     }
 
     const centerTeamID = this.getTile(ArmyMap.LAYER.TEAM, tileX, tileY);
-    const isEnemy = AllianceSystem.isEnemy(gameContext, teamID, ArmyMap.TEAM_TYPE[centerTeamID]);
+    const isEnemy = AllianceSystem.isEnemy(gameContext, teamID, getTeamName(centerTeamID));
 
     if(isEnemy) {
         return 0;
@@ -400,14 +353,14 @@ ArmyMap.prototype.getBorderType = function(gameContext, tileX, tileY, teamID) {
 
     const tileID = autotiler.run(tileX, tileY, (x, y) => {
         const neighborTypeID = this.getTile(ArmyMap.LAYER.TYPE, x, y);
-        const neighborType = tileTypes[neighborTypeID];
+        const neighborType = gameContext.getTileType(neighborTypeID);
 
-        if(!neighborType || !neighborType.hasBorder) {
+        if(!neighborType.hasBorder) {
             return Autotiler.RESPONSE.INVALID;
         }
 
         const neighborTeamID = this.getTile(ArmyMap.LAYER.TEAM, x, y);
-        const isEnemy = AllianceSystem.isEnemy(gameContext, ArmyMap.TEAM_TYPE[centerTeamID], ArmyMap.TEAM_TYPE[neighborTeamID]);
+        const isEnemy = AllianceSystem.isEnemy(gameContext, getTeamName(centerTeamID), getTeamName(neighborTeamID));
 
         if(isEnemy) {
             return Autotiler.RESPONSE.INVALID;

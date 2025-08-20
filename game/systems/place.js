@@ -1,3 +1,4 @@
+import { getTeamName } from "../enums.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { ArmyMap } from "../init/armyMap.js";
 import { AllianceSystem } from "./alliance.js";
@@ -24,14 +25,14 @@ const getBlockState = function(gameContext, worldMap, tileX, tileY, teamName) {
     }
 
     const typeID = worldMap.getTile(ArmyMap.LAYER.TYPE, tileX, tileY);
-    const type = gameContext.tileTypes[typeID];
+    const tileType = gameContext.getTileType(typeID);
 
-    if(!type || !type.allowPlacement) {
+    if(!tileType.allowPlacement) {
         return PlaceSystem.BLOCK_STATE.TILE_TYPE;
     }
 
     const teamID = worldMap.getTile(ArmyMap.LAYER.TEAM, tileX, tileY);
-    const isPlaceable = AllianceSystem.isPlaceable(gameContext, teamName, ArmyMap.TEAM_TYPE[teamID]);
+    const isPlaceable = AllianceSystem.isPlaceable(gameContext, teamName, getTeamName(teamID));
 
     if(!isPlaceable) {
         return PlaceSystem.BLOCK_STATE.ALLIANCE_DENY;

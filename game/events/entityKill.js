@@ -1,4 +1,5 @@
 import { ArmyEventHandler } from "../armyEventHandler.js";
+import { OBJECTIVE_TYPE } from "../enums.js";
 import { DropSystem } from "../systems/drop.js";
 import { ArmyEvent } from "./armyEvent.js";
 import { DropEvent } from "./drop.js";
@@ -28,7 +29,7 @@ EntityKillEvent.prototype.onStory = function(gameContext, event) {
         if(player && player.missions) {
             const entityType = entity.config.id;
 
-            player.missions.onObjective(ArmyEventHandler.OBJECTIVE_TYPE.DESTROY, entityType, 1);
+            player.missions.onObjective(OBJECTIVE_TYPE.DESTROY, entityType, 1);
         }
         
         eventBus.emit(ArmyEventHandler.TYPE.ENTITY_DEATH, EntityDeathEvent.createEvent(entityID, reason));

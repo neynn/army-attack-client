@@ -1,3 +1,4 @@
+import { TILE_TYPE } from "../../game/enums.js";
 import { loopValue } from "../math/math.js";
 import { Scroller } from "../scroller.js";
 import { EditorAutotiler } from "./editor/autotiler.js";
@@ -175,7 +176,6 @@ MapEditor.prototype.paint = function(gameContext, layerID) {
 MapEditor.prototype.incrementTypeIndex = function(gameContext, layerID) {
     const { world } = gameContext;
     const { mapManager } = world;
-    const types = gameContext.tileTypes;
     const worldMap = mapManager.getLoadedMap(this.mapID);
 
     if(!worldMap) {
@@ -185,10 +185,10 @@ MapEditor.prototype.incrementTypeIndex = function(gameContext, layerID) {
     const { x, y } = gameContext.getMouseTile();
     const tileTypeIDs = [];
 
-    for(const typeID of Object.keys(types)) {
-        const type = types[typeID];
+    for(const typeName in TILE_TYPE) {
+        const typeID = TILE_TYPE[typeName];
 
-        tileTypeIDs.push(type.id);
+        tileTypeIDs.push(typeID);
     }
 
     const currentID = worldMap.getTile(layerID, x, y);

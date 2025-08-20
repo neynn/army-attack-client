@@ -1,6 +1,5 @@
 {
-    "0": {
-        "id": 0,
+    "Ground": {
         "color": "#000000",
         "name": "Ground",
         "passability": "Land",
@@ -10,8 +9,7 @@
         "canDebrisSpawn": true,
         "allowPlacement": true
     },
-    "1": {
-        "id": 1,
+    "Mountain": {
         "color": "#ff0000",
         "name": "Mountain",
         "passability": "Mountain",
@@ -21,8 +19,7 @@
         "canDebrisSpawn": false,
         "allowPlacement": false
     },
-    "2": {
-        "id": 2,
+    "Sea": {
         "color": "#0000ff",
         "name": "Sea",
         "passability": "Sea",
@@ -32,14 +29,23 @@
         "canDebrisSpawn": false,
         "allowPlacement": false
     },
-    "3": {
-        "id": 3,
+    "Shore": {
         "color": "#00ffff",
         "name": "Shore",
         "passability": "Shore",
         "hasBorder": false,
         "isConquerable": false,
         "hasForm": true,
+        "canDebrisSpawn": false,
+        "allowPlacement": false
+    },
+    "Error": {
+        "color": "#ffffff",
+        "name": "Error",
+        "passability": "Error",
+        "hasBorder": false,
+        "isConquerable": false,
+        "hasForm": false,
         "canDebrisSpawn": false,
         "allowPlacement": false
     }

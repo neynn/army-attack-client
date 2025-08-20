@@ -125,13 +125,14 @@ Renderer.prototype.update = function(gameContext) {
         uiManager.debug(this.display);
     }
 
-    this.drawInfo(timer);
+    this.drawInfo(gameContext);
 }
 
-Renderer.prototype.drawInfo = function(timer) {
+Renderer.prototype.drawInfo = function(gameContext) {
     const { context } = this.display;
+    const { timer } = gameContext;
+    const { x, y } = gameContext.getMouseTile();
     const fps = Math.round(timer.getFPS());
-    const text = `FPS: ${fps}`;
 
     if(fps >= 60) {
         context.fillStyle = Renderer.FPS_COLOR.GOOD;
@@ -145,9 +146,10 @@ Renderer.prototype.drawInfo = function(timer) {
 
     context.globalAlpha = 1;
     context.font = `${TEXT_SIZE}px Arial`;
-    context.fillText(text, 0, WINDOW_Y + TEXT_SIZE);
-    context.fillText(`WindowX: ${this.windowWidth}`, 0, WINDOW_Y + TEXT_SIZE * 2);
-    context.fillText(`WindowY: ${this.windowHeight}`, 0, WINDOW_Y + TEXT_SIZE * 3);
+
+    context.fillText(`FPS: ${fps}`, 0, WINDOW_Y + TEXT_SIZE);
+    context.fillText(`WindowX: ${this.windowWidth}, WindowY: ${this.windowHeight}`, 0, WINDOW_Y + TEXT_SIZE * 2);
+    context.fillText(`MouseX: ${x}, MouseY: ${y}`, 0, WINDOW_Y + TEXT_SIZE * 3);
 
     context.fillText(`DEBUG-CONTEXT: ${Renderer.DEBUG.CONTEXT}`, 0, DEBUG_Y);
     context.fillText(`DEBUG-INTERFACE: ${Renderer.DEBUG.INTERFACE}`, 0, DEBUG_Y + TEXT_SIZE);

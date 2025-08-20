@@ -29,11 +29,6 @@ ArmyEventHandler.MODE = {
     COOP: 3
 };
 
-ArmyEventHandler.OBJECTIVE_TYPE = {
-    DESTROY: "Destroy",
-    CONQUER: "Conquer"
-};
-
 ArmyEventHandler.TYPE = {
     ACTION_REQUEST: 100,
     ACTION_AUTHORIZE: 101,

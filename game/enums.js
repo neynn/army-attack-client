@@ -41,3 +41,42 @@ export const TEAM_TYPE = {
     NEUTRAL: "Neutral",
     VERSUS: "Versus"
 };
+
+export const TEAM_ID = {
+    CRIMSON: 0,
+    ALLIES: 1,
+    NEUTRAL: 2,
+    VERSUS: 3
+};
+
+export const TILE_TYPE = {
+    GROUND: 0,
+    MOUNTAIN: 1,
+    SEA: 2,
+    SHORE: 3
+};
+
+export const OBJECTIVE_TYPE = {
+    DESTROY: "Destroy",
+    CONQUER: "Conquer"
+}
+
+export const getTeamName = function(id) {
+    switch(id) {
+        case TEAM_ID.CRIMSON: return TEAM_TYPE.CRIMSON;
+        case TEAM_ID.ALLIES: return TEAM_TYPE.ALLIES;
+        case TEAM_ID.NEUTRAL: return TEAM_TYPE.NEUTRAL;
+        case TEAM_ID.VERSUS: return TEAM_TYPE.VERSUS;
+        default: return TEAM_TYPE.NEUTRAL;
+    }
+}
+
+export const getTeamID = function(name) {
+    switch(name) {
+        case TEAM_TYPE.CRIMSON: return TEAM_ID.CRIMSON;
+        case TEAM_TYPE.ALLIES: return TEAM_ID.ALLIES;
+        case TEAM_TYPE.NEUTRAL: return TEAM_ID.NEUTRAL;
+        case TEAM_TYPE.VERSUS: return TEAM_ID.VERSUS;
+        default: return TEAM_ID.NEUTRAL;
+    }
+}

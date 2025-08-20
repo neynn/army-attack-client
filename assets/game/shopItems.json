@@ -1,6 +1,6 @@
 {
-    "blue_infantry": {  "id": "blue_infantry", "type": "Entity", "icon": "icon_units_infantry" },
-    "blue_elite_infantry": {  "id": "blue_elite_infantry", "type": "Entity", "icon": "icon_units_premium_infantry" },
+    "blue_infantry": { "id": "blue_infantry", "type": "Entity", "icon": "icon_units_infantry" },
+    "blue_elite_infantry": { "id": "blue_elite_infantry", "type": "Entity", "icon": "icon_units_premium_infantry" },
     "blue_tank": { "id": "blue_tank", "type": "Entity", "icon": "icon_units_apc" },
     "blue_artillery": { "id": "blue_artillery", "type": "Entity", "icon": "icon_units_artillery" },
     "blue_battletank": {  "id": "blue_battletank", "type": "Entity", "icon": "icon_units_battle_tank" },

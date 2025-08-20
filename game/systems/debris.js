@@ -1,4 +1,5 @@
 import { ArmyEventHandler } from "../armyEventHandler.js";
+import { getTeamName } from "../enums.js";
 import { DebrisRemovedEvent } from "../events/debrisRemoved.js";
 import { ArmyMap } from "../init/armyMap.js";
 import { AllianceSystem } from "./alliance.js";
@@ -46,7 +47,7 @@ DebrisSystem.isCleanable = function(gameContext, tileX, tileY, actorID) {
     }
 
     const teamID = worldMap.getTile(ArmyMap.LAYER.TEAM, tileX, tileY);
-    const isEnemy = AllianceSystem.isEnemy(gameContext, actor.teamID, ArmyMap.TEAM_TYPE[teamID]);
+    const isEnemy = AllianceSystem.isEnemy(gameContext, actor.teamID, getTeamName(teamID));
 
     return !isEnemy;
 }
@@ -103,9 +104,9 @@ DebrisSystem.spawnDebris = function(gameContext, debris) {
  */
 DebrisSystem.canDebrisSpawn = function(gameContext, worldMap, tileX, tileY) {
     const typeID = worldMap.getTile(ArmyMap.LAYER.TYPE, tileX, tileY);
-    const tileType = gameContext.tileTypes[typeID];
+    const tileType = gameContext.getTileType(typeID);
 
-    if(!tileType || !tileType.canDebrisSpawn) {
+    if(!tileType.canDebrisSpawn) {
         return false;
     }
 

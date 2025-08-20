@@ -1,5 +1,5 @@
 import { GameContext } from "../source/gameContext.js";
-import { ACTION_TYPE } from "./enums.js";
+import { ACTION_TYPE, getTeamName, TILE_TYPE } from "./enums.js";
 import { AttackAction } from "./actions/attackAction.js";
 import { MoveAction } from "./actions/moveAction.js";
 import { ArmorComponent } from "./components/armor.js";
@@ -26,7 +26,6 @@ import { TileManager } from "../source/tile/tileManager.js";
 import { Renderer } from "../source/renderer.js";
 import { Logger } from "../source/logger.js";
 import { ArmyEventHandler } from "./armyEventHandler.js";
-import { ArmyMap } from "./init/armyMap.js";
 import { FireMissionAction } from "./actions/fireMissionAction.js";
 import { TownComponent } from "./components/town.js";
 import { ClearDebrisAction } from "./actions/clearDebrisAction.js";
@@ -227,7 +226,7 @@ ArmyContext.prototype.addDebug = function() {
 }
 
 ArmyContext.prototype.getConversionID = function(tileID, teamID) {
-    const teamConversions = this.tileConversions[ArmyMap.TEAM_TYPE[teamID]];
+    const teamConversions = this.tileConversions[getTeamName(teamID)];
 
     if(!teamConversions) {
         return TileManager.TILE_ID.EMPTY;
@@ -242,12 +241,36 @@ ArmyContext.prototype.getConversionID = function(tileID, teamID) {
     return convertedID;
 } 
 
-ArmyContext.prototype.getTeamID = function(teamName) {
-    const team = this.teamTypes[teamName];
+ArmyContext.prototype.getAnimationForm = function(tileID) {
+    const tileMeta = this.tileManager.getMeta(tileID);
 
-    if(!team) {
-        return 0;
+    if(!tileMeta) {
+        return null;
     }
 
-    return team.id;
+    const { graphics } = tileMeta;
+    const [atlas, texture] = graphics;
+    const setForm = this.tileFormConditions[atlas];
+
+    if(!setForm) {
+        return null;
+    }
+
+    const animationForm = setForm[texture];
+
+    if(!animationForm) {
+        return null;
+    }
+
+    return animationForm;
+}
+
+ArmyContext.prototype.getTileType = function(id) {
+    switch(id) {
+        case TILE_TYPE.GROUND: return this.tileTypes.Ground;
+        case TILE_TYPE.MOUNTAIN: return this.tileTypes.Mountain;
+        case TILE_TYPE.SEA: return this.tileTypes.Sea;
+        case TILE_TYPE.SHORE: return this.tileTypes.Shore;
+        default: return this.tileTypes.Error;
+    }
 }
