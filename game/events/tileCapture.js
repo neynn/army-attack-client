@@ -1,4 +1,3 @@
-import { ArmyEventHandler } from "../armyEventHandler.js";
 import { OBJECTIVE_TYPE } from "../enums.js";
 import { ConquerSystem } from "../systems/conquer.js";
 import { ArmyEvent } from "./armyEvent.js";
@@ -27,6 +26,6 @@ TileCaptureEvent.createEvent = function(actorID, teamID, tiles) {
         "actorID": actorID,
         "teamID": teamID,
         "tiles": tiles,
-        "count": tiles.length / 2
+        "count": tiles.length
     }
 }

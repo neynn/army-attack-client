@@ -55,7 +55,9 @@ PlayerIdleState.prototype.selectEntity = function(gameContext, player, entity) {
 
     player.hover.updateNodes(gameContext, nodeList);
     player.camera.updateMoveOverlay(gameContext, nodeList, enableTileID, attackTileID);
-    player.states.setNextState(gameContext, Player.STATE.SELECTED, { "entityID": entityID });
+    player.states.setNextState(gameContext, Player.STATE.SELECTED, {
+        "entityID": entityID
+    });
 }
 
 PlayerIdleState.prototype.queueClearDebris = function(player, tileX, tileY) {

@@ -59,7 +59,9 @@ DropHandler.prototype.update = function(gameContext, worldMap) {
 
         if(drop.state === Drop.STATE.COLLECTED) {
             drop.sprite.terminate();
-            this.drops.splice(i, 1);
+
+            this.drops[i] = this.drops[this.drops.length - 1];
+            this.drops.pop();
         }
     }
 }

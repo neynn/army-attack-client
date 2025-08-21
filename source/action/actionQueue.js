@@ -4,6 +4,7 @@ import { Queue } from "../queue.js";
 import { Action } from "./action.js";
 
 export const ActionQueue = function() {
+    this.nextID = 0;
     this.actionTypes = new Map();
     this.maxInstantActions = 100;
     this.immediateQueue = new Queue(100);
@@ -16,7 +17,7 @@ export const ActionQueue = function() {
     this.events.listen(ActionQueue.EVENT.EXECUTION_DEFER);
     this.events.listen(ActionQueue.EVENT.EXECUTION_ERROR);
     this.events.listen(ActionQueue.EVENT.EXECUTION_RUNNING);
-    this.events.listen(ActionQueue.EVENT.QUEUE_ERROR);
+    this.events.listen(ActionQueue.EVENT.EXECUTION_COMPLETE);
 }
 
 ActionQueue.STATE = {
@@ -30,7 +31,7 @@ ActionQueue.EVENT = {
     EXECUTION_DEFER: "EXECUTION_DEFER",
     EXECUTION_ERROR: "EXECUTION_ERROR",
     EXECUTION_RUNNING: "EXECUTION_RUNNING",
-    QUEUE_ERROR: "QUEUE_ERROR"
+    EXECUTION_COMPLETE: "EXECUTION_COMPLETE"
 };
 
 ActionQueue.prototype.isSendable = function(typeID) {
@@ -111,11 +112,10 @@ ActionQueue.prototype.flushExecution = function(gameContext) {
     this.current.setState(ExecutionRequest.STATE.RUNNING);
 
     actionType.onStart(gameContext, data);
-
-    this.current.setState(ExecutionRequest.STATE.FINISHED);
-
     actionType.onEnd(gameContext, data);
 
+    this.current.setState(ExecutionRequest.STATE.FINISHED);
+    this.events.emit(ActionQueue.EVENT.EXECUTION_COMPLETE, this.current);
     this.clearCurrent();
 }
 
@@ -152,8 +152,9 @@ ActionQueue.prototype.processExecution = function(gameContext) {
     if(this.isSkipping || actionType.isFinished(gameContext, this.current)) {
         actionType.onEnd(gameContext, data);
 
-        this.state = ActionQueue.STATE.ACTIVE;
         this.current.setState(ExecutionRequest.STATE.FINISHED);
+        this.events.emit(ActionQueue.EVENT.EXECUTION_COMPLETE, this.current);
+        this.state = ActionQueue.STATE.ACTIVE;
         this.clearCurrent();
     }
 }
@@ -227,9 +228,7 @@ ActionQueue.prototype.createExecutionRequest = function(gameContext, request) {
         return null;
     }
 
-    const executionRequest = new ExecutionRequest(type, validatedData);
-
-    return executionRequest;
+    return new ExecutionRequest(this.nextID++, type, validatedData);
 }
 
 ActionQueue.prototype.registerAction = function(typeID, handler) {
@@ -247,6 +246,7 @@ ActionQueue.prototype.exit = function() {
     this.executionQueue.clear();
     this.state = ActionQueue.STATE.ACTIVE;
     this.clearCurrent();
+    this.nextID = 0;
 }
 
 ActionQueue.prototype.clearCurrent = function() {
@@ -256,7 +256,7 @@ ActionQueue.prototype.clearCurrent = function() {
 
 ActionQueue.prototype.enqueue = function(request) {
     if(this.executionQueue.isFull()) {
-        this.events.emit(ActionQueue.EVENT.QUEUE_ERROR, {
+        console.error({
             "error": "The execution queue is full. Item has been discarded!",
             "item": request
         });

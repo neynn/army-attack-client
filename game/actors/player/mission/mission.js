@@ -2,12 +2,8 @@ import { Objective } from "./objective.js";
 
 export const Mission = function(config) {
     this.config = config;
+    this.objectives = this.initObjectives(config.objectives);
     this.state = Mission.STATE.HIDDEN;
-    this.objectives = [];
-
-    if(config.objectives) {
-        this.initObjectives(config.objectives);
-    }
 }
 
 Mission.STATE = {
@@ -32,15 +28,21 @@ Mission.prototype.loadProgress = function(objectives) {
     }
 }
 
-Mission.prototype.initObjectives = function(objectives) {
-    this.objectives.length = 0;
+Mission.prototype.initObjectives = function(objectiveList) {
+    const objectives = [];
 
-    for(let i = 0; i < objectives.length; i++) {
-        const { type = null, parameter = null, value = 0 } = objectives[i];
+    if(!objectiveList) {
+        return objectives;
+    }
+
+    for(let i = 0; i < objectiveList.length; i++) {
+        const { type = null, parameter = null, value = 0 } = objectiveList[i];
         const objective = new Objective(type, parameter, value);
 
-        this.objectives.push(objective);
+        objectives.push(objective);
     }
+
+    return objectives;
 }
 
 Mission.prototype.onObjective = function(type, parameter, count) {

@@ -2,25 +2,25 @@ import { MissionGroup } from "./missionGroup.js";
 
 export const MissionHandler = function() {
     this.groups = new Map();
-    this.current = null;
+    this.currentGroup = null;
 }
 
 MissionHandler.prototype.clear = function() {
     this.groups.clear();
-    this.current = null;
+    this.currentGroup = null;
 }
 
 MissionHandler.prototype.deselectGroup = function() {
-    this.current = null;
+    this.currentGroup = null;
 }
 
 MissionHandler.prototype.selectGroup = function(groupID) {
     const group = this.groups.get(groupID);
 
     if(group) {
-        this.current = group;
+        this.currentGroup = group;
     } else {
-        this.current = null;
+        this.currentGroup = null;
     }
 }
 
@@ -61,13 +61,13 @@ MissionHandler.prototype.save = function() {
 }
 
 MissionHandler.prototype.onObjective = function(type, parameter, count) {
-    if(this.current) {
-        this.current.handleObjective(type, parameter, count);
+    if(this.currentGroup) {
+        this.currentGroup.handleObjective(type, parameter, count);
     }
 }
 
 MissionHandler.prototype.getCurrentActiveMissions = function() {
-    if(this.current) {
-        this.current.getActiveMissions();
+    if(this.currentGroup) {
+        this.currentGroup.getActiveMissions();
     }
 }

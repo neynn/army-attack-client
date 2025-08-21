@@ -7,7 +7,6 @@ import { PlayerCursor } from "../playerCursor.js";
 import { Player } from "../player.js";
 import { MoveAction } from "../../../actions/moveAction.js";
 import { PlayerState } from "./playerState.js";
-import { AttackSystem } from "../../../systems/attack.js";
 
 export const PlayerSelectedState = function() {
     this.entityID = EntityManager.ID.INVALID;
@@ -49,17 +48,14 @@ PlayerSelectedState.prototype.updateEntity = function(gameContext, player) {
     const { entityManager } = world;
     const selectedEntity = entityManager.getEntity(this.entityID);
 
-    if(!selectedEntity) {
-        return;
-    }
-
-    const hoverTileX = player.hover.tileX;
-    const { tileX } = selectedEntity.getComponent(ArmyEntity.COMPONENT.POSITION);
-    
-    if(hoverTileX !== tileX) {
-        LookSystem.lookHorizontal(selectedEntity, hoverTileX < tileX);
-
-        selectedEntity.updateSpriteHorizontal(gameContext, selectedEntity);
+    if(selectedEntity) {
+        const hoverTileX = player.hover.tileX;
+        const { tileX } = selectedEntity.getComponent(ArmyEntity.COMPONENT.POSITION);
+        
+        if(hoverTileX !== tileX) {
+            LookSystem.lookHorizontal(selectedEntity, hoverTileX < tileX);
+            selectedEntity.updateSpriteHorizontal(gameContext, selectedEntity);
+        }
     }
 }
 

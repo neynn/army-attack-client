@@ -7,6 +7,7 @@ import { ArmyContext } from "../armyContext.js";
 import { ArmyCamera } from "../armyCamera.js";
 import { DefaultTypes } from "../defaultTypes.js";
 import { ACTOR_ID } from "../enums.js";
+import { Actor } from "../../source/turn/actor.js";
 
 const ACTOR_TYPE = {
     PLAYER: "Player",
@@ -104,12 +105,13 @@ const createActor = function(gameContext, actorID, team, type) {
             return actor;
         }
         default: {
+            const actor = new Actor(actorID);
+
             console.warn(`Type ${type} is not defined!`);
-            break;
+
+            return actor;
         }
     }
-
-    return null;
 }
 
 /**
@@ -131,9 +133,7 @@ ActorSystem.createActor = function(gameContext, actorID, config) {
     const { team, type } = config;
     const actor = createActor(gameContext, actorID, team, type);
 
-    if(actor) {
-        turnManager.addActor(actorID, actor);
-    }
+    turnManager.addActor(actorID, actor);
 
     return actor;
 }
@@ -150,9 +150,7 @@ ActorSystem.createStoryPlayer = function(gameContext, teamID) {
     const { turnManager } = world;
     const actor = createActor(gameContext, ACTOR_ID.STORY_PLAYER, teamID, ACTOR_TYPE.PLAYER);
 
-    if(actor) {
-        turnManager.addActor(ACTOR_ID.STORY_PLAYER, actor);
-    }
+    turnManager.addActor(ACTOR_ID.STORY_PLAYER, actor);
 
     return actor;
 }
@@ -169,9 +167,7 @@ ActorSystem.createStoryEnemy = function(gameContext, teamID) {
     const { turnManager } = world;
     const actor = createActor(gameContext, ACTOR_ID.STORY_ENEMY, teamID, ACTOR_TYPE.ENEMY);
 
-    if(actor) {
-        turnManager.addActor(ACTOR_ID.STORY_ENEMY, actor);
-    }
+    turnManager.addActor(ACTOR_ID.STORY_ENEMY, actor);
 
     return actor;
 }

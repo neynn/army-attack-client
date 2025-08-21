@@ -128,17 +128,17 @@ PlayerCursor.prototype.alignSpriteAuto = function(gameContext) {
     switch(this.state) {
         case PlayerCursor.STATE.HOVER_ON_ENTITY: {
             const hoverEntity = this.getEntity(gameContext);
-            this.alignSpriteEntity(gameContext, hoverEntity);
+            this.alignSpriteOnEntity(gameContext, hoverEntity);
             break;
         }
         default: {
-            this.alignSpriteTile(gameContext);
+            this.alignSpriteOnTile(gameContext);
             break;
         }
     }
 }
 
-PlayerCursor.prototype.alignSpriteTile = function(gameContext) {
+PlayerCursor.prototype.alignSpriteOnTile = function(gameContext) {
     const { spriteManager, transform2D } = gameContext;
     const sprite = spriteManager.getSprite(this.spriteIndex);
     const { x, y } = transform2D.transformTileToWorldCenter(this.tileX, this.tileY);
@@ -146,7 +146,7 @@ PlayerCursor.prototype.alignSpriteTile = function(gameContext) {
     sprite.setPosition(x, y);
 }
 
-PlayerCursor.prototype.alignSpriteEntity = function(gameContext, entity) {
+PlayerCursor.prototype.alignSpriteOnEntity = function(gameContext, entity) {
     const { spriteManager, transform2D } = gameContext;
     const sprite = spriteManager.getSprite(this.spriteIndex);
     const { tileX, tileY } = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
@@ -180,7 +180,7 @@ PlayerCursor.prototype.createSprite = function(gameContext) {
 
     const { spriteManager } = gameContext;
     const actorSprite = spriteManager.createSprite("cursor_attack_1x1", SpriteManager.LAYER.UI);
-    const spriteID = actorSprite.getIndex();
+    const spriteIndex = actorSprite.getIndex();
 
-    this.spriteIndex = spriteID;
+    this.spriteIndex = spriteIndex;
 }

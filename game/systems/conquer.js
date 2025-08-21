@@ -48,15 +48,14 @@ ConquerSystem.conquer = function(gameContext, teamName, tiles) {
     const { mapManager } = world;
     const worldMap = mapManager.getActiveMap();
 
-    if(!worldMap) {
-        return;
-    }
+    if(worldMap) {
+        const teamID = getTeamID(teamName);
 
-    for(let i = 0; i < tiles.length; i += 2) {
-        const tileX = tiles[i];
-        const tileY = tiles[i + 1];
+        for(let i = 0; i < tiles.length; i++) {
+            const { x, y, } = tiles[i];
 
-        worldMap.conquerTile(gameContext, getTeamID(teamName), tileX, tileY);
+            worldMap.conquerTile(gameContext, teamID, x, y);
+        }
     }
 }
 
@@ -91,7 +90,10 @@ ConquerSystem.tryConquering = function(gameContext, entity, tileX, tileY, actorI
             const isConquerable = isTileConquerable(gameContext, worldMap, j, i, teamID);
 
             if(isConquerable) {
-                tiles.push(j, i);
+                tiles.push({
+                    "x": j,
+                    "y": i
+                });
             }
         }
     }

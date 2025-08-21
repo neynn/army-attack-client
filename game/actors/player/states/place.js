@@ -48,7 +48,7 @@ PlayerPlaceState.prototype.onEnter = function(gameContext, stateMachine, transit
 PlayerPlaceState.prototype.onUpdate = function(gameContext, stateMachine) {
     const player = stateMachine.getContext();
 
-    player.hover.alignSpriteTile(gameContext);
+    player.hover.alignSpriteOnTile(gameContext);
 }
 
 PlayerPlaceState.prototype.onClick = function(gameContext, stateMachine) {
@@ -98,21 +98,21 @@ PlayerPlaceState.prototype.setupBuildSprite = function(gameContext, player) {
 
 PlayerPlaceState.prototype.highlightPlaceableTiles = function(gameContext, player) {
     const { tileManager } = gameContext;
-    const tileID = tileManager.getTileIDByArray(player.config.overlays.disabled);
+    const blockedTileID = tileManager.getTileIDByArray(player.config.overlays.disabled);
     const blockedIndices = PlaceSystem.getBlockedPlaceIndices(gameContext, player.teamID);
-    const layer = player.camera.place;
+    const targetLayer = player.camera.place;
 
     for(let i = 0; i < blockedIndices.length; i += 2) {
         const index = blockedIndices[i];
         const state = blockedIndices[i + 1];
 
         switch(state) {
-            case PlaceSystem.BLOCK_STATE.ENTITY_ATTACK: {
-                layer.setItem(tileID, index);
+            case PlaceSystem.BLOCK_REASON.ENTITY_ATTACK: {
+                targetLayer.setItem(blockedTileID, index);
                 break;
             }
             default: {
-                layer.clearItem(index);
+                targetLayer.clearItem(index);
                 break;
             }
         }

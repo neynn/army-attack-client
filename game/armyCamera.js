@@ -143,7 +143,7 @@ ArmyCamera.prototype.debugMap = function(context, worldMap) {
     this.drawMapOutlines(context);
 }
 
-ArmyCamera.prototype.updateMoveOverlay = function(gameContext, nodeList, enableTileID, attackTileID, ) {
+ArmyCamera.prototype.updateMoveOverlay = function(gameContext, nodeList, enableTileID, attackTileID) {
     const { world } = gameContext;
     const showInvalidTiles = gameContext.settings.debug.showInvalidMoveTiles;
 

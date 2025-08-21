@@ -1,4 +1,5 @@
-export const ExecutionRequest = function(type, data) {
+export const ExecutionRequest = function(id, type, data) {
+    this.id = id;
     this.type = type;
     this.data = data;
     this.state = ExecutionRequest.STATE.NONE;

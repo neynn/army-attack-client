@@ -16,6 +16,10 @@ export const World = function() {
         this.turnManager.removeEntity(entityID);
     }, { permanent: true });
     
+    this.actionQueue.events.on(ActionQueue.EVENT.EXECUTION_COMPLETE, (executionItem) => {
+        this.eventBus.onExecutionComplete(executionItem);
+    }, { permanent: true });
+
     this.addDebug();
 }
 
@@ -31,7 +35,7 @@ World.prototype.addDebug = function() {
         this.actionQueue.events.on(ActionQueue.EVENT.EXECUTION_DEFER, (item, request) => console.log(item, request), { permanent: true });
         this.actionQueue.events.on(ActionQueue.EVENT.EXECUTION_ERROR, (request, type) => console.log(request, type), { permanent: true });
         this.actionQueue.events.on(ActionQueue.EVENT.EXECUTION_RUNNING, (item) => console.log(item), { permanent: true });
-        this.actionQueue.events.on(ActionQueue.EVENT.QUEUE_ERROR, (error) => console.log(error), { permanent: true });
+        this.actionQueue.events.on(ActionQueue.EVENT.EXECUTION_COMPLETE, (error) => console.log(error), { permanent: true });
     }
 
     if(World.DEBUG.LOG_TURN_EVENTS) {

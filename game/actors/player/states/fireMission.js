@@ -42,7 +42,7 @@ PlayerFireMissionState.prototype.onUpdate = function(gameContext, stateMachine) 
     const player = stateMachine.getContext();
     const { hover } = player;
 
-    hover.alignSpriteTile(gameContext);
+    hover.alignSpriteOnTile(gameContext);
 }
 
 PlayerFireMissionState.prototype.updateCursor = function(gameContext, player) {
@@ -66,32 +66,24 @@ PlayerFireMissionState.prototype.queueFireMission = function(player, tileX, tile
     player.inputQueue.enqueueLast(request);
 }
 
-PlayerFireMissionState.prototype.isValid = function(gameContext, fireMissionID, tileX, tileY) {
-    const fireMission = FireMissionSystem.getType(gameContext, fireMissionID);
-
-    if(!fireMission) {
-        return false;
-    }
-
-    const isBlocked = FireMissionSystem.isBlocked(gameContext, fireMission, tileX, tileY);
-
-    return !isBlocked;
-}
-
 PlayerFireMissionState.prototype.onClick = function(gameContext, stateMachine) {
-    const player = stateMachine.getContext();
-    const { hover } = player;
-    const { tileX, tileY } = hover;
-    const isValid = this.isValid(gameContext, this.missionID, tileX, tileY);
+    const fireMission = FireMissionSystem.getType(gameContext, this.missionID);
 
-    if(isValid) {
-        this.queueFireMission(player, tileX, tileY);
-        stateMachine.setNextState(gameContext, Player.STATE.IDLE);
-    } else {
-        const { client } = gameContext;
-        const { soundPlayer } = client;
-        
-        soundPlayer.play(player.config.sounds.error, 0.5);
+    if(fireMission) {
+        const player = stateMachine.getContext();
+        const { hover } = player;
+        const { tileX, tileY } = hover;
+        const isBlocked = FireMissionSystem.isBlocked(gameContext, fireMission, tileX, tileY);
+
+        if(!isBlocked) {
+            this.queueFireMission(player, tileX, tileY);
+            stateMachine.setNextState(gameContext, Player.STATE.IDLE);
+        } else {
+            const { client } = gameContext;
+            const { soundPlayer } = client;
+            
+            soundPlayer.play(player.config.sounds.error, 0.5);
+        }
     }
 }
 
