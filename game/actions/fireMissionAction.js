@@ -25,7 +25,7 @@ FireMissionAction.prototype.onEnd = function(gameContext, request) {
 FireMissionAction.prototype.isFinished = function(gameContext, request) {
     const timeRequired = gameContext.settings.hitDuration;
 
-    //Fire Animations have no animation as of yet, so return true immediately.
+    //Fire missions have no animation as of yet, so return true immediately.
     return true || request.timePassed >= timeRequired;
 }
 

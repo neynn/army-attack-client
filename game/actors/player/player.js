@@ -7,7 +7,7 @@ import { PlayerFireMissionState } from "./states/fireMission.js";
 import { PlayerSpectateState } from "./states/spectate.js";
 import { Actor } from "../../../source/turn/actor.js";
 import { StateMachine } from "../../../source/state/stateMachine.js";
-import { Queue } from "../../../source/queue.js";
+import { Queue } from "../../../source/util/queue.js";
 import { ArmyEventHandler } from "../../armyEventHandler.js";
 import { AttackVisualizer } from "./attackVisualizer.js";
 import { PlayerHealState } from "./states/heal.js";

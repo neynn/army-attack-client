@@ -1,6 +1,6 @@
 import { TILE_TYPE } from "../../game/enums.js";
 import { loopValue } from "../math/math.js";
-import { Scroller } from "../scroller.js";
+import { Scroller } from "../util/scroller.js";
 import { EditorAutotiler } from "./editor/autotiler.js";
 import { Brush } from "./editor/brush.js";
 

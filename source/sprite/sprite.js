@@ -130,6 +130,23 @@ Sprite.prototype.isEqual = function(typeID) {
     return typeID === this.typeID;
 }
 
+Sprite.prototype.swapTexture = function(sprite) {
+    const typeID = sprite.typeID;
+    const frameCount = sprite.frameCount;
+    const frameTime = sprite.frameTime;
+    const lastCallTime = sprite.lastCallTime;
+    const bX = sprite.boundsX;
+    const bY = sprite.boundsY;
+    const bW = sprite.boundsW;
+    const bH = sprite.boundsH;
+
+    sprite.init(sprite.DEBUG_NAME, this.typeID, this.frameCount, this.frameTime, this.lastCallTime);
+    sprite.setBounds(this.boundsX, this.boundsY, this.boundsW, this.boundsH);
+
+    this.init(this.DEBUG_NAME, typeID, frameCount, frameTime, lastCallTime);
+    this.setBounds(bX, bY, bW, bH);
+}
+
 Sprite.prototype.init = function(DEBUG_NAME, typeID, frameCount, frameTime, lastCallTime) {
     this.DEBUG_NAME = DEBUG_NAME;
     this.typeID = typeID;

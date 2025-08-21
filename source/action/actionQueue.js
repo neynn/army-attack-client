@@ -1,6 +1,6 @@
 import { EventEmitter } from "../events/eventEmitter.js";
 import { ExecutionRequest } from "./executionRequest.js";
-import { Queue } from "../queue.js";
+import { Queue } from "../util/queue.js";
 import { Action } from "./action.js";
 
 export const ActionQueue = function() {
@@ -105,14 +105,14 @@ ActionQueue.prototype.flushExecution = function(gameContext) {
         return;
     }
 
-    const { type, data } = this.current;
+    const { type, data, id } = this.current;
     const actionType = this.actionTypes.get(type);
 
     this.events.emit(ActionQueue.EVENT.EXECUTION_RUNNING, this.current);
     this.current.setState(ExecutionRequest.STATE.RUNNING);
 
-    actionType.onStart(gameContext, data);
-    actionType.onEnd(gameContext, data);
+    actionType.onStart(gameContext, data, id);
+    actionType.onEnd(gameContext, data, id);
 
     this.current.setState(ExecutionRequest.STATE.FINISHED);
     this.events.emit(ActionQueue.EVENT.EXECUTION_COMPLETE, this.current);
@@ -124,14 +124,14 @@ ActionQueue.prototype.startExecution = function(gameContext) {
         return;
     }
 
-    const { type, data } = this.current;
+    const { type, data, id } = this.current;
     const actionType = this.actionTypes.get(type);
 
     this.state = ActionQueue.STATE.PROCESSING;
     this.current.setState(ExecutionRequest.STATE.RUNNING);
     this.events.emit(ActionQueue.EVENT.EXECUTION_RUNNING, this.current);
         
-    actionType.onStart(gameContext, data);
+    actionType.onStart(gameContext, data, id);
 }
 
 ActionQueue.prototype.processExecution = function(gameContext) {
@@ -142,15 +142,15 @@ ActionQueue.prototype.processExecution = function(gameContext) {
     const { timer } = gameContext;
     const deltaTime = timer.getFixedDeltaTime();
 
-    const { type, data } = this.current;
+    const { type, data, id } = this.current;
     const actionType = this.actionTypes.get(type);
 
     this.current.advance(deltaTime);
 
-    actionType.onUpdate(gameContext, data);
+    actionType.onUpdate(gameContext, data, id);
 
     if(this.isSkipping || actionType.isFinished(gameContext, this.current)) {
-        actionType.onEnd(gameContext, data);
+        actionType.onEnd(gameContext, data, id);
 
         this.current.setState(ExecutionRequest.STATE.FINISHED);
         this.events.emit(ActionQueue.EVENT.EXECUTION_COMPLETE, this.current);

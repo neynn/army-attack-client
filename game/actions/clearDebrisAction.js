@@ -11,14 +11,14 @@ export const ClearDebrisAction = function() {
 ClearDebrisAction.prototype = Object.create(Action.prototype);
 ClearDebrisAction.prototype.constructor = ClearDebrisAction;
 
-ClearDebrisAction.prototype.onStart = function(gameContext, request) {
-    const { tileX, tileY } = request;
+ClearDebrisAction.prototype.onStart = function(gameContext, actionData, actionID) {
+    const { tileX, tileY, actorID } = actionData;
 
     AnimationSystem.playCleaning(gameContext, tileX, tileY);
 }
 
-ClearDebrisAction.prototype.onEnd = function(gameContext, request) {
-    const { tileX, tileY, actorID } = request;
+ClearDebrisAction.prototype.onEnd = function(gameContext, actionData, actionID) {
+    const { tileX, tileY, actorID } = actionData;
 
     DebrisSystem.endCleaning(gameContext, tileX, tileY, actorID);
 }

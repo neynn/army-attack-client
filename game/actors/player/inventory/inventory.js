@@ -125,13 +125,26 @@ Inventory.prototype.has = function(type, id, value) {
     return hasItem;
 }
 
-Inventory.prototype.handleTransaction = function(transaction) {
+Inventory.prototype.addByTransaction = function(transaction) {
     if(transaction) {
         const { type, id, value } = transaction;
         const itemType = this.getItem(type, id);
 
         if(itemType) {
-            itemType.update(value);
+            itemType.add(value);
+        } else {
+            console.log("INVALID TRANSACTION", transaction);
+        }
+    }
+}
+
+Inventory.prototype.removeByTransaction = function(transaction) {
+    if(transaction) {
+        const { type, id, value } = transaction;
+        const itemType = this.getItem(type, id);
+
+        if(itemType) {
+            itemType.remove(value);
         } else {
             console.log("INVALID TRANSACTION", transaction);
         }
@@ -143,7 +156,7 @@ Inventory.prototype.updateEnergyCounter = function() {
     const energyDrops = Math.floor(energyCounter.getCount() / Inventory.COUNTER_TO_ENERGY_RATIO);
     const counterSpent = energyDrops * Inventory.COUNTER_TO_ENERGY_RATIO;
 
-    energyCounter.update(-counterSpent);
+    energyCounter.remove(counterSpent);
 
     return energyDrops;
 }

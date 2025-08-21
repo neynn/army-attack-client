@@ -13,6 +13,7 @@ import { EntityKillEvent } from "./events/entityKill.js";
 import { EntityMoveEvent } from "./events/entityMove.js";
 import { EntitySellEvent } from "./events/entitySell.js";
 import { MissionCompleteEvent } from "./events/missionComplete.js";
+import { MissionRewardsEvent } from "./events/missionRewards.js";
 import { TileCaptureEvent } from "./events/tileCapture.js";
 import { VersusRequestSkipTurnEvent } from "./events/versusRequestSkipTurn.js";
 import { VersusSkipTurnEvent } from "./events/versusSkipTurn.js";
@@ -49,6 +50,7 @@ ArmyEventHandler.TYPE = {
 
     DROP: 400,
     MISSION_COMPLETE: 401,
+    MISSION_REWARDS: 402,
 
     VERSUS_REQUEST_SKIP_TURN: 1000,
     VERSUS_SKIP_TURN: 1001
@@ -80,6 +82,7 @@ ArmyEventHandler.prototype.createEvents = function() {
 
     this.events.set(ArmyEventHandler.TYPE.DROP, new DropEvent());
     this.events.set(ArmyEventHandler.TYPE.MISSION_COMPLETE, new MissionCompleteEvent());
+    this.events.set(ArmyEventHandler.TYPE.MISSION_REWARDS, new MissionRewardsEvent());
 
     this.events.set(ArmyEventHandler.TYPE.VERSUS_SKIP_TURN, new VersusSkipTurnEvent());
     this.events.set(ArmyEventHandler.TYPE.VERSUS_REQUEST_SKIP_TURN, new VersusRequestSkipTurnEvent());

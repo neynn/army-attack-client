@@ -26,7 +26,7 @@ HealAction.prototype.onStart = function(gameContext, request) {
     AnimationSystem.playHeal(gameContext, entity);
 
     if(actor.inventory) {
-        actor.inventory.handleTransaction(transaction);
+        actor.inventory.removeByTransaction(transaction);
     }
 }
 
@@ -66,7 +66,7 @@ HealAction.prototype.getValidated = function(gameContext, request) {
 
     const missingHealth = entity.getComponent(ArmyEntity.COMPONENT.HEALTH).getMissing();
     const supplyCost = HealSystem.getSuppliesRequired(entity, missingHealth);
-    const transaction = DefaultTypes.createItemTransaction(Inventory.TYPE.RESOURCE, HealSystem.HEAL_RESOURCE, -supplyCost);
+    const transaction = DefaultTypes.createItemTransaction(Inventory.TYPE.RESOURCE, HealSystem.HEAL_RESOURCE, supplyCost);
 
     return {
         "entityID": entityID,

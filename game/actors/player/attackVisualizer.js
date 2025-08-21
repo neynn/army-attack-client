@@ -1,7 +1,6 @@
-import { SwapSet } from "../../../source/swapSet.js";
+import { SwapSet } from "../../../source/util/swapSet.js";
 import { ArmyCamera } from "../../armyCamera.js";
 import { ArmyEntity } from "../../init/armyEntity.js";
-import { AttackSystem } from "../../systems/attack.js";
 import { LookSystem } from "../../systems/look.js";
 import { PlayerCursor } from "./playerCursor.js";
 

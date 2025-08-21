@@ -1,5 +1,6 @@
 import { Action } from "../../source/action/action.js";
 import { ActionRequest } from "../../source/action/actionRequest.js";
+import { ArmyEventHandler } from "../armyEventHandler.js";
 import { ACTION_TYPE } from "../enums.js";
 import { AnimationSystem } from "../systems/animation.js";
 import { AttackSystem } from "../systems/attack.js";
@@ -13,17 +14,17 @@ export const CounterMoveAction = function() {
 CounterMoveAction.prototype = Object.create(Action.prototype);
 CounterMoveAction.prototype.constructor = CounterMoveAction;
 
-CounterMoveAction.prototype.onStart = function(gameContext, request) {
-    const { attackers, target } = request;
+CounterMoveAction.prototype.onStart = function(gameContext, actionData, actionID) {
+    const { attackers, target } = actionData;
 
     AttackSystem.startAttack(gameContext, target);
     AnimationSystem.playFire(gameContext, target, attackers);
 }
 
-CounterMoveAction.prototype.onEnd = function(gameContext, request) {
-    const { attackers, target } = request;
+CounterMoveAction.prototype.onEnd = function(gameContext, actionData, actionID) {
+    const { attackers, target } = actionData;
     
-    AttackSystem.endAttack(gameContext, target, null);
+    AttackSystem.updateTarget(gameContext, target, null, ArmyEventHandler.KILL_REASON.ATTACK);
     AnimationSystem.playIdle(gameContext, attackers);
 }
 
@@ -50,7 +51,7 @@ CounterMoveAction.prototype.getValidated = function(gameContext, template) {
     }
     
     const attackerIDs = attackers.map(entity => entity.getID());
-    const targetObject = AttackSystem.getAttackTarget(target, attackers);
+    const targetObject = AttackSystem.createTargetObject(target, attackers);
     
     return {
         "attackers": attackerIDs,

@@ -1,5 +1,6 @@
 import { Action } from "../../source/action/action.js";
 import { ActionRequest } from "../../source/action/actionRequest.js";
+import { ArmyEventHandler } from "../armyEventHandler.js";
 import { ACTION_TYPE } from "../enums.js";
 import { AnimationSystem } from "../systems/animation.js";
 import { AttackSystem } from "../systems/attack.js";
@@ -23,7 +24,7 @@ CounterAttackAction.prototype.onStart = function(gameContext, request) {
 CounterAttackAction.prototype.onEnd = function(gameContext, request) {
     const { attackers, target } = request;
 
-    AttackSystem.endAttack(gameContext, target, null);
+    AttackSystem.updateTarget(gameContext, target, null, ArmyEventHandler.KILL_REASON.ATTACK);
     AnimationSystem.playIdle(gameContext, attackers);
 }
 
@@ -50,7 +51,7 @@ CounterAttackAction.prototype.getValidated = function(gameContext, template) {
     }
 
     const attackerIDs = [entity].map(entity => entity.getID());
-    const targetObject = AttackSystem.getAttackTarget(counterTarget, [entity]);
+    const targetObject = AttackSystem.createTargetObject(counterTarget, [entity]);
     
     return {
         "attackers": attackerIDs,

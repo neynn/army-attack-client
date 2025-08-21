@@ -34,7 +34,7 @@ FireMissionSystem.getType = function(gameContext, fireMissionID) {
  * @returns {boolean}
  */
 FireMissionSystem.isTargetable = function(entity) {
-    if(entity.hasComponent(ArmyEntity.COMPONENT.TOWN)) {
+    if(entity.hasComponent(ArmyEntity.COMPONENT.TOWN) || !entity.isAlive()) {
         return false;
     }
 

@@ -1,7 +1,7 @@
-export const Objective = function(type, parameter, value) {
+export const Objective = function(type, parameter, target) {
     this.type = type;
     this.parameter = parameter;
-    this.maxValue = value;
+    this.target = target;
     this.value = 0;
     this.state = Objective.STATE.INCOMPLETE;
 }
@@ -22,8 +22,8 @@ Objective.prototype.load = function(blob) {
 
     if(value < 0) {
         this.value = 0;
-    } else if(value > this.maxValue) {
-        this.value = this.maxValue;
+    } else if(value > this.target) {
+        this.value = this.target;
     } else {
         this.value = value;
     }
@@ -36,9 +36,9 @@ Objective.prototype.isMatching = function(type, parameter) {
 Objective.prototype.progress = function(count) {
     this.value += count;
 
-    if(this.value >= this.maxValue) {
+    if(this.value >= this.target) {
         this.state = Objective.STATE.COMPLETE;
-        this.value = this.maxValue;
+        this.value = this.target;
     }
 
     return this.state;

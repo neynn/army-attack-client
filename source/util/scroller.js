@@ -1,4 +1,4 @@
-import { clampValue, loopValue } from "./math/math.js";
+import { clampValue, loopValue } from "../math/math.js";
 
 export const Scroller = function(values = []) {
     this.values = values;

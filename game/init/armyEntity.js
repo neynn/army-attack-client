@@ -324,3 +324,14 @@ ArmyEntity.prototype.isAttackableByTeam = function(gameContext, teamID) {
 
     return isEnemy;
 }
+
+ArmyEntity.prototype.getCenterTile = function() {
+    const positionComponent = this.getComponent(ArmyEntity.COMPONENT.POSITION);
+    const centerX = positionComponent.tileX + ((this.config.dimX - 1) / 2);
+    const centerY = positionComponent.tileY + ((this.config.dimY - 1) / 2);
+
+    return {
+        "x": centerX,
+        "y": centerY
+    }
+}

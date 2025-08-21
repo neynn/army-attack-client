@@ -1,5 +1,6 @@
 import { Action } from "../../source/action/action.js";
 import { ActionRequest } from "../../source/action/actionRequest.js";
+import { ArmyEventHandler } from "../armyEventHandler.js";
 import { ACTION_TYPE } from "../enums.js";
 import { AnimationSystem } from "../systems/animation.js";
 import { AttackSystem } from "../systems/attack.js";
@@ -12,20 +13,20 @@ export const AttackAction = function() {
 AttackAction.prototype = Object.create(Action.prototype);
 AttackAction.prototype.constructor = AttackAction;
 
-AttackAction.prototype.onStart = function(gameContext, request) {
-    const { attackers, target } = request;
+AttackAction.prototype.onStart = function(gameContext, actionData, actionID) {
+    const { attackers, target } = actionData;
 
     AttackSystem.startAttack(gameContext, target);
     AnimationSystem.playFire(gameContext, target, attackers);
 }
 
-AttackAction.prototype.onEnd = function(gameContext, request) {
+AttackAction.prototype.onEnd = function(gameContext, actionData, actionID) {
     const { world } = gameContext;
     const { actionQueue } = world;
-    const { actorID, attackers, target } = request;
+    const { actorID, attackers, target } = actionData;
     const { id, state } = target;
 
-    AttackSystem.endAttack(gameContext, target, actorID);
+    AttackSystem.updateTarget(gameContext, target, actorID, ArmyEventHandler.KILL_REASON.ATTACK);
     AnimationSystem.playIdle(gameContext, attackers);
 
     if(state === AttackSystem.OUTCOME_STATE.IDLE) {
@@ -56,7 +57,7 @@ AttackAction.prototype.getValidated = function(gameContext, request) {
     }
 
     const attackerIDs = attackerEntities.map(entity => entity.getID());
-    const targetObject = AttackSystem.getAttackTarget(target, attackerEntities);
+    const targetObject = AttackSystem.createTargetObject(target, attackerEntities);
     
     return {
         "actorID": actorID,

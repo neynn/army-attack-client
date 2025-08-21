@@ -40,7 +40,6 @@ ObjectPool.prototype.freeElement = function(index) {
     }
 }
 
-
 ObjectPool.prototype.reserveElement = function() {
     if(this.openSlots.length === 0) {
         if(this.size === 0) {

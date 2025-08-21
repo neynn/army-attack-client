@@ -8,7 +8,7 @@ import { EntityDownEvent } from "../events/entityDown.js";
 import { ArmyContext } from "../armyContext.js";
 
 /**
- * Collection of functions revolving around the animations.
+ * Collection of functions revolving around attacking.
  */
 export const AttackSystem = function() {}
 
@@ -60,7 +60,7 @@ AttackSystem.startAttack = function(gameContext, targetObject) {
     switch(state) {
         case AttackSystem.OUTCOME_STATE.DOWN: {
             DecaySystem.beginDecay(entity);
-            
+
             entity.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.DOWN);
             entity.playSound(gameContext, ArmyEntity.SOUND_TYPE.DEATH);
             break;
@@ -70,17 +70,6 @@ AttackSystem.startAttack = function(gameContext, targetObject) {
             break;
         }
     }
-}
-
-/**
- * Ends a regular attack on a target.
- * 
- * @param {ArmyContext} gameContext 
- * @param {ArmyEntity} target 
- * @param {string} actorID 
- */
-AttackSystem.endAttack = function(gameContext, target, actorID) {
-    AttackSystem.updateTarget(gameContext, target, actorID, ArmyEventHandler.KILL_REASON.ATTACK);
 }
 
 /**
@@ -128,7 +117,7 @@ AttackSystem.updateTarget = function(gameContext, target, actorID, reason) {
  * @param {ArmyEntity[]} attackers 
  * @returns {TargetObject}
  */
-AttackSystem.getAttackTarget = function(target, attackers) {
+AttackSystem.createTargetObject = function(target, attackers) {
     const armorComponent = target.getComponent(ArmyEntity.COMPONENT.ARMOR);
 
     let totalDamage = 0;

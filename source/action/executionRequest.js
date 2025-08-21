@@ -26,6 +26,7 @@ ExecutionRequest.prototype.setState = function(stateID) {
 
 ExecutionRequest.prototype.toJSON = function() {
     return {
+        "id": this.id,
         "type": this.type,
         "data": this.data
     }

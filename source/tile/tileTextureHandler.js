@@ -20,23 +20,6 @@ TileTextureHandler.prototype.getContainerCount = function() {
     return this.containers.length;
 }
 
-TileTextureHandler.prototype.getValidContainer = function(tileID) {
-    const index = tileID - 1;
-
-    if(index < 0 || index >= this.containers.length) {
-        return null;
-    }
-
-    const container = this.containers[index];
-    const { texture, frameCount } = container;
-
-    if(texture === null || frameCount === 0) {
-        return null;
-    }
-
-    return container;
-}
-
 TileTextureHandler.prototype.onTextureLoad = function(textureID, texture) {
     const indices = this.atlases.get(textureID);
 

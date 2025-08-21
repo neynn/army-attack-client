@@ -1,6 +1,6 @@
 import { Logger } from "../logger.js";
 import { Sprite } from "./sprite.js";
-import { ObjectPool } from "../objectPool.js";
+import { ObjectPool } from "../util/objectPool.js";
 import { SpriteTextureHandler } from "./spriteTextureHandler.js";
 
 export const SpriteManager = function() {

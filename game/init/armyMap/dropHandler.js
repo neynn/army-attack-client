@@ -7,45 +7,58 @@ export const DropHandler = function() {
     this.drops = [];
 }
 
-DropHandler.prototype.createDrop = function(gameContext, type, id, value, inventory) {
-    const { spriteManager } = gameContext;
+DropHandler.prototype.createDrop = function(gameContext, inventory, tileX, tileY, type, id, value) {
+    const { spriteManager, transform2D } = gameContext;
     const sprite = spriteManager.createSprite("drop_money");
     const transaction = DefaultTypes.createItemTransaction(type, id, value);
     const drop = new Drop(transaction, inventory, sprite);
+    const { x, y } = transform2D.transformTileToWorldCenter(tileX, tileY);
 
-    drop.setPosition(100 + getRandomNumber(-50, 50), 100);
+    drop.setPosition(x + getRandomNumber(-48, 48), y);
 
     this.drops.push(drop);
 }
 
 DropHandler.prototype.createDrops = function(gameContext, drops, inventory) {
     for(let i = 0; i < drops.length; i++) {
-        const drop = drops[i];
-        const { type, id, value } = drop;
+        const { tileX, tileY, transaction } = drops[i];
+        const { type, id, value } = transaction;
         const maxDrop = inventory.getMaxDrop(type, id);
 
         if(maxDrop === 0) {
-            inventory.handleTransaction(drop);
+            inventory.addByTransaction(transaction);
             continue;
         }
 
         let toDrop = value;
 
         while(toDrop >= maxDrop) {
-            this.createDrop(gameContext, type, id, maxDrop, inventory);
+            this.createDrop(gameContext, inventory, tileX, tileY, type, id, maxDrop);
             toDrop -= maxDrop;
         }
 
         if(toDrop !== 0) {
-            this.createDrop(gameContext, type, id, toDrop, inventory);
+            this.createDrop(gameContext, inventory, tileX, tileY, type, id, toDrop);
         }
     }
 
     const energyDrops = inventory.updateEnergyCounter();
 
+    //TODO: Add a way to add positions to these drops!
     for(let i = 0; i < energyDrops; i++) {
-        this.createDrop(gameContext, Inventory.TYPE.RESOURCE, Inventory.ID.ENERGY, 1, inventory); 
+        this.createDrop(gameContext, inventory, 0, 0, Inventory.TYPE.RESOURCE, Inventory.ID.ENERGY, 1); 
     }
+}
+
+DropHandler.prototype.collectAllDrops = function() {
+    for(let i = 0; i < this.drops.length; i++) {
+        const drop = this.drops[i];
+
+        drop.collect();
+        drop.sprite.terminate();
+    }
+
+    this.drops = [];
 }
 
 DropHandler.prototype.update = function(gameContext, worldMap) {

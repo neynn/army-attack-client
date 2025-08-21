@@ -10,8 +10,12 @@ Item.prototype.has = function(value) {
     return this.count >= value;
 }
 
-Item.prototype.update = function(value) {
+Item.prototype.add = function(value) {
     this.count = clampValue(this.count + value, this.maxCount, 0);
+}
+
+Item.prototype.remove = function(value) {
+    this.count = clampValue(this.count - value, this.maxCount, 0);
 }
 
 Item.prototype.setCount = function(count) {

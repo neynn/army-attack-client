@@ -1,6 +1,7 @@
 import { ArmyEventHandler } from "../armyEventHandler.js";
 import { ArmyEvent } from "./armyEvent.js";
 import { DropEvent } from "./drop.js";
+import { MissionRewardsEvent } from "./missionRewards.js";
 
 export const MissionCompleteEvent = function() {}
 
@@ -15,7 +16,7 @@ MissionCompleteEvent.prototype.onStory = function(gameContext, event) {
     const rewards = mission.getRewards();
 
     if(rewards.length !== 0) {
-        eventBus.emit(ArmyEventHandler.TYPE.DROP, DropEvent.createEvent(actorID, rewards));
+        eventBus.emit(ArmyEventHandler.TYPE.MISSION_REWARDS, MissionRewardsEvent.createEvent(actorID, rewards));
     }
 }
 

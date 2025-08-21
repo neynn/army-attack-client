@@ -5,35 +5,38 @@ import { ArmyEntity } from "../init/armyEntity.js";
 import { ArmyMap } from "../init/armyMap.js";
 import { AllianceSystem } from "./alliance.js";
 
+const PathfinderNodeList = function() {
+    this.nodes = [];
+}
+
+PathfinderNodeList.prototype.add = function(node, state) {
+    this.nodes.push({
+        "node": node,
+        "state": state
+    });
+}
+
+PathfinderNodeList.prototype.exit = function() {
+    const nodes = this.nodes;
+
+    this.nodes = [];
+
+    return nodes;
+}
+
 /**
  * Collection of functions revolving around the pathfinding.
  */
 export const PathfinderSystem = function() {}
 
 PathfinderSystem.PATHFINDER = new FloodFill(1, 1.5);
-
+PathfinderSystem.NODE_LIST = new PathfinderNodeList();
 PathfinderSystem.NODE_STATE = {
     VALID: 0,
     INVALID_PASSABILITY: 1,
     INVALID_WALKABILITY: 2,
     INVALID_OCCUPIED: 3
 };
-
-/**
- * Adds a node to the specified node list.
- * 
- * @param {FullNode[]} nodeList 
- * @param {PathfinderNode} node 
- * @param {int} state 
- */
-const addNode = function(nodeList, node, state) {
-    const fullNode = {
-        "node": node,
-        "state": state
-    };
-
-    nodeList.push(fullNode);
-}
 
 /**
  * Checks if the tile is passable by the entity.
@@ -131,7 +134,6 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
         return [];
     }
 
-    const nodes = [];
     const moveComponent = entity.getComponent(ArmyEntity.COMPONENT.MOVE);
     const { tileX, tileY } = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
     const isOriginWalkable = isTileWalkable(gameContext, activeMap, entity, tileX, tileY);
@@ -141,7 +143,7 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
         const isNextPassable = isTilePassable(gameContext, activeMap, entity, positionX, positionY);
 
         if(!isNextPassable) {
-            addNode(nodes, next, PathfinderSystem.NODE_STATE.INVALID_PASSABILITY);
+            PathfinderSystem.NODE_LIST.add(next, PathfinderSystem.NODE_STATE.INVALID_PASSABILITY);
 
             return FloodFill.RESPONSE.IGNORE_NEXT;
         }
@@ -153,7 +155,7 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
             const isPassable = isPassingAllowed(gameContext, activeMap, entity, tileEntity);
 
             if(!isPassable) {
-                addNode(nodes, next, PathfinderSystem.NODE_STATE.INVALID_OCCUPIED);
+                PathfinderSystem.NODE_LIST.add(next, PathfinderSystem.NODE_STATE.INVALID_OCCUPIED);
 
                 return FloodFill.RESPONSE.IGNORE_NEXT;
             }
@@ -167,11 +169,11 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
          */
         if(!isOriginWalkable) {
             if(!isNextWalkable) {
-                addNode(nodes, next, PathfinderSystem.NODE_STATE.INVALID_WALKABILITY);
+                PathfinderSystem.NODE_LIST.add(next, PathfinderSystem.NODE_STATE.INVALID_WALKABILITY);
 
                 return FloodFill.RESPONSE.IGNORE_NEXT;
             } else {
-                addNode(nodes, next, PathfinderSystem.NODE_STATE.VALID);
+                PathfinderSystem.NODE_LIST.add(next, PathfinderSystem.NODE_STATE.VALID);
 
                 return FloodFill.RESPONSE.USE_NEXT;
             }
@@ -183,20 +185,20 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
          */
         if(!isNextWalkable) {
             if(!moveComponent.isCoward()) {
-                addNode(nodes, next, PathfinderSystem.NODE_STATE.VALID);
+                PathfinderSystem.NODE_LIST.add(next, PathfinderSystem.NODE_STATE.VALID);
             } else {
-                addNode(nodes, next, PathfinderSystem.NODE_STATE.INVALID_WALKABILITY);
+                PathfinderSystem.NODE_LIST.add(next, PathfinderSystem.NODE_STATE.INVALID_WALKABILITY);
             }
 
             return FloodFill.RESPONSE.IGNORE_NEXT;
         }
 
-        addNode(nodes, next, PathfinderSystem.NODE_STATE.VALID);
+        PathfinderSystem.NODE_LIST.add(next, PathfinderSystem.NODE_STATE.VALID);
 
         return FloodFill.RESPONSE.USE_NEXT;
     });
 
-    return nodes;
+    return PathfinderSystem.NODE_LIST.exit();
 }
 
 /**

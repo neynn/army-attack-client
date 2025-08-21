@@ -1,5 +1,6 @@
 import { getRandomChance } from "../../source/math/math.js";
 import { DefaultTypes } from "../defaultTypes.js";
+import { ArmyEntity } from "../init/armyEntity.js";
 
 /**
  * Collection of functions revolving around the dropping of items.
@@ -13,7 +14,7 @@ export const DropSystem = function() {}
  * @param {RewardType} reward 
  * @returns {ItemTransaction | null}
  */
-const getDrop = function(reward) {
+const getDrop = function(reward, tileX = 0, tileY = 0) {
     const { type, id, value, chance = 100 } = reward;
     const randomRoll = getRandomChance();
 
@@ -21,13 +22,17 @@ const getDrop = function(reward) {
         return null;
     }
 
-    return DefaultTypes.createItemTransaction(type, id, value);
+    return {
+        "transaction": DefaultTypes.createItemTransaction(type, id, value),
+        "tileX": tileX,
+        "tileY": tileY
+    }
 }
 
 /**
  * Gets a list of rewards from hitting an enemy.
  * 
- * @param {*} entity 
+ * @param {ArmyEntity} entity 
  * @returns {DropType[]}
  */
 DropSystem.getHitReward = function(entity) {
@@ -38,8 +43,10 @@ DropSystem.getHitReward = function(entity) {
         return drops;
     }
     
+    const { x, y } = entity.getCenterTile();
+
     for(let i = 0; i < hitRewards.length; i++) {
-        const drop = getDrop(hitRewards[i]);
+        const drop = getDrop(hitRewards[i], x, y);
 
         if(drop) {
             drops.push(drop);
@@ -52,7 +59,7 @@ DropSystem.getHitReward = function(entity) {
 /**
  * Gets a list of rewards from killing an enemy.
  * 
- * @param {*} entity 
+ * @param {ArmyEntity} entity 
  * @returns {DropType[]}
  */
 DropSystem.getKillReward = function(entity) {
@@ -63,8 +70,10 @@ DropSystem.getKillReward = function(entity) {
         return drops;
     }
 
+    const { x, y } = entity.getCenterTile();
+
     for(let i = 0; i < killRewards.length; i++) {
-        const drop = getDrop(killRewards[i]);
+        const drop = getDrop(killRewards[i], x, y);
 
         if(drop) {
             drops.push(drop);
@@ -77,10 +86,13 @@ DropSystem.getKillReward = function(entity) {
 /**
  * Gets a list of rewards from cleaning debris.
  * 
- * @param {*} entity 
+ * @param {*} gameContext 
+ * @param {*} typeID 
+ * @param {*} tileX 
+ * @param {*} tileY 
  * @returns {DropType[]}
  */
-DropSystem.getDebrisReward = function(gameContext, typeID) {
+DropSystem.getDebrisReward = function(gameContext, typeID, tileX, tileY) {
     const debrisType = gameContext.debrisTypes[typeID];
     const drops = [];
 
@@ -95,7 +107,7 @@ DropSystem.getDebrisReward = function(gameContext, typeID) {
     }
 
     for(let i = 0; i < killRewards.length; i++) {
-        const drop = getDrop(killRewards[i]);
+        const drop = getDrop(killRewards[i], tileX, tileY);
 
         if(drop) {
             drops.push(drop);
@@ -108,7 +120,7 @@ DropSystem.getDebrisReward = function(gameContext, typeID) {
 /**
  * Gets a list of rewards from selling an entity.
  * 
- * @param {*} entity 
+ * @param {ArmyEntity} entity 
  * @returns {DropType[]}
  */
 DropSystem.getSellReward = function(entity) {
@@ -119,7 +131,8 @@ DropSystem.getSellReward = function(entity) {
         return drops;
     }
 
-    const drop = getDrop(sellReward);
+    const { x, y } = entity.getCenterTile();
+    const drop = getDrop(sellReward, x, y);
 
     if(drop) {
         drops.push(drop);

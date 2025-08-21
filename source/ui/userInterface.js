@@ -1,4 +1,4 @@
-import { SwapSet } from "../swapSet.js";
+import { SwapSet } from "../util/swapSet.js";
 import { createFadeInEffect } from "../effects/example/fadeIn.js";
 import { createFadeOutEffect } from "../effects/example/fadeOut.js";
 import { TextElement } from "./elements/textElement.js";
