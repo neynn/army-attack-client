@@ -132,6 +132,8 @@ Inventory.prototype.handleTransaction = function(transaction) {
 
         if(itemType) {
             itemType.update(value);
+        } else {
+            console.log("INVALID TRANSACTION", transaction);
         }
     }
 }

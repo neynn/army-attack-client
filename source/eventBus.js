@@ -4,6 +4,11 @@ export const EventBus = function() {
     this.postEvents = [];
 }
 
+EventBus.EVENT_TYPE = {
+    DIRECT: 0,
+    POST: 1
+};
+
 EventBus.prototype.setEmitableTable = function(table) {
     if(typeof table === "object") {
         this.emitable = table;
@@ -29,10 +34,11 @@ EventBus.prototype.isEmitable = function(eventID) {
     return isEmitable;
 }
 
-EventBus.prototype.addPostEvent = function(onCall, actionID) {
+EventBus.prototype.addPostEvent = function(actionID, eventID, eventData) {
     this.postEvents.push({
         "actionID": actionID,
-        "onCall": onCall
+        "eventID": eventID,
+        "eventData": eventData
     });
 }
 
@@ -41,12 +47,12 @@ EventBus.prototype.onExecutionComplete = function(executionItem) {
 
     for(let i = 0; i < this.postEvents.length; i++) {
         const event = this.postEvents[i];
-        const { actionID, onCall } = event;
+        const { actionID, eventID, eventData } = event;
 
         if(actionID <= executionItem.id) {
             const actionsBehind = executionItem.id - actionID;
 
-            onCall(executionItem, actionsBehind);
+            this.force(eventID, eventData);
 
             completedEvents.push(i);
         }
@@ -59,12 +65,16 @@ EventBus.prototype.onExecutionComplete = function(executionItem) {
     }
 }
 
-EventBus.prototype.emit = function(eventID, eventData) {
-    if(!this.isEmitable(eventID)) {
-        return;
-    }
-
+EventBus.prototype.force = function(eventID, eventData) {
     for(let i = 0; i < this.handlers.length; i++) {
         this.handlers[i](eventID, eventData);
+    }
+}
+
+EventBus.prototype.emit = function(eventID, eventData) {
+    if(this.isEmitable(eventID)) {
+        for(let i = 0; i < this.handlers.length; i++) {
+            this.handlers[i](eventID, eventData);
+        }
     }
 }
