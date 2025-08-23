@@ -84,7 +84,10 @@ const createActor = function(gameContext, actorID, team, type) {
             router.on("ESCAPE", () => gameContext.states.setNextState(gameContext, ArmyContext.STATE.MAIN_MENU));
             router.on("DEBUG_IDLE", () => actor.states.setNextState(gameContext, Player.STATE.IDLE));
             router.on("DEBUG_HEAL", () => actor.states.setNextState(gameContext, Player.STATE.HEAL));
-            router.on("DEBUG_FIREMISSION", () => actor.states.setNextState(gameContext, Player.STATE.FIRE_MISSION, { "missionID": "OrbitalLaser" }));
+            router.on("DEBUG_FIREMISSION", () => actor.states.setNextState(gameContext, Player.STATE.FIRE_MISSION, {
+                "missionID": "OrbitalLaser",
+                "transaction": DefaultTypes.createItemTransaction("Resource", "Gold", 500)
+            }));
             router.on("DEBUG_SELL", () => actor.states.setNextState(gameContext, Player.STATE.SELL));
             router.on("DEBUG_PLACE", () => actor.states.setNextState(gameContext, Player.STATE.PLACE, {
                 "entityType": entityManager.getEntityType("blue_commando"),

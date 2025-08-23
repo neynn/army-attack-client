@@ -77,11 +77,9 @@ EntityManager.prototype.forAllEntities = function(onCall) {
 }
 
 EntityManager.prototype.markForDestroy = function(entityID) {
-    if(!this.entityMap.has(entityID)) {
-        return;
+    if(this.entityMap.has(entityID)) {
+        this.pendingRemovals.push(entityID);
     }
-
-    this.pendingRemovals.push(entityID);
 }
 
 EntityManager.prototype.update = function(gameContext) {

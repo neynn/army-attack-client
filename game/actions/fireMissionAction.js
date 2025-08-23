@@ -31,7 +31,7 @@ FireMissionAction.prototype.isFinished = function(gameContext, request) {
 
 FireMissionAction.prototype.getValidated = function(gameContext, request) {
     const { actorID, callID, tileX, tileY } = request;
-    const fireMission = FireMissionSystem.getType(gameContext, callID);
+    const fireMission = gameContext.getFireMissionType(callID);
 
     if(!fireMission) {
         return null;

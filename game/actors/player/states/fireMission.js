@@ -8,18 +8,18 @@ import { PlayerState } from "./playerState.js";
 
 export const PlayerFireMissionState = function() {
     this.missionID = null;
+    this.transaction = null;
 }
 
 PlayerFireMissionState.prototype = Object.create(PlayerState.prototype);
 PlayerFireMissionState.prototype.constructor = PlayerFireMissionState;
 
 PlayerFireMissionState.prototype.onEnter = function(gameContext, stateMachine, transition) {
-    const { missionID } = transition;
+    const { missionID, transaction } = transition;
     const player = stateMachine.getContext();
 
-    if(missionID) {
-        this.missionID = missionID;
-    }
+    this.missionID = missionID;
+    this.transaction = transaction;
 
     AnimationSystem.playIdle(gameContext, player.attackVisualizer.attackers.getCurrent());
 
@@ -36,6 +36,7 @@ PlayerFireMissionState.prototype.onExit = function(gameContext, stateMachine) {
     player.camera.clearOverlay(ArmyCamera.OVERLAY.FIRE_MISSION);
 
     this.missionID = null;
+    this.transaction = null;
 }
 
 PlayerFireMissionState.prototype.onUpdate = function(gameContext, stateMachine) {
@@ -48,14 +49,12 @@ PlayerFireMissionState.prototype.onUpdate = function(gameContext, stateMachine) 
 PlayerFireMissionState.prototype.updateCursor = function(gameContext, player) {
     const fireMission = gameContext.fireCallTypes[this.missionID];
 
-    if(!fireMission) {
-        return;
-    }
+    if(fireMission) {
+        const { sprites } = fireMission;
 
-    const { sprites } = fireMission;
-
-    if(sprites) {
-        player.hover.updateSprite(gameContext, sprites.cursor);
+        if(sprites) {
+            player.hover.updateSprite(gameContext, sprites.cursor);
+        }
     }
 }
 
@@ -67,7 +66,7 @@ PlayerFireMissionState.prototype.queueFireMission = function(player, tileX, tile
 }
 
 PlayerFireMissionState.prototype.onClick = function(gameContext, stateMachine) {
-    const fireMission = FireMissionSystem.getType(gameContext, this.missionID);
+    const fireMission = gameContext.getFireMissionType(this.missionID);
 
     if(fireMission) {
         const player = stateMachine.getContext();

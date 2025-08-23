@@ -1,22 +1,16 @@
 import { Entity } from "../../source/entity/entity.js";
-import { EventEmitter } from "../../source/events/eventEmitter.js";
 import { isRectangleRectangleIntersect } from "../../source/math/math.js";
 import { DirectionComponent } from "../components/direction.js";
 import { SpriteComponent } from "../components/sprite.js";
+import { DefaultTypes } from "../defaultTypes.js";
 import { AllianceSystem } from "../systems/alliance.js";
+import { StatCard } from "./statCard.js";
 
 export const ArmyEntity = function(id, DEBUG_NAME) {
     Entity.call(this, id, DEBUG_NAME);
 
-    this.events = new EventEmitter();
-    this.events.listen(ArmyEntity.EVENT.HEALTH_UPDATE);
-    this.events.listen(ArmyEntity.EVENT.DAMAGE_UPDATE);
+    this.statCard = new StatCard();
 }
-
-ArmyEntity.EVENT = {
-    HEALTH_UPDATE: "HEALTH_UPDATE",
-    DAMAGE_UPDATE: "DAMAGE_UPDATE"
-};
 
 ArmyEntity.TYPE = {
     UNIT: "Unit",
@@ -121,7 +115,7 @@ ArmyEntity.prototype.addHealth = function(health) {
     
     healthComponent.addHealth(health);
 
-    this.events.emit(ArmyEntity.EVENT.HEALTH_UPDATE, healthComponent.health, healthComponent.maxHealth);
+    this.updateStatCard();
 }
 
 ArmyEntity.prototype.reduceHealth = function(damage) {
@@ -129,7 +123,7 @@ ArmyEntity.prototype.reduceHealth = function(damage) {
     
     healthComponent.reduceHealth(damage);
 
-    this.events.emit(ArmyEntity.EVENT.HEALTH_UPDATE, healthComponent.health, healthComponent.maxHealth);
+    this.updateStatCard();
 }
 
 ArmyEntity.prototype.getHealth = function() {
@@ -374,4 +368,27 @@ ArmyEntity.prototype.isConstructionComplete = function() {
     }
 
     return constructionComponent.isComplete(this.config.constructionSteps);
+}
+
+ArmyEntity.prototype.getConstructionResult = function(gameContext) {
+    const { world } = gameContext;
+    const { turnManager } = world;
+    const { tileX, tileY } = this.getComponent(ArmyEntity.COMPONENT.POSITION);
+    const { teamID } = this.getComponent(ArmyEntity.COMPONENT.TEAM);
+    const owners = turnManager.getOwnersOf(this.id).map(actor => actor.getID());
+    const type = this.config.constructionResult;
+    
+    return DefaultTypes.createSpawnConfig(type, teamID, owners, tileX, tileY);
+}
+
+ArmyEntity.prototype.updateStatCard = function() {
+    const healthComponent = this.getComponent(ArmyEntity.COMPONENT.HEALTH);
+
+    this.statCard.setHealthText(`${healthComponent.health}/${healthComponent.maxHealth}`);
+
+    const attackComponent = this.getComponent(ArmyEntity.COMPONENT.ATTACK);
+
+    if(attackComponent) {
+        this.statCard.setDamageText(`${attackComponent.damage}`);
+    }
 }

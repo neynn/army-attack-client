@@ -303,3 +303,13 @@ ArmyContext.prototype.getAlliance = function(teamA, teamB) {
 
     return alliance;
 }
+
+ArmyContext.prototype.getFireMissionType = function(name) {
+    const fireMission = this.fireCallTypes[name];
+
+    if(!fireMission) {
+        return null; //TODO: Stub
+    }
+
+    return fireMission;
+}

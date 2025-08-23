@@ -11,23 +11,6 @@ import { DebrisSpawnEvent } from "../events/debrisSpawn.js";
 export const FireMissionSystem = function() {}
 
 /**
- * Returns the config of a fire mission.
- * 
- * @param {*} gameContext 
- * @param {string} fireMissionID 
- * @returns {FireMissionType}
- */
-FireMissionSystem.getType = function(gameContext, fireMissionID) {
-    const fireMission = gameContext.fireCallTypes[fireMissionID];
-
-    if(!fireMission) {
-        return null;
-    }
-
-    return fireMission;
-} 
-
-/**
  * Checks if the entity is targetable by any fire mission.
  * 
  * @param {*} entity 
@@ -167,7 +150,7 @@ FireMissionSystem.isBlocked = function(gameContext, fireMission, tileX, tileY) {
 FireMissionSystem.startFireMission = function(gameContext, missionID, tileX, tileY, targetObjects) {
     const { client } = gameContext;
     const { soundPlayer } = client;
-    const fireMission = FireMissionSystem.getType(gameContext, missionID);
+    const fireMission = gameContext.getFireMissionType(missionID);
     
     for(let i = 0; i < targetObjects.length; i++) {
         AttackSystem.startAttack(gameContext, targetObjects[i]);
@@ -195,7 +178,7 @@ FireMissionSystem.endFireMission = function(gameContext, missionID, actorID, til
         AttackSystem.updateTarget(gameContext, targetObjects[i], actorID, ArmyEventHandler.KILL_REASON.FIRE_MISSION);
     }
 
-    const fireMission = FireMissionSystem.getType(gameContext, missionID);
+    const fireMission = gameContext.getFireMissionType(missionID);
     const { dimX, dimY } = fireMission;
     const debris = DebrisSystem.getDebrisSpawnLocations(gameContext, tileX, tileY, dimX, dimY);
 
