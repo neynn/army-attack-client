@@ -65,8 +65,6 @@ CardSystem.generateStatCard = function(gameContext, entity) {
         entity.updateStatCard();
         sprite.addChild(entity.statCard);
     }
-
-    console.log(CardSystem.CARD_SPRITE_CACHE)
 }
 
 /**
