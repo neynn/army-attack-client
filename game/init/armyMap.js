@@ -4,7 +4,7 @@ import { AllianceSystem } from "../systems/alliance.js";
 import { DropHandler } from "./armyMap/dropHandler.js";
 import { Shop } from "./armyMap/shop.js";
 import { ArmyCamera } from "../armyCamera.js";
-import { getTeamName } from "../enums.js";
+import { getTeamName, TILE_TYPE } from "../enums.js";
 
 export const ArmyMap = function(id) {
     WorldMap.call(this, id);
@@ -130,13 +130,42 @@ ArmyMap.prototype.conquerTile = function(gameContext, teamID, tileX, tileY) {
     this.updateBorder(gameContext, tileX, tileY, 1);
 }
 
-ArmyMap.prototype.updateBorder = function(gameContext, tileX, tileY, range) {
-    const { world } = gameContext;
+ArmyMap.prototype.updateAllBorders = function(gameContext) {
+    const { world, tileManager } = gameContext;
     const { turnManager } = world;
     
     if(!gameContext.settings.calculateBorder) {
         return;
     }
+
+    const autotiler = tileManager.getAutotilerByID(ArmyMap.AUTOTILER.BORDER);
+
+    turnManager.forAllActors((actorID, actor) => {
+        const { camera, teamID } = actor;
+
+        if(!(camera instanceof ArmyCamera) || teamID === undefined) {
+            return;
+        }
+
+        for(let i = 0; i < this.height; i++) {
+            for(let j = 0; j < this.width; j++) {
+                const borderID = this.getBorderID(gameContext, autotiler, j, i, teamID);
+
+                camera.updateBorder(borderID, j, i);
+            }
+        }
+    });
+}
+
+ArmyMap.prototype.updateBorder = function(gameContext, tileX, tileY, range) {
+    const { world, tileManager } = gameContext;
+    const { turnManager } = world;
+    
+    if(!gameContext.settings.calculateBorder) {
+        return;
+    }
+
+    const autotiler = tileManager.getAutotilerByID(ArmyMap.AUTOTILER.BORDER);
 
     turnManager.forAllActors((actorID, actor) => {
         const { camera, teamID } = actor;
@@ -152,7 +181,7 @@ ArmyMap.prototype.updateBorder = function(gameContext, tileX, tileY, range) {
     
         for(let i = startY; i <= endY; i++) {
             for(let j = startX; j <= endX; j++) {
-                const borderID = this.getBorderID(gameContext, j, i, teamID);
+                const borderID = this.getBorderID(gameContext, autotiler, j, i, teamID);
 
                 camera.updateBorder(borderID, j, i);
             }
@@ -241,21 +270,15 @@ ArmyMap.prototype.init = function(gameContext, config = {}) {
 }
 
 ArmyMap.prototype.reload = function(gameContext) {
+    for(let i = 0; i < this.height; i++) {
+        for(let j = 0; j < this.width; j++) {
+            this.updateShoreTiles(gameContext, j, i, 0);
+            this.convertGraphicToTeam(gameContext, j, i);
+        }
+    }
+
     if(this.hasFlag(ArmyMap.FLAG.ALLOW_BORDER)) {
-        for(let i = 0; i < this.height; i++) {
-            for(let j = 0; j < this.width; j++) {
-                this.updateShoreTiles(gameContext, j, i, 1);
-                this.convertGraphicToTeam(gameContext, j, i);
-                this.updateBorder(gameContext, j, i, 0);
-            }
-        }
-    } else {
-        for(let i = 0; i < this.height; i++) {
-            for(let j = 0; j < this.width; j++) {
-                this.updateShoreTiles(gameContext, j, i, 1);
-                this.convertGraphicToTeam(gameContext, j, i);
-            }
-        }
+        this.updateAllBorders(gameContext);
     }
 }
 
@@ -296,9 +319,8 @@ ArmyMap.prototype.updateShoreTiles = function(gameContext, tileX, tileY, range) 
     for(let i = startY; i <= endY; i++) {
         for(let j = startX; j <= endX; j++) {
             const typeID = this.getTile(ArmyMap.LAYER.TYPE, j, i);
-            const tileType = gameContext.getTileType(typeID);
 
-            if(tileType.hasForm) {
+            if(typeID === TILE_TYPE.SHORE) {
                 const groundID = this.getTile(ArmyMap.LAYER.GROUND, j, i);
                 const isFormValid = this.isFormValid(gameContext, groundID, j, i, teamID);
 
@@ -329,13 +351,10 @@ ArmyMap.prototype.convertGraphicToTeam = function(gameContext, tileX, tileY) {
     }
 }
 
-ArmyMap.prototype.getBorderID = function(gameContext, tileX, tileY, teamID) {
+ArmyMap.prototype.getBorderID = function(gameContext, autotiler, tileX, tileY, teamID) {
     if(!this.hasFlag(ArmyMap.FLAG.ALLOW_BORDER)) {
         return 0;
     }
-
-    const { tileManager } = gameContext;
-    const autotiler = tileManager.getAutotilerByID(ArmyMap.AUTOTILER.BORDER);
     
     const centerTypeID = this.getTile(ArmyMap.LAYER.TYPE, tileX, tileY);
     const centerType = gameContext.getTileType(centerTypeID);

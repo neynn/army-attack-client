@@ -5,7 +5,6 @@
         "passability": "Land",
         "hasBorder": true,
         "isConquerable": true,
-        "hasForm": false,
         "canDebrisSpawn": true,
         "allowPlacement": true
     },
@@ -15,7 +14,6 @@
         "passability": "Mountain",
         "hasBorder": false,
         "isConquerable": false,
-        "hasForm": false,
         "canDebrisSpawn": false,
         "allowPlacement": false
     },
@@ -25,7 +23,6 @@
         "passability": "Sea",
         "hasBorder": false,
         "isConquerable": false,
-        "hasForm": false,
         "canDebrisSpawn": false,
         "allowPlacement": false
     },
@@ -35,7 +32,6 @@
         "passability": "Shore",
         "hasBorder": false,
         "isConquerable": false,
-        "hasForm": true,
         "canDebrisSpawn": false,
         "allowPlacement": false
     },
@@ -45,7 +41,6 @@
         "passability": "Error",
         "hasBorder": false,
         "isConquerable": false,
-        "hasForm": false,
         "canDebrisSpawn": false,
         "allowPlacement": false
     }
