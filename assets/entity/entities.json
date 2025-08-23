@@ -455,7 +455,7 @@
         "sell": { "type": "Resource", "id": "Money", "value": 3000 },
         "cost": { "infantry": 1, "armor": 0, "artillery": 0 },
         "stats": {
-            "story": { "health": 5, "damage": 2, "attackRange": 1, "moveRange": 5, "traits": ["Infantry", "Elite"] }, 
+            "story": { "health": 5, "damage": 2, "attackRange": 1, "moveRange": 5, "traits": ["Infantry", "Elite", "Stealth"] }, 
             "versus": { "health": 5, "damage": 2, "attackRange": 1, "moveRange": 5, "traits": ["Infantry"] }
         },
         "sprites": {

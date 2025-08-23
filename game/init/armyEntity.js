@@ -210,6 +210,10 @@ ArmyEntity.prototype.canActivelyAttack = function() {
     return canActivelyAttack;
 }
 
+ArmyEntity.prototype.canMove = function() {
+    return this.isAlive() && this.hasComponent(ArmyEntity.COMPONENT.MOVE);
+}
+
 ArmyEntity.prototype.getAttackCounterTarget = function(gameContext) {
     if(!this.canCounterAttack()) {
         return null;
@@ -334,4 +338,40 @@ ArmyEntity.prototype.getCenterTile = function() {
         "x": centerX,
         "y": centerY
     }
+}
+
+ArmyEntity.prototype.hasPassability = function(passability) {
+    if(!this.config.passability) {
+        return false;
+    }
+    
+    for(let i = 0; i < this.config.passability.length; i++) {
+        if(passability === this.config.passability[i]) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+ArmyEntity.prototype.updateSpritePosition = function(gameContext) {
+    const spriteComponent = this.getComponent(ArmyEntity.COMPONENT.SPRITE);
+    const positionComponent = this.getComponent(ArmyEntity.COMPONENT.POSITION);
+    const { positionX, positionY } = positionComponent;
+
+    spriteComponent.setPosition(gameContext, positionX, positionY);
+}
+
+ArmyEntity.prototype.isConstructionComplete = function() {
+    if(!this.isAlive()) {
+        return false;
+    }
+
+    const constructionComponent = this.getComponent(ArmyEntity.COMPONENT.CONSTRUCTION);
+
+    if(!constructionComponent) {
+        return false;
+    }
+
+    return constructionComponent.isComplete(this.config.constructionSteps);
 }

@@ -1,37 +1,7 @@
-import { Logger } from "../../source/logger.js";
-import { DEFAULT_ALLIANCE } from "../defaultTypes.js";
-
 /**
  * Collection of functions revolving around the alliances.
  */
 export const AllianceSystem = function() {}
-
-/**
- * Returns the alliance type between the two teams.
- * 
- * @param {ArmyContext} gameContext 
- * @param {string} actorTeamID 
- * @param {string} reactorTeamID 
- * @returns {AllianceType}
- */
-const getAlliance = function(gameContext, actorTeamID, reactorTeamID) {
-    const actorTeam = gameContext.teamTypes[actorTeamID];
-
-    if(!actorTeam) {
-        Logger.log(Logger.CODE.WARN, "TeamType does not exist", "getAlliance", { actorTeamID });
-        return DEFAULT_ALLIANCE;
-    }
-
-    const allianceID = actorTeam.alliances[reactorTeamID];
-    const alliance = gameContext.allianceTypes[allianceID];
-
-    if(!alliance) {
-        Logger.log(Logger.CODE.WARN, "AllianceType does not exist", "getAlliance", { actorTeamID, allianceID });
-        return DEFAULT_ALLIANCE;
-    }
-
-    return alliance;
-}
 
 /**
  * Returns if teamA can bypass teamB.
@@ -42,7 +12,7 @@ const getAlliance = function(gameContext, actorTeamID, reactorTeamID) {
  * @returns {boolean}
  */
 AllianceSystem.isPassable = function(gameContext, actorTeamID, reactorTeamID) {
-    return getAlliance(gameContext, actorTeamID, reactorTeamID).isPassable;
+    return gameContext.getAlliance(actorTeamID, reactorTeamID).isPassable;
 }
 
 /**
@@ -54,7 +24,7 @@ AllianceSystem.isPassable = function(gameContext, actorTeamID, reactorTeamID) {
  * @returns {boolean}
  */
 AllianceSystem.isWalkable = function(gameContext, actorTeamID, reactorTeamID) {
-    return getAlliance(gameContext, actorTeamID, reactorTeamID).isWalkable;
+    return gameContext.getAlliance(actorTeamID, reactorTeamID).isWalkable;
 }
 
 /**
@@ -66,7 +36,7 @@ AllianceSystem.isWalkable = function(gameContext, actorTeamID, reactorTeamID) {
  * @returns {boolean}
  */
 AllianceSystem.isEnemy = function(gameContext, actorTeamID, reactorTeamID) {
-    return getAlliance(gameContext, actorTeamID, reactorTeamID).isEnemy;
+    return gameContext.getAlliance(actorTeamID, reactorTeamID).isEnemy;
 }
 
 /**
@@ -78,5 +48,5 @@ AllianceSystem.isEnemy = function(gameContext, actorTeamID, reactorTeamID) {
  * @returns {boolean}
  */
 AllianceSystem.isPlaceable = function(gameContext, actorTeamID, reactorTeamID) {
-    return getAlliance(gameContext, actorTeamID, reactorTeamID).isPlaceable;
+    return gameContext.getAlliance(actorTeamID, reactorTeamID).isPlaceable;
 }

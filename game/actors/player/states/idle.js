@@ -1,12 +1,10 @@
 import { AnimationSystem } from "../../../systems/animation.js";
 import { ConstructionSystem } from "../../../systems/construction.js";
-import { MoveSystem } from "../../../systems/move.js";
 import { PathfinderSystem } from "../../../systems/pathfinder.js";
 import { PlayerCursor } from "../playerCursor.js";
 import { Player } from "../player.js";
 import { ClearDebrisAction } from "../../../actions/clearDebrisAction.js";
 import { PlayerState } from "./playerState.js";
-import { AttackSystem } from "../../../systems/attack.js";
 
 export const PlayerIdleState = function() {}
 
@@ -97,7 +95,7 @@ PlayerIdleState.prototype.onClick = function(gameContext, stateMachine) {
                 return;
             }
         
-            if(!actionQueue.isRunning() && MoveSystem.isMoveable(mouseEntity)) {
+            if(!actionQueue.isRunning() && mouseEntity.canMove()) {
                 this.selectEntity(gameContext, player, mouseEntity);
             }
 

@@ -5,7 +5,7 @@ import { MapSystem } from "./map.js";
 import { UnitLimitSystem } from "./unitLimit.js";
 import { SpriteManager } from "../../source/sprite/spriteManager.js";
 
-const initAttackComponent = function(entityType, component, stats) {
+const initAttackComponent = function(component, stats) {
     const {
         damage = 0,
         attackRange = 0
@@ -15,29 +15,11 @@ const initAttackComponent = function(entityType, component, stats) {
     component.range = attackRange;
 }
 
-const initConstructionComponent = function(entityType, component, stats) {
-    const {
-        constructionSteps,
-        constructionResult
-    } = entityType;
-
-    component.stepsRequired = constructionSteps;
-    component.result = constructionResult;
-}
-
-const initMoveComponent = function(entityType, component, stats) {
-    const {
-        passability = []
-    } = entityType;
-
+const initMoveComponent = function(component, stats) {
     const {
         moveRange = 0,
         moveSpeed = 480
     } = stats;
-
-    for(let i = 0; i < passability.length; i++) {
-        component.passability.add(passability[i]);
-    }
 
     component.range = moveRange;
     component.speed = moveSpeed;
@@ -86,7 +68,6 @@ const createSprite = function(gameContext, entity, tileX, tileY) {
 
 const COMPONENT_INIT = {
     [ArmyEntity.COMPONENT.ATTACK]: initAttackComponent,
-    [ArmyEntity.COMPONENT.CONSTRUCTION]: initConstructionComponent,
     [ArmyEntity.COMPONENT.MOVE]: initMoveComponent
 };
 
@@ -124,7 +105,7 @@ const createEntity = function(gameContext, config, entityID) {
         const component = entity.getComponent(componentID);
 
         if(component) {
-            COMPONENT_INIT[componentID](entityType, component, statConfig);
+            COMPONENT_INIT[componentID](component, statConfig);
         }
     }
 

@@ -73,7 +73,7 @@ MoveAction.prototype.getValidated = function(gameContext, request) {
     const { actorID, entityID, targetX, targetY } = request;
     const entity = entityManager.getEntity(entityID);
 
-    if(!entity || !entity.isAlive()) {
+    if(!entity) {
         return null;
     }
 

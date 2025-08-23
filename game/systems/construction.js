@@ -46,7 +46,7 @@ ConstructionSystem.onInteract = function(gameContext, entity, actorID) {
     const { world } = gameContext;
     const { actionQueue } = world;
     
-    if(constructionComponent.isComplete()) {
+    if(entity.isConstructionComplete()) {
         if(!actionQueue.isRunning()) {
             const result = getResult(gameContext, entity);
 

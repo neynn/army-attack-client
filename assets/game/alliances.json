@@ -16,5 +16,11 @@
         "isPassable": true,
         "isPlaceable": false,
         "isEnemy": false
+    },
+    "Error": {
+        "isWalkable": false,
+        "isPassable": false,
+        "isPlaceable": false,
+        "isEnemy": false
     }
 }

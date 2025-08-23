@@ -1,36 +1,23 @@
-import { clampValue } from "../../source/math/math.js";
-
 export const ConstructionComponent = function() {
-    this.stepsRequired = 0;
     this.stepsCompleted = 0;
-    this.result = null;
 }
 
 ConstructionComponent.CONSTRUCTION_FRAMES = [0, 0, 1, 1, 2];
 
-ConstructionComponent.prototype.getResult = function() {
-    return this.result;
-}
-
-ConstructionComponent.prototype.isComplete = function() {
-    return this.stepsCompleted >= this.stepsRequired;
-}
-
 ConstructionComponent.prototype.getFrame = function() {
-    const frameID = ConstructionComponent.CONSTRUCTION_FRAMES[this.stepsCompleted];
-
-    if(frameID === undefined) {
+    if(this.stepsCompleted < 0 || this.stepsCompleted >= ConstructionComponent.CONSTRUCTION_FRAMES.length) {
         return 0;
     }
 
-    return frameID;
+    return ConstructionComponent.CONSTRUCTION_FRAMES[this.stepsCompleted];
+}
+
+ConstructionComponent.prototype.isComplete = function(maxSteps = 0) {
+    return this.stepsCompleted >= maxSteps;
 }
 
 ConstructionComponent.prototype.advance = function(deltaSteps = 0) {
-    const nextValue = this.stepsCompleted + deltaSteps;
-    const stepsCompleted = clampValue(nextValue, this.stepsRequired, 0);
-
-    this.stepsCompleted = stepsCompleted;
+    this.stepsCompleted += deltaSteps;
 }
 
 ConstructionComponent.prototype.save = function() {

@@ -42,9 +42,8 @@ ConstructionAction.prototype.getValidated = function(gameContext, request) {
     const { entityManager } = world;
     const { entityID } = request;
     const entity = entityManager.getEntity(entityID);
-    const constructionComponent = entity.getComponent(ArmyEntity.COMPONENT.CONSTRUCTION);
 
-    if(!constructionComponent || constructionComponent.isComplete()) {
+    if(!entity || !entity.hasComponent(ArmyEntity.COMPONENT.CONSTRUCTION) || entity.isConstructionComplete()) {
         return null;
     }
 

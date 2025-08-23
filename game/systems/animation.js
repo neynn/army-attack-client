@@ -1,5 +1,6 @@
 import { SpriteManager } from "../../source/sprite/spriteManager.js";
 import { ArmyContext } from "../armyContext.js";
+import { UI_SONUD } from "../enums.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { LookSystem } from "./look.js";
 
@@ -17,11 +18,6 @@ AnimationSystem.SPRITE_ID = {
 AnimationSystem.FIRE_OFFSET = {
     ARTILLERY: 48,
     REGULAR: 12
-};
-
-AnimationSystem.SOUND_TYPE = {
-    HEAL: "sound_unit_repair",
-    BUTTON: "sound_button_press"
 };
 
 AnimationSystem.SPRITE_TYPE = {
@@ -194,7 +190,7 @@ AnimationSystem.playCleaning = function(gameContext, tileX, tileY) {
     delaySprite.expire();
     delaySprite.setPosition(x, y);
 
-    soundPlayer.playSound(AnimationSystem.SOUND_TYPE.BUTTON);
+    soundPlayer.playSound(UI_SONUD.BUTTON);
 }
 
 /**
@@ -215,7 +211,7 @@ AnimationSystem.playHeal = function(gameContext, entity) {
     delaySprite.expire();
     delaySprite.setPosition(x, y);
 
-    soundPlayer.playSound(AnimationSystem.SOUND_TYPE.HEAL);
+    soundPlayer.playSound(UI_SONUD.HEAL);
 }
 
 /**

@@ -49,10 +49,9 @@ PathfinderSystem.NODE_STATE = {
  * @returns {boolean}
  */
 const isTilePassable = function(gameContext, worldMap, entity, tileX, tileY) {
-    const tileTypeID = worldMap.getTile(ArmyMap.LAYER.TYPE, tileX, tileY);
-    const moveComponent = entity.getComponent(ArmyEntity.COMPONENT.MOVE);
-    const { passability } = gameContext.getTileType(tileTypeID);
-    const isTilePassable = moveComponent.hasPassability(passability);
+    const typeID = worldMap.getTile(ArmyMap.LAYER.TYPE, tileX, tileY);
+    const { passability } = gameContext.getTileType(typeID);
+    const isTilePassable = entity.hasPassability(passability);
 
     if(!isTilePassable) {
         return false;
@@ -75,14 +74,17 @@ const isTilePassable = function(gameContext, worldMap, entity, tileX, tileY) {
  * @returns {boolean}
  */
 const isTileWalkable = function(gameContext, worldMap, entity, tileX, tileY) {
-    const { teamID } = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
     const moveComponent = entity.getComponent(ArmyEntity.COMPONENT.MOVE);
 
+    if(moveComponent.isStealth()) {
+        return true;
+    }
+
+    const { teamID } = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
     const tileTeamID = worldMap.getTile(ArmyMap.LAYER.TEAM, tileX, tileY);
     const isTileWalkable = AllianceSystem.isWalkable(gameContext, teamID, getTeamName(tileTeamID));
-    const isWalkable = isTileWalkable || moveComponent.isStealth();
 
-    return isWalkable;
+    return isTileWalkable;
 }
 
 /**
@@ -130,7 +132,7 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
     const { mapManager, entityManager } = world;
     const activeMap = mapManager.getActiveMap();
     
-    if(!activeMap || !entity || !entity.hasComponent(ArmyEntity.COMPONENT.MOVE)) {
+    if(!activeMap || !entity.isAlive() || !entity.hasComponent(ArmyEntity.COMPONENT.MOVE)) {
         return [];
     }
 
@@ -231,9 +233,11 @@ PathfinderSystem.generateMovePath = function(nodeList, targetX, targetY) {
         for(let i = 1; i < length; i++) {
             const deltaX = flatTree[i - 1].positionX - flatTree[i].positionX;
             const deltaY = flatTree[i - 1].positionY - flatTree[i].positionY;
-            const step = MoveComponent.createStep(deltaX, deltaY);
-    
-            path.push(step);
+
+            path.push({
+                "deltaX": deltaX,
+                "deltaY": deltaY
+            });
         }
 
         return path;

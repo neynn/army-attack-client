@@ -4,7 +4,6 @@ export const MoveComponent = function() {
     this.path = [];
     this.pathIndex = -1;
     this.distance = 0;
-    this.passability = new Set();
     this.flags = MoveComponent.FLAGS.NONE;
 }
 
@@ -20,14 +19,6 @@ MoveComponent.FLAG_MAP = {
     "Cloak": MoveComponent.FLAGS.CLOAK,
     "Coward": MoveComponent.FLAGS.COWARD
 };
-
-MoveComponent.createStep = function(deltaX, deltaY) {
-    return {
-        "deltaX": deltaX,
-        "deltaY": deltaY,
-        "speed": Math.sqrt(deltaX * deltaX + deltaY * deltaY)
-    }
-}
 
 MoveComponent.prototype.canPathAdvance = function(distance) {
     return this.distance >= distance && !this.isPathDone();
@@ -73,17 +64,14 @@ MoveComponent.prototype.isCloaked = function() {
     return (this.flags & MoveComponent.FLAGS.CLOAK) !== 0;
 }
 
-MoveComponent.prototype.updateDistance = function(deltaTime) {
-    const { speed } = this.getCurrentStep();
+MoveComponent.prototype.updateDistance = function(deltaTime, straightSpeed, crossSpeed) {
+    const { deltaX, deltaY } = this.getCurrentStep();
+    const speed = (deltaX * deltaX + deltaY * deltaY) > 1 ? crossSpeed : straightSpeed;
     const deltaDistance = (this.speed / speed) * deltaTime;
 
     this.distance += deltaDistance;
 
     return deltaDistance;
-}
-
-MoveComponent.prototype.hasPassability = function(type) {
-    return this.passability.has(type);
 }
 
 MoveComponent.prototype.init = function(config) {

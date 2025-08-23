@@ -56,10 +56,21 @@ export const TILE_TYPE = {
     SHORE: 3
 };
 
+export const ALLIANCE_TYPE = {
+    ENEMY: "Enemy",
+    ALLY: "Ally",
+    NEUTRAL: "Neutral"
+};
+
 export const OBJECTIVE_TYPE = {
     DESTROY: "Destroy",
     CONQUER: "Conquer"
-}
+};
+
+export const UI_SONUD = {
+    HEAL: "sound_unit_repair",
+    BUTTON: "sound_button_press"
+};
 
 export const getTeamName = function(id) {
     switch(id) {

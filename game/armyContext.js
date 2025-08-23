@@ -1,5 +1,5 @@
 import { GameContext } from "../source/gameContext.js";
-import { ACTION_TYPE, getTeamName, TILE_TYPE } from "./enums.js";
+import { ACTION_TYPE, getTeamID, getTeamName, TEAM_ID, TILE_TYPE } from "./enums.js";
 import { AttackAction } from "./actions/attackAction.js";
 import { MoveAction } from "./actions/moveAction.js";
 import { ArmorComponent } from "./components/armor.js";
@@ -273,4 +273,33 @@ ArmyContext.prototype.getTileType = function(id) {
         case TILE_TYPE.SHORE: return this.tileTypes.Shore;
         default: return this.tileTypes.Error;
     }
+}
+
+ArmyContext.prototype.getTeamType = function(id) {
+    switch(id) {
+        case TEAM_ID.CRIMSON: return this.teamTypes.Crimson;
+        case TEAM_ID.ALLIES: return this.teamTypes.Allies;
+        case TEAM_ID.NEUTRAL: return this.teamTypes.Neutral;
+        case TEAM_ID.VERSUS: return this.teamTypes.Versus;
+        default: return this.teamTypes.Neutral;
+    }
+}
+
+ArmyContext.prototype.getAllianceType = function(allianceName) {
+    const alliance = this.allianceTypes[allianceName];
+
+    if(!alliance) {
+        return this.allianceTypes.Error;
+    }
+
+    return alliance;
+}
+
+ArmyContext.prototype.getAlliance = function(teamA, teamB) {
+    const teamID = getTeamID(teamA);
+    const teamType = this.getTeamType(teamID);
+    const allianceID = teamType.alliances[teamB];
+    const alliance = this.getAllianceType(allianceID);
+
+    return alliance;
 }
