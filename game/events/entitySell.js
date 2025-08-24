@@ -1,8 +1,6 @@
-import { ArmyEventHandler } from "../armyEventHandler.js";
 import { DropSystem } from "../systems/drop.js";
 import { SpawnSystem } from "../systems/spawn.js";
 import { ArmyEvent } from "./armyEvent.js";
-import { DropEvent } from "./drop.js";
 
 export const EntitySellEvent = function() {}
 
@@ -11,18 +9,13 @@ EntitySellEvent.prototype.constructor = EntitySellEvent;
 
 EntitySellEvent.prototype.onStory = function(gameContext, event) {
     const { world } = gameContext;
-    const { eventBus, entityManager } = world;
+    const { entityManager } = world;
 
     const { entityID, actorID } = event;
     const entity = entityManager.getEntity(entityID);
 
     if(entity) {
-        const sellReward = DropSystem.getSellReward(entity);
-
-        if(sellReward) {
-            eventBus.emit(ArmyEventHandler.TYPE.DROP, DropEvent.createEvent(actorID, sellReward));
-        }
-
+        DropSystem.createEntityDrop(gameContext, entity, DropSystem.DROP_TYPE.SELL, actorID);
         SpawnSystem.destroyEntity(gameContext, entity);
     }
 }

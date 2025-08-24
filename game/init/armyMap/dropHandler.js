@@ -27,9 +27,7 @@ DropHandler.prototype.createDrop = function(gameContext, inventory, tileX, tileY
     }
 }
 
-DropHandler.prototype.createDrops = function(gameContext, dropContainer, inventory) {
-    const { drops, tileX, tileY } = dropContainer;
-
+DropHandler.prototype.createDrops = function(gameContext, inventory, drops, tileX, tileY) {
     for(let i = 0; i < drops.length; i++) {
         const { type, id, value } = drops[i];
         const maxDrop = inventory.getMaxDrop(type, id);

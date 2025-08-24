@@ -1,153 +1,82 @@
 import { getRandomChance } from "../../source/math/math.js";
+import { ArmyEventHandler } from "../armyEventHandler.js";
 import { DefaultTypes } from "../defaultTypes.js";
-import { ArmyEntity } from "../init/armyEntity.js";
+import { DropEvent } from "../events/drop.js";
 
-/**
- * Collection of functions revolving around the dropping of items.
- */
 export const DropSystem = function() {}
 
-/**
- * Returns a drop item based on chance.
- * If no chance is specified, the item always gets returned.
- * 
- * @param {RewardType} reward 
- * @returns {ItemTransaction | null}
- */
-const getDrop = function(reward) {
-    const { type, id, value, chance = 100 } = reward;
-    const randomRoll = getRandomChance();
+DropSystem.DROP_TYPE = {
+    HIT: 0,
+    KILL: 1,
+    SELL: 2
+};
 
-    if(chance < randomRoll) {
-        return null;
-    }
-
-    return DefaultTypes.createItemTransaction(type, id, value);
-}
-
-/**
- * Gets a list of rewards from hitting an enemy.
- * 
- * @param {ArmyEntity} entity 
- * @returns {DropType[]}
- */
-DropSystem.getHitReward = function(entity) {
-    const hitRewards = entity.config.hitRewards;
-
-    if(!hitRewards) {
-        return null;
-    }
-    
+const getDropList = function(rewards) {
     const drops = [];
 
-    for(let i = 0; i < hitRewards.length; i++) {
-        const drop = getDrop(hitRewards[i]);
+    for(let i = 0; i < rewards.length; i++) {
+        const { type, id, value, chance = 100 } = rewards[i];
+        const randomRoll = getRandomChance();
 
-        if(drop) {
+        if(chance >= randomRoll) {
+            const drop = DefaultTypes.createItemTransaction(type, id, value);
+
             drops.push(drop);
         }
     }
 
-    if(drops.length === 0) {
-        return null;
-    }
-
-    const { x, y } = entity.getCenterTile();
-
-    return DefaultTypes.createDropContainer(drops, x, y);
+    return drops;
 }
 
-/**
- * Gets a list of rewards from killing an enemy.
- * 
- * @param {ArmyEntity} entity 
- * @returns {DropType[]}
- */
-DropSystem.getKillReward = function(entity) {
-    const killRewards = entity.config.killRewards;
+DropSystem.createEntityDrop = function(gameContext, entity, dropType, actorID) {
+    const { world } = gameContext;
+    const { eventBus } = world;
 
-    if(!killRewards) {
-        return null;
-    }
+    let rewards = null;
 
-    const drops = [];
+    switch(dropType) {
+        case DropSystem.DROP_TYPE.HIT: {
+            rewards = entity.config.hitRewards;
+            break;
+        }
+        case DropSystem.DROP_TYPE.KILL: {
+            rewards = entity.config.killRewards;
+            break;
+        }
+        case DropSystem.DROP_TYPE.SELL: {
+            if(entity.config.sell) {
+                rewards = [entity.config.sell];
+            }
 
-    for(let i = 0; i < killRewards.length; i++) {
-        const drop = getDrop(killRewards[i]);
-
-        if(drop) {
-            drops.push(drop);
+            break;
         }
     }
 
-    if(drops.length === 0) {
-        return null;
+    if(rewards) {
+        const drops = getDropList(rewards);
+
+        if(drops.length !== 0) {
+            const { x, y } = entity.getCenterTile();
+
+            eventBus.emit(ArmyEventHandler.TYPE.DROP, DropEvent.createEvent(actorID, drops, x, y));
+        }
     }
-
-    const { x, y } = entity.getCenterTile();
-
-    return DefaultTypes.createDropContainer(drops, x, y);
 }
 
-/**
- * Gets a list of rewards from cleaning debris.
- * 
- * @param {*} gameContext 
- * @param {*} typeID 
- * @param {*} tileX 
- * @param {*} tileY 
- * @returns {DropContainer}
- */
-DropSystem.getDebrisReward = function(gameContext, typeID, tileX, tileY) {
+DropSystem.createDebrisDrop = function(gameContext, typeID, actorID, tileX, tileY) {
+    const { world } = gameContext;
+    const { eventBus } = world;
     const debrisType = gameContext.debrisTypes[typeID];
 
-    if(!debrisType) {
-        return null;
-    }
+    if(debrisType) {
+        const { killRewards } = debrisType;
 
-    const { killRewards } = debrisType;
+        if(killRewards) {
+            const drops = getDropList(killRewards);
 
-    if(!killRewards) {
-        return null;
-    }
-
-    const drops = [];
-
-    for(let i = 0; i < killRewards.length; i++) {
-        const drop = getDrop(killRewards[i]);
-
-        if(drop) {
-            drops.push(drop);
+            if(drops.length !== 0) {
+                eventBus.emit(ArmyEventHandler.TYPE.DROP, DropEvent.createEvent(actorID, drops, tileX, tileY));
+            }
         }
     }
-
-    if(drops.length === 0) {
-        return null;
-    }
-
-    return DefaultTypes.createDropContainer(drops, tileX, tileY);
-}
-
-/**
- * Gets a list of rewards from selling an entity.
- * 
- * @param {ArmyEntity} entity 
- * @returns {DropContainer}
- */
-DropSystem.getSellReward = function(entity) {
-    const sellReward = entity.config.sell;
-
-    if(!sellReward) {
-        return null;
-    }
-
-    const drop = getDrop(sellReward);
-
-    if(!drop) {
-        return null;
-    }
-
-    const { x, y } = entity.getCenterTile();
-
-    return DefaultTypes.createDropContainer([drop], x, y);
 }

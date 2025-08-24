@@ -1,7 +1,5 @@
-import { ArmyEventHandler } from "../armyEventHandler.js";
 import { DropSystem } from "../systems/drop.js";
 import { ArmyEvent } from "./armyEvent.js";
-import { DropEvent } from "./drop.js";
 
 export const EntityHitEvent = function() {}
 
@@ -10,16 +8,12 @@ EntityHitEvent.prototype.constructor = EntityHitEvent;
 
 EntityHitEvent.prototype.onStory = function(gameContext, event) {
     const { world } = gameContext;
-    const { eventBus, entityManager } = world;
-    const { entityID, actor } = event;
+    const { entityManager } = world;
+    const { entityID, actorID } = event;
     const entity = entityManager.getEntity(entityID);
 
     if(entity) {
-        const hitReward = DropSystem.getHitReward(entity);
-
-        if(hitReward) {
-            eventBus.emit(ArmyEventHandler.TYPE.DROP, DropEvent.createEvent(actor, hitReward));
-        }
+        DropSystem.createEntityDrop(gameContext, entity, DropSystem.DROP_TYPE.HIT, actorID);
     }
 }
 
