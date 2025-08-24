@@ -13,10 +13,10 @@ DebrisRemovedEvent.prototype.onStory = function(gameContext, event) {
     const { eventBus } = world;
 
     const { tileX, tileY, actorID } = event;
-    const drops = DropSystem.getDebrisReward(gameContext, "Debris", tileX, tileY);
+    const debrisReward = DropSystem.getDebrisReward(gameContext, "Debris", tileX, tileY);
 
-    if(drops.length !== 0) {
-        eventBus.emit(ArmyEventHandler.TYPE.DROP, DropEvent.createEvent(actorID, drops));
+    if(debrisReward) {
+        eventBus.emit(ArmyEventHandler.TYPE.DROP, DropEvent.createEvent(actorID, debrisReward));
     }
 }
 

@@ -18,10 +18,10 @@ EntityKillEvent.prototype.onStory = function(gameContext, event) {
     const entity = entityManager.getEntity(entityID);
 
     if(entity) {
-        const killRewards = DropSystem.getKillReward(entity);
+        const killReward = DropSystem.getKillReward(entity);
 
-        if(killRewards.length !== 0) {
-            eventBus.emit(ArmyEventHandler.TYPE.DROP, DropEvent.createEvent(actorID, killRewards));
+        if(killReward) {
+            eventBus.emit(ArmyEventHandler.TYPE.DROP, DropEvent.createEvent(actorID, killReward));
         }
 
         const player = turnManager.getActor(actorID);

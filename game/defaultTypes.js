@@ -120,3 +120,11 @@ DefaultTypes.createItemTransaction = function(type, id, value) {
         "value": value
     }
 }   
+
+DefaultTypes.createDropContainer = function(drops, tileX, tileY) {
+    return {
+        "drops": drops,
+        "tileX": tileX,
+        "tileY": tileY
+    }
+}

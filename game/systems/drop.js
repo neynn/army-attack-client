@@ -14,7 +14,7 @@ export const DropSystem = function() {}
  * @param {RewardType} reward 
  * @returns {ItemTransaction | null}
  */
-const getDrop = function(reward, tileX = 0, tileY = 0) {
+const getDrop = function(reward) {
     const { type, id, value, chance = 100 } = reward;
     const randomRoll = getRandomChance();
 
@@ -22,11 +22,7 @@ const getDrop = function(reward, tileX = 0, tileY = 0) {
         return null;
     }
 
-    return {
-        "transaction": DefaultTypes.createItemTransaction(type, id, value),
-        "tileX": tileX,
-        "tileY": tileY
-    }
+    return DefaultTypes.createItemTransaction(type, id, value);
 }
 
 /**
@@ -37,23 +33,28 @@ const getDrop = function(reward, tileX = 0, tileY = 0) {
  */
 DropSystem.getHitReward = function(entity) {
     const hitRewards = entity.config.hitRewards;
-    const drops = [];
 
     if(!hitRewards) {
-        return drops;
+        return null;
     }
     
-    const { x, y } = entity.getCenterTile();
+    const drops = [];
 
     for(let i = 0; i < hitRewards.length; i++) {
-        const drop = getDrop(hitRewards[i], x, y);
+        const drop = getDrop(hitRewards[i]);
 
         if(drop) {
             drops.push(drop);
         }
     }
 
-    return drops;
+    if(drops.length === 0) {
+        return null;
+    }
+
+    const { x, y } = entity.getCenterTile();
+
+    return DefaultTypes.createDropContainer(drops, x, y);
 }
 
 /**
@@ -64,23 +65,28 @@ DropSystem.getHitReward = function(entity) {
  */
 DropSystem.getKillReward = function(entity) {
     const killRewards = entity.config.killRewards;
-    const drops = [];
 
     if(!killRewards) {
-        return drops;
+        return null;
     }
 
-    const { x, y } = entity.getCenterTile();
+    const drops = [];
 
     for(let i = 0; i < killRewards.length; i++) {
-        const drop = getDrop(killRewards[i], x, y);
+        const drop = getDrop(killRewards[i]);
 
         if(drop) {
             drops.push(drop);
         }
     }
 
-    return drops;
+    if(drops.length === 0) {
+        return null;
+    }
+
+    const { x, y } = entity.getCenterTile();
+
+    return DefaultTypes.createDropContainer(drops, x, y);
 }
 
 /**
@@ -90,53 +96,58 @@ DropSystem.getKillReward = function(entity) {
  * @param {*} typeID 
  * @param {*} tileX 
  * @param {*} tileY 
- * @returns {DropType[]}
+ * @returns {DropContainer}
  */
 DropSystem.getDebrisReward = function(gameContext, typeID, tileX, tileY) {
     const debrisType = gameContext.debrisTypes[typeID];
-    const drops = [];
 
     if(!debrisType) {
-        return drops;
+        return null;
     }
 
     const { killRewards } = debrisType;
 
     if(!killRewards) {
-        return drops;
+        return null;
     }
 
+    const drops = [];
+
     for(let i = 0; i < killRewards.length; i++) {
-        const drop = getDrop(killRewards[i], tileX, tileY);
+        const drop = getDrop(killRewards[i]);
 
         if(drop) {
             drops.push(drop);
         }
     }
 
-    return drops;
+    if(drops.length === 0) {
+        return null;
+    }
+
+    return DefaultTypes.createDropContainer(drops, tileX, tileY);
 }
 
 /**
  * Gets a list of rewards from selling an entity.
  * 
  * @param {ArmyEntity} entity 
- * @returns {DropType[]}
+ * @returns {DropContainer}
  */
 DropSystem.getSellReward = function(entity) {
     const sellReward = entity.config.sell;
-    const drops = [];
 
     if(!sellReward) {
-        return drops;
+        return null;
+    }
+
+    const drop = getDrop(sellReward);
+
+    if(!drop) {
+        return null;
     }
 
     const { x, y } = entity.getCenterTile();
-    const drop = getDrop(sellReward, x, y);
 
-    if(drop) {
-        drops.push(drop);
-    }
-
-    return drops;
+    return DefaultTypes.createDropContainer([drop], x, y);
 }

@@ -22,8 +22,8 @@ CardSystem.CARD_SPRITE_CACHE = {};
  */
 const createStatCardSprite = function(gameContext, entity) {
     const teamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
-    const teamType = gameContext.getTeamType(getTeamID(teamComponent.teamID));
     const cardType = entity.hasComponent(ArmyEntity.COMPONENT.ATTACK) ? CardSystem.CARD_TYPE.LARGE : CardSystem.CARD_TYPE.SMALL;
+    const teamType = gameContext.getTeamType(getTeamID(teamComponent.teamID));
     const spriteType = teamType.sprites[cardType];
 
     if(CardSystem.CARD_SPRITE_CACHE[spriteType]) {

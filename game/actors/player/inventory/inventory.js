@@ -7,7 +7,7 @@ export const Inventory = function() {
 
 Inventory.COUNTER_TO_ENERGY_RATIO = 100;
 
-Inventory.ID = {
+Inventory.RESOURCE_TYPE = {
     ENERGY: "Energy",
     ENERGY_COUNTER: "EnergyCounter"
 };
@@ -152,7 +152,7 @@ Inventory.prototype.removeByTransaction = function(transaction) {
 }
 
 Inventory.prototype.updateEnergyCounter = function() {
-    const energyCounter = this.getItem(Inventory.TYPE.RESOURCE, Inventory.ID.ENERGY_COUNTER);
+    const energyCounter = this.getItem(Inventory.TYPE.RESOURCE, Inventory.RESOURCE_TYPE.ENERGY_COUNTER);
     const energyDrops = Math.floor(energyCounter.getCount() / Inventory.COUNTER_TO_ENERGY_RATIO);
     const counterSpent = energyDrops * Inventory.COUNTER_TO_ENERGY_RATIO;
 

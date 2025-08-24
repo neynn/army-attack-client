@@ -15,10 +15,10 @@ EntityHitEvent.prototype.onStory = function(gameContext, event) {
     const entity = entityManager.getEntity(entityID);
 
     if(entity) {
-        const hitRewards = DropSystem.getHitReward(entity);
+        const hitReward = DropSystem.getHitReward(entity);
 
-        if(hitRewards.length !== 0) {
-            eventBus.emit(ArmyEventHandler.TYPE.DROP, DropEvent.createEvent(actor, hitRewards));
+        if(hitReward) {
+            eventBus.emit(ArmyEventHandler.TYPE.DROP, DropEvent.createEvent(actor, hitReward));
         }
     }
 }

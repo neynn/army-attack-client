@@ -109,3 +109,23 @@ GameContext.prototype.getMouseTile = function() {
 
     return mouseTile;
 }
+
+GameContext.prototype.getMousePosition = function() {
+    const context = this.getContextAtMouse();
+
+    if(!context) {
+        return {
+            "x": -1,
+            "y": -1,
+            "r": this.client.cursor.radius
+        }
+    }
+
+    const { x, y } = context.getWorldPosition(this.client.cursor.positionX, this.client.cursor.positionY);
+
+    return {
+        "x": x,
+        "y": y,
+        "r": this.client.cursor.radius
+    };
+}

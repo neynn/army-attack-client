@@ -17,10 +17,10 @@ EntitySellEvent.prototype.onStory = function(gameContext, event) {
     const entity = entityManager.getEntity(entityID);
 
     if(entity) {
-        const sellRewards = DropSystem.getSellReward(entity);
+        const sellReward = DropSystem.getSellReward(entity);
 
-        if(sellRewards.length !== 0) {
-            eventBus.emit(ArmyEventHandler.TYPE.DROP, DropEvent.createEvent(actorID, sellRewards));
+        if(sellReward) {
+            eventBus.emit(ArmyEventHandler.TYPE.DROP, DropEvent.createEvent(actorID, sellReward));
         }
 
         SpawnSystem.destroyEntity(gameContext, entity);

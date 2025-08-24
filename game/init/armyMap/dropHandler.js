@@ -5,48 +5,55 @@ import { DefaultTypes } from "../../defaultTypes.js";
 
 export const DropHandler = function() {
     this.drops = [];
+    this.deltaTime = 0;
 }
+
+DropHandler.TIME_BETWEEN_SOUNDS_S = 0.5;
 
 DropHandler.prototype.createDrop = function(gameContext, inventory, tileX, tileY, type, id, value) {
     const { spriteManager, transform2D } = gameContext;
     const sprite = spriteManager.createSprite("drop_money");
     const transaction = DefaultTypes.createItemTransaction(type, id, value);
-    const drop = new Drop(transaction, inventory, sprite);
-    const { x, y } = transform2D.transformTileToWorldCenter(tileX, tileY);
 
-    drop.setPosition(x + getRandomNumber(-48, 48), y);
+    if(sprite) {
+        const { x, y } = transform2D.transformTileToWorldCenter(tileX, tileY);
+        const drop = new Drop(transaction, inventory, sprite);
 
-    this.drops.push(drop);
+        drop.setPosition(x + getRandomNumber(-48, 48), y);
+
+        this.drops.push(drop);
+    } else {
+        inventory.addByTransaction(transaction);
+    }
 }
 
-DropHandler.prototype.createDrops = function(gameContext, drops, inventory) {
+DropHandler.prototype.createDrops = function(gameContext, dropContainer, inventory) {
+    const { drops, tileX, tileY } = dropContainer;
+
     for(let i = 0; i < drops.length; i++) {
-        const { tileX, tileY, transaction } = drops[i];
-        const { type, id, value } = transaction;
+        const { type, id, value } = drops[i];
         const maxDrop = inventory.getMaxDrop(type, id);
 
-        if(maxDrop === 0) {
-            inventory.addByTransaction(transaction);
-            continue;
-        }
+        if(maxDrop !== 0) {
+            let toDrop = value;
 
-        let toDrop = value;
+            while(toDrop >= maxDrop) {
+                this.createDrop(gameContext, inventory, tileX, tileY, type, id, maxDrop);
+                toDrop -= maxDrop;
+            }
 
-        while(toDrop >= maxDrop) {
-            this.createDrop(gameContext, inventory, tileX, tileY, type, id, maxDrop);
-            toDrop -= maxDrop;
-        }
-
-        if(toDrop !== 0) {
-            this.createDrop(gameContext, inventory, tileX, tileY, type, id, toDrop);
+            if(toDrop !== 0) {
+                this.createDrop(gameContext, inventory, tileX, tileY, type, id, toDrop);
+            }
+        } else {
+            inventory.addByTransaction(drops[i]);
         }
     }
 
     const energyDrops = inventory.updateEnergyCounter();
 
-    //TODO: Add a way to add positions to these drops!
     for(let i = 0; i < energyDrops; i++) {
-        this.createDrop(gameContext, inventory, 0, 0, Inventory.TYPE.RESOURCE, Inventory.ID.ENERGY, 1); 
+        this.createDrop(gameContext, inventory, tileX, tileY, Inventory.TYPE.RESOURCE, Inventory.RESOURCE_TYPE.ENERGY, 1); 
     }
 }
 
@@ -61,20 +68,47 @@ DropHandler.prototype.collectAllDrops = function() {
     this.drops = [];
 }
 
+DropHandler.prototype.playCursorCollectSound = function(gameContext) {
+    const { client } = gameContext;
+    const { soundPlayer } = client;
+
+    if(this.deltaTime >= DropHandler.TIME_BETWEEN_SOUNDS_S) {
+        soundPlayer.play("sound_collect_1st_item");
+
+        this.deltaTime = 0;
+    }
+}
+
 DropHandler.prototype.update = function(gameContext, worldMap) {
     const { timer } = gameContext;
+    const { x, y, r } = gameContext.getMousePosition();
     const fixedDeltaTime = timer.getFixedDeltaTime();
+    const toRemove = [];
 
-    for(let i = this.drops.length - 1; i >= 0; i--) {
+    this.deltaTime += fixedDeltaTime;
+
+    for(let i = 0; i < this.drops.length; i++) {
         const drop = this.drops[i];
 
-        drop.update(gameContext, fixedDeltaTime);
+        drop.update(x, y, r, fixedDeltaTime);
 
-        if(drop.state === Drop.STATE.COLLECTED) {
-            drop.sprite.terminate();
-
-            this.drops[i] = this.drops[this.drops.length - 1];
-            this.drops.pop();
+        switch(drop.state) {
+            case Drop.STATE.COLLECTING_CURSOR: {
+                this.playCursorCollectSound(gameContext);
+                break;
+            }
+            case Drop.STATE.COLLECTED: {
+                toRemove.push(i);
+                break;
+            }
         }
+    }
+
+    for(let i = toRemove.length - 1; i >= 0; i--) {
+        const index = toRemove[i];
+
+        this.drops[index].sprite.terminate();
+        this.drops[index] = this.drops[this.drops.length - 1];
+        this.drops.pop();
     }
 }

@@ -66,12 +66,19 @@ ArmyCamera.prototype.drawDebris = function(tileManager, context, worldMap) {
 ArmyCamera.prototype.drawDrops = function(display, worldMap, realTime, deltaTime) {
     const { drops } = worldMap;
     const dropElements = drops.drops;
+    const viewportLeftEdge = this.viewportX;
+    const viewportTopEdge = this.viewportY;
+    const viewportRightEdge = viewportLeftEdge + this.viewportWidth;
+    const viewportBottomEdge = viewportTopEdge + this.viewportHeight;
 
     for(let i = 0; i < dropElements.length; i++) {
         const { sprite } = dropElements[i];
+        const isVisible = sprite.isVisible(viewportRightEdge, viewportLeftEdge, viewportBottomEdge, viewportTopEdge);
 
-        if(sprite) {
-            this.drawSprite(display, sprite, realTime, deltaTime);
+        if(isVisible) {
+            sprite.update(realTime, deltaTime);
+            sprite.draw(display, viewportLeftEdge, viewportTopEdge);
+            //sprite.debug(display, viewportLeftEdge, viewportTopEdge);
         }
     }
 }

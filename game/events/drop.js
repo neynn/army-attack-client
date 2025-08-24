@@ -8,7 +8,7 @@ DropEvent.prototype.constructor = DropEvent;
 DropEvent.prototype.onStory = function(gameContext, event) {
     const { world } = gameContext;
     const { turnManager, mapManager } = world;
-    const { drops, receiverID } = event;
+    const { dropContainer, receiverID } = event;
     const receiver = turnManager.getActor(receiverID);
 
     if(!receiver || !receiver.inventory) {
@@ -18,13 +18,13 @@ DropEvent.prototype.onStory = function(gameContext, event) {
     const worldMap = mapManager.getActiveMap();
     
     if(worldMap) {
-        worldMap.drops.createDrops(gameContext, drops, receiver.inventory);
+        worldMap.drops.createDrops(gameContext, dropContainer, receiver.inventory);
     }
 }
 
-DropEvent.createEvent = function(receiverID, drops) {
+DropEvent.createEvent = function(receiverID, dropContainer) {
     return {
         "receiverID": receiverID,
-        "drops": drops
+        "dropContainer": dropContainer
     }
 }
