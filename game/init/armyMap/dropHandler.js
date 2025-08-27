@@ -21,8 +21,9 @@ DropHandler.prototype.createDrop = function(gameContext, inventory, tileX, tileY
         if(sprite) {
             const { x, y } = transform2D.transformTileToWorldCenter(tileX, tileY);
             const drop = new Drop(transaction, inventory, sprite);
+            const positionX = x + getRandomNumber(-transform2D.halfTileWidth, transform2D.halfTileWidth);
 
-            drop.setPosition(x + getRandomNumber(-48, 48), y);
+            drop.setPosition(positionX, y);
 
             this.drops.push(drop);
         } else {

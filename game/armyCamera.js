@@ -71,13 +71,24 @@ ArmyCamera.prototype.drawDrops = function(display, worldMap) {
     const viewportRightEdge = viewportLeftEdge + this.viewportWidth;
     const viewportBottomEdge = viewportTopEdge + this.viewportHeight;
 
-    for(let i = 0; i < dropElements.length; i++) {
-        const { sprite, positionX, positionY } = dropElements[i];
-        const isVisible = sprite.isVisibleStatic(positionX, positionY, viewportRightEdge, viewportLeftEdge, viewportBottomEdge, viewportTopEdge);
+    if(Renderer.DEBUG.SPRITES) {
+        for(let i = 0; i < dropElements.length; i++) {
+            const { sprite, positionX, positionY } = dropElements[i];
+            const isVisible = sprite.isVisibleStatic(positionX, positionY, viewportRightEdge, viewportLeftEdge, viewportBottomEdge, viewportTopEdge);
 
-        if(isVisible) {
-            sprite.draw(display, viewportLeftEdge - positionX, viewportTopEdge - positionY);
-            //sprite.debug(display, viewportLeftEdge - positionX, viewportTopEdge - positionY);
+            if(isVisible) {
+                sprite.draw(display, viewportLeftEdge - positionX, viewportTopEdge - positionY);
+                sprite.debug(display, viewportLeftEdge - positionX, viewportTopEdge - positionY);
+            }
+        }
+    } else {
+        for(let i = 0; i < dropElements.length; i++) {
+            const { sprite, positionX, positionY } = dropElements[i];
+            const isVisible = sprite.isVisibleStatic(positionX, positionY, viewportRightEdge, viewportLeftEdge, viewportBottomEdge, viewportTopEdge);
+
+            if(isVisible) {
+                sprite.draw(display, viewportLeftEdge - positionX, viewportTopEdge - positionY);
+            }
         }
     }
 }
