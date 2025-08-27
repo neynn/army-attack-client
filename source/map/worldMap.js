@@ -11,9 +11,18 @@ export const WorldMap = function(id) {
     this.entities = new Map();
 }
 
+WorldMap.TYPE = {
+    NORMAL: 0,
+    EMPTY: 1
+};
+
 WorldMap.prototype.load = function(blob) {}
 
-WorldMap.prototype.save = function() {}
+WorldMap.prototype.save = function() {
+    return {
+        "id": this.id
+    }
+}
 
 WorldMap.prototype.update = function(gameContext) {}
 
@@ -335,4 +344,31 @@ WorldMap.prototype.getUniqueEntitiesInArea = function(startX, startY, endX, endY
     }
 
     return entities;
+}
+
+WorldMap.prototype.loadLayers = function(gameContext, layerData, mapType) {
+    const { tileManager } = gameContext;
+    const containerCount = tileManager.graphics.getContainerCount();
+
+    switch(mapType) {
+        case WorldMap.TYPE.NORMAL: {
+            for(const layerID in layerData) {
+                const layer = this.createLayer(layerID);
+
+                layer.initBuffer(containerCount);
+                layer.decode(layerData[layerID]);
+            }
+            break;
+        }
+        case WorldMap.TYPE.EMPTY: {
+            for(const layerID in layerData) {
+                const { fill } = layerData[layerID];
+                const layer = this.createLayer(layerID);
+
+                layer.initBuffer(containerCount);
+                layer.fill(fill);
+            }
+            break;
+        }
+    }
 }

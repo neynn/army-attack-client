@@ -55,16 +55,6 @@ export const ArmyContext = function() {
 ArmyContext.prototype = Object.create(GameContext.prototype);
 ArmyContext.prototype.constructor = ArmyContext;
 
-ArmyContext.EVENT = {
-    STORY_SAVE: 0
-};
-
-ArmyContext.FACTORY = {
-    MAP: "MAP",
-    ENTITY: "ENTITY",
-    ACTOR: "ACTOR"
-};
-
 ArmyContext.STATE = {
     MAIN_MENU: 0,
     STORY_MODE: 1,

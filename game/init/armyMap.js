@@ -66,6 +66,16 @@ ArmyMap.prototype.update = function(gameContext) {
     this.drops.update(gameContext, this);
 }
 
+ArmyMap.prototype.load = function(data) {
+    const { debris } = data;
+
+    for(let i = 0; i < debris.length; i++) {
+        const { type, x, y } = debris[i];
+
+        this.addDebris(type, x, y);
+    }
+}
+
 ArmyMap.prototype.save = function() {
     const debris = [];
 
@@ -78,6 +88,7 @@ ArmyMap.prototype.save = function() {
     });
 
     return {
+        "id": this.id,
         "debris": debris
     }
 }
@@ -140,7 +151,7 @@ ArmyMap.prototype.updateAllBorders = function(gameContext) {
 
     const autotiler = tileManager.getAutotilerByID(ArmyMap.AUTOTILER.BORDER);
 
-    turnManager.forAllActors((actorID, actor) => {
+    turnManager.forAllActors((actor) => {
         const { camera, teamID } = actor;
 
         if(!(camera instanceof ArmyCamera) || teamID === undefined) {
@@ -167,7 +178,7 @@ ArmyMap.prototype.updateBorder = function(gameContext, tileX, tileY, range) {
 
     const autotiler = tileManager.getAutotilerByID(ArmyMap.AUTOTILER.BORDER);
 
-    turnManager.forAllActors((actorID, actor) => {
+    turnManager.forAllActors((actor) => {
         const { camera, teamID } = actor;
 
         if(!(camera instanceof ArmyCamera) || teamID === undefined) {

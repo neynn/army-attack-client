@@ -115,7 +115,7 @@ MapEditor.prototype.undo = function(gameContext) {
     const { world } = gameContext;
     const { mapManager } = world;
     const { mapID, mode, actions } = this.activityStack.pop();
-    const gameMap = mapManager.getLoadedMap(mapID);
+    const gameMap = mapManager.getMap(mapID);
 
     if(!gameMap) {
         return;
@@ -134,7 +134,7 @@ MapEditor.prototype.onPaint = function(gameContext, worldMap, tileID, tileX, til
 MapEditor.prototype.paint = function(gameContext, layerID) {
     const { world, tileManager } = gameContext;
     const { mapManager } = world;
-    const worldMap = mapManager.getLoadedMap(this.mapID);
+    const worldMap = mapManager.getMap(this.mapID);
 
     if(!worldMap) {
         return;
@@ -176,7 +176,7 @@ MapEditor.prototype.paint = function(gameContext, layerID) {
 MapEditor.prototype.incrementTypeIndex = function(gameContext, layerID) {
     const { world } = gameContext;
     const { mapManager } = world;
-    const worldMap = mapManager.getLoadedMap(this.mapID);
+    const worldMap = mapManager.getMap(this.mapID);
 
     if(!worldMap) {
         return;

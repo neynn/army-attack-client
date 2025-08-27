@@ -134,7 +134,7 @@ MapEditorState.prototype.initUIEvents = function(gameContext) {
     });
 
     editorInterface.addClick("BUTTON_SAVE", () => {
-        const mapData = mapManager.getLoadedMap(this.controller.editor.mapID);
+        const mapData = mapManager.getMap(this.controller.editor.mapID);
         
         saveMap(this.controller.editor.mapID, mapData);
     });
@@ -144,10 +144,9 @@ MapEditorState.prototype.initUIEvents = function(gameContext) {
 
         if(createNew) {
             const mapID = `${Date.now()}`;
+            const worldMap = MapSystem.createEmptyMap(gameContext, mapID, this.controller.defaultMap);
 
-            MapSystem.createEmptyMap(gameContext, mapID, this.controller.defaultMap);
-
-            this.controller.setMapID(mapID);
+            this.controller.setMapID(worldMap.getID());
         }
     });
 
@@ -156,7 +155,7 @@ MapEditorState.prototype.initUIEvents = function(gameContext) {
         const worldMap = await MapSystem.createMapByID(gameContext, mapID);
 
         if(worldMap) {
-            this.controller.editor.mapID = mapID;
+            this.controller.editor.mapID = worldMap.getID();;
         }
     });
 

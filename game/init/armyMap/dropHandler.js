@@ -77,7 +77,7 @@ DropHandler.prototype.playCursorCollectSound = function(gameContext) {
     }
 }
 
-DropHandler.prototype.update = function(gameContext, worldMap) {
+DropHandler.prototype.update = function(gameContext) {
     const { timer } = gameContext;
     const { x, y, r } = gameContext.getMousePosition();
     const fixedDeltaTime = timer.getFixedDeltaTime();

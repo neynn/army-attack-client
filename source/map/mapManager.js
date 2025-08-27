@@ -5,6 +5,7 @@ import { Logger } from "../logger.js";
 export const MapManager = function() {
     this.mapTypes = {};
     this.maps = new Map();
+    this.nextID = 0;
     this.activeMap = null;
     this.resources = new JSONManager();
     this.resources.enableCache();
@@ -23,96 +24,17 @@ MapManager.EVENT = {
     MAP_DISABLE: "MAP_DISABLE"
 };
 
-MapManager.MAP_TYPE = {
-    EMPTY: 0,
-    NORMAL: 1
-};
-
-MapManager.prototype.createMapByID = async function(gameContext, mapID, onMapCreate) {
-    if(this.maps.has(mapID)) {
-        return null;
-    }
-    
-    const mapData = await this.fetchMapData(mapID);
-
-    if(!mapData) {
-        return null;
-    }
-
-    const { data } = mapData;
-    const worldMap = onMapCreate(gameContext, mapID, mapData);
-
-    if(data) {
-        this.loadLayers(gameContext, worldMap, data, MapManager.MAP_TYPE.NORMAL);
-    }
-
-    this.maps.set(mapID, worldMap);
-    this.events.emit(MapManager.EVENT.MAP_CREATE, mapID, mapData, worldMap);
-
-    return worldMap;
-}
-
-MapManager.prototype.createMapByData = function(gameContext, mapID, mapData, onMapCreate) {
+MapManager.prototype.createMap = function(mapID, onCreate) {
     if(this.maps.has(mapID)) {
         return null;
     }
 
-    const { data } = mapData;
-    const worldMap = onMapCreate(gameContext, mapID, mapData);
-
-    if(data) {
-        this.loadLayers(gameContext, worldMap, data, MapManager.MAP_TYPE.NORMAL);
-    }
+    const worldMap = onCreate(mapID);
 
     this.maps.set(mapID, worldMap);
-    this.events.emit(MapManager.EVENT.MAP_CREATE, mapID, mapData, worldMap);
+    this.events.emit(MapManager.EVENT.MAP_CREATE, mapID, worldMap);
 
     return worldMap;
-} 
-
-MapManager.prototype.createEmptyMap = function(gameContext, mapID, mapData, onMapCreate) {
-    if(this.maps.has(mapID)) {
-        return null;
-    }
-
-    const { data } = mapData;
-    const worldMap = onMapCreate(gameContext, mapID, mapData);
-
-    if(data) {
-        this.loadLayers(gameContext, worldMap, data, MapManager.MAP_TYPE.EMPTY);
-    }
-
-    this.maps.set(mapID, worldMap);
-    this.events.emit(MapManager.EVENT.MAP_CREATE, mapID, mapData, worldMap);
-
-    return worldMap;
-}
-
-MapManager.prototype.loadLayers = function(gameContext, worldMap, data, mapType) {
-    const { tileManager } = gameContext;
-    const containerCount = tileManager.graphics.getContainerCount();
-
-    switch(mapType) {
-        case MapManager.MAP_TYPE.NORMAL: {
-            for(const layerID in data) {
-                const layer = worldMap.createLayer(layerID);
-
-                layer.initBuffer(containerCount);
-                layer.decode(data[layerID]);
-            }
-            break;
-        }
-        case MapManager.MAP_TYPE.EMPTY: {
-            for(const layerID in data) {
-                const { fill } = data[layerID];
-                const layer = worldMap.createLayer(layerID);
-
-                layer.initBuffer(containerCount);
-                layer.fill(fill);
-            }
-            break;
-        }
-    }
 }
 
 MapManager.prototype.update = function(gameContext) {
@@ -131,15 +53,9 @@ MapManager.prototype.load = function(mapTypes) {
 }
 
 MapManager.prototype.forAllMaps = function(onCall) {
-    if(typeof onCall !== "function") {
-        return;
+    if(typeof onCall === "function") {
+        this.maps.forEach((map) => onCall(map))
     }
-
-    this.maps.forEach((map) => {
-        const mapID = map.getID();
-
-        onCall(mapID, map);
-    });
 }
 
 MapManager.prototype.fetchMapData = async function(mapID) {
@@ -207,7 +123,7 @@ MapManager.prototype.deleteMap = function(mapID) {
     this.events.emit(MapManager.EVENT.MAP_DELETE, mapID, loadedMap);
 }
 
-MapManager.prototype.getLoadedMap = function(mapID) {
+MapManager.prototype.getMap = function(mapID) {
     const loadedMap = this.maps.get(mapID);
 
     if(!loadedMap) {
@@ -231,4 +147,5 @@ MapManager.prototype.exit = function() {
     this.events.muteAll();
     this.maps.clear();
     this.clearActiveMap();
+    this.nextID = 0;
 }

@@ -7,7 +7,11 @@ export const Actor = function(id) {
 
 Actor.prototype.load = function(blob) {}
 
-Actor.prototype.save = function() {}
+Actor.prototype.save = function() {
+    return {
+        "id": this.id
+    }
+}
 
 Actor.prototype.update = function(gameContext) {}
 

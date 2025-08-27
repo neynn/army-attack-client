@@ -8,6 +8,7 @@ import { ArmyCamera } from "../armyCamera.js";
 import { DefaultTypes } from "../defaultTypes.js";
 import { ACTOR_ID } from "../enums.js";
 import { Actor } from "../../source/turn/actor.js";
+import { MapManager } from "../../source/map/mapManager.js";
 
 const ACTOR_TYPE = {
     PLAYER: "Player",
@@ -49,7 +50,7 @@ const createPlayerCamera = function(gameContext) {
  */
 const createActor = function(gameContext, actorID, team, type) {
     const { client, world } = gameContext;
-    const { turnManager, entityManager } = world;
+    const { turnManager, entityManager, mapManager } = world;
     const { router, cursor } = client;
     const actorType = turnManager.getActorType(type);
 
@@ -64,7 +65,7 @@ const createActor = function(gameContext, actorID, team, type) {
             actor.inventory.init(gameContext);
             actor.hover.createSprite(gameContext);
             actor.setConfig(actorType);
-            actor.initMapEvents(gameContext);
+            mapManager.events.on(MapManager.EVENT.MAP_ENABLE, (mapID, worldMap) => actor.onMapEnable(gameContext, mapID, worldMap));
 
             cursor.events.on(Cursor.EVENT.BUTTON_DRAG, (buttonID, deltaX, deltaY) => {
                 if(buttonID !== Cursor.BUTTON.LEFT) {

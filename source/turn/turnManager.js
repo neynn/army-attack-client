@@ -49,15 +49,9 @@ TurnManager.prototype.getActorType = function(typeID) {
 }
 
 TurnManager.prototype.forAllActors = function(onCall) {
-    if(typeof onCall !== "function") {
-        return;
+    if(typeof onCall === "function") {
+        this.actors.forEach((actor) => onCall(actor));
     }
-
-    this.actors.forEach((actor) => {
-        const actorID = actor.getID();
-
-        onCall(actorID, actor);
-    });
 }
 
 TurnManager.prototype.addActor = function(actorID, actor) {

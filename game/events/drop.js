@@ -10,13 +10,10 @@ DropEvent.prototype.onStory = function(gameContext, event) {
     const { turnManager, mapManager } = world;
     const { receiverID, drops, tileX, tileY } = event;
     const receiver = turnManager.getActor(receiverID);
+    const worldMap = mapManager.getActiveMap();
 
     if(receiver && receiver.inventory) {
-        const worldMap = mapManager.getActiveMap();
-        
-        if(worldMap) {
-            worldMap.drops.createDrops(gameContext, receiver.inventory, drops, tileX, tileY);
-        }
+        worldMap.drops.createDrops(gameContext, receiver.inventory, drops, tileX, tileY);
     }
 }
 

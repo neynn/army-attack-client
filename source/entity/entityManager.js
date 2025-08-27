@@ -68,11 +68,10 @@ EntityManager.prototype.registerComponent = function(componentID, componentClass
 }
 
 EntityManager.prototype.forAllEntities = function(onCall) {
-    for(let i = 0; i < this.entities.length; ++i) {
-        const entity = this.entities[i];
-        const entityID = entity.getID();
-
-        onCall(entityID, entity);
+    if(typeof onCall === "function") {
+        for(let i = 0; i < this.entities.length; ++i) {
+            onCall(this.entities[i]);
+        }
     }
 }
 

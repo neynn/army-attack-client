@@ -18,7 +18,7 @@ DebugSystem.killAllEntities = function(gameContext) {
     const { world } = gameContext;
     const { entityManager, eventBus } = world;
 
-    entityManager.forAllEntities((entityID, entity) => eventBus.emit(ArmyEventHandler.TYPE.ENTITY_DEATH, EntityDeathEvent.createEvent(entityID, "DEBUG")));
+    entityManager.forAllEntities((entity) => eventBus.emit(ArmyEventHandler.TYPE.ENTITY_DEATH, EntityDeathEvent.createEvent(entity.getID(), "DEBUG")));
 }
 
 /**
@@ -41,6 +41,30 @@ DebugSystem.spawnFullEntities = function(gameContext) {
     for(let i = 0; i < height; i++) {
         for(let j = 0; j < width; j++) {
             SpawnSystem.createEntity(gameContext, DefaultTypes.createSpawnConfig("red_battletank", TEAM_TYPE.CRIMSON, [], j, i));     
+        }
+    }
+}
+
+/**
+ * Spawns a debris on every tile of the map.
+ * 
+ * @param {*} gameContext 
+ * @returns 
+ */
+DebugSystem.spawnFullDebris = function(gameContext) {
+    const { world } = gameContext;
+    const { mapManager } = world;
+    const worldMap = mapManager.getActiveMap();
+
+    if(!worldMap) {
+        return;
+    }
+
+    const { width, height } = worldMap;
+
+    for(let i = 0; i < height; i++) {
+        for(let j = 0; j < width; j++) {
+            worldMap.addDebris(1, j, i);
         }
     }
 }

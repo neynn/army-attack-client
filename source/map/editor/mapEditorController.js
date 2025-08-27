@@ -207,7 +207,7 @@ MapEditorController.prototype.initCursorEvents = function(gameContext) {
 MapEditorController.prototype.clickLayerButton = function(gameContext, buttonID) {
     const { world, uiManager } = gameContext;
     const { mapManager } = world;
-    const worldMap = mapManager.getLoadedMap(this.editor.mapID);
+    const worldMap = mapManager.getMap(this.editor.mapID);
 
     if(!worldMap) {
         return;
@@ -222,7 +222,7 @@ MapEditorController.prototype.clickLayerButton = function(gameContext, buttonID)
 MapEditorController.prototype.viewAllLayers = function(gameContext) {
     const { uiManager, world } = gameContext;
     const { mapManager } = world;
-    const worldMap = mapManager.getLoadedMap(this.editor.mapID);
+    const worldMap = mapManager.getMap(this.editor.mapID);
 
     if(!worldMap) {
         return;
@@ -358,7 +358,7 @@ MapEditorController.prototype.updatePalletButtonEvents = function(gameContext) {
 MapEditorController.prototype.resizeCurrentMap = function(gameContext) {
     const { world, renderer } = gameContext;
     const { mapManager } = world;
-    const gameMap = mapManager.getLoadedMap(this.editor.mapID);
+    const gameMap = mapManager.getMap(this.editor.mapID);
 
     if(!gameMap) {
         console.warn(`GameMap cannot be undefined! Returning...`);

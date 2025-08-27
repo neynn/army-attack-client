@@ -1,3 +1,5 @@
+import { WorldMap } from "../../source/map/worldMap.js";
+import { Player } from "../actors/player/player.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { ArmyMap } from "../init/armyMap.js";
 
@@ -8,10 +10,22 @@ import { ArmyMap } from "../init/armyMap.js";
  * @param {{}} data 
  * @returns {ArmyMap}
  */
-const createMap = function(gameContext, id, data) {
+const createMap = function(gameContext, id, data, type) {
+    const { world } = gameContext;
+    const { turnManager } = world;
     const worldMap = new ArmyMap(id);
 
     worldMap.init(gameContext, data);
+
+    if(data.data) {
+        worldMap.loadLayers(gameContext, data.data, type);
+    }
+
+    turnManager.forAllActors((actor) => {
+        if(actor instanceof Player) {
+            actor.onMapCreate(gameContext, id, data);
+        }
+    });
 
     return worldMap;
 }
@@ -69,7 +83,13 @@ MapSystem.removeEntity = function(gameContext, entity) {
 MapSystem.createMapByID = async function(gameContext, mapID) {
     const { world } = gameContext;
     const { mapManager } = world;
-    const worldMap = await mapManager.createMapByID(gameContext, mapID, createMap);
+    const mapData = await mapManager.fetchMapData(mapID);
+
+    if(!mapData) {
+        return null;
+    }
+
+    const worldMap = mapManager.createMap(mapID, (id) => createMap(gameContext, id, mapData, WorldMap.TYPE.NORMAL));
 
     mapManager.setActiveMap(mapID);
 
@@ -87,7 +107,7 @@ MapSystem.createMapByID = async function(gameContext, mapID) {
 MapSystem.createMapByData = function(gameContext, mapID, mapData) {
     const { world } = gameContext;
     const { mapManager } = world;
-    const worldMap = mapManager.createMapByData(gameContext, mapID, mapData, createMap);
+    const worldMap = mapManager.createMap(mapID, (id) => createMap(gameContext, id, mapData, WorldMap.TYPE.NORMAL));
 
     mapManager.setActiveMap(mapID);
 
@@ -105,7 +125,7 @@ MapSystem.createMapByData = function(gameContext, mapID, mapData) {
 MapSystem.createEmptyMap = function(gameContext, mapID, mapData) {
     const { world } = gameContext;
     const { mapManager } = world;
-    const worldMap = mapManager.createEmptyMap(gameContext, mapID, mapData, createMap);
+    const worldMap = mapManager.createMap(mapID, (id) => createMap(gameContext, id, mapData, WorldMap.TYPE.EMPTY));
 
     mapManager.setActiveMap(mapID);
 

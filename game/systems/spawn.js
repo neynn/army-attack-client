@@ -5,6 +5,10 @@ import { MapSystem } from "./map.js";
 import { UnitLimitSystem } from "./unitLimit.js";
 import { SpriteManager } from "../../source/sprite/spriteManager.js";
 
+const BLOCKED_SPRITES = [
+    "airdrop"
+];
+
 const initAttackComponent = function(component, stats) {
     const {
         damage = 0,
@@ -25,27 +29,16 @@ const initMoveComponent = function(component, stats) {
     component.speed = moveSpeed;
 }
 
-const setupComponents = function(entity, stats, tileX, tileY, teamID, customHealth) {
+const setupComponents = function(entity, tileX, tileY, teamID, health, maxHealth) {
     const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
     const healthComponent = entity.getComponent(ArmyEntity.COMPONENT.HEALTH);
     const teamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
-    const {
-        health = 1,
-        maxHealth = health
-    } = stats;
 
     positionComponent.tileX = tileX;
     positionComponent.tileY = tileY;
-
-    if(customHealth === undefined) {
-        healthComponent.health = health;
-    } else {
-        healthComponent.health = customHealth;
-    }
-
-    healthComponent.maxHealth = maxHealth;
-
     teamComponent.teamID = teamID;
+    healthComponent.health = health;
+    healthComponent.maxHealth = maxHealth;
 }
 
 const createSprite = function(gameContext, entity, tileX, tileY) {
@@ -95,7 +88,11 @@ const createEntity = function(gameContext, config, entityID) {
 
     entityManager.addArchetypeComponents(entity, archetype);
 
-    setupComponents(entity, statConfig, tileX, tileY, team, health);
+    if(health !== undefined) {
+        setupComponents(entity, tileX, tileY, team, health, statConfig.maxHealth);
+    } else {
+        setupComponents(entity, tileX, tileY, team, statConfig.health, statConfig.maxHealth ?? statConfig.health);
+    }
 
     const sprite = createSprite(gameContext, entity, tileX, tileY);
 
@@ -150,9 +147,7 @@ const unloadEntitySprites = function(gameContext, entity) {
     const { sprites } = entity.config;
 
     for(const spriteType in sprites) {
-        const spriteID = sprites[spriteType];
-
-        spriteManager.graphics.loader.removeReference(spriteID);
+        spriteManager.graphics.loader.removeReference(sprites[spriteType]);
     }
 }
 
@@ -165,13 +160,10 @@ const unloadEntitySprites = function(gameContext, entity) {
 const loadEntitySprites = function(gameContext, entity) {
     const { spriteManager } = gameContext;
     const { sprites } = entity.config;
-    const blocked = new Set(["airdrop"]);
 
     for(const spriteType in sprites) {
-        if(!blocked.has(spriteType)) {
-            const spriteID = sprites[spriteType];
-
-            spriteManager.preloadAtlas(spriteID);
+        if(!BLOCKED_SPRITES.includes(spriteType)) {
+            spriteManager.preloadAtlas(sprites[spriteType]);
         }
     }
 }
@@ -265,4 +257,23 @@ SpawnSystem.destroyEntity = function(gameContext, entity) {
     entityManager.markForDestroy(entityID);
 
     unloadEntitySprites(gameContext, entity);
+}
+
+SpawnSystem.getSpawnConfig = function(gameContext, entity) {
+    const { world } = gameContext;
+    const { turnManager } = world;
+    const entityID = entity.getID();
+    const savedData = entity.save();
+    const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
+    const teamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
+    const owners = turnManager.getOwnersOf(entityID).map(actor => actor.getID());
+    
+    return {
+        "type": entity.config.id,
+        "tileX": positionComponent.tileX,
+        "tileY": positionComponent.tileY,
+        "team": teamComponent.teamID,
+        "owners": owners,
+        "data": savedData
+    };
 }

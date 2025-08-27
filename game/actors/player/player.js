@@ -16,7 +16,6 @@ import { MissionHandler } from "./mission/missionHandler.js";
 import { PlayerSellState } from "./states/sell.js";
 import { PlayerDebugState } from "./states/debug.js";
 import { PlayerPlaceState } from "./states/place.js";
-import { MapManager } from "../../../source/map/mapManager.js";
 import { MissionGroup } from "./mission/missionGroup.js";
 import { ArmyContext } from "../../armyContext.js";
 import { UnitLimitHandler } from "./unitLimit/unitLimitHandler.js";
@@ -84,6 +83,7 @@ Player.prototype.constructor = Player;
 
 Player.prototype.save = function() {
     return {
+        "id": this.id,
         "missions": this.missions.save(),
         "inventory": this.inventory.save()
     }
@@ -156,32 +156,30 @@ Player.prototype.update = function(gameContext) {
     this.states.update(gameContext);
 }
 
-Player.prototype.initMapEvents = function(gameContext) {
+Player.prototype.onMapCreate = function(gameContext, mapID, mapData) {
     const { world } = gameContext;
-    const { mapManager, eventBus }  = world;
+    const { eventBus }  = world;
 
-    mapManager.events.on(MapManager.EVENT.MAP_CREATE, (id, data, map) => {
-        if(data.missions) {
-            this.missions.createGroup(id, data.missions, (group) => {
-                group.events.on(MissionGroup.EVENT.MISSION_STARTED, (id, mission) => {
-                    console.log(id, mission, "STARTED");
-                });
-
-                group.events.on(MissionGroup.EVENT.MISSION_COMPLETED, (id, mission) => {
-                    eventBus.emit(ArmyEventHandler.TYPE.MISSION_COMPLETE, MissionCompleteEvent.createEvent(id, mission, this.id));
-                });
+    if(mapData.missions) {
+        this.missions.createGroup(mapID, mapData.missions, (group) => {
+            group.events.on(MissionGroup.EVENT.MISSION_STARTED, (id, mission) => {
+                console.log(id, mission, "STARTED");
             });
 
-            this.limits.createGroup(id, (group) => console.log(group));
-        }
-    });
+            group.events.on(MissionGroup.EVENT.MISSION_COMPLETED, (id, mission) => {
+                eventBus.emit(ArmyEventHandler.TYPE.MISSION_COMPLETE, MissionCompleteEvent.createEvent(id, mission, this.id));
+            });
+        });
 
-    mapManager.events.on(MapManager.EVENT.MAP_ENABLE, (id, map) => {
-        this.missions.selectGroup(id);
-        this.limits.selectGroup(id);
-        
-        if(map.music && gameContext.modeID !== ArmyContext.GAME_MODE.EDIT) {
-            gameContext.client.musicPlayer.playTrack(map.music);
-        }
-    });
+        this.limits.createGroup(mapID, (group) => console.log(group));
+    }
+}
+
+Player.prototype.onMapEnable = function(gameContext, mapID, worldMap) {
+    this.missions.selectGroup(mapID);
+    this.limits.selectGroup(mapID);
+    
+    if(worldMap.music && gameContext.modeID !== ArmyContext.GAME_MODE.EDIT) {
+        gameContext.client.musicPlayer.playTrack(worldMap.music);
+    }
 }
