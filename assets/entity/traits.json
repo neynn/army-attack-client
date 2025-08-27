@@ -59,8 +59,7 @@
         "name": "TRAIT_NAME_COUNTER",
         "desc": "TRAIT_DESC_COUNTER",
         "components": {
-            "Attack": { "counter": ["Move", "Attack"] },
-            "Town": null
+            "Attack": { "counter": ["Move", "Attack"] }
         }
     },
     "Bulldoze": {

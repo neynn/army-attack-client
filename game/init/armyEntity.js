@@ -23,7 +23,9 @@ ArmyEntity.TYPE = {
     UNIT: "Unit",
     DEFENSE: "Defense",
     CONSTRUCTION: "Construction",
-    BUILDING: "Building"
+    BUILDING: "Building",
+    HFE: "HFE",
+    TOWN: "Town"
 };
 
 ArmyEntity.COMPONENT = {
@@ -424,12 +426,6 @@ ArmyEntity.prototype.updateStatCard = function() {
     }
 }
 
-ArmyEntity.prototype.isProductionFinished = function() {
-    const productionComponent = this.getComponent(ArmyEntity.COMPONENT.PRODUCTION);
-
-    return productionComponent && productionComponent.isFinished() && this.isFull();
-}
-
 ArmyEntity.prototype.createStatCardSprite = function(gameContext) {
     const { spriteManager } = gameContext;
     const cardType = this.hasComponent(ArmyEntity.COMPONENT.ATTACK) ? StatCard.TYPE.LARGE : StatCard.TYPE.SMALL;
@@ -487,4 +483,18 @@ ArmyEntity.prototype.endDecay = function() {
 
         reviveableComponent.endDecay();
     }
+}
+
+ArmyEntity.prototype.getCollectRewards = function() {
+    switch(this.config.archetype) {
+        case ArmyEntity.TYPE.BUILDING: return this.config.collectRewards;
+        case ArmyEntity.TYPE.HFE: return this.config.rewards;
+        default: return false;
+    }
+}
+
+ArmyEntity.prototype.isProductionFinished = function() {
+    const productionComponent = this.getComponent(ArmyEntity.COMPONENT.PRODUCTION);
+
+    return productionComponent && productionComponent.isFinished() && this.isFull();
 }

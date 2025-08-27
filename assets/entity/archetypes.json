@@ -29,7 +29,7 @@
         "desc": "ARCH_DESC_BUILDING",
         "components": {
             "Sprite": null,
-            "Production": { "producing": true }
+            "Production": { "producing": true, "type": "BUILDING" }
         }
     },
     "Deco": {
@@ -43,14 +43,17 @@
         "name": "ARCH_NAME_TOWN",
         "desc": "ARCH_DESC_TOWN",
         "components": {
-            "Sprite": null
+            "Sprite": null,
+            "Production": { "producing": false, "type": "TOWN" },
+            "Town": null
         }
     },
     "HFE": {
         "name": "ARCH_NAME_HFE",
         "desc": "ARCH_DESC_HFE",
         "components": {
-            "Sprite": null
+            "Sprite": null,
+            "Production": { "producing": false, "type": "HFE" }
         }
     }
 }

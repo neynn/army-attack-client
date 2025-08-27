@@ -23,11 +23,11 @@ import { Renderer } from "../source/renderer.js";
 import { Logger } from "../source/logger.js";
 import { ArmyEventHandler } from "./armyEventHandler.js";
 import { FireMissionAction } from "./actions/fireMissionAction.js";
-import { TownComponent } from "./components/town.js";
 import { ClearDebrisAction } from "./actions/clearDebrisAction.js";
 import { HealAction } from "./actions/healAction.js";
 import { ArmyResources } from "./armyResources.js";
 import { CollectAction } from "./actions/collectAction.js";
+import { TownComponent } from "./components/town.js";
 
 export const ArmyContext = function() {
     GameContext.call(this);

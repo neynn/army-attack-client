@@ -34,7 +34,7 @@ const getRewards = function(entity, dropType) {
         case DropSystem.DROP_TYPE.HIT: return entity.config.hitRewards;
         case DropSystem.DROP_TYPE.KILL: return entity.config.killRewards;
         case DropSystem.DROP_TYPE.SELL: return entity.config.sell ? [entity.config.sell] : null;
-        case DropSystem.DROP_TYPE.COLLECT: return entity.config.collectRewards;
+        case DropSystem.DROP_TYPE.COLLECT: return entity.getCollectRewards();
         default: return null;
     }
 }
