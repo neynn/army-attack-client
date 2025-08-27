@@ -6,6 +6,7 @@ import { SpriteTextureHandler } from "./spriteTextureHandler.js";
 export const SpriteManager = function() {
     this.graphics = new SpriteTextureHandler();
     this.spriteTracker = new Set();
+    this.spriteCache = [];
     this.sprites = new ObjectPool(1024, (index) => new Sprite(this, index, index));
     this.sprites.allocate();
     this.timestamp = 0;
@@ -57,10 +58,40 @@ SpriteManager.prototype.exit = function() {
     this.spriteTracker.clear();
     this.sprites.forAllReserved((sprite) => sprite.closeGraph());
     this.sprites.reset();
+    this.spriteCache.length = 0;
 
     for(let i = 0; i < this.layers.length; i++) {
         this.layers[i].length = 0;
     }
+}
+
+SpriteManager.prototype.createCachedSprite = function(typeID) {
+    const cachedSprite = this.getFromCache(typeID);
+
+    if(cachedSprite) {
+        return cachedSprite;
+    }
+
+    const sprite = this.sprites.reserveElement();
+
+    if(!sprite) {
+        Logger.log(Logger.CODE.ENGINE_ERROR, "SpritePool is full!", "SpriteManager.prototype.createSprite", null);
+        return null;
+    }
+
+    sprite.reset();
+
+    const spriteID = sprite.getID();
+    const spriteIndex = sprite.getIndex();
+
+    this.spriteTracker.add(spriteID);
+    this.spriteCache.push({
+        "id": typeID,
+        "index": spriteIndex
+    });
+    this.updateSpriteTexture(sprite, typeID);
+
+    return sprite;
 }
 
 SpriteManager.prototype.createSprite = function(typeID, layerID = null) {
@@ -201,4 +232,51 @@ SpriteManager.prototype.updateSprite = function(spriteIndex, spriteID) {
     }
 
     this.updateSpriteTexture(sprite, spriteID);
+}
+
+SpriteManager.prototype.isCached = function(spriteID, spriteIndex) {
+    for(let i = 0; i < this.spriteCache.length; i++) {
+        const { id, index } = this.spriteCache[i];
+
+        if(index === spriteIndex || id === spriteID) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+SpriteManager.prototype.removeFromCache = function(spriteID) {
+    for(let i = 0; i < this.spriteCache.length; i++) {
+        const { id, index } = this.spriteCache[i];
+
+        if(id === spriteID) {
+            this.destroySprite(index);
+            this.spriteCache[i] = this.spriteCache[this.spriteCache.length - 1];
+            this.spriteCache.pop();
+            break;
+        }
+    }
+}
+
+SpriteManager.prototype.getFromCache = function(spriteID) {
+    for(let i = 0; i < this.spriteCache.length; i++) {
+        const { id, index } = this.spriteCache[i];
+
+        if(id === spriteID) {
+            return this.getSprite(index);
+        }
+    }
+    
+    return null;
+}
+
+SpriteManager.prototype.clearCache = function() {
+    for(let i = 0; i < this.spriteCache.length; i++) {
+        const { id, index } = this.spriteCache;
+
+        this.destroySprite(index);
+    }
+
+    this.spriteCache.length = 0;
 }

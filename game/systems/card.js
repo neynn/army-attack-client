@@ -11,8 +11,6 @@ CardSystem.CARD_TYPE = {
     SMALL: "stat_card_small"
 };
 
-CardSystem.CARD_SPRITE_CACHE = {};
-
 /**
  * Creates the entities stat card.
  * 
@@ -21,22 +19,13 @@ CardSystem.CARD_SPRITE_CACHE = {};
  * @returns 
  */
 const createStatCardSprite = function(gameContext, entity) {
+    const { spriteManager } = gameContext;
     const cardType = entity.hasComponent(ArmyEntity.COMPONENT.ATTACK) ? CardSystem.CARD_TYPE.LARGE : CardSystem.CARD_TYPE.SMALL;
     const teamType = gameContext.getTeamType(getTeamID(entity.teamID));
     const spriteType = teamType.sprites[cardType];
+    const statCardSprite = spriteManager.createCachedSprite(spriteType);
 
-    if(CardSystem.CARD_SPRITE_CACHE[spriteType]) {
-        return CardSystem.CARD_SPRITE_CACHE[spriteType];
-    }
-
-    const { spriteManager } = gameContext;
-    const statCard = spriteManager.createSprite(teamType.sprites[cardType]);
-
-    if(statCard) {
-        CardSystem.CARD_SPRITE_CACHE[spriteType] = statCard;
-    }
-
-    return statCard;
+    return statCardSprite;
 }
 
 /**
@@ -63,16 +52,5 @@ CardSystem.generateStatCard = function(gameContext, entity) {
         entity.statCard.setSprite(statCardSprite);
         entity.updateStatCard();
         sprite.addChild(entity.statCard);
-    }
-}
-
-/**
- * Clears the cache of shared card sprites.
- */
-CardSystem.clearCache = function() {
-    for(const spriteID in CardSystem.CARD_SPRITE_CACHE) {
-        const sprite = CardSystem.CARD_SPRITE_CACHE[spriteID];
-
-        sprite.terminate();
     }
 }

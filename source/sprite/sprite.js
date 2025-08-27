@@ -173,6 +173,18 @@ Sprite.prototype.setBounds = function(x, y, w, h) {
     this.boundsH = h;
 }
 
+Sprite.prototype.isVisibleStatic = function(positionX, positionY, viewportRight, viewportLeft, viewportBottom, viewportTop) {
+    const isFlipped = (this.flags & Sprite.FLAG.FLIP) !== 0;
+    const adjustedX = isFlipped ? -this.boundsX - this.boundsW : this.boundsX;
+    const leftEdge = positionX + adjustedX;
+    const topEdge = positionY + this.boundsY;
+    const rightEdge = leftEdge + this.boundsW;
+    const bottomEdge = topEdge + this.boundsH;
+    const isVisible = leftEdge < viewportRight && rightEdge > viewportLeft && topEdge < viewportBottom && bottomEdge > viewportTop;
+
+    return isVisible;
+}
+
 Sprite.prototype.isVisible = function(viewportRight, viewportLeft, viewportBottom, viewportTop) {
     const isFlipped = (this.flags & Sprite.FLAG.FLIP) !== 0;
     const adjustedX = isFlipped ? -this.boundsX - this.boundsW : this.boundsX;
@@ -183,6 +195,17 @@ Sprite.prototype.isVisible = function(viewportRight, viewportLeft, viewportBotto
     const isVisible = leftEdge < viewportRight && rightEdge > viewportLeft && topEdge < viewportBottom && bottomEdge > viewportTop;
 
     return isVisible;
+}
+
+Sprite.prototype.isCollidingStatic = function(positionX, positionY, x, y, w, h) {
+    const isFlipped = (this.flags & Sprite.FLAG.FLIP) !== 0;
+    const adjustedX = isFlipped ? -this.boundsX - this.boundsW : this.boundsX;
+    const isColliding = isRectangleRectangleIntersect(
+        positionX + adjustedX, positionY + this.boundsY, this.boundsW, this.boundsH,
+        x, y, w, h
+    );
+
+    return isColliding;
 }
 
 Sprite.prototype.isColliding = function(x, y, w, h) {

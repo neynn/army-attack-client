@@ -23,7 +23,6 @@ Drop.STATE = {
 Drop.prototype.setPosition = function(x, y) {
     this.positionX = x;
     this.positionY = y;
-    this.sprite.setPosition(x, y);
 }
 
 Drop.prototype.collect = function() {
@@ -51,7 +50,7 @@ Drop.prototype.update = function(mouseX, mouseY, mouseR, deltaTime) {
                 this.targetX = -1; //Anywhere outside the screen
                 this.targetY = -1; //Anywhere outside the screen
             } else {
-                const isColliding = this.sprite.isColliding(mouseX, mouseY, mouseR, mouseR);
+                const isColliding = this.sprite.isCollidingStatic(this.positionX, this.positionY, mouseX, mouseY, mouseR, mouseR);
 
                 if(isColliding) {
                     this.collect();

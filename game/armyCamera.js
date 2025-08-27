@@ -63,7 +63,7 @@ ArmyCamera.prototype.drawDebris = function(tileManager, context, worldMap) {
     });
 }
 
-ArmyCamera.prototype.drawDrops = function(display, worldMap, realTime, deltaTime) {
+ArmyCamera.prototype.drawDrops = function(display, worldMap) {
     const { drops } = worldMap;
     const dropElements = drops.drops;
     const viewportLeftEdge = this.viewportX;
@@ -72,13 +72,12 @@ ArmyCamera.prototype.drawDrops = function(display, worldMap, realTime, deltaTime
     const viewportBottomEdge = viewportTopEdge + this.viewportHeight;
 
     for(let i = 0; i < dropElements.length; i++) {
-        const { sprite } = dropElements[i];
-        const isVisible = sprite.isVisible(viewportRightEdge, viewportLeftEdge, viewportBottomEdge, viewportTopEdge);
+        const { sprite, positionX, positionY } = dropElements[i];
+        const isVisible = sprite.isVisibleStatic(positionX, positionY, viewportRightEdge, viewportLeftEdge, viewportBottomEdge, viewportTopEdge);
 
         if(isVisible) {
-            sprite.update(realTime, deltaTime);
-            sprite.draw(display, viewportLeftEdge, viewportTopEdge);
-            //sprite.debug(display, viewportLeftEdge, viewportTopEdge);
+            sprite.draw(display, viewportLeftEdge - positionX, viewportTopEdge - positionY);
+            //sprite.debug(display, viewportLeftEdge - positionX, viewportTopEdge - positionY);
         }
     }
 }
@@ -117,7 +116,7 @@ ArmyCamera.prototype.update = function(gameContext, display) {
     this.drawOverlay(graphics, context, this.overlays[ArmyCamera.OVERLAY.RANGE]);
     this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.TOP), realTime, deltaTime);
     this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.UI), realTime, deltaTime);
-    this.drawDrops(display, worldMap, realTime, deltaTime);
+    this.drawDrops(display, worldMap);
     display.unflip();
     this.drawLayer(graphics, context, worldMap.getLayer(ArmyMap.LAYER.CLOUD));
 

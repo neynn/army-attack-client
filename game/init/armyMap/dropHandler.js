@@ -8,20 +8,26 @@ export const DropHandler = function() {
     this.deltaTime = 0;
 }
 
+DropHandler.MAX_VISIBLE_DROPS = 1000;
 DropHandler.TIME_BETWEEN_SOUNDS_S = 0.5;
 
 DropHandler.prototype.createDrop = function(gameContext, inventory, tileX, tileY, type, id, value) {
     const { spriteManager, transform2D } = gameContext;
-    const sprite = spriteManager.createSprite("drop_money");
     const transaction = DefaultTypes.createItemTransaction(type, id, value);
 
-    if(sprite) {
-        const { x, y } = transform2D.transformTileToWorldCenter(tileX, tileY);
-        const drop = new Drop(transaction, inventory, sprite);
+    if(this.drops.length < DropHandler.MAX_VISIBLE_DROPS) {
+        const sprite = spriteManager.createCachedSprite("drop_money");
 
-        drop.setPosition(x + getRandomNumber(-48, 48), y);
+        if(sprite) {
+            const { x, y } = transform2D.transformTileToWorldCenter(tileX, tileY);
+            const drop = new Drop(transaction, inventory, sprite);
 
-        this.drops.push(drop);
+            drop.setPosition(x + getRandomNumber(-48, 48), y);
+
+            this.drops.push(drop);
+        } else {
+            inventory.addByTransaction(transaction);
+        }
     } else {
         inventory.addByTransaction(transaction);
     }
@@ -70,10 +76,9 @@ DropHandler.prototype.collectAllDrops = function() {
         const drop = this.drops[i];
 
         drop.collect();
-        drop.sprite.terminate();
     }
 
-    this.drops = [];
+    this.drops.length = 0;
 }
 
 DropHandler.prototype.playCursorCollectSound = function(gameContext) {
@@ -115,7 +120,6 @@ DropHandler.prototype.update = function(gameContext) {
     for(let i = toRemove.length - 1; i >= 0; i--) {
         const index = toRemove[i];
 
-        this.drops[index].sprite.terminate();
         this.drops[index] = this.drops[this.drops.length - 1];
         this.drops.pop();
     }
