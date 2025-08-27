@@ -2067,6 +2067,11 @@
             "story": { "health": 50, "traits": [] }, 
             "versus": { "health": 50, "traits": [] }
         },
+        "collectRewards": [
+            {"type": "Resource", "id": "Money", "value": 150},
+            {"type": "Resource", "id": "Supplies", "value": 10},
+            {"type": "Resource", "id": "Energy", "value": 1}
+        ],
         "collectableTimeSeconds": 3,
         "sprites": {
             "idle": "blue_airport",

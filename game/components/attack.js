@@ -75,17 +75,6 @@ AttackComponent.prototype.getDamage = function(armor) {
     return damage;
 }
 
-AttackComponent.prototype.save = function() {
-    return [this.damage, this.range];
-}
-
-AttackComponent.prototype.load = function(blob) {
-    const [ damage, range ] = blob;
-    
-    this.damage = damage;
-    this.range = range;
-}
-
 AttackComponent.prototype.init = function(config) {
     const { counter, bulldoze, active } = config;
 

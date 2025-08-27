@@ -11,7 +11,8 @@ export const AnimationSystem = function() {}
 AnimationSystem.SPRITE_ID = {
     MOVE: 0,
     CARD: 1,
-    SELL: 2
+    SELL: 2,
+    ATTENTION: 3
 };
 
 AnimationSystem.FIRE_OFFSET = {
@@ -21,7 +22,8 @@ AnimationSystem.FIRE_OFFSET = {
 
 AnimationSystem.SPRITE_TYPE = {
     SELECT: "cursor_move_1x1",
-    DELAY: "icon_delay"
+    DELAY: "icon_delay",
+    ATTENTION: "icon_status_finished"
 };
 
 /**
@@ -193,6 +195,21 @@ AnimationSystem.playCleaning = function(gameContext, tileX, tileY) {
     soundPlayer.playSound(UI_SONUD.BUTTON);
 }
 
+AnimationSystem.playDelay = function(gameContext, entity) {
+    const { spriteManager, transform2D, client } = gameContext;
+    const { soundPlayer } = client;
+    const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
+    const entitySprite = spriteComponent.getSprite(gameContext);
+    const delaySprite = spriteManager.createSprite(AnimationSystem.SPRITE_TYPE.DELAY);
+    const { x, y } = transform2D.transformSizeToWorldOffsetCenter(entity.config.dimX, entity.config.dimY);
+
+    entitySprite.addChild(delaySprite);
+    delaySprite.expire();
+    delaySprite.setPosition(x, y);
+
+    soundPlayer.playSound(UI_SONUD.BUTTON);
+}
+
 /**
  * Plays the heal animation of an entity.
  * 
@@ -204,7 +221,7 @@ AnimationSystem.playHeal = function(gameContext, entity) {
     const { soundPlayer } = client;
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const entitySprite = spriteComponent.getSprite(gameContext);
-    const delaySprite = spriteManager.createSprite(AnimationSystem.SPRITE_TYPE.DELAY, SpriteManager.LAYER.MIDDLE);
+    const delaySprite = spriteManager.createSprite(AnimationSystem.SPRITE_TYPE.DELAY);
     const { x, y } = transform2D.transformSizeToWorldOffsetCenter(entity.config.dimX, entity.config.dimY);
 
     entitySprite.addChild(delaySprite);
@@ -212,6 +229,27 @@ AnimationSystem.playHeal = function(gameContext, entity) {
     delaySprite.setPosition(x, y);
 
     soundPlayer.playSound(UI_SONUD.HEAL);
+}
+
+AnimationSystem.playAttention = function(gameContext, entity) {
+    const { spriteManager, transform2D } = gameContext;
+    const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
+    const entitySprite = spriteComponent.getSprite(gameContext);
+    const attentionSprite = spriteManager.createSprite(AnimationSystem.SPRITE_TYPE.ATTENTION);
+    const { x, y } = transform2D.transformSizeToWorldOffsetCenter(entity.config.dimX, entity.config.dimY);
+
+    entitySprite.addChild(attentionSprite, AnimationSystem.SPRITE_ID.ATTENTION);
+    attentionSprite.setPosition(x, y);
+}
+
+AnimationSystem.stopAttention = function(gameContext, entity) {
+    const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
+    const entitySprite = spriteComponent.getSprite(gameContext);
+    const attentionSprite = entitySprite.getChild(AnimationSystem.SPRITE_ID.ATTENTION);
+
+    if(attentionSprite) {
+        attentionSprite.terminate();
+    }
 }
 
 /**

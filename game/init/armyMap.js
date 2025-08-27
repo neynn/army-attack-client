@@ -30,9 +30,7 @@ ArmyMap.TYPE = {
     NONE: 0,
     VERSUS: 1,
     STORY: 2,
-    STRIKE: 3,
-    EMPTY_STORY: 4,
-    EMPTY_VERSUS: 5
+    STRIKE: 3
 };
 
 ArmyMap.AUTOTILER = {

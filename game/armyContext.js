@@ -27,6 +27,7 @@ import { TownComponent } from "./components/town.js";
 import { ClearDebrisAction } from "./actions/clearDebrisAction.js";
 import { HealAction } from "./actions/healAction.js";
 import { ArmyResources } from "./armyResources.js";
+import { CollectAction } from "./actions/collectAction.js";
 
 export const ArmyContext = function() {
     GameContext.call(this);
@@ -82,7 +83,8 @@ ArmyContext.prototype.init = function(resources) {
     this.world.actionQueue.registerAction(ACTION_TYPE.FIRE_MISSION, new FireMissionAction());
     this.world.actionQueue.registerAction(ACTION_TYPE.CLEAR_DEBRIS, new ClearDebrisAction());
     this.world.actionQueue.registerAction(ACTION_TYPE.HEAL, new HealAction());
-
+    this.world.actionQueue.registerAction(ACTION_TYPE.COLLECT, new CollectAction());
+    
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.ARMOR, ArmorComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.ATTACK, AttackComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.AVIAN, AvianComponent);

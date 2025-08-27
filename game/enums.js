@@ -27,7 +27,8 @@ export const ACTION_TYPE = {
     DEATH: "Death",
     FIRE_MISSION: "FireMission",
     CLEAR_DEBRIS: "ClearDebris",
-    HEAL: "Heal"
+    HEAL: "Heal",
+    COLLECT: "Collect"
 };
 
 export const ACTOR_ID = {
@@ -64,7 +65,8 @@ export const ALLIANCE_TYPE = {
 
 export const OBJECTIVE_TYPE = {
     DESTROY: "Destroy",
-    CONQUER: "Conquer"
+    CONQUER: "Conquer",
+    COLLECT: "Collect"
 };
 
 export const UI_SONUD = {

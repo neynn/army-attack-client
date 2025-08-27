@@ -1,3 +1,5 @@
+import { AnimationSystem } from "../systems/animation.js";
+
 export const ProductionComponent = function() {
     this.passedTime = 0;
     this.state = ProductionComponent.STATE.NOT_PRODUCING;
@@ -19,10 +21,19 @@ ProductionComponent.prototype.update = function(gameContext, entity) {
         if(this.passedTime >= entity.config.collectableTimeSeconds) {
             this.passedTime = entity.config.collectableTimeSeconds;
             this.state = ProductionComponent.STATE.FINISHED;
-            //TODO: Emit PRODUCTION_READY event!
-            console.error("TODO FINISH PRODUCTION");
+
+            AnimationSystem.playAttention(gameContext, entity);
         }
     }
+}
+
+ProductionComponent.prototype.reset = function() {
+    this.passedTime = 0;
+    this.state = ProductionComponent.STATE.NOT_PRODUCING;
+}
+
+ProductionComponent.prototype.start = function() {
+    this.state = ProductionComponent.STATE.PRODUCING;
 }
 
 ProductionComponent.prototype.isFinished = function() {

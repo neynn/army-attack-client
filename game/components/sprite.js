@@ -8,6 +8,12 @@ SpriteComponent.FLIP_STATE = {
     FLIPPED: 1
 };
 
+SpriteComponent.prototype.updateSprite = function(gameContext, spriteID) {
+    const { spriteManager } = gameContext;
+
+    spriteManager.updateSprite(this.spriteIndex, spriteID);
+}
+
 SpriteComponent.prototype.setIndex = function(index) {
     this.spriteIndex = index;
 }

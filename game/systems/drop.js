@@ -8,7 +8,8 @@ export const DropSystem = function() {}
 DropSystem.DROP_TYPE = {
     HIT: 0,
     KILL: 1,
-    SELL: 2
+    SELL: 2,
+    COLLECT: 3
 };
 
 const getDropList = function(rewards) {
@@ -48,6 +49,10 @@ DropSystem.createEntityDrop = function(gameContext, entity, dropType, actorID) {
                 rewards = [entity.config.sell];
             }
 
+            break;
+        }
+        case DropSystem.DROP_TYPE.COLLECT: {
+            rewards = entity.config.collectRewards;
             break;
         }
     }

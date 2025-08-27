@@ -66,6 +66,7 @@ StorySystem.initialize = function(gameContext) {
         DefaultTypes.createSpawnConfig("blue_commando", TEAM_TYPE.ALLIES, ACTOR_ID.STORY_PLAYER, 5, 3),
         DefaultTypes.createSpawnConfig("red_artillery", TEAM_TYPE.ALLIES, ACTOR_ID.STORY_PLAYER, 2, 3),
         DefaultTypes.createSpawnConfig("blue_bootcamp_construction", TEAM_TYPE.ALLIES, ACTOR_ID.STORY_PLAYER, 2, 9),
+        DefaultTypes.createSpawnConfig("blue_airport", TEAM_TYPE.ALLIES, ACTOR_ID.STORY_PLAYER, 4, 9),
         DefaultTypes.createSpawnConfig("blue_elite_infantry", TEAM_TYPE.ALLIES, ACTOR_ID.STORY_PLAYER, 7, 3),
         DefaultTypes.createSpawnConfig("red_battletank", TEAM_TYPE.ALLIES, ACTOR_ID.STORY_PLAYER, 3, 5),
         DefaultTypes.createSpawnConfig("blue_elite_battletank", TEAM_TYPE.ALLIES, ACTOR_ID.STORY_PLAYER, 3, 4),

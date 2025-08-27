@@ -5,6 +5,7 @@ import { PlayerCursor } from "../playerCursor.js";
 import { Player } from "../player.js";
 import { ClearDebrisAction } from "../../../actions/clearDebrisAction.js";
 import { PlayerState } from "./playerState.js";
+import { CollectAction } from "../../../actions/collectAction.js";
 
 export const PlayerIdleState = function() {}
 
@@ -65,6 +66,13 @@ PlayerIdleState.prototype.queueClearDebris = function(player, tileX, tileY) {
     player.inputQueue.enqueueLast(request);
 }
 
+PlayerIdleState.prototype.queueCollectProduction = function(player, entityID) {
+    const playerID = player.getID();
+    const request = CollectAction.createRequest(playerID, entityID);
+    
+    player.inputQueue.enqueueLast(request);
+}
+
 PlayerIdleState.prototype.onClick = function(gameContext, stateMachine) {
     const { world } = gameContext;
     const { actionQueue } = world;
@@ -88,6 +96,13 @@ PlayerIdleState.prototype.onClick = function(gameContext, stateMachine) {
                 return;
             }
         
+            const isProductionFinished = mouseEntity.isProductionFinished();
+
+            if(isProductionFinished) {
+                this.queueCollectProduction(player, mouseEntity.getID());
+                return;
+            }
+
             const constructionRequest = ConstructionSystem.onInteract(gameContext, mouseEntity, playerID);
         
             if(constructionRequest) {

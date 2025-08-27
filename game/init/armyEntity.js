@@ -129,10 +129,6 @@ ArmyEntity.prototype.updateSpriteHorizontal = function(gameContext) {
 }
 
 ArmyEntity.prototype.updateSpriteDirectonal = function(gameContext, southTypeID, northTypeID) {
-    if(northTypeID === undefined && southTypeID === undefined) {
-        return;
-    }
-
     const spriteComponent = this.getComponent(ArmyEntity.COMPONENT.SPRITE);
 
     if(this.directionX === ArmyEntity.DIRECTION.WEST) {
@@ -153,13 +149,12 @@ ArmyEntity.prototype.updateSpriteDirectonal = function(gameContext, southTypeID,
 }
 
 ArmyEntity.prototype.updateSprite = function(gameContext, spriteType) {
-    const { spriteManager } = gameContext;
     const spriteID = this.config.sprites[spriteType];
 
     if(spriteID) {
         const spriteComponent = this.getComponent(ArmyEntity.COMPONENT.SPRITE);
 
-        spriteManager.updateSprite(spriteComponent.spriteIndex, spriteID);
+        spriteComponent.updateSprite(gameContext, spriteID);
     }
 }
 
@@ -426,4 +421,10 @@ ArmyEntity.prototype.updateStatCard = function() {
     if(attackComponent) {
         this.statCard.setDamageText(`${attackComponent.damage}`);
     }
+}
+
+ArmyEntity.prototype.isProductionFinished = function() {
+    const productionComponent = this.getComponent(ArmyEntity.COMPONENT.PRODUCTION);
+
+    return productionComponent && productionComponent.isFinished();
 }
