@@ -51,15 +51,14 @@ RangeVisualizer.prototype.show = function(gameContext, entity) {
     const { tileManager } = gameContext;
     const autotiler = tileManager.getAutotilerByID(ArmyMap.AUTOTILER.RANGE);
     const { range } = attackComponent;
-    const { tileX, tileY } = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
 
     spriteComponent.swapLayer(gameContext, SpriteManager.LAYER.TOP);
 
-    const startX = tileX - range;
-    const startY = tileY - range;
-    const endX = tileX + range + entity.config.dimX - 1;
-    const endY = tileY + range + entity.config.dimY - 1;
+    const startX = entity.tileX - range;
+    const startY = entity.tileY - range;
+    const endX = entity.tileX + range + entity.config.dimX - 1;
+    const endY = entity.tileY + range + entity.config.dimY - 1;
 
     for(let i = startY; i <= endY; i++) {
         for(let j = startX; j <= endX; j++) {

@@ -1,7 +1,6 @@
 import { EntityManager } from "../../../source/entity/entityManager.js";
 import { SpriteManager } from "../../../source/sprite/spriteManager.js";
 import { PathfinderSystem } from "../../systems/pathfinder.js";
-import { ArmyEntity } from "../../init/armyEntity.js";
 
 export const PlayerCursor = function() {
     this.tileX = -1;
@@ -149,8 +148,7 @@ PlayerCursor.prototype.alignSpriteOnTile = function(gameContext) {
 PlayerCursor.prototype.alignSpriteOnEntity = function(gameContext, entity) {
     const { spriteManager, transform2D } = gameContext;
     const sprite = spriteManager.getSprite(this.spriteIndex);
-    const { tileX, tileY } = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
-    const { x, y } = transform2D.transformTileToWorldCenter(tileX, tileY);
+    const { x, y } = transform2D.transformTileToWorldCenter(entity.tileX, entity.tileY);
 
     sprite.setPosition(x, y);
 }

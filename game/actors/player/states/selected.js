@@ -1,8 +1,6 @@
 import { EntityManager } from "../../../../source/entity/entityManager.js";
 import { ArmyCamera } from "../../../armyCamera.js";
 import { AnimationSystem } from "../../../systems/animation.js";
-import { LookSystem } from "../../../systems/look.js";
-import { ArmyEntity } from "../../../init/armyEntity.js";
 import { PlayerCursor } from "../playerCursor.js";
 import { Player } from "../player.js";
 import { MoveAction } from "../../../actions/moveAction.js";
@@ -50,10 +48,9 @@ PlayerSelectedState.prototype.updateEntity = function(gameContext, player) {
 
     if(selectedEntity) {
         const hoverTileX = player.hover.tileX;
-        const { tileX } = selectedEntity.getComponent(ArmyEntity.COMPONENT.POSITION);
         
-        if(hoverTileX !== tileX) {
-            LookSystem.lookHorizontal(selectedEntity, hoverTileX < tileX);
+        if(hoverTileX !== selectedEntity.tileX) {
+            selectedEntity.lookHorizontal(hoverTileX < selectedEntity.tileX);
             selectedEntity.updateSpriteHorizontal(gameContext, selectedEntity);
         }
     }

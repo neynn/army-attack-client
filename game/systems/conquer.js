@@ -79,8 +79,7 @@ ConquerSystem.tryConquering = function(gameContext, entity, tileX, tileY, actorI
         return;
     }
 
-    const teamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
-    const { teamID } = teamComponent;
+    const teamID = entity.teamID;
     const endX = tileX + entity.config.dimX;
     const endY = tileY + entity.config.dimY;
     const tiles = [];

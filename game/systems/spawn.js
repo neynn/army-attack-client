@@ -29,29 +29,12 @@ const initMoveComponent = function(component, stats) {
     component.speed = moveSpeed;
 }
 
-const setupComponents = function(entity, tileX, tileY, teamID, health, maxHealth) {
-    const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
-    const healthComponent = entity.getComponent(ArmyEntity.COMPONENT.HEALTH);
-    const teamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
-
-    positionComponent.tileX = tileX;
-    positionComponent.tileY = tileY;
-    teamComponent.teamID = teamID;
-    healthComponent.health = health;
-    healthComponent.maxHealth = maxHealth;
-}
-
 const createSprite = function(gameContext, entity, tileX, tileY) {
     const { spriteManager, transform2D } = gameContext;
     const spriteType = entity.getSpriteID(ArmyEntity.SPRITE_TYPE.IDLE);
     const sprite = spriteManager.createSprite(spriteType, SpriteManager.LAYER.MIDDLE);
     const { x, y } = transform2D.transformTileToWorldCenter(tileX, tileY);
-
-    const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
-
-    positionComponent.positionX = x;
-    positionComponent.positionY = y;
 
     spriteComponent.setIndex(sprite.getIndex());
     sprite.setPosition(x, y);
@@ -85,13 +68,18 @@ const createEntity = function(gameContext, config, entityID) {
     const entity = new ArmyEntity(entityID, type);
     
     entity.setConfig(entityType);
+    entity.tileX = tileX;
+    entity.tileY = tileY;
+    entity.teamID = team;
 
     entityManager.addArchetypeComponents(entity, archetype);
 
     if(health !== undefined) {
-        setupComponents(entity, tileX, tileY, team, health, statConfig.maxHealth);
+        entity.health = health;
+        entity.maxHealth = statConfig.maxHealth;
     } else {
-        setupComponents(entity, tileX, tileY, team, statConfig.health, statConfig.maxHealth ?? statConfig.health);
+        entity.health = statConfig.health;
+        entity.maxHealth = statConfig.maxHealth ?? statConfig.health;
     }
 
     const sprite = createSprite(gameContext, entity, tileX, tileY);
@@ -264,15 +252,14 @@ SpawnSystem.getSpawnConfig = function(gameContext, entity) {
     const { turnManager } = world;
     const entityID = entity.getID();
     const savedData = entity.save();
-    const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
-    const teamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
     const owners = turnManager.getOwnersOf(entityID).map(actor => actor.getID());
     
     return {
         "type": entity.config.id,
-        "tileX": positionComponent.tileX,
-        "tileY": positionComponent.tileY,
-        "team": teamComponent.teamID,
+        "tileX": entity.tileX,
+        "tileY": entity.tileY,
+        "team": entity.teamID,
+        "health": entity.health,
         "owners": owners,
         "data": savedData
     };

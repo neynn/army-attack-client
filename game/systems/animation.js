@@ -2,7 +2,6 @@ import { SpriteManager } from "../../source/sprite/spriteManager.js";
 import { ArmyContext } from "../armyContext.js";
 import { UI_SONUD } from "../enums.js";
 import { ArmyEntity } from "../init/armyEntity.js";
-import { LookSystem } from "./look.js";
 
 /**
  * Collection of functions revolving around the animations.
@@ -52,12 +51,13 @@ AnimationSystem.playIdle = function(gameContext, entityIDList) {
  */
 AnimationSystem.playDeath = function(gameContext, entity) {
     const { spriteManager, transform2D } = gameContext;
-    const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
     const spriteType = entity.getSpriteID(ArmyEntity.SPRITE_TYPE.DEATH);
     const deathAnimation = spriteManager.createSprite(spriteType, SpriteManager.LAYER.MIDDLE);
-    const { x, y } = transform2D.transformSizeToWorldOffsetCenter(entity.config.dimX, entity.config.dimY);
-    const positionX = positionComponent.positionX + x;
-    const positionY = positionComponent.positionY + y;
+
+    const centerPosition = transform2D.transformTileToWorldCenter(entity.tileX, entity.tileY);
+    const offsetPosition = transform2D.transformSizeToWorldOffsetCenter(entity.config.dimX, entity.config.dimY);
+    const positionX = centerPosition.x + offsetPosition.x;
+    const positionY = centerPosition.y + offsetPosition.y;
 
     deathAnimation.setPosition(positionX, positionY);
     deathAnimation.expire();
@@ -85,7 +85,7 @@ AnimationSystem.playFire = function(gameContext, targetObject, attackerIDList) {
         const weaponSprite = spriteManager.createSprite(attacker.config.sprites.weapon);
         const { x, y } = transform2D.transformSizeToRandomOffset(target.config.dimX, target.config.dimY, AnimationSystem.FIRE_OFFSET.REGULAR, AnimationSystem.FIRE_OFFSET.REGULAR);
 
-        LookSystem.lookAtEntity(attacker, target);
+        attacker.lookAtEntity(target);
         attacker.updateSpriteDirectonal(gameContext, ArmyEntity.SPRITE_TYPE.FIRE, ArmyEntity.SPRITE_TYPE.FIRE_UP);
         attacker.playSound(gameContext, ArmyEntity.SOUND_TYPE.FIRE);
         entitySprite.addChild(weaponSprite);

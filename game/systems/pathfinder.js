@@ -80,9 +80,8 @@ const isTileWalkable = function(gameContext, worldMap, entity, tileX, tileY) {
         return true;
     }
 
-    const { teamID } = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
     const tileTeamID = worldMap.getTile(ArmyMap.LAYER.TEAM, tileX, tileY);
-    const isTileWalkable = AllianceSystem.isWalkable(gameContext, teamID, getTeamName(tileTeamID));
+    const isTileWalkable = AllianceSystem.isWalkable(gameContext, entity.teamID, getTeamName(tileTeamID));
 
     return isTileWalkable;
 }
@@ -111,10 +110,7 @@ const isPassingAllowed = function(gameContext, worldMap, entity, blocker) {
     }
 
     const moveComponent = entity.getComponent(ArmyEntity.COMPONENT.MOVE);
-    const teamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
-    const passerTeamComponent = blocker.getComponent(ArmyEntity.COMPONENT.TEAM);
-
-    const isPassable = AllianceSystem.isPassable(gameContext, teamComponent.teamID, passerTeamComponent.teamID);
+    const isPassable = AllianceSystem.isPassable(gameContext, entity.teamID, blocker.teamID);
     const isPassingAllowed = isPassable || moveComponent.isCloaked();
 
     return isPassingAllowed;
@@ -136,8 +132,9 @@ PathfinderSystem.generateNodeList = function(gameContext, entity) {
         return [];
     }
 
+    const tileX = entity.tileX;
+    const tileY = entity.tileY;
     const moveComponent = entity.getComponent(ArmyEntity.COMPONENT.MOVE);
-    const { tileX, tileY } = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
     const isOriginWalkable = isTileWalkable(gameContext, activeMap, entity, tileX, tileY);
 
     PathfinderSystem.PATHFINDER.searchCross(tileX, tileY, moveComponent.range, activeMap.width, activeMap.height, (next) => {

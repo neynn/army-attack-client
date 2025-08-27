@@ -1,6 +1,5 @@
 import { Entity } from "../../source/entity/entity.js";
-import { isRectangleRectangleIntersect } from "../../source/math/math.js";
-import { DirectionComponent } from "../components/direction.js";
+import { clampValue, isRectangleRectangleIntersect } from "../../source/math/math.js";
 import { SpriteComponent } from "../components/sprite.js";
 import { DefaultTypes } from "../defaultTypes.js";
 import { AllianceSystem } from "../systems/alliance.js";
@@ -9,6 +8,13 @@ import { StatCard } from "./statCard.js";
 export const ArmyEntity = function(id, DEBUG_NAME) {
     Entity.call(this, id, DEBUG_NAME);
 
+    this.health = 1;
+    this.maxHealth = 1;
+    this.tileX = -1;
+    this.tileY = -1;
+    this.directionX = ArmyEntity.DIRECTION.EAST;
+    this.directionY = ArmyEntity.DIRECTION.SOUTH;
+    this.teamID = null;
     this.statCard = new StatCard();
 }
 
@@ -20,7 +26,6 @@ ArmyEntity.TYPE = {
 };
 
 ArmyEntity.COMPONENT = {
-    HEALTH: "Health",
     CONSTRUCTION: "Construction",
     REVIVEABLE: "Reviveable",
     ATTACK: "Attack",
@@ -28,10 +33,7 @@ ArmyEntity.COMPONENT = {
     UNIT: "Unit",
     ARMOR: "Armor",
     AVIAN: "Avian",
-    POSITION: "Position",
     SPRITE: "Sprite",
-    DIRECTION: "Direction",
-    TEAM: "Team",
     PRODUCTION: "Production",
     TOWN: "Town"
 };
@@ -58,15 +60,68 @@ ArmyEntity.SOUND_TYPE = {
     BUILD: "build"
 };
 
+ArmyEntity.DIRECTION = {
+    NORTH: 0,
+    EAST: 1,
+    SOUTH: 2,
+    WEST: 3
+};
+
 ArmyEntity.prototype = Object.create(Entity.prototype);
 ArmyEntity.prototype.constructor = ArmyEntity;
 
+ArmyEntity.prototype.updateSpritePosition = function(gameContext, deltaX, deltaY) {
+    const spriteComponent = this.getComponent(ArmyEntity.COMPONENT.SPRITE);
+    const sprite = spriteComponent.getSprite(gameContext);
+
+    sprite.positionX += deltaX;
+    sprite.positionY += deltaY;
+}
+
+ArmyEntity.prototype.setSpritePosition = function(gameContext, positionX, positionY) {
+    const spriteComponent = this.getComponent(ArmyEntity.COMPONENT.SPRITE);
+
+    spriteComponent.setPosition(gameContext, positionX, positionY);
+}
+
+ArmyEntity.prototype.setTile = function(tileX, tileY) {
+    this.tileX = tileX;
+    this.tileY = tileY;
+}
+
+ArmyEntity.prototype.lookAtEntity = function(target) {
+    this.lookAtTarget(target.tileX, target.tileY);
+}
+
+ArmyEntity.prototype.lookAtTarget = function(targetX, targetY) {
+    if(targetX === this.tileX) {
+        this.lookVertical(targetY < this.tileY);
+    } else {
+        this.lookHorizontal(targetX < this.tileX);
+        this.lookVertical(targetY < this.tileY);
+    }
+}
+
+ArmyEntity.prototype.lookVertical = function(northCondition) {
+    if(northCondition) {
+        this.directionY = ArmyEntity.DIRECTION.NORTH; 
+    } else {
+        this.directionY = ArmyEntity.DIRECTION.SOUTH; 
+    }
+}
+
+ArmyEntity.prototype.lookHorizontal = function(westCondition) {
+    if(westCondition) {
+        this.directionX = ArmyEntity.DIRECTION.WEST; 
+    } else {
+        this.directionX = ArmyEntity.DIRECTION.EAST; 
+    }
+}
+
 ArmyEntity.prototype.updateSpriteHorizontal = function(gameContext) {
     const spriteComponent = this.getComponent(ArmyEntity.COMPONENT.SPRITE);
-    const directionComponent = this.getComponent(ArmyEntity.COMPONENT.DIRECTION);
-    const { directionX } = directionComponent;
 
-    if(directionX === DirectionComponent.DIRECTION.WEST) {
+    if(this.directionX === ArmyEntity.DIRECTION.WEST) {
         spriteComponent.setFlipState(gameContext, SpriteComponent.FLIP_STATE.FLIPPED);
     } else {
         spriteComponent.setFlipState(gameContext, SpriteComponent.FLIP_STATE.UNFLIPPED);
@@ -79,16 +134,14 @@ ArmyEntity.prototype.updateSpriteDirectonal = function(gameContext, southTypeID,
     }
 
     const spriteComponent = this.getComponent(ArmyEntity.COMPONENT.SPRITE);
-    const directionComponent = this.getComponent(ArmyEntity.COMPONENT.DIRECTION);
-    const { directionX, directionY } = directionComponent;
 
-    if(directionX === DirectionComponent.DIRECTION.WEST) {
+    if(this.directionX === ArmyEntity.DIRECTION.WEST) {
         spriteComponent.setFlipState(gameContext, SpriteComponent.FLIP_STATE.FLIPPED);
     } else {
         spriteComponent.setFlipState(gameContext, SpriteComponent.FLIP_STATE.UNFLIPPED);
     }
 
-    if(directionY === DirectionComponent.DIRECTION.SOUTH) {
+    if(this.directionY === ArmyEntity.DIRECTION.SOUTH) {
         this.updateSprite(gameContext, southTypeID);
     } else {
         if(!this.config.sprites[northTypeID]) {
@@ -110,26 +163,35 @@ ArmyEntity.prototype.updateSprite = function(gameContext, spriteType) {
     }
 }
 
-ArmyEntity.prototype.addHealth = function(health) {
-    const healthComponent = this.getComponent(ArmyEntity.COMPONENT.HEALTH);
-    
-    healthComponent.addHealth(health);
+ArmyEntity.prototype.addHealth = function(value) {
+    const health = clampValue(this.health + value, this.maxHealth, 0);
+
+    this.health = health;
+    this.updateStatCard();
+}
+
+ArmyEntity.prototype.reduceHealth = function(value) {
+    const health = this.health - value;
+
+    if(health < 0) {
+        this.health = 0;
+    } else {
+        this.health = health;
+    }
 
     this.updateStatCard();
 }
 
-ArmyEntity.prototype.reduceHealth = function(damage) {
-    const healthComponent = this.getComponent(ArmyEntity.COMPONENT.HEALTH);
-    
-    healthComponent.reduceHealth(damage);
-
-    this.updateStatCard();
+ArmyEntity.prototype.isDamageFatal = function(damage) {
+    return (this.health - damage) <= 0;
 }
 
-ArmyEntity.prototype.getHealth = function() {
-    const healthComponent = this.getComponent(ArmyEntity.COMPONENT.HEALTH);
+ArmyEntity.prototype.isFull = function() {
+    return this.health >= this.maxHealth;
+}
 
-    return healthComponent.health;
+ArmyEntity.prototype.getMissingHealth = function() {
+    return this.maxHealth - this.health;
 }
 
 ArmyEntity.prototype.playSound = function(gameContext, soundType) {
@@ -153,10 +215,7 @@ ArmyEntity.prototype.getSpriteID = function(spriteType) {
 }
 
 ArmyEntity.prototype.isAlive = function() {
-    const healthComponent = this.getComponent(ArmyEntity.COMPONENT.HEALTH);
-    const isAlive = healthComponent.isAlive();
-
-    return isAlive;
+    return this.health > 0;
 }
 
 ArmyEntity.prototype.determineSprite = function(gameContext) {
@@ -173,11 +232,10 @@ ArmyEntity.prototype.determineSprite = function(gameContext) {
 
 ArmyEntity.prototype.getSurroundingEntities = function(gameContext, range) {
     const { world } = gameContext;
-    const positionComponent = this.getComponent(ArmyEntity.COMPONENT.POSITION);
-    const startX = positionComponent.tileX - range;
-    const startY = positionComponent.tileY - range;
-    const endX = positionComponent.tileX + this.config.dimX + range;
-    const endY = positionComponent.tileY + this.config.dimY + range;
+    const startX = this.tileX - range;
+    const startY = this.tileY - range;
+    const endX = this.tileX + this.config.dimX + range;
+    const endY = this.tileY + this.config.dimY + range;
     const entities = world.getUniqueEntitiesInArea(startX, startY, endX, endY);
 
     return entities;
@@ -214,20 +272,18 @@ ArmyEntity.prototype.getAttackCounterTarget = function(gameContext) {
     }
 
     const attackComponent = this.getComponent(ArmyEntity.COMPONENT.ATTACK);
-    const teamComponent = this.getComponent(ArmyEntity.COMPONENT.TEAM);
     const surroundingEntities = this.getSurroundingEntities(gameContext, attackComponent.range);
     let target = null;
 
     for(let i = 0; i < surroundingEntities.length; i++) {
         const entity = surroundingEntities[i];
-        const entityTeamComponent = entity.getComponent(ArmyEntity.COMPONENT.TEAM);
-        const isTargetable = entity.isAlive() && AllianceSystem.isEnemy(gameContext, teamComponent.teamID, entityTeamComponent.teamID);
+        const isTargetable = entity.isAlive() && AllianceSystem.isEnemy(gameContext, this.teamID, entity.teamID);
 
         if(isTargetable) {
             if(!target) {
                 target = entity;
             } else {
-                if(entity.getHealth() < target.getHealth()) {
+                if(entity.health < target.health) {
                     target = entity;
                 }
             }
@@ -238,7 +294,6 @@ ArmyEntity.prototype.getAttackCounterTarget = function(gameContext) {
 }
 
 ArmyEntity.prototype.getMoveCounterAttackers = function(gameContext) {
-    const teamComponent = this.getComponent(ArmyEntity.COMPONENT.TEAM);
     const potentialAttackers = this.getSurroundingEntities(gameContext, gameContext.settings.maxAttackRange);
     const attackers = [];
 
@@ -251,11 +306,11 @@ ArmyEntity.prototype.getMoveCounterAttackers = function(gameContext) {
 
         if(potentialAttacker.canCounterMove()) {
             const attackerAttackComponent = potentialAttacker.getComponent(ArmyEntity.COMPONENT.ATTACK);
-            const attackerTeamComponent = potentialAttacker.getComponent(ArmyEntity.COMPONENT.TEAM);
-            const isMoveCounterable = potentialAttacker.isColliding(this, attackerAttackComponent.range) && AllianceSystem.isEnemy(gameContext, attackerTeamComponent.teamID, teamComponent.teamID);
 
-            if(isMoveCounterable) {
-                attackers.push(potentialAttacker);
+            if(potentialAttacker.isColliding(this, attackerAttackComponent.range)) {
+                if(AllianceSystem.isEnemy(gameContext, potentialAttacker.teamID, this.teamID)) {
+                    attackers.push(potentialAttacker);
+                }
             }
         }
     }
@@ -273,7 +328,6 @@ ArmyEntity.prototype.getActiveAttackers = function(gameContext, actorID) {
         return attackers;
     }
 
-    const teamComponent = this.getComponent(ArmyEntity.COMPONENT.TEAM);
     const potentialAttackers = this.getSurroundingEntities(gameContext, gameContext.settings.maxAttackRange);
 
     for(let i = 0; i < potentialAttackers.length; i++) {
@@ -282,11 +336,11 @@ ArmyEntity.prototype.getActiveAttackers = function(gameContext, actorID) {
 
         if(actor.hasEntity(attackerID) && potentialAttacker.canActivelyAttack()) {
             const attackerAttackComponent = potentialAttacker.getComponent(ArmyEntity.COMPONENT.ATTACK);
-            const attackerTeamComponent = potentialAttacker.getComponent(ArmyEntity.COMPONENT.TEAM);
-            const isActiveAttacker = potentialAttacker.isColliding(this, attackerAttackComponent.range) && AllianceSystem.isEnemy(gameContext, attackerTeamComponent.teamID, teamComponent.teamID);
 
-            if(isActiveAttacker) {
-                attackers.push(potentialAttacker);
+            if(potentialAttacker.isColliding(this, attackerAttackComponent.range)) {
+                if(AllianceSystem.isEnemy(gameContext, potentialAttacker.teamID, this.teamID)) {
+                    attackers.push(potentialAttacker);
+                }
             }
         }
     }
@@ -295,21 +349,16 @@ ArmyEntity.prototype.getActiveAttackers = function(gameContext, actorID) {
 }
 
 ArmyEntity.prototype.isColliding = function(target, range) {
-    const position = this.getComponent(ArmyEntity.COMPONENT.POSITION);
-    const targetPosition = target.getComponent(ArmyEntity.COMPONENT.POSITION);
-
-    const collision = isRectangleRectangleIntersect(
-        position.tileX - range,
-        position.tileY - range,
+    return isRectangleRectangleIntersect(
+        this.tileX - range,
+        this.tileY - range,
         this.config.dimX - 1 + range * 2,
         this.config.dimY - 1 + range * 2,
-        targetPosition.tileX,
-        targetPosition.tileY,
+        target.tileX,
+        target.tileY,
         target.config.dimX - 1,
         target.config.dimY - 1
-    );
-
-    return collision;
+    );;
 }
 
 ArmyEntity.prototype.isAttackableByTeam = function(gameContext, teamID) {
@@ -317,16 +366,14 @@ ArmyEntity.prototype.isAttackableByTeam = function(gameContext, teamID) {
         return false;
     }
 
-    const teamComponent = this.getComponent(ArmyEntity.COMPONENT.TEAM);
-    const isEnemy = AllianceSystem.isEnemy(gameContext, teamComponent.teamID, teamID);
+    const isEnemy = AllianceSystem.isEnemy(gameContext, this.teamID, teamID);
 
     return isEnemy;
 }
 
 ArmyEntity.prototype.getCenterTile = function() {
-    const positionComponent = this.getComponent(ArmyEntity.COMPONENT.POSITION);
-    const centerX = positionComponent.tileX + ((this.config.dimX - 1) / 2);
-    const centerY = positionComponent.tileY + ((this.config.dimY - 1) / 2);
+    const centerX = this.tileX + ((this.config.dimX - 1) / 2);
+    const centerY = this.tileY + ((this.config.dimY - 1) / 2);
 
     return {
         "x": centerX,
@@ -348,14 +395,6 @@ ArmyEntity.prototype.hasPassability = function(passability) {
     return false;
 }
 
-ArmyEntity.prototype.updateSpritePosition = function(gameContext) {
-    const spriteComponent = this.getComponent(ArmyEntity.COMPONENT.SPRITE);
-    const positionComponent = this.getComponent(ArmyEntity.COMPONENT.POSITION);
-    const { positionX, positionY } = positionComponent;
-
-    spriteComponent.setPosition(gameContext, positionX, positionY);
-}
-
 ArmyEntity.prototype.isConstructionComplete = function() {
     if(!this.isAlive()) {
         return false;
@@ -373,18 +412,14 @@ ArmyEntity.prototype.isConstructionComplete = function() {
 ArmyEntity.prototype.getConstructionResult = function(gameContext) {
     const { world } = gameContext;
     const { turnManager } = world;
-    const { tileX, tileY } = this.getComponent(ArmyEntity.COMPONENT.POSITION);
-    const { teamID } = this.getComponent(ArmyEntity.COMPONENT.TEAM);
     const owners = turnManager.getOwnersOf(this.id).map(actor => actor.getID());
     const type = this.config.constructionResult;
     
-    return DefaultTypes.createSpawnConfig(type, teamID, owners, tileX, tileY);
+    return DefaultTypes.createSpawnConfig(type, this.teamID, owners, this.tileX, this.tileY);
 }
 
 ArmyEntity.prototype.updateStatCard = function() {
-    const healthComponent = this.getComponent(ArmyEntity.COMPONENT.HEALTH);
-
-    this.statCard.setHealthText(`${healthComponent.health}/${healthComponent.maxHealth}`);
+    this.statCard.setHealthText(`${this.health}/${this.maxHealth}`);
 
     const attackComponent = this.getComponent(ArmyEntity.COMPONENT.ATTACK);
 

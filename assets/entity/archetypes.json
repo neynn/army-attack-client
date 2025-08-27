@@ -3,10 +3,6 @@
         "name": "ARCH_NAME_UNIT",
         "desc": "ARCH_DESC_UNIT",
         "components": {
-            "Position": null,
-            "Health": null,
-            "Team": null,
-            "Direction": null,
             "Sprite": { "allowFlip": true },
             "Attack": { "active": true },
             "Move": null
@@ -16,11 +12,7 @@
         "name": "ARCH_NAME_DEFENSE",
         "desc": "ARCH_DESC_DEFENSE",
         "components": {
-            "Position": null,
-            "Health": null,
             "Sprite": null,
-            "Team": null,
-            "Direction": null,
             "Attack": null
         }
     },
@@ -28,11 +20,7 @@
         "name": "ARCH_NAME_CONSTRUCTION",
         "desc": "ARCH_DESC_CONSTRUCTION",
         "components": {
-            "Position": null,
-            "Health": null,
             "Sprite": null,
-            "Team": null,
-            "Direction": null,
             "Construction": null
         }
     },
@@ -40,11 +28,7 @@
         "name": "ARCH_NAME_BUILDING",
         "desc": "ARCH_DESC_BUILDING",
         "components": {
-            "Position": null,
-            "Health": null,
             "Sprite": null,
-            "Team": null,
-            "Direction": null,
             "Production": { "producing": true }
         }
     },
@@ -52,33 +36,21 @@
         "name": "ARCH_NAME_DECO",
         "desc": "ARCH_DESC_DECO",
         "components": {
-            "Position": null,
-            "Health": null,
-            "Sprite": null,
-            "Team": null,
-            "Direction": null
+            "Sprite": null
         }
     },
     "Town": {
         "name": "ARCH_NAME_TOWN",
         "desc": "ARCH_DESC_TOWN",
         "components": {
-            "Position": null,
-            "Health": null,
-            "Sprite": null,
-            "Team": null,
-            "Direction": null
+            "Sprite": null
         }
     },
     "HFE": {
         "name": "ARCH_NAME_HFE",
         "desc": "ARCH_DESC_HFE",
         "components": {
-            "Position": null,
-            "Health": null,
-            "Sprite": null,
-            "Team": null,
-            "Direction": null
+            "Sprite": null
         }
     }
 }

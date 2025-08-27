@@ -56,17 +56,11 @@ HealSystem.hasEnoughResources = function(actor, value) {
 HealSystem.isEntityHealableBy = function(entity, actor) {
     const entityID = entity.getID();
 
-    if(!actor.hasEntity(entityID)) {
+    if(!actor.hasEntity(entityID) || entity.isFull()) {
         return false;
     }
 
-    const healthComponent = entity.getComponent(ArmyEntity.COMPONENT.HEALTH);
-
-    if(healthComponent.isFull()) {
-        return false;
-    }
-
-    const missingHealth = healthComponent.getMissing();
+    const missingHealth = entity.getMissingHealth();
     const requiredSupplies = HealSystem.getSuppliesRequired(entity, missingHealth);
     const hasEnoughResources = HealSystem.hasEnoughResources(actor, requiredSupplies);
 

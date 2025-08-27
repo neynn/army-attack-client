@@ -1,6 +1,5 @@
 import { FireMissionAction } from "../../../actions/fireMissionAction.js";
 import { ArmyCamera } from "../../../armyCamera.js";
-import { ArmyEntity } from "../../../init/armyEntity.js";
 import { AnimationSystem } from "../../../systems/animation.js";
 import { FireMissionSystem } from "../../../systems/fireMission.js";
 import { Player } from "../player.js";
@@ -98,13 +97,11 @@ PlayerFireMissionState.prototype.showBlockedEntities = function(gameContext, pla
         const isTargetable = FireMissionSystem.isTargetable(entity);
 
         if(!isTargetable) {
-            const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
-            const { tileX, tileY } = positionComponent;
-            const endX = tileX + entity.config.dimX;
-            const endY = tileY + entity.config.dimY;
+            const endX = entity.tileX + entity.config.dimX;
+            const endY = entity.tileY + entity.config.dimY;
 
-            for(let i = tileY; i < endY; i++) {
-                for(let j = tileX; j < endX; j++) {
+            for(let i = entity.tileY; i < endY; i++) {
+                for(let j = entity.tileX; j < endX; j++) {
                     camera.pushOverlay(ArmyCamera.OVERLAY.FIRE_MISSION, disabledID, j, i);
                 }
             }

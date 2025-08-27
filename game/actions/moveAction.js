@@ -5,7 +5,6 @@ import { ACTION_TYPE } from "../enums.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { ConquerSystem } from "../systems/conquer.js";
 import { MapSystem } from "../systems/map.js";
-import { LookSystem } from "../systems/look.js";
 import { ActionRequest } from "../../source/action/actionRequest.js";
 import { CounterMoveAction } from "./counterMoveAction.js";
 import { ArmyEventHandler } from "../armyEventHandler.js";
@@ -27,7 +26,7 @@ MoveAction.prototype.onStart = function(gameContext, request) {
 
     moveComponent.setPath(path);
     entity.playSound(gameContext, ArmyEntity.SOUND_TYPE.MOVE);
-    LookSystem.lookAtTarget(entity, targetX, targetY);
+    entity.lookAtTarget(targetX, targetY);
     entity.updateSpriteDirectonal(gameContext, ArmyEntity.SPRITE_TYPE.MOVE, ArmyEntity.SPRITE_TYPE.MOVE_UP);
     MapSystem.removeEntity(gameContext, entity);
 }

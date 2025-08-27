@@ -56,10 +56,7 @@ const getBlockReason = function(gameContext, worldMap, tileX, tileY, teamName) {
                 const nextEntity = entityManager.getEntity(nextEntityID);
 
                 if(nextEntity && nextEntity.hasComponent(ArmyEntity.COMPONENT.ATTACK)) {
-                    const teamComponent = nextEntity.getComponent(ArmyEntity.COMPONENT.TEAM);
-                    const isEnemy = AllianceSystem.isEnemy(gameContext, teamName, teamComponent.teamID);
-
-                    if(isEnemy) {
+                    if(AllianceSystem.isEnemy(gameContext, teamName, nextEntity.teamID)) {
                         return PlaceSystem.BLOCK_REASON.ENTITY_ATTACK;
                     }
                 }

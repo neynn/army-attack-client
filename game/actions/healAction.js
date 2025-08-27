@@ -64,7 +64,7 @@ HealAction.prototype.getValidated = function(gameContext, request) {
         return null;
     }
 
-    const missingHealth = entity.getComponent(ArmyEntity.COMPONENT.HEALTH).getMissing();
+    const missingHealth = entity.getMissingHealth();
     const supplyCost = HealSystem.getSuppliesRequired(entity, missingHealth);
     const transaction = DefaultTypes.createItemTransaction(Inventory.TYPE.RESOURCE, HealSystem.HEAL_RESOURCE, supplyCost);
 

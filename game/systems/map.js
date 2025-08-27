@@ -1,6 +1,5 @@
 import { WorldMap } from "../../source/map/worldMap.js";
 import { Player } from "../actors/player/player.js";
-import { ArmyEntity } from "../init/armyEntity.js";
 import { ArmyMap } from "../init/armyMap.js";
 
 /**
@@ -47,10 +46,7 @@ MapSystem.placeEntity = function(gameContext, entity) {
     const worldMap = mapManager.getActiveMap();
 
     if(worldMap) {
-        const entityID = entity.getID();
-        const { tileX, tileY } = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
-
-        worldMap.addEntity(tileX, tileY, entity.config.dimX, entity.config.dimY, entityID);
+        worldMap.addEntity(entity.tileX, entity.tileY, entity.config.dimX, entity.config.dimY, entity.getID());
     }
 }
 
@@ -66,10 +62,7 @@ MapSystem.removeEntity = function(gameContext, entity) {
     const worldMap = mapManager.getActiveMap();
 
     if(worldMap) {
-        const entityID = entity.getID();
-        const { tileX, tileY } = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
-
-        worldMap.removeEntity(tileX, tileY, entity.config.dimX, entity.config.dimY, entityID);
+        worldMap.removeEntity(entity.tileX, entity.tileY, entity.config.dimX, entity.config.dimY, entity.getID());
     }
 }
 

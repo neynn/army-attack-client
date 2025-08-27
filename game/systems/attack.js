@@ -27,8 +27,7 @@ AttackSystem.OUTCOME_STATE = {
  * @returns {int}
  */
 AttackSystem.getState = function(target, damage, isBulldozed) {
-    const healthComponent = target.getComponent(ArmyEntity.COMPONENT.HEALTH);
-    const isFatal = healthComponent.isFatal(damage);
+    const isFatal = target.isDamageFatal(damage);
 
     if(isFatal) {
         const isReviveable = target.hasComponent(ArmyEntity.COMPONENT.REVIVEABLE);

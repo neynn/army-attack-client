@@ -1,7 +1,6 @@
 import { SwapSet } from "../../../source/util/swapSet.js";
 import { ArmyCamera } from "../../armyCamera.js";
 import { ArmyEntity } from "../../init/armyEntity.js";
-import { LookSystem } from "../../systems/look.js";
 import { PlayerCursor } from "./playerCursor.js";
 
 export const AttackVisualizer = function(camera) {
@@ -47,9 +46,8 @@ AttackVisualizer.prototype.updateAttackerOverlay = function(attackers, overlayID
 
     for(let i = 0; i < attackers.length; i++) {
         const attacker = attackers[i];
-        const { tileX, tileY } = attacker.getComponent(ArmyEntity.COMPONENT.POSITION);
 
-        this.camera.pushOverlay(ArmyCamera.OVERLAY.ATTACK, overlayID, tileX, tileY);
+        this.camera.pushOverlay(ArmyCamera.OVERLAY.ATTACK, overlayID, attacker.tileX, attacker.tileY);
     }
 }
 
@@ -57,7 +55,7 @@ AttackVisualizer.prototype.updateAttackerSprites = function(gameContext, target,
     for(let i = 0; i < attackers.length; i++) {
         const attacker = attackers[i];
 
-        LookSystem.lookAtEntity(attacker, target);
+        attacker.lookAtEntity(target);
         attacker.updateSpriteDirectonal(gameContext, ArmyEntity.SPRITE_TYPE.AIM, ArmyEntity.SPRITE_TYPE.AIM_UP);
     }
 }

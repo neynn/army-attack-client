@@ -26,24 +26,21 @@ MoveSystem.updatePath = function(gameContext, entity) {
         return;
     }
 
-    const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
     const { deltaX, deltaY } = moveComponent.getCurrentStep();
     const distance = moveComponent.updateDistance(deltaTime, MoveSystem.SPEED.STRAIGHT, MoveSystem.SPEED.CROSS);
 
-    positionComponent.updatePosition(deltaX * distance, deltaY * distance);
-
+    entity.updateSpritePosition(gameContext, deltaX * distance, deltaY * distance);
+    
     while(moveComponent.canPathAdvance(gameContext.settings.travelDistance)) {
         const { deltaX, deltaY } = moveComponent.getCurrentStep();
-        const tileX = positionComponent.tileX + deltaX;
-        const tileY = positionComponent.tileY + deltaY;
+        const tileX = entity.tileX + deltaX;
+        const tileY = entity.tileY + deltaY;
         const { x, y } = transform2D.transformTileToWorldCenter(tileX, tileY);
-        
-        positionComponent.setPosition(x, y);
-        positionComponent.setTile(tileX, tileY);
+
+        entity.setTile(tileX, tileY);
+        entity.setSpritePosition(gameContext, x, y);
         moveComponent.advancePath(gameContext.settings.travelDistance);
     }
-
-    entity.updateSpritePosition(gameContext);
 }
 
 /**
@@ -56,13 +53,11 @@ MoveSystem.updatePath = function(gameContext, entity) {
  */
 MoveSystem.endMove = function(gameContext, entity, targetX, targetY) {
     const { transform2D } = gameContext;
-    const positionComponent = entity.getComponent(ArmyEntity.COMPONENT.POSITION);
-    const moveComponent = entity.getComponent(ArmyEntity.COMPONENT.MOVE);
     const { x, y } = transform2D.transformTileToWorldCenter(targetX, targetY);
+    const moveComponent = entity.getComponent(ArmyEntity.COMPONENT.MOVE);
 
-    positionComponent.setPosition(x, y);
-    positionComponent.setTile(targetX, targetY);
     moveComponent.clearPath();
 
-    entity.updateSpritePosition(gameContext);
+    entity.setTile(targetX, targetY);
+    entity.setSpritePosition(gameContext, x, y);
 }
