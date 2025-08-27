@@ -19,7 +19,7 @@ MapEditorState.prototype.onEnter = function(gameContext, stateMachine) {
     const { router } = client;
 
     this.controller = new MapEditorController();
-    this.controller.init(gameContext.editorConfig, tileManager.getInversion());
+    this.controller.init(gameContext.resources.editorConfig, tileManager.getInversion());
     this.controller.initCamera(gameContext, new ArmyEditorCamera(this.controller));
 
     this.controller.buttonHandler.createButton("L1", "ground", "TEXT_L1");
@@ -42,7 +42,7 @@ MapEditorState.prototype.onEnter = function(gameContext, stateMachine) {
     }
 
     uiManager.createUIByID(this.controller.interfaceID, gameContext);
-    router.load(gameContext, gameContext.keybinds.editor);
+    router.load(gameContext, gameContext.resources.keybinds.editor);
     router.on("TOGGLE_AUTOTILER", () => this.controller.toggleAutotiler(gameContext));
     router.on("TOGGLE_ERASER", () => this.controller.toggleEraser(gameContext));
     router.on("TOGGLE_INVERSION", () => this.controller.toggleInversion(gameContext));

@@ -66,17 +66,14 @@ DropSystem.createEntityDrop = function(gameContext, entity, dropType, actorID) {
 DropSystem.createDebrisDrop = function(gameContext, typeID, actorID, tileX, tileY) {
     const { world } = gameContext;
     const { eventBus } = world;
-    const debrisType = gameContext.debrisTypes[typeID];
+    const debrisType = gameContext.getDebrisType(typeID);
 
     if(debrisType) {
-        const { killRewards } = debrisType;
+        const { clearRewards } = debrisType;
+        const drops = getDropList(clearRewards);
 
-        if(killRewards) {
-            const drops = getDropList(killRewards);
-
-            if(drops.length !== 0) {
-                eventBus.emit(ArmyEventHandler.TYPE.DROP, DropEvent.createEvent(actorID, drops, tileX, tileY));
-            }
+        if(drops.length !== 0) {
+            eventBus.emit(ArmyEventHandler.TYPE.DROP, DropEvent.createEvent(actorID, drops, tileX, tileY));
         }
     }
 }

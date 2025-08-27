@@ -30,24 +30,13 @@ import { FireMissionAction } from "./actions/fireMissionAction.js";
 import { TownComponent } from "./components/town.js";
 import { ClearDebrisAction } from "./actions/clearDebrisAction.js";
 import { HealAction } from "./actions/healAction.js";
+import { ArmyResources } from "./armyResources.js";
 
 export const ArmyContext = function() {
     GameContext.call(this);
 
     this.settings = {};
-    this.itemTypes = {};
-    this.resourceTypes = {};
-    this.teamTypes = {};
-    this.tileTypes = {};
-    this.collectionTypes = {};
-    this.allianceTypes = {};
-    this.tileConversions = {};
-    this.tileFormConditions = {};
-    this.fireCallTypes = {};
-    this.keybinds = {};
-    this.debrisTypes = {};
-    this.shopItemTypes = {};
-
+    this.resources = new ArmyResources();
     this.eventHandler = new ArmyEventHandler();
     this.modeID = ArmyContext.GAME_MODE.NONE;
 }
@@ -85,21 +74,8 @@ ArmyContext.prototype.getGameModeName = function() {
 }
 
 ArmyContext.prototype.init = function(resources) {
-    this.tileConversions = this.initConversions(resources.teamTileConversion);
-    this.itemTypes = resources.items;
-    this.teamTypes = resources.teams;
-    this.collectionTypes = resources.collections;
-    this.resourceTypes = resources.resources;
-    this.tileTypes = resources.tileTypes;
-    this.allianceTypes = resources.alliances;
-    this.debrisTypes = resources.debris;
-    this.fireCallTypes = resources.fireCalls;
-    this.tileFormConditions = resources.tileFormConditions;
+    this.resources.load(this, resources);
     this.settings = resources.settings;
-    this.editorConfig = resources.editor;
-    this.keybinds = resources.keybinds;
-    this.shopItemTypes = resources.shopItems;
-
     this.transform2D.setSize(resources.settings.tileWidth, resources.settings.tileHeight);
 
     this.world.actionQueue.registerAction(ACTION_TYPE.ATTACK, new AttackAction());
@@ -169,44 +145,10 @@ ArmyContext.prototype.setGameMode = function(modeID) {
     this.addDebug();
 }
 
-ArmyContext.prototype.initConversions = function(teamConversions) {
-    const updatedConversions = {};
-
-    for(const teamID in teamConversions) {
-        const atlases = teamConversions[teamID];
-        const teamConversion = {};
-
-        for(const atlasID in atlases) {
-            const atlas = atlases[atlasID];
-
-            for(const textureID in atlas) {
-                const tileID = this.tileManager.getTileID(atlasID, textureID);
-
-                if(tileID === TileManager.TILE_ID.EMPTY) {
-                    continue;
-                }
-
-                const [a, b] = atlas[textureID];
-                const convertedID = this.tileManager.getTileID(a, b);
-
-                if(convertedID === TileManager.TILE_ID.EMPTY) {
-                    continue;
-                }
-
-                teamConversion[tileID] = convertedID;
-            }
-        }
-
-        updatedConversions[teamID] = teamConversion;
-    }
-
-    return updatedConversions;
-}
-
 ArmyContext.prototype.addDebug = function() {
     const { router } = this.client;
 
-    router.load(this, this.keybinds.debug);
+    router.load(this, this.resources.keybinds.debug);
 
     router.on("DEBUG_MAP", () => Renderer.DEBUG.MAP = !Renderer.DEBUG.MAP);
     router.on("DEBUG_CONTEXT", () => Renderer.DEBUG.CONTEXT = !Renderer.DEBUG.CONTEXT);
@@ -216,7 +158,7 @@ ArmyContext.prototype.addDebug = function() {
 }
 
 ArmyContext.prototype.getConversionID = function(tileID, teamID) {
-    const teamConversions = this.tileConversions[getTeamName(teamID)];
+    const teamConversions = this.resources.tileConversions[getTeamName(teamID)];
 
     if(!teamConversions) {
         return TileManager.TILE_ID.EMPTY;
@@ -240,7 +182,7 @@ ArmyContext.prototype.getAnimationForm = function(tileID) {
 
     const { graphics } = tileMeta;
     const [atlas, texture] = graphics;
-    const setForm = this.tileFormConditions[atlas];
+    const setForm = this.resources.tileFormConditions[atlas];
 
     if(!setForm) {
         return null;
@@ -257,29 +199,29 @@ ArmyContext.prototype.getAnimationForm = function(tileID) {
 
 ArmyContext.prototype.getTileType = function(id) {
     switch(id) {
-        case TILE_TYPE.GROUND: return this.tileTypes.Ground;
-        case TILE_TYPE.MOUNTAIN: return this.tileTypes.Mountain;
-        case TILE_TYPE.SEA: return this.tileTypes.Sea;
-        case TILE_TYPE.SHORE: return this.tileTypes.Shore;
-        default: return this.tileTypes.Error;
+        case TILE_TYPE.GROUND: return this.resources.tileTypes.Ground;
+        case TILE_TYPE.MOUNTAIN: return this.resources.tileTypes.Mountain;
+        case TILE_TYPE.SEA: return this.resources.tileTypes.Sea;
+        case TILE_TYPE.SHORE: return this.resources.tileTypes.Shore;
+        default: return this.resources.tileTypes.Error;
     }
 }
 
 ArmyContext.prototype.getTeamType = function(id) {
     switch(id) {
-        case TEAM_ID.CRIMSON: return this.teamTypes.Crimson;
-        case TEAM_ID.ALLIES: return this.teamTypes.Allies;
-        case TEAM_ID.NEUTRAL: return this.teamTypes.Neutral;
-        case TEAM_ID.VERSUS: return this.teamTypes.Versus;
-        default: return this.teamTypes.Neutral;
+        case TEAM_ID.CRIMSON: return this.resources.teamTypes.Crimson;
+        case TEAM_ID.ALLIES: return this.resources.teamTypes.Allies;
+        case TEAM_ID.NEUTRAL: return this.resources.teamTypes.Neutral;
+        case TEAM_ID.VERSUS: return this.resources.teamTypes.Versus;
+        default: return this.resources.teamTypes.Neutral;
     }
 }
 
 ArmyContext.prototype.getAllianceType = function(allianceName) {
-    const alliance = this.allianceTypes[allianceName];
+    const alliance = this.resources.allianceTypes[allianceName];
 
     if(!alliance) {
-        return this.allianceTypes.Error;
+        return this.resources.allianceTypes.Error;
     }
 
     return alliance;
@@ -295,11 +237,21 @@ ArmyContext.prototype.getAlliance = function(teamA, teamB) {
 }
 
 ArmyContext.prototype.getFireMissionType = function(name) {
-    const fireMission = this.fireCallTypes[name];
+    const fireMission = this.resources.fireCallTypes[name];
 
     if(!fireMission) {
         return null; //TODO: Stub
     }
 
     return fireMission;
+}
+
+ArmyContext.prototype.getDebrisType = function(name) {
+    const debrisType = this.resources.debrisTypes[name];
+
+    if(!debrisType) {
+        return null;
+    }
+
+    return debrisType;
 }

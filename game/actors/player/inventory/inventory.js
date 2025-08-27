@@ -87,7 +87,8 @@ Inventory.prototype.getItem = function(type, id) {
 }
 
 Inventory.prototype.init = function(gameContext) {
-    const { itemTypes, resourceTypes } = gameContext;
+    const { resources } = gameContext;
+    const { itemTypes, resourceTypes } = resources;
 
     for(const itemID in itemTypes) {
         const { maxStack, maxDrop } = itemTypes[itemID];

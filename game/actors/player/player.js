@@ -97,7 +97,7 @@ Player.prototype.getSpriteType = function(typeID, spriteKey) {
 }
 
 Player.prototype.selectFireMission = function(gameContext, fireMissionID) {
-    const fireMission = gameContext.fireCallTypes[fireMissionID];
+    const fireMission = gameContext.getFireMissionType(fireMissionID);
 
     if(!fireMission) {
         return;

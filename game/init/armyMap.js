@@ -401,3 +401,12 @@ ArmyMap.prototype.getBorderID = function(gameContext, autotiler, tileX, tileY, t
 
     return tileID;
 }
+
+ArmyMap.prototype.createDrops = function(gameContext, inventory, drops, tileX, tileY) {
+    if(this.hasFlag(ArmyMap.FLAG.ALLOW_DROPS)) {
+        this.drops.createDrops(gameContext, inventory, drops, tileX, tileY);
+    } else {
+        this.drops.addImmediateDrops(inventory, drops);
+    }
+}
+

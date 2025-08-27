@@ -79,7 +79,7 @@ const createActor = function(gameContext, actorID, team, type) {
                 }
             });
 
-            router.load(gameContext, gameContext.keybinds.player);
+            router.load(gameContext, gameContext.resources.keybinds.player);
             router.on(Player.COMMAND.TOGGLE_RANGE, () => actor.rangeVisualizer.toggle(gameContext));
             router.on(Player.COMMAND.CLICK, () => actor.onClick(gameContext));
             router.on("ESCAPE", () => gameContext.states.setNextState(gameContext, ArmyContext.STATE.MAIN_MENU));

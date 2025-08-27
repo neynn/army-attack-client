@@ -13,7 +13,7 @@ DropEvent.prototype.onStory = function(gameContext, event) {
     const worldMap = mapManager.getActiveMap();
 
     if(receiver && receiver.inventory) {
-        worldMap.drops.createDrops(gameContext, receiver.inventory, drops, tileX, tileY);
+        worldMap.createDrops(gameContext, receiver.inventory, drops, tileX, tileY);
     }
 }
 

@@ -47,7 +47,7 @@ PlayerFireMissionState.prototype.onUpdate = function(gameContext, stateMachine) 
 }
 
 PlayerFireMissionState.prototype.updateCursor = function(gameContext, player) {
-    const fireMission = gameContext.fireCallTypes[this.missionID];
+    const fireMission = gameContext.getFireMissionType(this.missionID);
 
     if(fireMission) {
         const { sprites } = fireMission;

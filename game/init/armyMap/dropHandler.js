@@ -55,6 +55,16 @@ DropHandler.prototype.createDrops = function(gameContext, inventory, drops, tile
     }
 }
 
+DropHandler.prototype.addImmediateDrops = function(inventory, drops) {
+    for(let i = 0; i < drops.length; i++) {
+        inventory.addByTransaction(drops[i]);
+    }
+
+    const energyDrops = inventory.updateEnergyCounter();
+
+    inventory.addByTransaction(DefaultTypes.createItemTransaction(Inventory.TYPE.RESOURCE, Inventory.RESOURCE_TYPE.ENERGY, energyDrops));
+}
+
 DropHandler.prototype.collectAllDrops = function() {
     for(let i = 0; i < this.drops.length; i++) {
         const drop = this.drops[i];
