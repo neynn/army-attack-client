@@ -3,9 +3,7 @@ import { ActionRequest } from "../../source/action/actionRequest.js";
 import { Inventory } from "../actors/player/inventory/inventory.js";
 import { DefaultTypes } from "../defaultTypes.js";
 import { ACTION_TYPE } from "../enums.js";
-import { ArmyEntity } from "../init/armyEntity.js";
 import { AnimationSystem } from "../systems/animation.js";
-import { DecaySystem } from "../systems/decay.js";
 import { HealSystem } from "../systems/heal.js";
 
 export const HealAction = function() {
@@ -22,7 +20,7 @@ HealAction.prototype.onStart = function(gameContext, request) {
     const entity = entityManager.getEntity(entityID);
     const actor = turnManager.getActor(actorID);
 
-    DecaySystem.endDecay(entity);
+    entity.endDecay();
     AnimationSystem.playHeal(gameContext, entity);
 
     if(actor.inventory) {

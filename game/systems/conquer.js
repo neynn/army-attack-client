@@ -1,7 +1,6 @@
 import { ArmyEventHandler } from "../armyEventHandler.js";
 import { getTeamID, getTeamName } from "../enums.js";
 import { TileCaptureEvent } from "../events/tileCapture.js";
-import { ArmyEntity } from "../init/armyEntity.js";
 import { ArmyMap } from "../init/armyMap.js";
 import { AllianceSystem } from "./alliance.js";
 

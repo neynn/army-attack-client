@@ -146,16 +146,16 @@ ArmyCamera.prototype.debugMap = function(context, worldMap) {
     context.textAlign = "center";
 
     context.fillStyle = "#ff0000";
-    this.drawBufferData(context, worldMap.getLayer("type").getBuffer(), scaleX, scaleY);
+    this.drawBufferData(context, worldMap.getLayer(ArmyMap.LAYER.TYPE).getBuffer(), scaleX, scaleY);
 
     context.fillStyle = "#00ff00";
-    this.drawBufferData(context, worldMap.getLayer("team").getBuffer(), this.tileWidth - scaleX, scaleY);
+    this.drawBufferData(context, worldMap.getLayer(ArmyMap.LAYER.TEAM).getBuffer(), this.tileWidth - scaleX, scaleY);
 
     context.fillStyle = "#0000ff";
     this.drawBufferData(context, this.border.getBuffer(), scaleX, this.tileHeight - scaleY);
 
     context.fillStyle = "#ffff00";
-    this.drawBufferData(context, worldMap.getLayer("ground").getBuffer(), this.tileWidth - scaleX, this.tileHeight - scaleY);
+    this.drawBufferData(context, worldMap.getLayer(ArmyMap.LAYER.GROUND).getBuffer(), this.tileWidth - scaleX, this.tileHeight - scaleY);
 
     this.drawMapOutlines(context);
 }

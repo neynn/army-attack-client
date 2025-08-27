@@ -2,6 +2,7 @@ import { Entity } from "../../source/entity/entity.js";
 import { clampValue, isRectangleRectangleIntersect } from "../../source/math/math.js";
 import { SpriteComponent } from "../components/sprite.js";
 import { DefaultTypes } from "../defaultTypes.js";
+import { getTeamID } from "../enums.js";
 import { AllianceSystem } from "../systems/alliance.js";
 import { StatCard } from "./statCard.js";
 
@@ -427,4 +428,63 @@ ArmyEntity.prototype.isProductionFinished = function() {
     const productionComponent = this.getComponent(ArmyEntity.COMPONENT.PRODUCTION);
 
     return productionComponent && productionComponent.isFinished() && this.isFull();
+}
+
+ArmyEntity.prototype.createStatCardSprite = function(gameContext) {
+    const { spriteManager } = gameContext;
+    const cardType = this.hasComponent(ArmyEntity.COMPONENT.ATTACK) ? StatCard.TYPE.LARGE : StatCard.TYPE.SMALL;
+    const teamType = gameContext.getTeamType(getTeamID(this.teamID));
+    const spriteType = teamType.sprites[cardType];
+    const statCardSprite = spriteManager.createCachedSprite(spriteType);
+
+    return statCardSprite;
+}
+
+ArmyEntity.prototype.generateStatCard = function(gameContext) {
+    if(this.config.disableCard) {
+        return;
+    }
+
+    const statCardSprite = this.createStatCardSprite(gameContext);
+
+    if(statCardSprite) {
+        const { transform2D } = gameContext;
+        const { x, y } = transform2D.transformSizeToWorldOffset(this.config.dimX, this.config.dimY);
+        const spriteComponent = this.getComponent(ArmyEntity.COMPONENT.SPRITE);
+        const sprite = spriteComponent.getSprite(gameContext);
+
+        sprite.addChild(this.statCard);
+
+        this.statCard.setPosition(x - transform2D.halfTileWidth, y - transform2D.halfTileHeight);
+        this.statCard.setSprite(statCardSprite);
+        this.updateStatCard();
+    }
+}
+
+ArmyEntity.prototype.beginDecay = function() {
+    const reviveableComponent = this.getComponent(ArmyEntity.COMPONENT.REVIVEABLE);
+
+    if(reviveableComponent) {
+        const avianComponent = this.getComponent(ArmyEntity.COMPONENT.AVIAN);
+
+        if(avianComponent) {
+            avianComponent.toGround();
+        }
+
+        reviveableComponent.beginDecay();
+    }
+}
+
+ArmyEntity.prototype.endDecay = function() {
+    const reviveableComponent = this.getComponent(ArmyEntity.COMPONENT.REVIVEABLE);
+
+    if(reviveableComponent) {
+        const avianComponent = this.getComponent(ArmyEntity.COMPONENT.AVIAN);
+
+        if(avianComponent) {
+            avianComponent.toAir();
+        }
+
+        reviveableComponent.endDecay();
+    }
 }

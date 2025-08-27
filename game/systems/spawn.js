@@ -1,6 +1,5 @@
 import { ArmyContext } from "../armyContext.js";
 import { ArmyEntity } from "../init/armyEntity.js";
-import { CardSystem } from "./card.js";
 import { MapSystem } from "./map.js";
 import { UnitLimitSystem } from "./unitLimit.js";
 import { SpriteManager } from "../../source/sprite/spriteManager.js";
@@ -214,8 +213,8 @@ SpawnSystem.createEntity = function(gameContext, config) {
     loadEntitySprites(gameContext, entity);
 
     entity.determineSprite(gameContext);
+    entity.generateStatCard(gameContext);
     MapSystem.placeEntity(gameContext, entity);
-    CardSystem.generateStatCard(gameContext, entity);
     UnitLimitSystem.addEntity(gameContext, entity);
     
     return entity;

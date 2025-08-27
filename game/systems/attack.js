@@ -1,7 +1,6 @@
 import { DefaultTypes } from "../defaultTypes.js";
 import { ArmyEventHandler } from "../armyEventHandler.js";
 import { ArmyEntity } from "../init/armyEntity.js";
-import { DecaySystem } from "./decay.js";
 import { EntityKillEvent } from "../events/entityKill.js";
 import { EntityHitEvent } from "../events/entityHit.js";
 import { EntityDownEvent } from "../events/entityDown.js";
@@ -58,8 +57,7 @@ AttackSystem.startAttack = function(gameContext, targetObject) {
 
     switch(state) {
         case AttackSystem.OUTCOME_STATE.DOWN: {
-            DecaySystem.beginDecay(entity);
-
+            entity.beginDecay();
             entity.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.DOWN);
             entity.playSound(gameContext, ArmyEntity.SOUND_TYPE.DEATH);
             break;

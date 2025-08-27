@@ -12,8 +12,15 @@ export const StatCard = function() {
 StatCard.prototype = Object.create(Graph.prototype);
 StatCard.prototype.constructor = StatCard;
 
-StatCard.TEXT_COLOR = "rgba(238, 238, 238, 255)";
-StatCard.TEXT_FONT = "10px ArmyAttack Arial";
+StatCard.TYPE = {
+    LARGE: "stat_card",
+    SMALL: "stat_card_small"
+};
+
+StatCard.TEXT = {
+    COLOR: "rgba(238, 238, 238, 255)",
+    FONT: "10px ArmyAttack Arial"
+};
 
 StatCard.prototype.onDebug = function(display, localX, localY) {
     if(this.sprite) {
@@ -30,9 +37,9 @@ StatCard.prototype.onDraw = function(display, localX, localY) {
 
     this.sprite.onDraw(display, localX, localY);
 
-    context.font = StatCard.TEXT_FONT;
+    context.font = StatCard.TEXT.FONT;
     context.textAlign = TextStyle.TEXT_ALIGNMENT.RIGHT;
-    context.fillStyle = StatCard.TEXT_COLOR;
+    context.fillStyle = StatCard.TEXT.COLOR;
     context.textBaseline = TextStyle.TEXT_BASELINE.MIDDLE;
 
     if(this.healthText.length !== 0) {
