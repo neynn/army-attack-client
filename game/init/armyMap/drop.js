@@ -33,8 +33,13 @@ Drop.prototype.collect = function() {
 Drop.prototype.update = function(mouseX, mouseY, mouseR, deltaTime) {
     switch(this.state) {
         case Drop.STATE.JUMPING: {
-            //Jump 2 times with reducing intensity until the target is reached.
-            this.state = Drop.STATE.DROPPED;
+            this.timePassed += deltaTime;
+
+            if(this.timePassed >= 1) {
+                //Jump 2 times with reducing intensity until the target is reached.
+                this.state = Drop.STATE.DROPPED;
+                this.timePassed = 0;
+            }
             break;
         }
         case Drop.STATE.DROPPED: {

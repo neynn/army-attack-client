@@ -1,12 +1,10 @@
 import { Action } from "../../source/action/action.js";
 import { ActionRequest } from "../../source/action/actionRequest.js";
 import { ArmyEventHandler } from "../armyEventHandler.js";
-import { ProductionComponent } from "../components/production.js";
 import { ACTION_TYPE } from "../enums.js";
 import { EntityCollectEvent } from "../events/entityCollect.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 import { AnimationSystem } from "../systems/animation.js";
-import { DropSystem } from "../systems/drop.js";
 
 export const CollectAction = function() {
     Action.call(this);

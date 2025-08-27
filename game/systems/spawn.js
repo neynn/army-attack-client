@@ -71,16 +71,10 @@ const createEntity = function(gameContext, config, entityID) {
     entity.tileX = tileX;
     entity.tileY = tileY;
     entity.teamID = team;
+    entity.health = health !== undefined ? health : statConfig.health;
+    entity.maxHealth = statConfig.health;
 
     entityManager.addArchetypeComponents(entity, archetype);
-
-    if(health !== undefined) {
-        entity.health = health;
-        entity.maxHealth = statConfig.maxHealth;
-    } else {
-        entity.health = statConfig.health;
-        entity.maxHealth = statConfig.maxHealth ?? statConfig.health;
-    }
 
     const sprite = createSprite(gameContext, entity, tileX, tileY);
 

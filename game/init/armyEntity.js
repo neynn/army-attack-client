@@ -426,5 +426,5 @@ ArmyEntity.prototype.updateStatCard = function() {
 ArmyEntity.prototype.isProductionFinished = function() {
     const productionComponent = this.getComponent(ArmyEntity.COMPONENT.PRODUCTION);
 
-    return productionComponent && productionComponent.isFinished();
+    return productionComponent && productionComponent.isFinished() && this.isFull();
 }

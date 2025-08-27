@@ -23,7 +23,9 @@ export const Sprite = function(manager, index, DEBUG_NAME) {
 
 Sprite.DEBUG = {
     COLOR: "#ff00ff",
-    LINE_SIZE: 2
+    LINE_SIZE: 2,
+    DOT_SIZE: 8,
+    DOT_SIZE_HALF: 4
 };
 
 Sprite.FLAG = {
@@ -84,24 +86,26 @@ Sprite.prototype.onDebug = function(display, localX, localY) {
     const { context } = display;
     const isFlipped = (this.flags & Sprite.FLAG.FLIP) !== 0;
 
+    context.strokeStyle = Sprite.DEBUG.COLOR;
+    context.fillStyle = Sprite.DEBUG.COLOR;
+    context.lineWidth = Sprite.DEBUG.LINE_SIZE;
+
     if(isFlipped) {
         const drawX = localX - this.boundsX;
         const drawY = localY + this.boundsY;
 
         display.flip();
 
-        context.strokeStyle = Sprite.DEBUG.COLOR;
-        context.lineWidth = Sprite.DEBUG.LINE_SIZE;
         context.strokeRect(-drawX, drawY, this.boundsW, this.boundsH);
+        context.fillRect(-drawX - Sprite.DEBUG.DOT_SIZE_HALF, drawY - Sprite.DEBUG.DOT_SIZE_HALF, Sprite.DEBUG.DOT_SIZE, Sprite.DEBUG.DOT_SIZE);
     } else {
         const drawX = localX + this.boundsX;
         const drawY = localY + this.boundsY;
 
         display.unflip();
 
-        context.strokeStyle = Sprite.DEBUG.COLOR;
-        context.lineWidth = Sprite.DEBUG.LINE_SIZE;
         context.strokeRect(drawX, drawY, this.boundsW, this.boundsH);
+        context.fillRect(drawX - Sprite.DEBUG.DOT_SIZE_HALF, drawY - Sprite.DEBUG.DOT_SIZE_HALF, Sprite.DEBUG.DOT_SIZE, Sprite.DEBUG.DOT_SIZE);
     }
 }
 

@@ -29,33 +29,20 @@ const getDropList = function(rewards) {
     return drops;
 }
 
+const getRewards = function(entity, dropType) {
+    switch(dropType) {
+        case DropSystem.DROP_TYPE.HIT: return entity.config.hitRewards;
+        case DropSystem.DROP_TYPE.KILL: return entity.config.killRewards;
+        case DropSystem.DROP_TYPE.SELL: return entity.config.sell ? [entity.config.sell] : null;
+        case DropSystem.DROP_TYPE.COLLECT: return entity.config.collectRewards;
+        default: return null;
+    }
+}
+
 DropSystem.createEntityDrop = function(gameContext, entity, dropType, actorID) {
     const { world } = gameContext;
     const { eventBus } = world;
-
-    let rewards = null;
-
-    switch(dropType) {
-        case DropSystem.DROP_TYPE.HIT: {
-            rewards = entity.config.hitRewards;
-            break;
-        }
-        case DropSystem.DROP_TYPE.KILL: {
-            rewards = entity.config.killRewards;
-            break;
-        }
-        case DropSystem.DROP_TYPE.SELL: {
-            if(entity.config.sell) {
-                rewards = [entity.config.sell];
-            }
-
-            break;
-        }
-        case DropSystem.DROP_TYPE.COLLECT: {
-            rewards = entity.config.collectRewards;
-            break;
-        }
-    }
+    const rewards = getRewards(entity, dropType);
 
     if(rewards) {
         const drops = getDropList(rewards);

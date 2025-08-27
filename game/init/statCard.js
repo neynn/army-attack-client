@@ -15,6 +15,12 @@ StatCard.prototype.constructor = StatCard;
 StatCard.TEXT_COLOR = "rgba(238, 238, 238, 255)";
 StatCard.TEXT_FONT = "10px ArmyAttack Arial";
 
+StatCard.prototype.onDebug = function(display, localX, localY) {
+    if(this.sprite) {
+        this.sprite.onDebug(display, localX, localY);
+    }
+}
+
 StatCard.prototype.onDraw = function(display, localX, localY) {
     if(!this.sprite) {
         return;
