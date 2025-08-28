@@ -8,14 +8,12 @@ const BLOCKED_SPRITES = [
     "airdrop"
 ];
 
-const createSprite = function(gameContext, entity, tileX, tileY) {
+const createSprite = function(gameContext, config, tileX, tileY) {
     const { spriteManager, transform2D } = gameContext;
-    const spriteType = entity.getSpriteID(ArmyEntity.SPRITE_TYPE.IDLE);
+    const spriteType = config.sprites[ArmyEntity.SPRITE_TYPE.IDLE];
     const sprite = spriteManager.createSprite(spriteType, SpriteManager.LAYER.MIDDLE);
     const { x, y } = transform2D.transformTileToWorldCenter(tileX, tileY);
-    const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
 
-    spriteComponent.setIndex(sprite.getIndex());
     sprite.setPosition(x, y);
 
     return sprite;
@@ -48,7 +46,7 @@ const adjustComponents = function(gameContext, entity, stats) {
 }
 
 const createEntity = function(gameContext, config, entityID) {
-    const { world } = gameContext;
+    const { world, spriteManager } = gameContext;
     const { entityManager } = world;
     const { tileX = -1, tileY = -1, team = null, type = null, health } = config;
     const entityType = entityManager.getEntityType(type);
@@ -65,7 +63,8 @@ const createEntity = function(gameContext, config, entityID) {
         return null;
     }
 
-    const entity = new ArmyEntity(entityID, type);
+    const sprite = createSprite(gameContext, entityType, tileX, tileY);
+    const entity = new ArmyEntity(entityID, sprite, type);
     
     entity.setConfig(entityType);
     entity.tileX = tileX;
@@ -75,9 +74,7 @@ const createEntity = function(gameContext, config, entityID) {
     entity.maxHealth = statConfig.health;
 
     entityManager.addArchetypeComponents(entity, archetype);
-
-    const sprite = createSprite(gameContext, entity, tileX, tileY);
-
+    entity.getComponent(ArmyEntity.COMPONENT.SPRITE).setIndex(sprite.getIndex());
     entityManager.addTraitComponents(entity, statConfig.traits);
 
     adjustComponents(gameContext, entity, statConfig);

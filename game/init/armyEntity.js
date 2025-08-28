@@ -4,9 +4,9 @@ import { SpriteComponent } from "../components/sprite.js";
 import { DefaultTypes } from "../defaultTypes.js";
 import { getTeamID } from "../enums.js";
 import { AllianceSystem } from "../systems/alliance.js";
-import { StatCard } from "./statCard.js";
+import { ArmySprite } from "./armySprite.js";
 
-export const ArmyEntity = function(id, DEBUG_NAME) {
+export const ArmyEntity = function(id, sprite, DEBUG_NAME) {
     Entity.call(this, id, DEBUG_NAME);
 
     this.health = 1;
@@ -16,7 +16,7 @@ export const ArmyEntity = function(id, DEBUG_NAME) {
     this.directionX = ArmyEntity.DIRECTION.EAST;
     this.directionY = ArmyEntity.DIRECTION.SOUTH;
     this.teamID = null;
-    this.statCard = new StatCard();
+    this.statCard = new ArmySprite(sprite);
 }
 
 ArmyEntity.TYPE = {
@@ -429,7 +429,7 @@ ArmyEntity.prototype.updateStatCard = function() {
 
 ArmyEntity.prototype.createStatCardSprite = function(gameContext) {
     const { spriteManager } = gameContext;
-    const cardType = this.hasComponent(ArmyEntity.COMPONENT.ATTACK) ? StatCard.TYPE.LARGE : StatCard.TYPE.SMALL;
+    const cardType = this.hasComponent(ArmyEntity.COMPONENT.ATTACK) ? ArmySprite.TYPE.LARGE : ArmySprite.TYPE.SMALL;
     const teamType = gameContext.getTeamType(getTeamID(this.teamID));
     const spriteType = teamType.sprites[cardType];
     const statCardSprite = spriteManager.createCachedSprite(spriteType);
@@ -452,8 +452,7 @@ ArmyEntity.prototype.generateStatCard = function(gameContext) {
 
         sprite.addChild(this.statCard);
 
-        this.statCard.setPosition(x - transform2D.halfTileWidth, y - transform2D.halfTileHeight);
-        this.statCard.setSprite(statCardSprite);
+        this.statCard.setCard(statCardSprite, x - transform2D.halfTileWidth, y - transform2D.halfTileHeight);
         this.updateStatCard();
     }
 }

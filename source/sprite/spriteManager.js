@@ -50,8 +50,16 @@ SpriteManager.prototype.load = function(textures, sprites) {
 SpriteManager.prototype.update = function(gameContext) {
     const { timer } = gameContext;
     const realTime = timer.getRealTime();
-    
+    const deltaTime = timer.getDeltaTime();
+
     this.timestamp = realTime;
+
+    for(let i = 0; i < this.spriteCache.length; i++) {
+        const { id, index } = this.spriteCache[i];
+        const sprite = this.getSprite(index);
+
+        sprite.update(realTime, deltaTime);
+    }
 }
 
 SpriteManager.prototype.exit = function() {

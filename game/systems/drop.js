@@ -61,7 +61,7 @@ DropSystem.createProductionDrop = function(gameContext, entity, actorID) {
 DropSystem.createEntityDrop = function(gameContext, entity, dropType, actorID) {
     const { world } = gameContext;
     const { eventBus } = world;
-    const rewards = getRewards(gameContext, entity, dropType);
+    const rewards = getRewards(entity, dropType);
 
     if(rewards) {
         const drops = getDropList(rewards);

@@ -233,23 +233,14 @@ AnimationSystem.playHeal = function(gameContext, entity) {
 
 AnimationSystem.playAttention = function(gameContext, entity) {
     const { spriteManager, transform2D } = gameContext;
-    const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
-    const entitySprite = spriteComponent.getSprite(gameContext);
-    const attentionSprite = spriteManager.createSprite(AnimationSystem.SPRITE_TYPE.ATTENTION);
+    const attentionSprite = spriteManager.createCachedSprite(AnimationSystem.SPRITE_TYPE.ATTENTION);
     const { x, y } = transform2D.transformSizeToWorldOffsetCenter(entity.config.dimX, entity.config.dimY);
 
-    entitySprite.addChild(attentionSprite, AnimationSystem.SPRITE_ID.ATTENTION);
-    attentionSprite.setPosition(x, y);
+    entity.statCard.setAttention(attentionSprite, x, y);
 }
 
 AnimationSystem.stopAttention = function(gameContext, entity) {
-    const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
-    const entitySprite = spriteComponent.getSprite(gameContext);
-    const attentionSprite = entitySprite.getChild(AnimationSystem.SPRITE_ID.ATTENTION);
-
-    if(attentionSprite) {
-        attentionSprite.terminate();
-    }
+    entity.statCard.removeAttention();
 }
 
 /**
