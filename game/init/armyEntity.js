@@ -25,7 +25,8 @@ ArmyEntity.TYPE = {
     CONSTRUCTION: "Construction",
     BUILDING: "Building",
     HFE: "HFE",
-    TOWN: "Town"
+    TOWN: "Town",
+    DECO: "Deco"
 };
 
 ArmyEntity.COMPONENT = {
@@ -485,16 +486,22 @@ ArmyEntity.prototype.endDecay = function() {
     }
 }
 
-ArmyEntity.prototype.getCollectRewards = function() {
-    switch(this.config.archetype) {
-        case ArmyEntity.TYPE.BUILDING: return this.config.collectRewards;
-        case ArmyEntity.TYPE.HFE: return this.config.rewards;
-        default: return false;
+ArmyEntity.prototype.getCollectRewards = function(gameContext) {
+    const productionComponent = this.getComponent(ArmyEntity.COMPONENT.PRODUCTION);
+
+    if(!productionComponent) {
+        return null;
     }
+
+    return productionComponent.getRewards(gameContext, this);
 }
 
 ArmyEntity.prototype.isProductionFinished = function() {
     const productionComponent = this.getComponent(ArmyEntity.COMPONENT.PRODUCTION);
 
     return productionComponent && productionComponent.isFinished() && this.isFull();
+}
+
+ArmyEntity.prototype.isType = function(archetype) {
+    return this.config.archetype === archetype;
 }

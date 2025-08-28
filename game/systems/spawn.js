@@ -8,26 +8,6 @@ const BLOCKED_SPRITES = [
     "airdrop"
 ];
 
-const initAttackComponent = function(component, stats) {
-    const {
-        damage = 0,
-        attackRange = 0
-    } = stats;
-
-    component.damage = damage;
-    component.range = attackRange;
-}
-
-const initMoveComponent = function(component, stats) {
-    const {
-        moveRange = 0,
-        moveSpeed = 480
-    } = stats;
-
-    component.range = moveRange;
-    component.speed = moveSpeed;
-}
-
 const createSprite = function(gameContext, entity, tileX, tileY) {
     const { spriteManager, transform2D } = gameContext;
     const spriteType = entity.getSpriteID(ArmyEntity.SPRITE_TYPE.IDLE);
@@ -41,10 +21,31 @@ const createSprite = function(gameContext, entity, tileX, tileY) {
     return sprite;
 }
 
-const COMPONENT_INIT = {
-    [ArmyEntity.COMPONENT.ATTACK]: initAttackComponent,
-    [ArmyEntity.COMPONENT.MOVE]: initMoveComponent
-};
+const adjustComponents = function(gameContext, entity, stats) {
+    const attackComponent = entity.getComponent(ArmyEntity.COMPONENT.ATTACK);
+
+    if(attackComponent) {
+        const {
+            damage = 0,
+            attackRange = 0
+        } = stats;
+
+        attackComponent.damage = damage;
+        attackComponent.range = attackRange;
+    }
+
+    const moveComponent = entity.getComponent(ArmyEntity.COMPONENT.MOVE);
+
+    if(moveComponent) {
+        const {
+            moveRange = 10,
+            moveSpeed = 480
+        } = stats;
+
+        moveComponent.range = moveRange;
+        moveComponent.speed = moveSpeed;
+    }
+}
 
 const createEntity = function(gameContext, config, entityID) {
     const { world } = gameContext;
@@ -79,17 +80,15 @@ const createEntity = function(gameContext, config, entityID) {
 
     entityManager.addTraitComponents(entity, statConfig.traits);
 
-    for(const componentID in COMPONENT_INIT) {
-        const component = entity.getComponent(componentID);
+    adjustComponents(gameContext, entity, statConfig);
 
-        if(component) {
-            COMPONENT_INIT[componentID](component, statConfig);
-        }
-    }
-
-    if(archetype === ArmyEntity.TYPE.CONSTRUCTION) {
+    if(entity.hasComponent(ArmyEntity.COMPONENT.CONSTRUCTION)) {
         sprite.freeze();
         sprite.setFrame(0);
+    }
+
+    if(entity.isType(ArmyEntity.TYPE.HFE)) {
+        entity.getComponent(ArmyEntity.COMPONENT.PRODUCTION).plantHFE("HFE_Oilwell");
     }
     
     return entity;

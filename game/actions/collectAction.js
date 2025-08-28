@@ -21,8 +21,6 @@ CollectAction.prototype.onStart = function(gameContext, actionData, actionID) {
 
     AnimationSystem.stopAttention(gameContext, entity);
     AnimationSystem.playDelay(gameContext, entity);
-
-    entity.getComponent(ArmyEntity.COMPONENT.PRODUCTION).reset();
 }
 
 CollectAction.prototype.onEnd = function(gameContext, actionData, actionID) {
@@ -32,7 +30,7 @@ CollectAction.prototype.onEnd = function(gameContext, actionData, actionID) {
     const entity = entityManager.getEntity(entityID);
 
     eventBus.emit(ArmyEventHandler.TYPE.ENTITY_COLLECT, EntityCollectEvent.createEvent(actorID, entityID));
-    entity.getComponent(ArmyEntity.COMPONENT.PRODUCTION).start();
+    entity.getComponent(ArmyEntity.COMPONENT.PRODUCTION).reset();
 }
 
 CollectAction.prototype.isFinished = function(gameContext, request) {

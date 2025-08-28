@@ -14,6 +14,7 @@ export const ArmyResources = function() {
     this.tileTypes = {};
     this.keybinds = {};
     this.teamTypes = {};
+    this.productionTypes = {};
 }
 
 ArmyResources.prototype.load = function(gameContext, resources) {
@@ -30,6 +31,7 @@ ArmyResources.prototype.load = function(gameContext, resources) {
     this.tileTypes = resources.tileTypes;
     this.keybinds = resources.keybinds;
     this.teamTypes = resources.teams;
+    this.productionTypes = resources.productionTypes;
 }
 
 ArmyResources.prototype.initConversions = function(gameContext, teamConversions) {

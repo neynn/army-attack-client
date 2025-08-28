@@ -19,7 +19,7 @@ EntityCollectEvent.prototype.onStory = function(gameContext, event) {
             actor.missions.onObjective(OBJECTIVE_TYPE.COLLECT, entity.config.archetype, 1);
         }
 
-        DropSystem.createEntityDrop(gameContext, entity, DropSystem.DROP_TYPE.COLLECT, actorID);
+        DropSystem.createProductionDrop(gameContext, entity, actorID);
     }
 }
 

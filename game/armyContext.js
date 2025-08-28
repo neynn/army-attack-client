@@ -249,3 +249,13 @@ ArmyContext.prototype.getDebrisType = function(name) {
 
     return debrisType;
 }
+
+ArmyContext.prototype.getProductionType = function(name) {
+    const productionType = this.resources.productionTypes[name];
+
+    if(!productionType) {
+        return this.resources.productionTypes.Error;
+    }
+
+    return productionType;
+}

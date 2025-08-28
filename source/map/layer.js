@@ -24,17 +24,15 @@ Layer.prototype.clear = function() {
 }
 
 Layer.prototype.fill = function(id) {
-    if(!id) {
-        return;
-    }
+    if(typeof id === "number" && id > 0) {
+        const length = this.buffer.length;
+        
+        for(let i = 0; i < length; ++i) {
+            this.buffer[i] = id;
+        }
 
-    const length = this.buffer.length;
-    
-    for(let i = 0; i < length; ++i) {
-        this.buffer[i] = id;
+        this.fillValue = id;
     }
-
-    this.fillValue = id;
 }
 
 Layer.prototype.initBuffer = function(count) {

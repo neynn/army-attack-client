@@ -26,6 +26,7 @@
     "items": { "directory": ["assets", "game"], "source": "items.json" },
     "keybinds": { "directory": ["assets", "game"], "source": "keybinds.json" },
     "objectives": { "directory": ["assets", "game"], "source": "objectives.json" },
+    "productionTypes": { "directory": ["assets", "game"], "source": "productionTypes.json" },
     "resources": { "directory": ["assets", "game"], "source": "resources.json" },
     "settings": { "directory": ["assets", "game"], "source": "settings.json" },
     "shopItems": { "directory": ["assets", "game"], "source": "shopItems.json" },
