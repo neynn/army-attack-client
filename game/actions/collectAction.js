@@ -19,7 +19,7 @@ CollectAction.prototype.onStart = function(gameContext, actionData, actionID) {
     const { entityID } = actionData;
     const entity = entityManager.getEntity(entityID);
 
-    AnimationSystem.stopAttention(gameContext, entity);
+    AnimationSystem.stopAttention(entity);
     AnimationSystem.playDelay(gameContext, entity);
 }
 

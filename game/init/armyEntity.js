@@ -16,7 +16,7 @@ export const ArmyEntity = function(id, sprite, DEBUG_NAME) {
     this.directionX = ArmyEntity.DIRECTION.EAST;
     this.directionY = ArmyEntity.DIRECTION.SOUTH;
     this.teamID = null;
-    this.statCard = new ArmySprite(sprite);
+    this.sprite = new ArmySprite(sprite);
 }
 
 ArmyEntity.TYPE = {
@@ -418,12 +418,12 @@ ArmyEntity.prototype.getConstructionResult = function(gameContext) {
 }
 
 ArmyEntity.prototype.updateStatCard = function() {
-    this.statCard.setHealthText(`${this.health}/${this.maxHealth}`);
+    this.sprite.setHealthText(`${this.health}/${this.maxHealth}`);
 
     const attackComponent = this.getComponent(ArmyEntity.COMPONENT.ATTACK);
 
     if(attackComponent) {
-        this.statCard.setDamageText(`${attackComponent.damage}`);
+        this.sprite.setDamageText(`${attackComponent.damage}`);
     }
 }
 
@@ -450,9 +450,9 @@ ArmyEntity.prototype.generateStatCard = function(gameContext) {
         const spriteComponent = this.getComponent(ArmyEntity.COMPONENT.SPRITE);
         const sprite = spriteComponent.getSprite(gameContext);
 
-        sprite.addChild(this.statCard);
+        sprite.addChild(this.sprite);
 
-        this.statCard.setCard(statCardSprite, x - transform2D.halfTileWidth, y - transform2D.halfTileHeight);
+        this.sprite.setCard(statCardSprite, x - transform2D.halfTileWidth, y - transform2D.halfTileHeight);
         this.updateStatCard();
     }
 }

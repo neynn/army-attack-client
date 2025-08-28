@@ -236,11 +236,11 @@ AnimationSystem.playAttention = function(gameContext, entity) {
     const attentionSprite = spriteManager.createCachedSprite(AnimationSystem.SPRITE_TYPE.ATTENTION);
     const { x, y } = transform2D.transformSizeToWorldOffsetCenter(entity.config.dimX, entity.config.dimY);
 
-    entity.statCard.setAttention(attentionSprite, x, y);
+    entity.sprite.setAttention(attentionSprite, x, y);
 }
 
-AnimationSystem.stopAttention = function(gameContext, entity) {
-    entity.statCard.removeAttention();
+AnimationSystem.stopAttention = function(entity) {
+    entity.sprite.removeAttention();
 }
 
 /**
