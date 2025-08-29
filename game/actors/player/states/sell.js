@@ -89,7 +89,7 @@ PlayerSellState.prototype.hideSellableObjects = function(gameContext, player) {
         const entity = entityManager.getEntity(entityID);
 
         if(entity) {
-            AnimationSystem.stopSell(gameContext, entity);
+            AnimationSystem.stopSell(entity);
         }
     }
 }

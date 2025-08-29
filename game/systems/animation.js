@@ -114,13 +114,12 @@ AnimationSystem.playFire = function(gameContext, targetObject, attackerIDList) {
  */
 AnimationSystem.playSell = function(gameContext, entity) {
     const { spriteManager } = gameContext;
-    const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
-    const entitySprite = spriteComponent.getSprite(gameContext);
     const spriteType = `cursor_move_${entity.config.dimX}x${entity.config.dimY}`;
-    const moveSprite = spriteManager.createSprite(spriteType);
+    const sellSprite = spriteManager.createCachedSprite(spriteType);
     
-    entitySprite.addChild(moveSprite, AnimationSystem.SPRITE_ID.SELL);
-    moveSprite.setPosition(0, 0);
+    if(sellSprite) {
+        entity.sprite.setOther(sellSprite, 0, 0);
+    }
 }
 
 /**
@@ -129,17 +128,8 @@ AnimationSystem.playSell = function(gameContext, entity) {
  * @param {ArmyContext} gameContext 
  * @param {ArmyEntity} entity 
  */
-AnimationSystem.stopSell = function(gameContext, entity) {
-    const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
-    const entitySprite = spriteComponent.getSprite(gameContext);
-
-    if(entitySprite) {
-        const sellSprite = entitySprite.getChild(AnimationSystem.SPRITE_ID.SELL);
-
-        if(sellSprite) {
-            sellSprite.terminate();
-        }
-    }
+AnimationSystem.stopSell = function(entity) {
+    entity.sprite.removeOther();
 }
 
 /**

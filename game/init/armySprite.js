@@ -16,7 +16,9 @@ export const ArmySprite = function(mainSprite) {
     this.attentionX = 0;
     this.attentionY = 0;
 
-    //TODO: select sprite
+    this.other = null;
+    this.otherX = 0;
+    this.otherY = 0;
 }
 
 ArmySprite.prototype = Object.create(Graph.prototype);
@@ -40,6 +42,16 @@ ArmySprite.prototype.onDebug = function(display, localX, localY) {
     if(this.attention) {
         this.attention.onDebug(display, localX, localY);
     }
+
+    if(this.other) {
+        this.other.onDebug(display, localX, localY);
+    }
+}
+
+ArmySprite.prototype.setOther = function(other, positionX, positionY) {
+    this.other = other;
+    this.otherX = positionX;
+    this.otherY = positionY;
 }
 
 ArmySprite.prototype.setAttention = function(attention, positionX, positionY) {
@@ -52,6 +64,12 @@ ArmySprite.prototype.removeAttention = function() {
     this.attention = null;
     this.attentionX = 0;
     this.attentionY = 0;
+}
+
+ArmySprite.prototype.removeOther = function() {
+    this.other = null;
+    this.otherX = 0;
+    this.otherY = 0;
 }
 
 ArmySprite.prototype.setCard = function(card, positionX, positionY) {
@@ -84,6 +102,10 @@ ArmySprite.prototype.onDraw = function(display, localX, localY) {
 
     if(this.attention) {
         this.attention.onDraw(display, localX + this.attentionX, localY + this.attentionY);
+    }
+
+    if(this.other) {
+        this.other.onDraw(display, localX + this.otherX, localY + this.otherY);
     }
 }
 
