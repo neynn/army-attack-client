@@ -89,7 +89,7 @@ PlayerSelectedState.prototype.deselectEntity = function(gameContext, player) {
     const entity = entityManager.getEntity(this.entityID);
 
     if(entity) {
-        AnimationSystem.stopSelect(gameContext, entity);
+        AnimationSystem.stopSelect(entity);
     }
 
     player.camera.clearOverlay(ArmyCamera.OVERLAY.MOVE);

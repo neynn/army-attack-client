@@ -9,6 +9,7 @@ import { ArmySprite } from "./armySprite.js";
 export const ArmyEntity = function(id, sprite, DEBUG_NAME) {
     Entity.call(this, id, DEBUG_NAME);
 
+    this.unitType = ArmyEntity.UNIT_TYPE.NONE;
     this.health = 1;
     this.maxHealth = 1;
     this.tileX = -1;
@@ -18,6 +19,13 @@ export const ArmyEntity = function(id, sprite, DEBUG_NAME) {
     this.teamID = null;
     this.sprite = new ArmySprite(sprite);
 }
+
+ArmyEntity.UNIT_TYPE = {
+    NONE: 0,
+    INFANTRY: 1,
+    ARMOR: 2,
+    ARTILLERY: 3
+};
 
 ArmyEntity.TYPE = {
     UNIT: "Unit",

@@ -1,10 +1,10 @@
 import { Graph } from "../../source/graphics/graph.js";
 import { TextStyle } from "../../source/graphics/textStyle.js";
 
-export const ArmySprite = function(mainSprite) {
+export const ArmySprite = function(sprite) {
     Graph.call(this, "STAT_CARD");
     
-    this.mainSprite = mainSprite;
+    this.sprite = sprite;
 
     this.card = null;
     this.cardX = 0;
@@ -23,6 +23,13 @@ export const ArmySprite = function(mainSprite) {
 
 ArmySprite.prototype = Object.create(Graph.prototype);
 ArmySprite.prototype.constructor = ArmySprite;
+
+ArmySprite.OFFSET = {
+    HEALTH_Y: 90,
+    DAMAGE_Y: 79,
+    HEALTH_X: 95,
+    DAMAGE_X: 95
+};
 
 ArmySprite.TYPE = {
     LARGE: "stat_card",
@@ -78,6 +85,12 @@ ArmySprite.prototype.setCard = function(card, positionX, positionY) {
     this.cardY = positionY;
 }
 
+ArmySprite.prototype.removeCard = function() {
+    this.card = null;
+    this.cardX = 0;
+    this.cardY = 0;
+}
+
 ArmySprite.prototype.onDraw = function(display, localX, localY) {
     if(this.card) {
         const { context } = display;
@@ -92,11 +105,11 @@ ArmySprite.prototype.onDraw = function(display, localX, localY) {
         context.textBaseline = TextStyle.TEXT_BASELINE.MIDDLE;
 
         if(this.healthText.length !== 0) {
-            context.fillText(this.healthText, cardX + 95, cardY + 90);
+            context.fillText(this.healthText, cardX + ArmySprite.OFFSET.HEALTH_X, cardY + ArmySprite.OFFSET.HEALTH_Y);
         }
 
         if(this.damageText.length !== 0) {
-            context.fillText(this.damageText, cardX + 95, cardY + 78);
+            context.fillText(this.damageText, cardX + ArmySprite.OFFSET.DAMAGE_X, cardY + ArmySprite.OFFSET.DAMAGE_Y);
         }
     }
 
@@ -111,12 +124,8 @@ ArmySprite.prototype.onDraw = function(display, localX, localY) {
 
 ArmySprite.prototype.setHealthText = function(healthText) {
     this.healthText = healthText;
-
-    return this;
 }
 
 ArmySprite.prototype.setDamageText = function(damageText) {
     this.damageText = damageText;
-
-    return this;
 }
