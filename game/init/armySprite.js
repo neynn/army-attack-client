@@ -1,10 +1,8 @@
 import { Graph } from "../../source/graphics/graph.js";
 import { TextStyle } from "../../source/graphics/textStyle.js";
 
-export const ArmySprite = function(sprite) {
-    Graph.call(this, "STAT_CARD");
-    
-    this.sprite = sprite;
+export const ArmySprite = function() {
+    Graph.call(this, "ARMY_SPRITE");
 
     this.card = null;
     this.cardX = 0;
@@ -26,7 +24,7 @@ ArmySprite.prototype.constructor = ArmySprite;
 
 ArmySprite.OFFSET = {
     HEALTH_Y: 90,
-    DAMAGE_Y: 79,
+    DAMAGE_Y: 77,
     HEALTH_X: 95,
     DAMAGE_X: 95
 };
@@ -100,8 +98,8 @@ ArmySprite.prototype.onDraw = function(display, localX, localY) {
         this.card.onDraw(display, cardX, cardY);
 
         context.font = ArmySprite.TEXT.FONT;
-        context.textAlign = TextStyle.TEXT_ALIGNMENT.RIGHT;
         context.fillStyle = ArmySprite.TEXT.COLOR;
+        context.textAlign = TextStyle.TEXT_ALIGNMENT.RIGHT;
         context.textBaseline = TextStyle.TEXT_BASELINE.MIDDLE;
 
         if(this.healthText.length !== 0) {
@@ -112,11 +110,11 @@ ArmySprite.prototype.onDraw = function(display, localX, localY) {
             context.fillText(this.damageText, cardX + ArmySprite.OFFSET.DAMAGE_X, cardY + ArmySprite.OFFSET.DAMAGE_Y);
         }
     }
-
+    
     if(this.attention) {
         this.attention.onDraw(display, localX + this.attentionX, localY + this.attentionY);
     }
-
+    
     if(this.other) {
         this.other.onDraw(display, localX + this.otherX, localY + this.otherY);
     }

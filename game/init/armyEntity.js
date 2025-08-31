@@ -2,11 +2,11 @@ import { Entity } from "../../source/entity/entity.js";
 import { clampValue, isRectangleRectangleIntersect } from "../../source/math/math.js";
 import { SpriteComponent } from "../components/sprite.js";
 import { DefaultTypes } from "../defaultTypes.js";
-import { getTeamID } from "../enums.js";
+import { getTeamID, TEAM_TYPE } from "../enums.js";
 import { AllianceSystem } from "../systems/alliance.js";
 import { ArmySprite } from "./armySprite.js";
 
-export const ArmyEntity = function(id, sprite, DEBUG_NAME) {
+export const ArmyEntity = function(id, DEBUG_NAME) {
     Entity.call(this, id, DEBUG_NAME);
 
     this.unitType = ArmyEntity.UNIT_TYPE.NONE;
@@ -16,8 +16,8 @@ export const ArmyEntity = function(id, sprite, DEBUG_NAME) {
     this.tileY = -1;
     this.directionX = ArmyEntity.DIRECTION.EAST;
     this.directionY = ArmyEntity.DIRECTION.SOUTH;
-    this.teamID = null;
-    this.sprite = new ArmySprite(sprite);
+    this.teamID = TEAM_TYPE.NEUTRAL;
+    this.sprite = new ArmySprite();
 }
 
 ArmyEntity.UNIT_TYPE = {
@@ -174,7 +174,7 @@ ArmyEntity.prototype.addHealth = function(value) {
     const health = clampValue(this.health + value, this.maxHealth, 0);
 
     this.health = health;
-    this.updateStatCard();
+    this.updateCardText();
 }
 
 ArmyEntity.prototype.reduceHealth = function(value) {
@@ -186,7 +186,7 @@ ArmyEntity.prototype.reduceHealth = function(value) {
         this.health = health;
     }
 
-    this.updateStatCard();
+    this.updateCardText();
 }
 
 ArmyEntity.prototype.isDamageFatal = function(damage) {
@@ -425,7 +425,7 @@ ArmyEntity.prototype.getConstructionResult = function(gameContext) {
     return DefaultTypes.createSpawnConfig(type, this.teamID, owners, this.tileX, this.tileY);
 }
 
-ArmyEntity.prototype.updateStatCard = function() {
+ArmyEntity.prototype.updateCardText = function() {
     this.sprite.setHealthText(`${this.health}/${this.maxHealth}`);
 
     const attackComponent = this.getComponent(ArmyEntity.COMPONENT.ATTACK);
@@ -435,33 +435,21 @@ ArmyEntity.prototype.updateStatCard = function() {
     }
 }
 
-ArmyEntity.prototype.createStatCardSprite = function(gameContext) {
-    const { spriteManager } = gameContext;
-    const cardType = this.hasComponent(ArmyEntity.COMPONENT.ATTACK) ? ArmySprite.TYPE.LARGE : ArmySprite.TYPE.SMALL;
-    const teamType = gameContext.getTeamType(getTeamID(this.teamID));
-    const spriteType = teamType.sprites[cardType];
-    const statCardSprite = spriteManager.createCachedSprite(spriteType);
-
-    return statCardSprite;
-}
-
 ArmyEntity.prototype.generateStatCard = function(gameContext) {
-    if(this.config.disableCard) {
+    if(this.config.disableCard || this.isType(ArmyEntity.TYPE.HFE)) {
         return;
     }
 
-    const statCardSprite = this.createStatCardSprite(gameContext);
+    const { transform2D, spriteManager } = gameContext;
+    const cardType = this.hasComponent(ArmyEntity.COMPONENT.ATTACK) ? ArmySprite.TYPE.LARGE : ArmySprite.TYPE.SMALL;
+    const teamType = gameContext.getTeamType(getTeamID(this.teamID));
+    const statCardSprite = spriteManager.createSharedSprite(teamType.sprites[cardType]);
 
     if(statCardSprite) {
-        const { transform2D } = gameContext;
         const { x, y } = transform2D.transformSizeToWorldOffset(this.config.dimX, this.config.dimY);
-        const spriteComponent = this.getComponent(ArmyEntity.COMPONENT.SPRITE);
-        const sprite = spriteComponent.getSprite(gameContext);
-
-        sprite.addChild(this.sprite);
 
         this.sprite.setCard(statCardSprite, x - transform2D.halfTileWidth, y - transform2D.halfTileHeight);
-        this.updateStatCard();
+        this.updateCardText();
     }
 }
 
@@ -491,16 +479,6 @@ ArmyEntity.prototype.endDecay = function() {
 
         reviveableComponent.endDecay();
     }
-}
-
-ArmyEntity.prototype.getCollectRewards = function(gameContext) {
-    const productionComponent = this.getComponent(ArmyEntity.COMPONENT.PRODUCTION);
-
-    if(!productionComponent) {
-        return null;
-    }
-
-    return productionComponent.getRewards(gameContext, this);
 }
 
 ArmyEntity.prototype.isProductionFinished = function() {

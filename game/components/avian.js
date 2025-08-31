@@ -25,7 +25,7 @@ AvianComponent.prototype.init = function(config) {
     if(flying) {
         this.state = AvianComponent.STATE.FLYING;
     }
-};
+}
 
 AvianComponent.prototype.save = function() {
     return [this.state];

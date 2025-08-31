@@ -91,7 +91,7 @@ AnimationSystem.playFire = function(gameContext, targetObject, attackerIDList) {
 AnimationSystem.playSell = function(gameContext, entity) {
     const { spriteManager } = gameContext;
     const spriteType = `cursor_move_${entity.config.dimX}x${entity.config.dimY}`;
-    const sellSprite = spriteManager.createCachedSprite(spriteType);
+    const sellSprite = spriteManager.createSharedSprite(spriteType);
     
     if(sellSprite) {
         entity.sprite.setOther(sellSprite, 0, 0);
@@ -104,7 +104,7 @@ AnimationSystem.stopSell = function(entity) {
 
 AnimationSystem.playSelect = function(gameContext, entity) {
     const { spriteManager } = gameContext;
-    const moveSprite = spriteManager.createCachedSprite(AnimationSystem.SPRITE_TYPE.SELECT);
+    const moveSprite = spriteManager.createSharedSprite(AnimationSystem.SPRITE_TYPE.SELECT);
     
      if(moveSprite) {
         entity.sprite.setOther(moveSprite, 0, 0);
@@ -161,7 +161,7 @@ AnimationSystem.playHeal = function(gameContext, entity) {
 
 AnimationSystem.playAttention = function(gameContext, entity) {
     const { spriteManager, transform2D } = gameContext;
-    const attentionSprite = spriteManager.createCachedSprite(AnimationSystem.SPRITE_TYPE.ATTENTION);
+    const attentionSprite = spriteManager.createSharedSprite(AnimationSystem.SPRITE_TYPE.ATTENTION);
     const { x, y } = transform2D.transformSizeToWorldOffsetCenter(entity.config.dimX, entity.config.dimY);
 
     entity.sprite.setAttention(attentionSprite, x, y);

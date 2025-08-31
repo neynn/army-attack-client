@@ -6,9 +6,9 @@ import { SpriteTextureHandler } from "./spriteTextureHandler.js";
 export const SpriteManager = function() {
     this.graphics = new SpriteTextureHandler();
     this.spriteTracker = new Set();
-    this.spriteCache = [];
     this.sprites = new ObjectPool(1024, (index) => new Sprite(this, index, index));
     this.sprites.allocate();
+    this.sharedSprites = [];
     this.timestamp = 0;
 
     this.layers = [];
@@ -54,8 +54,8 @@ SpriteManager.prototype.update = function(gameContext) {
 
     this.timestamp = realTime;
 
-    for(let i = 0; i < this.spriteCache.length; i++) {
-        const { id, index } = this.spriteCache[i];
+    for(let i = 0; i < this.sharedSprites.length; i++) {
+        const { id, index } = this.sharedSprites[i];
         const sprite = this.getSprite(index);
 
         sprite.update(realTime, deltaTime);
@@ -66,18 +66,18 @@ SpriteManager.prototype.exit = function() {
     this.spriteTracker.clear();
     this.sprites.forAllReserved((sprite) => sprite.closeGraph());
     this.sprites.reset();
-    this.spriteCache.length = 0;
+    this.sharedSprites.length = 0;
 
     for(let i = 0; i < this.layers.length; i++) {
         this.layers[i].length = 0;
     }
 }
 
-SpriteManager.prototype.createCachedSprite = function(typeID) {
-    const cachedSprite = this.getFromCache(typeID);
+SpriteManager.prototype.createSharedSprite = function(typeID) {
+    const sharedSprite = this.getSharedSprite(typeID);
 
-    if(cachedSprite) {
-        return cachedSprite;
+    if(sharedSprite) {
+        return sharedSprite;
     }
 
     const sprite = this.sprites.reserveElement();
@@ -93,7 +93,7 @@ SpriteManager.prototype.createCachedSprite = function(typeID) {
     const spriteIndex = sprite.getIndex();
 
     this.spriteTracker.add(spriteID);
-    this.spriteCache.push({
+    this.sharedSprites.push({
         "id": typeID,
         "index": spriteIndex
     });
@@ -242,9 +242,9 @@ SpriteManager.prototype.updateSprite = function(spriteIndex, spriteID) {
     this.updateSpriteTexture(sprite, spriteID);
 }
 
-SpriteManager.prototype.isCached = function(spriteID, spriteIndex) {
-    for(let i = 0; i < this.spriteCache.length; i++) {
-        const { id, index } = this.spriteCache[i];
+SpriteManager.prototype.isShared = function(spriteID, spriteIndex) {
+    for(let i = 0; i < this.sharedSprites.length; i++) {
+        const { id, index } = this.sharedSprites[i];
 
         if(index === spriteIndex || id === spriteID) {
             return true;
@@ -254,22 +254,22 @@ SpriteManager.prototype.isCached = function(spriteID, spriteIndex) {
     return false;
 }
 
-SpriteManager.prototype.removeFromCache = function(spriteID) {
-    for(let i = 0; i < this.spriteCache.length; i++) {
-        const { id, index } = this.spriteCache[i];
+SpriteManager.prototype.removeShared = function(spriteID) {
+    for(let i = 0; i < this.sharedSprites.length; i++) {
+        const { id, index } = this.sharedSprites[i];
 
         if(id === spriteID) {
             this.destroySprite(index);
-            this.spriteCache[i] = this.spriteCache[this.spriteCache.length - 1];
-            this.spriteCache.pop();
+            this.sharedSprites[i] = this.sharedSprites[this.sharedSprites.length - 1];
+            this.sharedSprites.pop();
             break;
         }
     }
 }
 
-SpriteManager.prototype.getFromCache = function(spriteID) {
-    for(let i = 0; i < this.spriteCache.length; i++) {
-        const { id, index } = this.spriteCache[i];
+SpriteManager.prototype.getSharedSprite = function(spriteID) {
+    for(let i = 0; i < this.sharedSprites.length; i++) {
+        const { id, index } = this.sharedSprites[i];
 
         if(id === spriteID) {
             return this.getSprite(index);
@@ -279,12 +279,12 @@ SpriteManager.prototype.getFromCache = function(spriteID) {
     return null;
 }
 
-SpriteManager.prototype.clearCache = function() {
-    for(let i = 0; i < this.spriteCache.length; i++) {
-        const { id, index } = this.spriteCache;
+SpriteManager.prototype.clearShared = function() {
+    for(let i = 0; i < this.sharedSprites.length; i++) {
+        const { id, index } = this.sharedSprites;
 
         this.destroySprite(index);
     }
 
-    this.spriteCache.length = 0;
+    this.sharedSprites.length = 0;
 }

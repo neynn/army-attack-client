@@ -64,8 +64,9 @@ const createEntity = function(gameContext, config, entityID) {
     }
 
     const sprite = createSprite(gameContext, entityType, tileX, tileY);
-    const entity = new ArmyEntity(entityID, sprite, type);
+    const entity = new ArmyEntity(entityID, type);
     
+    sprite.addChild(entity.sprite);
     entity.setConfig(entityType);
     entity.tileX = tileX;
     entity.tileY = tileY;

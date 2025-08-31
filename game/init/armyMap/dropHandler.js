@@ -16,7 +16,7 @@ DropHandler.prototype.createDrop = function(gameContext, inventory, tileX, tileY
     const transaction = DefaultTypes.createItemTransaction(type, id, value);
 
     if(this.drops.length < DropHandler.MAX_VISIBLE_DROPS) {
-        const sprite = spriteManager.createCachedSprite("drop_money");
+        const sprite = spriteManager.createSharedSprite("drop_money");
 
         if(sprite) {
             const { x, y } = transform2D.transformTileToWorldCenter(tileX, tileY);
