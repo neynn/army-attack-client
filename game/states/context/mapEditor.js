@@ -9,13 +9,14 @@ import { EditorButton } from "../../../source/map/editor/editorButton.js";
 
 export const MapEditorState = function() {
     this.controller = null;
+    this.guiID = -1;
 }
 
 MapEditorState.prototype = Object.create(State.prototype);
 MapEditorState.prototype.constructor = MapEditorState;
 
 MapEditorState.prototype.onEnter = function(gameContext, stateMachine) {
-    const { uiManager, tileManager, client } = gameContext;
+    const { tileManager, client } = gameContext;
     const { router } = client;
 
     this.controller = new MapEditorController();
@@ -41,7 +42,6 @@ MapEditorState.prototype.onEnter = function(gameContext, stateMachine) {
         }
     }
 
-    uiManager.createUIByID(this.controller.interfaceID, gameContext);
     router.load(gameContext, gameContext.resources.keybinds.editor);
     router.on("TOGGLE_AUTOTILER", () => this.controller.toggleAutotiler(gameContext));
     router.on("TOGGLE_ERASER", () => this.controller.toggleEraser(gameContext));
@@ -65,7 +65,7 @@ MapEditorState.prototype.onExit = function(gameContext, stateMachine) {
 MapEditorState.prototype.initUIEvents = function(gameContext) {
     const { uiManager, world, states } = gameContext;
     const { mapManager } = world;
-    const editorInterface = uiManager.getInterface(this.controller.interfaceID);
+    const editorInterface = uiManager.getGUI(this.controller.guiID);
 
     editorInterface.addClick("BUTTON_INVERT", () => {
         this.controller.toggleInversion(gameContext);

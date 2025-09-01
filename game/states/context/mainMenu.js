@@ -9,7 +9,7 @@ MainMenuState.prototype.constructor = MainMenuState;
 
 const loadUI = function(gameContext, stateMachine) {
     const { uiManager, spriteManager } = gameContext;
-    const mainMenuInterface = uiManager.createUIByID("MAIN_MENU", gameContext);
+    const mainMenuInterface = uiManager.parseGUI(gameContext, "MAIN_MENU");
 
     mainMenuInterface.addClick("BUTTON_PLAY", () => stateMachine.setNextState(gameContext, ArmyContext.STATE.STORY_MODE));
     mainMenuInterface.addClick("BUTTON_EDIT", () => stateMachine.setNextState(gameContext, ArmyContext.STATE.EDIT_MODE));

@@ -10,7 +10,7 @@ export const Renderer = function() {
     this.windowWidth = window.innerWidth;
     this.windowHeight = window.innerHeight;
 
-    this.effects = new EffectManager();
+    this.effectManager = new EffectManager();
     this.display = new Display();
     this.display.init(this.windowWidth, this.windowHeight, Display.TYPE.DISPLAY);
 
@@ -99,9 +99,10 @@ Renderer.prototype.destroyContext = function(contextID) {
 Renderer.prototype.update = function(gameContext) {
     const { timer, uiManager } = gameContext; 
     const deltaTime = timer.getDeltaTime();
+    const realTime = timer.getRealTime();
 
     this.display.clear();
-    this.effects.update(this.display, deltaTime);
+    this.effectManager.update(this.display, deltaTime);
 
     for(let i = 0; i < this.contexts.length; i++) {
         this.display.save();
@@ -117,7 +118,7 @@ Renderer.prototype.update = function(gameContext) {
 
     this.display.save();
 
-    uiManager.draw(gameContext, this.display);
+    uiManager.draw(this.display, realTime, deltaTime);
 
     this.display.reset();
 
@@ -151,10 +152,10 @@ Renderer.prototype.drawInfo = function(gameContext) {
     context.fillText(`WindowX: ${this.windowWidth}, WindowY: ${this.windowHeight}`, 0, WINDOW_Y + TEXT_SIZE * 2);
     context.fillText(`MouseX: ${x}, MouseY: ${y}`, 0, WINDOW_Y + TEXT_SIZE * 3);
 
-    context.fillText(`DEBUG-CONTEXT: ${Renderer.DEBUG.CONTEXT}`, 0, DEBUG_Y);
-    context.fillText(`DEBUG-INTERFACE: ${Renderer.DEBUG.INTERFACE}`, 0, DEBUG_Y + TEXT_SIZE);
-    context.fillText(`DEBUG-SPRITES: ${Renderer.DEBUG.SPRITES}`, 0, DEBUG_Y + TEXT_SIZE * 2);
-    context.fillText(`DEBUG-MAP: ${Renderer.DEBUG.MAP}`, 0, DEBUG_Y + TEXT_SIZE * 3);
+    context.fillText(`DEBUG-MAP: ${Renderer.DEBUG.MAP}`, 0, DEBUG_Y);
+    context.fillText(`DEBUG-CONTEXT: ${Renderer.DEBUG.CONTEXT}`, 0, DEBUG_Y + TEXT_SIZE);
+    context.fillText(`DEBUG-INTERFACE: ${Renderer.DEBUG.INTERFACE}`, 0, DEBUG_Y + TEXT_SIZE * 2);
+    context.fillText(`DEBUG-SPRITES: ${Renderer.DEBUG.SPRITES}`, 0, DEBUG_Y + TEXT_SIZE * 3);
 }
 
 Renderer.prototype.onWindowResize = function(width, height) {

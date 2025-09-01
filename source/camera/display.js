@@ -1,4 +1,4 @@
-import { SHAPE } from "../math/constants.js";
+import { SHAPE, TWO_PI } from "../math/constants.js";
 
 export const Display = function() {
     this.canvas = null;

@@ -1,6 +1,4 @@
 import { SwapSet } from "../util/swapSet.js";
-import { FadeInEffect } from "../effects/example/fadeIn.js";
-import { FadeOutEffect } from "../effects/example/fadeOut.js";
 import { TextElement } from "./elements/textElement.js";
 import { UICollider } from "./uiCollider.js";
 
@@ -19,9 +17,8 @@ UserInterface.STATE = {
     VISIBLE_NO_INTERACT: 2
 };
 
-UserInterface.EFFECT_TYPE = {
-    FADE_IN: "FADE_IN",
-    FADE_OUT: "FADE_OUT"
+UserInterface.prototype.getID = function() {
+    return this.id;
 }
 
 UserInterface.prototype.clear = function() {
@@ -46,30 +43,21 @@ UserInterface.prototype.handleClick = function(mouseX, mouseY, mouseRange) {
 UserInterface.prototype.destroyElement = function(name) {
     const element = this.getElement(name);
 
-    if(!element) {
-        return;
-    }
+    if(element) {
+        const elementID = element.getID();
+        
+        element.closeGraph();
 
-    const elementID = element.getID();
-    
-    element.closeGraph();
+        this.elements.delete(elementID);
+        this.nameMap.delete(name);
 
-    this.elements.delete(elementID);
-    this.nameMap.delete(name);
-
-    for(let i = 0; i < this.roots.length; i++) {
-        if(this.roots[i] === element) {
-            this.roots.splice(i, 1);
-            break;
+        for(let i = 0; i < this.roots.length; i++) {
+            if(this.roots[i] === element) {
+                this.roots.splice(i, 1);
+                break;
+            }
         }
     }
-}
-
-UserInterface.prototype.update = function(gameContext) {
-    const { client } = gameContext;
-    const { cursor } = client;
-
-    this.updateCollisions(cursor.positionX, cursor.positionY, cursor.radius);
 }
 
 UserInterface.prototype.debug = function(display) {
@@ -103,16 +91,14 @@ UserInterface.prototype.getElement = function(name) {
 }
 
 UserInterface.prototype.getCollisions = function(mouseX, mouseY, mouseRange) {
-    if(this.state !== UserInterface.STATE.VISIBLE) {
-        return [];
-    }
+    if(this.state === UserInterface.STATE.VISIBLE) {
+        for(let i = 0; i < this.roots.length; i++) {
+            const element = this.roots[i];
+            const collisions = element.getCollisions(mouseX, mouseY, mouseRange);
 
-    for(let i = 0; i < this.roots.length; i++) {
-        const element = this.roots[i];
-        const collisions = element.getCollisions(mouseX, mouseY, mouseRange);
-
-        if(collisions.length > 0) {
-            return collisions;
+            if(collisions.length > 0) {
+                return collisions;
+            }
         }
     }
 
@@ -144,67 +130,34 @@ UserInterface.prototype.updateCollisions = function(mouseX, mouseY, mouseRange) 
     }
 }
 
-UserInterface.prototype.addElement = function(element, name) {
+UserInterface.prototype.addElement = function(element) {
+    const elementID = element.getID();
+
+    if(!this.elements.has(elementID)) {
+        this.elements.set(elementID, element);
+
+        return true;
+    }
+
+    return false;
+}
+
+UserInterface.prototype.addNamedElement = function(element, name) {
     if(!this.nameMap.has(name)) {
         const elementID = element.getID();
 
-        this.nameMap.set(name, elementID);
-        this.elements.set(elementID, element);
-    }
-}
+        if(!this.elements.has(elementID)) {
+            this.nameMap.set(name, elementID);
+            this.elements.set(elementID, element);
 
-UserInterface.prototype.addChildrenByID = function(parentID, children) {
-    if(!children) {
-        return;
-    }
-
-    const parent = this.getElement(parentID);
-
-    if(!parent) {
-        return;
-    }
-
-    for(let i = 0; i < children.length; i++) {
-        const child = this.getElement(children[i]);
-
-        if(child) {
-            parent.addChild(child);
+            return true;
         }
     }
+
+    return false;
 }
 
-UserInterface.prototype.addEffects = function(gameContext, element, effectList) {
-    if(!effectList) {
-        return;
-    }
-
-    const { renderer } = gameContext;
-    const { effects } = renderer;
-
-    for(let i = 0; i < effectList.length; i++) {
-        const { type, value, threshold } = effectList[i];
-
-        switch(type) {
-            case UserInterface.EFFECT_TYPE.FADE_IN: {
-                effects.addEffect(new FadeInEffect(element, value, threshold));
-                break;
-            }
-            case UserInterface.EFFECT_TYPE.FADE_OUT: {
-                effects.addEffect(new FadeOutEffect(element, value, threshold));
-                break;
-            }
-            default: {
-                console.log(`EffectType ${type} does not exist!`);
-                break;
-            }
-        }
-    }
-}
-
-UserInterface.prototype.refreshRootElements = function(gameContext) {
-    const { renderer } = gameContext;
-    const { windowWidth, windowHeight } = renderer;
-
+UserInterface.prototype.refreshRoots = function() {
     this.roots.length = 0;
 
     for(const [elementID, element] of this.elements) {
@@ -212,8 +165,10 @@ UserInterface.prototype.refreshRootElements = function(gameContext) {
             this.roots.push(element);
         }
     }
+}
 
-    this.updateRootAnchors(windowWidth, windowHeight);
+UserInterface.prototype.clearRoots = function() {
+    this.roots.length = 0;
 }
 
 UserInterface.prototype.updateRootAnchors = function(width, height) {
@@ -222,36 +177,26 @@ UserInterface.prototype.updateRootAnchors = function(width, height) {
     }
 }
 
-UserInterface.prototype.getID = function() {
-    return this.id;
-}
-
-UserInterface.prototype.addClick = function(elementID, onClick, id) {
+UserInterface.prototype.addClick = function(elementID, onClick) {
     const element = this.getElement(elementID);
 
-    if(element.collider) {
-        const subscriberID = id === undefined ? this.id : id;
-
-        element.collider.events.on(UICollider.EVENT.CLICKED, onClick, { id: subscriberID });
+    if(element && element.collider) {
+        element.collider.events.on(UICollider.EVENT.CLICKED, onClick, { id: this.id });
     }
 }
 
-UserInterface.prototype.removeClick = function(elementID, id) {
+UserInterface.prototype.removeClick = function(elementID) {
     const element = this.getElement(elementID);
 
-    if(element.collider) {
-        const subscriberID = id === undefined ? this.id : id;
-
-        element.collider.events.unsubscribeAll(UICollider.EVENT.CLICKED, subscriberID);
+    if(element && element.collider) {
+        element.collider.events.unsubscribeAll(UICollider.EVENT.CLICKED, this.id);
     }
 }
 
 UserInterface.prototype.setText = function(textID, message) {
     const text = this.getElement(textID);
 
-    if(!(text instanceof TextElement)) {
-        return;
+    if(text && (text instanceof TextElement)) {
+        text.setText(message);
     }
-
-    text.setText(message);
 }

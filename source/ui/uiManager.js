@@ -4,6 +4,7 @@ import { UIParser } from "./parser.js";
 import { UserInterface } from "./userInterface.js";
 
 export const UIManager = function() {
+    this.nextID = 0;
     this.resources = new TextureLoader();
     this.parser = new UIParser();
     this.interfaceStack = [];
@@ -24,17 +25,27 @@ UIManager.prototype.debug = function(display) {
     }
 }
 
-UIManager.prototype.draw = function(gameContext, display) {
-    const { timer } = gameContext;
-    const realTime = timer.getRealTime();
-    const deltaTime = timer.getDeltaTime();
-
+UIManager.prototype.draw = function(display, realTime, deltaTime) {
     for(let i = this.interfaceStack.length - 1; i >= 0; i--) {
         this.interfaceStack[i].draw(display, realTime, deltaTime);
     }
 }
 
-UIManager.prototype.getInterfaceIndex = function(interfaceID) {
+UIManager.prototype.update = function(gameContext) {
+    const { client } = gameContext;
+    const { cursor } = client;
+    const { positionX, positionY, radius } = cursor;
+
+    for(let i = this.interfaceStack.length - 1; i >= 0; i--) {
+        this.interfaceStack[i].updateCollisions(positionX, positionY, radius);
+
+        if(this.interfaceStack[i].isAnyColliding()) {
+            break;
+        }
+    }
+}
+
+UIManager.prototype.getIndex = function(interfaceID) {
     for(let i = 0; i < this.interfaceStack.length; i++) {
         const currentID = this.interfaceStack[i].getID();
 
@@ -46,18 +57,13 @@ UIManager.prototype.getInterfaceIndex = function(interfaceID) {
     return -1;
 }
 
-UIManager.prototype.update = function(gameContext) {
-    for(let i = 0; i < this.interfaceStack.length; i++) {
-        this.interfaceStack[i].update(gameContext);
-    }
-}
-
 UIManager.prototype.exit = function() {
+    this.nextID = 0;
     this.interfaceStack.length = 0;
 }
 
-UIManager.prototype.getInterface = function(interfaceID) {
-    const interfaceIndex = this.getInterfaceIndex(interfaceID);
+UIManager.prototype.getGUI = function(interfaceID) {
+    const interfaceIndex = this.getIndex(interfaceID);
 
     if(interfaceIndex === -1) {
         return null;
@@ -84,26 +90,23 @@ UIManager.prototype.onWindowResize = function(windowWidth, windowHeight) {
     }
 }
 
-UIManager.prototype.destroyUI = function(interfaceID) {
-    const interfaceIndex = this.getInterfaceIndex(interfaceID);
+UIManager.prototype.destroyGUI = function(interfaceID) {
+    const index = this.getIndex(interfaceID);
 
-    if(interfaceIndex === -1) {
-        Logger.log(Logger.CODE.ENGINE_ERROR, "Interface does not exist!", "UIManager.prototype.destroyUI", { "interfaceID": interfaceID });
+    if(index === -1) {
+        Logger.log(Logger.CODE.ENGINE_ERROR, "GUI does not exist!", "UIManager.prototype.destroyGUI", { "interfaceID": interfaceID });
         return;
     }
 
-    const userInterface = this.interfaceStack[interfaceIndex];
+    const userInterface = this.interfaceStack[index];
 
     userInterface.clear();
 
-    this.interfaceStack.splice(interfaceIndex, 1);
+    this.interfaceStack.splice(index, 1);
 }
 
-UIManager.prototype.createUI = function(interfaceID) {
-    if(this.getInterfaceIndex(interfaceID) !== -1) {
-        return null;
-    }
-
+UIManager.prototype.createGUI = function() {
+    const interfaceID = this.nextID++;
     const userInterface = new UserInterface(interfaceID);
 
     this.interfaceStack.push(userInterface);
@@ -111,14 +114,15 @@ UIManager.prototype.createUI = function(interfaceID) {
     return userInterface;
 }
 
-UIManager.prototype.createUIByID = function(id, gameContext) {
-    const gui = this.createUI(id);
+UIManager.prototype.parseGUI = function(gameContext, typeID) {
+    const { renderer } = gameContext;
+    const { windowWidth, windowHeight } = renderer;
+    const gui = this.createGUI();
 
-    if(gui) {
-        this.parser.initGUI(gameContext, id, gui);
+    this.parser.initGUI(gameContext, typeID, gui);
 
-        gui.refreshRootElements(gameContext);
-    }
+    gui.refreshRoots();
+    gui.updateRootAnchors(windowWidth, windowHeight);
 
     return gui;
 }

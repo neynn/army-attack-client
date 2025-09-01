@@ -2,14 +2,18 @@ import { ROOM_EVENTS } from "../../../../source/network/events.js";
 import { State } from "../../../../source/state/state.js";
 import { ArmyContext } from "../../../armyContext.js";
 
-export const VersusModeLobbyState = function() {}
+export const VersusModeLobbyState = function() {
+    this.guiID = -1;
+}
 
 VersusModeLobbyState.prototype = Object.create(State.prototype);
 VersusModeLobbyState.prototype.constructor = VersusModeLobbyState;
 
 VersusModeLobbyState.prototype.onEnter = function(gameContext, stateMachine) {
     const { uiManager, client } = gameContext;
-    const versusInterface = uiManager.createUIByID("VERSUS_MODE_HUB", gameContext);
+    const versusInterface = uiManager.parseGUI(gameContext, "VERSUS_MODE_HUB");
+
+    this.guiID = versusInterface.getID();
 
     versusInterface.addClick("BUTTON_CREATE_ROOM", () => {
         client.socket.createRoom("VERSUS"); //TODO
@@ -38,5 +42,5 @@ VersusModeLobbyState.prototype.onEnter = function(gameContext, stateMachine) {
 VersusModeLobbyState.prototype.onExit = function(gameContext, stateMachine) {
     const { uiManager } = gameContext;
 
-    uiManager.destroyUI("VERSUS_MODE_HUB");
+    uiManager.destroyGUI(this.guiID);
 }

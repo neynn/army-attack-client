@@ -161,9 +161,10 @@ UIParser.prototype.createElementFromConfig = function(uiManager, config, DEBUG_N
     }
 }
 
-UIParser.prototype.initGUI = function(gameContext, interfaceID, gui) {
-    const { uiManager } = gameContext;
-    const userInterfaceType = this.interfaceTypes[interfaceID];
+UIParser.prototype.initGUI = function(gameContext, typeID, gui) {
+    const { uiManager, renderer } = gameContext;
+    const { effectManager } = renderer;
+    const userInterfaceType = this.interfaceTypes[typeID];
 
     if(!userInterfaceType) {
         return;
@@ -173,7 +174,7 @@ UIParser.prototype.initGUI = function(gameContext, interfaceID, gui) {
         const config = userInterfaceType[elementID];
         const element = this.createElementFromConfig(uiManager, config, elementID);
 
-        gui.addElement(element, elementID);   
+        gui.addNamedElement(element, elementID);   
     }
     
     for(const elementID in userInterfaceType) {
@@ -181,7 +182,18 @@ UIParser.prototype.initGUI = function(gameContext, interfaceID, gui) {
         const config = userInterfaceType[elementID];
         const { children, effects } = config;
 
-        gui.addEffects(gameContext, element, effects);
-        gui.addChildrenByID(elementID, children);
+        if(effects) {
+            effectManager.addEffects(element, effects);
+        }
+
+        if(children) {
+            for(let i = 0; i < children.length; i++) {
+                const child = gui.getElement(children[i]);
+
+                if(child) {
+                    element.addChild(child);
+                }
+            }
+        }
     }
 }
