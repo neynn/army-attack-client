@@ -43,11 +43,11 @@ CameraContext.prototype.getCamera = function() {
 }
 
 CameraContext.prototype.getWorldPosition = function(screenX, screenY) {
-    const { x, y } = this.camera.getViewport();
+    const { viewportX, viewportY } = this.camera;
 
     return {
-        "x": (screenX - this.positionX) / this.scale + x,
-        "y": (screenY - this.positionY) / this.scale + y
+        "x": (screenX - this.positionX) / this.scale + viewportX,
+        "y": (screenY - this.positionY) / this.scale + viewportY
     }
 }
 
@@ -57,9 +57,9 @@ CameraContext.prototype.setPosition = function(x, y) {
 }
 
 CameraContext.prototype.centerCamera = function() {
-    const { w, h } = this.camera.getViewport();
-    const positionX = (this.windowWidth - this.scale * w) * 0.5;
-    const positionY = (this.windowHeight - this.scale * h) * 0.5;
+    const { viewportWidth, viewportHeight } = this.camera;
+    const positionX = (this.windowWidth - this.scale * viewportWidth) * 0.5;
+    const positionY = (this.windowHeight - this.scale * viewportHeight) * 0.5;
 
     this.setPosition(positionX, positionY);
 }
@@ -241,7 +241,7 @@ CameraContext.prototype.update = function(gameContext, display) {
         case CameraContext.DISPLAY_MODE.RESOLUTION_FIXED: {
             const { context } = display;
             const { canvas, width, height } = this.display;
-            const { w, h } = this.camera.getViewport();
+            const { viewportWidth, viewportHeight } = this.camera;
 
             this.display.clear();
             this.camera.update(gameContext, this.display);
@@ -249,7 +249,7 @@ CameraContext.prototype.update = function(gameContext, display) {
             context.drawImage(
                 canvas,
                 0, 0, width, height,
-                this.positionX, this.positionY, w * this.scale, h * this.scale
+                this.positionX, this.positionY, viewportWidth * this.scale, viewportHeight * this.scale
             );
             break;
         }
@@ -257,18 +257,18 @@ CameraContext.prototype.update = function(gameContext, display) {
 }
 
 CameraContext.prototype.debug = function(context) {
-    const { w, h } = this.camera.getViewport();
+    const { viewportWidth, viewportHeight } = this.camera;
 
     context.globalAlpha = 1;
     context.strokeStyle = "#eeeeee";
     context.lineWidth = 3;
-    context.strokeRect(this.positionX, this.positionY, w * this.scale, h * this.scale);
+    context.strokeRect(this.positionX, this.positionY, viewportWidth * this.scale, viewportHeight * this.scale);
 }
 
 CameraContext.prototype.isColliding = function(mouseX, mouseY, mouseRange) {
-    const { w, h } = this.camera.getViewport();
+    const { viewportWidth, viewportHeight } = this.camera;
     const isColliding = isRectangleRectangleIntersect(
-        this.positionX, this.positionY, w * this.scale, h * this.scale,
+        this.positionX, this.positionY, viewportWidth * this.scale, viewportHeight * this.scale,
         mouseX, mouseY, mouseRange, mouseRange
     );
 

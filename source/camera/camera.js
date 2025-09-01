@@ -26,15 +26,6 @@ Camera.VIEWPORT_MODE = {
 
 Camera.prototype.update = function(gameContext, renderContext) {}
 
-Camera.prototype.getViewport = function() {
-    return {
-        "x": this.viewportX,
-        "y": this.viewportY,
-        "w": this.viewportWidth,
-        "h": this.viewportHeight
-    }
-}
-
 Camera.prototype.limitViewport = function() {
     if(this.viewportType !== Camera.VIEWPORT_TYPE.BOUND) {
         return;

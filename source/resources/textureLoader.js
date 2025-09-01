@@ -70,17 +70,14 @@ TextureLoader.prototype.createTextures = function(textureMeta) {
 }
 
 TextureLoader.prototype.createTexture = function(textureID, config) {
-    const { directory, source, regions = {} } = config;
-    const fileName = source ? source : `${textureID}${TextureLoader.DEFAULT.FILE_TYPE}`;
-    const imagePath = PathHandler.getPath(directory, fileName);
+    if(!this.textures.has(textureID)) {
+        const { directory, source, regions = {} } = config;
+        const fileName = source ? source : `${textureID}${TextureLoader.DEFAULT.FILE_TYPE}`;
+        const imagePath = PathHandler.getPath(directory, fileName);
+        const texture = new Texture(imagePath, regions);
 
-    if(this.textures.has(textureID)) {
-        return;
+        this.textures.set(textureID, texture);
     }
-
-    const texture = new Texture(imagePath, regions);
-
-    this.textures.set(textureID, texture);
 }
 
 TextureLoader.prototype.requestBitmap = function(textureID) {
@@ -116,15 +113,21 @@ TextureLoader.prototype.getBitmap = function(textureID) {
 
     const { state, bitmap } = texture;
 
-    if(state === Texture.STATE.LOADED) {
-        return bitmap;
-    }
+    switch(state) {
+        case Texture.STATE.EMPTY: {
+            if(this.autoLoad) {
+                this.requestBitmap(textureID);
+            }
 
-    if(this.autoLoad && state === Texture.STATE.EMPTY) {
-        this.requestBitmap(textureID);
+            return null;
+        }
+        case Texture.STATE.LOADING: {
+            return null;
+        }
+        case Texture.STATE.LOADED: {
+            return bitmap;
+        }
     }
-
-    return null;
 }
 
 TextureLoader.prototype.addReference = function(textureID) {

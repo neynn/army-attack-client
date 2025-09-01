@@ -48,16 +48,14 @@ ArmyEditorCamera.prototype.update = function(gameContext, display) {
 
     this.updateWorldBounds();
     this.clampWorldBounds();
-    this.drawLayer(graphics, context, worldMap.getLayer(ArmyMap.LAYER.GROUND));
-    this.drawLayer(graphics, context, worldMap.getLayer(ArmyMap.LAYER.DECORATION));
+    this.drawLayer(graphics, display, worldMap.getLayer(ArmyMap.LAYER.GROUND));
+    this.drawLayer(graphics, display, worldMap.getLayer(ArmyMap.LAYER.DECORATION));
     this.drawDebris(tileManager, context, worldMap);
     this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.BOTTOM), realTime, deltaTime);
     this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.MIDDLE), realTime, deltaTime);
-    display.unflip();
     this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.TOP), realTime, deltaTime);
     this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.UI), realTime, deltaTime);
-    display.unflip();
-    this.drawLayer(graphics, context, worldMap.getLayer(ArmyMap.LAYER.CLOUD));
+    this.drawLayer(graphics, display, worldMap.getLayer(ArmyMap.LAYER.CLOUD));
     this.postDraw(gameContext, context);
 
     if(Renderer.DEBUG.MAP) {

@@ -109,27 +109,25 @@ ArmyCamera.prototype.update = function(gameContext, display) {
 
     this.updateWorldBounds();
     this.clampWorldBounds();
-    this.drawLayer(graphics, context, worldMap.getLayer(ArmyMap.LAYER.GROUND));
+    this.drawLayer(graphics, display, worldMap.getLayer(ArmyMap.LAYER.GROUND));
 
     if(gameContext.settings.drawBorder) {
-        this.drawLayer(graphics, context, this.border);
+        this.drawLayer(graphics, display, this.border);
     }
 
-    this.drawLayer(graphics, context, worldMap.getLayer(ArmyMap.LAYER.DECORATION));
+    this.drawLayer(graphics, display, worldMap.getLayer(ArmyMap.LAYER.DECORATION));
     this.drawDebris(tileManager, context, worldMap);
     this.drawOverlay(graphics, context, this.overlays[ArmyCamera.OVERLAY.MOVE]);
     this.drawOverlay(graphics, context, this.overlays[ArmyCamera.OVERLAY.ATTACK]);
     this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.BOTTOM), realTime, deltaTime);
     this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.MIDDLE), realTime, deltaTime);
-    display.unflip();
-    this.drawLayer(graphics, context, this.place);
+    this.drawLayer(graphics, display, this.place);
     this.drawOverlay(graphics, context, this.overlays[ArmyCamera.OVERLAY.FIRE_MISSION]);
     this.drawOverlay(graphics, context, this.overlays[ArmyCamera.OVERLAY.RANGE]);
     this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.TOP), realTime, deltaTime);
     this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.UI), realTime, deltaTime);
     this.drawDrops(display, worldMap);
-    display.unflip();
-    this.drawLayer(graphics, context, worldMap.getLayer(ArmyMap.LAYER.CLOUD));
+    this.drawLayer(graphics, display, worldMap.getLayer(ArmyMap.LAYER.CLOUD));
 
     if(Renderer.DEBUG.MAP) {
         this.debugMap(context, worldMap);

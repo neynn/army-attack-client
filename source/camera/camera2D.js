@@ -148,14 +148,16 @@ Camera2D.prototype.drawOverlay = function(graphics, context, overlay) {
     }
 }
 
-Camera2D.prototype.drawLayer = function(graphics, context, layer) {
+Camera2D.prototype.drawLayer = function(graphics, display, layer) {
     if(layer) {
         const opacity = layer.getOpacity();
 
         if(opacity > 0) {
+            const { context } = display;
             const buffer = layer.getBuffer();
             const previousAlpha = context.globalAlpha;
 
+            display.unflip();
             context.globalAlpha = opacity;
 
             this.drawTileBuffer(graphics, context, buffer);
