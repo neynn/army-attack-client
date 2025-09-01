@@ -6,7 +6,7 @@ export const CameraContext = function(id, camera, windowWidth, windowHeight) {
     this.camera = camera;
     this.positionX = 0;
     this.positionY = 0;
-    this.display = null;
+    this.display = new Display();
     this.scale = CameraContext.BASE_SCALE;
     this.scaleMode = CameraContext.SCALE_MODE.NONE;
     this.positionMode = CameraContext.POSITION_MODE.FIXED;
@@ -14,6 +14,7 @@ export const CameraContext = function(id, camera, windowWidth, windowHeight) {
     this.windowWidth = windowWidth;
     this.windowHeight = windowHeight;
     this.camera.setViewportSize(this.windowWidth, this.windowHeight);
+    this.display.init(1, 1, Display.TYPE.BUFFER);
 }
 
 CameraContext.BASE_SCALE = 1;
@@ -72,10 +73,6 @@ CameraContext.prototype.dragCamera = function(deltaX, deltaY) {
 }
 
 CameraContext.prototype.getScale = function(width, height) {
-    if(!this.display) {
-        return CameraContext.BASE_SCALE;
-    }
-
     let scaleX = CameraContext.BASE_SCALE;
     let scaleY = CameraContext.BASE_SCALE;
 
@@ -181,10 +178,6 @@ CameraContext.prototype.setDisplayMode = function(modeID) {
             break;
         }
         case CameraContext.DISPLAY_MODE.RESOLUTION_FIXED: {
-            if(!this.display) {
-                break;
-            }
-
             this.displayMode = CameraContext.DISPLAY_MODE.RESOLUTION_FIXED;
             this.camera.setViewportSize(this.display.width, this.display.height);
             this.refreshFull();
@@ -206,20 +199,6 @@ CameraContext.prototype.onWindowResize = function(windowWidth, windowHeight) {
     }
 
     this.refreshFull();
-}
-
-CameraContext.prototype.createBuffer = function(width, height) {
-    if(!this.display) {
-        this.display = new Display();
-        this.display.init(width, height, Display.TYPE.BUFFER);
-    }
-}
-
-CameraContext.prototype.destroyBuffer = function() {
-    if(this.displayMode === CameraContext.DISPLAY_MODE.RESOLUTION_FIXED) {
-        this.display = null;
-        this.setDisplayMode(CameraContext.DISPLAY_MODE.RESOLUTION_DEPENDENT);
-    }
 }
 
 CameraContext.prototype.setResolution = function(width, height) {

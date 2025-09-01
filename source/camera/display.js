@@ -30,6 +30,10 @@ Display.STATE = {
     FLIPPED: 1
 };
 
+Display.isTypeValid = function(type) {
+    return type !== Display.TYPE.NONE && Object.values(Display.TYPE).includes(type);
+}
+
 Display.prototype.save = function() {
     this.context.save();
 }
@@ -62,96 +66,68 @@ Display.prototype.unflip = function() {
 }
 
 Display.prototype.fromDocument = function(canvasID) {
-    if(this.type !== Display.TYPE.NONE) {
-        return;
+    if(this.type === Display.TYPE.NONE) {
+        const canvas = document.getElementById(canvasID);
+
+        if(canvas) {
+            this.type = Display.TYPE.CUSTOM;
+            this.canvas = canvas;
+            this.context = canvas.getContext("2d");
+            this.resize(canvas.width, canvas.height);
+        }
     }
-
-    const canvas = document.getElementById(canvasID);
-
-    if(!canvas) {
-        return;
-    }
-
-    this.type = Display.TYPE.CUSTOM;
-    this.canvas = canvas;
-    this.context = canvas.getContext("2d");
-    this.resize(canvas.width, canvas.height);
 }
 
 Display.prototype.clear = function() {
-    if(this.type === Display.TYPE.NONE) {
-        return;
+    if(this.type !== Display.TYPE.NONE) {
+        this.context.fillStyle = this.color;
+        this.context.fillRect(0, 0, this.width, this.height);
     }
-
-    this.context.fillStyle = this.color;
-    this.context.fillRect(0, 0, this.width, this.height);
 }
 
 Display.prototype.onWindowResize = function(width, height) {
-    if(this.type === Display.TYPE.CUSTOM) {
-        return;
+    if(this.type !== Display.TYPE.CUSTOM) {
+        this.resize(width, height);
     }
-
-    this.resize(width, height);
 }
 
 Display.prototype.resize = function(width, height) {
-    if(this.type === Display.TYPE.NONE) {
-        return;
+    if(this.type !== Display.TYPE.NONE) {
+        this.clear();
+        this.canvas.width = width;
+        this.canvas.height = height;
+        this.width = width;
+        this.height = height;
+        this.centerX = width / 2;
+        this.centerY = height / 2;
+        this.context.imageSmoothingEnabled = false;
     }
-
-    this.clear();
-    this.canvas.width = width;
-    this.canvas.height = height;
-    this.width = width;
-    this.height = height;
-    this.centerX = width / 2;
-    this.centerY = height / 2;
-    this.context.imageSmoothingEnabled = false;
 }
 
 Display.prototype.init = function(width, height, type) {
-    if(this.type !== Display.TYPE.NONE) {
-        return;
-    }
-    
-    this.canvas = document.createElement("canvas");
+    if(this.type === Display.TYPE.NONE && Display.isTypeValid(type)) {
+        this.type = type;
+        this.canvas = document.createElement("canvas");
+        this.context = this.canvas.getContext("2d");
+        this.resize(width, height);
 
-    switch(type) {
-        case Display.TYPE.DISPLAY: {
-            this.type = Display.TYPE.DISPLAY;
+        if(type === Display.TYPE.DISPLAY) {
             this.canvas.oncontextmenu = (event) => { 
                 event.preventDefault();
                 event.stopPropagation();
             }
 
             document.body.appendChild(this.canvas);
-            break;
-        }
-        case Display.TYPE.BUFFER: {
-            this.type = Display.TYPE.BUFFER;
-            break;
-        }
-        default: {
-            this.type = Display.TYPE.NONE;
-            break;
         }
     }
-
-    this.context = this.canvas.getContext("2d");
-    this.resize(width, height);
 }
 
 Display.prototype.getImageData = function() {
-    if(this.type === Display.TYPE.NONE) {
-        return null;
+    if(this.type === Display.TYPE.NONE || !this.canvas) {
+        this.imageData = null;
+    } else {
+        this.imageData = this.context.getImageData(0, 0, this.width, this.height);
     }
-
-    if(!this.canvas) {
-        return null;
-    }
-
-    this.imageData = this.context.getImageData(0, 0, this.width, this.height);
 
     return this.imageData;
 }

@@ -28,9 +28,9 @@ const createPlayerCamera = function(gameContext) {
     const camera = new ArmyCamera();
     const context = renderer.createContext("PLAYER_CAMERA", camera);
 
-    //context.createBuffer(600, 600);
     //context.setDisplayMode(CameraContext.DISPLAY_MODE.RESOLUTION_FIXED);
     //context.setScaleMode(CameraContext.SCALE_MODE.NONE);
+    //context.setResolution(600, 600);
     context.setPositionMode(CameraContext.POSITION_MODE.AUTO_CENTER);
 
     camera.bindViewport();
