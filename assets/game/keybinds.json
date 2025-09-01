@@ -8,7 +8,9 @@
         "DEBUG_FIREMISSION": "+3",
         "DEBUG_SELL": "+4",
         "DEBUG_PLACE": "+5",
-        "DEBUG_DEBUG": "+0"
+        "DEBUG_DEBUG": "+0",
+        "DEBUG_LOAD": "+9",
+        "DEBUG_KILL": "+8"
     },
     "editor": {
         "TOGGLE_AUTOTILER": "+a",

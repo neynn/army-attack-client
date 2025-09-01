@@ -9,6 +9,7 @@ import { DefaultTypes } from "../defaultTypes.js";
 import { ACTOR_ID } from "../enums.js";
 import { Actor } from "../../source/turn/actor.js";
 import { MapManager } from "../../source/map/mapManager.js";
+import { DebugSystem } from "./debug.js";
 
 const ACTOR_TYPE = {
     PLAYER: "Player",
@@ -94,6 +95,8 @@ const createActor = function(gameContext, actorID, team, type) {
                 "entityType": entityManager.getEntityType("blue_commando"),
                 "transaction": DefaultTypes.createItemTransaction("Resource", "Gold", 500)
             }));
+            router.on("DEBUG_LOAD", () => DebugSystem.spawnFullEntities(gameContext));
+            router.on("DEBUG_KILL", () => DebugSystem.killAllEntities(gameContext));
             router.on("DEBUG_DEBUG", () => actor.states.setNextState(gameContext, Player.STATE.DEBUG));
 
             return actor;

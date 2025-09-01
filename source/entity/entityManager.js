@@ -1,5 +1,6 @@
 import { EventEmitter } from "../events/eventEmitter.js";
 import { Logger } from "../logger.js";
+import { Entity } from "./entity.js";
 
 export const EntityManager = function() {
     this.traits = {};
@@ -10,7 +11,6 @@ export const EntityManager = function() {
     this.nextID = 0;
     this.entities = [];
     this.entityMap = new Map();
-    this.pendingRemovals = [];
 
     this.events = new EventEmitter();
     this.events.listen(EntityManager.EVENT.ENTITY_CREATE);
@@ -54,7 +54,6 @@ EntityManager.prototype.exit = function() {
     this.events.muteAll();
     this.entityMap.clear();
     this.entities.length = 0;
-    this.pendingRemovals.length = 0;
     this.nextID = 0;
 }
 
@@ -75,22 +74,22 @@ EntityManager.prototype.forAllEntities = function(onCall) {
     }
 }
 
-EntityManager.prototype.markForDestroy = function(entityID) {
-    if(this.entityMap.has(entityID)) {
-        this.pendingRemovals.push(entityID);
-    }
-}
-
 EntityManager.prototype.update = function(gameContext) {
-    for(let i = 0; i < this.entities.length; ++i) {
-        this.entities[i].update(gameContext);
+    const toRemove = [];
+
+    for(let i = 0; i < this.entities.length; i++) {
+        const entity = this.entities[i];
+
+        entity.update(gameContext);
+
+        if(entity.hasFlag(Entity.FLAG.DESTROY)) {
+            toRemove.push(i);
+        }
     }
 
-    for(let i = 0; i < this.pendingRemovals.length; ++i) {
-        this.destroyEntity(this.pendingRemovals[i]);
+    for(let i = toRemove.length - 1; i >= 0; i--) {
+        this.destroyEntity(toRemove[i]);
     }
-
-    this.pendingRemovals.length = 0;
 }
 
 EntityManager.prototype.getEntity = function(entityID) {
@@ -141,42 +140,18 @@ EntityManager.prototype.createEntity = function(onCreate, externalID) {
     return entity;
 }
 
-EntityManager.prototype.destroyEntityAtIndex = function(index, entityID) {
+EntityManager.prototype.destroyEntity = function(index) {
     const swapEntityIndex = this.entities.length - 1;
     const swapEntity = this.entities[swapEntityIndex];
     const swapEntityID = swapEntity.getID();
+    const entity = this.entities[index];
+    const entityID = entity.getID();
 
     this.entityMap.set(swapEntityID, index);
     this.entityMap.delete(entityID);
     this.entities[index] = this.entities[swapEntityIndex];
     this.entities.pop();
     this.events.emit(EntityManager.EVENT.ENTITY_DESTROY, entityID);
-}
-
-EntityManager.prototype.destroyEntity = function(entityID) {
-    const index = this.entityMap.get(entityID);
-
-    if(index === undefined || index < 0 || index >= this.entities.length) {
-        return;
-    }
-
-    const entity = this.entities[index];
-    const targetID = entity.getID();
-
-    if(entityID === targetID) {
-        this.destroyEntityAtIndex(index, entityID);
-        return;
-    }
-    
-    for(let i = 0; i < this.entities.length; ++i) {
-        const entity = this.entities[i];
-        const currentID = entity.getID();
-
-        if(entityID === currentID) {
-            this.destroyEntityAtIndex(i, entityID);
-            return;
-        }
-    }
 }
 
 EntityManager.prototype.createComponentInstance = function(componentID) {

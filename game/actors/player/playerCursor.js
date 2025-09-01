@@ -178,7 +178,10 @@ PlayerCursor.prototype.createSprite = function(gameContext) {
 
     const { spriteManager } = gameContext;
     const actorSprite = spriteManager.createSprite("cursor_attack_1x1", SpriteManager.LAYER.UI);
-    const spriteIndex = actorSprite.getIndex();
 
-    this.spriteIndex = spriteIndex;
+    if(actorSprite) {
+        const spriteIndex = actorSprite.getIndex();
+
+        this.spriteIndex = spriteIndex;
+    }
 }

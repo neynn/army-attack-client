@@ -4,11 +4,25 @@ export const Entity = function(id, DEBUG_NAME = "") {
     this.config = null;
     this.components = new Map();
     this.activeComponents = [];
+    this.flags = Entity.FLAG.NONE;
 }
+
+Entity.FLAG = {
+    NONE: 0,
+    DESTROY: 1
+};
 
 Entity.DEBUG = {
     LOG_COMPONENT: 0
 };
+
+Entity.prototype.hasFlag = function(flag) {
+    return (this.flags & flag) !== 0;
+}
+
+Entity.prototype.destroy = function() {
+    this.flags |= Entity.FLAG.DESTROY;
+}
 
 Entity.prototype.setConfig = function(config) {
     if(config !== undefined) {
@@ -21,8 +35,10 @@ Entity.prototype.getID = function() {
 }
 
 Entity.prototype.update = function(gameContext) {
-    for(let i = 0; i < this.activeComponents.length; ++i) {
-        this.activeComponents[i].update(gameContext, this);
+    if(!this.hasFlag(Entity.FLAG.DESTROY)) {
+        for(let i = 0; i < this.activeComponents.length; i++) {
+            this.activeComponents[i].update(gameContext, this);
+        }
     }
 }
 

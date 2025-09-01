@@ -44,13 +44,15 @@ AnimationSystem.playDeath = function(gameContext, entity) {
     const spriteType = entity.getSpriteID(ArmyEntity.SPRITE_TYPE.DEATH);
     const deathAnimation = spriteManager.createSprite(spriteType, SpriteManager.LAYER.MIDDLE);
 
-    const centerPosition = transform2D.transformTileToWorldCenter(entity.tileX, entity.tileY);
-    const offsetPosition = transform2D.transformSizeToWorldOffsetCenter(entity.config.dimX, entity.config.dimY);
-    const positionX = centerPosition.x + offsetPosition.x;
-    const positionY = centerPosition.y + offsetPosition.y;
+    if(deathAnimation) {
+        const centerPosition = transform2D.transformTileToWorldCenter(entity.tileX, entity.tileY);
+        const offsetPosition = transform2D.transformSizeToWorldOffsetCenter(entity.config.dimX, entity.config.dimY);
+        const positionX = centerPosition.x + offsetPosition.x;
+        const positionY = centerPosition.y + offsetPosition.y;
 
-    deathAnimation.setPosition(positionX, positionY);
-    deathAnimation.expire();
+        deathAnimation.setPosition(positionX, positionY);
+        deathAnimation.expire();
+    }
   
     entity.playSound(gameContext, ArmyEntity.SOUND_TYPE.DEATH);
 }
@@ -66,23 +68,29 @@ AnimationSystem.playFire = function(gameContext, targetObject, attackerIDList) {
     for(let i = 0; i < attackerIDList.length; i++) {
         const attacker = entityManager.getEntity(attackerIDList[i]);
         const weaponSprite = spriteManager.createSprite(attacker.config.sprites.weapon);
-        const { x, y } = transform2D.transformSizeToRandomOffset(target.config.dimX, target.config.dimY, AnimationSystem.FIRE_OFFSET.REGULAR, AnimationSystem.FIRE_OFFSET.REGULAR);
 
-        attacker.lookAtEntity(target);
-        attacker.updateSpriteDirectonal(gameContext, ArmyEntity.SPRITE_TYPE.FIRE, ArmyEntity.SPRITE_TYPE.FIRE_UP);
-        attacker.playSound(gameContext, ArmyEntity.SOUND_TYPE.FIRE);
-        targetSprite.addChild(weaponSprite);
-        weaponSprite.setPosition(x, y);
-        weaponSprite.expire();
+        if(weaponSprite) {
+            const { x, y } = transform2D.transformSizeToRandomOffset(target.config.dimX, target.config.dimY, AnimationSystem.FIRE_OFFSET.REGULAR, AnimationSystem.FIRE_OFFSET.REGULAR);
+
+            attacker.lookAtEntity(target);
+            attacker.updateSpriteDirectonal(gameContext, ArmyEntity.SPRITE_TYPE.FIRE, ArmyEntity.SPRITE_TYPE.FIRE_UP);
+            attacker.playSound(gameContext, ArmyEntity.SOUND_TYPE.FIRE);
+            targetSprite.addChild(weaponSprite);
+            weaponSprite.setPosition(x, y);
+            weaponSprite.expire();
+        }
 
         if(attacker.config.cost && attacker.config.cost.artillery !== 0) {
             const artillerySprite = spriteManager.createSprite(attacker.config.sprites.weapon);
-            const { x, y } = transform2D.transformSizeToRandomOffset(target.config.dimX, target.config.dimY, AnimationSystem.FIRE_OFFSET.ARTILLERY, AnimationSystem.FIRE_OFFSET.ARTILLERY);
 
-            targetSprite.addChild(artillerySprite);
-            artillerySprite.setPosition(x, y);
-            artillerySprite.flip();
-            artillerySprite.expire();
+            if(artillerySprite) {
+                const { x, y } = transform2D.transformSizeToRandomOffset(target.config.dimX, target.config.dimY, AnimationSystem.FIRE_OFFSET.ARTILLERY, AnimationSystem.FIRE_OFFSET.ARTILLERY);
+
+                targetSprite.addChild(artillerySprite);
+                artillerySprite.setPosition(x, y);
+                artillerySprite.flip();
+                artillerySprite.expire();
+            }
         }
     }
 }
@@ -121,10 +129,13 @@ AnimationSystem.playCleaning = function(gameContext, tileX, tileY) {
     const { spriteManager, transform2D, client } = gameContext;
     const { soundPlayer } = client;
     const delaySprite = spriteManager.createSprite(AnimationSystem.SPRITE_TYPE.DELAY, SpriteManager.LAYER.MIDDLE);
-    const { x, y } = transform2D.transformTileToWorldCenter(tileX, tileY);
 
-    delaySprite.expire();
-    delaySprite.setPosition(x, y);
+    if(delaySprite) {
+        const { x, y } = transform2D.transformTileToWorldCenter(tileX, tileY);
+
+        delaySprite.expire();
+        delaySprite.setPosition(x, y);
+    }
 
     soundPlayer.playSound(UI_SONUD.BUTTON);
 }
@@ -135,11 +146,14 @@ AnimationSystem.playDelay = function(gameContext, entity) {
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const entitySprite = spriteComponent.getSprite(gameContext);
     const delaySprite = spriteManager.createSprite(AnimationSystem.SPRITE_TYPE.DELAY);
-    const { x, y } = transform2D.transformSizeToWorldOffsetCenter(entity.config.dimX, entity.config.dimY);
 
-    entitySprite.addChild(delaySprite);
-    delaySprite.expire();
-    delaySprite.setPosition(x, y);
+    if(delaySprite) {
+        const { x, y } = transform2D.transformSizeToWorldOffsetCenter(entity.config.dimX, entity.config.dimY);
+
+        entitySprite.addChild(delaySprite);
+        delaySprite.expire();
+        delaySprite.setPosition(x, y);
+    }
 
     soundPlayer.playSound(UI_SONUD.BUTTON);
 }
@@ -150,11 +164,14 @@ AnimationSystem.playHeal = function(gameContext, entity) {
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const entitySprite = spriteComponent.getSprite(gameContext);
     const delaySprite = spriteManager.createSprite(AnimationSystem.SPRITE_TYPE.DELAY);
-    const { x, y } = transform2D.transformSizeToWorldOffsetCenter(entity.config.dimX, entity.config.dimY);
 
-    entitySprite.addChild(delaySprite);
-    delaySprite.expire();
-    delaySprite.setPosition(x, y);
+    if(delaySprite) {
+        const { x, y } = transform2D.transformSizeToWorldOffsetCenter(entity.config.dimX, entity.config.dimY);
+
+        entitySprite.addChild(delaySprite);
+        delaySprite.expire();
+        delaySprite.setPosition(x, y);
+    }
 
     soundPlayer.playSound(UI_SONUD.HEAL);
 }
@@ -162,9 +179,12 @@ AnimationSystem.playHeal = function(gameContext, entity) {
 AnimationSystem.playAttention = function(gameContext, entity) {
     const { spriteManager, transform2D } = gameContext;
     const attentionSprite = spriteManager.createSharedSprite(AnimationSystem.SPRITE_TYPE.ATTENTION);
-    const { x, y } = transform2D.transformSizeToWorldOffsetCenter(entity.config.dimX, entity.config.dimY);
 
-    entity.sprite.setAttention(attentionSprite, x, y);
+    if(attentionSprite) {
+        const { x, y } = transform2D.transformSizeToWorldOffsetCenter(entity.config.dimX, entity.config.dimY);
+
+        entity.sprite.setAttention(attentionSprite, x, y);
+    }
 }
 
 AnimationSystem.stopAttention = function(entity) {
@@ -176,11 +196,14 @@ AnimationSystem.playConstruction = function(gameContext, entity) {
     const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
     const entitySprite = spriteComponent.getSprite(gameContext);
     const delaySprite = spriteManager.createSprite(AnimationSystem.SPRITE_TYPE.DELAY);
-    const { x, y } = transform2D.transformSizeToWorldOffsetCenter(entity.config.dimX, entity.config.dimY);
 
-    entitySprite.addChild(delaySprite);
-    delaySprite.expire();
-    delaySprite.setPosition(x, y);
+    if(delaySprite) {
+        const { x, y } = transform2D.transformSizeToWorldOffsetCenter(entity.config.dimX, entity.config.dimY);
+
+        entitySprite.addChild(delaySprite);
+        delaySprite.expire();
+        delaySprite.setPosition(x, y);
+    }
 
     entity.playSound(gameContext, ArmyEntity.SOUND_TYPE.BUILD);
 }
