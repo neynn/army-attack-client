@@ -8,6 +8,7 @@ import { EditorButton } from "./editorButton.js";
 import { ButtonHandler } from "./buttonHandler.js";
 import { EditorAutotiler } from "./autotiler.js";
 import { Button } from "../../ui/elements/button.js";
+import { getRGBAString } from "../../graphics/helpers.js";
 
 export const MapEditorController = function() {
     this.camera = null;
@@ -95,8 +96,8 @@ MapEditorController.prototype.initUI = function(gameContext) {
     ["CONTAINER_FILE", "CONTAINER_LAYERS", "CONTAINER_TILES", "CONTAINER_TOOLS"].forEach(id => {
         const container = editorInterface.getElement(id);
 
-        container.background.color.setColorRGBA(20, 20, 20, 128);
-        container.background.toggle();
+        container.drawBackground = true;
+        container.backgroundColor = getRGBAString(20, 20, 20, 128);
     });
 }
 
@@ -238,9 +239,8 @@ MapEditorController.prototype.viewAllLayers = function(gameContext) {
 MapEditorController.prototype.resetBrush = function(editorInterface) {
     const text = editorInterface.getElement("TEXT_ERASER");
     const { style } = text;
-    const { color } = style;
 
-    color.setColorArray(this.textColorView);
+    style.setColorArray(this.textColorView);
 
     this.editor.brush.reset();
 }
@@ -250,15 +250,14 @@ MapEditorController.prototype.updateInversionText = function(gameContext, stateI
     const editorInterface = uiManager.getInterface(this.interfaceID);
     const text = editorInterface.getElement("TEXT_INVERT");
     const { style } = text;
-    const { color } = style;
 
     switch(stateID) {
         case EditorAutotiler.STATE.ACTIVE_INVERTED: {
-            color.setColorArray(this.textColorEdit);
+            style.setColorArray(this.textColorEdit);
             break;
         }
         default: {
-            color.setColorArray(this.textColorView);
+            style.setColorArray(this.textColorView);
             break;
         }
     }
@@ -269,15 +268,14 @@ MapEditorController.prototype.updateEraserText = function(gameContext, stateID) 
     const editorInterface = uiManager.getInterface(this.interfaceID);
     const text = editorInterface.getElement("TEXT_ERASER");
     const { style } = text;
-    const { color } = style;
 
     switch(stateID) {
         case Brush.MODE.ERASE: {
-            color.setColorArray(this.textColorEdit);
+            style.setColorArray(this.textColorEdit);
             break;
         }
         default: {
-            color.setColorArray(this.textColorView);
+            style.setColorArray(this.textColorView);
             break;
         }
     }
@@ -288,16 +286,15 @@ MapEditorController.prototype.updateAutoText = function(gameContext, stateID) {
     const editorInterface = uiManager.getInterface(this.interfaceID);
     const text = editorInterface.getElement("TEXT_AUTO");
     const { style } = text;
-    const { color } = style;
 
     switch(stateID) {
         case EditorAutotiler.STATE.INACTIVE: {
-            color.setColorArray(this.textColorView);
+            style.setColorArray(this.textColorView);
             this.updateInversionText(gameContext, stateID);
             break;
         }
         case EditorAutotiler.STATE.ACTIVE: {
-            color.setColorArray(this.textColorEdit);
+            style.setColorArray(this.textColorEdit);
             break;
         }
     }

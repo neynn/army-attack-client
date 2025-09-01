@@ -111,14 +111,14 @@ UIManager.prototype.createUI = function(interfaceID) {
     return userInterface;
 }
 
-UIManager.prototype.createUIByID = function(interfaceID, gameContext) {
-    const userInterface = this.createUI(interfaceID);
+UIManager.prototype.createUIByID = function(id, gameContext) {
+    const gui = this.createUI(id);
 
-    if(userInterface) {
-        this.parser.createInterfaceFromConfig(gameContext, interfaceID, userInterface);
+    if(gui) {
+        this.parser.initGUI(gameContext, id, gui);
 
-        userInterface.refreshRootElements(gameContext);
+        gui.refreshRootElements(gameContext);
     }
 
-    return userInterface;
+    return gui;
 }

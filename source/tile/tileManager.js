@@ -14,13 +14,8 @@ TileManager.TILE_ID = {
 };
 
 TileManager.prototype.load = function(tileAtlases, tileMeta, autotilers) {
-    if(!tileAtlases) {
-        console.warn("TileAtlases do not exist!");
-        return;
-    }
-
-    if(!tileMeta) {
-        console.warn("TileMeta does not exist!");
+    if(!tileAtlases || !tileMeta) {
+        console.warn("TileAtlases/TileMeta does not exist!");
         return;
     }
 

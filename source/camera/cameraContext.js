@@ -35,6 +35,37 @@ CameraContext.SCALE_MODE = {
     FRACTURED: 2
 };
 
+CameraContext.prototype.getScale = function(width, height) {
+    let scale = CameraContext.BASE_SCALE;
+    let scaleX = CameraContext.BASE_SCALE;
+    let scaleY = CameraContext.BASE_SCALE;
+
+    switch(this.scaleMode) {
+        case CameraContext.SCALE_MODE.FRACTURED: {
+            scaleX = width / this.display.width;
+            scaleY = height / this.display.height;
+            break;
+        }
+        case CameraContext.SCALE_MODE.WHOLE: {
+            scaleX = Math.floor(width / this.display.width);
+            scaleY = Math.floor(height / this.display.height);
+            break;
+        }
+    }
+
+    if(scaleX < scaleY) {
+        scale = scaleX;
+    } else {
+        scale = scaleY;
+    }
+
+    if(scale < CameraContext.BASE_SCALE) {
+        scale = CameraContext.BASE_SCALE;
+    }
+
+    return scale;
+}
+
 CameraContext.prototype.getID = function() {
     return this.id;
 }
@@ -70,32 +101,6 @@ CameraContext.prototype.dragCamera = function(deltaX, deltaY) {
     const dragY = deltaY / this.scale;
 
     this.camera.dragViewport(dragX, dragY);
-}
-
-CameraContext.prototype.getScale = function(width, height) {
-    let scaleX = CameraContext.BASE_SCALE;
-    let scaleY = CameraContext.BASE_SCALE;
-
-    switch(this.scaleMode) {
-        case CameraContext.SCALE_MODE.FRACTURED: {
-            scaleX = width / this.display.width;
-            scaleY = height / this.display.height;
-            break;
-        }
-        case CameraContext.SCALE_MODE.WHOLE: {
-            scaleX = Math.floor(width / this.display.width);
-            scaleY = Math.floor(height / this.display.height);
-            break;
-        }
-    }
-
-    const minScale = Math.min(scaleX, scaleY);
-
-    if(minScale < CameraContext.BASE_SCALE) {
-        return CameraContext.BASE_SCALE;
-    }
-
-    return minScale;
 }
 
 CameraContext.prototype.reloadScale = function() {

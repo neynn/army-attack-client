@@ -130,7 +130,7 @@ UIParser.prototype.createElementFromConfig = function(uiManager, config, DEBUG_N
                 fontType = TextStyle.DEFAULT.FONT_TYPE,
                 fontSize = TextStyle.DEFAULT.FONT_SIZE,
                 align = TextStyle.TEXT_ALIGNMENT.LEFT,
-                color = [0, 0, 0, 255]
+                color
             } = config;
 
             element.setPosition(x, y);
@@ -142,7 +142,7 @@ UIParser.prototype.createElementFromConfig = function(uiManager, config, DEBUG_N
             element.style.setFontType(fontType);
             element.style.setFontSize(fontSize);
             element.style.setAlignment(align);
-            element.style.color.setColorArray(color);
+            element.style.setColorArray(color);
 
             return element;
         }
@@ -161,7 +161,7 @@ UIParser.prototype.createElementFromConfig = function(uiManager, config, DEBUG_N
     }
 }
 
-UIParser.prototype.createInterfaceFromConfig = function(gameContext, interfaceID, userInterface) {
+UIParser.prototype.initGUI = function(gameContext, interfaceID, gui) {
     const { uiManager } = gameContext;
     const userInterfaceType = this.interfaceTypes[interfaceID];
 
@@ -173,15 +173,15 @@ UIParser.prototype.createInterfaceFromConfig = function(gameContext, interfaceID
         const config = userInterfaceType[elementID];
         const element = this.createElementFromConfig(uiManager, config, elementID);
 
-        userInterface.addElement(element, elementID);   
+        gui.addElement(element, elementID);   
     }
     
     for(const elementID in userInterfaceType) {
-        const element = userInterface.getElement(elementID);
+        const element = gui.getElement(elementID);
         const config = userInterfaceType[elementID];
         const { children, effects } = config;
 
-        userInterface.addEffects(gameContext, element, effects);
-        userInterface.addChildrenByID(elementID, children);
+        gui.addEffects(gameContext, element, effects);
+        gui.addChildrenByID(elementID, children);
     }
 }

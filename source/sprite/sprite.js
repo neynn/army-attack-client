@@ -35,6 +35,8 @@ Sprite.FLAG = {
     DESTROY: 1 << 3
 };
 
+Sprite.RENDER_PLACEHOLDER = 0;
+
 Sprite.prototype = Object.create(Graph.prototype);
 Sprite.prototype.constructor = Sprite;
 
@@ -110,24 +112,26 @@ Sprite.prototype.onDebug = function(display, localX, localY) {
 }
 
 Sprite.prototype.drawPlaceholder = function(display, localX, localY) {
-    const { context } = display;
-    const isFlipped = (this.flags & Sprite.FLAG.FLIP) !== 0;
+    if(Sprite.RENDER_PLACEHOLDER) {
+        const { context } = display;
+        const isFlipped = (this.flags & Sprite.FLAG.FLIP) !== 0;
 
-    let renderX = localX;
-    let renderY = localY;
+        let renderX = localX;
+        let renderY = localY;
 
-    if(isFlipped) {
-        renderX = (localX - this.boundsX) * -1;
-        renderY = localY + this.boundsY;
-        display.flip();
-    } else {
-        renderX = localX + this.boundsX;
-        renderY = localY + this.boundsY;
-        display.unflip();
+        if(isFlipped) {
+            renderX = (localX - this.boundsX) * -1;
+            renderY = localY + this.boundsY;
+            display.flip();
+        } else {
+            renderX = localX + this.boundsX;
+            renderY = localY + this.boundsY;
+            display.unflip();
+        }
+
+        context.fillStyle = Sprite.DEBUG.COLOR;
+        context.fillRect(renderX, renderY, this.boundsW, this.boundsH);
     }
-
-    context.fillStyle = Sprite.DEBUG.COLOR;
-    context.fillRect(renderX, renderY, this.boundsW, this.boundsH);
 }
 
 Sprite.prototype.getIndex = function() {
@@ -264,29 +268,27 @@ Sprite.prototype.unflip = function() {
 }
 
 Sprite.prototype.updateFrame = function(floatFrames) {
-    const isStatic = (this.flags & Sprite.FLAG.STATIC) !== 0;
+    if(!this.hasFlag(Sprite.FLAG.STATIC)) {
+        this.floatFrame += floatFrames;
+        this.currentFrame = Math.floor(this.floatFrame % this.frameCount);
 
-    if(isStatic) {
-        return;
+        if(floatFrames !== 0) {
+            if(this.floatFrame >= this.frameCount) {
+                const skippedLoops = Math.floor(this.floatFrame / this.frameCount);
+
+                this.floatFrame -= this.frameCount * skippedLoops;
+                this.loopCount += skippedLoops;
+            }
+
+            if(this.loopCount > this.loopLimit && this.hasFlag(Sprite.FLAG.EXPIRE)) {
+                this.terminate();
+            }
+        }
     }
+}
 
-    this.floatFrame += floatFrames;
-    this.currentFrame = Math.floor(this.floatFrame % this.frameCount);
-
-    if(floatFrames === 0) {
-        return;
-    }
-
-    if(this.floatFrame >= this.frameCount) {
-        const skippedLoops = Math.floor(this.floatFrame / this.frameCount);
-
-        this.floatFrame -= this.frameCount * skippedLoops;
-        this.loopCount += skippedLoops;
-    }
-
-    const isExpiring = (this.flags & Sprite.FLAG.EXPIRE) !== 0;
-
-    if(isExpiring && this.loopCount > this.loopLimit) {
-        this.terminate();
+Sprite.prototype.setFrameTime = function(frameTime) {
+    if(frameTime > 0) {
+        this.frameTime = frameTime;
     }
 }

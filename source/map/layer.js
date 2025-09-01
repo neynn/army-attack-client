@@ -1,6 +1,6 @@
 export const Layer = function(width, height) {
     this.buffer = [];
-    this.opacity = 1;
+    this.alpha = 1;
     this.autoGenerate = false;
     this.width = width;
     this.height = height;
@@ -50,21 +50,13 @@ Layer.prototype.initBuffer = function(count) {
     }
 }
 
-Layer.prototype.getBuffer = function() {
-    return this.buffer;
-}
-
-Layer.prototype.getOpacity = function() {
-    return this.opacity;
-}
-
-Layer.prototype.setOpacity = function(opacity = 0) {
-    if(opacity < 0) {
-        this.opacity = 0;
-    } else if(opacity > 1) {
-        this.opacity = 1;
+Layer.prototype.setAlpha = function(alpha = 0) {
+    if(alpha < 0) {
+        this.alpha = 0;
+    } else if(alpha > 1) {
+        this.alpha = 1;
     } else {
-        this.opacity = opacity;
+        this.alpha = alpha;
     }
 }
 

@@ -119,13 +119,13 @@ ArmyCamera.prototype.update = function(gameContext, display) {
     this.drawDebris(tileManager, context, worldMap);
     this.drawOverlay(graphics, context, this.overlays[ArmyCamera.OVERLAY.MOVE]);
     this.drawOverlay(graphics, context, this.overlays[ArmyCamera.OVERLAY.ATTACK]);
-    this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.BOTTOM), realTime, deltaTime);
-    this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.MIDDLE), realTime, deltaTime);
+    this.drawSpriteBatchYSorted(display, spriteManager.getLayer(SpriteManager.LAYER.BOTTOM), realTime, deltaTime);
+    this.drawSpriteBatchYSorted(display, spriteManager.getLayer(SpriteManager.LAYER.MIDDLE), realTime, deltaTime);
     this.drawLayer(graphics, display, this.place);
     this.drawOverlay(graphics, context, this.overlays[ArmyCamera.OVERLAY.FIRE_MISSION]);
     this.drawOverlay(graphics, context, this.overlays[ArmyCamera.OVERLAY.RANGE]);
-    this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.TOP), realTime, deltaTime);
-    this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.UI), realTime, deltaTime);
+    this.drawSpriteBatchYSorted(display, spriteManager.getLayer(SpriteManager.LAYER.TOP), realTime, deltaTime);
+    this.drawSpriteBatchYSorted(display, spriteManager.getLayer(SpriteManager.LAYER.UI), realTime, deltaTime);
     this.drawDrops(display, worldMap);
     this.drawLayer(graphics, display, worldMap.getLayer(ArmyMap.LAYER.CLOUD));
 
@@ -144,16 +144,16 @@ ArmyCamera.prototype.debugMap = function(context, worldMap) {
     context.textAlign = "center";
 
     context.fillStyle = "#ff0000";
-    this.drawBufferData(context, worldMap.getLayer(ArmyMap.LAYER.TYPE).getBuffer(), scaleX, scaleY);
+    this.drawBufferData(context, worldMap.getLayer(ArmyMap.LAYER.TYPE).buffer, scaleX, scaleY);
 
     context.fillStyle = "#00ff00";
-    this.drawBufferData(context, worldMap.getLayer(ArmyMap.LAYER.TEAM).getBuffer(), this.tileWidth - scaleX, scaleY);
+    this.drawBufferData(context, worldMap.getLayer(ArmyMap.LAYER.TEAM).buffer, this.tileWidth - scaleX, scaleY);
 
     context.fillStyle = "#0000ff";
-    this.drawBufferData(context, this.border.getBuffer(), scaleX, this.tileHeight - scaleY);
+    this.drawBufferData(context, this.border.buffer, scaleX, this.tileHeight - scaleY);
 
     context.fillStyle = "#ffff00";
-    this.drawBufferData(context, worldMap.getLayer(ArmyMap.LAYER.GROUND).getBuffer(), this.tileWidth - scaleX, this.tileHeight - scaleY);
+    this.drawBufferData(context, worldMap.getLayer(ArmyMap.LAYER.GROUND).buffer, this.tileWidth - scaleX, this.tileHeight - scaleY);
 
     this.drawMapOutlines(context);
 }

@@ -29,8 +29,8 @@ const createPlayerCamera = function(gameContext) {
     const context = renderer.createContext("PLAYER_CAMERA", camera);
 
     //context.setDisplayMode(CameraContext.DISPLAY_MODE.RESOLUTION_FIXED);
-    //context.setScaleMode(CameraContext.SCALE_MODE.NONE);
-    //context.setResolution(600, 600);
+    //context.setScaleMode(CameraContext.SCALE_MODE.WHOLE);
+    //context.setResolution(300, 280);
     context.setPositionMode(CameraContext.POSITION_MODE.AUTO_CENTER);
 
     camera.bindViewport();

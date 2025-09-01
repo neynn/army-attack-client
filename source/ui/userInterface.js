@@ -1,6 +1,6 @@
 import { SwapSet } from "../util/swapSet.js";
-import { createFadeInEffect } from "../effects/example/fadeIn.js";
-import { createFadeOutEffect } from "../effects/example/fadeOut.js";
+import { FadeInEffect } from "../effects/example/fadeIn.js";
+import { FadeOutEffect } from "../effects/example/fadeOut.js";
 import { TextElement } from "./elements/textElement.js";
 import { UICollider } from "./uiCollider.js";
 
@@ -19,10 +19,10 @@ UserInterface.STATE = {
     VISIBLE_NO_INTERACT: 2
 };
 
-UserInterface.EFFECT_CLASS = {
-    "FADE_IN": createFadeInEffect,
-    "FADE_OUT": createFadeOutEffect 
-};
+UserInterface.EFFECT_TYPE = {
+    FADE_IN: "FADE_IN",
+    FADE_OUT: "FADE_OUT"
+}
 
 UserInterface.prototype.clear = function() {
     this.elements.forEach(element => element.closeGraph());
@@ -183,12 +183,20 @@ UserInterface.prototype.addEffects = function(gameContext, element, effectList) 
 
     for(let i = 0; i < effectList.length; i++) {
         const { type, value, threshold } = effectList[i];
-        const effectBuilder = UserInterface.EFFECT_CLASS[type];
 
-        if(effectBuilder) {
-            const effect = effectBuilder(element, value, threshold);
-
-            effects.addEffect(effect);
+        switch(type) {
+            case UserInterface.EFFECT_TYPE.FADE_IN: {
+                effects.addEffect(new FadeInEffect(element, value, threshold));
+                break;
+            }
+            case UserInterface.EFFECT_TYPE.FADE_OUT: {
+                effects.addEffect(new FadeOutEffect(element, value, threshold));
+                break;
+            }
+            default: {
+                console.log(`EffectType ${type} does not exist!`);
+                break;
+            }
         }
     }
 }

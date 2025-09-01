@@ -1,30 +1,78 @@
-import { SHAPE, TWO_PI } from "../../math/constants.js";
+import { getRGBAString } from "../../graphics/helpers.js";
+import { SHAPE } from "../../math/constants.js";
 import { UICollider } from "../uiCollider.js";
-import { UIColorHandler } from "../uiColorHandler.js";
 import { UIElement } from "../uiElement.js";
 
 export const Button = function(DEBUG_NAME) {
     UIElement.call(this, DEBUG_NAME);
 
-    this.customRenders = [];
     this.shape = SHAPE.RECTANGLE;
     this.collider = new UICollider();
-
-    this.background = new UIColorHandler();
-    this.highlight = new UIColorHandler();
-    this.outline = new UIColorHandler();
+    this.drawBackground = false;
+    this.drawHighlight = false;
+    this.drawOutline = true;
+    this.drawCustom = true;
+    this.backgroundColor = getRGBAString(0, 0, 0, 0);
+    this.highlightColor = getRGBAString(200, 200, 200, 64);
+    this.outlineColor = getRGBAString(255, 255, 255, 255);
     this.outlineSize = 1;
+    this.customRenders = [];
 
-    this.highlight.color.setColorRGBA(200, 200, 200, 64);
-    this.outline.color.setColorRGBA(255, 255, 255, 255);
-    this.outline.enable();
-
-    this.collider.events.on(UICollider.EVENT.FIRST_COLLISION, (mouseX, mouseY, mouseRange) => this.highlight.enable(), { permanent: true });
-    this.collider.events.on(UICollider.EVENT.LAST_COLLISION, (mouseX, mouseY, mouseRange) => this.highlight.disable(), { permanent: true });
+    this.collider.events.on(UICollider.EVENT.FIRST_COLLISION, (mouseX, mouseY, mouseRange) => this.enableOverlay(Button.OVERLAY.HIGHLIGHT), { permanent: true });
+    this.collider.events.on(UICollider.EVENT.LAST_COLLISION, (mouseX, mouseY, mouseRange) => this.disableOverlay(Button.OVERLAY.HIGHLIGHT), { permanent: true });
 }
+
+Button.OVERLAY = {
+    BACKGROUND: 0,
+    HIGHLIGHT: 1,
+    OUTLINE: 2,
+    CUSTOM: 3
+};
 
 Button.prototype = Object.create(UIElement.prototype);
 Button.prototype.constructor = Button;
+
+Button.prototype.disableOverlay = function(type) {
+    switch(type) {
+        case Button.OVERLAY.BACKGROUND: {
+            this.drawBackground = false;
+            break;
+        }
+        case Button.OVERLAY.HIGHLIGHT: {
+            this.drawHighlight = false;
+            break;
+        }
+        case Button.OVERLAY.OUTLINE: {
+            this.drawOutline = false;
+            break;
+        }
+        case Button.OVERLAY.CUSTOM: {
+            this.drawCustom = false;
+            break;
+        }
+    }
+}
+
+Button.prototype.enableOverlay = function(type) {
+    switch(type) {
+        case Button.OVERLAY.BACKGROUND: {
+            this.drawBackground = true;
+            break;
+        }
+        case Button.OVERLAY.HIGHLIGHT: {
+            this.drawHighlight = true;
+            break;
+        }
+        case Button.OVERLAY.OUTLINE: {
+            this.drawOutline = true;
+            break;
+        }
+        case Button.OVERLAY.CUSTOM: {
+            this.drawCustom = true;
+            break;
+        }
+    }
+}
 
 Button.prototype.setShape = function(shape) {
     switch(shape) {
@@ -46,28 +94,33 @@ Button.prototype.onDebug = function(display, localX, localY) {
     
     context.globalAlpha = 0.2;
     context.fillStyle = "#ff00ff";
-
-    switch(this.shape) {
-        case SHAPE.RECTANGLE: {
-            context.fillRect(localX, localY, this.width, this.height);
-            break;
-        }
-        case SHAPE.CIRCLE: {
-            context.beginPath();
-            context.arc(localX, localY, this.width, 0, TWO_PI);
-            context.fill();
-            break;
-        }
-    }
+    display.drawShape(this.shape, localX, localY, this.width, this.height);
 }
 
 Button.prototype.onDraw = function(display, localX, localY) {
     const { context } = display;
 
-    this.background.drawColor(context, this.shape, localX, localY, this.width, this.height);
-    this.customRenders.forEach(onDraw => onDraw(context, localX, localY));
-    this.highlight.drawColor(context, this.shape, localX, localY, this.width, this.height);
-    this.outline.drawStroke(context, this.outlineSize, this.shape, localX, localY, this.width, this.height);
+    if(this.drawBackground) {
+        context.fillStyle = this.backgroundColor;
+        display.drawShape(this.shape, localX, localY, this.width, this.height);
+    }
+
+    if(this.drawCustom) {
+        for(let i = 0; i < this.customRenders.length; i++) {
+            this.customRenders[i](context, localX, localY);
+        }
+    }
+
+    if(this.drawHighlight) {
+        context.fillStyle = this.highlightColor;
+        display.drawShape(this.shape, localX, localY, this.width, this.height);
+    }
+
+    if(this.drawOutline) {
+        context.strokeStyle = this.outlineColor;
+        context.lineWidth = this.outlineSize;
+        display.strokeShape(this.shape, localX, localY, this.width, this.height);
+    }
 }
 
 Button.prototype.clearCustomRenders = function() {

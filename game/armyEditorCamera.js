@@ -51,10 +51,10 @@ ArmyEditorCamera.prototype.update = function(gameContext, display) {
     this.drawLayer(graphics, display, worldMap.getLayer(ArmyMap.LAYER.GROUND));
     this.drawLayer(graphics, display, worldMap.getLayer(ArmyMap.LAYER.DECORATION));
     this.drawDebris(tileManager, context, worldMap);
-    this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.BOTTOM), realTime, deltaTime);
-    this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.MIDDLE), realTime, deltaTime);
-    this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.TOP), realTime, deltaTime);
-    this.drawSpriteLayer(display, spriteManager.getLayer(SpriteManager.LAYER.UI), realTime, deltaTime);
+    this.drawSpriteBatchYSorted(display, spriteManager.getLayer(SpriteManager.LAYER.BOTTOM), realTime, deltaTime);
+    this.drawSpriteBatchYSorted(display, spriteManager.getLayer(SpriteManager.LAYER.MIDDLE), realTime, deltaTime);
+    this.drawSpriteBatchYSorted(display, spriteManager.getLayer(SpriteManager.LAYER.TOP), realTime, deltaTime);
+    this.drawSpriteBatchYSorted(display, spriteManager.getLayer(SpriteManager.LAYER.UI), realTime, deltaTime);
     this.drawLayer(graphics, display, worldMap.getLayer(ArmyMap.LAYER.CLOUD));
     this.postDraw(gameContext, context);
 
@@ -73,13 +73,13 @@ ArmyEditorCamera.prototype.debugMap = function(context, worldMap) {
     context.textAlign = "center";
 
     context.fillStyle = "#ff0000";
-    this.drawBufferData(context, worldMap.getLayer("type").getBuffer(), scaleX, scaleY);
+    this.drawBufferData(context, worldMap.getLayer("type").buffer, scaleX, scaleY);
 
     context.fillStyle = "#00ff00";
-    this.drawBufferData(context, worldMap.getLayer("team").getBuffer(), this.tileWidth - scaleX, scaleY);
+    this.drawBufferData(context, worldMap.getLayer("team").buffer, this.tileWidth - scaleX, scaleY);
 
     context.fillStyle = "#ffff00";
-    this.drawBufferData(context, worldMap.getLayer("ground").getBuffer(), this.tileWidth - scaleX, this.tileHeight - scaleY);
+    this.drawBufferData(context, worldMap.getLayer("ground").buffer, this.tileWidth - scaleX, this.tileHeight - scaleY);
 
     this.drawMapOutlines(context);
 }

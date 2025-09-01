@@ -52,19 +52,9 @@ UICollider.prototype.setSize = function(width, height) {
 
 UICollider.prototype.isColliding = function(mouseX, mouseY, mouseRange) {
     switch(this.shape) {
-        case SHAPE.RECTANGLE: {
-            const isColliding = isRectangleRectangleIntersect(this.positionX, this.positionY, this.width, this.height, mouseX, mouseY, mouseRange, mouseRange);
-
-            return isColliding;
-        }
-        case SHAPE.CIRCLE: {
-            const isColliding = isCircleCicleIntersect(this.positionX, this.positionY, this.width, mouseX, mouseY, mouseRange);
-
-            return isColliding;
-        }
-        default: {
-            return false;
-        }
+        case SHAPE.RECTANGLE: return isRectangleRectangleIntersect(this.positionX, this.positionY, this.width, this.height, mouseX, mouseY, mouseRange, mouseRange);
+        case SHAPE.CIRCLE: return isCircleCicleIntersect(this.positionX, this.positionY, this.width, mouseX, mouseY, mouseRange);
+        default: return false;
     }
 }
 

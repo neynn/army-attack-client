@@ -10,16 +10,16 @@ ButtonHandler.prototype.updateLayers = function(worldMap) {
         this.buttons.forEach((button) => {
             const { layerID, opacity } = button;
 
-            worldMap.setLayerOpacity(layerID, opacity);
+            worldMap.setLayerAlpha(layerID, opacity);
         });
     } else {
         this.buttons.forEach((button) => {
             const { state, layerID, opacity } = button;
 
             if(state === EditorButton.STATE.VISIBLE) {
-                worldMap.setLayerOpacity(layerID, 0.5);
+                worldMap.setLayerAlpha(layerID, 0.5);
             } else {
-                worldMap.setLayerOpacity(layerID, opacity);
+                worldMap.setLayerAlpha(layerID, opacity);
             }
         })
     }
@@ -28,25 +28,22 @@ ButtonHandler.prototype.updateLayers = function(worldMap) {
 ButtonHandler.prototype.updateButtonTextColor = function(button, controller, userInterface) {
     const text = userInterface.getElement(button.textID);
 
-    if(!text) {
-        return;
-    }
-
-    const { style } = text;
-    const { color } = style;
-    
-    switch(button.state) {
-        case EditorButton.STATE.EDIT: {
-            color.setColorArray(controller.textColorEdit);
-            break;
-        }
-        case EditorButton.STATE.HIDDEN: {   
-            color.setColorArray(controller.textColorHide);
-            break;
-        }
-        case EditorButton.STATE.VISIBLE: {
-            color.setColorArray(controller.textColorView);
-            break;
+    if(text) {
+        const { style } = text;
+        
+        switch(button.state) {
+            case EditorButton.STATE.EDIT: {
+                style.setColorArray(controller.textColorEdit);
+                break;
+            }
+            case EditorButton.STATE.HIDDEN: {   
+                style.setColorArray(controller.textColorHide);
+                break;
+            }
+            case EditorButton.STATE.VISIBLE: {
+                style.setColorArray(controller.textColorView);
+                break;
+            }
         }
     }
 }

@@ -1,28 +1,25 @@
-import { Graph } from "../../graphics/graph.js";
 import { clampValue } from "../../math/math.js";
 import { Effect } from "../effect.js";
 
-export const createFadeInEffect = function(drawable, increment = 0.1, limit = 1) {
-    if(!(drawable instanceof Graph)) {
-        return null;
-    }
+export const FadeInEffect = function(target, rate = 1, limit = 1) {
+    Effect.call(this);
 
-    const effect = new Effect();
-    const maximum = clampValue(limit, 1, 0);
+    this.target = target;
+    this.rate = rate;
+    this.limit = clampValue(limit, 1, 0);
+}
 
-    effect.update = (context, deltaTime) => {
-        const currentOpactiy = drawable.getOpacity();
-        const nextOpacity = currentOpactiy + (increment * deltaTime);
-        const clampedOpactiy = clampValue(nextOpacity, maximum, 0);
+FadeInEffect.prototype = Object.create(Effect.prototype);
+FadeInEffect.prototype.constructor = FadeInEffect;
 
-        drawable.setOpacity(clampedOpactiy);
-    };
+FadeInEffect.prototype.update = function(display, deltaTime) {
+    const currentOpactiy = this.target.getOpacity();
+    const nextOpacity = currentOpactiy + (this.rate * deltaTime);
+    const clampedOpactiy = clampValue(nextOpacity, this.limit, 0);
 
-    effect.isFinished = () => {
-        const currentOpactiy = drawable.getOpacity();
+    this.target.setOpacity(clampedOpactiy);
+}
 
-        return currentOpactiy >= maximum;
-    }
-
-    return effect;
+FadeInEffect.prototype.isFinished = function() {
+    return this.target.getOpacity() >= this.limit;
 }

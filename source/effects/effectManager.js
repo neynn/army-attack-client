@@ -1,40 +1,26 @@
-import { Effect } from "./effect.js";
-
 export const EffectManager = function() {
-    this.activeEffects = new Map();
+    this.effects = [];
 }
 
 EffectManager.prototype.update = function(display, deltaTime) {
-    const deleteable = [];
+    const finishedEffects = [];
 
-    this.activeEffects.forEach(effect => {
+    for(let i = 0; i < this.effects.length; i++) {
+        const effect = this.effects[i];
+
         effect.update(display, deltaTime);
 
-        const effectID = effect.getID();
-        const isFinished = effect.isFinished();
-
-        if(isFinished) {
-            deleteable.push(effectID);
+        if(effect.isFinished()) {
+            finishedEffects.push(i);
         }
-    });
+    }
 
-    for(const effectID of deleteable) {
-        this.removeEffect(effectID);
+    for(let i = finishedEffects.length - 1; i >= 0; i--) {
+        this.effects[i] = this.effects[this.effects.length - 1];
+        this.effects.pop();
     }
 }
 
 EffectManager.prototype.addEffect = function(effect) {
-    if(!(effect instanceof Effect)) {
-        return;
-    }
-    
-    const effectID = effect.getID();
-
-    this.activeEffects.set(effectID, effect);
-}
-
-EffectManager.prototype.removeEffect = function(effectID) {
-    if(this.activeEffects.has(effectID)) {
-        this.activeEffects.delete(effectID);
-    }
+    this.effects.push(effect);
 }

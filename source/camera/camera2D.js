@@ -149,21 +149,18 @@ Camera2D.prototype.drawOverlay = function(graphics, context, overlay) {
 }
 
 Camera2D.prototype.drawLayer = function(graphics, display, layer) {
-    if(layer) {
-        const opacity = layer.getOpacity();
+    const { alpha, buffer } = layer;
+    
+    if(alpha > 0) {
+        const { context } = display;
+        const previousAlpha = context.globalAlpha;
 
-        if(opacity > 0) {
-            const { context } = display;
-            const buffer = layer.getBuffer();
-            const previousAlpha = context.globalAlpha;
+        display.unflip();
+        display.setAlpha(alpha);
 
-            display.unflip();
-            context.globalAlpha = opacity;
+        this.drawTileBuffer(graphics, context, buffer);
 
-            this.drawTileBuffer(graphics, context, buffer);
-
-            context.globalAlpha = previousAlpha;
-        }
+        display.setAlpha(previousAlpha);
     }
 }
 
@@ -208,16 +205,38 @@ Camera2D.prototype.drawSprite = function(display, sprite, realTime, deltaTime) {
     }
 }
 
-Camera2D.prototype.drawSpriteLayer = function(display, spriteLayer, realTime, deltaTime) {
+Camera2D.prototype.drawSpriteBatch = function(display, spriteBatch, realTime, deltaTime) {
     const viewportLeftEdge = this.viewportX;
     const viewportTopEdge = this.viewportY;
     const viewportRightEdge = viewportLeftEdge + this.viewportWidth;
-    const viewportBottomEdge = viewportTopEdge + this.viewportHeight;
-    const visibleSprites = [];
-    const length = spriteLayer.length;
+    const viewportBottomEdge = viewportTopEdge + this.viewportHeight
+    const length = spriteBatch.length;
 
     for(let i = 0; i < length; ++i) {
-        const sprite = spriteLayer[i];
+        const sprite = spriteBatch[i];
+        const isVisible = sprite.isVisible(viewportRightEdge, viewportLeftEdge, viewportBottomEdge, viewportTopEdge);
+
+        if(isVisible) {
+            sprite.update(realTime, deltaTime);
+            sprite.draw(display, viewportLeftEdge, viewportTopEdge);
+
+            if(Renderer.DEBUG.SPRITES) {
+                sprite.debug(display, viewportLeftEdge, viewportTopEdge);
+            }
+        }
+    }
+}
+
+Camera2D.prototype.drawSpriteBatchYSorted = function(display, spriteBatch, realTime, deltaTime) {
+    const viewportLeftEdge = this.viewportX;
+    const viewportTopEdge = this.viewportY;
+    const viewportRightEdge = viewportLeftEdge + this.viewportWidth;
+    const viewportBottomEdge = viewportTopEdge + this.viewportHeight
+    const length = spriteBatch.length;
+    const visibleSprites = [];
+
+    for(let i = 0; i < length; ++i) {
+        const sprite = spriteBatch[i];
         const isVisible = sprite.isVisible(viewportRightEdge, viewportLeftEdge, viewportBottomEdge, viewportTopEdge);
 
         if(isVisible) {

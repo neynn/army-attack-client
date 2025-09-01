@@ -234,14 +234,12 @@ WorldMap.prototype.addEntity = function(tileX, tileY, rangeX, rangeY, entityID) 
     }
 }
 
-WorldMap.prototype.setLayerOpacity = function(layerID, opacity) {
+WorldMap.prototype.setLayerAlpha = function(layerID, alpha) {
     const layer = this.layers.get(layerID);
 
-    if(!layer || opacity === undefined) {
-        return;
+    if(layer && alpha !== undefined) {
+        layer.setAlpha(alpha);
     }
-
-    layer.setOpacity(opacity);
 } 
 
 WorldMap.prototype.resize = function(width, height) {

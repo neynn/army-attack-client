@@ -1,7 +1,7 @@
-import { Color } from "./color.js";
+import { getRGBAString, getRGBAStringByArray } from "./helpers.js";
 
 export const TextStyle = function() {
-    this.color = new Color();
+    this.color = getRGBAString(0, 0, 0, 255);
     this.fontSize = TextStyle.DEFAULT.FONT_SIZE;
     this.fontType = TextStyle.DEFAULT.FONT_TYPE;
     this.baseline = TextStyle.TEXT_BASELINE.MIDDLE;
@@ -64,10 +64,19 @@ TextStyle.prototype.setFontSize = function(fontSize) {
     this.updateFont();
 }
 
-TextStyle.prototype.drawText = function(context, text, positionX, positionY) {
+TextStyle.prototype.apply = function(context) {
     context.font = this.font;
-    context.fillStyle = this.color.rgba;
+    context.fillStyle = this.color;
     context.textAlign = this.alignment;
     context.textBaseline = this.baseline;
-    context.fillText(text, positionX, positionY);
+}
+
+TextStyle.prototype.setColor = function(r, g, b, a) {
+    this.color = getRGBAString(r, g, b, a);
+}
+
+TextStyle.prototype.setColorArray = function(color) {
+    if(color) {
+        this.color = getRGBAStringByArray(color);
+    }
 }
