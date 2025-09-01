@@ -1,8 +1,8 @@
 import { clampValue } from "../../math/math.js";
 import { Effect } from "../effect.js";
 
-export const FadeInEffect = function(target, rate = 1, limit = 1) {
-    Effect.call(this);
+export const FadeInEffect = function(id, target, rate = 1, limit = 1) {
+    Effect.call(this, id);
 
     this.target = target;
     this.rate = rate;

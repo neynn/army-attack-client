@@ -8,6 +8,11 @@ export const Texture = function(path, regions) {
     this.state = Texture.STATE.EMPTY;
 }
 
+Texture.TYPE = {
+    BITMAP: 0,
+    RAW: 1
+};
+
 Texture.STATE = {
     EMPTY: 0,
     LOADING: 1,
@@ -22,6 +27,24 @@ Texture.ERROR_CODE = {
     ERROR_IMAGE_IS_LOADING: "IS_LOADING"
 };
 
+Texture.createImageData = function(bitmap) {
+    const { width, height } = bitmap;
+    const canvas = document.createElement("canvas");
+
+    canvas.width = width;
+    canvas.height = height;
+
+    const context = canvas.getContext("2d");
+
+    context.imageSmoothingEnabled = false;
+    context.drawImage(bitmap, 0, 0);
+
+    const imageData = context.getImageData(0, 0, width, height);
+    const pixelArray = imageData.data;
+
+    return pixelArray;
+}
+
 Texture.prototype.isState = function(state) {
     return this.state === state;
 }
@@ -31,40 +54,55 @@ Texture.prototype.clear = function() {
     this.state = Texture.STATE.EMPTY;
 }
 
-Texture.prototype.requestBitmap = function() {
+Texture.prototype.getLoadingError = function() {
     if(!this.path) {
-        return Promise.reject(Texture.ERROR_CODE.ERROR_NO_PATH);
+        return Texture.ERROR_CODE.ERROR_NO_PATH;
     }
 
     if(this.state === Texture.STATE.LOADING) {
-        return Promise.reject(Texture.ERROR_CODE.ERROR_IMAGE_IS_LOADING);
+        return Texture.ERROR_CODE.ERROR_IMAGE_IS_LOADING;
     }
 
     if(this.bitmap) {
-        return Promise.reject(Texture.ERROR_CODE.ERROR_IMAGE_ALREADY_LOADED);
+        return Texture.ERROR_CODE.ERROR_IMAGE_ALREADY_LOADED;
+    }
+
+    return Texture.ERROR_CODE.NONE;
+}
+
+Texture.prototype.requestBitmap = function(type) {
+    const errorCode = this.getLoadingError();
+
+    if(errorCode !== Texture.ERROR_CODE.NONE) {
+        return Promise.reject(errorCode);
     }
 
     this.state = Texture.STATE.LOADING;
 
     return fetch(this.path)
-    .then((response) => this.onResponse(response))
+    .then((response) => {
+        if(response.ok) {
+            return response.blob();
+        }
+
+        return Promise.reject(Texture.ERROR_CODE.ERROR_IMAGE_LOAD);
+    })
     .then((blob) => createImageBitmap(blob))
-    .catch((error) => this.onLoadError(error));
+    .then((bitmap) => {
+        this.setImageData(bitmap, bitmap.width, bitmap.height);
+
+        if(type === Texture.TYPE.RAW) {
+            return Promise.resolve(Texture.createImageData(bitmap));
+        }
+
+        return Promise.resolve(bitmap);
+    })
+    .catch((error) => {
+        this.state = Texture.STATE.EMPTY;
+
+        return Promise.reject(error);
+    });
 };
-
-Texture.prototype.onResponse = function(response) {
-    if(response.ok) {
-        return response.blob();
-    }
-
-    return Promise.reject(Texture.ERROR_CODE.ERROR_IMAGE_LOAD);
-}
-
-Texture.prototype.onLoadError = function(error) {
-    this.state = Texture.STATE.EMPTY;
-
-    return Promise.reject(error);
-}
 
 Texture.prototype.setImageData = function(bitmap, width, height) {
     this.bitmap = bitmap;

@@ -2,6 +2,7 @@ import { FadeInEffect } from "./example/fadeIn.js";
 import { FadeOutEffect } from "./example/fadeOut.js";
 
 export const EffectManager = function() {
+    this.nextID = 0;
     this.effects = [];
 }
 
@@ -39,11 +40,11 @@ EffectManager.prototype.addEffects = function(graph, effects) {
 
         switch(type) {
             case EffectManager.EFFECT_TYPE.FADE_IN: {
-                this.addEffect(new FadeInEffect(graph, value, threshold));
+                this.addEffect(new FadeInEffect(this.nextID++, graph, value, threshold));
                 break;
             }
             case EffectManager.EFFECT_TYPE.FADE_OUT: {
-                this.addEffect(new FadeOutEffect(graph, value, threshold));
+                this.addEffect(new FadeOutEffect(this.nextID++, graph, value, threshold));
                 break;
             }
             default: {

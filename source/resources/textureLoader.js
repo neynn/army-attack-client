@@ -4,19 +4,12 @@ import { PathHandler } from "./pathHandler.js";
 
 export const TextureLoader = function() {
     this.textures = new Map();
-    this.textureType = TextureLoader.TEXTURE_TYPE.BITMAP;
-    this.autoLoad = true;
-
     this.events = new EventEmitter();
+
     this.events.listen(TextureLoader.EVENT.TEXTURE_LOAD);
     this.events.listen(TextureLoader.EVENT.TEXTURE_UNLOAD);
     this.events.listen(TextureLoader.EVENT.TEXTURE_ERROR);
 }
-
-TextureLoader.TEXTURE_TYPE = {
-    BITMAP: 0,
-    RAW: 1
-};
 
 TextureLoader.EVENT = {
     TEXTURE_LOAD: "TEXTURE_LOAD",
@@ -32,24 +25,6 @@ TextureLoader.SIZE = {
 TextureLoader.DEFAULT = {
     FILE_TYPE: ".png"
 };
-
-TextureLoader.createImageData = function(bitmap) {
-    const { width, height } = bitmap;
-    const canvas = document.createElement("canvas");
-
-    canvas.width = width;
-    canvas.height = height;
-
-    const context = canvas.getContext("2d");
-
-    context.imageSmoothingEnabled = false;
-    context.drawImage(bitmap, 0, 0);
-
-    const imageData = context.getImageData(0, 0, width, height);
-    const pixelArray = imageData.data;
-
-    return pixelArray;
-}
 
 TextureLoader.prototype.getTexture = function(textureID) {
     const texture = this.textures.get(textureID);
@@ -80,53 +55,17 @@ TextureLoader.prototype.createTexture = function(textureID, config) {
     }
 }
 
-TextureLoader.prototype.requestBitmap = function(textureID) {
+TextureLoader.prototype.requestBitmap = async function(textureID) {
     const texture = this.textures.get(textureID);
 
-    if(!texture || texture.state !== Texture.STATE.EMPTY) {
-        return;
-    }
-
-    texture.requestBitmap()
-    .then((bitmap) => this.onBitmapLoad(textureID, texture, bitmap))
-    .catch((error) => this.events.emit(TextureLoader.EVENT.TEXTURE_ERROR, textureID, error));
-}
-
-TextureLoader.prototype.onBitmapLoad = function(textureID, texture, bitmap) {
-    let imageData = bitmap;
-
-    if(this.textureType === TextureLoader.TEXTURE_TYPE.RAW) {
-        imageData = TextureLoader.createImageData(bitmap);
-    }
-
-    texture.setImageData(bitmap, bitmap.width, bitmap.height);
-
-    this.events.emit(TextureLoader.EVENT.TEXTURE_LOAD, textureID, texture);
-}
-
-TextureLoader.prototype.getBitmap = function(textureID) {
-    const texture = this.textures.get(textureID);
-
-    if(!texture) {
-        return null;
-    }
-
-    const { state, bitmap } = texture;
-
-    switch(state) {
-        case Texture.STATE.EMPTY: {
-            if(this.autoLoad) {
-                this.requestBitmap(textureID);
-            }
-
-            return null;
-        }
-        case Texture.STATE.LOADING: {
-            return null;
-        }
-        case Texture.STATE.LOADED: {
-            return bitmap;
-        }
+    if(texture && texture.state === Texture.STATE.EMPTY) {
+        texture.requestBitmap(Texture.TYPE.BITMAP)
+        .then((result) => {
+            this.events.emit(TextureLoader.EVENT.TEXTURE_LOAD, textureID, texture);
+        })
+        .catch((error) => {
+            this.events.emit(TextureLoader.EVENT.TEXTURE_ERROR, textureID, error);
+        });
     }
 }
 

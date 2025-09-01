@@ -1,4 +1,4 @@
-import { PrettyJSON } from "./plugin/prettyJSON.js";
+import { PrettyJSON } from "./source/resources/prettyJSON.js";
 
 export const generateAnimations = function(fname, rName, resouces) {
     const regions = resouces.tiles[rName].regions;
