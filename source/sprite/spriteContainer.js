@@ -1,3 +1,5 @@
+import { Texture } from "../resources/texture.js";
+
 export const SpriteContainer = function(texture, bounds, frameTime) {
     this.texture = texture;
     this.bounds = bounds;
@@ -7,12 +9,18 @@ export const SpriteContainer = function(texture, bounds, frameTime) {
     this.frames = [];
 }
 
+SpriteContainer.prototype.isLoaded = function() {
+    return this.texture.isState(Texture.STATE.LOADED);
+}
+
 SpriteContainer.prototype.initFrames = function(frames) {
     for(let i = 0; i < frames.length; i++) {
         const region = this.texture.getRegion(frames[i]);
 
         if(region) {
             this.frames.push(region);
+        } else {
+            //TODO: Log region error.
         }
     }
 

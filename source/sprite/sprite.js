@@ -1,12 +1,11 @@
 import { Graph } from "../graphics/graph.js";
 import { isRectangleRectangleIntersect } from "../math/math.js";
 
-export const Sprite = function(manager, index, DEBUG_NAME) {
+export const Sprite = function(index, DEBUG_NAME) {
     Graph.call(this, DEBUG_NAME);
     
-    this.manager = manager;
     this.index = index;
-    this.typeID = -1;
+    this.container = null;
     this.lastCallTime = 0;
     this.frameCount = 0;
     this.frameTime = 1;
@@ -32,23 +31,24 @@ Sprite.FLAG = {
     NONE: 0b00000000,
     FLIP: 1 << 0,
     STATIC: 1 << 1,
-    EXPIRE: 1 << 2
+    EXPIRE: 1 << 2,
+    DESTROY: 1 << 3
 };
 
 Sprite.prototype = Object.create(Graph.prototype);
 Sprite.prototype.constructor = Sprite;
 
 Sprite.prototype.onDraw = function(display, localX, localY) {
-    const container = this.manager.graphics.getContainer(this.typeID);
-
-    if(!container) {
+    if(!this.container) {
+        this.drawPlaceholder(display, localX, localY);
         return;
     }
 
-    const { texture, frames, frameCount } = container;
+    const { texture, frames } = this.container;
     const { bitmap } = texture;
 
-    if(frameCount === 0 || !bitmap) {
+    if(!bitmap) {
+        this.drawPlaceholder(display, localX, localY);
         return;
     }
 
@@ -109,12 +109,33 @@ Sprite.prototype.onDebug = function(display, localX, localY) {
     }
 }
 
+Sprite.prototype.drawPlaceholder = function(display, localX, localY) {
+    const { context } = display;
+    const isFlipped = (this.flags & Sprite.FLAG.FLIP) !== 0;
+
+    let renderX = localX;
+    let renderY = localY;
+
+    if(isFlipped) {
+        renderX = (localX - this.boundsX) * -1;
+        renderY = localY + this.boundsY;
+        display.flip();
+    } else {
+        renderX = localX + this.boundsX;
+        renderY = localY + this.boundsY;
+        display.unflip();
+    }
+
+    context.fillStyle = Sprite.DEBUG.COLOR;
+    context.fillRect(renderX, renderY, this.boundsW, this.boundsH);
+}
+
 Sprite.prototype.getIndex = function() {
     return this.index;
 }
 
 Sprite.prototype.reset = function() {
-    this.typeID = -1;
+    this.container = null;
     this.lastCallTime = 0;
     this.frameCount = 0;
     this.frameTime = 1;
@@ -131,39 +152,20 @@ Sprite.prototype.reset = function() {
     this.show();
 }
 
-Sprite.prototype.isEqual = function(typeID) {
-    return typeID === this.typeID;
-}
+Sprite.prototype.init = function(container, lastCallTime, DEBUG_NAME) {
+    if(this.container !== container) {
+        const { frameTime, frameCount, bounds } = container;
+        const { x, y, w, h } = bounds;
 
-Sprite.prototype.swapTexture = function(sprite) {
-    const typeID = sprite.typeID;
-    const frameCount = sprite.frameCount;
-    const frameTime = sprite.frameTime;
-    const lastCallTime = sprite.lastCallTime;
-    const bX = sprite.boundsX;
-    const bY = sprite.boundsY;
-    const bW = sprite.boundsW;
-    const bH = sprite.boundsH;
-
-    sprite.init(sprite.DEBUG_NAME, this.typeID, this.frameCount, this.frameTime, this.lastCallTime);
-    sprite.setBounds(this.boundsX, this.boundsY, this.boundsW, this.boundsH);
-
-    this.init(this.DEBUG_NAME, typeID, frameCount, frameTime, lastCallTime);
-    this.setBounds(bX, bY, bW, bH);
-}
-
-Sprite.prototype.init = function(DEBUG_NAME, typeID, frameCount, frameTime, lastCallTime) {
-    this.DEBUG_NAME = DEBUG_NAME;
-    this.typeID = typeID;
-    this.frameCount = frameCount;
-    this.frameTime = frameTime;
-    this.lastCallTime = lastCallTime;
-    this.currentFrame = 0;
-    this.floatFrame = 0;
-}
-
-Sprite.prototype.setLastCallTime = function(lastCallTime) {
-    this.lastCallTime = lastCallTime;
+        this.container = container;
+        this.lastCallTime = lastCallTime;
+        this.frameCount = frameCount;
+        this.frameTime = frameTime;
+        this.floatFrame = 0;
+        this.currentFrame = 0;
+        this.DEBUG_NAME = DEBUG_NAME;
+        this.setBounds(x, y, w, h);
+    }
 }
 
 Sprite.prototype.setBounds = function(x, y, w, h) {
@@ -229,8 +231,12 @@ Sprite.prototype.setFrame = function(frameIndex = this.currentFrame) {
 Sprite.prototype.terminate = function() {
     this.hide();
     this.freeze();
-    this.manager.destroySprite(this.index);
+    this.flags |= Sprite.FLAG.DESTROY;
 }
+
+Sprite.prototype.hasFlag = function(flag) {
+    return (this.flags & flag) !== 0;
+} 
 
 Sprite.prototype.expire = function(loops = 0) {
     this.loopLimit = this.loopCount + loops;

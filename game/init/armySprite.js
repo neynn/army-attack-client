@@ -41,15 +41,15 @@ ArmySprite.TEXT = {
 
 ArmySprite.prototype.onDebug = function(display, localX, localY) {
     if(this.card) {
-        this.card.onDebug(display, localX, localY);
+        this.card.onDebug(display, localX + this.cardX, localY + this.cardY);
     }
 
     if(this.attention) {
-        this.attention.onDebug(display, localX, localY);
+        this.attention.onDebug(display, localX + this.attentionX, localY + this.attentionY);
     }
 
     if(this.other) {
-        this.other.onDebug(display, localX, localY);
+        this.other.onDebug(display, localX + this.otherX, localY + this.otherY);
     }
 }
 

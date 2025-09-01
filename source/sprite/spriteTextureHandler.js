@@ -3,8 +3,7 @@ import { SpriteContainer } from "./spriteContainer.js";
 
 export const SpriteTextureHandler = function() {
     this.loader = new TextureLoader();
-    this.indexMap = new Map();
-    this.textureMap = new Map();
+    this.spriteMap = new Map();
     this.containers = [];
 }
 
@@ -17,23 +16,25 @@ SpriteTextureHandler.prototype.getContainer = function(index) {
 }
 
 SpriteTextureHandler.prototype.getContainerIndex = function(spriteID) {
-    const index = this.indexMap.get(spriteID);
+    const data = this.spriteMap.get(spriteID);
 
-    if(index === undefined) {
+    if(!data) {
         return -1;
     }
+
+    const { index, textureID } = data;
 
     return index;
 }
 
 SpriteTextureHandler.prototype.loadBitmap = function(spriteID) {
-    const textureID = this.textureMap.get(spriteID);
+    const data = this.spriteMap.get(spriteID);
 
-    if(!textureID) {
-        return;
+    if(data) {
+        const { index, textureID } = data;
+
+        this.loader.requestBitmap(textureID);
     }
-
-    this.loader.requestBitmap(textureID);
 }
 
 SpriteTextureHandler.prototype.load = function(textures, sprites) {
@@ -58,7 +59,9 @@ SpriteTextureHandler.prototype.load = function(textures, sprites) {
         }
 
         this.containers.push(spriteContainer);
-        this.indexMap.set(spriteID, this.containers.length - 1);
-        this.textureMap.set(spriteID, texture);
+        this.spriteMap.set(spriteID, {
+            "index": this.containers.length - 1,
+            "textureID": texture
+        });
     }
 }

@@ -8,13 +8,6 @@ export const Texture = function(path, regions) {
     this.state = Texture.STATE.EMPTY;
 }
 
-Texture.EMPTY_REGION = {
-    "x": 0,
-    "y": 0,
-    "w": 0,
-    "h": 0
-};
-
 Texture.STATE = {
     EMPTY: 0,
     LOADING: 1,
@@ -28,6 +21,10 @@ Texture.ERROR_CODE = {
     ERROR_IMAGE_ALREADY_LOADED: "ALREADY_LOADED",
     ERROR_IMAGE_IS_LOADING: "IS_LOADING"
 };
+
+Texture.prototype.isState = function(state) {
+    return this.state === state;
+}
 
 Texture.prototype.clear = function() {
     this.bitmap = null;
@@ -96,7 +93,7 @@ Texture.prototype.getRegion = function(regionID) {
     const region = this.regions[regionID];
 
     if(!region) {
-        return Texture.EMPTY_REGION;
+        return null;
     }
 
     return region;

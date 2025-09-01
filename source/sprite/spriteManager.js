@@ -6,7 +6,7 @@ import { SpriteTextureHandler } from "./spriteTextureHandler.js";
 export const SpriteManager = function() {
     this.graphics = new SpriteTextureHandler();
     this.spriteTracker = new Set();
-    this.sprites = new ObjectPool(1024, (index) => new Sprite(this, index, index));
+    this.sprites = new ObjectPool(1024, (index) => new Sprite(index, "EMPTY_SPRITE"));
     this.sprites.allocate();
     this.sharedSprites = [];
     this.timestamp = 0;
@@ -51,6 +51,7 @@ SpriteManager.prototype.update = function(gameContext) {
     const { timer } = gameContext;
     const realTime = timer.getRealTime();
     const deltaTime = timer.getDeltaTime();
+    const removedSprites = [];
 
     this.timestamp = realTime;
 
@@ -59,6 +60,18 @@ SpriteManager.prototype.update = function(gameContext) {
         const sprite = this.getSprite(index);
 
         sprite.update(realTime, deltaTime);
+    }
+
+    for(const index of this.sprites.reservedElements) {
+        const sprite = this.sprites.elements[index];
+
+        if(sprite.hasFlag(Sprite.FLAG.DESTROY)) {
+            removedSprites.push(index);
+        }
+    }
+
+    for(let i = 0; i < removedSprites.length; i++) {
+        this.destroySprite(removedSprites[i]);
     }
 }
 
@@ -220,14 +233,10 @@ SpriteManager.prototype.updateSpriteTexture = function(sprite, spriteID) {
         return;
     }
 
-    if(!sprite.isEqual(containerIndex)) {
-        const { frameTime, frameCount, bounds } = container;
-        const { x, y, w, h } = bounds;
+    sprite.init(container, this.timestamp, spriteID);
 
-        sprite.init(spriteID, containerIndex, frameCount, frameTime, this.timestamp);
-        sprite.setBounds(x, y, w, h);
-        
-        this.graphics.loadBitmap(spriteID);
+    if(!container.isLoaded()) {
+        this.graphics.loadBitmap(spriteID, sprite);
     }
 }
 
