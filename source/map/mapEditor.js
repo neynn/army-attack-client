@@ -1,17 +1,27 @@
-import { TILE_TYPE } from "../../game/enums.js";
-import { loopValue } from "../math/math.js";
+import { EventEmitter } from "../events/eventEmitter.js";
 import { Scroller } from "../util/scroller.js";
 import { Brush } from "./editor/brush.js";
+import { Pallet } from "./editor/pallet.js";
 
 export const MapEditor = function() {
     this.mapID = null;
     this.brush = new Brush();
+    this.pallet = new Pallet();
     this.brushSets = new Scroller();
     this.brushSizes = new Scroller();
     this.modes = new Scroller([MapEditor.MODE.DRAW, MapEditor.MODE.AUTOTILE]);
-    this.activityStack = [];
     this.autotilerState = MapEditor.AUTOTILER_STATE.INACTIVE;
+    this.activityStack = [];
+
+    this.events = new EventEmitter();
+    this.events.listen(MapEditor.EVENT.BRUSH_UPDATE);
+    this.events.listen(MapEditor.EVENT.PALLET_UPDATE);
 }
+
+MapEditor.EVENT = {
+    BRUSH_UPDATE: 0,
+    PALLET_UPDATE: 1
+};
 
 MapEditor.AUTOTILER_STATE = {
     INACTIVE: 0,
@@ -29,11 +39,14 @@ MapEditor.MODE_NAME = {
     [MapEditor.MODE.AUTOTILE]: "AUTOTILE"
 };
 
+MapEditor.prototype.paint = function(gameContext, layerID) {}
+
 MapEditor.prototype.scrollBrushSize = function(delta = 0) {
     const brushSize = this.brushSizes.scroll(delta);
 
     if(brushSize !== null) {
         this.brush.setSize(brushSize);
+        this.events.emit(MapEditor.EVENT.BRUSH_UPDATE, this.brush);
     }
 }
 
@@ -41,7 +54,7 @@ MapEditor.prototype.scrollMode = function(delta = 0) {
     const mode = this.modes.loop(delta);
 
     if(mode !== null) {
-        this.reloadBrush();
+        this.reloadPallet();
     }
 }
 
@@ -49,11 +62,11 @@ MapEditor.prototype.scrollBrushSet = function(delta) {
     const brushSet = this.brushSets.loop(delta);
 
     if(brushSet !== null) {
-        this.reloadBrush();
+        this.reloadPallet();
     }
 }
 
-MapEditor.prototype.reloadBrush = function() {
+MapEditor.prototype.reloadPallet = function() {
     const brushMode = this.modes.getValue();
 
     switch(brushMode) {
@@ -63,19 +76,20 @@ MapEditor.prototype.reloadBrush = function() {
             if(pallet) {
                 const { values } = pallet;
         
-                this.brush.loadPallet(values);
+                this.pallet.load(values);
             } else {
-                this.brush.clearPallet();
+                this.pallet.clear();
             }
             break;
         }
         case MapEditor.MODE.AUTOTILE: {
-            this.brush.clearPallet();
+            this.pallet.clear();
             break;
         }
     }
 
-    this.brush.reset();
+    this.events.emit(MapEditor.EVENT.PALLET_UPDATE, this.pallet);
+    this.resetBrush();
 }
 
 MapEditor.prototype.initBrushSets = function(brushSets, hiddenSets) {
@@ -109,7 +123,7 @@ MapEditor.prototype.initBrushSets = function(brushSets, hiddenSets) {
     }
 
     this.brushSets.setValues(sets);
-    this.reloadBrush();
+    this.reloadPallet();
 }
 
 MapEditor.prototype.undo = function(gameContext) {
@@ -132,96 +146,6 @@ MapEditor.prototype.undo = function(gameContext) {
 
         gameMap.placeTile(oldID, layerID, tileX, tileY);
     }
-}
-
-MapEditor.prototype.onPaint = function(gameContext, worldMap, layerID, tileX, tileY, tileID) {}
-
-MapEditor.prototype.paint = function(gameContext, layerID) {
-    const { world, tileManager } = gameContext;
-    const { mapManager } = world;
-    const worldMap = mapManager.getMap(this.mapID);
-
-    if(!worldMap) {
-        return;
-    }
-
-    const actionsTaken = [];
-    const { x, y } = gameContext.getMouseTile();
-    const { id } = this.brush;
-    const autotiler = tileManager.getAutotilerByTile(id);
-
-    this.brush.paint(x, y, (tileX, tileY, brushID, brushName) => {
-        const tileID = worldMap.getTile(layerID, tileX, tileY);
-
-        if(tileID !== null && tileID !== brushID) {
-            worldMap.placeTile(brushID, layerID, tileX, tileY);
-
-            this.onPaint(gameContext, worldMap, layerID, tileX, tileY, brushID);
-
-            actionsTaken.push({
-                "layerID": layerID,
-                "tileX": tileX,
-                "tileY": tileY,
-                "oldID": tileID
-            });
-        }
-
-        if(this.autotilerState !== MapEditor.AUTOTILER_STATE.INACTIVE && autotiler) {
-            const startX = tileX - 1;
-            const startY = tileY - 1;
-            const endX = tileX + 1;
-            const endY = tileY + 1;
-            const isInverted = this.autotilerState === MapEditor.AUTOTILER_STATE.ACTIVE_INVERTED;
-
-            for(let i = startY; i <= endY; i++) {
-                for(let j = startX; j <= endX; j++) {
-                    const previousID = worldMap.getTile(layerID, j, i);
-
-                    worldMap.applyAutotiler(autotiler, j, i, layerID, isInverted);
-
-                    const nextID = worldMap.getTile(layerID, j, i);
-
-                    if(previousID !== nextID) {
-                        this.onPaint(gameContext, worldMap, layerID, j, i, nextID);
-                    }
-                }
-            }
-        }
-    });
-
-    if(actionsTaken.length !== 0) {
-        this.activityStack.push({
-            "mapID": this.mapID,
-            "mode": this.modes.getValue(),
-            "actions": actionsTaken
-        });
-    }
-}
-
-MapEditor.prototype.incrementTypeIndex = function(gameContext, layerID) {
-    const { world } = gameContext;
-    const { mapManager } = world;
-    const worldMap = mapManager.getMap(this.mapID);
-
-    if(!worldMap) {
-        return;
-    }
-
-    const { x, y } = gameContext.getMouseTile();
-    const tileTypeIDs = [];
-
-    for(const typeName in TILE_TYPE) {
-        const typeID = TILE_TYPE[typeName];
-
-        tileTypeIDs.push(typeID);
-    }
-
-    const currentID = worldMap.getTile(layerID, x, y);
-    const currentIndex = tileTypeIDs.indexOf(currentID);
-    const nextIndex = loopValue(currentIndex + 1, tileTypeIDs.length - 1, 0);
-    const nextID = tileTypeIDs[nextIndex];
-
-    worldMap.placeTile(nextID, layerID, x, y);
 }
 
 MapEditor.prototype.toggleInversion = function() {
@@ -252,4 +176,22 @@ MapEditor.prototype.toggleAutotiling = function() {
     }
 
     return this.autotilerState;
+}
+
+MapEditor.prototype.toggleEraser = function() {
+    const state = this.brush.toggleEraser();
+    this.events.emit(MapEditor.EVENT.BRUSH_UPDATE, this.brush);
+    return state;
+}
+
+MapEditor.prototype.resetBrush = function() {
+    this.brush.reset();
+    this.events.emit(MapEditor.EVENT.BRUSH_UPDATE, this.brush);
+}
+
+MapEditor.prototype.selectBrush = function(index) {
+    const { id, name } = this.pallet.getElement(index);
+
+    this.brush.setBrush(id, name);
+    this.events.emit(MapEditor.EVENT.BRUSH_UPDATE, this.brush);
 }

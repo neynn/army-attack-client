@@ -1,13 +1,17 @@
-import { EditorButton } from "../../source/map/editor/editorButton.js";
+import { Pallet } from "../../source/map/editor/pallet.js";
 import { Renderer } from "../../source/renderer.js";
 import { SpriteManager } from "../../source/sprite/spriteManager.js";
 import { ArmyCamera } from "../armyCamera.js";
 import { ArmyMap } from "../init/armyMap.js";
 
-export const EditCamera = function(controller) {
+export const EditCamera = function() {
     ArmyCamera.call(this);
 
-    this.controller = controller;
+    this.tileID = Pallet.ID.ERROR;
+    this.tileName = "";
+    this.drawRange = 0;
+    this.overlayAlpha = 0.75;
+    this.overlayColor = "#eeeeee";
 }
 
 EditCamera.prototype = Object.create(ArmyCamera.prototype);
@@ -67,25 +71,50 @@ EditCamera.prototype.debugMap = function(context, worldMap) {
 }
 
 EditCamera.prototype.drawHoverTile = function(gameContext, context) {
+    if(this.tileID === Pallet.ID.ERROR) {
+        return;
+    }
+
     const { tileManager, transform2D } = gameContext;
     const { graphics } = tileManager;
-    const button = this.controller.buttonHandler.getActiveButton();
+    const { x, y } = gameContext.getMouseTile();
+    const { width, height, halfWidth } = transform2D.getTileDimensions();
 
-    if(button) {
-        const { x, y } = gameContext.getMouseTile();
-        const { width, height, halfWidth } = transform2D.getTileDimensions();
+    context.globalAlpha = this.overlayAlpha;
+    context.fillStyle = this.overlayColor;
+    context.textAlign = "center";
 
-        context.globalAlpha = this.controller.overlayAlpha;
-        context.fillStyle = this.controller.overlayColor;
-        context.textAlign = "center";
+    const startX = x - this.drawRange;
+    const startY = y - this.drawRange;
+    const endX = x + this.drawRange;
+    const endY = y + this.drawRange;
 
-        this.controller.editor.brush.paint(x, y, (j, i, id, name) => {
+    for(let i = startY; i <= endY; i++) {
+        for(let j = startX; j <= endX; j++) {
             const renderY = i * height - this.screenY;
             const renderX = j * width - this.screenX;
 
-            this.drawTileSafe(graphics, id, context, renderX, renderY);
+            this.drawTileSafe(graphics, this.tileID, context, renderX, renderY);
 
-            context.fillText(name, renderX + halfWidth, renderY);  
-        });
+            context.fillText(this.tileName, renderX + halfWidth, renderY);
+        }
+    }
+}
+
+EditCamera.prototype.onBrushUpdate = function(brush) {
+    const { id, name, size } = brush;
+
+    this.tileID = id;
+    this.tileName = name;
+    this.drawRange = size;
+}
+
+EditCamera.prototype.setOverlay = function(color, alpha) {
+    if(color) {
+        this.overlayColor = color;
+    }
+
+    if(alpha) {
+        this.overlayAlpha = alpha;
     }
 }

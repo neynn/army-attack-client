@@ -3,13 +3,13 @@ import { State } from "../../../source/state/state.js";
 import { ArmyContext } from "../../armyContext.js";
 import { EditCamera } from "../../camera/editCamera.js";
 import { MapEditorController } from "../../../source/map/editor/mapEditorController.js";
-import { ArmyMap } from "../../init/armyMap.js";
 import { MapSystem } from "../../systems/map.js";
-import { getTileID } from "../../enums.js";
+import { ArmyMapEditor } from "./armyMapEditor.js";
+import { MapEditor } from "../../../source/map/mapEditor.js";
+import { CameraContext } from "../../../source/camera/cameraContext.js";
 
 export const MapEditorState = function() {
     this.controller = null;
-    this.guiID = -1;
 }
 
 MapEditorState.prototype = Object.create(State.prototype);
@@ -18,47 +18,58 @@ MapEditorState.prototype.constructor = MapEditorState;
 MapEditorState.prototype.onEnter = function(gameContext, stateMachine) {
     const { tileManager, client } = gameContext;
     const { router } = client;
+    const camera = new EditCamera();
+    const mapEditor = new ArmyMapEditor();
+    const controller = new MapEditorController(camera, mapEditor);
 
-    this.controller = new MapEditorController();
-    this.controller.init(gameContext.resources.editorConfig, tileManager.getInversion());
-    this.controller.initCamera(gameContext, new EditCamera(this.controller));
+    camera.setOverlay(gameContext.resources.editorConfig.overlayColor, gameContext.resources.editorConfig.overlayAlpha);
 
-    this.controller.buttonHandler.createButton("L1", "ground", "TEXT_L1");
-    this.controller.buttonHandler.createButton("L2", "decoration", "TEXT_L2");
-    this.controller.buttonHandler.createButton("L3", "cloud", "TEXT_L3");
+    mapEditor.events.on(MapEditor.EVENT.BRUSH_UPDATE, (brush) => camera.onBrushUpdate(brush));
+    mapEditor.events.on(MapEditor.EVENT.PALLET_UPDATE, (pallet) => console.log(pallet));
 
-    this.controller.editor.onPaint = function(gameContext, worldMap, layerID, tileX, tileY, tileID) {
-        const { tileManager } = gameContext;
-        const tileMeta = tileManager.getMeta(tileID);
-
-        if(tileMeta) {
-            const { type } = tileMeta;
-
-            if(type !== undefined) {
-                const typeID = getTileID(type);
-
-                worldMap.placeTile(typeID, ArmyMap.LAYER.TYPE, tileX, tileY);
-            }
-        }
-    }
+    controller.init(gameContext.resources.editorConfig, tileManager.getInversion());
+    controller.buttonHandler.createButton("L1", "ground", "TEXT_L1");
+    controller.buttonHandler.createButton("L2", "decoration", "TEXT_L2");
+    controller.buttonHandler.createButton("L3", "cloud", "TEXT_L3");    
+    controller.initUI(gameContext);
+    controller.initPalletButtons(gameContext);
+    controller.initCursorEvents(gameContext);
+    controller.updatePalletButtonEvents(gameContext);
+    controller.updateMenuText(gameContext);
 
     router.load(gameContext, gameContext.resources.keybinds.editor);
-    router.on("TOGGLE_AUTOTILER", () => this.controller.toggleAutotiler(gameContext));
-    router.on("TOGGLE_ERASER", () => this.controller.toggleEraser(gameContext));
-    router.on("TOGGLE_INVERSION", () => this.controller.toggleInversion(gameContext));
-    
-    this.controller.initUI(gameContext);
-    this.controller.initPalletButtons(gameContext);
-    this.controller.initCursorEvents(gameContext);
-    this.controller.updatePalletButtonEvents(gameContext);
-    this.controller.updateMenuText(gameContext);
+    router.on("TOGGLE_AUTOTILER", () => controller.toggleAutotiler(gameContext));
+    router.on("TOGGLE_ERASER", () => controller.toggleEraser(gameContext));
+    router.on("TOGGLE_INVERSION", () => controller.toggleInversion(gameContext));
+
+    this.controller = controller;
+    this.initCamera(gameContext, camera);
     this.initUIEvents(gameContext);
 
     gameContext.setGameMode(ArmyContext.GAME_MODE.EDIT);
 }
 
+MapEditorState.prototype.initCamera = function(gameContext, camera) {
+    const { renderer, transform2D } = gameContext;
+    const { tileWidth, tileHeight } = transform2D;
+    const context = renderer.createContext("CAMERA_CONTEXT", camera);
+    
+    context.setPosition(0, 0);
+    //context.setDisplayMode(CameraContext.DISPLAY_MODE.RESOLUTION_FIXED);
+    //context.setResolution(560, 560);
+    //context.setPositionMode(CameraContext.POSITION_MODE.AUTO_CENTER);
+    //context.setScaleMode(CameraContext.SCALE_MODE.WHOLE);
+
+    camera.freeViewport();
+    camera.setTileSize(tileWidth, tileHeight);
+}
+
 MapEditorState.prototype.onExit = function(gameContext, stateMachine) {
-    this.controller.destroy(gameContext);
+    const { renderer, uiManager } = gameContext;
+
+    uiManager.destroyGUI(this.controller.guiID);
+    renderer.destroyContext("CAMERA_CONTEXT");
+
     this.controller = null;
 }
 
@@ -100,34 +111,12 @@ MapEditorState.prototype.initUIEvents = function(gameContext) {
         this.controller.updateMenuText(gameContext);
     });
 
-    editorInterface.addClick("BUTTON_PAGE_LAST", () => {
-        this.controller.scrollPage(-1);
-        this.controller.updatePalletButtonEvents(gameContext);
-        this.controller.updateMenuText(gameContext);
-    }); 
-
-    editorInterface.addClick("BUTTON_PAGE_NEXT", () => {
-        this.controller.scrollPage(1);
-        this.controller.updatePalletButtonEvents(gameContext);
-        this.controller.updateMenuText(gameContext);
-    });  
-
-    editorInterface.addClick("BUTTON_SCROLL_SIZE", () => {
-        this.controller.editor.scrollBrushSize(1);
-        this.controller.updateMenuText(gameContext);
-    }); 
-
-    editorInterface.addClick("BUTTON_L1", () => {
-        this.controller.clickLayerButton(gameContext, "L1");
-    });
-
-    editorInterface.addClick("BUTTON_L2", () => {
-        this.controller.clickLayerButton(gameContext, "L2");
-    });
-
-    editorInterface.addClick("BUTTON_L3", () => {
-        this.controller.clickLayerButton(gameContext, "L3");
-    });
+    editorInterface.addClick("BUTTON_PAGE_LAST", () => this.controller.updatePage(gameContext, -1)); 
+    editorInterface.addClick("BUTTON_PAGE_NEXT", () => this.controller.updatePage(gameContext, 1));  
+    editorInterface.addClick("BUTTON_SCROLL_SIZE", () => this.controller.updateBrushSize(gameContext, 1));
+    editorInterface.addClick("BUTTON_L1", () => this.controller.clickLayerButton(gameContext, "L1"));
+    editorInterface.addClick("BUTTON_L2", () => this.controller.clickLayerButton(gameContext, "L2"));
+    editorInterface.addClick("BUTTON_L3", () => this.controller.clickLayerButton(gameContext, "L3"));
 
     editorInterface.addClick("BUTTON_SAVE", () => {
         const mapData = mapManager.getMap(this.controller.editor.mapID);
