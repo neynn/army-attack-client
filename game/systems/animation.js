@@ -1,7 +1,7 @@
 import { SpriteManager } from "../../source/sprite/spriteManager.js";
-import { ArmyContext } from "../armyContext.js";
 import { UI_SONUD } from "../enums.js";
 import { ArmyEntity } from "../init/armyEntity.js";
+import { ArmySprite } from "../init/armySprite.js";
 
 /**
  * Collection of functions revolving around the animations.
@@ -62,8 +62,7 @@ AnimationSystem.playFire = function(gameContext, targetObject, attackerIDList) {
     const { entityManager } = world;
     const { id } = targetObject;
     const target = entityManager.getEntity(id);
-    const spriteComponent = target.getComponent(ArmyEntity.COMPONENT.SPRITE);
-    const targetSprite = spriteComponent.getSprite(gameContext);
+    const targetSprite = target.sprite.getMainSprite();
 
     for(let i = 0; i < attackerIDList.length; i++) {
         const attacker = entityManager.getEntity(attackerIDList[i]);
@@ -102,12 +101,12 @@ AnimationSystem.playSell = function(gameContext, entity) {
     const sellSprite = spriteManager.createSharedSprite(spriteType);
     
     if(sellSprite) {
-        entity.sprite.setOther(sellSprite, 0, 0);
+        entity.sprite.setRender(ArmySprite.RENDER.OVERLAY, sellSprite, 0, 0);
     }
 }
 
 AnimationSystem.stopSell = function(entity) {
-    entity.sprite.removeOther();
+    entity.sprite.removeRender(ArmySprite.RENDER.OVERLAY);
 }
 
 AnimationSystem.playSelect = function(gameContext, entity) {
@@ -115,14 +114,14 @@ AnimationSystem.playSelect = function(gameContext, entity) {
     const moveSprite = spriteManager.createSharedSprite(AnimationSystem.SPRITE_TYPE.SELECT);
     
      if(moveSprite) {
-        entity.sprite.setOther(moveSprite, 0, 0);
+        entity.sprite.setRender(ArmySprite.RENDER.OVERLAY, moveSprite, 0, 0);
     }
     
     entity.playSound(gameContext, ArmyEntity.SOUND_TYPE.SELECT);
 }
 
 AnimationSystem.stopSelect = function(entity) {
-    entity.sprite.removeOther();
+    entity.sprite.removeRender(ArmySprite.RENDER.OVERLAY);
 }
 
 AnimationSystem.playCleaning = function(gameContext, tileX, tileY) {
@@ -143,8 +142,7 @@ AnimationSystem.playCleaning = function(gameContext, tileX, tileY) {
 AnimationSystem.playDelay = function(gameContext, entity) {
     const { spriteManager, transform2D, client } = gameContext;
     const { soundPlayer } = client;
-    const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
-    const entitySprite = spriteComponent.getSprite(gameContext);
+    const entitySprite = entity.sprite.getMainSprite();
     const delaySprite = spriteManager.createSprite(AnimationSystem.SPRITE_TYPE.DELAY);
 
     if(delaySprite) {
@@ -161,8 +159,7 @@ AnimationSystem.playDelay = function(gameContext, entity) {
 AnimationSystem.playHeal = function(gameContext, entity) {
     const { spriteManager, transform2D, client } = gameContext;
     const { soundPlayer } = client;
-    const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
-    const entitySprite = spriteComponent.getSprite(gameContext);
+    const entitySprite = entity.sprite.getMainSprite();
     const delaySprite = spriteManager.createSprite(AnimationSystem.SPRITE_TYPE.DELAY);
 
     if(delaySprite) {
@@ -183,18 +180,17 @@ AnimationSystem.playAttention = function(gameContext, entity) {
     if(attentionSprite) {
         const { x, y } = transform2D.transformSizeToWorldOffsetCenter(entity.config.dimX, entity.config.dimY);
 
-        entity.sprite.setAttention(attentionSprite, x, y);
+        entity.sprite.setRender(ArmySprite.RENDER.ATTENTION, attentionSprite, x, y);
     }
 }
 
 AnimationSystem.stopAttention = function(entity) {
-    entity.sprite.removeAttention();
+    entity.sprite.removeRender(ArmySprite.RENDER.ATTENTION);
 }
 
 AnimationSystem.playConstruction = function(gameContext, entity) {
     const { spriteManager, transform2D } = gameContext;
-    const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
-    const entitySprite = spriteComponent.getSprite(gameContext);
+    const entitySprite = entity.sprite.getMainSprite();
     const delaySprite = spriteManager.createSprite(AnimationSystem.SPRITE_TYPE.DELAY);
 
     if(delaySprite) {
@@ -208,11 +204,13 @@ AnimationSystem.playConstruction = function(gameContext, entity) {
     entity.playSound(gameContext, ArmyEntity.SOUND_TYPE.BUILD);
 }
 
-AnimationSystem.setConstructionFrame = function(gameContext, entity) {
-    const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
+AnimationSystem.setConstructionFrame = function(entity) {
     const constructionComponent = entity.getComponent(ArmyEntity.COMPONENT.CONSTRUCTION);
-    const sprite = spriteComponent.getSprite(gameContext);
-    const frame = constructionComponent.getFrame();
-    
-    sprite.setFrame(frame);
+
+    if(constructionComponent) {
+        const entitySprite = entity.sprite.getMainSprite();
+        const frame = constructionComponent.getFrame();
+        
+        entitySprite.setFrame(frame);
+    }
 }

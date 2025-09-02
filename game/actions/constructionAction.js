@@ -28,7 +28,7 @@ ConstructionAction.prototype.onEnd = function(gameContext, request) {
     const constructionComponent = entity.getComponent(ArmyEntity.COMPONENT.CONSTRUCTION);
 
     constructionComponent.advance(deltaSteps);
-    AnimationSystem.setConstructionFrame(gameContext, entity);
+    AnimationSystem.setConstructionFrame(entity);
 }
 
 ConstructionAction.prototype.isFinished = function(gameContext, request) {

@@ -11,68 +11,17 @@ export const Button = function(DEBUG_NAME) {
     this.drawBackground = false;
     this.drawHighlight = false;
     this.drawOutline = true;
-    this.drawCustom = true;
     this.backgroundColor = getRGBAString(0, 0, 0, 0);
     this.highlightColor = getRGBAString(200, 200, 200, 64);
     this.outlineColor = getRGBAString(255, 255, 255, 255);
     this.outlineSize = 1;
-    this.customRenders = [];
 
-    this.collider.events.on(UICollider.EVENT.FIRST_COLLISION, (mouseX, mouseY, mouseRange) => this.enableOverlay(Button.OVERLAY.HIGHLIGHT), { permanent: true });
-    this.collider.events.on(UICollider.EVENT.LAST_COLLISION, (mouseX, mouseY, mouseRange) => this.disableOverlay(Button.OVERLAY.HIGHLIGHT), { permanent: true });
+    this.collider.events.on(UICollider.EVENT.FIRST_COLLISION, (mouseX, mouseY, mouseRange) => this.drawHighlight = true, { permanent: true });
+    this.collider.events.on(UICollider.EVENT.LAST_COLLISION, (mouseX, mouseY, mouseRange) => this.drawHighlight = false, { permanent: true });
 }
-
-Button.OVERLAY = {
-    BACKGROUND: 0,
-    HIGHLIGHT: 1,
-    OUTLINE: 2,
-    CUSTOM: 3
-};
 
 Button.prototype = Object.create(UIElement.prototype);
 Button.prototype.constructor = Button;
-
-Button.prototype.disableOverlay = function(type) {
-    switch(type) {
-        case Button.OVERLAY.BACKGROUND: {
-            this.drawBackground = false;
-            break;
-        }
-        case Button.OVERLAY.HIGHLIGHT: {
-            this.drawHighlight = false;
-            break;
-        }
-        case Button.OVERLAY.OUTLINE: {
-            this.drawOutline = false;
-            break;
-        }
-        case Button.OVERLAY.CUSTOM: {
-            this.drawCustom = false;
-            break;
-        }
-    }
-}
-
-Button.prototype.enableOverlay = function(type) {
-    switch(type) {
-        case Button.OVERLAY.BACKGROUND: {
-            this.drawBackground = true;
-            break;
-        }
-        case Button.OVERLAY.HIGHLIGHT: {
-            this.drawHighlight = true;
-            break;
-        }
-        case Button.OVERLAY.OUTLINE: {
-            this.drawOutline = true;
-            break;
-        }
-        case Button.OVERLAY.CUSTOM: {
-            this.drawCustom = true;
-            break;
-        }
-    }
-}
 
 Button.prototype.setShape = function(shape) {
     switch(shape) {
@@ -97,40 +46,36 @@ Button.prototype.onDebug = function(display, localX, localY) {
     display.drawShape(this.shape, localX, localY, this.width, this.height);
 }
 
-Button.prototype.onDraw = function(display, localX, localY) {
-    const { context } = display;
-
+Button.prototype.onDrawBackground = function(display, localX, localY) {
     if(this.drawBackground) {
+        const { context } = display;
+
         context.fillStyle = this.backgroundColor;
         display.drawShape(this.shape, localX, localY, this.width, this.height);
     }
+}
 
-    if(this.drawCustom) {
-        for(let i = 0; i < this.customRenders.length; i++) {
-            this.customRenders[i](context, localX, localY);
-        }
-    }
-
+Button.prototype.onDrawHighlight = function(display, localX, localY) {
     if(this.drawHighlight) {
+        const { context } = display;
+
         context.fillStyle = this.highlightColor;
         display.drawShape(this.shape, localX, localY, this.width, this.height);
     }
+}
 
+Button.prototype.onDrawOutline = function(display, localX, localY) {
     if(this.drawOutline) {
+        const { context } = display;
+
         context.strokeStyle = this.outlineColor;
         context.lineWidth = this.outlineSize;
         display.strokeShape(this.shape, localX, localY, this.width, this.height);
     }
 }
 
-Button.prototype.clearCustomRenders = function() {
-    this.customRenders.length = 0;
-}
-
-Button.prototype.addCustomRender = function(onDraw) {
-    if(typeof onDraw !== "function") {
-        return;
-    }
-
-    this.customRenders.push(onDraw);
+Button.prototype.onDraw = function(display, localX, localY) {
+    this.onDrawBackground(display, localX, localY);
+    this.onDrawHighlight(display, localX, localY);
+    this.onDrawOutline(display, localX, localY);
 }

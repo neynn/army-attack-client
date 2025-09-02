@@ -24,18 +24,20 @@ const ACTOR_TYPE = {
  * @returns 
  */
 const createPlayerCamera = function(gameContext) {
-    const { renderer } = gameContext;
+    const { renderer, transform2D } = gameContext;
+    const { tileWidth, tileHeight } = transform2D;
 
     const camera = new ArmyCamera();
     const context = renderer.createContext("PLAYER_CAMERA", camera);
 
+    context.setPositionMode(CameraContext.POSITION_MODE.AUTO_CENTER);
     //context.setDisplayMode(CameraContext.DISPLAY_MODE.RESOLUTION_FIXED);
     //context.setScaleMode(CameraContext.SCALE_MODE.WHOLE);
     //context.setResolution(300, 280);
-    context.setPositionMode(CameraContext.POSITION_MODE.AUTO_CENTER);
+
 
     camera.bindViewport();
-    camera.setTileSize(gameContext.settings.tileWidth, gameContext.settings.tileHeight);
+    camera.setTileSize(tileWidth, tileHeight);
 
     return camera;
 }

@@ -16,7 +16,6 @@ import { ReviveableComponent } from "./components/reviveable.js";
 import { CounterAttackAction } from "./actions/counterAttackAction.js";
 import { CounterMoveAction } from "./actions/counterMoveAction.js";
 import { ArmyEntity } from "./init/armyEntity.js";
-import { SpriteComponent } from "./components/sprite.js";
 import { ProductionComponent } from "./components/production.js";
 import { TileManager } from "../source/tile/tileManager.js";
 import { Renderer } from "../source/renderer.js";
@@ -92,7 +91,6 @@ ArmyContext.prototype.init = function(resources) {
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.MOVE, MoveComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.PRODUCTION, ProductionComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.REVIVEABLE, ReviveableComponent);
-    this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.SPRITE, SpriteComponent);
     this.world.entityManager.registerComponent(ArmyEntity.COMPONENT.TOWN, TownComponent);
 
     this.eventHandler.createEvents();

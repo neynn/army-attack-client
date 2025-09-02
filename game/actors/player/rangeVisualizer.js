@@ -51,9 +51,8 @@ RangeVisualizer.prototype.show = function(gameContext, entity) {
     const { tileManager } = gameContext;
     const autotiler = tileManager.getAutotilerByID(ArmyMap.AUTOTILER.RANGE);
     const { range } = attackComponent;
-    const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
 
-    spriteComponent.swapLayer(gameContext, SpriteManager.LAYER.TOP);
+    entity.sprite.swapLayer(gameContext, SpriteManager.LAYER.TOP);
 
     const startX = entity.tileX - range;
     const startY = entity.tileY - range;
@@ -83,9 +82,7 @@ RangeVisualizer.prototype.hide = function(gameContext) {
     this.camera.clearOverlay(ArmyCamera.OVERLAY.RANGE);
 
     if(entity) {
-        const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
-        
-        spriteComponent.swapLayer(gameContext, SpriteManager.LAYER.MIDDLE);
+        entity.sprite.swapLayer(gameContext, SpriteManager.LAYER.MIDDLE);
     }
 }
 

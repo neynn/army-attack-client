@@ -51,7 +51,7 @@ PlayerSelectedState.prototype.updateEntity = function(gameContext, player) {
         
         if(hoverTileX !== selectedEntity.tileX) {
             selectedEntity.lookHorizontal(hoverTileX < selectedEntity.tileX);
-            selectedEntity.updateSpriteHorizontal(gameContext, selectedEntity);
+            selectedEntity.updateSpriteHorizontal();
         }
     }
 }

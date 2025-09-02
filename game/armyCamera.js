@@ -55,8 +55,8 @@ ArmyCamera.prototype.drawDebris = function(tileManager, context, worldMap) {
         const { type, x, y } = item;
 
         if(x >= this.startX && x <= this.endX && y >= this.startY && y <= this.endY) {
-            const renderX = x * this.tileWidth - this.viewportX;
-            const renderY = y * this.tileHeight - this.viewportY;
+            const renderX = x * this.tileWidth - this.screenX;
+            const renderY = y * this.tileHeight - this.screenY;
 
             this.drawTileSafe(graphics, debrisID, context, renderX, renderY);
         }
@@ -66,8 +66,8 @@ ArmyCamera.prototype.drawDebris = function(tileManager, context, worldMap) {
 ArmyCamera.prototype.drawDrops = function(display, worldMap) {
     const { drops } = worldMap;
     const dropElements = drops.drops;
-    const viewportLeftEdge = this.viewportX;
-    const viewportTopEdge = this.viewportY;
+    const viewportLeftEdge = this.screenX;
+    const viewportTopEdge = this.screenY;
     const viewportRightEdge = viewportLeftEdge + this.viewportWidth;
     const viewportBottomEdge = viewportTopEdge + this.viewportHeight;
 
@@ -109,6 +109,7 @@ ArmyCamera.prototype.update = function(gameContext, display) {
 
     this.updateWorldBounds();
     this.clampWorldBounds();
+    this.updateScreenCoordinates();
     this.drawLayer(graphics, display, worldMap.getLayer(ArmyMap.LAYER.GROUND));
 
     if(gameContext.settings.drawBorder) {

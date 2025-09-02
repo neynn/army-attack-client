@@ -1,6 +1,5 @@
 import { Entity } from "../../source/entity/entity.js";
 import { clampValue, isRectangleRectangleIntersect } from "../../source/math/math.js";
-import { SpriteComponent } from "../components/sprite.js";
 import { DefaultTypes } from "../defaultTypes.js";
 import { getTeamID, TEAM_TYPE } from "../enums.js";
 import { AllianceSystem } from "../systems/alliance.js";
@@ -18,7 +17,14 @@ export const ArmyEntity = function(id, DEBUG_NAME) {
     this.directionY = ArmyEntity.DIRECTION.SOUTH;
     this.teamID = TEAM_TYPE.NEUTRAL;
     this.sprite = new ArmySprite();
+    this.zLevel = ArmyEntity.Z_LEVEL.IRRELEVANT;
 }
+
+ArmyEntity.Z_LEVEL = {
+    IRRELEVANT: 0,
+    GROUND: 1,
+    AIR: 2
+};
 
 ArmyEntity.UNIT_TYPE = {
     NONE: 0,
@@ -82,18 +88,21 @@ ArmyEntity.DIRECTION = {
 ArmyEntity.prototype = Object.create(Entity.prototype);
 ArmyEntity.prototype.constructor = ArmyEntity;
 
-ArmyEntity.prototype.updateSpritePosition = function(gameContext, deltaX, deltaY) {
-    const spriteComponent = this.getComponent(ArmyEntity.COMPONENT.SPRITE);
-    const sprite = spriteComponent.getSprite(gameContext);
+ArmyEntity.prototype.updateSpritePosition = function(deltaX, deltaY) {
+    const sprite = this.sprite.getMainSprite();
 
-    sprite.positionX += deltaX;
-    sprite.positionY += deltaY;
+    if(sprite) {
+        sprite.positionX += deltaX;
+        sprite.positionY += deltaY;
+    }
 }
 
-ArmyEntity.prototype.setSpritePosition = function(gameContext, positionX, positionY) {
-    const spriteComponent = this.getComponent(ArmyEntity.COMPONENT.SPRITE);
+ArmyEntity.prototype.setSpritePosition = function(positionX, positionY) {
+    const sprite = this.sprite.getMainSprite();
 
-    spriteComponent.setPosition(gameContext, positionX, positionY);
+    if(sprite) {
+        sprite.setPosition(positionX, positionY);
+    }
 }
 
 ArmyEntity.prototype.setTile = function(tileX, tileY) {
@@ -130,24 +139,16 @@ ArmyEntity.prototype.lookHorizontal = function(westCondition) {
     }
 }
 
-ArmyEntity.prototype.updateSpriteHorizontal = function(gameContext) {
-    const spriteComponent = this.getComponent(ArmyEntity.COMPONENT.SPRITE);
-
+ArmyEntity.prototype.updateSpriteHorizontal = function() {
     if(this.directionX === ArmyEntity.DIRECTION.WEST) {
-        spriteComponent.setFlipState(gameContext, SpriteComponent.FLIP_STATE.FLIPPED);
+        this.sprite.setFlipState(ArmySprite.FLIP_STATE.FLIPPED);
     } else {
-        spriteComponent.setFlipState(gameContext, SpriteComponent.FLIP_STATE.UNFLIPPED);
+        this.sprite.setFlipState(ArmySprite.FLIP_STATE.UNFLIPPED);
     }
 }
 
 ArmyEntity.prototype.updateSpriteDirectonal = function(gameContext, southTypeID, northTypeID) {
-    const spriteComponent = this.getComponent(ArmyEntity.COMPONENT.SPRITE);
-
-    if(this.directionX === ArmyEntity.DIRECTION.WEST) {
-        spriteComponent.setFlipState(gameContext, SpriteComponent.FLIP_STATE.FLIPPED);
-    } else {
-        spriteComponent.setFlipState(gameContext, SpriteComponent.FLIP_STATE.UNFLIPPED);
-    }
+    this.updateSpriteHorizontal();
 
     if(this.directionY === ArmyEntity.DIRECTION.SOUTH) {
         this.updateSprite(gameContext, southTypeID);
@@ -164,9 +165,7 @@ ArmyEntity.prototype.updateSprite = function(gameContext, spriteType) {
     const spriteID = this.config.sprites[spriteType];
 
     if(spriteID) {
-        const spriteComponent = this.getComponent(ArmyEntity.COMPONENT.SPRITE);
-
-        spriteComponent.updateSprite(gameContext, spriteID);
+        this.sprite.updateTexture(gameContext, spriteID);
     }
 }
 
@@ -448,7 +447,7 @@ ArmyEntity.prototype.generateStatCard = function(gameContext) {
     if(statCardSprite) {
         const { x, y } = transform2D.transformSizeToWorldOffset(this.config.dimX, this.config.dimY);
 
-        this.sprite.setCard(statCardSprite, x - transform2D.halfTileWidth, y - transform2D.halfTileHeight);
+        this.sprite.setRender(ArmySprite.RENDER.CARD, statCardSprite, x - transform2D.halfTileWidth, y - transform2D.halfTileHeight);
         this.updateCardText();
     }
 }

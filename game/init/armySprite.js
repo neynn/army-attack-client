@@ -4,11 +4,13 @@ import { TextStyle } from "../../source/graphics/textStyle.js";
 export const ArmySprite = function() {
     Graph.call(this, "ARMY_SPRITE");
 
+    this.isFlippable = false;
+    this.healthText = "";
+    this.damageText = "";
+
     this.card = null;
     this.cardX = 0;
     this.cardY = 0;
-    this.healthText = "";
-    this.damageText = "";
 
     this.attention = null;
     this.attentionX = 0;
@@ -19,8 +21,16 @@ export const ArmySprite = function() {
     this.otherY = 0;
 }
 
-ArmySprite.prototype = Object.create(Graph.prototype);
-ArmySprite.prototype.constructor = ArmySprite;
+ArmySprite.RENDER = {
+    CARD: 0,
+    ATTENTION: 1,
+    OVERLAY: 2
+};
+
+ArmySprite.FLIP_STATE = {
+    UNFLIPPED: 0,
+    FLIPPED: 1
+};
 
 ArmySprite.OFFSET = {
     HEALTH_Y: 90,
@@ -39,6 +49,9 @@ ArmySprite.TEXT = {
     FONT: "10px ArmyAttack Arial"
 };
 
+ArmySprite.prototype = Object.create(Graph.prototype);
+ArmySprite.prototype.constructor = ArmySprite;
+
 ArmySprite.prototype.onDebug = function(display, localX, localY) {
     if(this.card) {
         this.card.onDebug(display, localX + this.cardX, localY + this.cardY);
@@ -51,42 +64,6 @@ ArmySprite.prototype.onDebug = function(display, localX, localY) {
     if(this.other) {
         this.other.onDebug(display, localX + this.otherX, localY + this.otherY);
     }
-}
-
-ArmySprite.prototype.setOther = function(other, positionX, positionY) {
-    this.other = other;
-    this.otherX = positionX;
-    this.otherY = positionY;
-}
-
-ArmySprite.prototype.setAttention = function(attention, positionX, positionY) {
-    this.attention = attention;
-    this.attentionX = positionX;
-    this.attentionY = positionY;
-}
-
-ArmySprite.prototype.removeAttention = function() {
-    this.attention = null;
-    this.attentionX = 0;
-    this.attentionY = 0;
-}
-
-ArmySprite.prototype.removeOther = function() {
-    this.other = null;
-    this.otherX = 0;
-    this.otherY = 0;
-}
-
-ArmySprite.prototype.setCard = function(card, positionX, positionY) {
-    this.card = card;
-    this.cardX = positionX;
-    this.cardY = positionY;
-}
-
-ArmySprite.prototype.removeCard = function() {
-    this.card = null;
-    this.cardX = 0;
-    this.cardY = 0;
 }
 
 ArmySprite.prototype.onDraw = function(display, localX, localY) {
@@ -117,6 +94,101 @@ ArmySprite.prototype.onDraw = function(display, localX, localY) {
     
     if(this.other) {
         this.other.onDraw(display, localX + this.otherX, localY + this.otherY);
+    }
+}
+
+ArmySprite.prototype.setFlipState = function(state) {
+    if(!this.isFlippable || !this.parent) {
+        return;
+    }
+
+    switch(state) {
+        case ArmySprite.FLIP_STATE.UNFLIPPED: {
+            this.parent.unflip();
+            break;
+        }
+        case ArmySprite.FLIP_STATE.FLIPPED: {
+            this.parent.flip();
+            break;
+        }
+        default: {
+            console.warn(`Unknown flip state ${state}`);
+            break; 
+        }
+    }
+}
+
+ArmySprite.prototype.getMainSprite = function() {
+    return this.parent;
+}
+
+ArmySprite.prototype.destroy = function() {
+    if(this.parent) {
+        this.parent.terminate();
+    }
+}
+
+ArmySprite.prototype.updateTexture = function(gameContext, textureID) {
+    const { spriteManager } = gameContext;
+
+    if(this.parent) {
+        spriteManager.updateSpriteTexture(this.parent, textureID);
+    }
+}
+
+ArmySprite.prototype.swapLayer = function(gameContext, layerID) {
+    const { spriteManager } = gameContext;
+
+    if(this.parent) {
+        const spriteIndex = this.parent.getIndex();
+
+        spriteManager.swapLayer(spriteIndex, layerID);
+    }
+}
+
+ArmySprite.prototype.setRender = function(type, sprite, positionX, positionY) {
+    switch(type) {
+        case ArmySprite.RENDER.CARD: {
+            this.card = sprite;
+            this.cardX = positionX;
+            this.cardY = positionY;
+            break;
+        }
+        case ArmySprite.RENDER.ATTENTION: {
+            this.attention = sprite;
+            this.attentionX = positionX;
+            this.attentionY = positionY;
+            break;
+        }
+        case ArmySprite.RENDER.OVERLAY: {
+            this.other = sprite;
+            this.otherX = positionX;
+            this.otherY = positionY;
+            break;
+        }
+    }
+}
+
+ArmySprite.prototype.removeRender = function(type) {
+    switch(type) {
+        case ArmySprite.RENDER.CARD: {
+            this.card = null;
+            this.cardX = 0;
+            this.cardY = 0;
+            break;
+        }
+        case ArmySprite.RENDER.ATTENTION: {
+            this.attention = null;
+            this.attentionX = 0;
+            this.attentionY = 0;
+            break;
+        }
+        case ArmySprite.RENDER.OVERLAY: {
+            this.other = null;
+            this.otherX = 0;
+            this.otherY = 0;
+            break;
+        }
     }
 }
 

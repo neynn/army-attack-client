@@ -48,6 +48,7 @@ ArmyEditorCamera.prototype.update = function(gameContext, display) {
 
     this.updateWorldBounds();
     this.clampWorldBounds();
+    this.updateScreenCoordinates();
     this.drawLayer(graphics, display, worldMap.getLayer(ArmyMap.LAYER.GROUND));
     this.drawLayer(graphics, display, worldMap.getLayer(ArmyMap.LAYER.DECORATION));
     this.drawDebris(tileManager, context, worldMap);
@@ -101,8 +102,8 @@ ArmyEditorCamera.prototype.postDraw = function(gameContext, context) {
     context.textAlign = "center";
 
     this.controller.editor.brush.paint(x, y, (j, i, id, name) => {
-        const renderY = i * height - this.viewportY;
-        const renderX = j * width - this.viewportX;
+        const renderY = i * height - this.screenY;
+        const renderX = j * width - this.screenX;
 
         this.drawTileSafe(graphics, id, context, renderX, renderY);
 

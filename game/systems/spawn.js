@@ -19,7 +19,7 @@ const createSprite = function(gameContext, config, tileX, tileY) {
     return sprite;
 }
 
-const adjustComponents = function(gameContext, entity, stats) {
+const adjustComponents = function(entity, stats) {
     const attackComponent = entity.getComponent(ArmyEntity.COMPONENT.ATTACK);
 
     if(attackComponent) {
@@ -75,10 +75,9 @@ const createEntity = function(gameContext, config, entityID) {
     entity.maxHealth = statConfig.health;
 
     entityManager.addArchetypeComponents(entity, archetype);
-    entity.getComponent(ArmyEntity.COMPONENT.SPRITE).setIndex(sprite.getIndex());
     entityManager.addTraitComponents(entity, statConfig.traits);
 
-    adjustComponents(gameContext, entity, statConfig);
+    adjustComponents(entity, statConfig);
 
     if(entity.hasComponent(ArmyEntity.COMPONENT.CONSTRUCTION)) {
         sprite.freeze();
@@ -87,6 +86,10 @@ const createEntity = function(gameContext, config, entityID) {
 
     if(entity.isType(ArmyEntity.TYPE.HFE)) {
         entity.getComponent(ArmyEntity.COMPONENT.PRODUCTION).plantHFE("HFE_Oilwell");
+    }
+
+    if(entity.isType(ArmyEntity.TYPE.UNIT)) {
+        entity.sprite.isFlippable = true;
     }
     
     return entity;
@@ -224,11 +227,9 @@ SpawnSystem.createEntity = function(gameContext, config) {
  * @param {ArmyEntity} entity 
  */
 SpawnSystem.destroyEntity = function(gameContext, entity) {
-    const spriteComponent = entity.getComponent(ArmyEntity.COMPONENT.SPRITE);
-
     MapSystem.removeEntity(gameContext, entity);
     UnitLimitSystem.removeEntity(gameContext, entity);
-    spriteComponent.destroy(gameContext);
+    entity.sprite.destroy(gameContext);
     entity.destroy();
 
     unloadEntitySprites(gameContext, entity);

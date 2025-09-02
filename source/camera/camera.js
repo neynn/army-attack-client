@@ -5,10 +5,10 @@ export const Camera = function() {
     this.viewportY_limit = 0;
     this.viewportWidth = 0;
     this.viewportHeight = 0;
-
+    this.screenX = 0;
+    this.screenY = 0;
     this.worldWidth = 0;
     this.worldHeight = 0;
-
     this.viewportMode = Camera.VIEWPORT_MODE.DRAG;
     this.viewportType = Camera.VIEWPORT_TYPE.BOUND;
 }
@@ -25,6 +25,11 @@ Camera.VIEWPORT_MODE = {
 };
 
 Camera.prototype.update = function(gameContext, renderContext) {}
+
+Camera.prototype.updateScreenCoordinates = function() {
+    this.screenX = Math.floor(this.viewportX);
+    this.screenY = Math.floor(this.viewportY);
+}
 
 Camera.prototype.limitViewport = function() {
     if(this.viewportType !== Camera.VIEWPORT_TYPE.BOUND) {
@@ -101,8 +106,8 @@ Camera.prototype.moveViewport = function(viewportX, viewportY) {
         return;
     }
 
-    this.viewportX = Math.floor(viewportX);
-    this.viewportY = Math.floor(viewportY);
+    this.viewportX = viewportX;
+    this.viewportY = viewportY;
 
     this.limitViewport();
 }

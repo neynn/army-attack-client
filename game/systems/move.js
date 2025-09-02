@@ -29,7 +29,7 @@ MoveSystem.updatePath = function(gameContext, entity) {
     const { deltaX, deltaY } = moveComponent.getCurrentStep();
     const distance = moveComponent.updateDistance(deltaTime, MoveSystem.SPEED.STRAIGHT, MoveSystem.SPEED.CROSS);
 
-    entity.updateSpritePosition(gameContext, deltaX * distance, deltaY * distance);
+    entity.updateSpritePosition(deltaX * distance, deltaY * distance);
     
     while(moveComponent.canPathAdvance(gameContext.settings.travelDistance)) {
         const { deltaX, deltaY } = moveComponent.getCurrentStep();
@@ -38,7 +38,7 @@ MoveSystem.updatePath = function(gameContext, entity) {
         const { x, y } = transform2D.transformTileToWorldCenter(tileX, tileY);
 
         entity.setTile(tileX, tileY);
-        entity.setSpritePosition(gameContext, x, y);
+        entity.setSpritePosition(x, y);
         moveComponent.advancePath(gameContext.settings.travelDistance);
     }
 }
@@ -59,5 +59,5 @@ MoveSystem.endMove = function(gameContext, entity, targetX, targetY) {
     moveComponent.clearPath();
 
     entity.setTile(targetX, targetY);
-    entity.setSpritePosition(gameContext, x, y);
+    entity.setSpritePosition(x, y);
 }

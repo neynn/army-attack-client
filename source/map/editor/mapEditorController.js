@@ -1,14 +1,14 @@
 import { Cursor } from "../../client/cursor.js";
 import { MapEditor } from "../mapEditor.js";
 import { clampValue, loopValue } from "../../math/math.js";
-import { UICollider } from "../../ui/uiCollider.js";
 import { SHAPE } from "../../math/constants.js";
 import { Brush } from "./brush.js";
 import { EditorButton } from "./editorButton.js";
 import { ButtonHandler } from "./buttonHandler.js";
 import { EditorAutotiler } from "./autotiler.js";
-import { Button } from "../../ui/elements/button.js";
 import { getRGBAString } from "../../graphics/helpers.js";
+import { PalletButton } from "./palletButton.js";
+import { CameraContext } from "../../camera/cameraContext.js";
 
 export const MapEditorController = function() {
     this.camera = null;
@@ -29,8 +29,6 @@ export const MapEditorController = function() {
     this.palletButtons = [];
     this.pageIndex = 0;
 }
-
-MapEditorController.EVENT_ID = "MAP_EDITOR_CONTROLLER";
 
 MapEditorController.prototype.paint = function(gameContext) {
     const button = this.buttonHandler.getActiveButton();
@@ -56,7 +54,7 @@ MapEditorController.prototype.destroy = function(gameContext) {
     const { renderer, uiManager } = gameContext;
 
     uiManager.destroyGUI(this.guiID);
-    renderer.destroyContext(MapEditorController.EVENT_ID);
+    renderer.destroyContext("CAMERA_CONTEXT");
 }
 
 MapEditorController.prototype.init = function(config, brushSets) {
@@ -119,7 +117,7 @@ MapEditorController.prototype.initPalletButtons = function(gameContext) {
         for(let i = 0; i < BUTTON_ROWS; i++) {
             for(let j = 0; j < BUTTON_COLUMNS; j++) {
                 const buttonID = `BUTTON_${i * BUTTON_COLUMNS + j}`;
-                const button = new Button(buttonID);
+                const button = new PalletButton(this.palletButtons.length, buttonID);
                 const posX = this.slotButtonSize * j;
                 const posY = this.slotButtonSize * i + SLOT_START_Y;
 
@@ -139,14 +137,19 @@ MapEditorController.prototype.initPalletButtons = function(gameContext) {
 }
 
 MapEditorController.prototype.initCamera = function(gameContext, camera) {
-    const { renderer } = gameContext;
-    const context = renderer.createContext(MapEditorController.EVENT_ID, camera);
+    const { renderer, transform2D } = gameContext;
+    const { tileWidth, tileHeight } = transform2D;
+    const context = renderer.createContext("CAMERA_CONTEXT", camera);
     
     context.setPosition(0, 0);
+    //context.setDisplayMode(CameraContext.DISPLAY_MODE.RESOLUTION_FIXED);
+    //context.setResolution(560 / 4, 560 / 4);
+    //context.setPositionMode(CameraContext.POSITION_MODE.AUTO_CENTER);
+    //context.setScaleMode(CameraContext.SCALE_MODE.WHOLE);
 
     this.camera = camera;
     this.camera.freeViewport();
-    this.camera.setTileSize(gameContext.settings.tileWidth, gameContext.settings.tileHeight)
+    this.camera.setTileSize(tileWidth, tileHeight)
 }
 
 MapEditorController.prototype.resetPage = function() {
@@ -335,21 +338,21 @@ MapEditorController.prototype.updatePalletButtonEvents = function(gameContext) {
 
     for(let i = 0; i < this.palletButtons.length; i++) {
         const button = this.palletButtons[i];
-        const palletIndex = this.mapPageIndex(i);
+        const palletIndex = this.mapPageIndex(button.palletID);
         const tileID = this.editor.brush.getTileID(palletIndex);
 
-        button.collider.events.unsubscribe(UICollider.EVENT.CLICKED, MapEditorController.EVENT_ID);
-        button.clearCustomRenders();
+        button.disableCustom();
+        button.removeClick();
 
         if(tileID !== Brush.ID.INVALID) {
-            button.collider.events.on(UICollider.EVENT.CLICKED, () => {
+            button.addClick(() => {
                 this.resetBrush(editorInterface);
                 this.editor.brush.selectFromPallet(palletIndex);
-            }, { id: MapEditorController.EVENT_ID });
+            });
 
-            button.addCustomRender((context, localX, localY) => {
-                this.camera.setRelativeScale(this.slotButtonSize, this.slotButtonSize);
-                this.camera.drawTileSafe(graphics, tileID, context, localX, localY);
+            button.enableCustom((display, localX, localY) => {
+                this.camera.setRelativeScale(this.slotButtonSize, this.slotButtonSize); 
+                this.camera.drawTileSafe(graphics, tileID, display.context, localX, localY);
                 this.camera.resetScale();
             });
         }
