@@ -3,7 +3,6 @@ import { MapEditor } from "../mapEditor.js";
 import { clampValue, loopValue } from "../../math/math.js";
 import { SHAPE } from "../../math/constants.js";
 import { Brush } from "./brush.js";
-import { EditorButton } from "./editorButton.js";
 import { ButtonHandler } from "./buttonHandler.js";
 import { EditorAutotiler } from "./autotiler.js";
 import { getRGBAString } from "../../graphics/helpers.js";
@@ -33,15 +32,9 @@ export const MapEditorController = function() {
 MapEditorController.prototype.paint = function(gameContext) {
     const button = this.buttonHandler.getActiveButton();
 
-    if(!button) {
-        return;
-    }
-
-    const { type, layerID } = button;
-    
-    if(type === EditorButton.TYPE.TYPE) {
-        this.editor.incrementTypeIndex(gameContext, layerID);
-    } else {
+    if(button) {
+        const { layerID } = button;
+        
         this.editor.paint(gameContext, layerID);
     }
 }

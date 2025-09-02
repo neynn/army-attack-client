@@ -336,10 +336,10 @@
             "type": "CONTAINER",
             "anchor": "BOTTOM_LEFT",
             "position": { "x": 0, "y": 0 },
-            "width": 500,
+            "width": 400,
             "height": 50,
             "opacity": 1,
-            "children": [ "BUTTON_L1", "BUTTON_L2", "BUTTON_L3", "BUTTON_LC", "BUTTON_VIEW_ALL" ]
+            "children": [ "BUTTON_L1", "BUTTON_L2", "BUTTON_L3", "BUTTON_VIEW_ALL" ]
         },
         "BUTTON_L1": {
             "type": "BUTTON",
@@ -407,33 +407,11 @@
             "opacity": 0.5,
             "effects": [ { "type": "FADE_IN", "threshold": 1, "value": 0.3 } ]
         },
-        "BUTTON_LC": {
-            "type": "BUTTON",
-            "shape": 0,
-            "anchor": "BOTTOM_LEFT",
-            "position": { "x": 300, "y": 0 },
-            "radius": 50,
-            "width": 100,
-            "height": 50,
-            "opacity": 1,
-            "children": [ "TEXT_LC" ]
-        },
-        "TEXT_LC": {
-            "type": "TEXT",
-            "position": { "x": 50, "y": 25 },
-            "text": "TYPE",
-            "fontSize": 15,
-            "fontType": "Arial",
-            "color": [238, 238, 238, 255],
-            "align": "center",
-            "opacity": 0.5,
-            "effects": [ { "type": "FADE_IN", "threshold": 1, "value": 0.3 } ]
-        },
         "BUTTON_VIEW_ALL": {
             "type": "BUTTON",
             "shape": 0,
             "anchor": "BOTTOM_LEFT",
-            "position": { "x": 400, "y": 0 },
+            "position": { "x": 300, "y": 0 },
             "radius": 50,
             "width": 100,
             "height": 50,

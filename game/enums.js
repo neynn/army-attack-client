@@ -50,6 +50,13 @@ export const TEAM_TYPE = {
     VERSUS: 3
 };
 
+export const TILE_NAME = {
+    GROUND: "Ground",
+    MOUNTAIN: "Mountain",
+    SEA: "Sea",
+    SHORE: "Shore"
+};
+
 export const TILE_TYPE = {
     GROUND: 0,
     MOUNTAIN: 1,
@@ -96,5 +103,15 @@ export const getTeamID = function(name) {
         case TEAM_NAME.NEUTRAL: return TEAM_TYPE.NEUTRAL;
         case TEAM_NAME.VERSUS: return TEAM_TYPE.VERSUS;
         default: return TEAM_TYPE.NEUTRAL;
+    }
+}
+
+export const getTileID = function(name) {
+    switch(name) {
+        case TILE_NAME.GROUND: return TILE_TYPE.GROUND;
+        case TILE_NAME.MOUNTAIN: return TILE_TYPE.MOUNTAIN;
+        case TILE_NAME.SEA: return TILE_TYPE.SEA;
+        case TILE_NAME.SHORE: return TILE_TYPE.SHORE;
+        default: return TILE_TYPE.GROUND;
     }
 }

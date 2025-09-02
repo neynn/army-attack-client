@@ -151,7 +151,7 @@ MapEditor.prototype.paint = function(gameContext, layerID) {
         if(tileID !== null && tileID !== brushID) {
             worldMap.placeTile(brushID, layerID, tileX, tileY);
 
-            this.onPaint(gameContext, worldMap, brushID, tileX, tileY);
+            this.onPaint(gameContext, worldMap, layerID, tileX, tileY, brushID);
 
             actionsTaken.push({
                 "layerID": layerID,
@@ -161,7 +161,9 @@ MapEditor.prototype.paint = function(gameContext, layerID) {
             });
         }
 
-        this.autotiler.run(autotiler, worldMap, tileX, tileY, layerID);
+        this.autotiler.run(autotiler, worldMap, tileX, tileY, layerID, (x, y, previousID, nextID) => {
+            this.onPaint(gameContext, worldMap, layerID, x, y, nextID);
+        });
     });
 
     if(actionsTaken.length !== 0) {

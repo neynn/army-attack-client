@@ -5,7 +5,7 @@ import { EditCamera } from "../../camera/editCamera.js";
 import { MapEditorController } from "../../../source/map/editor/mapEditorController.js";
 import { ArmyMap } from "../../init/armyMap.js";
 import { MapSystem } from "../../systems/map.js";
-import { EditorButton } from "../../../source/map/editor/editorButton.js";
+import { getTileID } from "../../enums.js";
 
 export const MapEditorState = function() {
     this.controller = null;
@@ -26,18 +26,18 @@ MapEditorState.prototype.onEnter = function(gameContext, stateMachine) {
     this.controller.buttonHandler.createButton("L1", "ground", "TEXT_L1");
     this.controller.buttonHandler.createButton("L2", "decoration", "TEXT_L2");
     this.controller.buttonHandler.createButton("L3", "cloud", "TEXT_L3");
-    this.controller.buttonHandler.createButton("LC", "type", "TEXT_LC").setType(EditorButton.TYPE.TYPE);
 
-    //TODO
-    this.controller.editor.onPaint = function(gameContext, worldMap, tileID, tileX, tileY) {
+    this.controller.editor.onPaint = function(gameContext, worldMap, layerID, tileX, tileY, tileID) {
         const { tileManager } = gameContext;
         const tileMeta = tileManager.getMeta(tileID);
 
         if(tileMeta) {
-            const { defaultType } = tileMeta;
+            const { type } = tileMeta;
 
-            if(defaultType !== undefined) {
-                worldMap.placeTile(defaultType, ArmyMap.LAYER.TYPE, tileX, tileY);
+            if(type !== undefined) {
+                const typeID = getTileID(type);
+
+                worldMap.placeTile(typeID, ArmyMap.LAYER.TYPE, tileX, tileY);
             }
         }
     }
@@ -127,10 +127,6 @@ MapEditorState.prototype.initUIEvents = function(gameContext) {
 
     editorInterface.addClick("BUTTON_L3", () => {
         this.controller.clickLayerButton(gameContext, "L3");
-    });
-
-    editorInterface.addClick("BUTTON_LC", () => {
-        this.controller.clickLayerButton(gameContext, "LC");
     });
 
     editorInterface.addClick("BUTTON_SAVE", () => {

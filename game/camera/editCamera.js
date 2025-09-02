@@ -71,23 +71,21 @@ EditCamera.prototype.drawHoverTile = function(gameContext, context) {
     const { graphics } = tileManager;
     const button = this.controller.buttonHandler.getActiveButton();
 
-    if(button && button.type !== EditorButton.TYPE.GRAPHICS) {
-        return;
+    if(button) {
+        const { x, y } = gameContext.getMouseTile();
+        const { width, height, halfWidth } = transform2D.getTileDimensions();
+
+        context.globalAlpha = this.controller.overlayAlpha;
+        context.fillStyle = this.controller.overlayColor;
+        context.textAlign = "center";
+
+        this.controller.editor.brush.paint(x, y, (j, i, id, name) => {
+            const renderY = i * height - this.screenY;
+            const renderX = j * width - this.screenX;
+
+            this.drawTileSafe(graphics, id, context, renderX, renderY);
+
+            context.fillText(name, renderX + halfWidth, renderY);  
+        });
     }
-    
-    const { x, y } = gameContext.getMouseTile();
-    const { width, height, halfWidth } = transform2D.getTileDimensions();
-
-    context.globalAlpha = this.controller.overlayAlpha;
-    context.fillStyle = this.controller.overlayColor;
-    context.textAlign = "center";
-
-    this.controller.editor.brush.paint(x, y, (j, i, id, name) => {
-        const renderY = i * height - this.screenY;
-        const renderX = j * width - this.screenX;
-
-        this.drawTileSafe(graphics, id, context, renderX, renderY);
-
-        context.fillText(name, renderX + halfWidth, renderY);  
-    });
 }

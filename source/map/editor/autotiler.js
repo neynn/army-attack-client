@@ -8,11 +8,7 @@ EditorAutotiler.STATE = {
     ACTIVE_INVERTED: 2
 };
 
-EditorAutotiler.prototype.isInverted = function() {
-    return this.state === EditorAutotiler.STATE.ACTIVE_INVERTED;
-}
-
-EditorAutotiler.prototype.run = function(autotiler, worldMap, tileX, tileY, layerID) {
+EditorAutotiler.prototype.run = function(autotiler, worldMap, tileX, tileY, layerID, onChange) {
     if(this.state === EditorAutotiler.STATE.INACTIVE || !autotiler) {
         return;
     }
@@ -21,11 +17,19 @@ EditorAutotiler.prototype.run = function(autotiler, worldMap, tileX, tileY, laye
     const startY = tileY - 1;
     const endX = tileX + 1;
     const endY = tileY + 1;
-    const isInverted = this.isInverted();
+    const isInverted = this.state === EditorAutotiler.STATE.ACTIVE_INVERTED;
 
     for(let i = startY; i <= endY; i++) {
         for(let j = startX; j <= endX; j++) {
+            const previousID = worldMap.getTile(layerID, j, i);
+
             worldMap.applyAutotiler(autotiler, j, i, layerID, isInverted);
+
+            const nextID = worldMap.getTile(layerID, j, i);
+
+            if(previousID !== nextID) {
+                onChange(j, i, previousID, nextID);
+            }
         }
     }
 }

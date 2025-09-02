@@ -4,23 +4,13 @@ export const EditorButton = function(layerID, textID) {
     this.description = "VISIBLE";
     this.opacity = 1;
     this.state = EditorButton.STATE.VISIBLE;
-    this.type = EditorButton.TYPE.GRAPHICS;
 }
-
-EditorButton.TYPE = {
-    GRAPHICS: 0,
-    TYPE: 1
-};
 
 EditorButton.STATE = {
     HIDDEN: 0,
     VISIBLE: 1,
     EDIT: 2
 };
-
-EditorButton.prototype.setType = function(typeID) {
-    this.type = typeID;
-}
 
 EditorButton.prototype.setState = function(state) {
     switch(state) {
