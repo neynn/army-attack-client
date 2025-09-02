@@ -139,14 +139,13 @@ ArmyMap.prototype.conquerTile = function(gameContext, teamID, tileX, tileY) {
     this.updateBorder(gameContext, tileX, tileY, 1);
 }
 
-ArmyMap.prototype.updateAllBorders = function(gameContext) {
-    const { world, tileManager } = gameContext;
-    const { turnManager } = world;
-    
+ArmyMap.prototype.updateAllBorders = function(gameContext) {    
     if(!gameContext.settings.calculateBorder) {
         return;
     }
 
+    const { world, tileManager } = gameContext;
+    const { turnManager } = world;
     const autotiler = tileManager.getAutotilerByID(ArmyMap.AUTOTILER.BORDER);
 
     turnManager.forAllActors((actor) => {
@@ -170,13 +169,12 @@ ArmyMap.prototype.updateAllBorders = function(gameContext) {
 }
 
 ArmyMap.prototype.updateBorder = function(gameContext, tileX, tileY, range) {
-    const { world, tileManager } = gameContext;
-    const { turnManager } = world;
-    
     if(!gameContext.settings.calculateBorder) {
         return;
     }
 
+    const { world, tileManager } = gameContext;
+    const { turnManager } = world;
     const autotiler = tileManager.getAutotilerByID(ArmyMap.AUTOTILER.BORDER);
 
     turnManager.forAllActors((actor) => {
@@ -352,11 +350,11 @@ ArmyMap.prototype.updateShoreTiles = function(gameContext, tileX, tileY, range) 
 
 ArmyMap.prototype.convertGraphicToTeam = function(gameContext, tileX, tileY) {
     const { tileManager } = gameContext;
+    const teamID = this.getTile(ArmyMap.LAYER.TEAM, tileX, tileY);
 
     for(let i = 0; i < ArmyMap.CONVERTABLE_LAYERS.length; i++) {
         const layerID = ArmyMap.CONVERTABLE_LAYERS[i];
         const tileID = this.getTile(layerID, tileX, tileY);
-        const teamID = this.getTile(ArmyMap.LAYER.TEAM, tileX, tileY);
         const conversionID = gameContext.getConversionID(tileID, teamID);
 
         if(tileManager.hasMeta(conversionID)) {

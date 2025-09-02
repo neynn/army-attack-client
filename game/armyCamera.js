@@ -1,5 +1,6 @@
 import { Renderer } from "../source/renderer.js";
 import { Camera2D } from "../source/camera/camera2D.js";
+import { DEBRIS_TYPE } from "./enums.js";
 
 export const ArmyCamera = function() {
     Camera2D.call(this);
@@ -11,10 +12,15 @@ export const ArmyCamera = function() {
 ArmyCamera.prototype = Object.create(Camera2D.prototype);
 ArmyCamera.prototype.constructor = ArmyCamera;
 
-ArmyCamera.prototype.drawDebris = function(tileManager, context, worldMap) {
+ArmyCamera.prototype.drawDebris = function(gameContext, context, worldMap) {
+    const { tileManager } = gameContext;
     const { graphics } = tileManager;
     const { debris } = worldMap;
-    const debrisID = tileManager.getTileID("debris", "Debris_01");
+
+    const defaultDebris = gameContext.getDebrisType(DEBRIS_TYPE.DEBRIS);
+    const defaultDebrisID = tileManager.getTileIDByArray(defaultDebris.texture);
+    const scorchedDebris = gameContext.getDebrisType(DEBRIS_TYPE.SCORCHED_GROUND);
+    const scorchedDebrisID = tileManager.getTileIDByArray(scorchedDebris.texture);
 
     context.globalAlpha = 1;
 
@@ -25,8 +31,17 @@ ArmyCamera.prototype.drawDebris = function(tileManager, context, worldMap) {
             const renderX = x * this.tileWidth - this.screenX;
             const renderY = y * this.tileHeight - this.screenY;
 
-            this.drawTileSafe(graphics, debrisID, context, renderX, renderY);
-        }
+            switch(type) {
+                case DEBRIS_TYPE.DEBRIS: {
+                    this.drawTileSafe(graphics, defaultDebrisID, context, renderX, renderY);
+                    break;
+                }
+                case DEBRIS_TYPE.SCORCHED_GROUND: {
+                    this.drawTileSafe(graphics, scorchedDebrisID, context, renderX, renderY);
+                    break;
+                }
+            }
+        }   
     }
 }
 

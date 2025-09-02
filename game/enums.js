@@ -36,14 +36,14 @@ export const ACTOR_ID = {
     STORY_ENEMY: "ENEMY"
 };
 
-export const TEAM_TYPE = {
+export const TEAM_NAME = {
     ALLIES: "Allies",
     CRIMSON: "Crimson",
     NEUTRAL: "Neutral",
     VERSUS: "Versus"
 };
 
-export const TEAM_ID = {
+export const TEAM_TYPE = {
     CRIMSON: 0,
     ALLIES: 1,
     NEUTRAL: 2,
@@ -74,22 +74,27 @@ export const UI_SONUD = {
     BUTTON: "sound_button_press"
 };
 
+export const DEBRIS_TYPE = {
+    DEBRIS: 0,
+    SCORCHED_GROUND: 1
+};
+
 export const getTeamName = function(id) {
     switch(id) {
-        case TEAM_ID.CRIMSON: return TEAM_TYPE.CRIMSON;
-        case TEAM_ID.ALLIES: return TEAM_TYPE.ALLIES;
-        case TEAM_ID.NEUTRAL: return TEAM_TYPE.NEUTRAL;
-        case TEAM_ID.VERSUS: return TEAM_TYPE.VERSUS;
-        default: return TEAM_TYPE.NEUTRAL;
+        case TEAM_TYPE.CRIMSON: return TEAM_NAME.CRIMSON;
+        case TEAM_TYPE.ALLIES: return TEAM_NAME.ALLIES;
+        case TEAM_TYPE.NEUTRAL: return TEAM_NAME.NEUTRAL;
+        case TEAM_TYPE.VERSUS: return TEAM_NAME.VERSUS;
+        default: return TEAM_NAME.NEUTRAL;
     }
 }
 
 export const getTeamID = function(name) {
     switch(name) {
-        case TEAM_TYPE.CRIMSON: return TEAM_ID.CRIMSON;
-        case TEAM_TYPE.ALLIES: return TEAM_ID.ALLIES;
-        case TEAM_TYPE.NEUTRAL: return TEAM_ID.NEUTRAL;
-        case TEAM_TYPE.VERSUS: return TEAM_ID.VERSUS;
-        default: return TEAM_ID.NEUTRAL;
+        case TEAM_NAME.CRIMSON: return TEAM_TYPE.CRIMSON;
+        case TEAM_NAME.ALLIES: return TEAM_TYPE.ALLIES;
+        case TEAM_NAME.NEUTRAL: return TEAM_TYPE.NEUTRAL;
+        case TEAM_NAME.VERSUS: return TEAM_TYPE.VERSUS;
+        default: return TEAM_TYPE.NEUTRAL;
     }
 }

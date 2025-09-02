@@ -32,7 +32,7 @@ EditCamera.prototype.update = function(gameContext, display) {
     this.floorRenderCoordinates();
     this.drawLayer(graphics, display, worldMap.getLayer(ArmyMap.LAYER.GROUND));
     this.drawLayer(graphics, display, worldMap.getLayer(ArmyMap.LAYER.DECORATION));
-    this.drawDebris(tileManager, context, worldMap);
+    this.drawDebris(gameContext, context, worldMap);
     this.drawSpriteBatch(display, spriteManager.getLayer(SpriteManager.LAYER.BOTTOM), realTime, deltaTime);
     this.drawSpriteBatch(display, spriteManager.getLayer(SpriteManager.LAYER.MIDDLE), realTime, deltaTime);
     this.drawSpriteBatch(display, spriteManager.getLayer(SpriteManager.LAYER.TOP), realTime, deltaTime);

@@ -2,7 +2,7 @@ import { DefaultTypes } from "../defaultTypes.js";
 import { ArmyEventHandler } from "../armyEventHandler.js";
 import { SpawnSystem } from "./spawn.js";
 import { EntityDeathEvent } from "../events/entityDeath.js";
-import { ACTOR_ID, TEAM_TYPE } from "../enums.js";
+import { ACTOR_ID, DEBRIS_TYPE, TEAM_NAME } from "../enums.js";
 
 /**
  * Collection of functions revolving around debugging.
@@ -40,8 +40,8 @@ DebugSystem.spawnFullEntities = function(gameContext) {
 
     for(let i = 0; i < height; i++) {
         for(let j = 0; j < width; j++) {
-            //SpawnSystem.createEntity(gameContext, DefaultTypes.createSpawnConfig("red_battletank", TEAM_TYPE.CRIMSON, [], j, i));
-            SpawnSystem.createEntity(gameContext, DefaultTypes.createSpawnConfig("blue_landingzone", TEAM_TYPE.ALLIES, ACTOR_ID.STORY_PLAYER, j, i));  
+            //SpawnSystem.createEntity(gameContext, DefaultTypes.createSpawnConfig("red_battletank", TEAM_NAME.CRIMSON, [], j, i));
+            SpawnSystem.createEntity(gameContext, DefaultTypes.createSpawnConfig("blue_landingzone", TEAM_NAME.ALLIES, ACTOR_ID.STORY_PLAYER, j, i));  
         }
     }
 }
@@ -65,7 +65,7 @@ DebugSystem.spawnFullDebris = function(gameContext) {
 
     for(let i = 0; i < height; i++) {
         for(let j = 0; j < width; j++) {
-            worldMap.addDebris(1, j, i);
+            worldMap.addDebris(DEBRIS_TYPE.DEBRIS, j, i);
         }
     }
 }

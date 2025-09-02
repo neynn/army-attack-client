@@ -1,6 +1,7 @@
 import { getRandomChance } from "../../source/math/math.js";
 import { ArmyEventHandler } from "../armyEventHandler.js";
 import { DefaultTypes } from "../defaultTypes.js";
+import { DEBRIS_TYPE } from "../enums.js";
 import { DropEvent } from "../events/drop.js";
 import { ArmyEntity } from "../init/armyEntity.js";
 
@@ -74,10 +75,10 @@ DropSystem.createEntityDrop = function(gameContext, entity, dropType, actorID) {
     }
 }
 
-DropSystem.createDebrisDrop = function(gameContext, typeID, actorID, tileX, tileY) {
+DropSystem.createDebrisDrop = function(gameContext, actorID, tileX, tileY) {
     const { world } = gameContext;
     const { eventBus } = world;
-    const debrisType = gameContext.getDebrisType(typeID);
+    const debrisType = gameContext.getDebrisType(DEBRIS_TYPE.DEBRIS);
 
     if(debrisType) {
         const { clearRewards } = debrisType;

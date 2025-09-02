@@ -1,5 +1,5 @@
 import { GameContext } from "../source/gameContext.js";
-import { ACTION_TYPE, getTeamID, getTeamName, TEAM_ID, TILE_TYPE } from "./enums.js";
+import { ACTION_TYPE, DEBRIS_TYPE, getTeamID, getTeamName, TEAM_TYPE, TILE_TYPE } from "./enums.js";
 import { AttackAction } from "./actions/attackAction.js";
 import { MoveAction } from "./actions/moveAction.js";
 import { ArmorComponent } from "./components/armor.js";
@@ -168,25 +168,21 @@ ArmyContext.prototype.getConversionID = function(tileID, teamID) {
 ArmyContext.prototype.getAnimationForm = function(tileID) {
     const tileMeta = this.tileManager.getMeta(tileID);
 
-    if(!tileMeta) {
-        return null;
+    if(tileMeta) {
+        const { graphics } = tileMeta;
+        const [atlas, texture] = graphics;
+        const setForm = this.resources.tileFormConditions[atlas];
+
+        if(setForm) {
+            const animationForm = setForm[texture];
+
+            if(animationForm) {
+                return animationForm;
+            }
+        }
     }
 
-    const { graphics } = tileMeta;
-    const [atlas, texture] = graphics;
-    const setForm = this.resources.tileFormConditions[atlas];
-
-    if(!setForm) {
-        return null;
-    }
-
-    const animationForm = setForm[texture];
-
-    if(!animationForm) {
-        return null;
-    }
-
-    return animationForm;
+    return null;
 }
 
 ArmyContext.prototype.getTileType = function(id) {
@@ -201,11 +197,19 @@ ArmyContext.prototype.getTileType = function(id) {
 
 ArmyContext.prototype.getTeamType = function(id) {
     switch(id) {
-        case TEAM_ID.CRIMSON: return this.resources.teamTypes.Crimson;
-        case TEAM_ID.ALLIES: return this.resources.teamTypes.Allies;
-        case TEAM_ID.NEUTRAL: return this.resources.teamTypes.Neutral;
-        case TEAM_ID.VERSUS: return this.resources.teamTypes.Versus;
+        case TEAM_TYPE.CRIMSON: return this.resources.teamTypes.Crimson;
+        case TEAM_TYPE.ALLIES: return this.resources.teamTypes.Allies;
+        case TEAM_TYPE.NEUTRAL: return this.resources.teamTypes.Neutral;
+        case TEAM_TYPE.VERSUS: return this.resources.teamTypes.Versus;
         default: return this.resources.teamTypes.Neutral;
+    }
+}
+
+ArmyContext.prototype.getDebrisType = function(id) {
+    switch(id) {
+        case DEBRIS_TYPE.DEBRIS: return this.resources.debrisTypes.Debris;
+        case DEBRIS_TYPE.SCORCHED_GROUND: return this.resources.debrisTypes.ScorchedGround;
+        default: return this.resources.debrisTypes.Error;
     }
 }
 
@@ -236,16 +240,6 @@ ArmyContext.prototype.getFireMissionType = function(name) {
     }
 
     return fireMission;
-}
-
-ArmyContext.prototype.getDebrisType = function(name) {
-    const debrisType = this.resources.debrisTypes[name];
-
-    if(!debrisType) {
-        return null;
-    }
-
-    return debrisType;
 }
 
 ArmyContext.prototype.getProductionType = function(name) {

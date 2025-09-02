@@ -56,7 +56,7 @@ PlayCamera.prototype.update = function(gameContext, display) {
     }
 
     this.drawLayer(graphics, display, worldMap.getLayer(ArmyMap.LAYER.DECORATION));
-    this.drawDebris(tileManager, context, worldMap);
+    this.drawDebris(gameContext, context, worldMap);
     this.drawOverlay(graphics, context, this.overlays[PlayCamera.OVERLAY.MOVE]);
     this.drawOverlay(graphics, context, this.overlays[PlayCamera.OVERLAY.ATTACK]);
     this.drawSpriteBatchYSorted(display, spriteManager.getLayer(SpriteManager.LAYER.BOTTOM), realTime, deltaTime);

@@ -1,5 +1,5 @@
 import { ArmyEventHandler } from "../armyEventHandler.js";
-import { getTeamName } from "../enums.js";
+import { DEBRIS_TYPE, getTeamName } from "../enums.js";
 import { DebrisRemovedEvent } from "../events/debrisRemoved.js";
 import { ArmyMap } from "../init/armyMap.js";
 import { AllianceSystem } from "./alliance.js";
@@ -89,7 +89,7 @@ DebrisSystem.spawnDebris = function(gameContext, debris) {
     for(let i = 0; i < debris.length; i++) {
         const { x, y } = debris[i];
 
-        worldMap.addDebris(1, x, y);
+        worldMap.addDebris(DEBRIS_TYPE.DEBRIS, x, y);
     }
 }
 

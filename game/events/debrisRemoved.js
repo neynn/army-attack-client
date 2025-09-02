@@ -9,7 +9,7 @@ DebrisRemovedEvent.prototype.constructor = DebrisRemovedEvent;
 DebrisRemovedEvent.prototype.onStory = function(gameContext, event) {
     const { tileX, tileY, actorID } = event;
 
-    DropSystem.createDebrisDrop(gameContext, "Debris", actorID, tileX, tileY);
+    DropSystem.createDebrisDrop(gameContext, actorID, tileX, tileY);
 }
 
 DebrisRemovedEvent.createEvent = function(tileX, tileY, actorID) {

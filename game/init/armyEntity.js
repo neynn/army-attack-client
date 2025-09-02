@@ -1,7 +1,7 @@
 import { Entity } from "../../source/entity/entity.js";
 import { clampValue, isRectangleRectangleIntersect } from "../../source/math/math.js";
 import { DefaultTypes } from "../defaultTypes.js";
-import { getTeamID, TEAM_TYPE } from "../enums.js";
+import { getTeamID, TEAM_NAME } from "../enums.js";
 import { AllianceSystem } from "../systems/alliance.js";
 import { ArmySprite } from "./armySprite.js";
 
@@ -15,7 +15,7 @@ export const ArmyEntity = function(id, DEBUG_NAME) {
     this.tileY = -1;
     this.directionX = ArmyEntity.DIRECTION.EAST;
     this.directionY = ArmyEntity.DIRECTION.SOUTH;
-    this.teamID = TEAM_TYPE.NEUTRAL;
+    this.teamID = TEAM_NAME.NEUTRAL;
     this.sprite = new ArmySprite();
     this.zLevel = ArmyEntity.Z_LEVEL.IRRELEVANT;
 }
