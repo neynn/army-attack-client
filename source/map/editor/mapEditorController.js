@@ -4,7 +4,6 @@ import { clampValue, loopValue } from "../../math/math.js";
 import { SHAPE } from "../../math/constants.js";
 import { Brush } from "./brush.js";
 import { ButtonHandler } from "./buttonHandler.js";
-import { EditorAutotiler } from "./autotiler.js";
 import { getRGBAString } from "../../graphics/helpers.js";
 import { PalletButton } from "./palletButton.js";
 import { CameraContext } from "../../camera/cameraContext.js";
@@ -254,7 +253,7 @@ MapEditorController.prototype.updateInversionText = function(gameContext, stateI
     const { style } = text;
 
     switch(stateID) {
-        case EditorAutotiler.STATE.ACTIVE_INVERTED: {
+        case MapEditor.AUTOTILER_STATE.ACTIVE_INVERTED: {
             style.setColorArray(this.textColorEdit);
             break;
         }
@@ -290,12 +289,12 @@ MapEditorController.prototype.updateAutoText = function(gameContext, stateID) {
     const { style } = text;
 
     switch(stateID) {
-        case EditorAutotiler.STATE.INACTIVE: {
+        case MapEditor.AUTOTILER_STATE.INACTIVE: {
             style.setColorArray(this.textColorView);
             this.updateInversionText(gameContext, stateID);
             break;
         }
-        case EditorAutotiler.STATE.ACTIVE: {
+        case MapEditor.AUTOTILER_STATE.ACTIVE: {
             style.setColorArray(this.textColorEdit);
             break;
         }
@@ -309,13 +308,13 @@ MapEditorController.prototype.toggleEraser = function(gameContext) {
 }
 
 MapEditorController.prototype.toggleAutotiler = function(gameContext) {
-    const nextState = this.editor.autotiler.toggleAutotiling();
+    const nextState = this.editor.toggleAutotiling();
 
     this.updateAutoText(gameContext, nextState);
 }
 
 MapEditorController.prototype.toggleInversion = function(gameContext) {
-    const inversionState = this.editor.autotiler.toggleInversion();
+    const inversionState = this.editor.toggleInversion();
 
     this.updateInversionText(gameContext, inversionState);
 }

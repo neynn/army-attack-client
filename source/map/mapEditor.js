@@ -1,7 +1,6 @@
 import { TILE_TYPE } from "../../game/enums.js";
 import { loopValue } from "../math/math.js";
 import { Scroller } from "../util/scroller.js";
-import { EditorAutotiler } from "./editor/autotiler.js";
 import { Brush } from "./editor/brush.js";
 
 export const MapEditor = function() {
@@ -11,8 +10,14 @@ export const MapEditor = function() {
     this.brushSizes = new Scroller();
     this.modes = new Scroller([MapEditor.MODE.DRAW, MapEditor.MODE.AUTOTILE]);
     this.activityStack = [];
-    this.autotiler = new EditorAutotiler();
+    this.autotilerState = MapEditor.AUTOTILER_STATE.INACTIVE;
 }
+
+MapEditor.AUTOTILER_STATE = {
+    INACTIVE: 0,
+    ACTIVE: 1,
+    ACTIVE_INVERTED: 2
+};
 
 MapEditor.MODE = {
     DRAW: 0,
@@ -129,7 +134,7 @@ MapEditor.prototype.undo = function(gameContext) {
     }
 }
 
-MapEditor.prototype.onPaint = function(gameContext, worldMap, tileID, tileX, tileY) {}
+MapEditor.prototype.onPaint = function(gameContext, worldMap, layerID, tileX, tileY, tileID) {}
 
 MapEditor.prototype.paint = function(gameContext, layerID) {
     const { world, tileManager } = gameContext;
@@ -161,9 +166,27 @@ MapEditor.prototype.paint = function(gameContext, layerID) {
             });
         }
 
-        this.autotiler.run(autotiler, worldMap, tileX, tileY, layerID, (x, y, previousID, nextID) => {
-            this.onPaint(gameContext, worldMap, layerID, x, y, nextID);
-        });
+        if(this.autotilerState !== MapEditor.AUTOTILER_STATE.INACTIVE && autotiler) {
+            const startX = tileX - 1;
+            const startY = tileY - 1;
+            const endX = tileX + 1;
+            const endY = tileY + 1;
+            const isInverted = this.autotilerState === MapEditor.AUTOTILER_STATE.ACTIVE_INVERTED;
+
+            for(let i = startY; i <= endY; i++) {
+                for(let j = startX; j <= endX; j++) {
+                    const previousID = worldMap.getTile(layerID, j, i);
+
+                    worldMap.applyAutotiler(autotiler, j, i, layerID, isInverted);
+
+                    const nextID = worldMap.getTile(layerID, j, i);
+
+                    if(previousID !== nextID) {
+                        this.onPaint(gameContext, worldMap, layerID, j, i, nextID);
+                    }
+                }
+            }
+        }
     });
 
     if(actionsTaken.length !== 0) {
@@ -199,4 +222,34 @@ MapEditor.prototype.incrementTypeIndex = function(gameContext, layerID) {
     const nextID = tileTypeIDs[nextIndex];
 
     worldMap.placeTile(nextID, layerID, x, y);
+}
+
+MapEditor.prototype.toggleInversion = function() {
+    switch(this.autotilerState) {
+        case MapEditor.AUTOTILER_STATE.ACTIVE: {
+            this.autotilerState = MapEditor.AUTOTILER_STATE.ACTIVE_INVERTED;
+            break;
+        }
+        case MapEditor.AUTOTILER_STATE.ACTIVE_INVERTED: {
+            this.autotilerState = MapEditor.AUTOTILER_STATE.ACTIVE;
+            break;
+        }
+    }
+
+    return this.autotilerState;
+}
+
+MapEditor.prototype.toggleAutotiling = function() {
+    switch(this.autotilerState) {
+        case MapEditor.AUTOTILER_STATE.INACTIVE: {
+            this.autotilerState = MapEditor.AUTOTILER_STATE.ACTIVE;
+            break;
+        }
+        default: {
+            this.autotilerState = MapEditor.AUTOTILER_STATE.INACTIVE;
+            break;
+        }
+    }
+
+    return this.autotilerState;
 }
