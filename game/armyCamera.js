@@ -1,48 +1,15 @@
 import { Renderer } from "../source/renderer.js";
 import { Camera2D } from "../source/camera/camera2D.js";
-import { SpriteManager } from "../source/sprite/spriteManager.js";
-import { PathfinderSystem } from "./systems/pathfinder.js";
-import { Layer } from "../source/map/layer.js";
-import { ArmyMap } from "./init/armyMap.js";
-import { Overlay } from "../source/camera/overlay.js";
 
 export const ArmyCamera = function() {
     Camera2D.call(this);
 
     this.overlays = [];
-    this.overlays[ArmyCamera.OVERLAY.ATTACK] = new Overlay();
-    this.overlays[ArmyCamera.OVERLAY.MOVE] = new Overlay();
-    this.overlays[ArmyCamera.OVERLAY.RANGE] = new Overlay();
-    this.overlays[ArmyCamera.OVERLAY.FIRE_MISSION] = new Overlay();
-    this.border = new Layer(0, 0);
-    this.place = new Layer(0, 0);
+    this.customLayers = [];
 }
-
-ArmyCamera.OVERLAY = {
-    ATTACK: 0,
-    MOVE: 1,
-    RANGE: 2,
-    FIRE_MISSION: 3
-};
 
 ArmyCamera.prototype = Object.create(Camera2D.prototype);
 ArmyCamera.prototype.constructor = ArmyCamera;
-
-ArmyCamera.prototype.pushOverlay = function(index, tileID, positionX, positionY) {
-    if(index < 0 || index >= this.overlays.length) {
-        return;
-    }
-
-    this.overlays[index].add(tileID, positionX, positionY);
-}
-
-ArmyCamera.prototype.clearOverlay = function(index) {
-    if(index < 0 || index >= this.overlays.length) {
-        return;
-    }
-
-    this.overlays[index].clear();
-}
 
 ArmyCamera.prototype.drawDebris = function(tileManager, context, worldMap) {
     const { graphics } = tileManager;
@@ -51,7 +18,7 @@ ArmyCamera.prototype.drawDebris = function(tileManager, context, worldMap) {
 
     context.globalAlpha = 1;
 
-    debris.forEach((item) => {
+    for(const [index, item] of debris) {
         const { type, x, y } = item;
 
         if(x >= this.startX && x <= this.endX && y >= this.startY && y <= this.endY) {
@@ -60,127 +27,30 @@ ArmyCamera.prototype.drawDebris = function(tileManager, context, worldMap) {
 
             this.drawTileSafe(graphics, debrisID, context, renderX, renderY);
         }
-    });
+    }
 }
 
 ArmyCamera.prototype.drawDrops = function(display, worldMap) {
-    const { drops } = worldMap;
-    const dropElements = drops.drops;
+    const dropElements = worldMap.drops.drops;
     const viewportLeftEdge = this.screenX;
     const viewportTopEdge = this.screenY;
     const viewportRightEdge = viewportLeftEdge + this.viewportWidth;
     const viewportBottomEdge = viewportTopEdge + this.viewportHeight;
 
-    if(Renderer.DEBUG.SPRITES) {
-        for(let i = 0; i < dropElements.length; i++) {
-            const { sprite, positionX, positionY } = dropElements[i];
-            const isVisible = sprite.isVisibleStatic(positionX, positionY, viewportRightEdge, viewportLeftEdge, viewportBottomEdge, viewportTopEdge);
+    for(let i = 0; i < dropElements.length; i++) {
+        const { sprite, positionX, positionY } = dropElements[i];
+        const isVisible = sprite.isVisibleStatic(positionX, positionY, viewportRightEdge, viewportLeftEdge, viewportBottomEdge, viewportTopEdge);
 
-            if(isVisible) {
-                sprite.draw(display, viewportLeftEdge - positionX, viewportTopEdge - positionY);
-                sprite.debug(display, viewportLeftEdge - positionX, viewportTopEdge - positionY);
+        if(isVisible) {
+            const drawX = Math.floor(viewportLeftEdge - positionX);
+            const drawY = Math.floor(viewportTopEdge - positionY);
+
+            sprite.draw(display, drawX, drawY);
+
+            if(Renderer.DEBUG.SPRITES) {
+                sprite.debug(display, drawX, drawY);
             }
         }
-    } else {
-        for(let i = 0; i < dropElements.length; i++) {
-            const { sprite, positionX, positionY } = dropElements[i];
-            const isVisible = sprite.isVisibleStatic(positionX, positionY, viewportRightEdge, viewportLeftEdge, viewportBottomEdge, viewportTopEdge);
-
-            if(isVisible) {
-                sprite.draw(display, viewportLeftEdge - positionX, viewportTopEdge - positionY);
-            }
-        }
-    }
-}
-
-ArmyCamera.prototype.update = function(gameContext, display) {
-    const { world, timer, spriteManager, tileManager } = gameContext;
-    const { graphics } = tileManager;
-    const { mapManager } = world;
-    const worldMap = mapManager.getActiveMap();
-
-    if(!worldMap) {
-        return;
-    }
-    
-    const { context } = display;
-    const deltaTime = timer.getDeltaTime();
-    const realTime = timer.getRealTime();
-
-    this.updateWorldBounds();
-    this.clampWorldBounds();
-    this.updateScreenCoordinates();
-    this.drawLayer(graphics, display, worldMap.getLayer(ArmyMap.LAYER.GROUND));
-
-    if(gameContext.settings.drawBorder) {
-        this.drawLayer(graphics, display, this.border);
-    }
-
-    this.drawLayer(graphics, display, worldMap.getLayer(ArmyMap.LAYER.DECORATION));
-    this.drawDebris(tileManager, context, worldMap);
-    this.drawOverlay(graphics, context, this.overlays[ArmyCamera.OVERLAY.MOVE]);
-    this.drawOverlay(graphics, context, this.overlays[ArmyCamera.OVERLAY.ATTACK]);
-    this.drawSpriteBatchYSorted(display, spriteManager.getLayer(SpriteManager.LAYER.BOTTOM), realTime, deltaTime);
-    this.drawSpriteBatchYSorted(display, spriteManager.getLayer(SpriteManager.LAYER.MIDDLE), realTime, deltaTime);
-    this.drawLayer(graphics, display, this.place);
-    this.drawOverlay(graphics, context, this.overlays[ArmyCamera.OVERLAY.FIRE_MISSION]);
-    this.drawOverlay(graphics, context, this.overlays[ArmyCamera.OVERLAY.RANGE]);
-    this.drawSpriteBatchYSorted(display, spriteManager.getLayer(SpriteManager.LAYER.TOP), realTime, deltaTime);
-    this.drawSpriteBatchYSorted(display, spriteManager.getLayer(SpriteManager.LAYER.UI), realTime, deltaTime);
-    this.drawDrops(display, worldMap);
-    this.drawLayer(graphics, display, worldMap.getLayer(ArmyMap.LAYER.CLOUD));
-
-    if(Renderer.DEBUG.MAP) {
-        this.debugMap(context, worldMap);
-    }
-}
-
-ArmyCamera.prototype.debugMap = function(context, worldMap) {
-    const scaleX = Math.floor(this.tileWidth / 6);
-    const scaleY = Math.floor(this.tileHeight / 6);
-
-    context.globalAlpha = 1;
-    context.font = `${scaleX}px Arial`;
-    context.textBaseline = "middle";
-    context.textAlign = "center";
-
-    context.fillStyle = "#ff0000";
-    this.drawBufferData(context, worldMap.getLayer(ArmyMap.LAYER.TYPE).buffer, scaleX, scaleY);
-
-    context.fillStyle = "#00ff00";
-    this.drawBufferData(context, worldMap.getLayer(ArmyMap.LAYER.TEAM).buffer, this.tileWidth - scaleX, scaleY);
-
-    context.fillStyle = "#0000ff";
-    this.drawBufferData(context, this.border.buffer, scaleX, this.tileHeight - scaleY);
-
-    context.fillStyle = "#ffff00";
-    this.drawBufferData(context, worldMap.getLayer(ArmyMap.LAYER.GROUND).buffer, this.tileWidth - scaleX, this.tileHeight - scaleY);
-
-    this.drawMapOutlines(context);
-}
-
-ArmyCamera.prototype.updateMoveOverlay = function(gameContext, nodeList, enableTileID, attackTileID) {
-    const { world } = gameContext;
-    const showInvalidTiles = gameContext.settings.debug.showInvalidMoveTiles;
-
-    this.clearOverlay(ArmyCamera.OVERLAY.MOVE);
-
-    for(let i = 0; i < nodeList.length; i++) {
-        const { node, state } = nodeList[i];
-        const { positionX, positionY } = node;
-
-        if(state !== PathfinderSystem.NODE_STATE.VALID) {
-            if(showInvalidTiles) {
-                this.pushOverlay(ArmyCamera.OVERLAY.MOVE, attackTileID, positionX, positionY);
-            }
-
-        } else {
-            const tileEntity = world.getTileEntity(positionX, positionY);
-
-            if(!tileEntity) {
-                this.pushOverlay(ArmyCamera.OVERLAY.MOVE, enableTileID, positionX, positionY);
-            }
-        } 
     }
 }
 
@@ -189,22 +59,35 @@ ArmyCamera.prototype.initCustomLayers = function(gameContext) {
     const { graphics } = tileManager;
     const containerCount = graphics.getContainerCount();
 
-    this.border.initBuffer(containerCount);
-    this.place.initBuffer(containerCount);
+    for(let i = 0; i < this.customLayers.length; i++) {
+        this.customLayers[i].initBuffer(containerCount);
+    }
+
     this.onMapSizeUpdate();
 }
 
 ArmyCamera.prototype.onMapSizeUpdate = function() {
-    this.border.resize(this.mapWidth, this.mapHeight);
-    this.place.resize(this.mapWidth, this.mapHeight);
+    for(let i = 0; i < this.customLayers.length; i++) {
+        this.customLayers[i].resize(this.mapWidth, this.mapHeight);
+    }
 }
 
-ArmyCamera.prototype.updateBorder = function(borderID, tileX, tileY) {
-    const index = tileY * this.mapWidth + tileX;
-
-    this.border.setItem(borderID, index);
+ArmyCamera.prototype.pushOverlay = function(index, tileID, positionX, positionY) {
+    if(index >= 0 && index < this.overlays.length) {
+        this.overlays[index].add(tileID, positionX, positionY);
+    }
 }
 
-ArmyCamera.prototype.clearPlace = function() {
-    this.place.clear();
+ArmyCamera.prototype.clearOverlay = function(index) {
+    if(index >= 0 && index < this.overlays.length) {
+        this.overlays[index].clear();
+    }
+}
+
+ArmyCamera.prototype.getLayer = function(index) {
+    if(index < 0 || index >= this.customLayers.length) {
+        return null;
+    }
+
+    return this.customLayers[index];
 }

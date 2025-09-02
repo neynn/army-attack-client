@@ -4,12 +4,12 @@ import { OtherPlayer } from "../actors/otherPlayer.js";
 import { EnemyActor } from "../actors/enemyActor.js";
 import { CameraContext } from "../../source/camera/cameraContext.js";
 import { ArmyContext } from "../armyContext.js";
-import { ArmyCamera } from "../armyCamera.js";
 import { DefaultTypes } from "../defaultTypes.js";
 import { ACTOR_ID } from "../enums.js";
 import { Actor } from "../../source/turn/actor.js";
 import { MapManager } from "../../source/map/mapManager.js";
 import { DebugSystem } from "./debug.js";
+import { PlayCamera } from "../camera/playCamera.js";
 
 const ACTOR_TYPE = {
     PLAYER: "Player",
@@ -27,7 +27,7 @@ const createPlayerCamera = function(gameContext) {
     const { renderer, transform2D } = gameContext;
     const { tileWidth, tileHeight } = transform2D;
 
-    const camera = new ArmyCamera();
+    const camera = new PlayCamera();
     const context = renderer.createContext("PLAYER_CAMERA", camera);
 
     context.setPositionMode(CameraContext.POSITION_MODE.AUTO_CENTER);

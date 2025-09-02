@@ -1,5 +1,5 @@
 import { FireMissionAction } from "../../../actions/fireMissionAction.js";
-import { ArmyCamera } from "../../../armyCamera.js";
+import { PlayCamera } from "../../../camera/playCamera.js";
 import { AnimationSystem } from "../../../systems/animation.js";
 import { FireMissionSystem } from "../../../systems/fireMission.js";
 import { Player } from "../player.js";
@@ -32,7 +32,7 @@ PlayerFireMissionState.prototype.onEnter = function(gameContext, stateMachine, t
 PlayerFireMissionState.prototype.onExit = function(gameContext, stateMachine) {
     const player = stateMachine.getContext();
 
-    player.camera.clearOverlay(ArmyCamera.OVERLAY.FIRE_MISSION);
+    player.camera.clearOverlay(PlayCamera.OVERLAY.FIRE_MISSION);
 
     this.missionID = null;
     this.transaction = null;
@@ -91,7 +91,7 @@ PlayerFireMissionState.prototype.showBlockedEntities = function(gameContext, pla
     const { camera } = player;
     const disabledID = tileManager.getTileIDByArray(player.config.overlays.disabled);
 
-    camera.clearOverlay(ArmyCamera.OVERLAY.FIRE_MISSION);
+    camera.clearOverlay(PlayCamera.OVERLAY.FIRE_MISSION);
 
     entityManager.forAllEntities((entity) => {
         const isTargetable = FireMissionSystem.isTargetable(entity);
@@ -102,7 +102,7 @@ PlayerFireMissionState.prototype.showBlockedEntities = function(gameContext, pla
 
             for(let i = entity.tileY; i < endY; i++) {
                 for(let j = entity.tileX; j < endX; j++) {
-                    camera.pushOverlay(ArmyCamera.OVERLAY.FIRE_MISSION, disabledID, j, i);
+                    camera.pushOverlay(PlayCamera.OVERLAY.FIRE_MISSION, disabledID, j, i);
                 }
             }
         }

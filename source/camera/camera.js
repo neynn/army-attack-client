@@ -26,33 +26,30 @@ Camera.VIEWPORT_MODE = {
 
 Camera.prototype.update = function(gameContext, renderContext) {}
 
-Camera.prototype.updateScreenCoordinates = function() {
+Camera.prototype.floorRenderCoordinates = function() {
     this.screenX = Math.floor(this.viewportX);
     this.screenY = Math.floor(this.viewportY);
 }
 
-Camera.prototype.limitViewport = function() {
-    if(this.viewportType !== Camera.VIEWPORT_TYPE.BOUND) {
-        return;
-    }
-
-    if(this.viewportX < 0) {
-        this.viewportX = 0;
-    } else if(this.viewportX >= this.viewportX_limit) {
-        this.viewportX = this.viewportX_limit;
-    }
-  
-    if(this.viewportY < 0) {
-        this.viewportY = 0;
-    } else if(this.viewportY >= this.viewportY_limit) {
-        this.viewportY = this.viewportY_limit;
+Camera.prototype.applyBounds = function() {
+    if(this.viewportType === Camera.VIEWPORT_TYPE.BOUND) {
+        if(this.viewportX < 0) {
+            this.viewportX = 0;
+        } else if(this.viewportX >= this.viewportX_limit) {
+            this.viewportX = this.viewportX_limit;
+        }
+    
+        if(this.viewportY < 0) {
+            this.viewportY = 0;
+        } else if(this.viewportY >= this.viewportY_limit) {
+            this.viewportY = this.viewportY_limit;
+        }
     }
 }
 
 Camera.prototype.bindViewport = function() {
     this.viewportType = Camera.VIEWPORT_TYPE.BOUND;
-
-    this.limitViewport();
+    this.applyBounds();
 }
 
 Camera.prototype.freeViewport = function() {
@@ -72,7 +69,7 @@ Camera.prototype.reloadViewport = function() {
         this.viewportY_limit = this.worldHeight - this.viewportHeight;
     }
 
-    this.limitViewport();
+    this.applyBounds();
 }
 
 Camera.prototype.alignViewport = function() {
@@ -102,25 +99,21 @@ Camera.prototype.setViewportSize = function(width, height) {
 }
 
 Camera.prototype.moveViewport = function(viewportX, viewportY) {
-    if(this.viewportMode === Camera.VIEWPORT_MODE.FIXED) {
-        return;
+    if(this.viewportMode !== Camera.VIEWPORT_MODE.FIXED) {
+        this.viewportX = viewportX;
+        this.viewportY = viewportY;
+
+        this.applyBounds();
     }
-
-    this.viewportX = viewportX;
-    this.viewportY = viewportY;
-
-    this.limitViewport();
 }
 
 Camera.prototype.dragViewport = function(dragX, dragY) {
-    if(this.viewportMode !== Camera.VIEWPORT_MODE.DRAG) {
-        return;
+    if(this.viewportMode === Camera.VIEWPORT_MODE.DRAG) {
+        const viewportX = this.viewportX + dragX;
+        const viewportY = this.viewportY + dragY;
+        
+        this.moveViewport(viewportX, viewportY);
     }
-
-    const viewportX = this.viewportX + dragX;
-    const viewportY = this.viewportY + dragY;
-    
-    this.moveViewport(viewportX, viewportY);
 }
 
 Camera.prototype.centerViewportOn = function(positionX, positionY) {

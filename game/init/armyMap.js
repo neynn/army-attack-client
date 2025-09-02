@@ -3,8 +3,8 @@ import { WorldMap } from "../../source/map/worldMap.js";
 import { AllianceSystem } from "../systems/alliance.js";
 import { DropHandler } from "./armyMap/dropHandler.js";
 import { Shop } from "./armyMap/shop.js";
-import { ArmyCamera } from "../armyCamera.js";
 import { getTeamName, TILE_TYPE } from "../enums.js";
+import { PlayCamera } from "../camera/playCamera.js";
 
 export const ArmyMap = function(id) {
     WorldMap.call(this, id);
@@ -152,15 +152,18 @@ ArmyMap.prototype.updateAllBorders = function(gameContext) {
     turnManager.forAllActors((actor) => {
         const { camera, teamID } = actor;
 
-        if(!(camera instanceof ArmyCamera) || teamID === undefined) {
+        if(!(camera instanceof PlayCamera) || teamID === undefined) {
             return;
         }
+
+        const borderLayer = camera.getLayer(PlayCamera.LAYER.BORDER);
 
         for(let i = 0; i < this.height; i++) {
             for(let j = 0; j < this.width; j++) {
                 const borderID = this.getBorderID(gameContext, autotiler, j, i, teamID);
+                const index = this.getIndex(j, i);
 
-                camera.updateBorder(borderID, j, i);
+                borderLayer.setItem(borderID, index);
             }
         }
     });
@@ -179,10 +182,11 @@ ArmyMap.prototype.updateBorder = function(gameContext, tileX, tileY, range) {
     turnManager.forAllActors((actor) => {
         const { camera, teamID } = actor;
 
-        if(!(camera instanceof ArmyCamera) || teamID === undefined) {
+        if(!(camera instanceof PlayCamera) || teamID === undefined) {
             return;
         }
 
+        const borderLayer = camera.getLayer(PlayCamera.LAYER.BORDER);
         const startX = tileX - range;
         const startY = tileY - range;
         const endX = tileX + range;
@@ -191,8 +195,9 @@ ArmyMap.prototype.updateBorder = function(gameContext, tileX, tileY, range) {
         for(let i = startY; i <= endY; i++) {
             for(let j = startX; j <= endX; j++) {
                 const borderID = this.getBorderID(gameContext, autotiler, j, i, teamID);
+                const index = this.getIndex(j, i);
 
-                camera.updateBorder(borderID, j, i);
+                borderLayer.setItem(borderID, index);
             }
         }
     });

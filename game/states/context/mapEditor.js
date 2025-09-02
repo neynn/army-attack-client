@@ -1,7 +1,7 @@
 import { saveMap } from "../../../helpers.js";
 import { State } from "../../../source/state/state.js";
 import { ArmyContext } from "../../armyContext.js";
-import { ArmyEditorCamera } from "../../armyEditorCamera.js";
+import { EditCamera } from "../../camera/editCamera.js";
 import { MapEditorController } from "../../../source/map/editor/mapEditorController.js";
 import { ArmyMap } from "../../init/armyMap.js";
 import { MapSystem } from "../../systems/map.js";
@@ -21,7 +21,7 @@ MapEditorState.prototype.onEnter = function(gameContext, stateMachine) {
 
     this.controller = new MapEditorController();
     this.controller.init(gameContext.resources.editorConfig, tileManager.getInversion());
-    this.controller.initCamera(gameContext, new ArmyEditorCamera(this.controller));
+    this.controller.initCamera(gameContext, new EditCamera(this.controller));
 
     this.controller.buttonHandler.createButton("L1", "ground", "TEXT_L1");
     this.controller.buttonHandler.createButton("L2", "decoration", "TEXT_L2");

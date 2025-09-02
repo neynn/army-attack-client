@@ -1,3 +1,4 @@
+import { PlayCamera } from "../../../camera/playCamera.js";
 import { DefaultTypes } from "../../../defaultTypes.js";
 import { PlaceSystem } from "../../../systems/place.js";
 import { SpawnSystem } from "../../../systems/spawn.js";
@@ -18,10 +19,11 @@ PlayerPlaceState.prototype.onExit = function(gameContext, stateMachine) {
 
     const player = stateMachine.getContext();
     const { hover, camera } = player;
+    const placeLayer = camera.getLayer(PlayCamera.LAYER.PLACE);
 
     spriteManager.destroySprite(this.buildSpriteIndex);
     hover.hideSprite(gameContext);
-    camera.clearPlace();
+    placeLayer.clear();
 
     this.buildSpriteIndex = -1;
     this.entityType = null;
@@ -33,10 +35,11 @@ PlayerPlaceState.prototype.onEnter = function(gameContext, stateMachine, transit
     const { tileManager } = gameContext;
     
     const player = stateMachine.getContext();
+    const placeLayer = player.camera.getLayer(PlayCamera.LAYER.PLACE);
     const tileID = tileManager.getTileIDByArray(player.config.overlays.enable);
 
     player.rangeVisualizer.disable(gameContext);
-    player.camera.place.fill(tileID);
+    placeLayer.fill(tileID);
 
     this.entityType = entityType;
     this.transaction = transaction;
@@ -100,7 +103,7 @@ PlayerPlaceState.prototype.highlightPlaceableTiles = function(gameContext, playe
     const { tileManager } = gameContext;
     const blockedTileID = tileManager.getTileIDByArray(player.config.overlays.disabled);
     const blockedIndices = PlaceSystem.getBlockedPlaceIndices(gameContext, player.teamID);
-    const targetLayer = player.camera.place;
+    const placeLayer = player.camera.getLayer(PlayCamera.LAYER.PLACE);
 
     for(let i = 0; i < blockedIndices.length; i += 2) {
         const index = blockedIndices[i];
@@ -108,11 +111,11 @@ PlayerPlaceState.prototype.highlightPlaceableTiles = function(gameContext, playe
 
         switch(state) {
             case PlaceSystem.BLOCK_REASON.ENTITY_ATTACK: {
-                targetLayer.setItem(blockedTileID, index);
+                placeLayer.setItem(blockedTileID, index);
                 break;
             }
             default: {
-                targetLayer.clearItem(index);
+                placeLayer.clearItem(index);
                 break;
             }
         }

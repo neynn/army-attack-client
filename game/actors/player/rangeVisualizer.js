@@ -1,6 +1,6 @@
 import { SpriteManager } from "../../../source/sprite/spriteManager.js";
 import { Autotiler } from "../../../source/tile/autotiler.js";
-import { ArmyCamera } from "../../armyCamera.js";
+import { PlayCamera } from "../../camera/playCamera.js";
 import { ArmyEntity } from "../../init/armyEntity.js";
 import { ArmyMap } from "../../init/armyMap.js";
 
@@ -69,7 +69,7 @@ RangeVisualizer.prototype.show = function(gameContext, entity) {
                 return Autotiler.RESPONSE.INVALID;
             });
 
-            this.camera.pushOverlay(ArmyCamera.OVERLAY.RANGE, tileID, j, i);
+            this.camera.pushOverlay(PlayCamera.OVERLAY.RANGE, tileID, j, i);
         }
     }
 }
@@ -79,7 +79,7 @@ RangeVisualizer.prototype.hide = function(gameContext) {
     const { entityManager } = world;
     const entity = entityManager.getEntity(this.lastTarget);
 
-    this.camera.clearOverlay(ArmyCamera.OVERLAY.RANGE);
+    this.camera.clearOverlay(PlayCamera.OVERLAY.RANGE);
 
     if(entity) {
         entity.sprite.swapLayer(gameContext, SpriteManager.LAYER.MIDDLE);

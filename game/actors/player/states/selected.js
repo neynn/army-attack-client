@@ -1,10 +1,10 @@
 import { EntityManager } from "../../../../source/entity/entityManager.js";
-import { ArmyCamera } from "../../../armyCamera.js";
 import { AnimationSystem } from "../../../systems/animation.js";
 import { PlayerCursor } from "../playerCursor.js";
 import { Player } from "../player.js";
 import { MoveAction } from "../../../actions/moveAction.js";
 import { PlayerState } from "./playerState.js";
+import { PlayCamera } from "../../../camera/playCamera.js";
 
 export const PlayerSelectedState = function() {
     this.entityID = EntityManager.ID.INVALID;
@@ -92,7 +92,7 @@ PlayerSelectedState.prototype.deselectEntity = function(gameContext, player) {
         AnimationSystem.stopSelect(entity);
     }
 
-    player.camera.clearOverlay(ArmyCamera.OVERLAY.MOVE);
+    player.camera.clearOverlay(PlayCamera.OVERLAY.MOVE);
     player.hover.clearNodes();
 
     this.entityID = EntityManager.ID.INVALID;

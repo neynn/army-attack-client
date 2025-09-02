@@ -1,5 +1,5 @@
 import { SwapSet } from "../../../source/util/swapSet.js";
-import { ArmyCamera } from "../../armyCamera.js";
+import { PlayCamera } from "../../camera/playCamera.js";
 import { ArmyEntity } from "../../init/armyEntity.js";
 import { PlayerCursor } from "./playerCursor.js";
 
@@ -13,7 +13,7 @@ AttackVisualizer.prototype.isAnyAttacking = function() {
 }
 
 AttackVisualizer.prototype.clearOverlay = function() {
-    this.camera.clearOverlay(ArmyCamera.OVERLAY.ATTACK);
+    this.camera.clearOverlay(PlayCamera.OVERLAY.ATTACK);
 }
 
 AttackVisualizer.prototype.resetAttackerSprite = function(gameContext, attackerID) {
@@ -42,12 +42,12 @@ AttackVisualizer.prototype.resetAttackers = function(gameContext) {
 }
 
 AttackVisualizer.prototype.updateAttackerOverlay = function(attackers, overlayID) {
-    this.camera.clearOverlay(ArmyCamera.OVERLAY.ATTACK);
+    this.camera.clearOverlay(PlayCamera.OVERLAY.ATTACK);
 
     for(let i = 0; i < attackers.length; i++) {
         const attacker = attackers[i];
 
-        this.camera.pushOverlay(ArmyCamera.OVERLAY.ATTACK, overlayID, attacker.tileX, attacker.tileY);
+        this.camera.pushOverlay(PlayCamera.OVERLAY.ATTACK, overlayID, attacker.tileX, attacker.tileY);
     }
 }
 
