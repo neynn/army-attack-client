@@ -11,14 +11,16 @@ import { LanguageHandler } from "./languageHandler.js";
 import { Transform2D } from "./math/transform2D.js";
 import { FontHandler } from "./fontHandler.js";
 import { MapManager } from "./map/mapManager.js";
+import { ResourceLoader } from "./resources/resourceLoader.js";
 
 export const GameContext = function() {
     this.client = new Client();
     this.world = new World();
     this.renderer = new Renderer();
-    this.tileManager = new TileManager();
-    this.spriteManager = new SpriteManager();
-    this.uiManager = new UIManager();
+    this.resourceLoader = new ResourceLoader();
+    this.tileManager = new TileManager(this.resourceLoader);
+    this.spriteManager = new SpriteManager(this.resourceLoader);
+    this.uiManager = new UIManager(this.resourceLoader);
     this.language = new LanguageHandler();
     this.fonts = new FontHandler();
     this.states = new StateMachine(this);
@@ -72,8 +74,8 @@ GameContext.prototype.exit = function() {
 }
 
 GameContext.prototype.loadResources = function(resources) {
-    this.spriteManager.load(resources.spriteTextures, resources.sprites);
     this.tileManager.load(resources.tiles, resources.tileMeta, resources.autotilers);
+    this.spriteManager.load(resources.spriteTextures, resources.sprites);
     this.uiManager.load(resources.interfaces, resources.icons);
     this.fonts.load(resources.fonts);
     this.client.musicPlayer.load(resources.music);

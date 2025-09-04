@@ -128,7 +128,9 @@ const unloadEntitySprites = function(gameContext, entity) {
     const { sprites } = entity.config;
 
     for(const spriteType in sprites) {
-        spriteManager.graphics.loader.removeReference(sprites[spriteType]);
+        const spriteID = sprites[spriteType];
+
+        spriteManager.graphics.removeReference(spriteID);
     }
 }
 

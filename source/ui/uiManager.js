@@ -1,13 +1,23 @@
 import { Logger } from "../logger.js";
-import { TextureLoader } from "../resources/textureLoader.js";
 import { UIParser } from "./parser.js";
 import { UserInterface } from "./userInterface.js";
 
-export const UIManager = function() {
+export const UIManager = function(resourceLoader) {
     this.nextID = 0;
-    this.resources = new TextureLoader();
+    this.resources = resourceLoader;
+    this.textureMap = {};
     this.parser = new UIParser();
     this.interfaceStack = [];
+}
+
+UIManager.prototype.getIconTexture = function(iconID) {
+    const textureID = this.textureMap[iconID];
+
+    if(textureID) {
+        this.resources.loadTexture(textureID);
+    }
+
+    return this.resources.getTextureByID(textureID);
 }
 
 UIManager.prototype.load = function(interfaceTypes, iconTypes) {
@@ -16,7 +26,7 @@ UIManager.prototype.load = function(interfaceTypes, iconTypes) {
     }
 
     this.parser.load(interfaceTypes);
-    this.resources.createTextures(iconTypes);
+    this.textureMap = this.resources.createTextures(iconTypes);
 }
 
 UIManager.prototype.debug = function(display) {

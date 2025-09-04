@@ -99,9 +99,7 @@ UIParser.prototype.createElementFromConfig = function(uiManager, config, DEBUG_N
                 scaleY = 1
             } = config;
 
-            const texture = uiManager.resources.getTexture(image);
-
-            uiManager.resources.requestBitmap(image);
+            const texture = uiManager.getIconTexture(image);
 
             element.setPosition(x, y);
             element.setOpacity(opacity);

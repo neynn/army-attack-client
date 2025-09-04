@@ -3,8 +3,8 @@ import { Sprite } from "./sprite.js";
 import { ObjectPool } from "../util/objectPool.js";
 import { SpriteTextureHandler } from "./spriteTextureHandler.js";
 
-export const SpriteManager = function() {
-    this.graphics = new SpriteTextureHandler();
+export const SpriteManager = function(resourceLoader) {
+    this.graphics = new SpriteTextureHandler(resourceLoader);
     this.spriteTracker = new Set();
     this.sprites = new ObjectPool(1024, (index) => new Sprite(index, "EMPTY_SPRITE"));
     this.sprites.allocate();
@@ -34,8 +34,7 @@ SpriteManager.prototype.getLayer = function(layerIndex) {
 }
 
 SpriteManager.prototype.preloadAtlas = function(atlasID) {
-    this.graphics.loader.requestBitmap(atlasID);
-    this.graphics.loader.addReference(atlasID);
+    this.graphics.loadBitmap(atlasID);
 }
 
 SpriteManager.prototype.load = function(textures, sprites) {

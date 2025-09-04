@@ -1,4 +1,5 @@
-export const Texture = function(path, regions) {
+export const Texture = function(id, path, regions) {
+    this.id = id;
     this.path = path;
     this.regions = regions;
     this.bitmap = null;

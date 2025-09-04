@@ -1,8 +1,7 @@
-import { TextureLoader } from "../resources/textureLoader.js";
 import { SpriteContainer } from "./spriteContainer.js";
 
-export const SpriteTextureHandler = function() {
-    this.loader = new TextureLoader();
+export const SpriteTextureHandler = function(loader) {
+    this.loader = loader;
     this.spriteMap = new Map();
     this.containers = [];
 }
@@ -33,23 +32,24 @@ SpriteTextureHandler.prototype.loadBitmap = function(spriteID) {
     if(data) {
         const { index, textureID } = data;
 
-        this.loader.requestBitmap(textureID);
+        this.loader.loadTexture(textureID);
     }
 }
 
 SpriteTextureHandler.prototype.load = function(textures, sprites) {
-    this.loader.createTextures(textures);
+    const textureMap = this.loader.createTextures(textures);
     
     for(const spriteID in sprites) {
         const spriteConfig = sprites[spriteID];
         const { texture, bounds, frameTime, frames } = spriteConfig;
-        const textureObject = this.loader.getTexture(texture);
+        const textureID = textureMap[texture];
 
-        if(!textureObject || !frames) {
+        if(textureID === undefined || !frames) {
             console.warn(`Texture ${texture} of sprite ${spriteID} does not exist!`);
             continue;
         }
 
+        const textureObject = this.loader.getTextureByID(textureID);
         const spriteContainer = new SpriteContainer(textureObject, bounds, frameTime);
         const frameCount = spriteContainer.initFrames(frames);
 
@@ -61,7 +61,15 @@ SpriteTextureHandler.prototype.load = function(textures, sprites) {
         this.containers.push(spriteContainer);
         this.spriteMap.set(spriteID, {
             "index": this.containers.length - 1,
-            "textureID": texture
+            "textureID": textureID
         });
     }
 }
+
+SpriteTextureHandler.prototype.removeReference = function(spriteID) {
+    const data = this.spriteMap.get(spriteID);
+
+    if(data) {
+        //TODO: Unload textures.
+    }
+}   

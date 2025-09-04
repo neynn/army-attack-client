@@ -1,14 +1,14 @@
-import { TextureLoader } from "../resources/textureLoader.js";
+import { ResourceLoader } from "../resources/resourceLoader.js";
 import { TileContainer } from "./tileContainer.js";
 
-export const TileTextureHandler = function() {
-    this.loader = new TextureLoader();
+export const TileTextureHandler = function(loader) {
+    this.loader = loader;
     this.containers = [];
     this.activeContainers = [];
     this.atlases = new Map();
 
-    this.loader.events.on(TextureLoader.EVENT.TEXTURE_LOAD, (textureID, texture) => {
-        this.onTextureLoad(textureID, texture);
+    this.loader.events.on(ResourceLoader.EVENT.TEXTURE_LOAD, (id, texture) => {
+        this.onTextureLoad(id, texture);
     }, { permanent: true });
 }
 
@@ -37,7 +37,7 @@ TileTextureHandler.prototype.onTextureLoad = function(textureID, texture) {
 }
 
 TileTextureHandler.prototype.load = function(atlases, tileMeta) {
-    this.loader.createTextures(atlases);
+    const textureMap = this.loader.createTextures(atlases);
 
     for(let i = 0; i < tileMeta.length; i++) {
         const { graphics } = tileMeta[i];
@@ -60,13 +60,17 @@ TileTextureHandler.prototype.load = function(atlases, tileMeta) {
                 this.activeContainers.push(container);
             }
 
-            const usedSheet = this.atlases.get(atlasID);
+            const textureID = textureMap[atlasID];
 
-            if(usedSheet) {
-                usedSheet.push(i);
-            } else {
-                this.atlases.set(atlasID, [i]);
-                this.loader.requestBitmap(atlasID);
+            if(textureID !== undefined) {
+                const atlas = this.atlases.get(textureID);
+
+                if(atlas) {
+                    atlas.push(i);
+                } else {
+                    this.atlases.set(textureID, [i]);
+                    this.loader.loadTexture(textureID);
+                }
             }
         }
     }
