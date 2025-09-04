@@ -12,15 +12,6 @@ Transform2D.prototype.setSize = function(tileWidth, tileHeight) {
     this.halfTileHeight = tileHeight / 2;
 }
 
-Transform2D.prototype.getTileDimensions = function() {
-    return {
-        "width": this.tileWidth,
-        "height": this.tileHeight,
-        "halfWidth": this.halfTileWidth,
-        "halfHeight": this.halfTileHeight
-    }
-}
-
 Transform2D.prototype.transformTileToWorld = function(tileX, tileY) {
 	const positionX = tileX * this.tileWidth;
 	const positionY = tileY * this.tileHeight;

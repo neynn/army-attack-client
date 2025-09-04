@@ -42,7 +42,9 @@ Sprite.prototype.constructor = Sprite;
 
 Sprite.prototype.onDraw = function(display, localX, localY) {
     if(!this.container) {
-        this.drawPlaceholder(display, localX, localY);
+        if(Sprite.RENDER_PLACEHOLDER) {
+            this.drawPlaceholder(display, localX, localY);
+        }
         return;
     }
 
@@ -50,7 +52,9 @@ Sprite.prototype.onDraw = function(display, localX, localY) {
     const { bitmap } = texture;
 
     if(!bitmap) {
-        this.drawPlaceholder(display, localX, localY);
+        if(Sprite.RENDER_PLACEHOLDER) {
+            this.drawPlaceholder(display, localX, localY);
+        }
         return;
     }
 
@@ -112,26 +116,24 @@ Sprite.prototype.onDebug = function(display, localX, localY) {
 }
 
 Sprite.prototype.drawPlaceholder = function(display, localX, localY) {
-    if(Sprite.RENDER_PLACEHOLDER) {
-        const { context } = display;
-        const isFlipped = (this.flags & Sprite.FLAG.FLIP) !== 0;
+    const { context } = display;
+    const isFlipped = (this.flags & Sprite.FLAG.FLIP) !== 0;
 
-        let renderX = localX;
-        let renderY = localY;
+    let renderX = localX;
+    let renderY = localY;
 
-        if(isFlipped) {
-            renderX = (localX - this.boundsX) * -1;
-            renderY = localY + this.boundsY;
-            display.flip();
-        } else {
-            renderX = localX + this.boundsX;
-            renderY = localY + this.boundsY;
-            display.unflip();
-        }
-
-        context.fillStyle = Sprite.DEBUG.COLOR;
-        context.fillRect(renderX, renderY, this.boundsW, this.boundsH);
+    if(isFlipped) {
+        renderX = (localX - this.boundsX) * -1;
+        renderY = localY + this.boundsY;
+        display.flip();
+    } else {
+        renderX = localX + this.boundsX;
+        renderY = localY + this.boundsY;
+        display.unflip();
     }
+
+    context.fillStyle = Sprite.DEBUG.COLOR;
+    context.fillRect(renderX, renderY, this.boundsW, this.boundsH);
 }
 
 Sprite.prototype.getIndex = function() {

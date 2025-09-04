@@ -76,9 +76,9 @@ EditCamera.prototype.drawHoverTile = function(gameContext, context) {
     }
 
     const { tileManager, transform2D } = gameContext;
+    const { tileWidth, tileHeight, halfTileWidth } = transform2D;
     const { graphics } = tileManager;
     const { x, y } = gameContext.getMouseTile();
-    const { width, height, halfWidth } = transform2D.getTileDimensions();
 
     context.globalAlpha = this.overlayAlpha;
     context.fillStyle = this.overlayColor;
@@ -91,12 +91,12 @@ EditCamera.prototype.drawHoverTile = function(gameContext, context) {
 
     for(let i = startY; i <= endY; i++) {
         for(let j = startX; j <= endX; j++) {
-            const renderY = i * height - this.screenY;
-            const renderX = j * width - this.screenX;
+            const renderY = i * tileHeight - this.screenY;
+            const renderX = j * tileWidth - this.screenX;
 
             this.drawTileSafe(graphics, this.tileID, context, renderX, renderY);
 
-            context.fillText(this.tileName, renderX + halfWidth, renderY);
+            context.fillText(this.tileName, renderX + halfTileWidth, renderY);
         }
     }
 }

@@ -34,10 +34,6 @@ Brush.prototype.setBrush = function(id, name) {
     }
 }
 
-Brush.prototype.setSize = function(size) {
-    this.size = size;
-}
-
 Brush.prototype.getDrawArea = function() {
     return (this.size + 1) * 2 - 1;
 }
