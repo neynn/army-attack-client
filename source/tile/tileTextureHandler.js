@@ -1,14 +1,11 @@
-import { ResourceLoader } from "../resources/resourceLoader.js";
 import { TileContainer } from "./tileContainer.js";
 
 export const TileTextureHandler = function() {
     this.containers = [];
     this.activeContainers = [];
-    this.atlases = new Map();
 }
 
 TileTextureHandler.EMPTY_CONTAINER = new TileContainer();
-TileTextureHandler.EMPTY_CONTAINER.setTexture(ResourceLoader.EMPTY_TEXTURE);
 
 TileTextureHandler.prototype.update = function(timestamp) {
     for(let i = 0; i < this.activeContainers.length; i++) {
@@ -53,15 +50,11 @@ TileTextureHandler.prototype.load = function(resourceLoader, atlases, tileMeta) 
                 container.setTexture(textureObject);
                 textureObject.addReference();
                 resourceLoader.loadTexture(textureID);
-            } else {
-                container.setTexture(ResourceLoader.EMPTY_TEXTURE);
-            }
+            } 
 
             if(frameCount > 1) {
                 this.activeContainers.push(container);
             }
-        } else {
-            container.setTexture(ResourceLoader.EMPTY_TEXTURE);
         }
 
         this.containers.push(container);

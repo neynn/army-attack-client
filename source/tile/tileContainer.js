@@ -1,5 +1,7 @@
+import { ResourceLoader } from "../resources/resourceLoader.js";
+
 export const TileContainer = function() {
-    this.texture = null;
+    this.texture = ResourceLoader.EMPTY_TEXTURE;
     this.frames = [];
     this.frameTime = TileContainer.DEFAULT.FRAME_TIME;
     this.frameIndex = 0;
