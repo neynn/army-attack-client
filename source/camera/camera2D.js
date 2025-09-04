@@ -67,17 +67,14 @@ Camera2D.prototype.drawTileSafe = function(graphics, tileID, context, renderX, r
     }
 
     const container = graphics.containers[index];
-    const { texture, frameCount, frames, frameIndex } = container;
-
-    if(texture === null || frameCount === 0) {
-        this.drawEmptyTile(context, renderX, renderY);
-        return;
-    }
-
+    const { texture, frames, frameIndex } = container;
     const { bitmap } = texture;
-    const currentFrame = frames[frameIndex];
 
-    this.drawFrame(context, bitmap, currentFrame, renderX, renderY);
+    if(bitmap === null) {
+        this.drawEmptyTile(context, renderX, renderY);
+    } else {
+        this.drawFrame(context, bitmap, frames[frameIndex], renderX, renderY);
+    }
 }
 
 Camera2D.prototype.drawFrame = function(context, bitmap, frame, renderX, renderY) {

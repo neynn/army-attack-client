@@ -4,7 +4,8 @@ import { ObjectPool } from "../util/objectPool.js";
 import { SpriteTextureHandler } from "./spriteTextureHandler.js";
 
 export const SpriteManager = function(resourceLoader) {
-    this.graphics = new SpriteTextureHandler(resourceLoader);
+    this.resources = resourceLoader;
+    this.graphics = new SpriteTextureHandler();
     this.spriteTracker = new Set();
     this.sprites = new ObjectPool(1024, (index) => new Sprite(index, "EMPTY_SPRITE"));
     this.sprites.allocate();
@@ -34,7 +35,7 @@ SpriteManager.prototype.getLayer = function(layerIndex) {
 }
 
 SpriteManager.prototype.preloadAtlas = function(atlasID) {
-    this.graphics.loadBitmap(atlasID);
+    this.graphics.loadBitmap(this.resources, atlasID);
 }
 
 SpriteManager.prototype.load = function(textures, sprites) {
@@ -43,7 +44,7 @@ SpriteManager.prototype.load = function(textures, sprites) {
         return;
     }
 
-    this.graphics.load(textures, sprites);
+    this.graphics.load(this.resources, textures, sprites);
 }
 
 SpriteManager.prototype.update = function(gameContext) {
@@ -235,7 +236,7 @@ SpriteManager.prototype.updateSpriteTexture = function(sprite, spriteID) {
     sprite.init(container, this.timestamp, spriteID);
 
     if(!container.isLoaded()) {
-        this.graphics.loadBitmap(spriteID, sprite);
+        this.graphics.loadBitmap(this.resources, spriteID);
     }
 }
 

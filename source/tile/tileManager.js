@@ -2,7 +2,8 @@ import { TileTextureHandler } from "./tileTextureHandler.js";
 import { Autotiler } from "./autotiler.js";
 
 export const TileManager = function(resourceLoader) {
-    this.graphics = new TileTextureHandler(resourceLoader);
+    this.resources = resourceLoader;
+    this.graphics = new TileTextureHandler();
     this.autotilers = new Map();
     this.metaInversion = {};
     this.meta = [];
@@ -19,7 +20,7 @@ TileManager.prototype.load = function(tileAtlases, tileMeta, autotilers) {
         return;
     }
 
-    this.graphics.load(tileAtlases, tileMeta);
+    this.graphics.load(this.resources, tileAtlases, tileMeta);
     this.meta = tileMeta;
 
     for(let i = 0; i < tileMeta.length; i++) {

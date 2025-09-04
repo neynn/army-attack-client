@@ -114,3 +114,56 @@ TileContainer.prototype.updateTotalFrameTime = function() {
         this.frameTimeTotal = frameTimeTotal;
     }
 }
+
+TileContainer.prototype.init = function(atlas, graphicID) {
+    const { regions = {}, patterns = {}, animations = {} } = atlas;
+    const frameData = regions[graphicID];
+
+    if(frameData) {
+        const frame = TileContainer.createFrame(frameData);
+
+        this.setFrameTime(TileContainer.DEFAULT.FRAME_TIME);
+        this.addFrame(frame);
+        return;
+    } 
+
+    const patternData = patterns[graphicID];
+
+    if(patternData) {
+        const frame = TileContainer.createPatternFrame(patternData, regions);
+
+        this.setFrameTime(TileContainer.DEFAULT.FRAME_TIME);
+        this.addFrame(frame);
+        return;
+    }
+
+    const animationData = animations[graphicID];
+
+    if(animationData) {
+        const frameTime = animationData.frameTime ?? TileContainer.DEFAULT.FRAME_TIME;
+        const animationFrames = animationData.frames ?? [];
+
+        this.setFrameTime(frameTime);
+
+        for(let i = 0; i < animationFrames.length; i++) {
+            const frameID = animationFrames[i];
+            const frameData = regions[frameID];
+
+            if(frameData) {
+                const frame = TileContainer.createFrame(frameData);
+
+                this.addFrame(frame);
+                continue;
+            }
+
+            const patternData = patterns[frameID];
+
+            if(patternData) {
+                const frame = TileContainer.createPatternFrame(patternData, regions);
+
+                this.addFrame(frame);
+                continue;
+            }
+        }
+    }
+}

@@ -1,7 +1,6 @@
 import { SpriteContainer } from "./spriteContainer.js";
 
-export const SpriteTextureHandler = function(loader) {
-    this.loader = loader;
+export const SpriteTextureHandler = function() {
     this.spriteMap = new Map();
     this.containers = [];
 }
@@ -26,18 +25,18 @@ SpriteTextureHandler.prototype.getContainerIndex = function(spriteID) {
     return index;
 }
 
-SpriteTextureHandler.prototype.loadBitmap = function(spriteID) {
+SpriteTextureHandler.prototype.loadBitmap = function(resourceLoader, spriteID) {
     const data = this.spriteMap.get(spriteID);
 
     if(data) {
         const { index, textureID } = data;
 
-        this.loader.loadTexture(textureID);
+        resourceLoader.loadTexture(textureID);
     }
 }
 
-SpriteTextureHandler.prototype.load = function(textures, sprites) {
-    const textureMap = this.loader.createTextures(textures);
+SpriteTextureHandler.prototype.load = function(resourceLoader, textures, sprites) {
+    const textureMap = resourceLoader.createTextures(textures);
     
     for(const spriteID in sprites) {
         const spriteConfig = sprites[spriteID];
@@ -49,7 +48,7 @@ SpriteTextureHandler.prototype.load = function(textures, sprites) {
             continue;
         }
 
-        const textureObject = this.loader.getTextureByID(textureID);
+        const textureObject = resourceLoader.getTextureByID(textureID);
         const spriteContainer = new SpriteContainer(textureObject, bounds, frameTime);
         const frameCount = spriteContainer.initFrames(frames);
 
