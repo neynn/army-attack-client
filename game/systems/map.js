@@ -22,7 +22,7 @@ const createMap = function(gameContext, id, data, type) {
 
     turnManager.forAllActors((actor) => {
         if(actor instanceof Player) {
-            actor.onMapCreate(gameContext, id, data);
+            actor.onMapCreate(id, data);
         }
     });
 

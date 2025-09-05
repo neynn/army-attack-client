@@ -1,21 +1,9 @@
-import { EventEmitter } from "../../../../source/events/eventEmitter.js";
 import { Mission } from "./mission.js";
 
 export const MissionGroup = function() {
     this.missions = new Map();
     this.state = MissionGroup.STATE.INCOMPLETE;
-
-    this.events = new EventEmitter();
-    this.events.listen(MissionGroup.EVENT.ALL_COMPLETED);
-    this.events.listen(MissionGroup.EVENT.MISSION_STARTED);
-    this.events.listen(MissionGroup.EVENT.MISSION_COMPLETED);
 }
-
-MissionGroup.EVENT = {
-    ALL_COMPLETED: "ALL_COMPLETED",
-    MISSION_STARTED: "MISSION_STARTED",
-    MISSION_COMPLETED: "MISSION_COMPLETED"
-};
 
 MissionGroup.STATE = {
     INCOMPLETE: 0,
@@ -116,7 +104,6 @@ MissionGroup.prototype.updateState = function() {
     }
 
     this.state = MissionGroup.STATE.COMPLETE;
-    this.events.emit(MissionGroup.EVENT.ALL_COMPLETED);
 }
 
 MissionGroup.prototype.unlockMissions = function() {
@@ -129,36 +116,9 @@ MissionGroup.prototype.unlockMissions = function() {
                 const hasStarted = mission.start();
 
                 if(hasStarted) {
-                    this.events.emit(MissionGroup.EVENT.MISSION_STARTED, missionID, mission);
+                    console.log(`Mission ${missionID} has started!`, mission);
                 }
             }
         }
     }
-}
-
-MissionGroup.prototype.handleObjective = function(type, parameter, count) {
-    for(const [missionID, mission] of this.missions) {
-        mission.onObjective(type, parameter, count);
-
-        const isCompleted = mission.complete();
-
-        if(isCompleted) {
-            this.events.emit(MissionGroup.EVENT.MISSION_COMPLETED, missionID, mission);
-        }
-    }
-
-    this.unlockMissions();
-    this.updateState();
-}
-
-MissionGroup.prototype.getActiveMissions = function() {
-    const missions = [];
-
-    for(const [missionID, mission] of this.missions) {
-        if(mission.state === Mission.STATE.STARTED) {
-            missions.push(mission);
-        }
-    }
-
-    return missions;
 }

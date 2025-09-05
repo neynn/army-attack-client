@@ -2,7 +2,7 @@ import { EventEmitter } from "../events/eventEmitter.js";
 import { State } from "./state.js";
 
 export const StateMachine = function(context) {
-    this.currentType = StateMachine.TYPE.NONE;
+    this.isCurrentMachine = false;
     this.currentState = null;
     this.previousState = null;
     this.nextState = null;
@@ -19,12 +19,6 @@ export const StateMachine = function(context) {
         console.warn(`No context given to state machine!`);
     }
 }
-
-StateMachine.TYPE = {
-    NONE: 0,
-    STATE: 1,
-    MACHINE: 2
-};
 
 StateMachine.EVENT = {
     "STATE_ADD": "STATE_ADD",
@@ -54,7 +48,7 @@ StateMachine.prototype.update = function(gameContext) {
     if(this.currentState !== null) {
         this.currentState.onUpdate(gameContext, this);
 
-        if(this.currentType === StateMachine.TYPE.MACHINE) {
+        if(this.isCurrentMachine) {
             this.currentState.update();
         }
     }
@@ -64,7 +58,7 @@ StateMachine.prototype.eventEnter = function(gameContext, eventID, eventData) {
     if(this.currentState !== null) {
         this.currentState.onEvent(gameContext, this, eventID, eventData);
 
-        if(this.currentType === StateMachine.TYPE.MACHINE) {
+        if(this.isCurrentMachine) {
             this.currentState.eventEnter(gameContext, eventID, eventData);
         }
     }
@@ -72,14 +66,14 @@ StateMachine.prototype.eventEnter = function(gameContext, eventID, eventData) {
 
 StateMachine.prototype.exit = function(gameContext) {
     if(this.currentState !== null) {
-        if(this.currentType === StateMachine.TYPE.MACHINE) {
+        if(this.isCurrentMachine) {
             this.currentState.exit(gameContext);
         }
-        
+
         this.currentState.onExit(gameContext, this);
         this.previousState = this.currentState;
         this.currentState = null;
-        this.currentType = StateMachine.TYPE.NONE;
+        this.isCurrentMachine = false;
     }
 }
 
@@ -89,11 +83,7 @@ StateMachine.prototype.changeState = function(gameContext, state, enterData = {}
     this.currentState = state;
 
     if(state instanceof StateMachine) {
-        this.currentType = StateMachine.TYPE.MACHINE;
-    } else if(state instanceof State) {
-        this.currentType = StateMachine.TYPE.STATE;
-    } else {
-        this.currentType = StateMachine.TYPE.NONE;
+        this.isCurrentMachine = true;
     }
 
     this.currentState.onEnter(gameContext, this, enterData);

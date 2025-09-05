@@ -158,22 +158,10 @@ Player.prototype.update = function(gameContext) {
     this.states.update(gameContext);
 }
 
-Player.prototype.onMapCreate = function(gameContext, mapID, mapData) {
-    const { world } = gameContext;
-    const { eventBus }  = world;
-
+Player.prototype.onMapCreate = function(mapID, mapData) {
     if(mapData.missions) {
-        this.missions.createGroup(mapID, mapData.missions, (group) => {
-            group.events.on(MissionGroup.EVENT.MISSION_STARTED, (id, mission) => {
-                console.log(id, mission, "STARTED");
-            });
-
-            group.events.on(MissionGroup.EVENT.MISSION_COMPLETED, (id, mission) => {
-                eventBus.emit(ArmyEventHandler.TYPE.MISSION_COMPLETE, MissionCompleteEvent.createEvent(id, mission, this.id));
-            });
-        });
-
-        this.limits.createGroup(mapID, (group) => console.log(group));
+        this.limits.createGroup(mapID);
+        this.missions.createGroup(mapID, mapData.missions);
     }
 }
 
@@ -206,6 +194,12 @@ Player.prototype.hideAttackers = function(gameContext) {
     this.attackVisualizer.disable(gameContext, this.camera);
 }
 
-Player.prototype.isAnyAttacking = function() {
-    return this.attackVisualizer.attackers.current.size > 0;
+Player.prototype.getCursorType = function(sizeX, sizeY) {
+    if(this.attackVisualizer.attackers.current.size > 0) {
+        if(this.attackVisualizer.isShowable) {
+            return this.getSpriteType(Player.SPRITE_TYPE.ATTACK, `${sizeX}-${sizeY}`);
+        }
+    }
+
+    return this.getSpriteType(Player.SPRITE_TYPE.SELECT, `${sizeX}-${sizeY}`);
 }

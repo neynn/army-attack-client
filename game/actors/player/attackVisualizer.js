@@ -7,6 +7,7 @@ import { PlayerCursor } from "./playerCursor.js";
 export const AttackVisualizer = function() {
     this.attackers = new SwapSet();
     this.isEnabled = true;
+    this.isShowable = true;
 }
 
 AttackVisualizer.prototype.resetAttackerSprite = function(gameContext, attackerID) {
@@ -19,7 +20,7 @@ AttackVisualizer.prototype.resetAttackerSprite = function(gameContext, attackerI
     }
 }
 
-AttackVisualizer.prototype.resetAttackers = function(gameContext, camera) {
+AttackVisualizer.prototype.resetAttackers = function(gameContext) {
     const { world } = gameContext;
     const { entityManager } = world;
 
@@ -30,31 +31,33 @@ AttackVisualizer.prototype.resetAttackers = function(gameContext, camera) {
             attacker.updateSprite(gameContext, ArmyEntity.SPRITE_TYPE.IDLE);
         }
     }
-
-    camera.clearOverlay(PlayCamera.OVERLAY.ATTACK);
 }
 
-AttackVisualizer.prototype.updateVisuals = function(gameContext, attackers, target, camera, overlayID) {
-    camera.clearOverlay(PlayCamera.OVERLAY.ATTACK);
+AttackVisualizer.prototype.updateCurrentAttackers = function(gameContext, player, camera, attackers, target) {
+    const { tileManager } = gameContext;
+    const overlayID = tileManager.getTileIDByArray(player.config.overlays.attack);
 
     for(let i = 0; i < attackers.length; i++) {
         const attacker = attackers[i];
+        const attackerID = attacker.getID();
 
         attacker.lookAtEntity(target);
         attacker.updateSpriteDirectonal(gameContext, ArmyEntity.SPRITE_TYPE.AIM, ArmyEntity.SPRITE_TYPE.AIM_UP);
 
         camera.pushOverlay(PlayCamera.OVERLAY.ATTACK, overlayID, attacker.tileX, attacker.tileY);
+
+        this.attackers.addCurrent(attackerID);
     }
 }
 
 AttackVisualizer.prototype.updateAttackers = function(gameContext, player) {
-    const { tileManager } = gameContext;
     const { hover, camera } = player;
 
-    this.attackers.swap();
+    camera.clearOverlay(PlayCamera.OVERLAY.ATTACK);
 
     if(hover.state !== PlayerCursor.STATE.HOVER_ON_ENTITY) {
-        this.resetAttackers(gameContext, camera);
+        this.resetAttackers(gameContext);
+        this.attackers.clear();
         return;
     }
 
@@ -62,38 +65,31 @@ AttackVisualizer.prototype.updateAttackers = function(gameContext, player) {
     const activeAttackers = AttackSystem.getAttackersForActor(gameContext, mouseEntity, player.getID());
 
     if(activeAttackers.length === 0) {
-        this.resetAttackers(gameContext, camera);
+        this.resetAttackers(gameContext);
+        this.attackers.clear();
         return;
     }
 
-    for(let i = 0; i < activeAttackers.length; i++) {
-        const attackerID = activeAttackers[i].getID();
-
-        this.attackers.addCurrent(attackerID);
-    }
+    this.attackers.swap();
+    this.updateCurrentAttackers(gameContext, player, camera, activeAttackers, mouseEntity);
 
     for(const attackerID of this.attackers.previous) {
-        const isAttacking = this.attackers.isCurrent(attackerID);
-
-        if(!isAttacking) {
+        if(!this.attackers.isCurrent(attackerID)) {
             this.resetAttackerSprite(gameContext, attackerID);
         }
     }
-
-    const overlayID = tileManager.getTileIDByArray(player.config.overlays.attack);
-
-    this.updateVisuals(gameContext, activeAttackers, mouseEntity, camera, overlayID)
 }
 
 AttackVisualizer.prototype.update = function(gameContext, player) {
     if(this.isEnabled) {
         const { world } = gameContext;
         const { actionQueue } = world;
-        const isShowable = !actionQueue.isRunning() && player.inputQueue.isEmpty();
-
-        if(isShowable) {
+        
+        if(!actionQueue.isRunning() && player.inputQueue.isEmpty()) {
+            this.isShowable = true;
             this.updateAttackers(gameContext, player); 
         } else {
+            this.isShowable = false;
             player.camera.clearOverlay(PlayCamera.OVERLAY.ATTACK);
         }
     }
@@ -108,6 +104,7 @@ AttackVisualizer.prototype.enable = function() {
 AttackVisualizer.prototype.disable = function(gameContext, camera) {
     if(this.isEnabled) {
         this.isEnabled = false;
+        this.isShowable = false;
         this.resetAttackers(gameContext, camera);
     }
 }

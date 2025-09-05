@@ -1,8 +1,17 @@
+import { EventEmitter } from "../../../../source/events/eventEmitter.js";
+import { Mission } from "./mission.js";
 import { MissionGroup } from "./missionGroup.js";
 
 export const MissionHandler = function() {
     this.groups = new Map();
     this.currentGroup = null;
+
+    this.events = new EventEmitter();
+    this.events.listen(MissionHandler.EVENT.MISSION_COMPLETE);
+}
+
+MissionHandler.EVENT = {
+    MISSION_COMPLETE: "MISSION_COMPLETE"
 }
 
 MissionHandler.prototype.clear = function() {
@@ -24,20 +33,14 @@ MissionHandler.prototype.selectGroup = function(groupID) {
     }
 }
 
-MissionHandler.prototype.createGroup = function(groupID, missions, onCreate) {
-    if(this.groups.has(groupID)) {
-        return;
+MissionHandler.prototype.createGroup = function(groupID, missions) {
+    if(!this.groups.has(groupID)) {
+        const group = new MissionGroup();
+
+        group.init(missions);
+
+        this.groups.set(groupID, group);
     }
-
-    const group = new MissionGroup();
-
-    if(typeof onCreate === "function") {
-        onCreate(group);
-    }
-
-    group.init(missions);
-
-    this.groups.set(groupID, group);
 }
 
 MissionHandler.prototype.load = function(groups) {
@@ -62,12 +65,31 @@ MissionHandler.prototype.save = function() {
 
 MissionHandler.prototype.onObjective = function(type, parameter, count) {
     if(this.currentGroup) {
-        this.currentGroup.handleObjective(type, parameter, count);
+        for(const [missionID, mission] of this.currentGroup.missions) {
+            mission.onObjective(type, parameter, count);
+
+            const isCompleted = mission.complete();
+
+            if(isCompleted) {
+                this.events.emit(MissionHandler.EVENT.MISSION_COMPLETE, missionID, mission);
+            }
+        }
+
+        this.currentGroup.unlockMissions();
+        this.currentGroup.updateState();
     }
 }
 
 MissionHandler.prototype.getCurrentActiveMissions = function() {
+    const missions = [];
+
     if(this.currentGroup) {
-        this.currentGroup.getActiveMissions();
+        for(const [missionID, mission] of this.currentGroup.missions) {
+            if(mission.state === Mission.STATE.STARTED) {
+                missions.push(mission);
+            }
+        }
     }
+
+    return missions;
 }

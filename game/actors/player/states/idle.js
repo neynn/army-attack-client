@@ -116,11 +116,9 @@ PlayerIdleState.prototype.updateCursor = function(gameContext, player) {
     switch(state) {
         case PlayerCursor.STATE.HOVER_ON_ENTITY: {
             const hoveredEntity = hover.getEntity(gameContext);
-            const typeID = player.isAnyAttacking() ? Player.SPRITE_TYPE.ATTACK : Player.SPRITE_TYPE.SELECT;
-            const spriteKey = `${hoveredEntity.config.dimX}-${hoveredEntity.config.dimY}`;
-            const spriteID = player.getSpriteType(typeID, spriteKey);
+            const spriteType = player.getCursorType(hoveredEntity.config.dimX, hoveredEntity.config.dimY);
 
-            hover.updateSprite(gameContext, spriteID);
+            hover.updateSprite(gameContext, spriteType);
             break;
         }
         case PlayerCursor.STATE.HOVER_ON_DEBRIS: {

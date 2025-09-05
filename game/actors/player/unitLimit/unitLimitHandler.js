@@ -36,16 +36,8 @@ UnitLimitHandler.prototype.selectGroup = function(groupID) {
     }
 }
 
-UnitLimitHandler.prototype.createGroup = function(groupID, onCreate) {
-    if(this.groups.has(groupID)) {
-        return;
+UnitLimitHandler.prototype.createGroup = function(groupID) {
+    if(!this.groups.has(groupID)) {
+        this.groups.set(groupID, new LimitGroup());
     }
-
-    const group = new LimitGroup();
-
-    if(typeof onCreate === "function") {
-        onCreate(group);
-    }
-
-    this.groups.set(groupID, group);
 }
