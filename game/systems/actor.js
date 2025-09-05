@@ -35,7 +35,6 @@ const createPlayerCamera = function(gameContext) {
     //context.setScaleMode(CameraContext.SCALE_MODE.WHOLE);
     //context.setResolution(300, 280);
 
-
     camera.bindViewport();
     camera.setTileSize(tileWidth, tileHeight);
 
@@ -83,7 +82,7 @@ const createActor = function(gameContext, actorID, team, type) {
             });
 
             router.load(gameContext, gameContext.resources.keybinds.player);
-            router.on(Player.COMMAND.TOGGLE_RANGE, () => actor.rangeVisualizer.toggle(gameContext));
+            router.on(Player.COMMAND.TOGGLE_RANGE, () => actor.toggleRange(gameContext));
             router.on(Player.COMMAND.CLICK, () => actor.onClick(gameContext));
             router.on("ESCAPE", () => gameContext.states.setNextState(gameContext, ArmyContext.STATE.MAIN_MENU));
             router.on("DEBUG_IDLE", () => actor.states.setNextState(gameContext, Player.STATE.IDLE));

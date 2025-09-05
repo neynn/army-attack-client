@@ -12,7 +12,8 @@ PlayerHealState.prototype.constructor = PlayerHealState;
 PlayerHealState.prototype.onEnter = function(gameContext, stateMachine) {
     const player = stateMachine.getContext();
 
-    player.rangeVisualizer.disable(gameContext);
+    player.hideRange(gameContext);
+    player.hideAttackers(gameContext);
 }
 
 PlayerHealState.prototype.onUpdate = function(gameContext, stateMachine) {

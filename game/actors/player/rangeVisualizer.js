@@ -4,20 +4,18 @@ import { PlayCamera } from "../../camera/playCamera.js";
 import { ArmyEntity } from "../../init/armyEntity.js";
 import { ArmyMap } from "../../init/armyMap.js";
 
-export const RangeVisualizer = function(camera) {
-    this.camera = camera;
+export const RangeVisualizer = function() {
     this.state = RangeVisualizer.STATE.ACTIVE;
     this.isEnabled = true;
     this.lastTarget = null;
 }
 
 RangeVisualizer.STATE = {
-    NONE: 0,
-    INACTIVE: 1,
-    ACTIVE: 2
+    INACTIVE: 0,
+    ACTIVE: 1
 };
 
-RangeVisualizer.prototype.toggle = function(gameContext) {
+RangeVisualizer.prototype.toggle = function(gameContext, camera) {
     if(!this.isEnabled) {
         return this.state;
     }
@@ -29,11 +27,7 @@ RangeVisualizer.prototype.toggle = function(gameContext) {
         }
         case RangeVisualizer.STATE.ACTIVE: {
             this.state = RangeVisualizer.STATE.INACTIVE;
-            
-            if(this.lastTarget !== null) {
-                this.hide(gameContext);
-                this.lastTarget = null;
-            }
+            this.removeLastTarget(gameContext, camera);
             break;
         }
     }
@@ -41,7 +35,7 @@ RangeVisualizer.prototype.toggle = function(gameContext) {
     return this.state;
 }
 
-RangeVisualizer.prototype.show = function(gameContext, entity) {
+RangeVisualizer.prototype.show = function(gameContext, camera, entity) {
     const attackComponent = entity.getComponent(ArmyEntity.COMPONENT.ATTACK);
 
     if(!attackComponent) {
@@ -69,17 +63,17 @@ RangeVisualizer.prototype.show = function(gameContext, entity) {
                 return Autotiler.RESPONSE.INVALID;
             });
 
-            this.camera.pushOverlay(PlayCamera.OVERLAY.RANGE, tileID, j, i);
+            camera.pushOverlay(PlayCamera.OVERLAY.RANGE, tileID, j, i);
         }
     }
 }
 
-RangeVisualizer.prototype.hide = function(gameContext) {
+RangeVisualizer.prototype.hide = function(gameContext, camera) {
     const { world } = gameContext;
     const { entityManager } = world;
     const entity = entityManager.getEntity(this.lastTarget);
 
-    this.camera.clearOverlay(PlayCamera.OVERLAY.RANGE);
+    camera.clearOverlay(PlayCamera.OVERLAY.RANGE);
 
     if(entity) {
         entity.sprite.swapLayer(gameContext, SpriteManager.LAYER.MIDDLE);
@@ -87,25 +81,27 @@ RangeVisualizer.prototype.hide = function(gameContext) {
 }
 
 RangeVisualizer.prototype.update = function(gameContext, player) {
-    if(!this.isEnabled || this.state !== RangeVisualizer.STATE.ACTIVE) {
-        return;
-    }
+    if(this.isEnabled && this.state === RangeVisualizer.STATE.ACTIVE) {
+        const { hover, camera } = player;
+        const entity = hover.getEntity(gameContext);
 
-    const entity = player.hover.getEntity(gameContext);
+        if(entity !== null) {
+            const entityID = entity.getID();
 
-    if(entity !== null) {
-        const entityID = entity.getID();
-
-        if(entityID !== this.lastTarget) {
-            if(this.lastTarget !== null) {
-                this.hide(gameContext);
+            if(entityID !== this.lastTarget) {
+                this.removeLastTarget(gameContext, camera);
+                this.show(gameContext, camera, entity);
+                this.lastTarget = entityID;
             }
-
-            this.show(gameContext, entity);
-            this.lastTarget = entityID;
+        } else {
+            this.removeLastTarget(gameContext, camera);
         }
-    } else {
-        this.hide(gameContext);
+    }
+}
+
+RangeVisualizer.prototype.removeLastTarget = function(gameContext, camera) {
+    if(this.lastTarget !== null) {
+        this.hide(gameContext, camera);
         this.lastTarget = null;
     }
 }
@@ -116,13 +112,9 @@ RangeVisualizer.prototype.enable = function() {
     }
 }
 
-RangeVisualizer.prototype.disable = function(gameContext) {
+RangeVisualizer.prototype.disable = function(gameContext, camera) {
     if(this.isEnabled) {
         this.isEnabled = false;
-
-        if(this.lastTarget !== null)  {
-            this.hide(gameContext);
-            this.lastTarget = null;
-        }
+        this.removeLastTarget(gameContext, camera);
     }
 }

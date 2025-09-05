@@ -15,7 +15,8 @@ PlayerSellState.prototype.onEnter = function(gameContext, stateMachine, transiti
 
     this.showSellableObjects(gameContext, player);
 
-    player.rangeVisualizer.disable(gameContext);
+    player.hideRange(gameContext);
+    player.hideAttackers(gameContext);
 }
 
 PlayerSellState.prototype.onExit = function(gameContext, stateMachine) {

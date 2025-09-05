@@ -139,7 +139,6 @@ SpriteManager.prototype.loadBitmap = function(spriteID) {
     }
 }
 
-
 SpriteManager.prototype.removeReference = function(spriteID) {
     const data = this.spriteMap.get(spriteID);
 

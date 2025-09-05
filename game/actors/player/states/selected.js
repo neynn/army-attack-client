@@ -17,7 +17,8 @@ PlayerSelectedState.prototype.onEnter = function(gameContext, stateMachine, tran
     const player = stateMachine.getContext();
     const { entityID } = transition;
 
-    player.rangeVisualizer.enable();
+    player.showAttackers();
+    player.showRange();
 
     this.entityID = entityID;
 }
@@ -26,18 +27,14 @@ PlayerSelectedState.prototype.onExit = function(gameContext, stateMachine) {
     const player = stateMachine.getContext();
         
     this.deselectEntity(gameContext, player);
-
-    player.attackVisualizer.resetAttackers(gameContext);
 }
 
 PlayerSelectedState.prototype.onUpdate = function(gameContext, stateMachine) {
     const player = stateMachine.getContext();
     const { hover } = player;
 
-    player.attackVisualizer.updateAttackers(gameContext, player);
     this.updateEntity(gameContext, player);
     this.updateCursor(gameContext, player);
-    player.rangeVisualizer.update(gameContext, player);
     hover.alignSpriteAuto(gameContext);
 }
 
@@ -63,7 +60,7 @@ PlayerSelectedState.prototype.updateCursor = function(gameContext, player) {
     switch(state) {
         case PlayerCursor.STATE.HOVER_ON_ENTITY: {
             const hoveredEntity = hover.getEntity(gameContext);
-            const typeID = player.attackVisualizer.isAnyAttacking() ? Player.SPRITE_TYPE.ATTACK : Player.SPRITE_TYPE.SELECT;
+            const typeID = player.isAnyAttacking() ? Player.SPRITE_TYPE.ATTACK : Player.SPRITE_TYPE.SELECT;
             const spriteKey = `${hoveredEntity.config.dimX}-${hoveredEntity.config.dimY}`;
             const spriteID = player.getSpriteType(typeID, spriteKey);
     

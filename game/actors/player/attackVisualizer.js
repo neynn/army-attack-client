@@ -3,17 +3,9 @@ import { PlayCamera } from "../../camera/playCamera.js";
 import { ArmyEntity } from "../../init/armyEntity.js";
 import { PlayerCursor } from "./playerCursor.js";
 
-export const AttackVisualizer = function(camera) {
-    this.camera = camera;
+export const AttackVisualizer = function() {
     this.attackers = new SwapSet();
-}
-
-AttackVisualizer.prototype.isAnyAttacking = function() {
-    return this.attackers.current.size > 0;
-}
-
-AttackVisualizer.prototype.clearOverlay = function() {
-    this.camera.clearOverlay(PlayCamera.OVERLAY.ATTACK);
+    this.isEnabled = true;
 }
 
 AttackVisualizer.prototype.resetAttackerSprite = function(gameContext, attackerID) {
@@ -26,7 +18,7 @@ AttackVisualizer.prototype.resetAttackerSprite = function(gameContext, attackerI
     }
 }
 
-AttackVisualizer.prototype.resetAttackers = function(gameContext) {
+AttackVisualizer.prototype.resetAttackers = function(gameContext, camera) {
     const { world } = gameContext;
     const { entityManager } = world;
 
@@ -38,16 +30,16 @@ AttackVisualizer.prototype.resetAttackers = function(gameContext) {
         }
     }
 
-    this.clearOverlay();
+    camera.clearOverlay(PlayCamera.OVERLAY.ATTACK);
 }
 
-AttackVisualizer.prototype.updateAttackerOverlay = function(attackers, overlayID) {
-    this.camera.clearOverlay(PlayCamera.OVERLAY.ATTACK);
+AttackVisualizer.prototype.updateAttackerOverlay = function(attackers, camera, overlayID) {
+    camera.clearOverlay(PlayCamera.OVERLAY.ATTACK);
 
     for(let i = 0; i < attackers.length; i++) {
         const attacker = attackers[i];
 
-        this.camera.pushOverlay(PlayCamera.OVERLAY.ATTACK, overlayID, attacker.tileX, attacker.tileY);
+        camera.pushOverlay(PlayCamera.OVERLAY.ATTACK, overlayID, attacker.tileX, attacker.tileY);
     }
 }
 
@@ -62,12 +54,12 @@ AttackVisualizer.prototype.updateAttackerSprites = function(gameContext, target,
 
 AttackVisualizer.prototype.updateAttackers = function(gameContext, player) {
     const { tileManager } = gameContext;
-    const { hover } = player;
+    const { hover, camera } = player;
 
     this.attackers.swap();
 
     if(hover.state !== PlayerCursor.STATE.HOVER_ON_ENTITY) {
-        this.resetAttackers(gameContext);
+        this.resetAttackers(gameContext, camera);
         return;
     }
 
@@ -75,7 +67,7 @@ AttackVisualizer.prototype.updateAttackers = function(gameContext, player) {
     const activeAttackers = mouseEntity.getActiveAttackers(gameContext, player.getID());
 
     if(activeAttackers.length === 0) {
-        this.resetAttackers(gameContext);
+        this.resetAttackers(gameContext, camera);
         return;
     }
 
@@ -95,6 +87,33 @@ AttackVisualizer.prototype.updateAttackers = function(gameContext, player) {
 
     const overlayID = tileManager.getTileIDByArray(player.config.overlays.attack);
 
-    this.updateAttackerOverlay(activeAttackers, overlayID);
+    this.updateAttackerOverlay(activeAttackers, camera, overlayID);
     this.updateAttackerSprites(gameContext, mouseEntity, activeAttackers);
+}
+
+AttackVisualizer.prototype.update = function(gameContext, player) {
+    if(this.isEnabled) {
+        const { world } = gameContext;
+        const { actionQueue } = world;
+        const isShowable = !actionQueue.isRunning() && player.inputQueue.isEmpty();
+
+        if(isShowable) {
+            this.updateAttackers(gameContext, player); 
+        } else {
+            player.camera.clearOverlay(PlayCamera.OVERLAY.ATTACK);
+        }
+    }
+}
+
+AttackVisualizer.prototype.enable = function() {
+    if(!this.isEnabled) {
+        this.isEnabled = true;
+    }
+}
+
+AttackVisualizer.prototype.disable = function(gameContext, camera) {
+    if(this.isEnabled) {
+        this.isEnabled = false;
+        this.resetAttackers(gameContext, camera);
+    }
 }

@@ -15,30 +15,16 @@ PlayerIdleState.prototype.constructor = PlayerIdleState;
 PlayerIdleState.prototype.onEnter = function(gameContext, stateMachine) {
     const player = stateMachine.getContext();
 
-    player.rangeVisualizer.enable();
+    player.showAttackers();
+    player.showRange();
 }
 
-PlayerIdleState.prototype.onExit = function(gameContext, stateMachine) {
-    const player = stateMachine.getContext();
-
-    player.attackVisualizer.resetAttackers(gameContext);
-}
+PlayerIdleState.prototype.onExit = function(gameContext, stateMachine) {}
 
 PlayerIdleState.prototype.onUpdate = function(gameContext, stateMachine) {
-    const { world } = gameContext;
-    const { actionQueue } = world;
     const player = stateMachine.getContext();
-    const isShowable = !actionQueue.isRunning() && player.inputQueue.isEmpty();
-
-    if(isShowable) {
-        player.attackVisualizer.updateAttackers(gameContext, player); 
-    } else {
-        player.attackVisualizer.clearOverlay();
-    }
 
     this.updateCursor(gameContext, player);
-
-    player.rangeVisualizer.update(gameContext, player);
     player.hover.alignSpriteAuto(gameContext);
 }
 
@@ -130,7 +116,7 @@ PlayerIdleState.prototype.updateCursor = function(gameContext, player) {
     switch(state) {
         case PlayerCursor.STATE.HOVER_ON_ENTITY: {
             const hoveredEntity = hover.getEntity(gameContext);
-            const typeID = player.attackVisualizer.isAnyAttacking() ? Player.SPRITE_TYPE.ATTACK : Player.SPRITE_TYPE.SELECT;
+            const typeID = player.isAnyAttacking() ? Player.SPRITE_TYPE.ATTACK : Player.SPRITE_TYPE.SELECT;
             const spriteKey = `${hoveredEntity.config.dimX}-${hoveredEntity.config.dimY}`;
             const spriteID = player.getSpriteType(typeID, spriteKey);
 

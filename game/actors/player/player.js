@@ -30,8 +30,8 @@ export const Player = function(id, camera) {
     this.inventory = new Inventory();
     this.inputQueue = new Queue(10);
     this.hover = new PlayerCursor();
-    this.attackVisualizer = new AttackVisualizer(this.camera);
-    this.rangeVisualizer = new RangeVisualizer(this.camera);
+    this.attackVisualizer = new AttackVisualizer();
+    this.rangeVisualizer = new RangeVisualizer();
     this.missions = new MissionHandler();
     this.limits = new UnitLimitHandler();
     
@@ -153,6 +153,8 @@ Player.prototype.update = function(gameContext) {
         this.states.eventEnter(gameContext, Player.EVENT.TARGET_CHANGE, null);
     }
 
+    this.attackVisualizer.update(gameContext, this);
+    this.rangeVisualizer.update(gameContext, this);
     this.states.update(gameContext);
 }
 
@@ -178,8 +180,32 @@ Player.prototype.onMapCreate = function(gameContext, mapID, mapData) {
 Player.prototype.onMapEnable = function(gameContext, mapID, worldMap) {
     this.missions.selectGroup(mapID);
     this.limits.selectGroup(mapID);
-    
+
     if(worldMap.music && gameContext.modeID !== ArmyContext.GAME_MODE.EDIT) {
         gameContext.client.musicPlayer.playTrack(worldMap.music);
     }
+}
+
+Player.prototype.showRange = function() {
+    this.rangeVisualizer.enable();
+}
+
+Player.prototype.hideRange = function(gameContext) {
+    this.rangeVisualizer.disable(gameContext, this.camera);
+}
+
+Player.prototype.toggleRange = function(gameContext) {
+    this.rangeVisualizer.toggle(gameContext, this.camera);
+}
+
+Player.prototype.showAttackers = function() {
+    this.attackVisualizer.enable();
+}
+
+Player.prototype.hideAttackers = function(gameContext) {
+    this.attackVisualizer.disable(gameContext, this.camera);
+}
+
+Player.prototype.isAnyAttacking = function() {
+    return this.attackVisualizer.attackers.current.size > 0;
 }

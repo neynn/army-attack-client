@@ -8,14 +8,11 @@ PlayerDebugState.prototype.constructor = PlayerDebugState;
 PlayerDebugState.prototype.onEnter = function(gameContext, stateMachine, transition) {
     const player = stateMachine.getContext();
 
-    player.rangeVisualizer.enable();
+    player.showRange();
+    player.hideAttackers(gameContext);
 }
 
-PlayerDebugState.prototype.onUpdate = function(gameContext, stateMachine) {
-    const player = stateMachine.getContext();
-    
-    player.rangeVisualizer.update(gameContext, player);
-}
+PlayerDebugState.prototype.onUpdate = function(gameContext, stateMachine) {}
 
 PlayerDebugState.prototype.onTargetChange = function(gameContext, stateMachine) {
     const player = stateMachine.getContext();

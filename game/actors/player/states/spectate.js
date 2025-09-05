@@ -8,11 +8,8 @@ PlayerSpectateState.prototype.constructor = PlayerSpectateState;
 PlayerSpectateState.prototype.onEnter = function(gameContext, stateMachine, transition) {
     const player = stateMachine.getContext();
 
-    player.rangeVisualizer.enable();
+    player.showRange();
+    player.hideAttackers(gameContext);
 }
 
-PlayerSpectateState.prototype.onUpdate = function(gameContext, stateMachine) {
-    const player = stateMachine.getContext();
-    
-    player.rangeVisualizer.update(gameContext, player);
-}
+PlayerSpectateState.prototype.onUpdate = function(gameContext, stateMachine) {}

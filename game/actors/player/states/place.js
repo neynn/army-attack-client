@@ -14,6 +14,25 @@ export const PlayerPlaceState = function() {
 PlayerPlaceState.prototype = Object.create(PlayerState.prototype);
 PlayerPlaceState.prototype.constructor = PlayerPlaceState;
 
+PlayerPlaceState.prototype.onEnter = function(gameContext, stateMachine, transition) {
+    const { entityType, transaction } = transition;
+    const { tileManager } = gameContext;
+    
+    const player = stateMachine.getContext();
+    const placeLayer = player.camera.getLayer(PlayCamera.LAYER.PLACE);
+    const tileID = tileManager.getTileIDByArray(player.config.overlays.enable);
+
+    player.hideRange(gameContext);
+    player.hideAttackers(gameContext);
+    placeLayer.fill(tileID);
+
+    this.entityType = entityType;
+    this.transaction = transaction;
+
+    this.setupBuildSprite(gameContext, player);
+    this.highlightPlaceableTiles(gameContext, player);
+}
+
 PlayerPlaceState.prototype.onExit = function(gameContext, stateMachine) {
     const { spriteManager } = gameContext;
 
@@ -28,24 +47,6 @@ PlayerPlaceState.prototype.onExit = function(gameContext, stateMachine) {
     this.buildSpriteIndex = -1;
     this.entityType = null;
     this.transaction = null;
-}
-
-PlayerPlaceState.prototype.onEnter = function(gameContext, stateMachine, transition) {
-    const { entityType, transaction } = transition;
-    const { tileManager } = gameContext;
-    
-    const player = stateMachine.getContext();
-    const placeLayer = player.camera.getLayer(PlayCamera.LAYER.PLACE);
-    const tileID = tileManager.getTileIDByArray(player.config.overlays.enable);
-
-    player.rangeVisualizer.disable(gameContext);
-    placeLayer.fill(tileID);
-
-    this.entityType = entityType;
-    this.transaction = transaction;
-
-    this.setupBuildSprite(gameContext, player);
-    this.highlightPlaceableTiles(gameContext, player);
 }
 
 PlayerPlaceState.prototype.onUpdate = function(gameContext, stateMachine) {

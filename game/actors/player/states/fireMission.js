@@ -1,6 +1,5 @@
 import { FireMissionAction } from "../../../actions/fireMissionAction.js";
 import { PlayCamera } from "../../../camera/playCamera.js";
-import { AnimationSystem } from "../../../systems/animation.js";
 import { FireMissionSystem } from "../../../systems/fireMission.js";
 import { Player } from "../player.js";
 import { PlayerState } from "./playerState.js";
@@ -19,14 +18,12 @@ PlayerFireMissionState.prototype.onEnter = function(gameContext, stateMachine, t
 
     this.missionID = missionID;
     this.transaction = transaction;
-
-    AnimationSystem.playIdle(gameContext, player.attackVisualizer.attackers.getCurrent());
-
     this.showBlockedEntities(gameContext, player);
     this.updateCursor(gameContext, player);
 
     player.inputQueue.clear();
-    player.rangeVisualizer.disable(gameContext);
+    player.hideRange(gameContext);
+    player.hideAttackers(gameContext);
 }
 
 PlayerFireMissionState.prototype.onExit = function(gameContext, stateMachine) {
