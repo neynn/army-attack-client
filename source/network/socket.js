@@ -42,11 +42,9 @@ Socket.prototype.addDebug = function() {
 }
 
 Socket.prototype.load = function(config) {
-    if(!config) {
-        return;
+    if(config) {
+        this.config = config;
     }
-    
-    this.config = config;
 }
 
 Socket.prototype.connect = async function() {

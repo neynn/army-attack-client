@@ -25,3 +25,7 @@ PathHandler.getPath = function(directory, source) {
         default: return getPathByArray(directory, source);
     }
 }
+
+PathHandler.promiseJSON = function(path) {
+    return fetch(path).then(response => response.json()).catch(error => null);
+}

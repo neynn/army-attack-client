@@ -1,11 +1,10 @@
-import { ResourceLoader } from "./source/resourceLoader.js";
+import { AssetLoader } from "./source/resources/assetLoader.js";
 import { ArmyContext } from "./game/armyContext.js";
 import { generateAnimations, generateAutoSheet, makeProdFile, packerToJSONSprites, packerToJSONTiles, saveEntities, saveSprites2, saveSprites3 } from "./helpers.js";
+import { PathHandler } from "./source/resources/pathHandler.js";
 
-ResourceLoader.setPaths("assets/assets.json", "assets/assets_prod.json");
-
-const resourceLoader = ResourceLoader.getInstance();
-const resources = await resourceLoader.loadResources(ResourceLoader.MODE.DEVELOPER);
+const assetLoader = new AssetLoader("assets/assets.json", "assets/assets_prod.json")
+const resources = await assetLoader.loadResources(AssetLoader.MODE.DEVELOPER);
 
 //saveSprites(resources.sprites);
 
@@ -15,8 +14,8 @@ gameContext.loadResources(resources);
 gameContext.init(resources);
 gameContext.timer.start();
 
-console.log(resourceLoader, gameContext);
+console.log(assetLoader, gameContext);
 
 /*["river"].forEach(name => {
-	resourceLoader.promiseJSON("export/" + name + ".json").then(f => packerToJSONSprites(name, f));
+	PathHandler.promiseJSON("export/" + name + ".json").then(f => packerToJSONSprites(name, f));
 });*/

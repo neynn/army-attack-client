@@ -1,5 +1,5 @@
 import { EventEmitter } from "../events/eventEmitter.js";
-import { JSONManager } from "../resources/jsonManager.js";
+import { PathHandler } from "../resources/pathHandler.js";
 import { Logger } from "../logger.js";
 
 export const MapManager = function() {
@@ -7,8 +7,8 @@ export const MapManager = function() {
     this.maps = new Map();
     this.nextID = 0;
     this.activeMap = null;
-    this.resources = new JSONManager();
-    this.resources.enableCache();
+    this.mapFiles = new Map();
+    this.cacheEnabled = true;
 
     this.events = new EventEmitter();
     this.events.listen(MapManager.EVENT.MAP_CREATE);
@@ -66,12 +66,25 @@ MapManager.prototype.fetchMapData = async function(mapID) {
         return null;
     }
 
+    if(this.cacheEnabled) {
+        const cachedMap = this.mapFiles.get(mapID);
+
+        if(cachedMap) {
+            return cachedMap;
+        }
+    }
+
     const { directory, source } = mapType;
-    const mapData = await this.resources.loadFileData(mapID, directory, source);
+    const filePath = PathHandler.getPath(directory, source);
+    const mapData = await PathHandler.promiseJSON(filePath);
 
     if(!mapData) {
         Logger.log(Logger.CODE.ENGINE_WARN, "MapData does not exist!", "MapManager.prototype.loadMapData", { "mapID": mapID });
         return null;
+    }
+
+    if(this.cacheEnabled) {
+        this.mapFiles.set(mapID, mapData);
     }
 
     return mapData;
