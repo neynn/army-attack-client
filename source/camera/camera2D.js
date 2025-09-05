@@ -58,8 +58,8 @@ Camera2D.prototype.drawEmptyTile = function(context, renderX, renderY) {
     context.fillRect(renderX, renderY + height, width, height);
 }
 
-Camera2D.prototype.drawTileSafe = function(graphics, tileID, context, renderX, renderY) {
-    const container = graphics.getContainer(tileID);
+Camera2D.prototype.drawTileSafe = function(tileManager, tileID, context, renderX, renderY) {
+    const container = tileManager.getContainer(tileID);
     const { texture, frames, frameIndex } = container;
     const { bitmap } = texture;
 
@@ -115,7 +115,7 @@ Camera2D.prototype.drawTile = function(container, context, renderX, renderY) {
     }
 }
 
-Camera2D.prototype.drawOverlay = function(graphics, context, overlay) {
+Camera2D.prototype.drawOverlay = function(tileManager, context, overlay) {
     const startX = this.startX;
     const startY = this.startY;
     const endX = this.endX;
@@ -136,12 +136,12 @@ Camera2D.prototype.drawOverlay = function(graphics, context, overlay) {
             const renderX = x * tileWidth - viewportX;
             const renderY = y * tileHeight - viewportY;
 
-            this.drawTileSafe(graphics, id, context, renderX, renderY);
+            this.drawTileSafe(tileManager, id, context, renderX, renderY);
         }
     }
 }
 
-Camera2D.prototype.drawLayer = function(graphics, display, layer) {
+Camera2D.prototype.drawLayer = function(tileManager, display, layer) {
     const { alpha, buffer } = layer;
     
     if(alpha > 0) {
@@ -151,13 +151,13 @@ Camera2D.prototype.drawLayer = function(graphics, display, layer) {
         display.unflip();
         display.setAlpha(alpha);
 
-        this.drawTileBuffer(graphics, context, buffer);
+        this.drawTileBuffer(tileManager, context, buffer);
 
         display.setAlpha(previousAlpha);
     }
 }
 
-Camera2D.prototype.drawTileBuffer = function(graphics, context, buffer) {
+Camera2D.prototype.drawTileBuffer = function(tileManager, context, buffer) {
     const startX = this.startX;
     const startY = this.startY;
     const endX = this.endX;
@@ -179,7 +179,7 @@ Camera2D.prototype.drawTileBuffer = function(graphics, context, buffer) {
             if(tileID !== 0) {
                 const renderX = j * tileWidth - viewportX;
 
-                this.drawTileSafe(graphics, tileID, context, renderX, renderY);
+                this.drawTileSafe(tileManager, tileID, context, renderX, renderY);
             }
         }
     }

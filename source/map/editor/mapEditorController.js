@@ -302,7 +302,6 @@ MapEditorController.prototype.mapPageIndex = function(index) {
 
 MapEditorController.prototype.updatePalletButtonEvents = function(gameContext) {
     const { uiManager, tileManager } = gameContext;
-    const { graphics } = tileManager;
     const editorInterface = uiManager.getGUI(this.guiID);
 
     for(let i = 0; i < this.palletButtons.length; i++) {
@@ -321,7 +320,7 @@ MapEditorController.prototype.updatePalletButtonEvents = function(gameContext) {
 
             button.enableCustom((display, localX, localY) => {
                 this.camera.setRelativeScale(this.slotButtonSize, this.slotButtonSize); 
-                this.camera.drawTileSafe(graphics, tileID, display.context, localX, localY);
+                this.camera.drawTileSafe(tileManager, tileID, display.context, localX, localY);
                 this.camera.resetScale();
             });
         }

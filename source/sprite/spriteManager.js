@@ -1,14 +1,15 @@
 import { Logger } from "../logger.js";
 import { Sprite } from "./sprite.js";
 import { ObjectPool } from "../util/objectPool.js";
-import { SpriteTextureHandler } from "./spriteTextureHandler.js";
+import { SpriteContainer } from "./spriteContainer.js";
 
 export const SpriteManager = function(resourceLoader) {
     this.resources = resourceLoader;
-    this.graphics = new SpriteTextureHandler();
-    this.spriteTracker = new Set();
     this.sprites = new ObjectPool(1024, (index) => new Sprite(index, "EMPTY_SPRITE"));
     this.sprites.allocate();
+    this.spriteTracker = new Set();
+    this.spriteMap = new Map();
+    this.containers = [];
     this.sharedSprites = [];
     this.timestamp = 0;
 
@@ -26,25 +27,39 @@ SpriteManager.LAYER = {
     UI: 3
 };
 
-SpriteManager.prototype.getLayer = function(layerIndex) {
-    if(layerIndex < 0 || layerIndex >= this.layers.length) {
-        return [];
-    }
-
-    return this.layers[layerIndex];
-}
-
-SpriteManager.prototype.preloadAtlas = function(atlasID) {
-    this.graphics.loadBitmap(this.resources, atlasID);
-}
-
 SpriteManager.prototype.load = function(textures, sprites) {
     if(!textures || !sprites) {
         Logger.log(Logger.CODE.ENGINE_WARN, "Textures/Sprites do not exist!", "SpriteManager.prototype.load", null);
         return;
     }
 
-    this.graphics.load(this.resources, textures, sprites);
+    const textureMap = this.resources.createTextures(textures);
+    
+    for(const spriteID in sprites) {
+        const spriteConfig = sprites[spriteID];
+        const { texture, bounds, frameTime, frames } = spriteConfig;
+        const textureID = textureMap[texture];
+
+        if(textureID === undefined || !frames) {
+            console.warn(`Texture ${texture} of sprite ${spriteID} does not exist!`);
+            continue;
+        }
+
+        const textureObject = this.resources.getTextureByID(textureID);
+        const spriteContainer = new SpriteContainer(textureObject, bounds, frameTime);
+        const frameCount = spriteContainer.initFrames(frames);
+
+        if(frameCount === 0) {
+            console.warn(`Sprite ${spriteID} has no frames!`);
+            continue;
+        }
+
+        this.containers.push(spriteContainer);
+        this.spriteMap.set(spriteID, {
+            "index": this.containers.length - 1,
+            "textureID": textureID
+        });
+    }
 }
 
 SpriteManager.prototype.update = function(gameContext) {
@@ -83,6 +98,53 @@ SpriteManager.prototype.exit = function() {
 
     for(let i = 0; i < this.layers.length; i++) {
         this.layers[i].length = 0;
+    }
+}
+
+SpriteManager.prototype.getLayer = function(layerIndex) {
+    if(layerIndex < 0 || layerIndex >= this.layers.length) {
+        return [];
+    }
+
+    return this.layers[layerIndex];
+}
+
+SpriteManager.prototype.getContainer = function(index) {
+    if(index < 0 || index >= this.containers.length) {
+        return null;
+    }
+
+    return this.containers[index];
+}
+
+SpriteManager.prototype.getContainerIndex = function(spriteID) {
+    const data = this.spriteMap.get(spriteID);
+
+    if(!data) {
+        return -1;
+    }
+
+    const { index, textureID } = data;
+
+    return index;
+}
+
+SpriteManager.prototype.loadBitmap = function(spriteID) {
+    const data = this.spriteMap.get(spriteID);
+
+    if(data) {
+        const { index, textureID } = data;
+
+        this.resources.loadTexture(textureID);
+    }
+}
+
+
+SpriteManager.prototype.removeReference = function(spriteID) {
+    const data = this.spriteMap.get(spriteID);
+
+    if(data) {
+        //TODO: Unload textures.
     }
 }
 
@@ -225,8 +287,8 @@ SpriteManager.prototype.removeSpriteFromLayers = function(spriteIndex) {
 }
 
 SpriteManager.prototype.updateSpriteTexture = function(sprite, spriteID) {
-    const containerIndex = this.graphics.getContainerIndex(spriteID);
-    const container = this.graphics.getContainer(containerIndex);
+    const containerIndex = this.getContainerIndex(spriteID);
+    const container = this.getContainer(containerIndex);
 
     if(!container) {
         Logger.log(Logger.CODE.ENGINE_WARN, "Container does not exist!", "SpriteManager.prototype.updateSpriteTexture", { "containerIndex": containerIndex });
@@ -236,7 +298,7 @@ SpriteManager.prototype.updateSpriteTexture = function(sprite, spriteID) {
     sprite.init(container, this.timestamp, spriteID);
 
     if(!container.isLoaded()) {
-        this.graphics.loadBitmap(this.resources, spriteID);
+        this.loadBitmap(spriteID);
     }
 }
 

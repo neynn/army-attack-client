@@ -346,7 +346,7 @@ WorldMap.prototype.getUniqueEntitiesInArea = function(startX, startY, endX, endY
 
 WorldMap.prototype.loadLayers = function(gameContext, layerData, mapType) {
     const { tileManager } = gameContext;
-    const containerCount = tileManager.graphics.getContainerCount();
+    const containerCount = tileManager.getContainerCount();
 
     switch(mapType) {
         case WorldMap.TYPE.NORMAL: {

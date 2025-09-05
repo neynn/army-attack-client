@@ -19,7 +19,6 @@ EditCamera.prototype.constructor = EditCamera;
 
 EditCamera.prototype.update = function(gameContext, display) {
     const { world, timer, spriteManager, tileManager } = gameContext;
-    const { graphics } = tileManager;
     const { mapManager } = world;
     const worldMap = mapManager.getActiveMap();
 
@@ -34,14 +33,14 @@ EditCamera.prototype.update = function(gameContext, display) {
     this.updateWorldBounds();
     this.clampWorldBounds();
     this.floorRenderCoordinates();
-    this.drawLayer(graphics, display, worldMap.getLayer(ArmyMap.LAYER.GROUND));
-    this.drawLayer(graphics, display, worldMap.getLayer(ArmyMap.LAYER.DECORATION));
+    this.drawLayer(tileManager, display, worldMap.getLayer(ArmyMap.LAYER.GROUND));
+    this.drawLayer(tileManager, display, worldMap.getLayer(ArmyMap.LAYER.DECORATION));
     this.drawDebris(gameContext, context, worldMap);
     this.drawSpriteBatch(display, spriteManager.getLayer(SpriteManager.LAYER.BOTTOM), realTime, deltaTime);
     this.drawSpriteBatch(display, spriteManager.getLayer(SpriteManager.LAYER.MIDDLE), realTime, deltaTime);
     this.drawSpriteBatch(display, spriteManager.getLayer(SpriteManager.LAYER.TOP), realTime, deltaTime);
     this.drawSpriteBatch(display, spriteManager.getLayer(SpriteManager.LAYER.UI), realTime, deltaTime);
-    this.drawLayer(graphics, display, worldMap.getLayer(ArmyMap.LAYER.CLOUD));
+    this.drawLayer(tileManager, display, worldMap.getLayer(ArmyMap.LAYER.CLOUD));
     this.drawHoverTile(gameContext, context);
 
     if(Renderer.DEBUG.MAP) {
@@ -77,7 +76,6 @@ EditCamera.prototype.drawHoverTile = function(gameContext, context) {
 
     const { tileManager, transform2D } = gameContext;
     const { tileWidth, tileHeight, halfTileWidth } = transform2D;
-    const { graphics } = tileManager;
     const { x, y } = gameContext.getMouseTile();
 
     context.globalAlpha = this.overlayAlpha;
@@ -94,7 +92,7 @@ EditCamera.prototype.drawHoverTile = function(gameContext, context) {
             const renderY = i * tileHeight - this.screenY;
             const renderX = j * tileWidth - this.screenX;
 
-            this.drawTileSafe(graphics, this.tileID, context, renderX, renderY);
+            this.drawTileSafe(tileManager, this.tileID, context, renderX, renderY);
 
             context.fillText(this.tileName, renderX + halfTileWidth, renderY);
         }

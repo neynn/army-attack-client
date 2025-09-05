@@ -130,7 +130,7 @@ const unloadEntitySprites = function(gameContext, entity) {
     for(const spriteType in sprites) {
         const spriteID = sprites[spriteType];
 
-        spriteManager.graphics.removeReference(spriteID);
+        spriteManager.removeReference(spriteID);
     }
 }
 
@@ -146,7 +146,7 @@ const loadEntitySprites = function(gameContext, entity) {
 
     for(const spriteType in sprites) {
         if(!BLOCKED_SPRITES.includes(spriteType)) {
-            spriteManager.preloadAtlas(sprites[spriteType]);
+            spriteManager.loadBitmap(sprites[spriteType]);
         }
     }
 }

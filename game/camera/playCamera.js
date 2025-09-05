@@ -34,7 +34,6 @@ PlayCamera.prototype.constructor = PlayCamera;
 
 PlayCamera.prototype.update = function(gameContext, display) {
     const { world, timer, spriteManager, tileManager } = gameContext;
-    const { graphics } = tileManager;
     const { mapManager } = world;
     const worldMap = mapManager.getActiveMap();
 
@@ -49,25 +48,25 @@ PlayCamera.prototype.update = function(gameContext, display) {
     this.updateWorldBounds();
     this.clampWorldBounds();
     this.floorRenderCoordinates();
-    this.drawLayer(graphics, display, worldMap.getLayer(ArmyMap.LAYER.GROUND));
+    this.drawLayer(tileManager, display, worldMap.getLayer(ArmyMap.LAYER.GROUND));
 
     if(gameContext.settings.drawBorder) {
-        this.drawLayer(graphics, display, this.customLayers[PlayCamera.LAYER.BORDER]);
+        this.drawLayer(tileManager, display, this.customLayers[PlayCamera.LAYER.BORDER]);
     }
 
-    this.drawLayer(graphics, display, worldMap.getLayer(ArmyMap.LAYER.DECORATION));
+    this.drawLayer(tileManager, display, worldMap.getLayer(ArmyMap.LAYER.DECORATION));
     this.drawDebris(gameContext, context, worldMap);
-    this.drawOverlay(graphics, context, this.overlays[PlayCamera.OVERLAY.MOVE]);
-    this.drawOverlay(graphics, context, this.overlays[PlayCamera.OVERLAY.ATTACK]);
+    this.drawOverlay(tileManager, context, this.overlays[PlayCamera.OVERLAY.MOVE]);
+    this.drawOverlay(tileManager, context, this.overlays[PlayCamera.OVERLAY.ATTACK]);
     this.drawSpriteBatchYSorted(display, spriteManager.getLayer(SpriteManager.LAYER.BOTTOM), realTime, deltaTime);
     this.drawSpriteBatchYSorted(display, spriteManager.getLayer(SpriteManager.LAYER.MIDDLE), realTime, deltaTime);
-    this.drawLayer(graphics, display, this.customLayers[PlayCamera.LAYER.PLACE]);
-    this.drawOverlay(graphics, context, this.overlays[PlayCamera.OVERLAY.FIRE_MISSION]);
-    this.drawOverlay(graphics, context, this.overlays[PlayCamera.OVERLAY.RANGE]);
+    this.drawLayer(tileManager, display, this.customLayers[PlayCamera.LAYER.PLACE]);
+    this.drawOverlay(tileManager, context, this.overlays[PlayCamera.OVERLAY.FIRE_MISSION]);
+    this.drawOverlay(tileManager, context, this.overlays[PlayCamera.OVERLAY.RANGE]);
     this.drawSpriteBatchYSorted(display, spriteManager.getLayer(SpriteManager.LAYER.TOP), realTime, deltaTime);
     this.drawSpriteBatchYSorted(display, spriteManager.getLayer(SpriteManager.LAYER.UI), realTime, deltaTime);
     this.drawDrops(display, worldMap);
-    this.drawLayer(graphics, display, worldMap.getLayer(ArmyMap.LAYER.CLOUD));
+    this.drawLayer(tileManager, display, worldMap.getLayer(ArmyMap.LAYER.CLOUD));
 
     if(Renderer.DEBUG.MAP) {
         this.debugMap(context, worldMap);

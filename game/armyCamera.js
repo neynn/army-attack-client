@@ -14,7 +14,6 @@ ArmyCamera.prototype.constructor = ArmyCamera;
 
 ArmyCamera.prototype.drawDebris = function(gameContext, context, worldMap) {
     const { tileManager } = gameContext;
-    const { graphics } = tileManager;
     const { debris } = worldMap;
 
     const defaultDebris = gameContext.getDebrisType(DEBRIS_TYPE.DEBRIS);
@@ -33,11 +32,11 @@ ArmyCamera.prototype.drawDebris = function(gameContext, context, worldMap) {
 
             switch(type) {
                 case DEBRIS_TYPE.DEBRIS: {
-                    this.drawTileSafe(graphics, defaultDebrisID, context, renderX, renderY);
+                    this.drawTileSafe(tileManager, defaultDebrisID, context, renderX, renderY);
                     break;
                 }
                 case DEBRIS_TYPE.SCORCHED_GROUND: {
-                    this.drawTileSafe(graphics, scorchedDebrisID, context, renderX, renderY);
+                    this.drawTileSafe(tileManager, scorchedDebrisID, context, renderX, renderY);
                     break;
                 }
             }
@@ -71,8 +70,7 @@ ArmyCamera.prototype.drawDrops = function(display, worldMap) {
 
 ArmyCamera.prototype.initCustomLayers = function(gameContext) {
     const { tileManager } = gameContext;
-    const { graphics } = tileManager;
-    const containerCount = graphics.getContainerCount();
+    const containerCount = tileManager.getContainerCount();
 
     for(let i = 0; i < this.customLayers.length; i++) {
         this.customLayers[i].initBuffer(containerCount);
