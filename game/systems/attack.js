@@ -143,3 +143,26 @@ AttackSystem.createTargetObject = function(target, attackers) {
 
     return targetObject;
 }
+
+AttackSystem.getAttackersForActor = function(gameContext, entity, actorID) {
+    const { world } = gameContext;
+    const { turnManager } = world;
+    const actor = turnManager.getActor(actorID);
+    const attackers = [];
+
+    if(!actor) {
+        return attackers;
+    }
+
+    const allAttackers = entity.getActiveAttackers(gameContext);
+
+    for(let i = 0; i < allAttackers.length; i++) {
+        const attackerID = allAttackers[i].getID();
+
+        if(actor.hasEntity(attackerID)) {
+            attackers.push(allAttackers[i]);
+        }
+    }
+
+    return attackers;
+}

@@ -1,6 +1,7 @@
 import { SwapSet } from "../../../source/util/swapSet.js";
 import { PlayCamera } from "../../camera/playCamera.js";
 import { ArmyEntity } from "../../init/armyEntity.js";
+import { AttackSystem } from "../../systems/attack.js";
 import { PlayerCursor } from "./playerCursor.js";
 
 export const AttackVisualizer = function() {
@@ -33,22 +34,16 @@ AttackVisualizer.prototype.resetAttackers = function(gameContext, camera) {
     camera.clearOverlay(PlayCamera.OVERLAY.ATTACK);
 }
 
-AttackVisualizer.prototype.updateAttackerOverlay = function(attackers, camera, overlayID) {
+AttackVisualizer.prototype.updateVisuals = function(gameContext, attackers, target, camera, overlayID) {
     camera.clearOverlay(PlayCamera.OVERLAY.ATTACK);
 
     for(let i = 0; i < attackers.length; i++) {
         const attacker = attackers[i];
 
-        camera.pushOverlay(PlayCamera.OVERLAY.ATTACK, overlayID, attacker.tileX, attacker.tileY);
-    }
-}
-
-AttackVisualizer.prototype.updateAttackerSprites = function(gameContext, target, attackers) {
-    for(let i = 0; i < attackers.length; i++) {
-        const attacker = attackers[i];
-
         attacker.lookAtEntity(target);
         attacker.updateSpriteDirectonal(gameContext, ArmyEntity.SPRITE_TYPE.AIM, ArmyEntity.SPRITE_TYPE.AIM_UP);
+
+        camera.pushOverlay(PlayCamera.OVERLAY.ATTACK, overlayID, attacker.tileX, attacker.tileY);
     }
 }
 
@@ -64,7 +59,7 @@ AttackVisualizer.prototype.updateAttackers = function(gameContext, player) {
     }
 
     const mouseEntity = hover.getEntity(gameContext);
-    const activeAttackers = mouseEntity.getActiveAttackers(gameContext, player.getID());
+    const activeAttackers = AttackSystem.getAttackersForActor(gameContext, mouseEntity, player.getID());
 
     if(activeAttackers.length === 0) {
         this.resetAttackers(gameContext, camera);
@@ -87,8 +82,7 @@ AttackVisualizer.prototype.updateAttackers = function(gameContext, player) {
 
     const overlayID = tileManager.getTileIDByArray(player.config.overlays.attack);
 
-    this.updateAttackerOverlay(activeAttackers, camera, overlayID);
-    this.updateAttackerSprites(gameContext, mouseEntity, activeAttackers);
+    this.updateVisuals(gameContext, activeAttackers, mouseEntity, camera, overlayID)
 }
 
 AttackVisualizer.prototype.update = function(gameContext, player) {

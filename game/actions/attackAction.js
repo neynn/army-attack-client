@@ -50,14 +50,14 @@ AttackAction.prototype.getValidated = function(gameContext, request) {
         return null;
     }
 
-    const attackerEntities = target.getActiveAttackers(gameContext, actorID);
+    const attackerEntities = AttackSystem.getAttackersForActor(gameContext, target, actorID);
 
     if(attackerEntities.length === 0) {
         return null;
     }
 
-    const attackerIDs = attackerEntities.map(entity => entity.getID());
     const targetObject = AttackSystem.createTargetObject(target, attackerEntities);
+    const attackerIDs = attackerEntities.map(entity => entity.getID());
     
     return {
         "actorID": actorID,

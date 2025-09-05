@@ -300,12 +300,13 @@ ArmyEntity.prototype.getAttackCounterTarget = function(gameContext) {
 }
 
 ArmyEntity.prototype.getMoveCounterAttackers = function(gameContext) {
-    const potentialAttackers = this.getSurroundingEntities(gameContext, gameContext.settings.maxAttackRange);
     const attackers = [];
 
     if(!this.isAlive()) {
         return attackers;
     }
+
+    const potentialAttackers = this.getSurroundingEntities(gameContext, gameContext.settings.maxAttackRange);
 
     for(let i = 0; i < potentialAttackers.length; i++) {
         const potentialAttacker = potentialAttackers[i];
@@ -324,13 +325,10 @@ ArmyEntity.prototype.getMoveCounterAttackers = function(gameContext) {
     return attackers;
 }
 
-ArmyEntity.prototype.getActiveAttackers = function(gameContext, actorID) {
-    const { world } = gameContext;
-    const { turnManager } = world;
-    const actor = turnManager.getActor(actorID);
+ArmyEntity.prototype.getActiveAttackers = function(gameContext) {
     const attackers = [];
 
-    if(!actor || !this.isAlive()) {
+    if(!this.isAlive()) {
         return attackers;
     }
 
@@ -338,9 +336,8 @@ ArmyEntity.prototype.getActiveAttackers = function(gameContext, actorID) {
 
     for(let i = 0; i < potentialAttackers.length; i++) {
         const potentialAttacker = potentialAttackers[i];
-        const attackerID = potentialAttacker.getID();
 
-        if(actor.hasEntity(attackerID) && potentialAttacker.canActivelyAttack()) {
+        if(potentialAttacker.canActivelyAttack()) {
             const attackerAttackComponent = potentialAttacker.getComponent(ArmyEntity.COMPONENT.ATTACK);
 
             if(potentialAttacker.isColliding(this, attackerAttackComponent.range)) {
